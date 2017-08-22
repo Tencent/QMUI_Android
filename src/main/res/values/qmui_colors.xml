@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--*********************************************
+    *              Config Color                  *
+    **********************************************-->
+
+    <color name="qmui_config_color_transparent">#00000000</color>
+    <color name="qmui_config_color_white">#ffffff</color>
+    <color name="qmui_config_color_75_white">#C0FFFFFF</color>
+    <color name="qmui_config_color_50_white">#80FFFFFF</color>
+    <color name="qmui_config_color_25_white">#40FFFFFF</color>
+    <color name="qmui_config_color_15_white">#26FFFFFF</color>
+    <color name="qmui_config_color_10_white">#19FFFFFF</color>
+
+    <color name="qmui_config_color_pure_black">#000000</color>
+    <color name="qmui_config_color_75_pure_black">#C0000000</color>
+    <color name="qmui_config_color_60_pure_black">#99000000</color>
+    <color name="qmui_config_color_50_pure_black">#80000000</color>
+    <color name="qmui_config_color_25_pure_black">#40000000</color>
+    <color name="qmui_config_color_15_pure_black">#26000000</color>
+    <color name="qmui_config_color_10_pure_black">#19000000</color>
+
+
+
+    <color name="qmui_config_color_blue">#1B88EE</color>
+    <color name="qmui_config_color_50_blue">#801B88EE</color>
+    <color name="qmui_config_color_red">#FA3A3A</color>
+    <color name="qmui_config_color_separator">#DEE0E2</color>
+    <color name="qmui_config_color_separator_darken">#D4D6D8</color>
+    <color name="qmui_config_color_background">#F4F5F7</color>
+    <color name="qmui_config_color_background_pressed">#EEEFF1</color>
+    <color name="qmui_config_color_black">#212832</color>
+    <color name="qmui_config_color_link">#547FB0</color>
+    <color name="qmui_config_color_pressed">#EEEEF0</color>
+
+    <color name="qmui_config_color_gray_1">#353C46</color>
+    <color name="qmui_config_color_gray_2">#49505A</color>
+    <color name="qmui_config_color_gray_3">#5D646E</color>
+    <color name="qmui_config_color_gray_4">#717882</color>
+    <color name="qmui_config_color_gray_5">#858C96</color>
+    <color name="qmui_config_color_gray_6">#99A0AA</color>
+    <color name="qmui_config_color_gray_7">#ADB4BE</color>
+    <color name="qmui_config_color_gray_8">#C4C8D0</color>
+    <color name="qmui_config_color_gray_9">#D8DCE4</color>
+
+
+    <color name="qmui_drawable_color_list_separator">#DEE0E2</color>
+    <color name="qmui_drawable_color_list_pressed">#DEE0E2</color>
+
+    <!--*********************************************
+    *               App 配置色    采用theme提供默认配置               *
+    **********************************************-->
+    <!-- http://developer.android.com/intl/zh-cn/training/material/theme.html -->
+    <!--1.colorPrimary: Toolbar导航栏的底色。-->
+    <!--2.colorPrimaryDark：状态栏的底色，注意这里只支持Android5.0以上的手机。-->
+    <!--3.textColorPrimary：整个当前Activity的字体的默认颜色。-->
+    <!--4.android:windowBackground：当前Activity的窗体颜色。-->
+    <!--5.colorAccent：CheckBox，RadioButton，SwitchCompat等控件的点击选中颜色-->
+    <!--6.colorControlNormal：CheckBox，RadioButton，SwitchCompat等默认状态的颜色。-->
+    <!--7.colorButtonNormal：默认状态下Button按钮的颜色。-->
+    <!--8.editTextColor：默认EditView输入框字体的颜色。-->
+    <!--<color name="qmui_colorPrimary">@color/qmui_config_color_blue</color>-->
+    <!--<color name="qmui_colorPrimaryDark">@color/qmui_colorPrimary</color>-->
+    <!--<color name="qmui_colorAccent">@color/qmui_config_color_red</color>-->
+    <!--<color name="qmui_textColorPrimary">@color/qmui_config_color_black</color>-->
+    <!--<color name="qmui_textColorSecondary">@color/qmui_config_color_white</color> &lt;!&ndash; 返回箭头也是用这个颜色 &ndash;&gt;-->
+    <!--<color name="qmui_windowBackground">@color/qmui_config_color_white</color>-->
+    <!--<color name="qmui_navigationBarColor">@color/qmui_config_color_black</color>-->
+    <!--<color name="qmui_colorControlNormal">@color/qmui_config_color_white</color>-->
+    <!--<color name="qmui_editTextColor">@color/qmui_config_color_black</color>-->
+    <!--<color name="qmui_app_bg">@color/qmui_config_color_white</color>-->
+
+
+    <!-- group list -->
+    <color name="qmui_common_list_item_text_color">?attr/qmui_config_color_black</color>
+    <color name="qmui_group_list_section_header_text_color">?attr/qmui_config_color_gray_3</color>
+
+
+    /**********************************************
+    *                TabSegment                  *
+    **********************************************/
+    <color name="qmui_tab_segment_bottom_line_color">?attr/qmui_config_color_blue</color>
+    <color name="qmui_tab_segment_text_color">?attr/qmui_config_color_black</color>
+</resources>

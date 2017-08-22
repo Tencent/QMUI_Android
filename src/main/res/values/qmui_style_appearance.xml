@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="QMUITextAppearance" parent="TextAppearanceBase">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+    </style>
+
+    <style name="QMUITextAppearance.Title"/>
+    <style name="QMUITextAppearance.Title.Gray">
+        <item name="android:textColor">?attr/qmui_config_color_gray_3</item>
+    </style>
+    <style name="QMUITextAppearance.Title.Large">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="QMUITextAppearance.ListItem">
+        <item name="android:textColor">@color/qmui_s_list_item_text_color</item>
+    </style>
+
+    <style name="QMUITextAppearance.GridItem"/>
+    <style name="QMUITextAppearance.GridItem.Small">
+        <item name="android:textColor">@color/qmui_config_color_gray_3</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+</resources>

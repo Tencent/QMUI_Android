@@ -1,0 +1,14 @@
+
+<resources>
+    <dimen name="emptyview_btn_padding_horizontal">32dp</dimen>
+
+    
+    <!-- ListView -->
+    <dimen name="list_item_textSize_title">16sp</dimen>
+    <dimen name="list_item_textSize_title_style_vertical">15sp</dimen>
+    <dimen name="list_item_textSize_detail">14sp</dimen>
+    <dimen name="list_item_textSize_detail_style_vertical">13sp</dimen>
+
+    
+
+</resources>

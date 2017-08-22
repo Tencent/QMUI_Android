@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--**********************************************
+    *                  Dialog                    *
+    **********************************************-->
+    <dimen name="qmui_dialog_radius">4dp</dimen>
+    <dimen name="qmui_dialog_action_button_radius">2dp</dimen>
+
+    <!--**********************************************
+    *                  Button                        *
+    **********************************************-->
+    <dimen name="qmui_btn_text_size">16sp</dimen>
+    <dimen name="qmui_btn_border_width">1dp</dimen>
+
+    <!--**********************************************
+    *                  Switch                        *
+    **********************************************-->
+    <dimen name="qmui_switch_size">20dp</dimen>
+
+    <!--**********************************************
+    *           List - List Item                 *
+    **********************************************-->
+
+    <dimen name="qmui_list_item_inset_left">16dp</dimen>
+    <dimen name="qmui_list_divider_height">1px</dimen>
+    <dimen name="qmui_list_divider_height_negative">-1px</dimen>
+    <dimen name="qmui_group_list_section_header_footer_text_size">13sp</dimen>
+
+    <!--**********************************************
+    *                TabSegment                  *
+    **********************************************-->
+    <dimen name="qmui_tab_segment_indicator_height">2dp</dimen>
+    <dimen name="qmui_tab_segment_text_size">16sp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize_with_text">16dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize">8dp</dimen>
+
+
+    <!--**********************************************
+    *                   GroupList                    *
+    **********************************************-->
+    <dimen name="qmui_list_item_height">56dp</dimen>
+    <dimen name="qmui_list_item_height_higher">103dp</dimen>
+    <dimen name="qmui_list_item_detail_lineSpacingExtra">5dp</dimen>
+    <dimen name="qmui_group_list_section_header_footer_padding_vertical">8dp</dimen>
+    <dimen name="qmui_group_list_section_header_footer_textSize">13sp</dimen>
+
+
+    <!-- 全局统一的界面左右间距，例如列表分隔线inset -->
+    <dimen name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</dimen> <!-- 已废弃 -->
+    <dimen name="qmui_content_spacing_horizontal">16dp</dimen> <!-- margin 和 padding 等使用的内容通用水平间距 -->
+    <!-- 提示标点 -->
+    <dimen name="qmui_tips_point_size">8dp</dimen>
+</resources>

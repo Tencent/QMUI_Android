@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                               android:layout_width="?attr/qmui_bottom_sheet_grid_item_mini_width"
+                                               android:layout_height="wrap_content"
+                                               android:gravity="center_horizontal"
+                                               android:paddingBottom="8dp"
+                                               android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="?attr/qmui_bottom_sheet_grid_item_icon_size"
+        android:layout_height="?attr/qmui_bottom_sheet_grid_item_icon_size"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="9dp">
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/grid_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_centerInParent="true"/>
+        <ViewStub
+            android:id="@+id/grid_item_subscript"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout="@layout/qmui_bottom_sheet_grid_item_subscript"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/grid_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="2"
+        android:textAppearance="?attr/qmui_bottom_sheet_grid_item_text_appearance"/>
+</com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout>

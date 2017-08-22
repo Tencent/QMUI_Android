@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="qmui_backgroundColor" format="color"/>
+    <attr name="qmui_borderColor" format="color"/>
+    <attr name="qmui_borderWidth" format="dimension"/>
+    <attr name="qmui_linkColor" format="color"/>
+
+    <!--**************** QMUITabSegment ******************-->
+    <declare-styleable name="QMUITabSegment">
+        <attr name="qmui_tab_indicator_height" format="dimension"/>
+        <attr name="qmui_tab_has_indicator" format="boolean"/>
+        <attr name="android:textSize"/>
+        <attr name="qmui_tab_indicator_top" format="boolean"/>
+        <attr name="qmui_tab_mode" format="enum">
+            <enum name="scrollable" value="0"/>
+            <enum name="fixed" value="1"/>
+        </attr>
+        <attr name="qmui_tab_space" format="dimension"/>
+        <attr name="qmui_tab_icon_position" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="top" value="1"/>
+            <enum name="right" value="2"/>
+            <enum name="bottom" value="3"/>
+        </attr>
+        <attr name="qmui_tab_typeface_provider" format="string"/>
+    </declare-styleable>
+    <attr name="QMUITabSegmentStyle" format="reference"/>
+
+    <!--************** QMUIGroupListView **************-->
+    <declare-styleable name="QMUIGroupListView">
+        <attr name="separatorStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="none" value="1"/>
+        </attr>
+    </declare-styleable>
+    <attr name="QMUIGroupListViewStyle" format="reference"/>
+    <attr name="QMUICommonListItemViewStyle" format="reference"/>
+    <attr name="qmui_common_list_item_chevron" format="reference"/>
+    <declare-styleable name="QMUICommonListItemView">
+        <attr name="orientation" format="enum">
+            <enum name="vertical" value="0"/>
+            <enum name="horizontal" value="1"/>
+        </attr>
+        <attr name="accessory_type" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="chevron" value="1"/>
+            <enum name="switcher" value="2"/>
+            <enum name="custom" value="3"/>
+        </attr>
+        <attr name="qmui_commonList_titleColor" format="color"/>
+        <attr name="qmui_commonList_detailColor" format="color"/>
+    </declare-styleable>
+    <attr name="QMUIGroupListSectionViewStyle" format="reference"/>
+
+
+    <!--************ 更新小红点与 new 的样式配置 ***********-->
+    <attr name="QMUITipPointStyle" format="reference"/>
+    <attr name="QMUITipNewStyle" format="reference"/>
+
+    <!--************ QMUILoading ***********-->
+    <declare-styleable name="QMUILoadingView">
+        <attr name="qmui_loading_view_size" format="dimension"/>
+        <attr name="android:color"/>
+    </declare-styleable>
+    <attr name="QMUILoadingStyle" format="reference"/>
+
+    <!--************ QMUITopBar ***********-->
+    <declare-styleable name="QMUITopBar">
+        <attr name="qmui_topbar_need_separator" format="boolean"/>
+        <attr name="qmui_topbar_separator_color" format="color"/>
+        <attr name="qmui_topbar_separator_height" format="dimension"/>
+        <attr name="qmui_topbar_bg_color" format="color"/>
+        <attr name="qmui_topbar_left_back_drawable_id" format="reference"/>
+    </declare-styleable>
+    <attr name="QMUITopBarStyle" format="reference"/>
+
+    <!--**************** QMUIPullRefreshLayout ******************-->
+    <declare-styleable name="QMUIPullRefreshLayout">
+        <!-- RefreshView的初始offset -->
+        <attr name="qmui_refresh_init_offset" format="dimension"/>
+        <!-- 刷新时RefreshView的offset -->
+        <attr name="qmui_refresh_end_offset" format="dimension"/>
+        <!-- TargetView(ListView或者ScrollView等)的初始位置 -->
+        <attr name="qmui_target_init_offset" format="dimension"/>
+        <!-- 刷新时TargetView(ListView或者ScrollView等)的位置-->
+        <attr name="qmui_target_refresh_offset" format="dimension"/>
+        <!-- 是否自动根据RefreshView的高度计算RefreshView的初始位置-->
+        <attr name="qmui_auto_calculate_refresh_init_offset" format="boolean"/>
+        <!-- 是否自动根据TargetView在刷新时的位置计算RefreshView的结束位置-->
+        <attr name="qmui_auto_calculate_refresh_end_offset" format="boolean"/>
+        <!-- TargetView的刷新位置与RefreshView高度相等-->
+        <attr name="qmui_equal_target_refresh_offset_to_refresh_view_height" format="boolean"/>
+    </declare-styleable>
+    <attr name="QMUIPullRefreshLayoutStyle" format="reference"/>
+
+    <!--************** QMUIRadiusImageView ****************-->
+    <attr name="qmui_border_width" format="dimension"/>
+    <attr name="qmui_border_color" format="color"/>
+    <declare-styleable name="QMUIRadiusImageView">
+        <attr name="qmui_border_width"/>
+        <attr name="qmui_border_color"/>
+        <attr name="qmui_selected_mask_color" format="color"/>
+        <attr name="qmui_selected_border_color" format="color"/>
+        <attr name="qmui_selected_border_width" format="dimension"/>
+        <attr name="qmui_corner_radius" format="dimension"/>
+        <attr name="qmui_is_oval" format="boolean"/>
+        <attr name="qmui_is_circle" format="boolean"/>
+        <attr name="qmui_is_touch_select_mode_enabled" format="boolean"/>
+    </declare-styleable>
+    <attr name="QMUIRadiusImageViewStyle" format="reference"/>
+
+    <!--************** QMUIQQFaceView ****************-->
+    <declare-styleable name="QMUIQQFaceView">
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:singleLine"/>
+        <attr name="android:maxLines"/>
+        <attr name="android:lineSpacingExtra"/>
+        <attr name="android:ellipsize"/>
+        <attr name="android:maxWidth"/>
+        <attr name="android:text"/>
+        <attr name="qmui_special_drawable_padding" format="dimension"/>
+        <attr name="qmui_more_action_text" format="string"/>
+        <attr name="qmui_more_action_color" format="color"/>
+    </declare-styleable>
+    <attr name="QMUIQQFaceStyle" format="reference"/>
+
+    <!-- QMUIFloatLayout start -->
+    <attr name="qmui_childHorizontalSpacing" format="dimension"/>
+    <attr name="qmui_childVerticalSpacing" format="dimension"/>
+    <attr name="qmui_maxNumber" format="integer"/>
+    <declare-styleable name="QMUIFloatLayout">
+        <attr name="android:gravity"/>
+        <attr name="qmui_childHorizontalSpacing"/>
+        <attr name="qmui_childVerticalSpacing"/>
+        <attr name="android:maxLines"/>
+        <attr name="qmui_maxNumber"/>
+    </declare-styleable>
+    <!-- QMUIFloatLayout end -->
+
+    <!-- EmptyView start -->
+    <declare-styleable name="QMUIEmptyView">
+        <attr name="qmui_show_loading" format="boolean"/>
+        <attr name="qmui_title_text" format="string"/>
+        <attr name="qmui_detail_text" format="string"/>
+        <attr name="qmui_btn_text" format="string"/>
+    </declare-styleable>
+    <!-- EmptyView end -->
+
+    <!-- QMUIRecycleView start -->
+    <declare-styleable name="QMUIRecyclerView">
+        <attr name="qmui_item_distance" format="dimension"/>
+        <attr name="qmui_paged" format="boolean"/>
+        <attr name="qmui_orientation" format="enum">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+    </declare-styleable>
+    <!-- QMUIRecycleView end -->
+
+    <!-- QMUIProgressBar start -->
+    <declare-styleable name="QMUIProgressBar">
+        <attr name="qmui_type" format="enum">
+            <enum name="type_rect" value="0"/>
+            <enum name="type_circle" value="1"/>
+        </attr>
+        <attr name="qmui_progress_color" format="color"/>
+        <attr name="qmui_background_color" format="color"/>
+        <attr name="qmui_max_value" format="integer"/>
+        <attr name="qmui_value" format="integer"/>
+        <attr name="qmui_stroke_width" format="dimension"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+    </declare-styleable>
+    <!-- QMUIProgressBar end -->
+
+    <!-- FontFitTextView start -->
+    <attr name="qmui_minTextSize" format="dimension"/>
+    <attr name="qmui_maxTextSize" format="dimension"/>
+    <declare-styleable name="QMUIFontFitTextView">
+        <attr name="qmui_minTextSize"/>
+        <attr name="qmui_maxTextSize"/>
+    </declare-styleable>
+    <!-- FontFitTextView end -->
+
+    <declare-styleable name="QMUILinkTextView">
+        <attr name="qmui_linkBackgroundColor" format="color"/>
+        <attr name="qmui_linkTextColor" format="color"/>
+    </declare-styleable>
+
+    <!-- RoundWidget start -->
+
+    <!-- 圆角是否要自适应为 View 高度的一半 -->
+    <attr name="qmui_isRadiusAdjustBounds" format="boolean"/>
+    <!-- 同时指定四个方向的圆角大小 -->
+    <attr name="qmui_radius" format="dimension"/>
+    <!-- 指定左上方圆角的大小 -->
+    <attr name="qmui_radiusTopLeft" format="dimension"/>
+    <!-- 指定右上方圆角的大小 -->
+    <attr name="qmui_radiusTopRight" format="dimension"/>
+    <!-- 指定左下方圆角的大小 -->
+    <attr name="qmui_radiusBottomLeft" format="dimension"/>
+    <!-- 指定右下方圆角的大小 -->
+    <attr name="qmui_radiusBottomRight" format="dimension"/>
+
+    <attr name="QMUIButtonStyle" format="reference"/>
+
+    <declare-styleable name="QMUIRoundButton">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundFrameLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundLinearLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundRelativeLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <!-- RoundWidget end -->
+
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--**********************************************
+    *                  Dialog                        *
+    **********************************************-->
+    <style name="qmui_dialog_wrap">
+        <item name="android:background">?attr/qmui_dialog_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">?attr/qmui_dialog_margin_vertical</item>
+        <item name="android:layout_marginBottom">?attr/qmui_dialog_margin_vertical</item>
+    </style>
+
+    <style name="qmui_tip_dialog_wrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">?attr/qmui_tip_dialog_min_width</item>
+        <item name="android:minHeight">?attr/qmui_tip_dialog_min_height</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginLeft">?attr/qmui_content_spacing_horizontal</item>
+        <item name="android:layout_marginRight">?attr/qmui_content_spacing_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">?attr/qmui_tip_dialog_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_tip_dialog_padding_horizontal</item>
+        <item name="android:paddingTop">?attr/qmui_tip_dialog_padding_vertical</item>
+        <item name="android:paddingBottom">?attr/qmui_tip_dialog_padding_vertical</item>
+        <item name="android:background">?attr/qmui_tip_dialog_bg</item>
+    </style>
+
+    <style name="qmui_tab_sign_count_view">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:background">?attr/qmui_tab_sign_count_view_bg</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/qmui_config_color_white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:minWidth">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>
+    </style>
+
+</resources>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--********************* TabSegment *********************-->
+    <style name="QMUI.TabSegment">
+        <item name="qmui_tab_has_indicator">false</item>
+        <item name="qmui_tab_indicator_height">@dimen/qmui_tab_segment_indicator_height</item>
+        <item name="android:textSize">@dimen/qmui_tab_segment_text_size</item>
+        <item name="qmui_tab_indicator_top">false</item>
+        <item name="qmui_tab_icon_position">left</item>
+    </style>
+
+    <!--********************* Button *********************-->
+    <style name="QMUI.RoundButton" parent="@style/Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--<item name="android:padding">0dp</item>--><!-- 不用 android:padding，而用各个方向分别指定 padding，方便子类覆盖 -->
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:ellipsize">end</item>
+        <item name="qmui_isRadiusAdjustBounds">true</item>
+        <item name="qmui_backgroundColor">@color/qmui_s_transparent</item>
+        <item name="qmui_borderWidth">?attr/qmui_round_btn_border_width</item>
+        <item name="qmui_borderColor">?attr/qmui_round_btn_border_color</item>
+        <item name="android:textColor">?attr/qmui_round_btn_text_color</item>
+    </style>
+
+    <!--********************* GroupListView *********************-->
+    <style name="QMUI.GroupListView">
+        <item name="separatorStyle">none</item>
+    </style>
+    <style name="QMUI.CommonListItemView">
+        <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_commonList_titleColor">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_commonList_detailColor">?attr/qmui_config_color_gray_5</item>
+    </style>
+
+    <style name="QMUI.GroupListSectionView">
+        <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
+    </style>
+
+    <!--********************* Loading *********************-->
+    <style name="QMUI.Loading">
+        <item name="qmui_loading_view_size">?attr/qmui_loading_size</item>
+        <item name="android:color">?attr/qmui_loading_color</item>
+    </style>
+
+    <style name="QMUI.Loading.White">
+        <item name="qmui_loading_view_size">?attr/qmui_loading_size</item>
+        <item name="android:color">@color/qmui_config_color_white</item>
+    </style>
+
+    <!--********************* TopBar *********************-->
+    <style name="QMUI.TopBar">
+        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_topbar_separator_height">1px</item>
+        <item name="qmui_topbar_bg_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_need_separator">true</item>
+        <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+
+    <!--********************* Dialog *********************-->
+
+    <style name="QMUI.Dialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
+        <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
+        <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
+        <item name="android:windowIsFloating">true</item><!-- 在中间弹框、背后有遮罩的效果 -->
+        <item name="android:minWidth">?attr/qmui_dialog_min_width</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">?attr/qmui_dialog_margin_horizontal</item>
+        <item name="android:layout_marginRight">?attr/qmui_dialog_margin_horizontal</item>
+    </style>
+
+    <style name="QMUI.Dialog.FullWidth" parent="QMUI.Dialog">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.FullWidth.NoAnimation" parent="QMUI.Dialog.FullWidth">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="QMUI.TipDialog" parent="android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="QMUI.BottomSheet" parent="android:Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <!--********************* Tip *********************-->
+    <!-- 提示更新小圆点 -->
+    <style name="QMUI.TipPoint">
+        <item name="android:layout_width">@dimen/qmui_tips_point_size</item>
+        <item name="android:layout_height">@dimen/qmui_tips_point_size</item>
+        <item name="android:background">@drawable/qmui_tips_point</item>
+    </style>
+
+    <!-- 提示更新new -->
+    <style name="QMUI.TipNew">
+        <item name="android:layout_width">37dp</item>
+        <item name="android:layout_height">17dp</item>
+        <item name="android:background">@drawable/qmui_icon_tip_new</item>
+    </style>
+
+    <!-- QMUIPullRefreshLayout -->
+    <style name="QMUI.PullRefreshLayout">
+        <item name="qmui_target_init_offset">0dp</item>
+        <item name="qmui_target_refresh_offset">72dp</item>
+        <item name="qmui_auto_calculate_refresh_init_offset">true</item>
+        <item name="qmui_auto_calculate_refresh_end_offset">true</item>
+    </style>
+
+    <!-- QMUIRadiusImageView -->
+    <style name="QMUI.RadiusImageView">
+        <item name="qmui_is_circle">true</item>
+        <item name="qmui_border_width">1px</item>
+        <item name="qmui_border_color">?attr/qmui_config_color_gray_4</item>
+        <item name="qmui_is_touch_select_mode_enabled">true</item>
+    </style>
+
+    <!-- QMUIQQFaceView -->
+    <style name="QMUI.QQFaceView">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="qmui_special_drawable_padding">5dp</item>
+    </style>
+
+    <style name="QMUI.Animation" parent="@android:style/Animation" />
+
+    <style name="QMUI.Animation.PopUpMenu" />
+
+    <style name="QMUI.Animation.PopUpMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottom</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_top</item>
+    </style>
+
+    <style name="QMUI.Animation.PopUpMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomleft_to_topright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topright_to_bottomleft</item>
+    </style>
+
+    <style name="QMUI.Animation.PopUpMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomright_to_topleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
+    </style>
+
+    <style name="QMUI.Animation.PopDownMenu" />
+
+    <style name="QMUI.Animation.PopDownMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_top</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottom</item>
+    </style>
+
+    <style name="QMUI.Animation.PopDownMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
+    </style>
+
+    <style name="QMUI.Animation.PopDownMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
+    </style>
+
+</resources>

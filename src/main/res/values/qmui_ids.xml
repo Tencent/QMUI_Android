@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dialog -->
+    <item name="qmui_dialog_edit_input" type="id"/>
+    <item name="qmui_dialog_edit_right_icon" type="id"/>
+    
+    <item name="qmui_tab_segment_item_id" type="id"/>
+
+    <item name="qmui_view_can_not_cache_tag" type="id"/>
+
+    <item name="qmui_topbar_item_left_back" type="id"/>
+</resources>

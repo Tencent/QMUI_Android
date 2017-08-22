@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppRootTheme" parent="android:Theme.Material.Light"/>
+
+    <!--
+    在 Android 5.0
+    android:colorPrimary App主题色：用在ScrollView的FadingEdge颜色（加了透明度），以及用在按下系统窗口键后出现后App Title的背景色
+    android:colorPrimaryDark App主题色（深色）：用在 statusBarColor（状态栏）
+    -->
+    <style name="AppConfigTheme" parent="AppBaseTheme">
+        <item name="android:colorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="android:colorPrimaryDark">?attr/qmui_config_color_blue</item>
+        <item name="android:colorAccent">?attr/qmui_config_color_blue</item>
+        <item name="android:textColorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="android:textColorSecondary">?attr/qmui_config_color_blue</item> <!--返回箭头也是用这个颜色-->
+        <item name="android:windowBackground">@color/qmui_config_color_white</item>
+        <item name="android:navigationBarColor">?attr/qmui_config_color_black</item>
+        <item name="android:colorControlNormal">@color/qmui_config_color_white</item>
+        <item name="android:editTextColor">?attr/qmui_config_color_black</item>
+        <!-- 该行会影响顶部条收起时效果,为false时，状态栏颜色不会被改变 -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <style name="ActionBarBase" parent="android:Widget.Material.Light.ActionBar" />
+    <style name="ActionBarTitleTextBase" parent="android:TextAppearance.Material.Widget.ActionBar.Title" />
+    <style name="ListViewBase" parent="android:Widget.Material.Light.ListView" />
+    <style name="GridViewBase" parent="android:Widget.Material.Light.GridView" />
+    <style name="ImageButtonBase" parent="android:Widget.Material.Light.ImageButton" />
+    <style name="ButtonBase" parent="android:Widget.Material.Light.Button"/>
+    <style name="EditTextBase" parent="android:Widget.Material.Light.EditText" />
+    <style name="AutoCompleteTextViewBase" parent="android:Widget.Material.Light.AutoCompleteTextView" />
+    <style name="DropDownListViewBase" parent="android:Widget.Material.Light.ListView.DropDown" />
+    <style name="TextAppearanceBase" parent="android:TextAppearance.Material"/>
+
+    <style name="AutoCompleteTextView" parent="AutoCompleteTextViewBase">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:dropDownVerticalOffset">0dp</item>
+        <item name="android:popupElevation">2dp</item>
+    </style>
+
+    <style name="Button" parent="ButtonBase">
+        <!-- 去掉5.0下Button点击的阴影动画效果 -->
+        <item name="android:stateListAnimator">@null</item>
+        <!-- 取消5.0下Button字符默认大写的功能（会导致 Spannable 失效） -->
+        <!-- http://stackoverflow.com/questions/29007746/button-settext-with-spannable-dosent-work-for-android-5-0-lollipop -->
+        <item name="android:textAllCaps">false</item>
+    </style>
+</resources>

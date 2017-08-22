@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Topbar的文字按钮颜色 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="false" android:color="#801B88EE"/>
+    <item android:state_pressed="true" android:color="#801B88EE"/>
+    <item android:color="@color/qmui_config_color_blue"/>
+
+</selector>
