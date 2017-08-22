@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white"
+        android:paddingLeft="@dimen/qmui_content_spacing_horizontal"
+        android:paddingRight="@dimen/qmui_content_spacing_horizontal">
+
+        <TextView
+            android:id="@+id/popup"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_above="@+id/actiontBtn"
+            android:layout_marginBottom="30dp"
+            android:background="@color/app_color_theme_5"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textColor="@color/qmui_config_color_white"
+            android:textSize="18sp"
+            android:visibility="gone"/>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actiontBtn"
+            style="@style/QMUI.RoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_centerInParent="true"
+            android:text="@string/progress_start_button_text"/>
+
+    </RelativeLayout>
+
+</FrameLayout>

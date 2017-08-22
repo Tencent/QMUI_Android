@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_in.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/anim-v21/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_out.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/anim-v21/design_bottom_sheet_slide_out.xml"
+    }
+]

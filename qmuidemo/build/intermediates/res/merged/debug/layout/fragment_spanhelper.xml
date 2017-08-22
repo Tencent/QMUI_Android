@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:id="@+id/contentWrap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <!-- 支持垂直居中的 ImageSpan -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanUtils_align_middle_title"/>
+
+            <TextView
+                android:id="@+id/alignMiddle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spanUtils_column_marginBottom"
+                android:lineSpacingExtra="6dp"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textSize="@dimen/spanUtils_common_textSize"/>
+
+            <!-- 支持增加左右间距的 ImageSpan -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanUtils_margin_image_title"/>
+
+            <TextView
+                android:id="@+id/marginImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spanUtils_column_marginBottom"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textSize="@dimen/spanUtils_common_textSize"/>
+
+            <!-- 整行的空白 Span，可用来用于制作段间距 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanUtils_block_space_title"/>
+
+            <TextView
+                android:id="@+id/blockSpace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spanUtils_column_marginBottom"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textSize="@dimen/spanUtils_common_textSize"/>
+
+            <!-- 自定义部分文字的字体 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanUtils_custom_type_face_title"/>
+
+            <TextView
+                android:id="@+id/customTypeface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="6dp"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textSize="@dimen/spanUtils_common_textSize"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

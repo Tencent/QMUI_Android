@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:id="@+id/contentWrap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="单行表情，末尾省略"/>
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="最多显示3行，末尾省略"/>
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:ellipsize="end"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="单行，开端省略"/>
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:singleLine="true"
+                android:ellipsize="start"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="最多显示3行，开端省略"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:ellipsize="start"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="单行，中间省略"/>
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:singleLine="true"
+                android:ellipsize="middle"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="最多显示3行，中间省略"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:ellipsize="middle"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="全是表情也能优雅的省略"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:singleLine="true"
+                android:ellipsize="start"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:singleLine="true"
+                android:layout_marginTop="10dp"
+                android:ellipsize="middle"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp"
+                android:maxLines="3"
+                android:ellipsize="start"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:layout_marginTop="10dp"
+                android:ellipsize="middle"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

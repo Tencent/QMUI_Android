@@ -1,0 +1,406 @@
+[
+    {
+        "outputFile": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ja/values-ja.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 96,
+                    "endOffset": 147
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 55,
+                        "endColumn": 96,
+                        "endOffset": 147
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 152,
+                    "endColumn": 106,
+                    "endOffset": 254
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 152,
+                        "endColumn": 106,
+                        "endOffset": 254
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 259,
+                    "endColumn": 120,
+                    "endOffset": 375
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 259,
+                        "endColumn": 120,
+                        "endOffset": 375
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 380,
+                    "endColumn": 92,
+                    "endOffset": 468
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 380,
+                        "endColumn": 92,
+                        "endOffset": 468
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 473,
+                    "endColumn": 104,
+                    "endOffset": 573
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 473,
+                        "endColumn": 104,
+                        "endOffset": 573
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 578,
+                    "endColumn": 81,
+                    "endOffset": 655
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 578,
+                        "endColumn": 81,
+                        "endOffset": 655
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 660,
+                    "endColumn": 97,
+                    "endOffset": 753
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 660,
+                        "endColumn": 97,
+                        "endOffset": 753
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 758,
+                    "endColumn": 107,
+                    "endOffset": 861
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 758,
+                        "endColumn": 107,
+                        "endOffset": 861
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 866,
+                    "endColumn": 76,
+                    "endOffset": 938
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 866,
+                        "endColumn": 76,
+                        "endOffset": 938
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 943,
+                    "endColumn": 75,
+                    "endOffset": 1014
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 943,
+                        "endColumn": 75,
+                        "endOffset": 1014
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 1019,
+                    "endColumn": 77,
+                    "endOffset": 1092
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 1019,
+                        "endColumn": 77,
+                        "endOffset": 1092
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 1097,
+                    "endColumn": 101,
+                    "endOffset": 1194
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 1097,
+                        "endColumn": 101,
+                        "endOffset": 1194
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 1199,
+                    "endColumn": 98,
+                    "endOffset": 1293
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 1199,
+                        "endColumn": 98,
+                        "endOffset": 1293
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 1298,
+                    "endColumn": 94,
+                    "endOffset": 1388
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 1298,
+                        "endColumn": 94,
+                        "endOffset": 1388
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 1393,
+                    "endColumn": 102,
+                    "endOffset": 1491
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 1393,
+                        "endColumn": 102,
+                        "endOffset": 1491
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 1496,
+                    "endColumn": 94,
+                    "endOffset": 1586
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 17,
+                        "startColumn": 4,
+                        "startOffset": 1496,
+                        "endColumn": 94,
+                        "endOffset": 1586
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 1591,
+                    "endColumn": 95,
+                    "endOffset": 1682
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 1591,
+                        "endColumn": 95,
+                        "endOffset": 1682
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1687,
+                    "endColumn": 110,
+                    "endOffset": 1793
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 1687,
+                        "endColumn": 110,
+                        "endOffset": 1793
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 1798,
+                    "endColumn": 96,
+                    "endOffset": 1890
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 1798,
+                        "endColumn": 96,
+                        "endOffset": 1890
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 1895,
+                    "endColumn": 77,
+                    "endOffset": 1968
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1895,
+                        "endColumn": 77,
+                        "endOffset": 1968
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 1973,
+                    "endColumn": 100,
+                    "endOffset": 2069
+                },
+                "from": {
+                    "file": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/values-ja/values-ja.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1973,
+                        "endColumn": 100,
+                        "endOffset": 2069
+                    }
+                }
+            }
+        ]
+    }
+]

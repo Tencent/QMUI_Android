@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility_off.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-anydpi-v21/design_ic_visibility_off.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-anydpi-v21/qmui_icon_topbar_back.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-anydpi-v21/qmui_icon_topbar_back.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-anydpi-v21/design_ic_visibility.xml"
+    }
+]

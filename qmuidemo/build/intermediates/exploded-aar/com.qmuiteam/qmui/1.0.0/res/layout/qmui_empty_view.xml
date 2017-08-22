@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <com.qmuiteam.qmui.widget.QMUILoadingView
+            android:id="@+id/empty_view_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/empty_view_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:textColor="?attr/qmui_config_color_gray_3"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/empty_view_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:textColor="?attr/qmui_config_color_gray_3"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/empty_view_button"
+            style="@style/QMUI.RoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="51dp"
+            android:layout_marginRight="51dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</merge>

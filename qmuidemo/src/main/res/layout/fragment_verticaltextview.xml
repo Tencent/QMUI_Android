@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/common_content_spacing"
+            android:paddingRight="@dimen/common_content_spacing"
+            android:paddingTop="40dp">
+
+            <com.qmuiteam.qmui.widget.QMUIVerticalTextView
+                android:id="@+id/verticalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="250dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="40dp"
+                android:background="?attr/qmui_config_color_gray_9"
+                android:lineSpacingExtra="6dp"
+                android:padding="6dp"
+                android:textColor="?attr/qmui_config_color_gray_1"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/verticalTextView_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/qmui_divider_bottom_bitmap"
+                android:hint="在此输入文字, 看垂直排版的效果"
+                android:paddingBottom="6dp"
+                android:singleLine="true"
+                android:textColor="@color/app_color_description"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

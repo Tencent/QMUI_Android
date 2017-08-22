@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="qmuidemo" type="id"/>
+    <item name="main_container" type="id"/>
+
+    <item name="empty_button" type="id"/>
+
+    <item name="topbar_right_about_button" type="id"/>
+    <item name="topbar_right_change_button" type="id"/>
+</resources>

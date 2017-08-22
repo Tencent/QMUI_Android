@@ -1,0 +1,62 @@
+[
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/design_bottom_navigation_item_background.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-v21/design_bottom_navigation_item_background.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_bottom_inset.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_bottom_inset.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/avd_show_password.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-v21/avd_show_password.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_none.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_none.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_double.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_double.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/design_password_eye.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-v21/design_password_eye.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_top.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_top.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_bottom_inset_left.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_bottom_inset_left.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_bottom.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_bottom.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/avd_hide_password.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/drawable-v21/avd_hide_password.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/drawable-v21/qmui_s_list_item_bg_with_border_top_inset_left.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/drawable-v21/qmui_s_list_item_bg_with_border_top_inset_left.xml"
+    }
+]

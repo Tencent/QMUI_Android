@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:gravity="center"
+    android:background="?attr/qmui_s_list_item_bg_with_border_none"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="2"
+        android:textSize="11sp"
+        android:textColor="?attr/qmui_config_color_gray_6"
+        android:gravity="center_horizontal|top"/>
+</LinearLayout>

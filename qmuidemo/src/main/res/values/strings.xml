@@ -1,0 +1,137 @@
+<resources>
+
+    <!-- common -->
+    <string name="app_name">QMUI</string>
+
+    <!-- Components 系列界面 -->
+
+    <!-- EmptyViewFragment 空界面展示界面 -->
+    <string name="emptyView_mode_title_loading">显示Loading</string>
+    <string name="emptyView_mode_title_single_text">显示一行提示语</string>
+    <string name="emptyView_mode_title_double_text">显示两行提示语</string>
+    <string name="emptyView_mode_title_single_text_and_button">显示一行文字和按钮</string>
+    <string name="emptyView_mode_title_double_text_and_button">显示两行文字和按钮</string>
+
+    <string name="emptyView_mode_desc_single">这是一行提示语</string>
+    <string name="emptyView_mode_desc_double">我是一个EmptyView</string>
+    <string name="emptyView_mode_desc_detail_double">通过右上角的菜单来切换我的不同状态</string>
+    <string name="emptyView_mode_desc_fail_title">加载失败</string>
+    <string name="emptyView_mode_desc_fail_desc">请检测网络是否能正常连接</string>
+    <string name="emptyView_mode_desc_retry">点击重试</string>
+
+    <!-- TabSegmentFragment 选项卡展示界面 -->
+    <string name="tabSegment_item_1_title">Item 1</string>
+    <string name="tabSegment_item_2_title">Item 2</string>
+
+    <string name="tabSegment_item_1_content">这是第一个 Item 的内容区</string>
+    <string name="tabSegment_item_2_content">这是第二个 Item 的内容区</string>
+
+    <string name="tabSegment_mode_general">简单文字</string>
+    <string name="tabSegment_mode_bottom_indicator">文字 + 底部 indicator</string>
+    <string name="tabSegment_mode_top_indicator">文字 + 顶部 indicator</string>
+    <string name="tabSegment_mode_indicator_with_content">文字 + indicator 长度不要跟随内容长度</string>
+    <string name="tabSegment_mode_left_icon_and_auto_tint">文字 + icon(支持四个方向) + 自动着色选中态 icon</string>
+    <string name="tabSegment_mode_sign_count">显示红点</string>
+    <string name="tabSegment_mode_icon_change">选中态更换 icon</string>
+    <string name="tabSegment_mode_muti_color">不同 item，不同文字(icon)颜色</string>
+    <string name="tabSegment_mode_change_content_by_index">根据 index 更新 tab 文案</string>
+    <string name="tabSegment_mode_replace_tab_by_index">根据 index 完全替换 tab</string>
+
+    <!-- ProgressBarFragment 进度条展示界面 -->
+    <string name="progress_start_button_text">点击开始</string>
+    <string name="progress_back_button_text">回滚进度</string>
+
+    <string name="circularImageView_item_xml_circle_title">剪裁为圆形+边框+点击效果</string>
+    <string name="circularImageView_item_xml_oval_title">剪裁为椭圆形+边框+点击效果</string>
+    <string name="circularImageView_item_xml_round_rect_title">剪裁为圆角矩形+边框+点击效果</string>
+
+    <string name="circularImageView_modify_tip">可以通过右上角的按钮动态修改下图的效果</string>
+    <string name="circularImageView_modify_1">改变边框颜色与宽度</string>
+    <string name="circularImageView_modify_2">改变选中态边框颜色与宽度</string>
+    <string name="circularImageView_modify_3">改变选中态 Mask 的颜色（带透明度）</string>
+    <string name="circularImageView_modify_4">手工切换选中态</string>
+    <string name="circularImageView_modify_5">改变圆角大小</string>
+    <string name="circularImageView_modify_6">变为圆形</string>
+    <string name="circularImageView_modify_7">变为椭圆形</string>
+    <string name="circularImageView_modify_8">禁止使用touchSelect态</string>
+    <string name="circularImageView_modify_9">重置为初始态</string>
+
+    <!-- PopupFragment 浮层展示界面 -->
+    <string name="popup_normal_action_button_text_show">显示普通浮层</string>
+    <string name="popup_normal_action_button_text_hide">隐藏普通浮层</string>
+    <string name="popup_list_action_button_text_show">显示列表浮层</string>
+    <string name="popup_list_action_button_text_hide">隐藏列表浮层</string>
+
+    <!-- LinkTextView 展示界面 -->
+    <string name="linkTextView_auto_identify">URL/Mail/Tel自动识别</string>
+    <string name="linkTextView_auto_identify_word">可以自动识别网页链接，例如 http://www.qmuiteam.com。\n可以自动识别电话号码，例如 13600000000。\n也可以识别邮件地址，例如 qmuiteam@gmail.com。\n我们可以为其添加自定义的点击事件。</string>
+
+    <!-- SpanTouchFixTextView -->
+    <string name="spanTouchFix_description">QMUISpanTouchFixTextView 主要用于修正 TextView 添加 ClickSpan 后的点击行为与事件传递</string>
+    <string name="spanTouchFix_system_behavior">TextView系统行为</string>
+    <string name="spanTouchFix_qmui_fix_behavior">QMUI修复后行为</string>
+
+    <!-- PullRefreshView -->
+    <string name="pull_refresh_default_offset_calculator">默认效果: RefreshView 下拉到一定距离后不动</string>
+    <string name="pull_refresh_follow_offset_calculator">RefreshView 一直跟随下拉的效果</string>
+    <string name="pull_refresh_center_gravity_offset_calculator">RefreshView 处于下拉区域的中间的效果</string>
+
+
+    <string name="system_behavior_1">\@qmui:点击span区域会同时出发span的点击事件和 TextView 的点击事件 #qmui#</string>
+    <string name="system_behavior_2">\@qmui: 系统默认情况下，TextView 不添加点击事件，然后 TextView 的父元素添加点击事件，
+        那么点击 TextView 将无法触发父元素的点击事件。#qmui#</string>
+
+    <string name="span_touch_fix_1">\@qmui:span的点击事件与textView的点击事件完全分离#qmui#</string>
+    <string name="span_touch_fix_2">\@qmui:默认情况下，如果textView添加了clickSpan,#qmui#那么textView的事件将无法冒泡到父级。
+        但在某些场景（例如微博评论需要整条可点），我们需要将事件冒泡给父元素进行处理。#qmui#</string>
+
+    <!-- Helper 系列界面 -->
+
+    <!-- ColorHelper 颜色工具 -->
+    <string name="colorHelper_alpha_title">设置颜色的 alpha 值</string>
+    <string name="colorHelper_ratio_title">根据比例，在两个 color 值之间计算出一个 color 值</string>
+    <string name="colorHelper_transform_title">将 color 颜色值转换为字符串</string>
+
+    <string name="colorHelper_squqre_origin">原始</string>
+    <string name="colorHelper_squqre_alpha">%1$.1f alpha</string>
+
+    <!-- DeviceHelper 设备检测工具 -->
+    <string name="deviceHelper_tablet_title">判断是否为平板设备</string>
+    <string name="deviceHelper_flyme_title">判断是否为 Flyme 系统</string>
+    <string name="deviceHelper_miui_title">判断是否为 MIUI 系统</string>
+    <string name="deviceHelper_meizu_title">判断是否为魅族手机</string>
+
+    <!-- DrawableHelper Drawable 工具 -->
+    <string name="drawableHelper_create_from_view_title">从一个 View 创建 Bitmap</string>
+    <string name="drawableHelper_create_from_view_button">以本界面 Root View 为例</string>
+    <string name="drawableHelper_solid_image_title">创建一张指定大小的纯色图片，支持圆角</string>
+    <string name="drawableHelper_circle_gradient_title">创建一张渐变图片，支持圆角</string>
+    <string name="drawableHelper_tint_color_title">设置 Drawable 的颜色</string>
+    <string name="drawableHelper_separator_title">创建带上分隔线或下分隔线的 Drawable</string>
+
+    <!-- StatusBarHelper 状态栏工具 -->
+    <string name="statusBarHelper_translucentActivity_desc">通过在 Activity 中调用 QMUIStatusBarHelper.translucent() 方法，即可实现沉浸式状态栏的效果</string>
+    <string name="statusBarHelper_statusBar_height_result">状态栏实际高度为 %1$d</string>
+
+    <!-- Span Utils 各种 Span 工具 -->
+    <string name="spanUtils_side_icon_title">在文字左边或者右边直接添加 Icon</string>
+    <string name="spanUtils_align_middle_title">支持垂直居中的 ImageSpan</string>
+    <string name="spanUtils_margin_image_title">支持增加左右间距的 ImageSpan</string>
+    <string name="spanUtils_block_space_title">整行的空白 Span，可用来用于制作段间距</string>
+    <string name="spanUtils_custom_type_face_title">自定义部分文字的字体</string>
+    <string name="spanUtils_rmb">¥</string><!-- ¥相当于&#xA5 -->
+
+    <!-- ViewHelper View 处理工具 -->
+    <string name="viewHelper_scale_origin">原始</string>
+    <string name="viewHelper_scale_result">%1$.1f等比缩放</string>
+    <string name="viewHelper_background_animation_blink_title">做背景闪动的动画</string>
+
+    <!-- 其他界面 -->
+
+    <!-- 关于界面 -->
+    <string name="about_title">关于</string>
+    <string name="about_item_homepage">访问官网</string>
+    <string name="about_item_github">GitHub</string>
+    <string name="about_copyright">© %1$s QMUI Team All rights reserved.</string>
+
+</resources>

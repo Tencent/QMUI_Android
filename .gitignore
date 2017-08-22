@@ -1,9 +1,13 @@
 /*.bin
 /*.iml
-/.DS_Store
+.DS_Store
+/.gradle
 /.gradletasknamecache
 /.idea
+app/*.iml
+app/build
 /bin
 /build
 /local.properties
-/deploy.properties
+release.properties
+qmuidemo.keystore

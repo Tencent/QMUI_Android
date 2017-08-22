@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':lib')
+    compile 'com.squareup:javapoet:1.7.0'
+    compile 'com.google.auto.service:auto-service:1.0-rc2'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

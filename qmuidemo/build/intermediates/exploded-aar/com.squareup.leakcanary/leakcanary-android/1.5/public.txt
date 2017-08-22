@@ -1,0 +1,3 @@
+string leak_canary_display_activity_label
+layout leak_canary_heap_dump_toast
+drawable leak_canary_icon

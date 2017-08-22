@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="oval"
+    >
+    <size
+        android:width="@dimen/qmui_switch_size"
+        android:height="@dimen/qmui_switch_size"
+        />
+    <solid android:color="?attr/qmui_config_color_link" />
+</shape>

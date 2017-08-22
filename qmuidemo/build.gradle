@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        Properties properties = new Properties()
+        File propFile = project.file('release.properties')
+        if (propFile.exists()) {
+            properties.load(propFile.newDataInputStream())
+        }
+        release {
+            keyAlias properties.getProperty("RELEASE_KEY_ALIAS")
+            keyPassword properties.getProperty("RELEASE_KEY_PASSWORD")
+            storeFile file('qmuidemo.keystore')
+            storePassword properties.getProperty("RELEASE_STORE_PASSWORD")
+        }
+    }
+    compileSdkVersion parent.ext.compileSdkVersion
+    buildToolsVersion parent.ext.buildToolsVersion
+    defaultConfig {
+        applicationId "com.qmuiteam.qmuidemo"
+        minSdkVersion parent.ext.minSdkVersion
+        targetSdkVersion parent.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    // 避免 lint 检测出错时停止构建
+    lintOptions {
+      abortOnError false
+    }
+}
+
+//apply plugin: 'com.qmuiteam.qmui'
+//qmui {
+//    parentTheme "AppRootTheme"
+//}
+
+configurations.all {
+    resolutionStrategy {
+        force "com.android.support:support-annotations:${supportVersion}"
+    }
+}
+
+// 加@aar与不加@aar的区别：
+// http://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "com.android.support:appcompat-v7:$supportVersion"
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile project(':qmui')
+    compile project(':lib')
+    annotationProcessor project(':compiler')
+
+    //leak
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+    //test
+//    testCompile 'junit:junit:4.12'
+//    androidTestCompile 'com.android.support.test:runner:0.5'
+//    androidTestCompile 'com.android.support.test:rules:0.5' // Set this dependency to use JUnit 4 rules
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') // Set this dependency to build and run Espresso tests
+}

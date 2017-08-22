@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/qmui_config_color_white"
+    android:orientation="vertical"
+    android:paddingTop="?attr/qmui_bottom_sheet_grid_padding_vertical"
+    android:paddingBottom="?attr/qmui_bottom_sheet_grid_padding_vertical">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:clipToPadding="false">
+
+        <!-- 只有第一行时会在代码中去掉paddingBottom -->
+        <LinearLayout
+            android:id="@+id/bottom_sheet_first_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="?attr/qmui_bottom_sheet_grid_line_padding_horizontal"
+            android:paddingRight="?attr/qmui_bottom_sheet_grid_line_padding_horizontal"
+            android:paddingBottom="?attr/qmui_bottom_sheet_grid_line_vertical_space"
+            android:orientation="horizontal"/>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/bottom_sheet_second_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="?attr/qmui_bottom_sheet_grid_line_padding_horizontal"
+            android:paddingRight="?attr/qmui_bottom_sheet_grid_line_padding_horizontal"
+            android:orientation="horizontal"/>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/bottom_sheet_button"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_bottom_sheet_button_height"
+        android:gravity="center"
+        android:textSize="?attr/qmui_bottom_sheet_button_text_size"
+        android:textColor="?attr/qmui_bottom_sheet_button_text_color"
+        android:background="?attr/qmui_bottom_sheet_button_text_background"
+        android:layout_marginTop="?attr/qmui_bottom_sheet_grid_padding_vertical"
+        android:text="关 闭"/>
+
+</LinearLayout>

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/mipmap-xxhdpi-v4/qd_show_img_1.jpg",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/mipmap-xxhdpi/qd_show_img_1.jpg"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/mipmap-xxhdpi-v4/image_big.jpg",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/mipmap-xxhdpi/image_big.jpg"
+    }
+]

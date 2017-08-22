@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:id="@+id/contentWrap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <!-- 创建一张指定大小的纯色图片，支持圆角 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/drawableHelper_solid_image_title"/>
+
+            <ImageView
+                android:id="@+id/solidImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"/>
+
+            <!-- 创建一张圆形渐变图片，支持圆角 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/drawableHelper_circle_gradient_title"/>
+
+            <ImageView
+                android:id="@+id/circleGradient"
+                android:layout_width="@dimen/drawableHelper_common_shape_size"
+                android:layout_height="@dimen/drawableHelper_common_shape_size"
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"/>
+
+            <!-- 设置 Drawable 的颜色 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/drawableHelper_tint_color_title"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tintColorOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/colorHelper_square_margin"
+                    android:src="@mipmap/arrowright"/>
+
+                <ImageView
+                    android:id="@+id/tintColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/colorHelper_square_margin"/>
+
+            </LinearLayout>
+
+            <!-- 创建带上分隔线或下分隔线的 Drawable -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/drawableHelper_separator_title"/>
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drawableHelper_common_shape_size"
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"/>
+
+            <!-- 从一个 View 创建 Bitmap -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/drawableHelper_create_from_view_title"/>
+
+            <Button
+                android:id="@+id/createFromView"
+                style="@style/QDRadiusButton"
+                android:text="@string/drawableHelper_create_from_view_button"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

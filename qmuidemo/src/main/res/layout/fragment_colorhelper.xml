@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:id="@+id/contentWrap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <!-- 设置颜色的 alpha 值 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/colorHelper_alpha_title"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/colorHelper_column_marginBottom"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="@dimen/colorHelper_square_length"
+                        android:layout_height="@dimen/colorHelper_square_length"
+                        android:background="@color/colorHelper_square_alpha_background"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/colorHelper_square_desc_marginTop"
+                        android:text="@string/colorHelper_squqre_origin"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/colorHelper_square_margin"
+                    android:src="@mipmap/arrowright"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <View
+                        android:id="@+id/square_alpha"
+                        android:layout_width="@dimen/colorHelper_square_length"
+                        android:layout_height="@dimen/colorHelper_square_length"/>
+
+                    <TextView
+                        android:id="@+id/square_desc_alpha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/colorHelper_square_desc_marginTop"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 根据比例，在两个 color 值之间计算出一个 color 值 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/colorHelper_ratio_title"/>
+
+            <LinearLayout
+                android:id="@+id/ratioSeekBarWrap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/colorHelper_column_marginBottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="@dimen/colorHelper_square_length"
+                    android:layout_height="@dimen/colorHelper_square_length"
+                    android:background="@color/colorHelper_square_from_ratio_background"/>
+
+                <SeekBar
+                    android:id="@+id/ratioSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"/>
+
+                <View
+                    android:layout_width="@dimen/colorHelper_square_length"
+                    android:layout_height="@dimen/colorHelper_square_length"
+                    android:background="@color/colorHelper_square_to_ratio_background"/>
+
+            </LinearLayout>
+
+            <!-- 将 color 颜色值转换为字符串 -->
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/colorHelper_transform_title"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/colorHelper_column_marginBottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/transformTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/app_color_blue"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

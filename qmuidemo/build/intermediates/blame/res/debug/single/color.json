@@ -1,0 +1,154 @@
+[
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_secondary_text_material_light.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_secondary_text_material_light.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/design_error.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/color/design_error.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_btn_blue_bg.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_btn_blue_bg.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_dialog_action_text_negative_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_dialog_action_text_negative_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_hint_foreground_material_light.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_hint_foreground_material_light.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_switch_thumb.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_app_color_gray.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_app_color_gray.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_btn_blue_border.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_btn_blue_border.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_primary_text_material_light.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_primary_text_material_light.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_switch_track.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_seek_thumb.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_s_transparent.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_s_transparent.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_btn_colored_text_material.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/switch_thumb_material_dark.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/switch_thumb_material_dark.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_topbar_btn_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_topbar_btn_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_btn_blue_border.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_btn_blue_border.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_s_link_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_s_link_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_edittext.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_edittext.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_s_list_item_text_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_s_list_item_text_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_default.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_default.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_primary_text_disable_only_material_dark.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_primary_text_disable_only_material_dark.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_dialog_action_text_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_dialog_action_text_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_btn_blue_text.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_btn_blue_text.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_btn_blue_text.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_btn_blue_text.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/design_tint_password_toggle.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/design/25.3.1/res/color/design_tint_password_toggle.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/switch_thumb_material_light.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/switch_thumb_material_light.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_primary_text_disable_only_material_light.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_primary_text_disable_only_material_light.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_topbar_text_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_topbar_text_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_s_switch_text_color.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_s_switch_text_color.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_secondary_text_material_dark.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_secondary_text_material_dark.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_search_url_text.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_search_url_text.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_primary_text_material_dark.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_primary_text_material_dark.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/qmui_btn_blue_bg.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.qmuiteam/qmui/1.0.0/res/color/qmui_btn_blue_bg.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_btn_checkable.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_btn_colored_borderless_text_material.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_btn_colored_borderless_text_material.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_hint_foreground_material_dark.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_hint_foreground_material_dark.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/abc_tint_spinner.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.3.1/res/color/abc_tint_spinner.xml"
+    },
+    {
+        "merged": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/build/intermediates/res/merged/debug/color/s_app_color_blue_2.xml",
+        "source": "/Users/chant/android/openSource/QMUI_Android_github/qmuidemo/src/main/res/color/s_app_color_blue_2.xml"
+    }
+]

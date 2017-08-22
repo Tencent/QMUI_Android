@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 用于显示未读数的红点 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <solid android:color="@color/qmui_config_color_red"/>
+
+    <corners android:radius="@dimen/qmui_tab_sign_count_view_minSize_with_text"/>
+
+</shape>

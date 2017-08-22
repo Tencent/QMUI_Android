@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white"
+        android:orientation="vertical"
+        android:padding="25dp">
+
+        <TextView
+            style="@style/QDCommonTitle"
+            android:text="@string/linkTextView_auto_identify"/>
+
+        <com.qmuiteam.qmui.widget.textview.QMUILinkTextView
+            android:id="@+id/link_text_view"
+            style="@style/QDCommonDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="left"
+            android:text="@string/linkTextView_auto_identify_word"
+            app:qmui_linkBackgroundColor="@color/s_app_color_gray"
+            app:qmui_linkTextColor="@color/s_app_color_blue_2"/>
+
+    </LinearLayout>
+
+</FrameLayout>

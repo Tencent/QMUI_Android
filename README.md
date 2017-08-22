@@ -26,6 +26,3 @@ QMUI Android 支持 API Level 14+。
 ## 使用方法
 请查看官网的[开始使用](http://qmuiteam.com/android/page/start.html)。
 
-## 代码示例
-请下载 [QMUI Demo](https://github.com/QMUI/QMUIDemo_Android)。
-
