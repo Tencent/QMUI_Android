@@ -33,6 +33,6 @@ QMUI Android 支持 API Level 14+。
 ## QMUI Demo APP 安装包下载
 点击链接下载：[http://cdn.qmuiteam.com/download/android/latest](http://cdn.qmuiteam.com/download/android/latest)
 
-或扫二维码下载：
+或扫二维码至官网下载：
 
-<p><img src="http://qmuiteam.com/android/public/style/images/independent/DownloadQRCode.png" alt="QMUI Demo QRCode" /></p>
+![QMUI Website](http://qmuiteam.com/android/public/style/images/independent/DownloadQRCode.png?v=website)
