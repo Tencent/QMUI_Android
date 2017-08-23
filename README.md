@@ -31,7 +31,7 @@ QMUI Android 支持 API Level 14+。
 请查看官网的[开始使用](http://qmuiteam.com/android/page/start.html)。
 
 ## QMUI Demo APP 安装包下载
-点击链接下载：[http://cdn.qmuiteam.com/download/android/latest.php](http://cdn.qmuiteam.com/download/android/latest.php)
+点击链接下载：[http://cdn.qmuiteam.com/download/android/latest](http://cdn.qmuiteam.com/download/android/latest)
 
 或扫二维码下载：
 
