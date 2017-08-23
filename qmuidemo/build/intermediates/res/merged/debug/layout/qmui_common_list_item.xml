@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/group_list_item_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="12dp"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/group_list_item_accessoryView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="14dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/group_list_item_textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/group_list_item_accessoryView"
+        android:layout_toRightOf="@id/group_list_item_imageView"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/group_list_item_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:includeFontPadding="false"
+            android:textColor="?attr/qmui_config_color_gray_1"
+            android:textSize="@dimen/list_item_textSize_title"/>
+
+        <TextView
+            android:id="@+id/group_list_item_detailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="@dimen/qmui_list_item_detail_lineSpacingExtra"
+            android:textColor="?attr/qmui_config_color_gray_5"
+            android:textSize="@dimen/list_item_textSize_detail"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <!-- 红点，代码会再修改这个View的位置 -->
+    <ImageView
+        android:id="@+id/group_list_item_tips_dot"
+        style="?attr/QMUITipPointStyle"
+        android:visibility="gone"/>
+
+    <!-- 更新提示 -->
+    <ViewStub
+        android:id="@+id/group_list_item_tips_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout="@layout/qmui_common_list_item_tip_new_layout"
+        android:visibility="gone"/>
+
+</merge>

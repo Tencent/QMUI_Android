@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <TextView
+                style="@style/QDCommonDescription"
+                android:text="@string/spanTouchFix_description"
+                android:gravity="left"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="10dp"
+                android:text="@string/spanTouchFix_system_behavior"/>
+
+            <TextView
+                android:id="@+id/sysytem_tv_1"
+                style="@style/QDCommonDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/s_app_touch_fix_area_bg"
+                android:gravity="left"
+                android:padding="5dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanTouchFix_qmui_fix_behavior"/>
+
+            <com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView
+                android:id="@+id/touch_fix_tv_1"
+                style="@style/QDCommonDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/s_app_touch_fix_area_bg"
+                android:gravity="left"
+                android:padding="5dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="?attr/qmui_config_color_separator_darken"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="@string/spanTouchFix_system_behavior"/>
+
+            <LinearLayout
+                android:id="@+id/click_area_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/s_app_touch_fix_area_bg"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/sysytem_tv_2"
+                    style="@style/QDCommonDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:background="?attr/qmui_config_color_gray_8"
+                    android:gravity="left"
+                    android:padding="5dp"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/spanTouchFix_qmui_fix_behavior"
+                android:layout_marginTop="10dp"/>
+
+            <LinearLayout
+                android:id="@+id/click_area_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/s_app_touch_fix_area_bg"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView
+                    android:id="@+id/touch_fix_tv_2"
+                    style="@style/QDCommonDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:background="?attr/qmui_config_color_gray_8"
+                    android:gravity="left"
+                    android:padding="5dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

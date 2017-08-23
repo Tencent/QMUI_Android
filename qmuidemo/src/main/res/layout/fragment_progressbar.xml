@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/common_content_spacing">
+
+            <com.qmuiteam.qmui.widget.QMUIProgressBar
+                android:id="@+id/rectProgressBar"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:textColor="@color/qmui_config_color_white"
+                android:textSize="16sp"
+                app:qmui_background_color="@color/qmui_config_color_gray_8"
+                app:qmui_progress_color="@color/app_color_blue_2"
+                app:qmui_type="type_rect"/>
+
+            <com.qmuiteam.qmui.widget.QMUIProgressBar
+                android:id="@+id/circleProgressBar"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="30dp"
+                android:textColor="?attr/qmui_config_color_gray_4"
+                android:textSize="22sp"
+                app:qmui_background_color="?attr/qmui_config_color_gray_8"
+                app:qmui_progress_color="@color/app_color_blue_2"
+                app:qmui_stroke_width="18dp"
+                app:qmui_type="type_circle"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/startBtn"
+                    style="@style/QDRadiusButton"
+                    android:layout_weight="1"
+                    android:text="@string/progress_start_button_text"/>
+
+                <Space
+                    android:layout_width="@dimen/qmui_content_padding_horizontal"
+                    android:layout_height="0dp"/>
+
+                <Button
+                    android:id="@+id/backBtn"
+                    style="@style/QDRadiusButton"
+                    android:layout_weight="1"
+                    android:text="@string/progress_back_button_text"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

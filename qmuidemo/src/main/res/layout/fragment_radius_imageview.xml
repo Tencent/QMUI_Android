@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?attr/app_primary_color">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"/>
+
+    <ScrollView
+        android:id="@+id/contentWrap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="@string/circularImageView_item_xml_circle_title"/>
+
+            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                android:clickable="true"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/example_image6"
+                app:qmui_border_color="?attr/qmui_config_color_gray_6"
+                app:qmui_border_width="1px"
+                app:qmui_is_circle="true"
+                app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
+                app:qmui_selected_border_width="1px"
+                app:qmui_selected_mask_color="?attr/qmui_config_color_gray_8"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="50dp"
+                android:text="@string/circularImageView_item_xml_oval_title"/>
+
+            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                android:clickable="true"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/example_image6"
+                app:qmui_border_color="?attr/qmui_config_color_gray_6"
+                app:qmui_border_width="1px"
+                app:qmui_is_oval="true"
+                app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
+                app:qmui_selected_border_width="1px"
+                app:qmui_selected_mask_color="?attr/qmui_config_color_gray_8"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="50dp"
+                android:text="@string/circularImageView_item_xml_round_rect_title"/>
+
+            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                android:clickable="true"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/example_image6"
+                app:qmui_border_color="?attr/qmui_config_color_gray_6"
+                app:qmui_border_width="1px"
+                app:qmui_corner_radius="15dp"
+                app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
+                app:qmui_selected_border_width="1px"
+                app:qmui_selected_mask_color="?attr/qmui_config_color_gray_8"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="50dp"
+                android:text="@string/circularImageView_modify_tip"/>
+
+            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                android:clickable="true"
+                android:id="@+id/radiusImageView"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/example_image6"
+                app:qmui_border_color="?attr/qmui_config_color_gray_6"
+                app:qmui_border_width="1px"
+                app:qmui_corner_radius="15dp"
+                app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
+                app:qmui_selected_border_width="1px"
+                app:qmui_selected_mask_color="?attr/qmui_config_color_gray_8"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

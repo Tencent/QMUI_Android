@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 一般dialog创建了高度就不变化了，但我们有时又需要dialog的可视高度改变
+    因此我们需要上下anchor来维持整体高度不变 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <View
+        android:id="@+id/anchor_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+    <LinearLayout
+        android:id="@+id/dialog"
+        style="@style/qmui_dialog_wrap"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <View
+        android:id="@+id/anchor_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+</LinearLayout>

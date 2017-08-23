@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="?attr/qmui_bottom_sheet_list_item_height"
+              android:background="?attr/qmui_bottom_sheet_list_item_bg"
+              android:gravity="center"
+              android:orientation="horizontal"
+              android:paddingLeft="?attr/qmui_bottom_sheet_list_item_padding_horizontal"
+              android:paddingRight="?attr/qmui_bottom_sheet_list_item_padding_horizontal">
+
+    <ImageView
+        android:id="@+id/bottom_dialog_list_item_img"
+        android:layout_width="?attr/qmui_bottom_sheet_list_item_icon_size"
+        android:layout_height="?attr/qmui_bottom_sheet_list_item_icon_size"
+        android:layout_marginRight="?attr/qmui_bottom_sheet_list_item_icon_margin_right"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/bottom_dialog_list_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textAppearance="?attr/qmui_bottom_sheet_list_item_text_appearance"/>
+    <ImageView
+        android:id="@+id/bottom_dialog_list_item_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?attr/QMUITipPointStyle"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="?attr/qmui_bottom_sheet_list_item_tip_point_margin_left"
+        android:visibility="gone"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    
+    <ViewStub
+        android:id="@+id/bottom_dialog_list_item_mark_view_stub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout="@layout/qmui_bottom_sheet_list_item_mark"/>
+</LinearLayout>

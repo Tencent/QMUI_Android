@@ -1,0 +1,1 @@
+include ':qmuidemo', ':qmui', ':lib', ':compiler'

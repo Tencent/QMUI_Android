@@ -1,0 +1,65 @@
+apply plugin: 'com.android.library'
+
+group = 'com.qmuiteam'
+version = "1.0.0"
+
+android {
+    compileSdkVersion parent.ext.compileSdkVersion
+    buildToolsVersion parent.ext.buildToolsVersion
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        minSdkVersion parent.ext.minSdkVersion
+        targetSdkVersion parent.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+//        vectorDrawables.useSupportLibrary = true // 与 com.android.support:support-vector-drawable 搭配使用,禁掉 Android Studio 自动生成 png 的功能
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    libraryVariants.all{ variant ->
+//        variant.mergeResources.doLast {
+//            replaceTheme variant
+//        }
+//    }
+//    testVariants.all { variant ->
+//        variant.mergeResources.doLast {
+//            replaceTheme variant
+//        }
+//    }
+}
+
+//def replaceTheme(variant){
+//    println "dirName::${variant.dirName}"
+//    def output = "AppConfigTheme"
+//
+//    File valuesFile = file("${buildDir}/intermediates/res/merged/${variant.dirName}/values/values.xml")
+//    String content = valuesFile.getText('UTF-8')
+//    content = content.replaceAll(/\$\{QMUI_PARENT_THEME\}/, output)
+//    valuesFile.write(content, 'UTF-8')
+//}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile("com.android.support:recyclerview-v7:$supportVersion")
+    compile("com.android.support:appcompat-v7:$supportVersion")
+    compile("com.android.support:design:$supportVersion")
+    compile("com.android.support:support-vector-drawable:$supportVersion") // need Gradle Plugin v1.5.0 or above
+    //test
+//    testCompile 'junit:junit:4.12'
+//    testCompile 'org.mockito:mockito-core:1.10.19'
+}
+
+// deploy
+File deployConfig = project.file('deploy.properties')
+if (deployConfig.exists()) {
+    apply from: "deployMaven.gradle"
+    apply from: "deployBintray.gradle"
+}

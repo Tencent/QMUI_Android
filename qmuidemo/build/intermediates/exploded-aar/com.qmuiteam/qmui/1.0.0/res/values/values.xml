@@ -1,0 +1,1062 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr format="reference" name="QMUIButtonStyle"/>
+    <attr format="reference" name="QMUICommonListItemViewStyle"/>
+    <attr format="reference" name="QMUIGroupListSectionViewStyle"/>
+    <attr format="reference" name="QMUIGroupListViewStyle"/>
+    <attr format="reference" name="QMUILoadingStyle"/>
+    <attr format="reference" name="QMUIPullRefreshLayoutStyle"/>
+    <attr format="reference" name="QMUIQQFaceStyle"/>
+    <attr format="reference" name="QMUIRadiusImageViewStyle"/>
+    <attr format="reference" name="QMUITabSegmentStyle"/>
+    <attr format="reference" name="QMUITipNewStyle"/>
+    <attr format="reference" name="QMUITipPointStyle"/>
+    <attr format="reference" name="QMUITopBarStyle"/>
+    <attr format="float" name="qmui_alpha_disabled"/>
+    <attr format="float" name="qmui_alpha_pressed"/>
+    <attr format="color" name="qmui_backgroundColor"/>
+    <attr format="color" name="qmui_borderColor"/>
+    <attr format="dimension" name="qmui_borderWidth"/>
+    <attr format="color" name="qmui_border_color"/>
+    <attr format="dimension" name="qmui_border_width"/>
+    <attr format="dimension" name="qmui_bottom_sheet_button_height"/>
+    <attr format="reference" name="qmui_bottom_sheet_button_text_background"/>
+    <attr format="reference" name="qmui_bottom_sheet_button_text_color"/>
+    <attr format="dimension" name="qmui_bottom_sheet_button_text_size"/>
+    <attr format="dimension" name="qmui_bottom_sheet_grid_item_icon_size"/>
+    <attr format="dimension" name="qmui_bottom_sheet_grid_item_mini_width"/>
+    <attr format="reference" name="qmui_bottom_sheet_grid_item_text_appearance"/>
+    <attr format="dimension" name="qmui_bottom_sheet_grid_line_padding_horizontal"/>
+    <attr format="dimension" name="qmui_bottom_sheet_grid_line_vertical_space"/>
+    <attr format="dimension" name="qmui_bottom_sheet_grid_padding_vertical"/>
+    <attr format="reference" name="qmui_bottom_sheet_list_item_bg"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_height"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_icon_margin_right"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_icon_size"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_mark_margin_left"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_padding_horizontal"/>
+    <attr format="reference" name="qmui_bottom_sheet_list_item_text_appearance"/>
+    <attr format="dimension" name="qmui_bottom_sheet_list_item_tip_point_margin_left"/>
+    <attr format="reference" name="qmui_bottom_sheet_title_appearance"/>
+    <attr format="reference" name="qmui_bottom_sheet_title_bg"/>
+    <attr format="dimension" name="qmui_bottom_sheet_title_height"/>
+    <attr format="dimension" name="qmui_childHorizontalSpacing"/>
+    <attr format="dimension" name="qmui_childVerticalSpacing"/>
+    <attr format="reference" name="qmui_common_list_item_chevron"/>
+    <attr format="color" name="qmui_config_color_background"/>
+    <attr format="color" name="qmui_config_color_background_pressed"/>
+    <attr format="color" name="qmui_config_color_black"/>
+    <attr format="color" name="qmui_config_color_blue"/>
+    <attr format="color" name="qmui_config_color_gray_1"/>
+    <attr format="color" name="qmui_config_color_gray_2"/>
+    <attr format="color" name="qmui_config_color_gray_3"/>
+    <attr format="color" name="qmui_config_color_gray_4"/>
+    <attr format="color" name="qmui_config_color_gray_5"/>
+    <attr format="color" name="qmui_config_color_gray_6"/>
+    <attr format="color" name="qmui_config_color_gray_7"/>
+    <attr format="color" name="qmui_config_color_gray_8"/>
+    <attr format="color" name="qmui_config_color_gray_9"/>
+    <attr format="color" name="qmui_config_color_link"/>
+    <attr format="color" name="qmui_config_color_pressed"/>
+    <attr format="color" name="qmui_config_color_red"/>
+    <attr format="color" name="qmui_config_color_separator"/>
+    <attr format="color" name="qmui_config_color_separator_darken"/>
+    <attr format="dimension" name="qmui_content_padding_horizontal"/>
+    <attr format="dimension" name="qmui_content_spacing_horizontal"/>
+    <attr format="reference" name="qmui_dialog_action_block_btn_bg"/>
+    <attr format="dimension" name="qmui_dialog_action_block_btn_height"/>
+    <attr format="dimension" name="qmui_dialog_action_block_container_margin_bottom"/>
+    <attr format="reference" name="qmui_dialog_action_btn_bg"/>
+    <attr format="dimension" name="qmui_dialog_action_button_height"/>
+    <attr format="dimension" name="qmui_dialog_action_button_margin_left"/>
+    <attr format="dimension" name="qmui_dialog_action_button_min_width"/>
+    <attr format="dimension" name="qmui_dialog_action_button_padding_horizontal"/>
+    <attr format="dimension" name="qmui_dialog_action_button_text_size"/>
+    <attr format="dimension" name="qmui_dialog_action_container_margin_bottom"/>
+    <attr format="dimension" name="qmui_dialog_action_container_margin_horizontal"/>
+    <attr format="dimension" name="qmui_dialog_action_drawable_padding"/>
+    <attr format="reference" name="qmui_dialog_action_text_color"/>
+    <attr format="reference" name="qmui_dialog_action_text_negative_color"/>
+    <attr format="reference" name="qmui_dialog_bg"/>
+    <attr format="dimension" name="qmui_dialog_block_content_text_size"/>
+    <attr format="dimension" name="qmui_dialog_confirm_content_padding_bottom"/>
+    <attr format="dimension" name="qmui_dialog_confirm_content_padding_top"/>
+    <attr format="reference" name="qmui_dialog_content_list_item_bg"/>
+    <attr format="dimension" name="qmui_dialog_content_list_item_height"/>
+    <attr format="dimension" name="qmui_dialog_content_list_item_text_size"/>
+    <attr format="dimension" name="qmui_dialog_content_message_text_size"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_bottom"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_bottom_when_action_block"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_bottom_when_no_action"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_top"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_top_when_list"/>
+    <attr format="dimension" name="qmui_dialog_content_padding_top_when_no_title"/>
+    <attr format="dimension" name="qmui_dialog_edit_content_padding_bottom"/>
+    <attr format="dimension" name="qmui_dialog_edit_content_padding_top"/>
+    <attr format="dimension" name="qmui_dialog_margin_horizontal"/>
+    <attr format="dimension" name="qmui_dialog_margin_vertical"/>
+    <attr format="dimension" name="qmui_dialog_menu_item_check_icon_margin_horizontal"/>
+    <attr format="color" name="qmui_dialog_menu_item_text_color"/>
+    <attr format="dimension" name="qmui_dialog_min_width"/>
+    <attr format="dimension" name="qmui_dialog_padding_horizontal"/>
+    <attr format="dimension" name="qmui_dialog_title_margin_top"/>
+    <attr format="color" name="qmui_dialog_title_text_color"/>
+    <attr format="dimension" name="qmui_dialog_title_text_size"/>
+    <attr format="reference" name="qmui_icon_check_mark"/>
+    <attr format="boolean" name="qmui_isRadiusAdjustBounds"/>
+    <attr format="color" name="qmui_linkColor"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_bottom"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_bottom_inset_left"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_bottom_inset_left_pressed"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_bottom_pressed"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_double"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_double_pressed"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_top"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_top_inset_left"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_top_inset_left_pressed"/>
+    <attr format="reference" name="qmui_list_item_bg_with_border_top_pressed"/>
+    <attr format="dimension" name="qmui_list_item_height"/>
+    <attr format="dimension" name="qmui_list_item_height_higher"/>
+    <attr format="color" name="qmui_loading_color"/>
+    <attr format="dimension" name="qmui_loading_size"/>
+    <attr format="integer" name="qmui_maxNumber"/>
+    <attr format="dimension" name="qmui_maxTextSize"/>
+    <attr format="dimension" name="qmui_minTextSize"/>
+    <attr format="reference" name="qmui_popup_arrow_down"/>
+    <attr format="dimension" name="qmui_popup_arrow_down_margin_bottom"/>
+    <attr format="reference" name="qmui_popup_arrow_up"/>
+    <attr format="dimension" name="qmui_popup_arrow_up_margin_top"/>
+    <attr format="reference" name="qmui_popup_bg"/>
+    <attr format="dimension" name="qmui_radius"/>
+    <attr format="dimension" name="qmui_radiusBottomLeft"/>
+    <attr format="dimension" name="qmui_radiusBottomRight"/>
+    <attr format="dimension" name="qmui_radiusTopLeft"/>
+    <attr format="dimension" name="qmui_radiusTopRight"/>
+    <attr format="color" name="qmui_round_btn_bg_color"/>
+    <attr format="color" name="qmui_round_btn_border_color"/>
+    <attr format="dimension" name="qmui_round_btn_border_width"/>
+    <attr format="color" name="qmui_round_btn_text_color"/>
+    <attr format="dimension" name="qmui_round_btn_text_size"/>
+    <attr format="reference" name="qmui_s_checkbox"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_bottom"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_bottom_inset"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_bottom_inset_left"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_double"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_none"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_top"/>
+    <attr format="reference" name="qmui_s_list_item_bg_with_border_top_inset_left"/>
+    <attr format="reference" name="qmui_tab_sign_count_view"/>
+    <attr format="reference" name="qmui_tab_sign_count_view_bg"/>
+    <attr format="dimension" name="qmui_tab_sign_count_view_minSize"/>
+    <attr format="dimension" name="qmui_tab_sign_count_view_minSize_with_text"/>
+    <attr format="dimension" name="qmui_tab_sign_count_view_padding_horizontal"/>
+    <attr format="reference" name="qmui_tip_dialog_bg"/>
+    <attr format="dimension" name="qmui_tip_dialog_margin_horizontal"/>
+    <attr format="dimension" name="qmui_tip_dialog_min_height"/>
+    <attr format="dimension" name="qmui_tip_dialog_min_width"/>
+    <attr format="dimension" name="qmui_tip_dialog_padding_horizontal"/>
+    <attr format="dimension" name="qmui_tip_dialog_padding_vertical"/>
+    <attr format="dimension" name="qmui_topbar_height"/>
+    <attr format="dimension" name="qmui_topbar_image_btn_height"/>
+    <attr format="dimension" name="qmui_topbar_image_btn_width"/>
+    <attr format="color" name="qmui_topbar_subtitle_color"/>
+    <attr format="dimension" name="qmui_topbar_subtitle_text_size"/>
+    <attr format="reference" name="qmui_topbar_text_btn_color_state_list"/>
+    <attr format="dimension" name="qmui_topbar_text_btn_padding_horizontal"/>
+    <attr format="dimension" name="qmui_topbar_text_btn_text_size"/>
+    <attr format="color" name="qmui_topbar_title_color"/>
+    <attr format="dimension" name="qmui_topbar_title_margin_horizontal_when_no_btn_aside"/>
+    <attr format="dimension" name="qmui_topbar_title_text_size"/>
+    <attr format="dimension" name="qmui_topbar_title_text_size_with_subtitle"/>
+    <color name="btn_filled_blue_bg_disabled">#80416f96</color>
+    <color name="btn_filled_blue_bg_normal">#416f96</color>
+    <color name="btn_filled_blue_bg_pressed">#243f55</color>
+    <color name="btn_ghost_blue_border_disabled">#801B88EE</color>
+    <color name="btn_ghost_blue_border_normal">@color/qmui_config_color_blue</color>
+    <color name="btn_ghost_blue_border_pressed">#801B88EE</color>
+    <color name="btn_ghost_blue_text_disabled">#801B88EE</color>
+    <color name="btn_ghost_blue_text_normal">@color/qmui_config_color_blue</color>
+    <color name="btn_ghost_blue_text_pressed">#801B88EE</color>
+    <color name="qmui_common_list_item_text_color">?attr/qmui_config_color_black</color>
+    <color name="qmui_config_color_10_pure_black">#19000000</color>
+    <color name="qmui_config_color_10_white">#19FFFFFF</color>
+    <color name="qmui_config_color_15_pure_black">#26000000</color>
+    <color name="qmui_config_color_15_white">#26FFFFFF</color>
+    <color name="qmui_config_color_25_pure_black">#40000000</color>
+    <color name="qmui_config_color_25_white">#40FFFFFF</color>
+    <color name="qmui_config_color_50_blue">#801B88EE</color>
+    <color name="qmui_config_color_50_pure_black">#80000000</color>
+    <color name="qmui_config_color_50_white">#80FFFFFF</color>
+    <color name="qmui_config_color_60_pure_black">#99000000</color>
+    <color name="qmui_config_color_75_pure_black">#C0000000</color>
+    <color name="qmui_config_color_75_white">#C0FFFFFF</color>
+    <color name="qmui_config_color_background">#F4F5F7</color>
+    <color name="qmui_config_color_background_pressed">#EEEFF1</color>
+    <color name="qmui_config_color_black">#212832</color>
+    <color name="qmui_config_color_blue">#1B88EE</color>
+    <color name="qmui_config_color_gray_1">#353C46</color>
+    <color name="qmui_config_color_gray_2">#49505A</color>
+    <color name="qmui_config_color_gray_3">#5D646E</color>
+    <color name="qmui_config_color_gray_4">#717882</color>
+    <color name="qmui_config_color_gray_5">#858C96</color>
+    <color name="qmui_config_color_gray_6">#99A0AA</color>
+    <color name="qmui_config_color_gray_7">#ADB4BE</color>
+    <color name="qmui_config_color_gray_8">#C4C8D0</color>
+    <color name="qmui_config_color_gray_9">#D8DCE4</color>
+    <color name="qmui_config_color_link">#547FB0</color>
+    <color name="qmui_config_color_pressed">#EEEEF0</color>
+    <color name="qmui_config_color_pure_black">#000000</color>
+    <color name="qmui_config_color_red">#FA3A3A</color>
+    <color name="qmui_config_color_separator">#DEE0E2</color>
+    <color name="qmui_config_color_separator_darken">#D4D6D8</color>
+    <color name="qmui_config_color_transparent">#00000000</color>
+    <color name="qmui_config_color_white">#ffffff</color>
+    <color name="qmui_drawable_color_list_pressed">#DEE0E2</color>
+    <color name="qmui_drawable_color_list_separator">#DEE0E2</color>
+    <color name="qmui_group_list_section_header_text_color">?attr/qmui_config_color_gray_3</color>
+    <color name="qmui_tab_segment_bottom_line_color">?attr/qmui_config_color_blue</color>
+    <color name="qmui_tab_segment_text_color">?attr/qmui_config_color_black</color>
+    <declare-styleable name="QMUICommonListItemView"><attr format="enum" name="orientation">
+            <enum name="vertical" value="0"/>
+            <enum name="horizontal" value="1"/>
+        </attr><attr format="enum" name="accessory_type">
+            <enum name="none" value="0"/>
+            <enum name="chevron" value="1"/>
+            <enum name="switcher" value="2"/>
+            <enum name="custom" value="3"/>
+        </attr><attr format="color" name="qmui_commonList_titleColor"/><attr format="color" name="qmui_commonList_detailColor"/></declare-styleable>
+    <declare-styleable name="QMUIEmptyView"><attr format="boolean" name="qmui_show_loading"/><attr format="string" name="qmui_title_text"/><attr format="string" name="qmui_detail_text"/><attr format="string" name="qmui_btn_text"/></declare-styleable>
+    <declare-styleable name="QMUIFloatLayout"><attr name="android:gravity"/><attr name="qmui_childHorizontalSpacing"/><attr name="qmui_childVerticalSpacing"/><attr name="android:maxLines"/><attr name="qmui_maxNumber"/></declare-styleable>
+    <declare-styleable name="QMUIFontFitTextView"><attr name="qmui_minTextSize"/><attr name="qmui_maxTextSize"/></declare-styleable>
+    <declare-styleable name="QMUIGroupListView"><attr format="enum" name="separatorStyle">
+            <enum name="normal" value="0"/>
+            <enum name="none" value="1"/>
+        </attr></declare-styleable>
+    <declare-styleable name="QMUILinkTextView"><attr format="color" name="qmui_linkBackgroundColor"/><attr format="color" name="qmui_linkTextColor"/></declare-styleable>
+    <declare-styleable name="QMUILoadingView"><attr format="dimension" name="qmui_loading_view_size"/><attr name="android:color"/></declare-styleable>
+    <declare-styleable name="QMUIProgressBar"><attr format="enum" name="qmui_type">
+            <enum name="type_rect" value="0"/>
+            <enum name="type_circle" value="1"/>
+        </attr><attr format="color" name="qmui_progress_color"/><attr format="color" name="qmui_background_color"/><attr format="integer" name="qmui_max_value"/><attr format="integer" name="qmui_value"/><attr format="dimension" name="qmui_stroke_width"/><attr name="android:textSize"/><attr name="android:textColor"/></declare-styleable>
+    <declare-styleable name="QMUIPullRefreshLayout"><attr format="dimension" name="qmui_refresh_init_offset"/><attr format="dimension" name="qmui_refresh_end_offset"/><attr format="dimension" name="qmui_target_init_offset"/><attr format="dimension" name="qmui_target_refresh_offset"/><attr format="boolean" name="qmui_auto_calculate_refresh_init_offset"/><attr format="boolean" name="qmui_auto_calculate_refresh_end_offset"/><attr format="boolean" name="qmui_equal_target_refresh_offset_to_refresh_view_height"/></declare-styleable>
+    <declare-styleable name="QMUIQQFaceView"><attr name="android:textColor"/><attr name="android:textSize"/><attr name="android:singleLine"/><attr name="android:maxLines"/><attr name="android:lineSpacingExtra"/><attr name="android:ellipsize"/><attr name="android:maxWidth"/><attr name="android:text"/><attr format="dimension" name="qmui_special_drawable_padding"/><attr format="string" name="qmui_more_action_text"/><attr format="color" name="qmui_more_action_color"/></declare-styleable>
+    <declare-styleable name="QMUIRadiusImageView"><attr name="qmui_border_width"/><attr name="qmui_border_color"/><attr format="color" name="qmui_selected_mask_color"/><attr format="color" name="qmui_selected_border_color"/><attr format="dimension" name="qmui_selected_border_width"/><attr format="dimension" name="qmui_corner_radius"/><attr format="boolean" name="qmui_is_oval"/><attr format="boolean" name="qmui_is_circle"/><attr format="boolean" name="qmui_is_touch_select_mode_enabled"/></declare-styleable>
+    <declare-styleable name="QMUIRecyclerView"><attr format="dimension" name="qmui_item_distance"/><attr format="boolean" name="qmui_paged"/><attr format="enum" name="qmui_orientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr></declare-styleable>
+    <declare-styleable name="QMUIRoundButton"><attr name="qmui_backgroundColor"/><attr name="qmui_borderColor"/><attr name="qmui_borderWidth"/><attr name="qmui_isRadiusAdjustBounds"/><attr name="qmui_radius"/><attr name="qmui_radiusTopLeft"/><attr name="qmui_radiusTopRight"/><attr name="qmui_radiusBottomLeft"/><attr name="qmui_radiusBottomRight"/></declare-styleable>
+    <declare-styleable name="QMUIRoundFrameLayout"><attr name="qmui_backgroundColor"/><attr name="qmui_borderColor"/><attr name="qmui_borderWidth"/><attr name="qmui_isRadiusAdjustBounds"/><attr name="qmui_radius"/><attr name="qmui_radiusTopLeft"/><attr name="qmui_radiusTopRight"/><attr name="qmui_radiusBottomLeft"/><attr name="qmui_radiusBottomRight"/></declare-styleable>
+    <declare-styleable name="QMUIRoundLinearLayout"><attr name="qmui_backgroundColor"/><attr name="qmui_borderColor"/><attr name="qmui_borderWidth"/><attr name="qmui_isRadiusAdjustBounds"/><attr name="qmui_radius"/><attr name="qmui_radiusTopLeft"/><attr name="qmui_radiusTopRight"/><attr name="qmui_radiusBottomLeft"/><attr name="qmui_radiusBottomRight"/></declare-styleable>
+    <declare-styleable name="QMUIRoundRelativeLayout"><attr name="qmui_backgroundColor"/><attr name="qmui_borderColor"/><attr name="qmui_borderWidth"/><attr name="qmui_isRadiusAdjustBounds"/><attr name="qmui_radius"/><attr name="qmui_radiusTopLeft"/><attr name="qmui_radiusTopRight"/><attr name="qmui_radiusBottomLeft"/><attr name="qmui_radiusBottomRight"/></declare-styleable>
+    <declare-styleable name="QMUITabSegment"><attr format="dimension" name="qmui_tab_indicator_height"/><attr format="boolean" name="qmui_tab_has_indicator"/><attr name="android:textSize"/><attr format="boolean" name="qmui_tab_indicator_top"/><attr format="enum" name="qmui_tab_mode">
+            <enum name="scrollable" value="0"/>
+            <enum name="fixed" value="1"/>
+        </attr><attr format="dimension" name="qmui_tab_space"/><attr format="enum" name="qmui_tab_icon_position">
+            <enum name="left" value="0"/>
+            <enum name="top" value="1"/>
+            <enum name="right" value="2"/>
+            <enum name="bottom" value="3"/>
+        </attr><attr format="string" name="qmui_tab_typeface_provider"/></declare-styleable>
+    <declare-styleable name="QMUITopBar"><attr format="boolean" name="qmui_topbar_need_separator"/><attr format="color" name="qmui_topbar_separator_color"/><attr format="dimension" name="qmui_topbar_separator_height"/><attr format="color" name="qmui_topbar_bg_color"/><attr format="reference" name="qmui_topbar_left_back_drawable_id"/></declare-styleable>
+    <dimen name="emptyview_btn_padding_horizontal">32dp</dimen>
+    <dimen name="list_item_textSize_detail">14sp</dimen>
+    <dimen name="list_item_textSize_detail_style_vertical">13sp</dimen>
+    <dimen name="list_item_textSize_title">16sp</dimen>
+    <dimen name="list_item_textSize_title_style_vertical">15sp</dimen>
+    <dimen name="qmui_btn_border_width">1dp</dimen>
+    <dimen name="qmui_btn_text_size">16sp</dimen>
+    <dimen name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</dimen>
+    <dimen name="qmui_content_spacing_horizontal">16dp</dimen>
+    <dimen name="qmui_dialog_action_button_radius">2dp</dimen>
+    <dimen name="qmui_dialog_radius">4dp</dimen>
+    <dimen name="qmui_group_list_section_header_footer_padding_vertical">8dp</dimen>
+    <dimen name="qmui_group_list_section_header_footer_textSize">13sp</dimen>
+    <dimen name="qmui_group_list_section_header_footer_text_size">13sp</dimen>
+    <dimen name="qmui_list_divider_height">1px</dimen>
+    <dimen name="qmui_list_divider_height_negative">-1px</dimen>
+    <dimen name="qmui_list_item_detail_lineSpacingExtra">5dp</dimen>
+    <dimen name="qmui_list_item_height">56dp</dimen>
+    <dimen name="qmui_list_item_height_higher">103dp</dimen>
+    <dimen name="qmui_list_item_inset_left">16dp</dimen>
+    <dimen name="qmui_switch_size">20dp</dimen>
+    <dimen name="qmui_tab_segment_indicator_height">2dp</dimen>
+    <dimen name="qmui_tab_segment_text_size">16sp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize">8dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize_with_text">16dp</dimen>
+    <dimen name="qmui_tips_point_size">8dp</dimen>
+    <item name="qmui_dialog_edit_input" type="id"/>
+    <item name="qmui_dialog_edit_right_icon" type="id"/>
+    <item name="qmui_tab_segment_item_id" type="id"/>
+    <item name="qmui_topbar_item_left_back" type="id"/>
+    <item name="qmui_view_can_not_cache_tag" type="id"/>
+    <integer name="qmui_anim_duration">300</integer>
+    <string name="app_name">QMUI</string>
+    <string name="qmui_tool_fixellipsize">\u200b</string>
+    <style name="ActionBarBase" parent="android:Widget.Holo.Light.ActionBar"/>
+    <style name="ActionBarTitleTextBase" parent="android:TextAppearance.Holo.Widget.ActionBar.Title"/>
+    <style name="AppBaseTheme" parent="AppRootTheme">
+        <item name="android:listDivider">@drawable/qmui_divider</item>
+        <item name="android:listViewStyle">@style/ListView</item>
+        <item name="android:gridViewStyle">@style/GridView</item>
+        <item name="android:imageButtonStyle">@style/ImageButton</item>
+        <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:editTextStyle">@style/EditText</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
+        <item name="android:textViewStyle">@style/TextView</item>
+    </style>
+    <style name="AppBaseTheme.Compat" parent="AppRootTheme.Compat">
+        <item name="android:listDivider">@drawable/qmui_divider</item>
+        <item name="android:listViewStyle">@style/ListView.Compat</item>
+        <item name="android:gridViewStyle">@style/GridView.Compat</item>
+        <item name="android:imageButtonStyle">@style/ImageButton.Compat</item>
+        <item name="android:buttonStyle">@style/Button.Compat</item>
+        <item name="android:editTextStyle">@style/EditText.Compat</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView.Compat</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Compat</item>
+        <item name="android:textViewStyle">@style/TextView.Compat</item>
+    </style>
+    <style name="AppConfigTheme" parent="AppBaseTheme"/>
+    <style name="AppConfigTheme.Compat" parent="AppBaseTheme.Compat"/>
+    <style name="AppRootTheme" parent="android:Theme.Holo.Light"/>
+    <style name="AppRootTheme.Compat" parent="Theme.AppCompat.Light"/>
+    <style name="AutoCompleteTextView" parent="AutoCompleteTextViewBase">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+    <style name="AutoCompleteTextView.Compat" parent="AutoCompleteTextViewBase.Compat">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+    <style name="AutoCompleteTextViewBase" parent="android:Widget.Holo.Light.AutoCompleteTextView"/>
+    <style name="AutoCompleteTextViewBase.Compat" parent="@style/Widget.AppCompat.AutoCompleteTextView"/>
+    <style name="Button" parent="ButtonBase"/>
+    <style name="Button.Compat" parent="ButtonBase.Compat"/>
+    <style name="ButtonBase" parent="android:Widget.Holo.Light.Button"/>
+    <style name="ButtonBase.Compat" parent="@style/Widget.AppCompat.Button"/>
+    <style name="DropDownListView" parent="DropDownListViewBase">
+        <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
+        <item name="android:dividerHeight">@dimen/qmui_list_divider_height</item>
+        <item name="android:background">@color/qmui_config_color_white</item>
+    </style>
+    <style name="DropDownListView.Compat" parent="DropDownListViewBase.Compat">
+        <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
+        <item name="android:dividerHeight">@dimen/qmui_list_divider_height</item>
+        <item name="android:background">@color/qmui_config_color_white</item>
+    </style>
+    <style name="DropDownListViewBase" parent="android:Widget.Holo.Light.ListView.DropDown"/>
+    <style name="DropDownListViewBase.Compat" parent="@style/Widget.AppCompat.ListView.DropDown"/>
+    <style name="EditText" parent="EditTextBase">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+    <style name="EditText.Compat" parent="EditTextBase.Compat">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+    <style name="EditTextBase" parent="android:Widget.Holo.Light.EditText"/>
+    <style name="EditTextBase.Compat" parent="@style/Widget.AppCompat.EditText"/>
+    <style name="GridView" parent="GridViewBase">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+        <item name="android:listSelector">@color/qmui_config_color_transparent</item>
+    </style>
+    <style name="GridView.Compat" parent="GridViewBase">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+        <item name="android:listSelector">@color/qmui_config_color_transparent</item>
+    </style>
+    <style name="GridViewBase" parent="android:Widget.Holo.Light.GridView"/>
+    <style name="GridViewBase.Compat" parent="android:Widget.GridView"/>
+    <style name="ImageButton" parent="ImageButtonBase">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+    </style>
+    <style name="ImageButton.Compat" parent="ImageButtonBase.Compat">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+    </style>
+    <style name="ImageButtonBase" parent="android:Widget.Holo.Light.ImageButton"/>
+    <style name="ImageButtonBase.Compat" parent="@style/Widget.AppCompat.ImageButton"/>
+    <style name="ListView" parent="ListViewBase">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+        <item name="android:listSelector">@color/qmui_config_color_transparent</item>
+        <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
+        <item name="android:dividerHeight">@dimen/qmui_list_divider_height</item>
+    </style>
+    <style name="ListView.Compat" parent="ListViewBase.Compat">
+        <item name="android:background">@color/qmui_config_color_transparent</item>
+        <item name="android:listSelector">@color/qmui_config_color_transparent</item>
+        <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
+        <item name="android:dividerHeight">@dimen/qmui_list_divider_height</item>
+    </style>
+    <style name="ListViewBase" parent="android:Widget.Holo.Light.ListView"/>
+    <style name="ListViewBase.Compat" parent="@style/Widget.AppCompat.ListView"/>
+    <style name="QMUI" parent="AppConfigTheme">
+        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal</item> <!-- 已废弃 -->
+        <item name="qmui_content_spacing_horizontal">@dimen/qmui_content_spacing_horizontal</item>
+
+        <!--**********************************************
+        *                qmui common color               *
+        **********************************************-->
+        <item name="qmui_config_color_blue">@color/qmui_config_color_blue</item>
+        <item name="qmui_config_color_red">@color/qmui_config_color_red</item>
+        <item name="qmui_config_color_separator">@color/qmui_config_color_separator</item>
+        <item name="qmui_config_color_separator_darken">@color/qmui_config_color_separator_darken</item>
+        <item name="qmui_config_color_background">@color/qmui_config_color_background</item>
+        <item name="qmui_config_color_background_pressed">@color/qmui_config_color_background_pressed</item>
+        <item name="qmui_config_color_black">@color/qmui_config_color_black</item>
+        <item name="qmui_config_color_link">@color/qmui_config_color_link</item>
+        <item name="qmui_config_color_pressed">@color/qmui_config_color_pressed</item>
+
+        <item name="qmui_config_color_gray_1">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_config_color_gray_2">@color/qmui_config_color_gray_2</item>
+        <item name="qmui_config_color_gray_3">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_config_color_gray_4">@color/qmui_config_color_gray_4</item>
+        <item name="qmui_config_color_gray_5">@color/qmui_config_color_gray_5</item>
+        <item name="qmui_config_color_gray_6">@color/qmui_config_color_gray_6</item>
+        <item name="qmui_config_color_gray_7">@color/qmui_config_color_gray_7</item>
+        <item name="qmui_config_color_gray_8">@color/qmui_config_color_gray_8</item>
+        <item name="qmui_config_color_gray_9">@color/qmui_config_color_gray_9</item>
+
+        <item name="qmui_alpha_pressed">0.5</item>
+        <item name="qmui_alpha_disabled">0.5</item>
+
+        <!--**********************************************
+        *                qmui dialog                     *
+        **********************************************-->
+        <item name="qmui_dialog_margin_horizontal">40dp</item>
+        <item name="qmui_dialog_min_width">280dp</item>
+        <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
+        <item name="qmui_dialog_margin_vertical">20dp</item>
+        <item name="qmui_dialog_padding_horizontal">24dp</item>
+
+        <!-- title -->
+        <item name="qmui_dialog_title_text_color">?attr/qmui_config_color_black</item>
+        <item name="qmui_dialog_title_margin_top">24dp</item>
+        <item name="qmui_dialog_title_text_size">17sp</item>
+
+        <!-- menu -->
+        <item name="qmui_dialog_menu_item_check_icon_margin_horizontal">6dp</item>
+
+        <!-- content -->
+        <item name="qmui_dialog_content_padding_top">14dp</item>
+        <item name="qmui_dialog_content_padding_top_when_no_title">27dp</item>
+        <item name="qmui_dialog_content_padding_top_when_list">8dp</item>
+        <item name="qmui_dialog_content_padding_bottom">28dp</item>
+        <item name="qmui_dialog_content_padding_bottom_when_no_action">8dp</item>
+        <item name="qmui_dialog_content_padding_bottom_when_action_block">16dp</item>
+        <item name="qmui_dialog_content_message_text_size">16sp</item>
+        <item name="qmui_dialog_content_list_item_height">48dp</item>
+        <item name="qmui_dialog_content_list_item_text_size">15sp</item>
+        <item name="qmui_dialog_content_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_dialog_confirm_content_padding_top">28dp</item>
+        <item name="qmui_dialog_confirm_content_padding_bottom">22dp</item>
+        <item name="qmui_dialog_edit_content_padding_top">28dp</item>
+        <item name="qmui_dialog_edit_content_padding_bottom">31dp</item>
+        <item name="qmui_dialog_block_content_text_size">14sp</item>
+        <item name="qmui_dialog_menu_item_text_color">?attr/qmui_config_color_black</item>
+
+        <!-- action -->
+        <item name="qmui_dialog_action_container_margin_bottom">12dp</item>
+        <item name="qmui_dialog_action_container_margin_horizontal">12dp</item>
+        <item name="qmui_dialog_action_button_min_width">64dp</item>
+        <item name="qmui_dialog_action_button_height">36dp</item>
+        <item name="qmui_dialog_action_button_margin_left">8dp</item>
+        <item name="qmui_dialog_action_drawable_padding">6dp</item>
+        <item name="qmui_dialog_action_button_text_size">14sp</item>
+        <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
+
+        <item name="qmui_dialog_action_block_container_margin_bottom">12dp</item>
+        <item name="qmui_dialog_action_block_btn_height">36dp</item>
+
+        <item name="qmui_dialog_action_text_negative_color">@color/qmui_dialog_action_text_negative_color</item>
+        <item name="qmui_dialog_action_text_color">@color/qmui_dialog_action_text_color</item>
+        <item name="qmui_dialog_action_btn_bg">@drawable/qmui_dialog_action_btn_bg</item>
+        <item name="qmui_dialog_action_block_btn_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+
+        <!-- tip -->
+        <item name="qmui_tip_dialog_bg">@drawable/qmui_tip_dialog_bg</item>
+        <item name="qmui_tip_dialog_min_width">120dp</item>
+        <item name="qmui_tip_dialog_min_height">56dp</item>
+        <item name="qmui_tip_dialog_margin_horizontal">?attr/qmui_content_spacing_horizontal</item>
+        <item name="qmui_tip_dialog_padding_vertical">12dp</item>
+        <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <!--**********************************************
+        *             qmui list item bg                  *
+        **********************************************-->
+        <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
+        <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
+
+        <item name="qmui_list_item_bg_with_border_bottom">@drawable/qmui_list_item_bg_with_border_bottom</item>
+        <item name="qmui_list_item_bg_with_border_bottom_pressed">@drawable/qmui_list_item_bg_with_border_bottom_pressed</item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_list_item_bg_with_border_bottom_inset_left</item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_bottom_inset_left_pressed</item>
+        <item name="qmui_list_item_bg_with_border_top">@drawable/qmui_list_item_bg_with_border_top</item>
+        <item name="qmui_list_item_bg_with_border_top_pressed">@drawable/qmui_list_item_bg_with_border_top_pressed</item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left">@drawable/qmui_list_item_bg_with_border_top_inset_left</item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_top_inset_left_pressed</item>
+        <item name="qmui_list_item_bg_with_border_double">@drawable/qmui_list_item_bg_with_double_border</item>
+        <item name="qmui_list_item_bg_with_border_double_pressed">@drawable/qmui_list_item_bg_with_double_border_pressed</item>
+
+        <item name="qmui_s_list_item_bg_with_border_bottom">@drawable/qmui_s_list_item_bg_with_border_bottom</item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset">@drawable/qmui_s_list_item_bg_with_border_bottom_inset</item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_s_list_item_bg_with_border_bottom_inset_left</item>
+        <item name="qmui_s_list_item_bg_with_border_top">@drawable/qmui_s_list_item_bg_with_border_top</item>
+        <item name="qmui_s_list_item_bg_with_border_top_inset_left">@drawable/qmui_s_list_item_bg_with_border_top_inset_left</item>
+        <item name="qmui_s_list_item_bg_with_border_double">@drawable/qmui_s_list_item_bg_with_border_double</item>
+        <item name="qmui_s_list_item_bg_with_border_none">@drawable/qmui_s_list_item_bg_with_border_none</item>
+
+        <!--**********************************************
+        *             qmui drawable                      *
+        ***********************************************-->
+        <item name="qmui_s_checkbox">@drawable/qmui_s_checkbox</item>
+        <item name="qmui_icon_check_mark">@drawable/qmui_icon_checkmark</item>
+
+        <!--**********************************************
+        *                   qmui btn                     *
+        ***********************************************-->
+        <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
+        <item name="qmui_round_btn_border_width">@dimen/qmui_btn_border_width</item>
+        <item name="qmui_round_btn_bg_color">@color/qmui_btn_blue_bg</item>
+        <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
+        <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
+
+
+        <!--**********************************************
+        *                  qmui topbar                   *
+        ***********************************************-->
+        <item name="qmui_topbar_height">56dp</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_title_text_size">17sp</item>
+        <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
+        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">@dimen/qmui_content_padding_horizontal</item>
+        <item name="qmui_topbar_subtitle_text_size">11sp</item>
+        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_image_btn_width">48dp</item>
+        <item name="qmui_topbar_image_btn_height">48dp</item>
+        <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_topbar_text_color</item>
+        <item name="qmui_topbar_text_btn_text_size">16sp</item>
+
+        <!--**********************************************
+        *                 qmui bottom sheet              *
+        ***********************************************-->
+        <item name="qmui_bottom_sheet_title_height">56dp</item>
+        <item name="qmui_bottom_sheet_title_appearance">@style/QMUITextAppearance.Title.Gray</item>
+        <item name="qmui_bottom_sheet_title_bg">?attr/qmui_list_item_bg_with_border_bottom</item>
+
+        <item name="qmui_bottom_sheet_list_item_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <item name="qmui_bottom_sheet_list_item_height">56dp</item>
+        <item name="qmui_bottom_sheet_list_item_mark_margin_left">12dp</item>
+        <item name="qmui_bottom_sheet_list_item_tip_point_margin_left">4dp</item>
+        <item name="qmui_bottom_sheet_list_item_text_appearance">@style/QMUITextAppearance.ListItem</item>
+        <item name="qmui_bottom_sheet_list_item_bg">?attr/qmui_s_list_item_bg_with_border_bottom</item>
+        <item name="qmui_bottom_sheet_list_item_icon_size">22dp</item>
+        <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>
+
+        <item name="qmui_bottom_sheet_grid_padding_vertical">12dp</item>
+        <item name="qmui_bottom_sheet_grid_line_padding_horizontal">12dp</item>
+        <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
+        <item name="qmui_bottom_sheet_grid_item_mini_width">84dp</item>
+        <item name="qmui_bottom_sheet_grid_item_icon_size">56dp</item>
+        <item name="qmui_bottom_sheet_grid_item_text_appearance">@style/QMUITextAppearance.GridItem.Small</item>
+
+        <item name="qmui_bottom_sheet_button_height">56dp</item>
+        <item name="qmui_bottom_sheet_button_text_size">15sp</item>
+        <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
+        <item name="qmui_bottom_sheet_button_text_background">@drawable/qmui_s_list_item_bg_with_border_top</item>
+
+        <!--**********************************************
+        *                 qmui common list item          *
+        ***********************************************-->
+        <item name="qmui_common_list_item_chevron">@drawable/icon_chevron</item>
+
+        <!--**********************************************
+        *               qmui loading view                *
+        ***********************************************-->
+        <item name="qmui_loading_size">20dp</item>
+        <item name="qmui_loading_color">@color/qmui_config_color_gray_5</item>
+
+        <!--**********************************************
+        *                   qmui popup                   *
+        ***********************************************-->
+        <item name="qmui_popup_bg">@drawable/qmui_popup_bg</item>
+        <item name="qmui_popup_arrow_down">@drawable/qmui_popup_arrow_down</item>
+        <item name="qmui_popup_arrow_up">@drawable/qmui_popup_arrow_up</item>
+        <item name="qmui_popup_arrow_up_margin_top">13dp</item>
+        <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
+
+       <!--**********************************************
+       *                  qmui tabSegment               *
+       ***********************************************-->
+        <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
+        <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
+        <item name="qmui_tab_sign_count_view_minSize_with_text">@dimen/qmui_tab_sign_count_view_minSize_with_text</item>
+        <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
+        <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
+
+        <!--**********************************************
+        *               qmui 提供的控件样式                *
+        ***********************************************-->
+        <item name="QMUIButtonStyle">@style/QMUI.RoundButton</item>
+        <item name="QMUITabSegmentStyle">@style/QMUI.TabSegment</item>
+        <item name="QMUIGroupListViewStyle">@style/QMUI.GroupListView</item>
+        <item name="QMUICommonListItemViewStyle">@style/QMUI.CommonListItemView</item>
+        <item name="QMUIGroupListSectionViewStyle">@style/QMUI.GroupListSectionView</item>
+        <item name="QMUITopBarStyle">@style/QMUI.TopBar</item>
+
+        <item name="QMUITipPointStyle">@style/QMUI.TipPoint</item>
+        <item name="QMUITipNewStyle">@style/QMUI.TipNew</item>
+
+        <item name="QMUILoadingStyle">@style/QMUI.Loading</item>
+        <item name="QMUIPullRefreshLayoutStyle">@style/QMUI.PullRefreshLayout</item>
+        <item name="QMUIRadiusImageViewStyle">@style/QMUI.RadiusImageView</item>
+        <item name="QMUIQQFaceStyle">@style/QMUI.QQFaceView</item>
+    </style>
+    <style name="QMUI.Animation" parent="@android:style/Animation"/>
+    <style name="QMUI.Animation.PopDownMenu"/>
+    <style name="QMUI.Animation.PopDownMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_top</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottom</item>
+    </style>
+    <style name="QMUI.Animation.PopDownMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
+    </style>
+    <style name="QMUI.Animation.PopDownMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
+    </style>
+    <style name="QMUI.Animation.PopUpMenu"/>
+    <style name="QMUI.Animation.PopUpMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottom</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_top</item>
+    </style>
+    <style name="QMUI.Animation.PopUpMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomleft_to_topright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topright_to_bottomleft</item>
+    </style>
+    <style name="QMUI.Animation.PopUpMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomright_to_topleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
+    </style>
+    <style name="QMUI.BottomSheet" parent="android:Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
+        <item name="android:layout_width">match_parent</item>
+    </style>
+    <style name="QMUI.CommonListItemView">
+        <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_commonList_titleColor">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_commonList_detailColor">?attr/qmui_config_color_gray_5</item>
+    </style>
+    <style name="QMUI.Compat" parent="AppConfigTheme.Compat">
+        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal</item> <!-- 已废弃 -->
+        <item name="qmui_content_spacing_horizontal">@dimen/qmui_content_spacing_horizontal</item>
+
+        <!--**********************************************
+        *                qmui common color               *
+        **********************************************-->
+        <item name="qmui_config_color_blue">@color/qmui_config_color_blue</item>
+        <item name="qmui_config_color_red">@color/qmui_config_color_red</item>
+        <item name="qmui_config_color_separator">@color/qmui_config_color_separator</item>
+        <item name="qmui_config_color_separator_darken">@color/qmui_config_color_separator_darken</item>
+        <item name="qmui_config_color_background">@color/qmui_config_color_background</item>
+        <item name="qmui_config_color_background_pressed">@color/qmui_config_color_background_pressed</item>
+        <item name="qmui_config_color_black">@color/qmui_config_color_black</item>
+        <item name="qmui_config_color_link">@color/qmui_config_color_link</item>
+        <item name="qmui_config_color_pressed">@color/qmui_config_color_pressed</item>
+
+        <item name="qmui_config_color_gray_1">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_config_color_gray_2">@color/qmui_config_color_gray_2</item>
+        <item name="qmui_config_color_gray_3">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_config_color_gray_4">@color/qmui_config_color_gray_4</item>
+        <item name="qmui_config_color_gray_5">@color/qmui_config_color_gray_5</item>
+        <item name="qmui_config_color_gray_6">@color/qmui_config_color_gray_6</item>
+        <item name="qmui_config_color_gray_7">@color/qmui_config_color_gray_7</item>
+        <item name="qmui_config_color_gray_8">@color/qmui_config_color_gray_8</item>
+        <item name="qmui_config_color_gray_9">@color/qmui_config_color_gray_9</item>
+
+        <item name="qmui_alpha_pressed">0.5</item>
+        <item name="qmui_alpha_disabled">0.5</item>
+
+        <!--**********************************************
+        *                qmui dialog                     *
+        **********************************************-->
+        <item name="qmui_dialog_margin_horizontal">40dp</item>
+        <item name="qmui_dialog_min_width">280dp</item>
+        <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
+        <item name="qmui_dialog_margin_vertical">20dp</item>
+        <item name="qmui_dialog_padding_horizontal">24dp</item>
+
+        <!-- title -->
+        <item name="qmui_dialog_title_text_color">?attr/qmui_config_color_black</item>
+        <item name="qmui_dialog_title_margin_top">24dp</item>
+        <item name="qmui_dialog_title_text_size">17sp</item>
+
+        <!-- menu -->
+        <item name="qmui_dialog_menu_item_check_icon_margin_horizontal">6dp</item>
+
+        <!-- content -->
+        <item name="qmui_dialog_content_padding_top">14dp</item>
+        <item name="qmui_dialog_content_padding_top_when_no_title">27dp</item>
+        <item name="qmui_dialog_content_padding_top_when_list">8dp</item>
+        <item name="qmui_dialog_content_padding_bottom">28dp</item>
+        <item name="qmui_dialog_content_padding_bottom_when_no_action">8dp</item>
+        <item name="qmui_dialog_content_padding_bottom_when_action_block">16dp</item>
+        <item name="qmui_dialog_content_message_text_size">16sp</item>
+        <item name="qmui_dialog_content_list_item_height">48dp</item>
+        <item name="qmui_dialog_content_list_item_text_size">15sp</item>
+        <item name="qmui_dialog_content_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_dialog_confirm_content_padding_top">28dp</item>
+        <item name="qmui_dialog_confirm_content_padding_bottom">22dp</item>
+        <item name="qmui_dialog_edit_content_padding_top">28dp</item>
+        <item name="qmui_dialog_edit_content_padding_bottom">31dp</item>
+        <item name="qmui_dialog_block_content_text_size">14sp</item>
+        <item name="qmui_dialog_menu_item_text_color">?attr/qmui_config_color_black</item>
+
+        <!-- action -->
+        <item name="qmui_dialog_action_container_margin_bottom">12dp</item>
+        <item name="qmui_dialog_action_container_margin_horizontal">12dp</item>
+        <item name="qmui_dialog_action_button_min_width">64dp</item>
+        <item name="qmui_dialog_action_button_height">36dp</item>
+        <item name="qmui_dialog_action_button_margin_left">8dp</item>
+        <item name="qmui_dialog_action_drawable_padding">6dp</item>
+        <item name="qmui_dialog_action_button_text_size">14sp</item>
+        <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
+
+        <item name="qmui_dialog_action_block_container_margin_bottom">12dp</item>
+        <item name="qmui_dialog_action_block_btn_height">36dp</item>
+
+        <item name="qmui_dialog_action_text_negative_color">@color/qmui_dialog_action_text_negative_color</item>
+        <item name="qmui_dialog_action_text_color">@color/qmui_dialog_action_text_color</item>
+        <item name="qmui_dialog_action_btn_bg">@drawable/qmui_dialog_action_btn_bg</item>
+        <item name="qmui_dialog_action_block_btn_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+
+        <!-- tip -->
+        <item name="qmui_tip_dialog_bg">@drawable/qmui_tip_dialog_bg</item>
+        <item name="qmui_tip_dialog_min_width">120dp</item>
+        <item name="qmui_tip_dialog_min_height">56dp</item>
+        <item name="qmui_tip_dialog_margin_horizontal">?attr/qmui_content_spacing_horizontal</item>
+        <item name="qmui_tip_dialog_padding_vertical">12dp</item>
+        <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <!--**********************************************
+        *             qmui list item bg                  *
+        **********************************************-->
+        <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
+        <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
+
+        <item name="qmui_list_item_bg_with_border_bottom">@drawable/qmui_list_item_bg_with_border_bottom</item>
+        <item name="qmui_list_item_bg_with_border_bottom_pressed">@drawable/qmui_list_item_bg_with_border_bottom_pressed</item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_list_item_bg_with_border_bottom_inset_left</item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_bottom_inset_left_pressed</item>
+        <item name="qmui_list_item_bg_with_border_top">@drawable/qmui_list_item_bg_with_border_top</item>
+        <item name="qmui_list_item_bg_with_border_top_pressed">@drawable/qmui_list_item_bg_with_border_top_pressed</item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left">@drawable/qmui_list_item_bg_with_border_top_inset_left</item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_top_inset_left_pressed</item>
+        <item name="qmui_list_item_bg_with_border_double">@drawable/qmui_list_item_bg_with_double_border</item>
+        <item name="qmui_list_item_bg_with_border_double_pressed">@drawable/qmui_list_item_bg_with_double_border_pressed</item>
+
+        <item name="qmui_s_list_item_bg_with_border_bottom">@drawable/qmui_s_list_item_bg_with_border_bottom</item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset">@drawable/qmui_s_list_item_bg_with_border_bottom_inset</item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_s_list_item_bg_with_border_bottom_inset_left</item>
+        <item name="qmui_s_list_item_bg_with_border_top">@drawable/qmui_s_list_item_bg_with_border_top</item>
+        <item name="qmui_s_list_item_bg_with_border_top_inset_left">@drawable/qmui_s_list_item_bg_with_border_top_inset_left</item>
+        <item name="qmui_s_list_item_bg_with_border_double">@drawable/qmui_s_list_item_bg_with_border_double</item>
+        <item name="qmui_s_list_item_bg_with_border_none">@drawable/qmui_s_list_item_bg_with_border_none</item>
+
+        <!--**********************************************
+        *             qmui drawable                      *
+        ***********************************************-->
+        <item name="qmui_s_checkbox">@drawable/qmui_s_checkbox</item>
+        <item name="qmui_icon_check_mark">@drawable/qmui_icon_checkmark</item>
+
+        <!--**********************************************
+        *                   qmui btn                     *
+        ***********************************************-->
+        <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
+        <item name="qmui_round_btn_border_width">@dimen/qmui_btn_border_width</item>
+        <item name="qmui_round_btn_bg_color">@color/qmui_btn_blue_bg</item>
+        <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
+        <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
+
+        <!--**********************************************
+        *                  qmui topbar                   *
+        ***********************************************-->
+        <item name="qmui_topbar_height">56dp</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_title_text_size">17sp</item>
+        <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
+        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">@dimen/qmui_content_padding_horizontal</item>
+        <item name="qmui_topbar_subtitle_text_size">11sp</item>
+        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_image_btn_width">48dp</item>
+        <item name="qmui_topbar_image_btn_height">48dp</item>
+        <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_topbar_text_color</item>
+        <item name="qmui_topbar_text_btn_text_size">16sp</item>
+
+        <!--**********************************************
+        *                 qmui bottom sheet              *
+        ***********************************************-->
+        <item name="qmui_bottom_sheet_title_height">56dp</item>
+        <item name="qmui_bottom_sheet_title_appearance">@style/QMUITextAppearance.Title.Gray</item>
+        <item name="qmui_bottom_sheet_title_bg">?attr/qmui_list_item_bg_with_border_bottom</item>
+
+        <item name="qmui_bottom_sheet_list_item_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <item name="qmui_bottom_sheet_list_item_height">56dp</item>
+        <item name="qmui_bottom_sheet_list_item_mark_margin_left">12dp</item>
+        <item name="qmui_bottom_sheet_list_item_tip_point_margin_left">4dp</item>
+        <item name="qmui_bottom_sheet_list_item_text_appearance">@style/QMUITextAppearance.ListItem</item>
+        <item name="qmui_bottom_sheet_list_item_bg">?attr/qmui_s_list_item_bg_with_border_bottom</item>
+        <item name="qmui_bottom_sheet_list_item_icon_size">22dp</item>
+        <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>
+
+        <item name="qmui_bottom_sheet_grid_padding_vertical">12dp</item>
+        <item name="qmui_bottom_sheet_grid_line_padding_horizontal">12dp</item>
+        <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
+        <item name="qmui_bottom_sheet_grid_item_mini_width">84dp</item>
+        <item name="qmui_bottom_sheet_grid_item_icon_size">56dp</item>
+        <item name="qmui_bottom_sheet_grid_item_text_appearance">@style/QMUITextAppearance.GridItem.Small</item>
+
+        <item name="qmui_bottom_sheet_button_height">56dp</item>
+        <item name="qmui_bottom_sheet_button_text_size">15sp</item>
+        <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
+        <item name="qmui_bottom_sheet_button_text_background">@drawable/qmui_s_list_item_bg_with_border_top</item>
+
+        <!--**********************************************
+        *                 qmui common list item          *
+        ***********************************************-->
+        <item name="qmui_common_list_item_chevron">@drawable/icon_chevron</item>
+
+        <!--**********************************************
+        *               qmui loading view                *
+        ***********************************************-->
+        <item name="qmui_loading_size">20dp</item>
+        <item name="qmui_loading_color">@color/qmui_config_color_gray_5</item>
+
+        <!--**********************************************
+        *                   qmui popup                   *
+        ***********************************************-->
+        <item name="qmui_popup_bg">@drawable/qmui_popup_bg</item>
+        <item name="qmui_popup_arrow_down">@drawable/qmui_popup_arrow_down</item>
+        <item name="qmui_popup_arrow_up">@drawable/qmui_popup_arrow_up</item>
+        <item name="qmui_popup_arrow_up_margin_top">13dp</item>
+        <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
+
+        <!--**********************************************
+        *                  qmui tabSegment               *
+        ***********************************************-->
+        <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
+        <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
+        <item name="qmui_tab_sign_count_view_minSize_with_text">@dimen/qmui_tab_sign_count_view_minSize_with_text</item>
+        <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
+        <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
+
+        <!--**********************************************
+        *               qmui 提供的控件样式                *
+        ***********************************************-->
+        <item name="QMUIButtonStyle">@style/QMUI.RoundButton</item>
+        <item name="QMUITabSegmentStyle">@style/QMUI.TabSegment</item>
+        <item name="QMUICommonListItemViewStyle">@style/QMUI.CommonListItemView</item>
+        <item name="QMUIGroupListSectionViewStyle">@style/QMUI.GroupListSectionView</item>
+        <item name="QMUITopBarStyle">@style/QMUI.TopBar</item>
+
+        <item name="QMUITipPointStyle">@style/QMUI.TipPoint</item>
+        <item name="QMUITipNewStyle">@style/QMUI.TipNew</item>
+
+        <item name="QMUILoadingStyle">@style/QMUI.Loading</item>
+        <item name="QMUIPullRefreshLayoutStyle">@style/QMUI.PullRefreshLayout</item>
+        <item name="QMUIRadiusImageViewStyle">@style/QMUI.RadiusImageView</item>
+        <item name="QMUIQQFaceStyle">@style/QMUI.QQFaceView</item>
+    </style>
+    <style name="QMUI.Compat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="QMUI.Dialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
+        <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
+        <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
+        <item name="android:windowIsFloating">true</item><!-- 在中间弹框、背后有遮罩的效果 -->
+        <item name="android:minWidth">?attr/qmui_dialog_min_width</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">?attr/qmui_dialog_margin_horizontal</item>
+        <item name="android:layout_marginRight">?attr/qmui_dialog_margin_horizontal</item>
+    </style>
+    <style name="QMUI.Dialog.FullWidth" parent="QMUI.Dialog">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+    </style>
+    <style name="QMUI.Dialog.FullWidth.NoAnimation" parent="QMUI.Dialog.FullWidth">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+    <style name="QMUI.GroupListSectionView">
+        <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
+    </style>
+    <style name="QMUI.GroupListView">
+        <item name="separatorStyle">none</item>
+    </style>
+    <style name="QMUI.Loading">
+        <item name="qmui_loading_view_size">?attr/qmui_loading_size</item>
+        <item name="android:color">?attr/qmui_loading_color</item>
+    </style>
+    <style name="QMUI.Loading.White">
+        <item name="qmui_loading_view_size">?attr/qmui_loading_size</item>
+        <item name="android:color">@color/qmui_config_color_white</item>
+    </style>
+    <style name="QMUI.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="QMUI.PullRefreshLayout">
+        <item name="qmui_target_init_offset">0dp</item>
+        <item name="qmui_target_refresh_offset">72dp</item>
+        <item name="qmui_auto_calculate_refresh_init_offset">true</item>
+        <item name="qmui_auto_calculate_refresh_end_offset">true</item>
+    </style>
+    <style name="QMUI.QQFaceView">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="qmui_special_drawable_padding">5dp</item>
+    </style>
+    <style name="QMUI.RadiusImageView">
+        <item name="qmui_is_circle">true</item>
+        <item name="qmui_border_width">1px</item>
+        <item name="qmui_border_color">?attr/qmui_config_color_gray_4</item>
+        <item name="qmui_is_touch_select_mode_enabled">true</item>
+    </style>
+    <style name="QMUI.RoundButton" parent="@style/Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--<item name="android:padding">0dp</item>--><!-- 不用 android:padding，而用各个方向分别指定 padding，方便子类覆盖 -->
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:ellipsize">end</item>
+        <item name="qmui_isRadiusAdjustBounds">true</item>
+        <item name="qmui_backgroundColor">@color/qmui_s_transparent</item>
+        <item name="qmui_borderWidth">?attr/qmui_round_btn_border_width</item>
+        <item name="qmui_borderColor">?attr/qmui_round_btn_border_color</item>
+        <item name="android:textColor">?attr/qmui_round_btn_text_color</item>
+    </style>
+    <style name="QMUI.TabSegment">
+        <item name="qmui_tab_has_indicator">false</item>
+        <item name="qmui_tab_indicator_height">@dimen/qmui_tab_segment_indicator_height</item>
+        <item name="android:textSize">@dimen/qmui_tab_segment_text_size</item>
+        <item name="qmui_tab_indicator_top">false</item>
+        <item name="qmui_tab_icon_position">left</item>
+    </style>
+    <style name="QMUI.TipDialog" parent="android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="QMUI.TipNew">
+        <item name="android:layout_width">37dp</item>
+        <item name="android:layout_height">17dp</item>
+        <item name="android:background">@drawable/qmui_icon_tip_new</item>
+    </style>
+    <style name="QMUI.TipPoint">
+        <item name="android:layout_width">@dimen/qmui_tips_point_size</item>
+        <item name="android:layout_height">@dimen/qmui_tips_point_size</item>
+        <item name="android:background">@drawable/qmui_tips_point</item>
+    </style>
+    <style name="QMUI.TopBar">
+        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_topbar_separator_height">1px</item>
+        <item name="qmui_topbar_bg_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_need_separator">true</item>
+        <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+    <style name="QMUITextAppearance" parent="TextAppearanceBase">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+    </style>
+    <style name="QMUITextAppearance.GridItem"/>
+    <style name="QMUITextAppearance.GridItem.Small">
+        <item name="android:textColor">@color/qmui_config_color_gray_3</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="QMUITextAppearance.ListItem">
+        <item name="android:textColor">@color/qmui_s_list_item_text_color</item>
+    </style>
+    <style name="QMUITextAppearance.Title"/>
+    <style name="QMUITextAppearance.Title.Gray">
+        <item name="android:textColor">?attr/qmui_config_color_gray_3</item>
+    </style>
+    <style name="QMUITextAppearance.Title.Large">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearanceBase" parent="android:TextAppearance.Holo"/>
+    <style name="TextView" parent="android:Widget.TextView">
+        <item name="android:textAppearance">@style/QMUITextAppearance</item>
+        <!-- textColorHighlight 放在appearance中无效，好像TextView总是默认存在一个textColorHighlight
+             会覆盖掉它，并不知道原因 -->
+        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+    </style>
+    <style name="TextView.Compat" parent="android:Widget.TextView">
+        <item name="android:textAppearance">@style/QMUITextAppearance</item>
+        <!-- textColorHighlight 放在appearance中无效，好像TextView总是默认存在一个textColorHighlight
+             会覆盖掉它，并不知道原因 -->
+        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+    </style>
+    <style name="qmui_dialog_wrap">
+        <item name="android:background">?attr/qmui_dialog_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">?attr/qmui_dialog_margin_vertical</item>
+        <item name="android:layout_marginBottom">?attr/qmui_dialog_margin_vertical</item>
+    </style>
+    <style name="qmui_tab_sign_count_view">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:background">?attr/qmui_tab_sign_count_view_bg</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/qmui_config_color_white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:minWidth">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>
+    </style>
+    <style name="qmui_tip_dialog_wrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">?attr/qmui_tip_dialog_min_width</item>
+        <item name="android:minHeight">?attr/qmui_tip_dialog_min_height</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginLeft">?attr/qmui_content_spacing_horizontal</item>
+        <item name="android:layout_marginRight">?attr/qmui_content_spacing_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">?attr/qmui_tip_dialog_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_tip_dialog_padding_horizontal</item>
+        <item name="android:paddingTop">?attr/qmui_tip_dialog_padding_vertical</item>
+        <item name="android:paddingBottom">?attr/qmui_tip_dialog_padding_vertical</item>
+        <item name="android:background">?attr/qmui_tip_dialog_bg</item>
+    </style>
+</resources>

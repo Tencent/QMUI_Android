@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 在Topbar下方的Tab面板的背景，带底部分割线 -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/list_divider_height_negative"
+    android:insetTop="@dimen/list_divider_height_negative"
+    android:insetRight="@dimen/list_divider_height_negative">
+
+    <shape>
+        <solid android:color="@color/tab_panel_bg" />
+        <stroke
+            android:width="@dimen/list_divider_height"
+            android:color="@color/tab_panel_divider" />
+    </shape>
+</inset>

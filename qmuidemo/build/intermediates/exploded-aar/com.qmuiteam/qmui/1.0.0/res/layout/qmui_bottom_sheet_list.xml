@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_bottom_sheet_title_height"
+        android:paddingLeft="?attr/qmui_bottom_sheet_list_item_padding_horizontal"
+        android:paddingRight="?attr/qmui_bottom_sheet_list_item_padding_horizontal"
+        android:gravity="center_vertical"
+        android:textAppearance="?attr/qmui_bottom_sheet_title_appearance"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:background="?attr/qmui_bottom_sheet_title_bg"
+        android:visibility="gone"/>
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/qmui_config_color_white"
+        android:divider="@null"
+        android:dividerHeight="0dp"/>
+</LinearLayout>
