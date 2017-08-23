@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Widget.Design.AppBarLayout" parent="Base.Widget.Design.AppBarLayout">
-        <item name="android:stateListAnimator">@animator/design_appbar_state_list_animator</item>
-    </style>
-</resources>

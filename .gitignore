@@ -4,10 +4,6 @@
 /.gradle
 /.gradletasknamecache
 /.idea
-app/*.iml
-app/build
 /bin
 /build
 /local.properties
-release.properties
-qmuidemo.keystore

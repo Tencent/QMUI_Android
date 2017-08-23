@@ -1,2 +1,0 @@
-int id transition_current_scene 0x7f020000
-int id transition_scene_layoutid_cache 0x7f020001

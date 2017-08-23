@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+local.properties
+/*.iml
+/build
+release.properties
+qmuidemo.keystore
