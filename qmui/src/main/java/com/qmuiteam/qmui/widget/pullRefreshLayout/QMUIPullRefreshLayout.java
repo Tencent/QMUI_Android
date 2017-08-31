@@ -101,6 +101,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private int mActivePointerId = INVALID_POINTER;
     private boolean mIsDragging;
     private float mInitialDownY;
+    private float mInitialDownX;
     private float mInitialMotionY;
     private float mLastMotionY;
     private float mDragRate = 0.65f;
@@ -332,6 +333,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 if (pointerIndex < 0) {
                     return false;
                 }
+                mInitialDownX = ev.getX(pointerIndex);
                 mInitialDownY = ev.getY(pointerIndex);
                 break;
 
@@ -342,8 +344,9 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                     return false;
                 }
 
+                final float x = ev.getX(pointerIndex);
                 final float y = ev.getY(pointerIndex);
-                startDragging(y);
+                startDragging(x, y);
                 break;
 
             case MotionEventCompat.ACTION_POINTER_UP:
@@ -389,8 +392,9 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                     Log.e(TAG, "onTouchEvent Got ACTION_MOVE event but have an invalid active pointer id.");
                     return false;
                 }
+                final float x = ev.getX(pointerIndex);
                 final float y = ev.getY(pointerIndex);
-                startDragging(y);
+                startDragging(x, y);
 
                 if (mIsDragging) {
                     float dy = y - mLastMotionY;
@@ -585,19 +589,28 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         }
     }
 
-    private void reset() {
+    public void reset() {
         moveTargetViewTo(mTargetInitOffset, false);
         mIRefreshView.stop();
+        mIsRefreshing = false;
+        mScroller.forceFinished(true);
         mScrollFlag = 0;
+        mIRefreshView.stop();
     }
 
-    protected void startDragging(float y) {
-        final float yDiff = y - mInitialDownY;
-        if ((yDiff > mTouchSlop || (yDiff < -mTouchSlop && mTargetCurrentOffset > mTargetInitOffset)) && !mIsDragging) {
+    protected void startDragging(float x, float y) {
+        final float dx = x - mInitialDownX;
+        final float dy = y - mInitialDownY;
+        boolean isYDrag = isYDrag(dx, dy);
+        if (isYDrag && (dy > mTouchSlop || (dy < -mTouchSlop && mTargetCurrentOffset > mTargetInitOffset)) && !mIsDragging) {
             mInitialMotionY = mInitialDownY + mTouchSlop;
             mLastMotionY = mInitialMotionY;
             mIsDragging = true;
         }
+    }
+
+    protected boolean isYDrag(float dx, float dy){
+        return Math.abs(dy) > Math.abs(dx);
     }
 
     @Override
@@ -622,7 +635,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         return defaultCanScrollUp(mTargetView);
     }
 
-    protected boolean defaultCanScrollUp(View view) {
+    public static boolean defaultCanScrollUp(View view) {
         if (view == null) {
             return false;
         }
