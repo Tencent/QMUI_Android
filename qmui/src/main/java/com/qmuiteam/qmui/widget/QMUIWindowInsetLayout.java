@@ -51,7 +51,7 @@ public class QMUIWindowInsetLayout extends FrameLayout {
     }
 
     private WindowInsetsCompat setWindowInsets(WindowInsetsCompat insets) {
-        if (Build.VERSION.SDK_INT >= 21 && insets.hasSystemWindowInsets()) {
+        if (Build.VERSION.SDK_INT >= 21) {
             if (applySystemWindowInsets21(insets)) {
                 return insets.consumeSystemWindowInsets();
             }
@@ -98,7 +98,10 @@ public class QMUIWindowInsetLayout extends FrameLayout {
     }
 
     @TargetApi(21)
-    private boolean applySystemWindowInsets21(WindowInsetsCompat insets) {
+    protected boolean applySystemWindowInsets21(WindowInsetsCompat insets) {
+        if(!insets.hasSystemWindowInsets()){
+            return false;
+        }
         boolean consumed = false;
         boolean showKeyboard = false;
         if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY) {
