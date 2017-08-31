@@ -12,6 +12,7 @@ android {
             keyPassword properties.getProperty("RELEASE_KEY_PASSWORD")
             storeFile file('qmuidemo.keystore')
             storePassword properties.getProperty("RELEASE_STORE_PASSWORD")
+            v2SigningEnabled false
         }
     }
     compileSdkVersion parent.ext.compileSdkVersion
