@@ -109,16 +109,16 @@ public class QMUIStatusBarHelper {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (MIUISetStatusBarLightMode(activity.getWindow(), true)) {
-                mStatuBarType = 1;
+                mStatuBarType = STATUSBAR_TYPE_MIUI;
             } else if (FlymeSetStatusBarLightMode(activity.getWindow(), true)) {
-                mStatuBarType = 2;
+                mStatuBarType = STATUSBAR_TYPE_FLYME;
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Window window = activity.getWindow();
                 View decorView = window.getDecorView();
                 int systemUi = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
                 systemUi = changeStatusBarModeRetainFlag(window, systemUi);
                 decorView.setSystemUiVisibility(systemUi);
-                mStatuBarType = 3;
+                mStatuBarType = STATUSBAR_TYPE_ANDROID6;
             }
         }
     }
