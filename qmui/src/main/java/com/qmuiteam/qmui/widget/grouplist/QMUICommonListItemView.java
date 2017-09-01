@@ -36,7 +36,7 @@ import java.lang.annotation.RetentionPolicy;
  *     <li>通过 {@link #setDetailText(String)} 设置一行说明文字, 并通过 {@link #setOrientation(int)} 设置说明文字的位置,
  *     也可以在 xml 中使用 {@link com.qmuiteam.qmui.R.styleable#QMUICommonListItemView_orientation} 设置。</li>
  *     <li>通过 {@link #setAccessoryType(int)} 设置右侧 View 的类型, 可选的类型见 {@link QMUICommonListItemAccessoryType},
- *     也可以在 xml 中使用 {@link com.qmuiteam.qmui.R.styleable#QMUICommonListItemView_accessory_type} 设置。</li>
+ *     也可以在 xml 中使用 {@link com.qmuiteam.qmui.R.styleable#QMUICommonListItemView_qmui_accessory_type} 设置。</li>
  * </ul>
  *
  * @author chantchen
@@ -130,8 +130,8 @@ public class QMUICommonListItemView extends RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.qmui_common_list_item, this, true);
 
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.QMUICommonListItemView, defStyleAttr, 0);
-        @QMUICommonListItemOrientation int orientation = array.getInt(R.styleable.QMUICommonListItemView_orientation, HORIZONTAL);
-        @QMUICommonListItemAccessoryType int accessoryType = array.getInt(R.styleable.QMUICommonListItemView_accessory_type, ACCESSORY_TYPE_NONE);
+        @QMUICommonListItemOrientation int orientation = array.getInt(R.styleable.QMUICommonListItemView_qmui_orientation, HORIZONTAL);
+        @QMUICommonListItemAccessoryType int accessoryType = array.getInt(R.styleable.QMUICommonListItemView_qmui_accessory_type, ACCESSORY_TYPE_NONE);
         final int initTitleColor = array.getColor(R.styleable.QMUICommonListItemView_qmui_commonList_titleColor, QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_1));
         final int initDetailColor = array.getColor(R.styleable.QMUICommonListItemView_qmui_commonList_detailColor, QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_5));
         array.recycle();

@@ -5,6 +5,10 @@
     <attr name="qmui_borderColor" format="color"/>
     <attr name="qmui_borderWidth" format="dimension"/>
     <attr name="qmui_linkColor" format="color"/>
+    <attr name="qmui_orientation" format="enum">
+        <enum name="horizontal" value="0"/>
+        <enum name="vertical" value="1"/>
+    </attr>
 
     <!--**************** QMUITabSegment ******************-->
     <declare-styleable name="QMUITabSegment">
@@ -38,11 +42,8 @@
     <attr name="QMUICommonListItemViewStyle" format="reference"/>
     <attr name="qmui_common_list_item_chevron" format="reference"/>
     <declare-styleable name="QMUICommonListItemView">
-        <attr name="orientation" format="enum">
-            <enum name="vertical" value="0"/>
-            <enum name="horizontal" value="1"/>
-        </attr>
-        <attr name="accessory_type" format="enum">
+        <attr name="qmui_orientation"/>
+        <attr name="qmui_accessory_type" format="enum">
             <enum name="none" value="0"/>
             <enum name="chevron" value="1"/>
             <enum name="switcher" value="2"/>
@@ -147,17 +148,6 @@
         <attr name="qmui_btn_text" format="string"/>
     </declare-styleable>
     <!-- EmptyView end -->
-
-    <!-- QMUIRecycleView start -->
-    <declare-styleable name="QMUIRecyclerView">
-        <attr name="qmui_item_distance" format="dimension"/>
-        <attr name="qmui_paged" format="boolean"/>
-        <attr name="qmui_orientation" format="enum">
-            <enum name="horizontal" value="0"/>
-            <enum name="vertical" value="1"/>
-        </attr>
-    </declare-styleable>
-    <!-- QMUIRecycleView end -->
 
     <!-- QMUIProgressBar start -->
     <declare-styleable name="QMUIProgressBar">
