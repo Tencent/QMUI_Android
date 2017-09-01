@@ -28,11 +28,9 @@
 
                 <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                     android:id="@+id/test1"
-                    style="@style/QMUI.RoundButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:background="@color/app_color_blue"
                     android:paddingBottom="10dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -52,9 +50,6 @@
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="指定圆角大小"
-                    app:qmui_backgroundColor="@color/qmui_s_transparent"
-                    app:qmui_borderColor="?attr/qmui_round_btn_border_color"
-                    app:qmui_borderWidth="?attr/qmui_round_btn_border_width"
                     app:qmui_radius="4dp"/>
 
             </RelativeLayout>
@@ -71,9 +66,6 @@
                         android:layout_height="60dp"
                         android:gravity="center"
                         android:text="指"
-                        app:qmui_backgroundColor="@color/qmui_s_transparent"
-                        app:qmui_borderColor="?attr/qmui_round_btn_border_color"
-                        app:qmui_borderWidth="?attr/qmui_round_btn_border_width"
                         app:qmui_radiusTopLeft="8dp"/>
 
                     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -82,9 +74,6 @@
                         android:layout_marginLeft="64dp"
                         android:gravity="center"
                         android:text="定"
-                        app:qmui_backgroundColor="@color/qmui_s_transparent"
-                        app:qmui_borderColor="?attr/qmui_round_btn_border_color"
-                        app:qmui_borderWidth="?attr/qmui_round_btn_border_width"
                         app:qmui_radiusTopRight="8dp"/>
 
                     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -93,9 +82,6 @@
                         android:layout_marginTop="64dp"
                         android:gravity="center"
                         android:text="方"
-                        app:qmui_backgroundColor="@color/qmui_s_transparent"
-                        app:qmui_borderColor="?attr/qmui_round_btn_border_color"
-                        app:qmui_borderWidth="?attr/qmui_round_btn_border_width"
                         app:qmui_radiusBottomLeft="8dp"/>
 
                     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -105,12 +91,25 @@
                         android:layout_marginTop="64dp"
                         android:gravity="center"
                         android:text="向"
-                        app:qmui_backgroundColor="@color/qmui_s_transparent"
-                        app:qmui_borderColor="?attr/qmui_round_btn_border_color"
-                        app:qmui_borderWidth="?attr/qmui_round_btn_border_width"
                         app:qmui_radiusBottomRight="8dp"/>
 
                 </FrameLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/button_wrapper_style">
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="更改 border 颜色和宽度"
+                    android:textColor="@color/qmui_s_link_color"
+                    app:qmui_borderColor="@color/qmui_s_link_color"
+                    app:qmui_borderWidth="1px"/>
 
             </RelativeLayout>
 
