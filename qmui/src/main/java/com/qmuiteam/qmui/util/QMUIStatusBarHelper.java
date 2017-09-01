@@ -107,7 +107,7 @@ public class QMUIStatusBarHelper {
             return setStatusBarLightMode(activity, mStatuBarType);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (MIUISetStatusBarLightMode(activity.getWindow(), true)) {
+            if (isMIUICustomStatusBarLightModeImpl() && MIUISetStatusBarLightMode(activity.getWindow(), true)) {
                 mStatuBarType = STATUSBAR_TYPE_MIUI;
                 return true;
             } else if (FlymeSetStatusBarLightMode(activity.getWindow(), true)) {
@@ -139,8 +139,6 @@ public class QMUIStatusBarHelper {
         }
         return false;
     }
-
-
 
 
     /**
@@ -227,6 +225,17 @@ public class QMUIStatusBarHelper {
             }
         }
         return result;
+    }
+
+    /**
+     * 更改状态栏图标、文字颜色的方案是否是MIUI自家的， MIUI9之后用回Android原生实现
+     * 见小米开发文档说明：https://dev.mi.com/console/doc/detail?pId=1159
+     *
+     * @return
+     */
+    private static boolean isMIUICustomStatusBarLightModeImpl(){
+        return QMUIDeviceHelper.isMIUIV5() || QMUIDeviceHelper.isMIUIV6() ||
+                QMUIDeviceHelper.isMIUIV7() || QMUIDeviceHelper.isMIUIV8();
     }
 
     /**

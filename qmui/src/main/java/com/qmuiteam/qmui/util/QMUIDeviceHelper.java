@@ -1,11 +1,14 @@
 package com.qmuiteam.qmui.util;
 
+import android.annotation.TargetApi;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.qmuiteam.qmui.QMUILog;
 
@@ -23,32 +26,31 @@ import java.util.regex.Pattern;
  */
 public class QMUIDeviceHelper {
     private final static String TAG = "QMUIDeviceHelper";
-    private final static String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";
     private final static String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
-    private final static String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
-    private final static String KEY_MEIZU_VERSION_ID = "ro.build.display.id";
+    private static final String KEY_FLYME_VERSION_NAME = "ro.build.display.id";
     private final static String FLYME = "flyme";
     private final static String ZTEC2016 = "zte c2016";
     private final static String ZUKZ1 = "zuk z1";
     private final static String MEIZUBOARD[] = {"m9", "M9", "mx", "MX"};
-    private static String sMiuiVersion;
-    private static String sMiuiVersionCode;
-    private static String sMiuiInternalStorage;
+    private static String sMiuiVersionName;
+    private static String sFlymeVersionName;
     private static boolean sIsTabletChecked = false;
     private static boolean sIsTabletValue = false;
-    private static String sMerizuVersion;
 
     static {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(new File(Environment.getRootDirectory(), "build.prop"));
-            Properties mProperties = new Properties();
-            mProperties.load(fileInputStream);
-            sMiuiVersionCode = mProperties.getProperty(KEY_MIUI_VERSION_CODE, null);
-            sMiuiVersion = mProperties.getProperty(KEY_MIUI_VERSION_NAME, null);
-            sMiuiInternalStorage = mProperties.getProperty(KEY_MIUI_INTERNAL_STORAGE, null);
-            sMerizuVersion = mProperties.getProperty(KEY_MEIZU_VERSION_ID, null);
-        } catch (IOException e) {
+            Properties properties = new Properties();
+            properties.load(fileInputStream);
+            Class<?> clzSystemProperties = Class.forName("android.os.SystemProperties");
+            Method getMethod = clzSystemProperties.getDeclaredMethod("get", String.class);
+            // miui
+            sMiuiVersionName =getLowerCaseName(properties, getMethod, KEY_MIUI_VERSION_NAME);
+            //flyme
+            sFlymeVersionName = getLowerCaseName(properties, getMethod, KEY_FLYME_VERSION_NAME);
+
+        } catch (Exception e) {
             QMUILog.printErrStackTrace(TAG, e, "getProperty error");
         } finally {
             QMUILangHelper.close(fileInputStream);
@@ -81,15 +83,7 @@ public class QMUIDeviceHelper {
      * @return
      */
     public static boolean isFlyme() {
-//        try {
-//            // Invoke Build.hasSmartBar()
-//            final Method method = Build.class.getMethod("hasSmartBar");
-//            return method != null;
-//        } catch (final Exception e) {
-//            return false;
-//        }
-        String androidDisplay = android.os.Build.DISPLAY.toLowerCase();
-        return Pattern.compile(FLYME).matcher(androidDisplay).find();
+        return !TextUtils.isEmpty(sFlymeVersionName) && sFlymeVersionName.contains(FLYME);
     }
 
     /**
@@ -98,23 +92,35 @@ public class QMUIDeviceHelper {
      * @return
      */
     public static boolean isMIUI() {
-        return !QMUILangHelper.isNullOrEmpty(sMiuiVersionCode)
-                || !QMUILangHelper.isNullOrEmpty(sMiuiVersion)
-                || !QMUILangHelper.isNullOrEmpty(sMiuiInternalStorage);
+        return !TextUtils.isEmpty(sMiuiVersionName);
     }
 
-    public static boolean isMIUIVersionHigherV5() {
-        return isMIUI() && sMiuiVersion != null && (sMiuiVersion.equalsIgnoreCase("V6")
-                || sMiuiVersion.equalsIgnoreCase("V7")
-                || sMiuiVersion.equalsIgnoreCase("V8"));
+    public static boolean isMIUIV5() {
+        return "v5".equals(sMiuiVersionName);
+    }
+
+    public static boolean isMIUIV6() {
+        return "v6".equals(sMiuiVersionName);
+    }
+
+    public static boolean isMIUIV7() {
+        return "v7".equals(sMiuiVersionName);
+    }
+
+    public static boolean isMIUIV8() {
+        return "v8".equals(sMiuiVersionName);
+    }
+
+    public static boolean isMIUIV9() {
+        return "v9".equals(sMiuiVersionName);
     }
 
     public static boolean isFlymeVersionHigher5_2_4() {
         //查不到默认高于5.2.4
         boolean isHigher = true;
-        if(sMerizuVersion != null && !sMerizuVersion.equals("")){
+        if(sFlymeVersionName != null && !sFlymeVersionName.equals("")){
             Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
-            Matcher matcher = pattern.matcher(sMerizuVersion);
+            Matcher matcher = pattern.matcher(sFlymeVersionName);
             if (matcher.find()) {
                 String versionString = matcher.group();
                 if (versionString != null && !versionString.equals("")) {
@@ -155,6 +161,16 @@ public class QMUIDeviceHelper {
     }
 
     /**
+     * 是否是小米
+     *
+     * @return
+     */
+    public static boolean isXiaomi() {
+        return Build.BRAND.toLowerCase().contains("xiaomi");
+    }
+
+
+    /**
      * ZUK Z1,ZTK C2016: android 6.0,但不支持状态栏icon颜色改变
      *
      * @return
@@ -190,11 +206,6 @@ public class QMUIDeviceHelper {
         return false;
     }
 
-
-    public static boolean isMIUIV8() {
-        return isMIUI() && sMiuiVersion != null && sMiuiVersion.equalsIgnoreCase("V8");
-    }
-
     /**
      * 判断悬浮窗权限（目前主要用户魅族与小米的检测）
      * @param context
@@ -214,9 +225,10 @@ public class QMUIDeviceHelper {
         }
     }
 
+    @TargetApi(19)
     private static boolean checkOp(Context context, int op) {
         final int version = Build.VERSION.SDK_INT;
-        if (version >= 19) {
+        if (version >= Build.VERSION_CODES.KITKAT) {
             AppOpsManager manager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
             try {
                 Method method = manager.getClass().getDeclaredMethod("checkOp", int.class, int.class, String.class);
@@ -229,5 +241,17 @@ public class QMUIDeviceHelper {
         } else {
         }
         return false;
+    }
+
+    @Nullable
+    private static String getLowerCaseName(Properties p, Method get, String key) {
+        String name = p.getProperty(key);
+        if (name == null) {
+            try {
+                name = (String) get.invoke(null, key);
+            } catch (Exception ignored) {}
+        }
+        if (name != null) name = name.toLowerCase();
+        return name;
     }
 }
