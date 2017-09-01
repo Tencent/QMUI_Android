@@ -34,7 +34,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -789,26 +788,6 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
 
         private void invalidateSelf() {
             mCallback.invalidateDrawable(null);
-        }
-    }
-
-    /**
-     * Squishes the interpolation curve into the second half of the animation.
-     */
-    private static class EndCurveInterpolator extends AccelerateDecelerateInterpolator {
-        @Override
-        public float getInterpolation(float input) {
-            return super.getInterpolation(Math.max(0, (input - 0.5f) * 2.0f));
-        }
-    }
-
-    /**
-     * Squishes the interpolation curve into the first half of the animation.
-     */
-    private static class StartCurveInterpolator extends AccelerateDecelerateInterpolator {
-        @Override
-        public float getInterpolation(float input) {
-            return super.getInterpolation(Math.min(1, input * 2.0f));
         }
     }
 }

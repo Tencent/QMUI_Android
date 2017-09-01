@@ -554,11 +554,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     protected void onRefresh() {
+        mIRefreshView.doRefresh();
         if (mIsRefreshing) {
             return;
         }
         mIsRefreshing = true;
-        mIRefreshView.doRefresh();
         if (mListener != null) {
             mListener.onRefresh();
         }
@@ -605,6 +605,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         if (isYDrag && (dy > mTouchSlop || (dy < -mTouchSlop && mTargetCurrentOffset > mTargetInitOffset)) && !mIsDragging) {
             mInitialMotionY = mInitialDownY + mTouchSlop;
             mLastMotionY = mInitialMotionY;
+            mIRefreshView.stop();
             mIsDragging = true;
         }
     }
@@ -949,9 +950,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         }
 
         public void doRefresh() {
-            if (!mProgress.isRunning()) {
-                mProgress.start();
-            }
+            mProgress.start();
         }
 
         public void setColorSchemeResources(@ColorRes int... colorResIds) {
