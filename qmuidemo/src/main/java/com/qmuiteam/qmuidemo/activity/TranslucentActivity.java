@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -18,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by Kayo on 2016/12/12.
  */
 
-public class TranslucentActivity extends Activity {
+public class TranslucentActivity extends AppCompatActivity {
 
     private final static String ARG_CHANGE_TRANSLUCENT = "ARG_CHANGE_TRANSLUCENT";
     private final static String ARG_STATUSBAR_MODE = "ARG_STATUSBAR_MODE";
