@@ -3,6 +3,7 @@ package com.qmuiteam.qmui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils.TruncateAt;
@@ -11,14 +12,15 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -61,6 +63,7 @@ public class QMUITopBar extends RelativeLayout {
     private int mTopbarImageBtnWidth = -1;
     private int mTopbarImageBtnHeight = -1;
     private int mTopbarTextBtnPaddingHorizontal = -1;
+    private Rect mTitleContainerRect;
 
     public QMUITopBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -117,6 +120,19 @@ public class QMUITopBar extends RelativeLayout {
         setBackgroundDividerEnabled(hasSeparator);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        ViewParent parent = getParent();
+        while (parent != null && (parent instanceof View)){
+            if(parent instanceof QMUICollapsingTopBarLayout){
+                makeSureTitleContainerView();
+                return;
+            }
+            parent = parent.getParent();
+        }
+    }
+
     /**
      * 在 TopBar 的中间添加 View，如果此前已经有 View 通过该方法添加到 TopBar，则旧的View会被 remove
      *
@@ -161,6 +177,13 @@ public class QMUITopBar extends RelativeLayout {
             titleView.setVisibility(VISIBLE);
         }
         return titleView;
+    }
+
+    public CharSequence getTitle() {
+        if (mTitleView == null) {
+            return null;
+        }
+        return mTitleView.getText();
     }
 
     public TextView setEmojiTitle(String title) {
@@ -269,6 +292,19 @@ public class QMUITopBar extends RelativeLayout {
         }
         requestLayout();
     }
+
+    public Rect getTitleContainerRect() {
+        if (mTitleContainerRect == null) {
+            mTitleContainerRect = new Rect();
+        }
+        if (mTitleContainerView == null) {
+            mTitleContainerRect.set(0, 0, 0, 0);
+        } else {
+            QMUIViewHelper.getDescendantRect(this, mTitleContainerView, mTitleContainerRect);
+        }
+        return mTitleContainerRect;
+    }
+
 
     // ========================= leftView、rightView 相关的方法
 

@@ -7,10 +7,14 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -19,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewStub;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
@@ -40,6 +45,21 @@ public class QMUIViewHelper {
 
     // copy from View.generateViewId for API <= 16
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
+
+
+    private static final int[] APPCOMPAT_CHECK_ATTRS = {
+            android.support.v7.appcompat.R.attr.colorPrimary
+    };
+
+    public static void checkAppCompatTheme(Context context) {
+        TypedArray a = context.obtainStyledAttributes(APPCOMPAT_CHECK_ATTRS);
+        final boolean failed = !a.hasValue(0);
+        a.recycle();
+        if (failed) {
+            throw new IllegalArgumentException("You need to use a Theme.AppCompat theme "
+                    + "(or descendant) with the design library.");
+        }
+    }
 
     /**
      * 获取activity的根view
@@ -399,7 +419,7 @@ public class QMUIViewHelper {
             translate.setInterpolator(new DecelerateInterpolator());
             translate.setDuration(duration);
             translate.setFillAfter(true);
-            if(listener != null){
+            if (listener != null) {
                 translate.setAnimationListener(listener);
             }
             view.setVisibility(View.VISIBLE);
@@ -627,4 +647,59 @@ public class QMUIViewHelper {
         return false;
     }
 
+
+    /**
+     * Retrieve the transformed bounding rect of an arbitrary descendant view.
+     * This does not need to be a direct child.
+     *
+     * @param descendant descendant view to reference
+     * @param out        rect to set to the bounds of the descendant view
+     */
+    public static void getDescendantRect(ViewGroup parent, View descendant, Rect out) {
+        out.set(0, 0, descendant.getWidth(), descendant.getHeight());
+        ViewGroupHelper.offsetDescendantRect(parent, descendant, out);
+    }
+
+
+    private static class ViewGroupHelper {
+        private static final ThreadLocal<Matrix> sMatrix = new ThreadLocal<>();
+        private static final ThreadLocal<RectF> sRectF = new ThreadLocal<>();
+
+        public static void offsetDescendantRect(ViewGroup group, View child, Rect rect) {
+            Matrix m = sMatrix.get();
+            if (m == null) {
+                m = new Matrix();
+                sMatrix.set(m);
+            } else {
+                m.reset();
+            }
+
+            offsetDescendantMatrix(group, child, m);
+
+            RectF rectF = sRectF.get();
+            if (rectF == null) {
+                rectF = new RectF();
+                sRectF.set(rectF);
+            }
+            rectF.set(rect);
+            m.mapRect(rectF);
+            rect.set((int) (rectF.left + 0.5f), (int) (rectF.top + 0.5f),
+                    (int) (rectF.right + 0.5f), (int) (rectF.bottom + 0.5f));
+        }
+
+        static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
+            final ViewParent parent = view.getParent();
+            if (parent instanceof View && parent != target) {
+                final View vp = (View) parent;
+                offsetDescendantMatrix(target, vp, m);
+                m.preTranslate(-vp.getScrollX(), -vp.getScrollY());
+            }
+
+            m.preTranslate(view.getLeft(), view.getTop());
+
+            if (!view.getMatrix().isIdentity()) {
+                m.preConcat(view.getMatrix());
+            }
+        }
+    }
 }

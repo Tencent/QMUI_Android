@@ -9,4 +9,6 @@
     <item name="qmui_view_can_not_cache_tag" type="id"/>
 
     <item name="qmui_topbar_item_left_back" type="id"/>
+
+    <item name="qmui_view_offset_helper" type="id"/>
 </resources>

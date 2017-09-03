@@ -9,6 +9,7 @@
         <enum name="horizontal" value="0"/>
         <enum name="vertical" value="1"/>
     </attr>
+    <attr name="qmui_title" format="string"/>
 
     <!--**************** QMUITabSegment ******************-->
     <declare-styleable name="QMUITabSegment">
@@ -245,5 +246,69 @@
     </declare-styleable>
 
     <!-- RoundWidget end -->
+
+    <!-- QMUICollapsingTopBarLayout start -->
+    <declare-styleable name="QMUICollapsingTopBarLayout">
+        <attr format="dimension" name="qmui_expandedTitleMargin"/>
+        <attr format="dimension" name="qmui_expandedTitleMarginStart"/>
+        <attr format="dimension" name="qmui_expandedTitleMarginTop"/>
+        <attr format="dimension" name="qmui_expandedTitleMarginEnd"/>
+        <attr format="dimension" name="qmui_expandedTitleMarginBottom"/>
+        <attr format="reference" name="qmui_expandedTitleTextAppearance"/>
+        <attr format="reference" name="qmui_collapsedTitleTextAppearance"/>
+        <attr format="color" name="qmui_contentScrim"/>
+        <attr format="color" name="qmui_statusBarScrim"/>
+        <attr format="reference" name="qmui_topBarId"/>
+        <attr format="dimension" name="qmui_scrimVisibleHeightTrigger"/>
+        <attr format="integer" name="qmui_scrimAnimationDuration"/>
+        <attr name="qmui_collapsedTitleGravity">
+            <flag name="top" value="0x30"/>
+            <flag name="bottom" value="0x50"/>
+            <flag name="left" value="0x03"/>
+            <flag name="right" value="0x05"/>
+            <flag name="center_vertical" value="0x10"/>
+            <flag name="fill_vertical" value="0x70"/>
+            <flag name="center_horizontal" value="0x01"/>
+            <flag name="center" value="0x11"/>
+            <flag name="start" value="0x00800003"/>
+            <flag name="end" value="0x00800005"/>
+        </attr>
+        <attr name="qmui_expandedTitleGravity">
+            <flag name="top" value="0x30"/>
+            <flag name="bottom" value="0x50"/>
+            <flag name="left" value="0x03"/>
+            <flag name="right" value="0x05"/>
+            <flag name="center_vertical" value="0x10"/>
+            <flag name="fill_vertical" value="0x70"/>
+            <flag name="center_horizontal" value="0x01"/>
+            <flag name="center" value="0x11"/>
+            <flag name="start" value="0x00800003"/>
+            <flag name="end" value="0x00800005"/>
+        </attr>
+        <attr format="boolean" name="qmui_titleEnabled"/>
+        <attr name="qmui_title"/>
+    </declare-styleable>
+    <declare-styleable name="QMUICollapsingTopBarLayout_Layout">
+        <attr name="qmui_layout_collapseMode">
+            <enum name="none" value="0"/>
+            <enum name="pin" value="1"/>
+            <enum name="parallax" value="2"/>
+        </attr>
+        <attr format="float" name="qmui_layout_collapseParallaxMultiplier"/>
+    </declare-styleable>
+    <!-- QMUICollapsingTopBarLayout end -->
+
+    <declare-styleable name="QMUITextAppearance">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:textColorHint"/>
+        <attr name="android:textStyle"/>
+        <attr name="android:typeface"/>
+        <attr name="textAllCaps"/>
+        <attr name="android:shadowColor"/>
+        <attr name="android:shadowDy"/>
+        <attr name="android:shadowDx"/>
+        <attr name="android:shadowRadius"/>
+    </declare-styleable>
 
 </resources>
