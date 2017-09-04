@@ -53,8 +53,12 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
      * 返回
      */
     public void popBackStack() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             BaseFragment fragment = getCurrentFragment();
+            if(fragment == null){
+                finish();
+                return;
+            }
             BaseFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
             Object toExec = fragment.onLastFragmentFinish();
             if (toExec != null) {
