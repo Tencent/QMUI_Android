@@ -3,6 +3,7 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIAnimationListView;
@@ -63,14 +64,6 @@ public class QDAnimationListViewFragment extends BaseFragment {
                         mData.add(position + 1, "item add" + (current + 1));
                         mData.add(position + 2, "item add" + (current + 2));
                         mData.add(position + 3, "item add" + (current + 3));
-                        mData.add(position + 4, "item add" + (current + 4));
-                        mData.add(position + 5, "item add" + (current + 5));
-                        mData.add(position + 6, "item add" + (current + 6));
-                        mData.add(position + 7, "item add" + (current + 7));
-                        mData.add(position + 8, "item add" + (current + 8));
-                        mData.add(position + 9, "item add" + (current + 9));
-                        mData.add(position + 10, "item add" + (current + 10));
-                        mData.add(position + 11, "item add" + (current + 11));
                     }
                 });
 
@@ -83,8 +76,13 @@ public class QDAnimationListViewFragment extends BaseFragment {
                     @Override
                     public void manipulate(MyAdapter adapter) {
                         int position = mListView.getFirstVisiblePosition();
-                        mData.remove(position + 1);
-                        mData.remove(position + 3);
+                        if(mData.size() > position + 4){
+                            mData.remove(position + 1);
+                            mData.remove(position + 3);
+                        }else{
+                            Toast.makeText(getContext(), "item 已经很少了，不如先添加几个？", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
             }
