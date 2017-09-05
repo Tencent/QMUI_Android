@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
  * @date 2017-09-02
  */
 
-@Widget(widgetClass = QMUICollapsingTopBarLayout.class)
+@Widget(widgetClass = QMUICollapsingTopBarLayout.class, iconRes = R.mipmap.icon_grid_collapse_top_bar)
 public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
 
     private View mRootView;
