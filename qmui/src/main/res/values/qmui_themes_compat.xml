@@ -240,7 +240,11 @@
     <style name="ListViewBase.Compat" parent="@style/Widget.AppCompat.ListView" />
     <style name="GridViewBase.Compat" parent="android:Widget.GridView" />
     <style name="ImageButtonBase.Compat" parent="@style/Widget.AppCompat.ImageButton" />
-    <style name="ButtonBase.Compat" parent="@style/Widget.AppCompat.Button" />
+    <style name="ButtonBase.Compat" parent="@style/Widget.AppCompat.Button" >
+        <!-- 取消 Button 字符默认大写的功能（会导致 Spannable 失效），默认值只影响 5.0 以上版本，但使用Compat包后，4.x 版本也会受到影响 -->
+        <!-- http://stackoverflow.com/questions/29007746/button-settext-with-spannable-dosent-work-for-android-5-0-lollipop -->
+        <item name="android:textAllCaps">false</item>
+    </style>
     <style name="EditTextBase.Compat" parent="@style/Widget.AppCompat.EditText" />
     <style name="AutoCompleteTextViewBase.Compat" parent="@style/Widget.AppCompat.AutoCompleteTextView" />
     <style name="DropDownListViewBase.Compat" parent="@style/Widget.AppCompat.ListView.DropDown" />
