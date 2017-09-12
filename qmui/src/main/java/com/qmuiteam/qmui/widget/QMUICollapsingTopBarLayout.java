@@ -95,6 +95,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout {
     private int mScrimVisibleHeightTrigger = -1;
 
     private AppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener;
+    private ValueAnimator.AnimatorUpdateListener mScrimUpdateListener;
 
     int mCurrentOffset;
 
@@ -509,6 +510,26 @@ public class QMUICollapsingTopBarLayout extends FrameLayout {
         }
     }
 
+    /**
+     *
+     * @param scrimUpdateListener 为 null 则是 removeUpdateListener
+     */
+    public void setScrimUpdateListener(ValueAnimator.AnimatorUpdateListener scrimUpdateListener) {
+        if (mScrimUpdateListener != scrimUpdateListener) {
+            if (mScrimAnimator == null) {
+                mScrimUpdateListener = scrimUpdateListener;
+            } else {
+                if (mScrimUpdateListener != null) {
+                    mScrimAnimator.removeUpdateListener(mScrimUpdateListener);
+                }
+                mScrimUpdateListener = scrimUpdateListener;
+                if(mScrimUpdateListener != null){
+                    mScrimAnimator.addUpdateListener(mScrimUpdateListener);
+                }
+            }
+        }
+    }
+
     private void animateScrim(int targetAlpha) {
         ensureToolbar();
         if (mScrimAnimator == null) {
@@ -524,6 +545,9 @@ public class QMUICollapsingTopBarLayout extends FrameLayout {
                     setScrimAlpha((Integer) animator.getAnimatedValue());
                 }
             });
+            if (mScrimUpdateListener != null) {
+                mScrimAnimator.addUpdateListener(mScrimUpdateListener);
+            }
         } else if (mScrimAnimator.isRunning()) {
             mScrimAnimator.cancel();
         }

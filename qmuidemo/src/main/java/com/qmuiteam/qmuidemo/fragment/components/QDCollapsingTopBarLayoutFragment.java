@@ -1,7 +1,9 @@
 package com.qmuiteam.qmuidemo.fragment.components;
 
+import android.animation.ValueAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -23,6 +25,7 @@ import butterknife.ButterKnife;
 
 @Widget(widgetClass = QMUICollapsingTopBarLayout.class, iconRes = R.mipmap.icon_grid_collapse_top_bar)
 public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
+    private static final String TAG = "CollapsingTopBarLayout";
 
     private View mRootView;
     QDRecyclerViewAdapter mRecyclerViewAdapter;
@@ -43,6 +46,13 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
         mRecyclerViewAdapter = new QDRecyclerViewAdapter();
         mRecyclerViewAdapter.setItemCount(10);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+        mCollapsingTopBarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.i(TAG, "scrim: " + animation.getAnimatedValue());
+            }
+        });
 
         return mRootView;
     }
