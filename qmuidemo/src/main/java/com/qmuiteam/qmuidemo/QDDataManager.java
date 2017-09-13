@@ -1,29 +1,30 @@
 package com.qmuiteam.qmuidemo;
 
-import com.qmuiteam.qmuidemo.fragment.components.QDButtonFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragment;
-import com.qmuiteam.qmuidemo.fragment.util.QDColorHelperFragment;
-import com.qmuiteam.qmuidemo.fragment.util.QDSpanFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDBottomSheetFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDButtonFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDDialogFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDEmptyViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDFloatLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDGroupListViewFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDLinkTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSpanTouchFixTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTipDialogFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDVerticalTextViewFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
+import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceFragment;
+import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDAnimationListViewFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDSnapHelperFragment;
-import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceFragment;
+import com.qmuiteam.qmuidemo.fragment.util.QDColorHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDDeviceHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDDrawableHelperFragment;
+import com.qmuiteam.qmuidemo.fragment.util.QDSpanFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDStatusBarHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDViewHelperFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
@@ -82,6 +83,7 @@ public class QDDataManager {
         mComponentsNames.add(QDQQFaceFragment.class);
         mComponentsNames.add(QDSpanFragment.class);
         mComponentsNames.add(QDCollapsingTopBarLayoutFragment.class);
+        mComponentsNames.add(QDViewPagerFragment.class);
     }
 
     /**
