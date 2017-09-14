@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -53,6 +54,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
     private void initPagers() {
         mPagerAdapter = new QMUIPagerAdapter() {
             private FragmentTransaction mCurrentTransaction;
+            private Fragment mCurrentPrimaryItem = null;
 
             @Override
             public boolean isViewFromObject(View view, Object object) {
@@ -94,7 +96,8 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
             protected void populate(ViewGroup container, Object item, int position) {
                 String name = makeFragmentName(container.getId(), position);
                 if (mCurrentTransaction == null) {
-                    mCurrentTransaction = getChildFragmentManager().beginTransaction();
+                    mCurrentTransaction = getChildFragmentManager()
+                            .beginTransaction();
                 }
                 Fragment fragment = getChildFragmentManager().findFragmentByTag(name);
                 if (fragment != null) {
@@ -103,14 +106,27 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                     fragment = (Fragment) item;
                     mCurrentTransaction.add(container.getId(), fragment, name);
                 }
+                if (fragment != mCurrentPrimaryItem) {
+                    fragment.setMenuVisibility(false);
+                    fragment.setUserVisibleHint(false);
+                }
             }
 
             @Override
             protected void destroy(ViewGroup container, int position, Object object) {
                 if (mCurrentTransaction == null) {
-                    mCurrentTransaction = getChildFragmentManager().beginTransaction();
+                    mCurrentTransaction = getChildFragmentManager()
+                            .beginTransaction();
                 }
                 mCurrentTransaction.detach((Fragment) object);
+            }
+
+            @Override
+            public void startUpdate(ViewGroup container) {
+                if (container.getId() == View.NO_ID) {
+                    throw new IllegalStateException("ViewPager with adapter " + this
+                            + " requires a view id");
+                }
             }
 
             @Override
@@ -118,6 +134,22 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 if (mCurrentTransaction != null) {
                     mCurrentTransaction.commitNowAllowingStateLoss();
                     mCurrentTransaction = null;
+                }
+            }
+
+            @Override
+            public void setPrimaryItem(ViewGroup container, int position, Object object) {
+                Fragment fragment = (Fragment)object;
+                if (fragment != mCurrentPrimaryItem) {
+                    if (mCurrentPrimaryItem != null) {
+                        mCurrentPrimaryItem.setMenuVisibility(false);
+                        mCurrentPrimaryItem.setUserVisibleHint(false);
+                    }
+                    if (fragment != null) {
+                        fragment.setMenuVisibility(true);
+                        fragment.setUserVisibleHint(true);
+                    }
+                    mCurrentPrimaryItem = fragment;
                 }
             }
 

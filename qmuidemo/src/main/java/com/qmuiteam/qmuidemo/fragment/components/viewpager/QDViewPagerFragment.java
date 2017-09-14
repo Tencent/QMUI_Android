@@ -9,8 +9,6 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmuidemo.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFacePerformanceTestFragment;
-import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceUsageFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
@@ -22,7 +20,7 @@ import butterknife.ButterKnife;
  * @date 2017-09-13
  */
 
-@Widget(widgetClass = QMUIViewPager.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUIViewPager.class, iconRes = R.mipmap.icon_grid_pager_layout_manager)
 public class QDViewPagerFragment extends BaseFragment{
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.groupListView) QMUIGroupListView mGroupListView;
