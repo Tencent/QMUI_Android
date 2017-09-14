@@ -22,7 +22,7 @@ android {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.3"
     }
     buildTypes {
         debug {
