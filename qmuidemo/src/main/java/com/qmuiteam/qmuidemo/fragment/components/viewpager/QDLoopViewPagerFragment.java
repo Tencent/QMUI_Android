@@ -35,7 +35,6 @@ import butterknife.ButterKnife;
 public class QDLoopViewPagerFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.pager) QMUIViewPager mViewPager;
-    private QMUIPagerAdapter mPagerAdapter;
 
     private List<String> mItems = new ArrayList<>();
 
@@ -68,7 +67,7 @@ public class QDLoopViewPagerFragment extends BaseFragment {
 
 
     private void initPagers() {
-        mPagerAdapter = new QMUIPagerAdapter() {
+        QMUIPagerAdapter pagerAdapter = new QMUIPagerAdapter() {
 
             @Override
             public boolean isViewFromObject(View view, Object object) {
@@ -108,7 +107,7 @@ public class QDLoopViewPagerFragment extends BaseFragment {
                 canUseHardware ? ViewCompat.LAYER_TYPE_HARDWARE : ViewCompat.LAYER_TYPE_SOFTWARE);
         mViewPager.setInfiniteRatio(500);
         mViewPager.setEnableLoop(true);
-        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setAdapter(pagerAdapter);
     }
 
     static class ItemView extends FrameLayout {

@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -32,7 +31,6 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
 
     @BindView(R.id.pager) QMUIViewPager mViewPager;
     @BindView(R.id.tabs) QMUITabSegment mTabSegment;
-    private QMUIPagerAdapter mPagerAdapter;
 
 
     @Override
@@ -52,7 +50,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
     }
 
     private void initPagers() {
-        mPagerAdapter = new QMUIPagerAdapter() {
+        QMUIPagerAdapter pagerAdapter = new QMUIPagerAdapter() {
             private FragmentTransaction mCurrentTransaction;
             private Fragment mCurrentPrimaryItem = null;
 
@@ -139,7 +137,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
 
             @Override
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
-                Fragment fragment = (Fragment)object;
+                Fragment fragment = (Fragment) object;
                 if (fragment != mCurrentPrimaryItem) {
                     if (mCurrentPrimaryItem != null) {
                         mCurrentPrimaryItem.setMenuVisibility(false);
@@ -157,7 +155,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 return "QDFitSystemWindowViewPagerFragment:" + viewId + ":" + id;
             }
         };
-        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setAdapter(pagerAdapter);
         mTabSegment.setupWithViewPager(mViewPager);
     }
 }

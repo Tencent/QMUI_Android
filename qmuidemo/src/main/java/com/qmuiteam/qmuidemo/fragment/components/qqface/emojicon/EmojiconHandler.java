@@ -1769,10 +1769,11 @@ public final class EmojiconHandler {
             if (c == '[') {
                 int emojiCloseIndex = text.indexOf(']', start);
                 if (emojiCloseIndex > 0 && emojiCloseIndex - start <= 4) {
-                    Object obj = sQQFaceMap.get(text.subSequence(start, emojiCloseIndex + 1));
+                    CharSequence charSequence = text.subSequence(start, emojiCloseIndex + 1);
+                    Integer value = sQQFaceMap.get(charSequence.toString());
 
-                    if (obj != null && obj instanceof Integer) {
-                        icon = (int) obj;
+                    if (value != null) {
+                        icon = value;
                         skip = emojiCloseIndex + 1 - start;
                         isQQFace = true;
                     }
