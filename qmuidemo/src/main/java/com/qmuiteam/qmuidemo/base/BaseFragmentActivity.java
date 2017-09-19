@@ -2,7 +2,7 @@ package com.qmuiteam.qmuidemo.base;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
@@ -107,7 +107,7 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
      * @param clazz
      */
     public void popBackStackInclusive(Class<? extends BaseFragment> clazz) {
-        getSupportFragmentManager().popBackStack(clazz.getSimpleName(), getSupportFragmentManager().POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().popBackStack(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
 

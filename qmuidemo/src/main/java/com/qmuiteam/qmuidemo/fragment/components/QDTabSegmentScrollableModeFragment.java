@@ -33,13 +33,12 @@ import butterknife.ButterKnife;
 
 @Widget(group = Group.Other, name = "内容自适应，超过父容器则滚动")
 public class QDTabSegmentScrollableModeFragment extends BaseFragment {
-    private final int TAB_COUNT = 10;
+    @SuppressWarnings("FieldCanBeLocal") private final int TAB_COUNT = 10;
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
     @BindView(R.id.contentViewPager) ViewPager mContentViewPager;
 
-    private View mRootView;
     private Map<ContentPage, View> mPageMap = new HashMap<>();
     private ContentPage mDestPage = ContentPage.Item1;
     private QDItemDescription mQDItemDescription;
@@ -67,23 +66,18 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return super.getPageTitle(position);
-        }
     };
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
+        ButterKnife.bind(this, rootView);
 
         mQDItemDescription = QDDataManager.getInstance().getDescription(this.getClass());
         initTopBar();
         initTabAndPager();
 
-        return mRootView;
+        return rootView;
     }
 
     private void initTopBar() {

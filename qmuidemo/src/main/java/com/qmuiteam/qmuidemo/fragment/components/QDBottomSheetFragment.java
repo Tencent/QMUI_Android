@@ -16,6 +16,7 @@ import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,9 +63,7 @@ public class QDBottomSheetFragment extends BaseFragment {
         };
         List<String> data = new ArrayList<>();
 
-        for (String listItem : listItems) {
-            data.add(listItem);
-        }
+        Collections.addAll(data, listItems);
 
         mListView.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.simple_list_item, data));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -16,35 +16,21 @@ import java.util.List;
 
 
 public final class EmojiconHandler {
-    private EmojiconHandler() {
-    }
-
-    private static final HashMap<String, Integer> sQQFaceMap = new HashMap<String, Integer>();
-    private static final List<QQFace> mQQFaceList = new ArrayList<QQFace>();
+    private static final HashMap<String, Integer> sQQFaceMap = new HashMap<>();
+    private static final List<QQFace> mQQFaceList = new ArrayList<>();
     private static final SparseIntArray sEmojisMap = new SparseIntArray(846);
     private static final SparseIntArray sSoftbanksMap = new SparseIntArray(471);
-    private static final ArrayMap<String,String> mQQFaceFileNameList = new ArrayMap();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
-
-    /** 表情的放大倍数 */
+    private static final ArrayMap<String, String> mQQFaceFileNameList = new ArrayMap<>();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
+    /**
+     * 表情的放大倍数
+     */
     private static final float EMOJIICON_SCALE = 1.2f;
-    /** 表情的偏移值 */
+    /**
+     * 表情的偏移值
+     */
     private static final int EMOJIICON_TRANSLATE_Y = 0;
     private static final int QQFACE_TRANSLATE_Y = QMUIDisplayHelper.dpToPx(1);
 
-    public static class QQFace{
-        private String name;
-        private int res;
-        public QQFace(String name, int res) {
-            this.name = name;
-            this.res = res;
-        }
-        public String getName() {
-            return name;
-        }
-        public int getRes() {
-            return res;
-        }
-    }
     static {
         long start = System.currentTimeMillis();
 
@@ -1090,7 +1076,6 @@ public final class EmojiconHandler {
         sEmojisMap.append(0x1f6c5, R.drawable.emoji_1f6c5);
 
 
-
         sSoftbanksMap.append(0xe001, R.drawable.emoji_1f466);
         sSoftbanksMap.append(0xe002, R.drawable.emoji_1f467);
         sSoftbanksMap.append(0xe003, R.drawable.emoji_1f48b);
@@ -1566,6 +1551,9 @@ public final class EmojiconHandler {
         Log.d("emoji", String.format("init emoji cost: %dms", (System.currentTimeMillis() - start)));
     }
 
+    private EmojiconHandler() {
+    }
+
     private static boolean isSoftBankEmoji(char c) {
         return ((c >> 12) == 0xe);
     }
@@ -1579,9 +1567,7 @@ public final class EmojiconHandler {
     }
 
     /**
-     * @param context
-     * Convert emoji characters of the given Spannable to the according emojicon.
-     *
+     * @param context   Convert emoji characters of the given Spannable to the according emojicon.
      * @param text
      * @param emojiSize
      */
@@ -1633,8 +1619,8 @@ public final class EmojiconHandler {
 
         // remove spans throughout all text
         EmojiconSpan[] oldSpans = text.getSpans(0, text.length(), EmojiconSpan.class);
-        for (int i = 0; i < oldSpans.length; i++) {
-            text.removeSpan(oldSpans[i]);
+        for (EmojiconSpan oldSpan : oldSpans) {
+            text.removeSpan(oldSpan);
         }
 
         int[] results = new int[3];
@@ -1648,25 +1634,26 @@ public final class EmojiconHandler {
             if (isEmoji) {
                 int icon = results[0];
                 boolean isQQFace = results[2] > 0;
-            	EmojiconSpan span = new EmojiconSpan(context, icon, (int)(emojiSize * EMOJIICON_SCALE),
-                        (int)(emojiSize * EMOJIICON_SCALE));
+                EmojiconSpan span = new EmojiconSpan(context, icon, (int) (emojiSize * EMOJIICON_SCALE),
+                        (int) (emojiSize * EMOJIICON_SCALE));
                 span.setTranslateY(isQQFace ? QQFACE_TRANSLATE_Y : EMOJIICON_TRANSLATE_Y);
-            	if (span.getCachedDrawable() == null) {
-            		text.replace(processIdx, processIdx + skip,  "..");
-            		//重新计算字符串的合法长度
-            		textLengthToProcess = calculateLegalTextLength(text, index, length);
-				} else {
-					text.setSpan(span, processIdx, processIdx + skip, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
+                if (span.getCachedDrawable() == null) {
+                    text.replace(processIdx, processIdx + skip, "..");
+                    //重新计算字符串的合法长度
+                    textLengthToProcess = calculateLegalTextLength(text, index, length);
+                } else {
+                    text.setSpan(span, processIdx, processIdx + skip, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
             }
-            
+
             processIdx += skip;
-		}
+        }
         return (SpannableStringBuilder) text.subSequence(index, processIdx);
     }
 
     /**
      * 判断文本位于start的字节是否为emoji。
+     *
      * @param text
      * @param start
      * @param end
@@ -1805,9 +1792,9 @@ public final class EmojiconHandler {
     }
 
     private static int calculateLegalTextLength(SpannableStringBuilder text, int index, int length) {
-    	int textLength = text.length();
+        int textLength = text.length();
         int textLengthToProcessMax = textLength - index;
-        return (length < 0 || length >= textLengthToProcessMax ? textLength : (length+index));
+        return (length < 0 || length >= textLengthToProcessMax ? textLength : (length + index));
     }
 
     public static List<QQFace> getQQFaceKeyList() {
@@ -1816,5 +1803,23 @@ public final class EmojiconHandler {
 
     public static boolean isQQFaceCodeExist(String qqFaceCode) {
         return sQQFaceMap.get(qqFaceCode) != null;
+    }
+
+    public static class QQFace {
+        private String name;
+        private int res;
+
+        public QQFace(String name, int res) {
+            this.name = name;
+            this.res = res;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getRes() {
+            return res;
+        }
     }
 }

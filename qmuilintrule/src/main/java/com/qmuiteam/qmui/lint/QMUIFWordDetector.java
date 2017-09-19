@@ -10,7 +10,7 @@ import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.ast.AstVisitor;
@@ -19,23 +19,25 @@ import lombok.ast.MethodInvocation;
 import lombok.ast.StrictListAccessor;
 import lombok.ast.VariableReference;
 
-public class FWordDetector extends Detector
+public class QMUIFWordDetector extends Detector
         implements Detector.JavaScanner, Detector.ClassScanner {
     public static final Issue ISSUE_F_WORD =
-            Issue.create("DontUseTheFWordInWRLog",
+            Issue.create("QMUIDontUseTheFWordInLog",
                     "Please, don't use the f word, type something more nicely.",
                     "Do I need to explain this? \uD83D\uDD95",
-                    Category.MESSAGES, 5, Severity.ERROR,
-                    new Implementation(FWordDetector.class, Scope.JAVA_FILE_SCOPE));
+                    Category.MESSAGES, 5, Severity.WARNING,
+                    new Implementation(QMUIFWordDetector.class, Scope.JAVA_FILE_SCOPE));
 
-    @Override public List<String> getApplicableMethodNames() {
-        return Collections.singletonList("log");
+    @Override
+    public List<String> getApplicableMethodNames() {
+        return Arrays.asList("e", "w", "i", "d");
     }
 
-    @Override public void visitMethod(@NonNull JavaContext context, AstVisitor visitor,
-                                      @NonNull MethodInvocation node) {
+    @Override
+    public void visitMethod(@NonNull JavaContext context, AstVisitor visitor,
+                            @NonNull MethodInvocation node) {
         VariableReference ref = (VariableReference) node.astOperand();
-        if (!"WRLog".equals(ref.astIdentifier().astValue())) {
+        if (!"QMUILog".equals(ref.astIdentifier().astValue())) {
             return;
         }
 

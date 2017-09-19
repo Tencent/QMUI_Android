@@ -10,7 +10,7 @@ import java.util.List;
 public final class QMUIIssueRegistry extends IssueRegistry {
     @Override public List<Issue> getIssues() {
         return Arrays.asList(
-                FWordDetector.ISSUE_F_WORD,
+                QMUIFWordDetector.ISSUE_F_WORD,
                 QMUIJavaVectorDrawableDetector.ISSUE_JAVA_VECTOR_DRAWABLE,
                 QMUIXmlVectorDrawableDetector.ISSUE_XML_VECTOR_DRAWABLE,
                 QMUIImageSizeDetector.ISSUE_IMAGE_SIZE,

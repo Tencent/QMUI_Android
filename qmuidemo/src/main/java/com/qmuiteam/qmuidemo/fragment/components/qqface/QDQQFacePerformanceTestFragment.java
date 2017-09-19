@@ -34,7 +34,6 @@ public class QDQQFacePerformanceTestFragment extends BaseFragment {
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
     @BindView(R.id.contentViewPager) ViewPager mContentViewPager;
 
-    private View mRootView;
     private Map<Page, View> mPageMap = new HashMap<>();
     private Page mDestPage = Page.QMUIQQFaceView;
     private PagerAdapter mPagerAdapter = new PagerAdapter() {
@@ -75,13 +74,13 @@ public class QDQQFacePerformanceTestFragment extends BaseFragment {
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
+        ButterKnife.bind(this, rootView);
 
         initTopBar();
         initTabAndPager();
 
-        return mRootView;
+        return rootView;
     }
 
     private void initTopBar() {

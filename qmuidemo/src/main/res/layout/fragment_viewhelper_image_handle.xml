@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="25dp">
 
@@ -37,6 +37,7 @@
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        android:contentDescription="@string/common_example"
                         android:src="@mipmap/qd_show_img_1"/>
 
                     <TextView
@@ -51,6 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/viewHelper_square_margin"
+                    android:contentDescription="@null"
                     android:src="@mipmap/arrowright"/>
 
                 <LinearLayout
@@ -63,6 +65,7 @@
                         android:id="@+id/result"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        android:contentDescription="@string/common_example"
                         android:src="@mipmap/qd_show_img_1"/>
 
                     <TextView

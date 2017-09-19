@@ -39,7 +39,6 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
     @BindView(R.id.contentViewPager) ViewPager mContentViewPager;
 
-    private View mRootView;
     private Map<ContentPage, View> mPageMap = new HashMap<>();
     private ContentPage mDestPage = ContentPage.Item1;
     private QDItemDescription mQDItemDescription;
@@ -68,22 +67,18 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
             container.removeView((View) object);
         }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return super.getPageTitle(position);
-        }
     };
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
+        ButterKnife.bind(this, rootView);
 
         mQDItemDescription = QDDataManager.getInstance().getDescription(this.getClass());
         initTopBar();
         initTabAndPager();
 
-        return mRootView;
+        return rootView;
     }
 
     private void initTopBar() {

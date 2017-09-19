@@ -25,7 +25,7 @@ public class QDRecyclerViewAdapter extends RecyclerView.Adapter<QDRecyclerViewAd
     }
 
     public static List<Data> generateDatas(int count) {
-        ArrayList<Data> mDatas = new ArrayList<Data>();
+        ArrayList<Data> mDatas = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             mDatas.add(new Data(String.valueOf(i)));
         }

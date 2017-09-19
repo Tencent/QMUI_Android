@@ -32,7 +32,6 @@ public class QDAnimationListViewFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.listview) QMUIAnimationListView mListView;
 
-    private MyAdapter mAdapter;
     private List<String> mData = new ArrayList<>();
 
     @Override
@@ -93,8 +92,8 @@ public class QDAnimationListViewFragment extends BaseFragment {
         for (int i = 0; i < 20; i++) {
             mData.add("item " + (i + 1));
         }
-        mAdapter = new MyAdapter(getContext(), mData);
-        mListView.setAdapter(mAdapter);
+        MyAdapter adapter = new MyAdapter(getContext(), mData);
+        mListView.setAdapter(adapter);
     }
 
 

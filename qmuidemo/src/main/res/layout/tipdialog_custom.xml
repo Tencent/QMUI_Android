@@ -8,6 +8,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="自定义 icon"
         android:src="@drawable/qmui_icon_notify_info"/>
 
     <TextView

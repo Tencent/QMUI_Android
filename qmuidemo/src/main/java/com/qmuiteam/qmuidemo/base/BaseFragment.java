@@ -188,7 +188,7 @@ public abstract class BaseFragment extends Fragment {
                 }
             });
             return nextAnimation;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
         return null;

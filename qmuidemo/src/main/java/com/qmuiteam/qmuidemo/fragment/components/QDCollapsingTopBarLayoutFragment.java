@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
 public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
     private static final String TAG = "CollapsingTopBarLayout";
 
-    private View mRootView;
     QDRecyclerViewAdapter mRecyclerViewAdapter;
     LinearLayoutManager mPagerLayoutManager;
 
@@ -38,8 +37,8 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_collapsing_topbar_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_collapsing_topbar_layout, null);
+        ButterKnife.bind(this, rootView);
         initTopBar();
         mPagerLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mPagerLayoutManager);
@@ -54,7 +53,7 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
             }
         });
 
-        return mRootView;
+        return rootView;
     }
 
     @Override

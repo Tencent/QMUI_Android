@@ -31,7 +31,8 @@
                 android:id="@+id/solidImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"/>
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"
+                android:contentDescription="@string/common_example"/>
 
             <!-- 创建一张圆形渐变图片，支持圆角 -->
             <TextView
@@ -42,7 +43,8 @@
                 android:id="@+id/circleGradient"
                 android:layout_width="@dimen/drawableHelper_common_shape_size"
                 android:layout_height="@dimen/drawableHelper_common_shape_size"
-                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"/>
+                android:layout_marginBottom="@dimen/drawableHelper_column_marginBottom"
+                android:contentDescription="@string/common_example"/>
 
             <!-- 设置 Drawable 的颜色 -->
             <TextView
@@ -59,19 +61,22 @@
                 <ImageView
                     android:id="@+id/tintColorOrigin"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/common_example"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/colorHelper_square_margin"
+                    android:contentDescription="@null"
                     android:src="@mipmap/arrowright"/>
 
                 <ImageView
                     android:id="@+id/tintColor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/colorHelper_square_margin"/>
+                    android:layout_marginLeft="@dimen/colorHelper_square_margin"
+                    android:contentDescription="@string/common_example"/>
 
             </LinearLayout>
 

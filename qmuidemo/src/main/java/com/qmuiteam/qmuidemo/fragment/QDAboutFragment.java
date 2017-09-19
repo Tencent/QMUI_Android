@@ -13,6 +13,7 @@ import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +58,7 @@ public class QDAboutFragment extends BaseFragment {
                 })
                 .addTo(mAboutGroupListView);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy", Locale.CHINA);
         String currentYear = dateFormat.format(new java.util.Date());
         mCopyrightTextView.setText(String.format(getResources().getString(R.string.about_copyright), currentYear));
 

@@ -35,7 +35,6 @@ public class QDPullRefreshFragment extends BaseFragment {
     @BindView(R.id.pull_to_refresh) QMUIPullRefreshLayout mPullRefreshLayout;
     @BindView(R.id.listview) ListView mListView;
 
-    private QDDataManager mQDDataManager;
     private QDItemDescription mQDItemDescription;
 
     @Override
@@ -43,8 +42,8 @@ public class QDPullRefreshFragment extends BaseFragment {
         View root = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_pull_refresh_listview, null);
         ButterKnife.bind(this, root);
 
-        mQDDataManager = QDDataManager.getInstance();
-        mQDItemDescription = mQDDataManager.getDescription(this.getClass());
+        QDDataManager QDDataManager = com.qmuiteam.qmuidemo.QDDataManager.getInstance();
+        mQDItemDescription = QDDataManager.getDescription(this.getClass());
         initTopBar();
         initData();
 

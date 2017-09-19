@@ -2,6 +2,7 @@
 
     <!-- common -->
     <string name="app_name">QMUI</string>
+    <string name="common_example">示例图片</string>
 
     <!-- Components 系列界面 -->
 
@@ -124,7 +125,6 @@
     <!-- ViewHelper View 处理工具 -->
     <string name="viewHelper_scale_origin">原始</string>
     <string name="viewHelper_scale_result">%1$.1f等比缩放</string>
-    <string name="viewHelper_background_animation_blink_title">做背景闪动的动画</string>
 
     <!-- 其他界面 -->
 
