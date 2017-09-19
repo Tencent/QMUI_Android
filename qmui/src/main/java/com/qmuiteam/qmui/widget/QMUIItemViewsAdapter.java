@@ -43,7 +43,7 @@ public abstract class QMUIItemViewsAdapter<T, V extends View> {
             if (notCacheTag == null || !(boolean) notCacheTag) {
                 try {
                     mCachePool.release(view);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 

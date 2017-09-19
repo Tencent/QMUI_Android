@@ -14,7 +14,6 @@ import com.qmuiteam.qmui.QMUILog;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -197,9 +196,8 @@ public class QMUIDeviceHelper {
         if (board == null) {
             return false;
         }
-        final int size = boards.length;
-        for (int i = 0; i < size; i++) {
-            if (board.equals(boards[i])) {
+        for (String board1 : boards) {
+            if (board.equals(board1)) {
                 return true;
             }
         }
@@ -238,7 +236,6 @@ public class QMUIDeviceHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
         }
         return false;
     }

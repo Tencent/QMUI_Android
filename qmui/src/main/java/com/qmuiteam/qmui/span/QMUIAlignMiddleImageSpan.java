@@ -26,7 +26,7 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan {
      */
     private boolean mAvoidSuperChangeFontMetrics = false;
 
-    private int mWidth;
+    @SuppressWarnings("FieldCanBeLocal") private int mWidth;
 
     /**
      * @param d                 作为 span 的 Drawable

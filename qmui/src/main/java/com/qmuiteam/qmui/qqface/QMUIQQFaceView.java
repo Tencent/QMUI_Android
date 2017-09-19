@@ -524,11 +524,7 @@ public class QMUIQQFaceView extends View {
             mNeedDrawLine = mMaxLine;
         }
 
-        if (mLines > mNeedDrawLine) {
-            mIsNeedEllipsize = true;
-        } else {
-            mIsNeedEllipsize = false;
-        }
+        mIsNeedEllipsize = mLines > mNeedDrawLine;
     }
 
     private void calculateLinesInner(List<QMUIQQFaceCompiler.Element> elements, int limitWidth) {

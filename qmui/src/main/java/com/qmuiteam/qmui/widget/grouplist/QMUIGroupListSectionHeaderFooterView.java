@@ -19,7 +19,6 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
  */
 
 public class QMUIGroupListSectionHeaderFooterView extends LinearLayout {
-    private boolean mIsFooter = false;
 
     private TextView mTextView;
 
@@ -44,11 +43,10 @@ public class QMUIGroupListSectionHeaderFooterView extends LinearLayout {
 
     public QMUIGroupListSectionHeaderFooterView(Context context, CharSequence titleText, boolean isFooter) {
         this(context);
-        mIsFooter = isFooter;
 
-        if(mIsFooter){
+        if (isFooter) {
             // Footer View 不需要 padding bottom
-           setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), 0);
+            setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), 0);
         }
 
         setText(titleText);
@@ -58,7 +56,7 @@ public class QMUIGroupListSectionHeaderFooterView extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.qmui_group_list_section_layout, this, true);
         setGravity(Gravity.BOTTOM);
 
-        mTextView = (TextView)findViewById(R.id.group_list_section_header_textView);
+        mTextView = (TextView) findViewById(R.id.group_list_section_header_textView);
     }
 
     public void setText(CharSequence text) {

@@ -478,7 +478,7 @@ public class QMUIAnimationListView extends ListView {
         anim.setDuration(duration);
 
         if (postBack) {
-            final WeakReference<View> wr = new WeakReference<View>(view);
+            final WeakReference<View> wr = new WeakReference<>(view);
             anim.addListener(new ManipulateAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -586,27 +586,15 @@ public class QMUIAnimationListView extends ListView {
         }
 
         @Override
-        public boolean isEnabled(int position) {
-            return super.isEnabled(position);
-        }
-
-        @Override
         public boolean hasStableIds() {
             boolean stable = mAdapter.hasStableIds();
-            if (!stable) {
-                mIsAnimationEnabled = false;
-            } else {
-                mIsAnimationEnabled = true;
-            }
+            mIsAnimationEnabled = stable;
             return stable;
         }
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isEnabled()) {
-            return super.dispatchTouchEvent(ev);
-        }
-        return false;
+        return isEnabled() && super.dispatchTouchEvent(ev);
     }
 }

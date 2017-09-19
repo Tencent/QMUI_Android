@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -630,7 +631,7 @@ public class QMUIBottomSheet extends Dialog {
         public BottomGridSheetBuilder addItem(int imageRes, CharSequence text, Object tag, @Style int style, int subscriptRes) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             // 给机会让用的人自定义ItemView
-            LinearLayout itemView = (LinearLayout) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
+            @SuppressLint("InflateParams") LinearLayout itemView = (LinearLayout) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
             // 字体加粗
             TextView titleTV = (TextView) itemView.findViewById(R.id.grid_item_title);
             if(mItemTextTypeFace != null){

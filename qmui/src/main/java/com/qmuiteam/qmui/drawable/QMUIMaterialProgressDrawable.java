@@ -91,7 +91,7 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
     /** The number of points in the progress "star". */
     private static final float NUM_POINTS = 5f;
     /** The list of animators operating on this drawable. */
-    private final ArrayList<Animation> mAnimators = new ArrayList<Animation>();
+    private final ArrayList<Animation> mAnimators = new ArrayList<>();
 
     /** The indicator ring, used to manage animation state. */
     private final Ring mRing;
@@ -121,7 +121,23 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
         mParent = parent;
         mResources = context.getResources();
 
-        mRing = new Ring(mCallback);
+        Callback callback = new Callback() {
+            @Override
+            public void invalidateDrawable(Drawable d) {
+                invalidateSelf();
+            }
+
+            @Override
+            public void scheduleDrawable(Drawable d, Runnable what, long when) {
+                scheduleSelf(what, when);
+            }
+
+            @Override
+            public void unscheduleDrawable(Drawable d, Runnable what) {
+                unscheduleSelf(what);
+            }
+        };
+        mRing = new Ring(callback);
         mRing.setColors(COLORS);
 
         updateSizes(DEFAULT);
@@ -308,22 +324,20 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
 
     // Adapted from ArgbEvaluator.java
     private int evaluateColorChange(float fraction, int startValue, int endValue) {
-        int startInt = (Integer) startValue;
-        int startA = (startInt >> 24) & 0xff;
-        int startR = (startInt >> 16) & 0xff;
-        int startG = (startInt >> 8) & 0xff;
-        int startB = startInt & 0xff;
+        int startA = (startValue >> 24) & 0xff;
+        int startR = (startValue >> 16) & 0xff;
+        int startG = (startValue >> 8) & 0xff;
+        int startB = startValue & 0xff;
 
-        int endInt = (Integer) endValue;
-        int endA = (endInt >> 24) & 0xff;
-        int endR = (endInt >> 16) & 0xff;
-        int endG = (endInt >> 8) & 0xff;
-        int endB = endInt & 0xff;
+        int endA = (endValue >> 24) & 0xff;
+        int endR = (endValue >> 16) & 0xff;
+        int endG = (endValue >> 8) & 0xff;
+        int endB = endValue & 0xff;
 
-        return (int) ((startA + (int) (fraction * (endA - startA))) << 24)
-                | (int) ((startR + (int) (fraction * (endR - startR))) << 16)
-                | (int) ((startG + (int) (fraction * (endG - startG))) << 8)
-                | (int) ((startB + (int) (fraction * (endB - startB))));
+        return (startA + (int) (fraction * (endA - startA))) << 24
+                | (startR + (int) (fraction * (endR - startR))) << 16
+                | (startG + (int) (fraction * (endG - startG))) << 8
+                | (startB + (int) (fraction * (endB - startB)));
     }
 
     /**
@@ -447,23 +461,6 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
         });
         mAnimation = animation;
     }
-
-    private final Callback mCallback = new Callback() {
-        @Override
-        public void invalidateDrawable(Drawable d) {
-            invalidateSelf();
-        }
-
-        @Override
-        public void scheduleDrawable(Drawable d, Runnable what, long when) {
-            scheduleSelf(what, when);
-        }
-
-        @Override
-        public void unscheduleDrawable(Drawable d, Runnable what) {
-            unscheduleSelf(what);
-        }
-    };
 
     private static class Ring {
         private final RectF mTempBounds = new RectF();

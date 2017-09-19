@@ -15,9 +15,8 @@ public class QMUIColorHelper {
      * @param alpha 取值为[0,1]，0表示全透明，1表示不透明
      * @return
      */
-    public static final int setColorAlpha(@ColorInt int color, float alpha) {
-        int result = color & 0x00ffffff | (int) (alpha * 255) << 24; // 清掉alpha信息后加上新的alpha信息
-        return result;
+    public static int setColorAlpha(@ColorInt int color, float alpha) {
+        return color & 0x00ffffff | (int) (alpha * 255) << 24; // 清掉alpha信息后加上新的alpha信息
     }
 
     /**

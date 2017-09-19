@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 
 /**
  * Created by Kayo on 2016/11/18.
+ *
  */
 public class QMUIPackageHelper {
     private static String appVersionName;

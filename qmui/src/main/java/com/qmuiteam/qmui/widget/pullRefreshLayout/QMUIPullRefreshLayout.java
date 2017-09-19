@@ -102,7 +102,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private boolean mIsDragging;
     private float mInitialDownY;
     private float mInitialDownX;
-    private float mInitialMotionY;
+    @SuppressWarnings("FieldCanBeLocal") private float mInitialMotionY;
     private float mLastMotionY;
     private float mDragRate = 0.65f;
     private RefreshOffsetCalculator mRefreshOffsetCalculator;
@@ -237,6 +237,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         // if this is a List < L or another view that doesn't support nested
         // scrolling, ignore this request so that the vertical scroll event
         // isn't stolen
+        //noinspection StatementWithEmptyBody
         if ((android.os.Build.VERSION.SDK_INT < 21 && mTargetView instanceof AbsListView)
                 || (mTargetView != null && !ViewCompat.isNestedScrollingEnabled(mTargetView))) {
             // Nope.

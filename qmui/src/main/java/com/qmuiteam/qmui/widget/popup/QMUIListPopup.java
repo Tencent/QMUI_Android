@@ -16,7 +16,6 @@ import com.qmuiteam.qmui.widget.QMUIWrapContentListView;
  */
 
 public class QMUIListPopup extends QMUIPopup {
-    private ListView mListView;
     private BaseAdapter mAdapter;
 
     /**
@@ -31,13 +30,13 @@ public class QMUIListPopup extends QMUIPopup {
     }
 
     public void create(int width, int maxHeight, AdapterView.OnItemClickListener onItemClickListener) {
-        mListView = new QMUIWrapContentListView(mContext, maxHeight);
+        ListView listView = new QMUIWrapContentListView(mContext, maxHeight);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, maxHeight);
-        mListView.setLayoutParams(lp);
-        mListView.setAdapter(mAdapter);
-        mListView.setVerticalScrollBarEnabled(false);
-        mListView.setOnItemClickListener(onItemClickListener);
-        mListView.setDivider(null);
-        setContentView(mListView);
+        listView.setLayoutParams(lp);
+        listView.setAdapter(mAdapter);
+        listView.setVerticalScrollBarEnabled(false);
+        listView.setOnItemClickListener(onItemClickListener);
+        listView.setDivider(null);
+        setContentView(listView);
     }
 }

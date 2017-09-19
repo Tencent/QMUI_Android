@@ -60,6 +60,7 @@
     <ImageView
         android:id="@+id/group_list_item_tips_dot"
         style="?attr/QMUITipPointStyle"
+        android:contentDescription="Red dot"
         android:visibility="gone"/>
 
     <!-- 更新提示 -->

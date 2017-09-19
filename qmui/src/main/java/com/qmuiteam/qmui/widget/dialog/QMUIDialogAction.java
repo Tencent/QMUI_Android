@@ -1,8 +1,11 @@
 package com.qmuiteam.qmui.widget.dialog;
 
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -170,6 +174,7 @@ public class QMUIDialogAction {
 	/**
 	 * 生成适用于对话框的按钮
 	 */
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public static Button generateSpanActionButton(Context context, String text, int iconRes, boolean hasLeftMargin) {
 		Button button = new Button(context);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -185,7 +190,7 @@ public class QMUIDialogAction {
 		button.setMinimumHeight(QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_action_button_height));
 		button.setText(text);
 		if (iconRes != 0) {
-			Drawable drawable = context.getResources().getDrawable(iconRes);
+			Drawable drawable = ContextCompat.getDrawable(context, iconRes);
 			if (drawable != null) {
 				drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
 				button.setCompoundDrawables(drawable, null, null, null);
@@ -203,7 +208,8 @@ public class QMUIDialogAction {
 		return button;
 	}
 
-	public static class BlockActionView extends FrameLayout {
+	@SuppressLint("ViewConstructor")
+    public static class BlockActionView extends FrameLayout {
 
 		private Button mButton;
 
@@ -217,7 +223,7 @@ public class QMUIDialogAction {
 					ViewGroup.LayoutParams.MATCH_PARENT,
 					QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_dialog_action_block_btn_height));
 			setLayoutParams(parentLp);
-			setBackground(QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_dialog_action_block_btn_bg));
+            QMUIViewHelper.setBackgroundKeepingPadding(this, QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_dialog_action_block_btn_bg));
 			setPadding(
 					QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_dialog_padding_horizontal),
 					0,

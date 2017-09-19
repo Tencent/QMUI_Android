@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.popup;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.LayoutInflater;
@@ -243,7 +244,7 @@ public class QMUIPopup extends QMUIBasePopup {
 
     @Override
     public void setContentView(View root) {
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
+        @SuppressLint("InflateParams") FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
                 .inflate(R.layout.qmui_popup_layout, null, false);
         mArrowDown = (ImageView) layout.findViewById(R.id.arrow_down);
         mArrowUp = (ImageView) layout.findViewById(R.id.arrow_up);

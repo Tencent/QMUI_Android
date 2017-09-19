@@ -220,7 +220,7 @@ public class QMUIStatusBarHelper {
                     extraFlagField.invoke(window, 0, darkModeFlag);//清除黑色字体
                 }
                 result = true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -267,7 +267,7 @@ public class QMUIStatusBarHelper {
                 meizuFlags.setInt(lp, value);
                 window.setAttributes(lp);
                 result = true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -317,11 +317,10 @@ public class QMUIStatusBarHelper {
                 if (field != null) {
                     Class<?> type = field.getType();
                     if (type == int.class) {
-                        int value = field.getInt(null);
-                        sTransparentValue = value;
+                        sTransparentValue = field.getInt(null);
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return sTransparentValue;

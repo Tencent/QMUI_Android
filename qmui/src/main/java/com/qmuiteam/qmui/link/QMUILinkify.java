@@ -119,7 +119,7 @@ public class QMUILinkify {
                     if (nextChar < 256 && !((0 <= UrlEndAppendNextChars.indexOf(nextChar)) || Character.isWhitespace(nextChar))) {
                         return false;
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
                 if (start == 0) {
@@ -128,7 +128,7 @@ public class QMUILinkify {
                 if (s.charAt(start - 1) == '@') {
                     return false;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
 
@@ -223,7 +223,7 @@ public class QMUILinkify {
      * attached to the Spannable, to avoid problems if you call it
      * repeatedly on the same text.
      */
-    public static final boolean addLinks(Spannable text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    public static boolean addLinks(Spannable text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
         if (mask == 0) {
             return false;
         }
@@ -276,7 +276,7 @@ public class QMUILinkify {
      * are found the movement method for the TextView is set to
      * LinkMovementMethod.
      */
-    public static final boolean addLinks(TextView text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    public static boolean addLinks(TextView text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
         if (mask == 0) {
             return false;
         }
@@ -304,7 +304,7 @@ public class QMUILinkify {
         }
     }
 
-    private static final void addLinkMovementMethod(TextView t) {
+    private static void addLinkMovementMethod(TextView t) {
         MovementMethod m = t.getMovementMethod();
 
         if ((m == null) || !(m instanceof LinkMovementMethod)) {
@@ -326,7 +326,7 @@ public class QMUILinkify {
      *                prepended to the url of links that do not have
      *                a scheme specified in the link text
      */
-    public static final void addLinks(TextView text, Pattern pattern, String scheme) {
+    public static void addLinks(TextView text, Pattern pattern, String scheme) {
         addLinks(text, pattern, scheme, null, null);
     }
 
@@ -345,8 +345,8 @@ public class QMUILinkify {
      *                    additional control over which pattern matches are
      *                    to be converted into links.
      */
-    public static final void addLinks(TextView text, Pattern p, String scheme,
-                                      MatchFilter matchFilter, TransformFilter transformFilter) {
+    public static void addLinks(TextView text, Pattern p, String scheme,
+                                MatchFilter matchFilter, TransformFilter transformFilter) {
         SpannableString s = SpannableString.valueOf(text.getText());
 
         if (addLinks(s, p, scheme, matchFilter, transformFilter)) {
@@ -366,7 +366,7 @@ public class QMUILinkify {
      *                prepended to the url of links that do not have
      *                a scheme specified in the link text
      */
-    public static final boolean addLinks(Spannable text, Pattern pattern, String scheme) {
+    public static boolean addLinks(Spannable text, Pattern pattern, String scheme) {
         return addLinks(text, pattern, scheme, null, null);
     }
 
@@ -384,9 +384,9 @@ public class QMUILinkify {
      *                    additional control over which pattern matches are
      *                    to be converted into links.
      */
-    public static final boolean addLinks(Spannable s, Pattern p,
-                                         String scheme, MatchFilter matchFilter,
-                                         TransformFilter transformFilter) {
+    public static boolean addLinks(Spannable s, Pattern p,
+                                   String scheme, MatchFilter matchFilter,
+                                   TransformFilter transformFilter) {
         boolean hasMatches = false;
         String prefix = (scheme == null) ? "" : scheme.toLowerCase(Locale.ROOT);
         Matcher m = p.matcher(s);
@@ -412,7 +412,7 @@ public class QMUILinkify {
         return hasMatches;
     }
 
-    private static final void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    private static void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, QMUIOnSpanClickListener l) {
         text.setSpan(new StyleableURLSpan(url, l) {
 
             @Override
@@ -469,15 +469,15 @@ public class QMUILinkify {
 
         boolean hasPrefix = false;
 
-        for (int i = 0; i < prefixes.length; i++) {
-            if (url.regionMatches(true, 0, prefixes[i], 0,
-                    prefixes[i].length())) {
+        for (String prefixe : prefixes) {
+            if (url.regionMatches(true, 0, prefixe, 0,
+                    prefixe.length())) {
                 hasPrefix = true;
 
                 // Fix capitalization if necessary
-                if (!url.regionMatches(false, 0, prefixes[i], 0,
-                        prefixes[i].length())) {
-                    url = prefixes[i] + url.substring(prefixes[i].length());
+                if (!url.regionMatches(false, 0, prefixe, 0,
+                        prefixe.length())) {
+                    url = prefixe + url.substring(prefixe.length());
                 }
 
                 break;
@@ -502,9 +502,8 @@ public class QMUILinkify {
 
             if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
                 LinkSpec spec = new LinkSpec();
-                String url = makeUrl(m.group(0), schemes, m, transformFilter);
 
-                spec.url = url;
+                spec.url = makeUrl(m.group(0), schemes, m, transformFilter);
                 spec.start = start;
                 spec.end = end;
 
@@ -528,9 +527,8 @@ public class QMUILinkify {
 
             if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
                 LinkSpec spec = new LinkSpec();
-                String url = makeUrl(m.group(0), schemes, m, transformFilter);
 
-                spec.url = url;
+                spec.url = makeUrl(m.group(0), schemes, m, transformFilter);
                 spec.start = start;
                 spec.end = end;
 
@@ -540,8 +538,8 @@ public class QMUILinkify {
     }
 
     private static boolean isInExcepts(CharSequence data, Pattern[] excepts) {
-        for (int i = 0; i < excepts.length; i++) {
-            Matcher m = excepts[i].matcher(data);
+        for (Pattern except : excepts) {
+            Matcher m = except.matcher(data);
             if (m.find()) {
                 return true;
             }
@@ -605,7 +603,7 @@ public class QMUILinkify {
                 string = string.substring(end);
                 base += end;
 
-                String encodedAddress = null;
+                String encodedAddress;
 
                 try {
                     encodedAddress = URLEncoder.encode(address, "UTF-8");
@@ -620,7 +618,6 @@ public class QMUILinkify {
             // findAddress may fail with an unsupported exception on platforms without a WebView.
             // In this case, we will not append anything to the links variable: it would have died
             // in WebView.findAddress.
-            return;
         }
     }
 

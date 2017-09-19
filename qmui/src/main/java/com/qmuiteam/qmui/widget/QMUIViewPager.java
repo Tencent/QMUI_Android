@@ -64,23 +64,16 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
 
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!mIsSwipeable) {
-            return false;
-        }
+        return mIsSwipeable && super.onTouchEvent(ev);
 
-        return super.onTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!mIsSwipeable) {
-            return false;
-        }
+        return mIsSwipeable && super.onInterceptTouchEvent(ev);
 
-        return super.onInterceptTouchEvent(ev);
     }
 
     @Override

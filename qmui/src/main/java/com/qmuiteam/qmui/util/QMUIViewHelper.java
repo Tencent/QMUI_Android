@@ -160,7 +160,7 @@ public class QMUIViewHelper {
         final Drawable oldBgDrawable = v.getBackground();
         setBackgroundKeepingPadding(v, bgDrawable);
 
-        List<Animator> animatorList = new ArrayList<Animator>();
+        List<Animator> animatorList = new ArrayList<>();
         for (int i = 0; i < animationCount; i++) {
             ObjectAnimator animator = ObjectAnimator.ofInt(v.getBackground(), "alpha", alphaArray[i], alphaArray[i + 1]);
             animatorList.add(animator);

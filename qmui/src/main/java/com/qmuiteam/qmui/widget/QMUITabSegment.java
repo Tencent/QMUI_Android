@@ -118,7 +118,6 @@ public class QMUITabSegment extends HorizontalScrollView {
     private View mIndicatorView;
     private int mSelectedIndex = Integer.MIN_VALUE;
     private int mPendingSelectedIndex = Integer.MIN_VALUE;
-    private int mModeFixItemWidth;
     private Container mContentLayout;
     /**
      * item的默认字体大小
@@ -260,6 +259,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             return;
         }
         className = getFullClassName(context, className);
+        //noinspection TryWithIdenticalCatches
         try {
             ClassLoader classLoader;
             if (isInEditMode()) {
@@ -1437,13 +1437,13 @@ public class QMUITabSegment extends HorizontalScrollView {
             int childWidthMeasureSpec, childHeightMeasureSpec, resultWidthSize = 0;
             if (mMode == MODE_FIXED) {
                 resultWidthSize = widthSpecSize;
-                mModeFixItemWidth = widthSpecSize / visibleChild;
+                int modeFixItemWidth = widthSpecSize / visibleChild;
                 for (i = 0; i < size; i++) {
                     final View child = childViews.get(i);
                     if (child.getVisibility() != VISIBLE) {
                         continue;
                     }
-                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(mModeFixItemWidth, MeasureSpec.EXACTLY);
+                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(modeFixItemWidth, MeasureSpec.EXACTLY);
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
                 }

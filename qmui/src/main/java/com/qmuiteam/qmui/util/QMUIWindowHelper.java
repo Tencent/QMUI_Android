@@ -1,7 +1,6 @@
 package com.qmuiteam.qmui.util;
 
 import android.os.Build;
-import android.view.ViewDebug;
 import android.view.WindowManager;
 
 /**

@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.util.ArrayList;
 
@@ -188,7 +189,7 @@ public class QMUIDialog extends Dialog {
                 mTextView.setText(mMessage);
                 mTextView.setPadding(
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                        hasTitle() ? QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_confirm_content_padding_top) : QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_top_when_no_title),
+                        QMUIResHelper.getAttrDimen(mContext, hasTitle() ? R.attr.qmui_dialog_confirm_content_padding_top : R.attr.qmui_dialog_content_padding_top_when_no_title),
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_confirm_content_padding_bottom)
                 );
@@ -282,13 +283,13 @@ public class QMUIDialog extends Dialog {
             mMainLayout.setBackgroundResource(R.drawable.qmui_edittext_bg_border_bottom);
             mMainLayout.setLayoutParams(lp);
 
-			if(mTransformationMethod!=null){
-				mEditText.setTransformationMethod(mTransformationMethod);
-			}else{
-				mEditText.setInputType(mInputType);
-			}
+            if (mTransformationMethod != null) {
+                mEditText.setTransformationMethod(mTransformationMethod);
+            } else {
+                mEditText.setInputType(mInputType);
+            }
 
-			mEditText.setBackgroundResource(0);
+            mEditText.setBackgroundResource(0);
             mEditText.setPadding(0, 0, 0, QMUIDisplayHelper.dpToPx(5));
             RelativeLayout.LayoutParams editLp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             editLp.addRule(RelativeLayout.LEFT_OF, mRightImageView.getId());
@@ -395,12 +396,14 @@ public class QMUIDialog extends Dialog {
             mMenuItemContainer.setLayoutParams(layoutParams);
             mMenuItemContainer.setOrientation(LinearLayout.VERTICAL);
             if (mMenuItemViews.size() == 1) {
-                mMenuItemContainer.setPadding(
-                        0,
-                        hasTitle() ? QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_top_when_list) : 0,
-                        0,
-                        mActions.size() > 0 ? QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom) : 0
+                mMenuItemContainer.setPadding(0, 0, 0, 0
                 );
+                if (hasTitle()) {
+                    QMUIViewHelper.setPaddingTop(mMenuItemContainer, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_top_when_list));
+                }
+                if (mActions.size() > 0) {
+                    QMUIViewHelper.setPaddingBottom(mMenuItemContainer, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom));
+                }
             }
             for (QMUIDialogMenuItemView itemView : mMenuItemViews) {
                 mMenuItemContainer.addView(itemView, mMenuItemLp);
@@ -425,8 +428,8 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件
          */
         public MenuDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (int i = 0; i < items.length; i++) {
-                addItem(new QMUIDialogMenuItemView.TextItemView(mContext, items[i]), listener);
+            for (CharSequence item : items) {
+                addItem(new QMUIDialogMenuItemView.TextItemView(mContext, item), listener);
             }
             return this;
         }
@@ -491,8 +494,8 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件,可以在点击事件里调用 {@link #setCheckedIndex(int)} 来设置选中某些菜单项
          */
         public CheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (int i = 0; i < items.length; i++) {
-                addItem(new QMUIDialogMenuItemView.MarkItemView(mContext, items[i]), listener);
+            for (CharSequence item : items) {
+                addItem(new QMUIDialogMenuItemView.MarkItemView(mContext, item), listener);
             }
             return this;
         }
@@ -530,8 +533,8 @@ public class QMUIDialog extends Dialog {
          */
         public MultiCheckableDialogBuilder setCheckedItems(int[] checkedIndexes) {
             int checkedItemRecord = 0;
-            for (int i = 0; i < checkedIndexes.length; i++) {
-                checkedItemRecord += 2 << (checkedIndexes[i]);
+            for (int checkedIndexe : checkedIndexes) {
+                checkedItemRecord += 2 << (checkedIndexe);
             }
             return setCheckedItems(checkedItemRecord);
         }
@@ -543,8 +546,8 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件,可以在点击事件里调用 {@link #setCheckedItems(int[])}} 来设置选中某些菜单项
          */
         public MultiCheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (int i = 0; i < items.length; i++) {
-                addItem(new QMUIDialogMenuItemView.CheckItemView(mContext, true, items[i]), listener);
+            for (CharSequence item : items) {
+                addItem(new QMUIDialogMenuItemView.CheckItemView(mContext, true, item), listener);
             }
             return this;
         }
@@ -603,10 +606,7 @@ public class QMUIDialog extends Dialog {
         }
 
         protected boolean existCheckedItem() {
-            if (getCheckedItemRecord() <= 0) {
-                return true;
-            }
-            return false;
+            return getCheckedItemRecord() <= 0;
         }
     }
 

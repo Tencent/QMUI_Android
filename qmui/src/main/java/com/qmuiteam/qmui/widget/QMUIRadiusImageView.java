@@ -22,7 +22,6 @@ import android.support.annotation.DrawableRes;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
 import com.qmuiteam.qmui.R;
 
@@ -236,9 +235,7 @@ public class QMUIRadiusImageView extends AppCompatImageView {
     }
 
     public boolean isOval() {
-        if (mIsCircle)
-            return false;
-        return mIsOval;
+        return !mIsCircle && mIsOval;
     }
 
     public boolean isSelected() {
@@ -433,6 +430,7 @@ public class QMUIRadiusImageView extends AppCompatImageView {
 
         } else {
             mRectF.left = halfBorderWidth;
+            //noinspection SuspiciousNameCombination
             mRectF.top = halfBorderWidth;
             mRectF.right = width - halfBorderWidth;
             mRectF.bottom = height - halfBorderWidth;

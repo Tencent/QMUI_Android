@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|left"
         android:layout_marginTop="?attr/qmui_popup_arrow_up_margin_top"
+        android:contentDescription="Up arrow"
         android:src="?attr/qmui_popup_arrow_up"/>
 
     <ImageView
@@ -23,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
+        android:contentDescription="Down arrow"
         android:layout_marginBottom="?attr/qmui_popup_arrow_down_margin_bottom"
         android:src="?attr/qmui_popup_arrow_down"/>
 

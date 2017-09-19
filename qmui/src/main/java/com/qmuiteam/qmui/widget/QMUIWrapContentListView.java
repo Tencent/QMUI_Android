@@ -2,7 +2,6 @@ package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 /**

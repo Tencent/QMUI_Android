@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -79,6 +80,7 @@ public class QMUIFloatLayout extends ViewGroup {
         array.recycle();
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -249,11 +251,8 @@ public class QMUIFloatLayout extends ViewGroup {
                 break;
             }
 
-            // 子View的最小x值
-            int childMinX = (parentWidth - getPaddingLeft() - getPaddingRight() - mWidthSumInEachLine[i]) / 2 + getPaddingLeft();
-
             // 遍历该行内的元素，布局每个元素
-            nextChildPositionX = childMinX;
+            nextChildPositionX = (parentWidth - getPaddingLeft() - getPaddingRight() - mWidthSumInEachLine[i]) / 2 + getPaddingLeft(); // 子 View 的最小 x 值
             for (int j = nextChildIndex; j < nextChildIndex + mItemNumberInEachLine[i]; j++) {
                 final View childView = getChildAt(j);
                 if (childView.getVisibility() == GONE) {
@@ -343,11 +342,8 @@ public class QMUIFloatLayout extends ViewGroup {
                 break;
             }
 
-            // 子View的最小x值
-            int childMinX = parentWidth - getPaddingRight() - mWidthSumInEachLine[i];
-
             // 遍历该行内的元素，布局每个元素
-            nextChildPositionX = childMinX;
+            nextChildPositionX = parentWidth - getPaddingRight() - mWidthSumInEachLine[i]; // 初始值为子 View 的最小 x 值
             for (int j = nextChildIndex; j < nextChildIndex + mItemNumberInEachLine[i]; j++) {
                 final View childView = getChildAt(j);
                 if (childView.getVisibility() == GONE) {

@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -228,6 +229,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param style Dialog 的样式
      * @see #create()
      */
+    @SuppressLint("InflateParams")
     public QMUIDialog create(@StyleRes int style) {
         mDialog = new QMUIDialog(mContext, style);
 

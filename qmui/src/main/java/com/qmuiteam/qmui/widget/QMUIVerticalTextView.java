@@ -1,14 +1,14 @@
 package com.qmuiteam.qmui.widget;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
-
-import java.util.Arrays;
 
 /**
  * 在 {@link TextView} 的基础上支持文字竖排
@@ -44,6 +44,8 @@ public class QMUIVerticalTextView extends TextView {
     private void init() {
     }
 
+    @SuppressLint("DrawAllocation")
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -143,6 +145,7 @@ public class QMUIVerticalTextView extends TextView {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onDraw(Canvas canvas) {
         if (!mIsVerticalMode) {
@@ -209,6 +212,7 @@ public class QMUIVerticalTextView extends TextView {
     // This method is copied from moai.ik.helper.CharacterHelper.isCJKCharacter(char input)
     private static boolean isCJKCharacter(char input) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(input);
+        //noinspection RedundantIfStatement
         if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
                 || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
                 || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
