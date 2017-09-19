@@ -7,7 +7,6 @@ import android.util.SparseIntArray;
 
 import com.qmuiteam.qmui.qqface.IQMUIQQFaceManager;
 import com.qmuiteam.qmui.qqface.QQFace;
-import com.qmuiteam.qmuidemo.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class QDQQFaceManager implements IQMUIQQFaceManager {
     private static final List<QQFace> mQQFaceList = new ArrayList<>();
     private static final SparseIntArray sEmojisMap = new SparseIntArray(846);
     private static final SparseIntArray sSoftbanksMap = new SparseIntArray(471);
-    private static final ArrayMap<String, String> mQQFaceFileNameList = new ArrayMap<>();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") private static final ArrayMap<String, String> mQQFaceFileNameList = new ArrayMap<>();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
 
     private static QDQQFaceManager sQDQQFaceManager = new QDQQFaceManager();
 
