@@ -25,8 +25,4 @@
     <!-- Span Utils 各种 Span 工具 -->
     <dimen name="spanUtils_column_marginBottom">35dp</dimen>
     <dimen name="spanUtils_common_textSize">16sp</dimen>
-
-    <!-- ColorHelper 颜色工具 -->
-    <dimen name="viewHelper_square_margin">23dp</dimen>
-    <dimen name="viewHelper_square_desc_marginTop">10dp</dimen>
 </resources>
