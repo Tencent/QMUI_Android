@@ -9,8 +9,8 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

@@ -4,6 +4,5 @@
     <issue id="HardcodedText" severity="ignore"/>
     <issue id="SmallSp" severity="ignore"/>
     <issue id="IconMissingDensityFolder" severity="ignore"/>
-    <issue id="MissingTranslation" severity="ignore"/>
     <issue id="RtlHardcoded" severity="ignore"/>
 </lint>

@@ -14,6 +14,8 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,21 +35,7 @@ public class QDProgressBarFragment extends BaseFragment {
     int count;
 
     private QDItemDescription mQDItemDescription;
-    private Handler myHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case STOP:
-                    break;
-                case NEXT:
-                    if (!Thread.currentThread().isInterrupted()) {
-                        mRectProgressBar.setProgress(count);
-                        mCircleProgressBar.setProgress(count);
-                    }
-            }
-        }
-    };
+    private ProgressHandler myHandler = new ProgressHandler();
 
     @Override
     protected View onCreateView() {
@@ -71,6 +59,8 @@ public class QDProgressBarFragment extends BaseFragment {
             }
         });
 
+        myHandler.setProgressBar(mRectProgressBar, mCircleProgressBar);
+
         mStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,16 +68,17 @@ public class QDProgressBarFragment extends BaseFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (int i = 0; i < 20; i++) {
+                        for (int i = 0; i <= 20; i++) {
                             try {
                                 count = (i + 1) * 5;
-                                if (i == 19) {
+                                if (i == 20) {
                                     Message msg = new Message();
                                     msg.what = STOP;
                                     myHandler.sendMessage(msg);
                                 } else {
                                     Message msg = new Message();
                                     msg.what = NEXT;
+                                    msg.arg1 = count;
                                     myHandler.sendMessage(msg);
                                 }
 
@@ -119,6 +110,33 @@ public class QDProgressBarFragment extends BaseFragment {
         });
 
         mTopBar.setTitle(mQDItemDescription.getName());
+    }
+
+    private static class ProgressHandler extends Handler {
+        private WeakReference<QMUIProgressBar> weakRectProgressBar;
+        private WeakReference<QMUIProgressBar> weakCircleProgressBar;
+
+        public void setProgressBar(QMUIProgressBar rectProgressBar, QMUIProgressBar circleProgressBar) {
+            weakRectProgressBar = new WeakReference<>(rectProgressBar);
+            weakCircleProgressBar = new WeakReference<>(circleProgressBar);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case STOP:
+                    break;
+                case NEXT:
+                    if (!Thread.currentThread().isInterrupted()) {
+                        if (weakRectProgressBar.get() != null && weakCircleProgressBar.get() != null) {
+                            weakRectProgressBar.get().setProgress(msg.arg1);
+                            weakCircleProgressBar.get().setProgress(msg.arg1);
+                        }
+                    }
+            }
+
+        }
     }
 
 }
