@@ -122,10 +122,6 @@
     <string name="spanUtils_custom_type_face_title">自定义部分文字的字体</string>
     <string name="spanUtils_rmb">¥</string><!-- ¥相当于&#xA5 -->
 
-    <!-- ViewHelper View 处理工具 -->
-    <string name="viewHelper_scale_origin">原始</string>
-    <string name="viewHelper_scale_result">%1$.1f等比缩放</string>
-
     <!-- 其他界面 -->
 
     <!-- 关于界面 -->
