@@ -9,7 +9,8 @@
         android:background="?attr/app_content_bg_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/home_tab_height"/>
+        android:layout_marginBottom="@dimen/home_tab_height"
+        android:fitsSystemWindows="true"/>
     <com.qmuiteam.qmui.widget.QMUITabSegment
         android:id="@+id/tabs"
         android:layout_gravity="bottom"

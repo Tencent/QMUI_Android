@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <com.qmuiteam.qmui.widget.QMUIAppBarLayout
         android:layout_width="match_parent"
         android:layout_height="256dp"
         android:fitsSystemWindows="true">
@@ -40,7 +40,7 @@
                 app:qmui_topbar_bg_color="@color/qmui_config_color_transparent"
                 app:qmui_topbar_need_separator="false"/>
         </com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout>
-    </android.support.design.widget.AppBarLayout>
+    </com.qmuiteam.qmui.widget.QMUIAppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

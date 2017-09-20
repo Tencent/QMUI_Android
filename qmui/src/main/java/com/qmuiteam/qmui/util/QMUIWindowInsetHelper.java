@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.widget.IWindowInsetLayout;
-import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import java.lang.ref.WeakReference;
 
@@ -68,8 +68,15 @@ public class QMUIWindowInsetHelper {
             Rect childInsets = new Rect(insets);
             computeInsetsWithGravity(child, childInsets);
 
-            child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-
+            if (!isHandleContainer(child)) {
+                child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
+            } else {
+                if (child instanceof IWindowInsetLayout) {
+                    ((IWindowInsetLayout) child).applySystemWindowInsets19(childInsets);
+                } else {
+                    defaultApplySystemWindowInsets19((ViewGroup) child, childInsets);
+                }
+            }
             consumed = true;
         }
 
@@ -114,10 +121,13 @@ public class QMUIWindowInsetHelper {
 
     @SuppressWarnings("deprecation")
     @TargetApi(19)
-    private boolean jumpDispatch(View child) {
-        return !child.getFitsSystemWindows() &&
-                !(child instanceof QMUIWindowInsetLayout) &&
-                !(child instanceof CoordinatorLayout);
+    public static boolean jumpDispatch(View child) {
+        return !child.getFitsSystemWindows() && !isHandleContainer(child);
+    }
+
+    public static boolean isHandleContainer(View child) {
+        return child instanceof IWindowInsetLayout ||
+                child instanceof CoordinatorLayout;
     }
 
     @SuppressLint("RtlHardcoded")
