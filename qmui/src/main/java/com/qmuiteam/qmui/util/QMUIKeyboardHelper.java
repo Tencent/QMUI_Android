@@ -29,8 +29,6 @@ public class QMUIKeyboardHelper {
      * 针对给定的editText显示软键盘（editText会先获得焦点）. 可以和{@link #hideKeyboard(View)}
      * 搭配使用，进行键盘的显示隐藏控制。
      *
-     * @param editText
-     * @author handleychen
      */
 
     public static void showKeyboard(final EditText editText, boolean delay) {
@@ -61,7 +59,6 @@ public class QMUIKeyboardHelper {
      * 隐藏软键盘 可以和{@link #showKeyboard(EditText, boolean)}搭配使用，进行键盘的显示隐藏控制。
      *
      * @param view 当前页面上任意一个可用的view
-     * @author handleychen
      */
     public static boolean hideKeyboard(final View view) {
         if (null == view)

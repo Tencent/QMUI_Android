@@ -480,7 +480,6 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     /**
      * 确定TargetView, 提供机会给子类来做一些初始化的操作
-     * @param targetView
      */
     protected void onSureTargetView(View targetView){
 

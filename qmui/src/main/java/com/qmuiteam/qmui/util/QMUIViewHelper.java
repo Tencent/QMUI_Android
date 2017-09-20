@@ -63,9 +63,6 @@ public class QMUIViewHelper {
 
     /**
      * 获取activity的根view
-     *
-     * @param activity
-     * @return
      */
     public static View getActivityRoot(Activity activity) {
         return ((ViewGroup) activity.findViewById(Window.ID_ANDROID_CONTENT)).getChildAt(0);
@@ -73,8 +70,6 @@ public class QMUIViewHelper {
 
     /**
      * 触发window的insets的广播，使得view的fitSystemWindows得以生效
-     *
-     * @param window
      */
     @SuppressWarnings("deprecation")
     public static void requestApplyInsets(Window window) {
@@ -628,10 +623,10 @@ public class QMUIViewHelper {
     }
 
     /**
-     * 判断 ListView 是否已经滚动到底部
+     * 判断 ListView 是否已经滚动到底部。
      *
-     * @param listView 需要被判断的 ListView
-     * @return
+     * @param listView 需要被判断的 ListView。
+     * @return ListView 已经滚动到底部则返回 true，否则返回 false。
      */
     public static boolean isListViewAlreadyAtBottom(ListView listView) {
         if (listView.getAdapter() == null || listView.getHeight() == 0) {

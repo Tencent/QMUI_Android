@@ -111,13 +111,6 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
         }
     }
 
-    /**
-     * 根据 AttributeSet
-     * @param context
-     * @param attrs
-     * @param defStyleAttr
-     * @return
-     */
     public static QMUIRoundButtonDrawable fromAttributeSet(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.QMUIRoundButton, defStyleAttr, 0);
         ColorStateList colorBg = typedArray.getColorStateList(R.styleable.QMUIRoundButton_qmui_backgroundColor);

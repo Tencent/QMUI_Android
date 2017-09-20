@@ -41,9 +41,7 @@ public class QMUIDisplayHelper {
     private static Boolean sHasCamera = null;
 
     /**
-     * DisplayMetrics
-     *
-     * @return
+     * 获取 DisplayMetrics
      */
     public static DisplayMetrics getDisplayMetrics(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -80,18 +78,14 @@ public class QMUIDisplayHelper {
     }
 
     /**
-     * 屏幕宽度
-     *
-     * @return
+     * 获取屏幕宽度
      */
     public static int getScreenWidth(Context context) {
         return getDisplayMetrics(context).widthPixels;
     }
 
     /**
-     * 屏幕高度
-     *
-     * @return
+     * 获取屏幕高度
      */
     public static int getScreenHeight(Context context) {
         return getDisplayMetrics(context).heightPixels;
@@ -99,13 +93,10 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取屏幕的真实宽高
-     *
-     * @param context
-     * @return
      */
     public static int[] getRealScreenSize(Context context) {
         int[] size = new int[2];
-        int widthPixels = 0, heightPixels = 0;
+        int widthPixels, heightPixels;
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = w.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -136,9 +127,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 单位转换: dp -> px
-     *
-     * @param dp
-     * @return
      */
     public static int dp2px(Context context, int dp) {
         return (int) (getDensity(context) * dp + 0.5);
@@ -146,19 +134,13 @@ public class QMUIDisplayHelper {
 
     /**
      * 单位转换:px -> dp
-     *
-     * @param px
-     * @return
      */
     public static int px2dp(Context context, int px) {
         return (int) (px / getDensity(context) + 0.5);
     }
 
     /**
-     * 是否有状态栏
-     *
-     * @param context
-     * @return
+     * 判断是否有状态栏
      */
     public static boolean hasStatusBar(Context context) {
         if (context instanceof Activity) {
@@ -171,9 +153,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取ActionBar高度
-     *
-     * @param context
-     * @return
      */
     public static int getActionBarHeight(Context context) {
         int actionBarHeight = 0;
@@ -187,9 +166,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取状态栏高度
-     *
-     * @param context
-     * @return
      */
     public static int getStatusBarHeight(Context context) {
         Class<?> c;
@@ -211,9 +187,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取虚拟菜单的高度,若无则返回0
-     *
-     * @param context
-     * @return
      */
     public static int getNavMenuHeight(Context context) {
         return getRealScreenSize(context)[1] - getScreenHeight(context);
@@ -234,12 +207,9 @@ public class QMUIDisplayHelper {
 
     /**
      * 是否有硬件menu
-     *
-     * @param context
-     * @return
      */
     public static boolean hasHardwareMenuKey(Context context) {
-        boolean flag = false;
+        boolean flag;
         if (Build.VERSION.SDK_INT < 11)
             flag = true;
         else if (Build.VERSION.SDK_INT >= 14) {
@@ -251,9 +221,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 是否有网络功能
-     *
-     * @param context
-     * @return
      */
     public static boolean hasInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -261,10 +228,7 @@ public class QMUIDisplayHelper {
     }
 
     /**
-     * 是否存在pckName包
-     *
-     * @param pckName
-     * @return
+     * 判断是否存在pckName包
      */
     public static boolean isPackageExist(Context context, String pckName) {
         try {
@@ -278,9 +242,7 @@ public class QMUIDisplayHelper {
     }
 
     /**
-     * SD Card是否ready
-     *
-     * @return
+     * 判断 SD Card 是否 ready
      */
     public static boolean isSdcardReady() {
         return Environment.MEDIA_MOUNTED.equals(Environment
@@ -289,9 +251,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取当前国家的语言
-     *
-     * @param context
-     * @return
      */
     public static String getCurCountryLan(Context context) {
         Configuration config = context.getResources().getConfiguration();
@@ -308,10 +267,7 @@ public class QMUIDisplayHelper {
     }
 
     /**
-     * 是否是中文环境
-     *
-     * @param context
-     * @return
+     * 判断是否为中文环境
      */
     public static boolean isZhCN(Context context) {
         Configuration config = context.getResources().getConfiguration();
@@ -328,8 +284,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 设置全屏
-     *
-     * @param context
      */
     public static void setFullScreen(Context context) {
         if (context instanceof Activity) {
@@ -344,8 +298,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 取消全屏
-     *
-     * @param context
      */
     public static void cancelFullScreen(Context context) {
         if (context instanceof Activity) {
@@ -359,9 +311,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断是否全屏
-     *
-     * @param activity
-     * @return
      */
     public static boolean isFullScreen(Activity activity) {
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();

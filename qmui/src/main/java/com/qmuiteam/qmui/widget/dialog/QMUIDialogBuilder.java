@@ -59,6 +59,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     /**
      * 设置对话框顶部的标题文字
      */
+    @SuppressWarnings("unchecked")
     public T setTitle(String title) {
         if (title != null && title.length() > 0) {
             this.mTitle = title + mContext.getString(R.string.qmui_tool_fixellipsize);
@@ -78,6 +79,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     /**
      * 添加对话框底部的操作按钮
      */
+    @SuppressWarnings("unchecked")
     public T addAction(@Nullable QMUIDialogAction action) {
         if (action != null) {
             mActions.add(action);
@@ -174,6 +176,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param prop     属性
      * @param listener 点击回调事件
      */
+    @SuppressWarnings("unchecked")
     protected T addAction(int iconRes, String str, @QMUIDialogAction.Prop int prop, @QMUIDialogAction.Type int type, QMUIDialogAction.ActionListener listener) {
         QMUIDialogAction action = new QMUIDialogAction(mContext, iconRes, str, type, prop, listener);
         mActions.add(action);

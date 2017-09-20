@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
 
 import java.lang.annotation.Retention;
@@ -210,7 +209,7 @@ public class QMUITipDialog extends Dialog {
             QMUITipDialog dialog = new QMUITipDialog(mContext);
             dialog.setContentView(R.layout.qmui_tip_dialog_layout);
             ViewGroup contentWrap = (ViewGroup) dialog.findViewById(R.id.contentWrap);
-            View customView = LayoutInflater.from(mContext).inflate(mContentLayoutId, contentWrap, true);
+            LayoutInflater.from(mContext).inflate(mContentLayoutId, contentWrap, true);
             return dialog;
         }
     }

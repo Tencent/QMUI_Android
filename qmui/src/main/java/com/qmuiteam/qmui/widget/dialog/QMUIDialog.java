@@ -364,6 +364,7 @@ public class QMUIDialog extends Dialog {
             mMenuItemViews.clear();
         }
 
+        @SuppressWarnings("unchecked")
         public T addItem(QMUIDialogMenuItemView itemView, final OnClickListener listener) {
             itemView.setMenuIndex(mMenuItemViews.size());
             itemView.setListener(new QMUIDialogMenuItemView.MenuItemViewListener() {

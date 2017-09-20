@@ -204,6 +204,7 @@ public class QMUIStatusBarHelper {
      * @param dark   是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回 true
      */
+    @SuppressWarnings("unchecked")
     public static boolean MIUISetStatusBarLightMode(Window window, boolean dark) {
         boolean result = false;
         if (window != null) {
@@ -349,7 +350,7 @@ public class QMUIStatusBarHelper {
     }
 
     private static void initStatusBarHeight(Context context) {
-        Class<?> clazz = null;
+        Class<?> clazz;
         Object obj = null;
         Field field = null;
         try {

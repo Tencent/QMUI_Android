@@ -183,7 +183,7 @@ public class QMUITopBarLayout extends FrameLayout {
     /**
      * 设置是否要 Topbar 底部的分割线
      *
-     * @param enabled
+     * @param enabled true 为显示底部分割线，false 则不显示
      */
     public void setBackgroundDividerEnabled(boolean enabled) {
         if (enabled) {

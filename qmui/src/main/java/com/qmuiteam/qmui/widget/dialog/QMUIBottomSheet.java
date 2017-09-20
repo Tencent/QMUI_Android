@@ -94,12 +94,6 @@ public class QMUIBottomSheet extends Dialog {
     }
 
     @Override
-    public void setContentView(@NonNull View view) {
-        mContentView = view;
-        super.setContentView(view);
-    }
-
-    @Override
     public void setContentView(@NonNull View view, ViewGroup.LayoutParams params) {
         mContentView = view;
         super.setContentView(view, params);
@@ -107,6 +101,12 @@ public class QMUIBottomSheet extends Dialog {
 
     public View getContentView() {
         return mContentView;
+    }
+
+    @Override
+    public void setContentView(@NonNull View view) {
+        mContentView = view;
+        super.setContentView(view);
     }
 
     /**
@@ -238,9 +238,8 @@ public class QMUIBottomSheet extends Dialog {
 
         /**
          * 设置要被选中的 Item 的下标
-         * <p>
-         *     注意:仅当 {@link #mNeedRightMark} 为 true 时才有效
-         * </p>
+         *
+         * 注意:仅当 {@link #mNeedRightMark} 为 true 时才有效
          */
         public BottomListSheetBuilder setCheckedIndex(int checkedIndex) {
             mCheckedIndex = checkedIndex;
@@ -454,6 +453,13 @@ public class QMUIBottomSheet extends Dialog {
             }
         }
 
+        private static class ViewHolder {
+            ImageView imageView;
+            TextView textView;
+            View markView;
+            View redPoint;
+        }
+
         private class ListAdapter extends BaseAdapter {
 
             @Override
@@ -542,23 +548,12 @@ public class QMUIBottomSheet extends Dialog {
             }
         }
 
-        private static class ViewHolder {
-            ImageView imageView;
-            TextView textView;
-            View markView;
-            View redPoint;
-        }
-
     }
 
     /**
      * 生成宫格类型的 {@link QMUIBottomSheet} 对话框。
      */
     public static class BottomGridSheetBuilder implements View.OnClickListener {
-
-        public interface OnSheetItemClickListener {
-            void onClick(QMUIBottomSheet dialog, View itemView);
-        }
 
         /**
          * item 出现在第一行
@@ -568,18 +563,10 @@ public class QMUIBottomSheet extends Dialog {
          * item 出现在第二行
          */
         public static final int SECOND_LINE = 1;
-
-        @Retention(RetentionPolicy.SOURCE)
-        @IntDef({FIRST_LINE, SECOND_LINE})
-        public @interface Style {
-        }
-
         private Context mContext;
-
         private QMUIBottomSheet mDialog;
         private SparseArray<View> mFirstLineViews;
         private SparseArray<View> mSecondLineViews;
-
         private int mMiniItemWidth = -1;
         private OnSheetItemClickListener mOnSheetItemClickListener;
         private Typeface mItemTextTypeFace = null;
@@ -588,7 +575,6 @@ public class QMUIBottomSheet extends Dialog {
         private boolean mIsShowButton = true;
         private CharSequence mButtonText = null;
         private View.OnClickListener mButtonClickListener = null;
-
         public BottomGridSheetBuilder(Context context) {
             mContext = context;
             mFirstLineViews = new SparseArray<>();
@@ -634,7 +620,7 @@ public class QMUIBottomSheet extends Dialog {
             @SuppressLint("InflateParams") LinearLayout itemView = (LinearLayout) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
             // 字体加粗
             TextView titleTV = (TextView) itemView.findViewById(R.id.grid_item_title);
-            if(mItemTextTypeFace != null){
+            if (mItemTextTypeFace != null) {
                 titleTV.setTypeface(mItemTextTypeFace);
             }
             titleTV.setText(text);
@@ -733,25 +719,25 @@ public class QMUIBottomSheet extends Dialog {
             }
 
             // button 在用户自定义了contentView的情况下可能不存在
-            if(mBottomButton != null){
-                if(mIsShowButton){
+            if (mBottomButton != null) {
+                if (mIsShowButton) {
                     mBottomButton.setVisibility(View.VISIBLE);
-                    int dimen = QMUIResHelper.getAttrDimen(mContext,R.attr.qmui_bottom_sheet_grid_padding_vertical);
-                    baseLinearLayout.setPadding(0,dimen,0,0);
-                }else {
+                    int dimen = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_bottom_sheet_grid_padding_vertical);
+                    baseLinearLayout.setPadding(0, dimen, 0, 0);
+                } else {
                     mBottomButton.setVisibility(View.GONE);
                 }
-                if(mBottomButtonTypeFace != null){
+                if (mBottomButtonTypeFace != null) {
                     mBottomButton.setTypeface(mBottomButtonTypeFace);
                 }
-                if(mButtonText != null) {
+                if (mButtonText != null) {
                     mBottomButton.setText(mButtonText);
                 }
 
-                if(mButtonClickListener != null) {
+                if (mButtonClickListener != null) {
                     mBottomButton.setOnClickListener(mButtonClickListener);
-                }else {
-                    mBottomButton.setOnClickListener(new View.OnClickListener(){
+                } else {
+                    mBottomButton.setOnClickListener(new View.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
@@ -814,6 +800,15 @@ public class QMUIBottomSheet extends Dialog {
                 itemView.setLayoutParams(itemLp);
             }
             itemLp.gravity = Gravity.TOP;
+        }
+
+        public interface OnSheetItemClickListener {
+            void onClick(QMUIBottomSheet dialog, View itemView);
+        }
+
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({FIRST_LINE, SECOND_LINE})
+        public @interface Style {
         }
     }
 }

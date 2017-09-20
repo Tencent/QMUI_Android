@@ -123,17 +123,17 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
 
         Callback callback = new Callback() {
             @Override
-            public void invalidateDrawable(Drawable d) {
+            public void invalidateDrawable(@NonNull Drawable d) {
                 invalidateSelf();
             }
 
             @Override
-            public void scheduleDrawable(Drawable d, Runnable what, long when) {
+            public void scheduleDrawable(@NonNull Drawable d, @NonNull Runnable what, long when) {
                 scheduleSelf(what, when);
             }
 
             @Override
-            public void unscheduleDrawable(Drawable d, Runnable what) {
+            public void unscheduleDrawable(@NonNull Drawable d, @NonNull Runnable what) {
                 unscheduleSelf(what);
             }
         };
@@ -222,7 +222,6 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
      * The first color will also be the color of the bar that grows in response
      * to a user swipe gesture.
      *
-     * @param colors
      */
     public void setColorSchemeColors(int... colors) {
         mRing.setColors(colors);
@@ -240,7 +239,7 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
     }
 
     @Override
-    public void draw(Canvas c) {
+    public void draw(@NonNull Canvas c) {
         final Rect bounds = getBounds();
         final int saveCount = c.save();
         c.rotate(mRotation, bounds.exactCenterX(), bounds.exactCenterY());
@@ -783,6 +782,7 @@ public class QMUIMaterialProgressDrawable extends Drawable implements Animatable
             setRotation(0);
         }
 
+        @SuppressWarnings("ConstantConditions")
         private void invalidateSelf() {
             mCallback.invalidateDrawable(null);
         }

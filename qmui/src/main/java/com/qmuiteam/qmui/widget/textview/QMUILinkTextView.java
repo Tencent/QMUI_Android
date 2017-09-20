@@ -131,7 +131,7 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
     /**
      * 是否强制把TextView的事件强制传递给父元素。TextView在有ClickSpan的情况下默认会消耗掉事件
      *
-     * @param needForceEventToParent
+     * @param needForceEventToParent true 为强制把TextView的事件强制传递给父元素，false 则不传递
      */
     public void setNeedForceEventToParent(boolean needForceEventToParent) {
         if (mNeedForceEventToParent != needForceEventToParent) {

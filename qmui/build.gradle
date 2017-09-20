@@ -3,6 +3,7 @@ apply plugin: 'com.android.library'
 group = 'com.qmuiteam'
 version = "1.0.3" // QMUI 发布到 bintray 的版本号
 
+//noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion

@@ -31,7 +31,7 @@ public class QMUIBlockSpaceSpan extends ReplacementSpan {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
 
     }
 }

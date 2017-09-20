@@ -37,11 +37,12 @@ public class QMUIDrawableHelper {
     private static final Canvas sCanvas = new Canvas();
 
     /**
-     * 从一个view创建Bitmap:
-     * 注意点：绘制之前要清掉 View 的焦点，因为焦点可能会改变一个 View 的 UI 状态
+     * 从一个view创建Bitmap。
+     * 注意点：绘制之前要清掉 View 的焦点，因为焦点可能会改变一个 View 的 UI 状态。
      * 来源：https://github.com/tyrantgit/ExplosionField
      *
-     * @param view
+     * @param view 传入一个 View，会获取这个 View 的内容创建 Bitmap。
+     * @param scale 缩放比例，对创建的 Bitmap 进行缩放，数值支持从 0 到 1。
      * @return
      */
     public static Bitmap createBitmapFromView(View view, float scale) {
@@ -95,13 +96,14 @@ public class QMUIDrawableHelper {
     }
 
     /**
-     * 安全的创建bitmap;如果新建 Bitmap 时产生了 OOM，可以主动进行一次 GC - System.gc()，然后再次尝试创建
+     * 安全的创建bitmap。
+     * 如果新建 Bitmap 时产生了 OOM，可以主动进行一次 GC - System.gc()，然后再次尝试创建。
      *
-     * @param width
-     * @param height
-     * @param config
-     * @param retryCount
-     * @return
+     * @param width Bitmap 宽度。
+     * @param height Bitmap 高度。
+     * @param config 传入一个 Bitmap.Config。
+     * @param retryCount 创建 Bitmap 时产生 OOM 后，主动重试的次数。
+     * @return 返回创建的 Bitmap。
      */
     public static Bitmap createBitmapSafely(int width, int height, Bitmap.Config config, int retryCount) {
         try {
@@ -149,9 +151,6 @@ public class QMUIDrawableHelper {
     /**
      * 设置Drawable的颜色
      * <b>这里不对Drawable进行mutate()，会影响到所有用到这个Drawable的地方，如果要避免，请先自行mutate()</b>
-     *
-     * @param drawable
-     * @param tintColor
      */
     public static ColorFilter setDrawableTintColor(Drawable drawable, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
@@ -161,9 +160,6 @@ public class QMUIDrawableHelper {
 
     /**
      * 由一个drawable生成bitmap
-     *
-     * @param drawable
-     * @return
      */
     public static Bitmap drawableToBitmap(Drawable drawable) {
         if (drawable == null)
@@ -190,14 +186,14 @@ public class QMUIDrawableHelper {
     }
 
     /**
-     * 创建一张渐变图片，支持圆角
+     * 创建一张渐变图片，支持韵脚。
      *
      * @param startColor 渐变开始色
      * @param endColor   渐变结束色
      * @param radius     圆角大小
      * @param centerX    渐变中心点 X 轴坐标
      * @param centerY    渐变中心点 Y 轴坐标
-     * @return
+     * @return 返回所创建的渐变图片。
      */
     @TargetApi(16)
     public static GradientDrawable createCircleGradientDrawable(@ColorInt int startColor,
@@ -217,12 +213,12 @@ public class QMUIDrawableHelper {
 
 
     /**
-     * 动态创建带上分隔线或下分隔线的Drawable
+     * 动态创建带上分隔线或下分隔线的Drawable。
      *
-     * @param separatorColor
-     * @param bgColor
-     * @param top
-     * @return
+     * @param separatorColor 分割线颜色。
+     * @param bgColor Drawable 的背景色。
+     * @param top true 则分割线为上分割线，false 则为下分割线。
+     * @return 返回所创建的 Drawable。
      */
     public static LayerDrawable createItemSeparatorBg(@ColorInt int separatorColor, @ColorInt int bgColor, int separatorHeight, boolean top) {
 

@@ -124,8 +124,8 @@ public class QMUITopBar extends RelativeLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ViewParent parent = getParent();
-        while (parent != null && (parent instanceof View)){
-            if(parent instanceof QMUICollapsingTopBarLayout){
+        while (parent != null && (parent instanceof View)) {
+            if (parent instanceof QMUICollapsingTopBarLayout) {
                 makeSureTitleContainerView();
                 return;
             }
@@ -337,8 +337,6 @@ public class QMUITopBar extends RelativeLayout {
      * 生成 TitleContainerView 的 LayoutParams。
      * 左右有按钮时，该 View 在左右按钮之间；
      * 没有左右按钮时，该 View 距离 TopBar 左右边缘有固定的距离
-     *
-     * @return
      */
     private LayoutParams generateTitleContainerViewLp() {
         LayoutParams titleLp = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -359,8 +357,6 @@ public class QMUITopBar extends RelativeLayout {
 
     /**
      * 生成 titleView 或 subTitleView 的 LayoutParams
-     *
-     * @return
      */
     private LinearLayout.LayoutParams generateTitleViewAndSubTitleViewLp() {
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -387,11 +383,11 @@ public class QMUITopBar extends RelativeLayout {
     }
 
     /**
-     * 在TopBar的左侧添加View，如果此前已经有View通过该方法添加到TopBar，则新添加进去的View会出现在已有View的右侧
+     * 在TopBar的左侧添加View，如果此前已经有View通过该方法添加到TopBar，则新添加进去的View会出现在已有View的右侧。
      *
-     * @param view         要添加到 TopBar 左边的 View
+     * @param view         要添加到 TopBar 左边的 View。
      * @param viewId       该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @param layoutParams
+     * @param layoutParams 传入一个 LayoutParams，当把 Button addView 到 TopBar 时，使用这个 LayouyParams。
      */
     public void addLeftView(View view, int viewId, LayoutParams layoutParams) {
         if (mLeftLastViewId == DEFAULT_VIEW_ID) {
@@ -427,11 +423,11 @@ public class QMUITopBar extends RelativeLayout {
     }
 
     /**
-     * 在 TopBar 的右侧添加 View，如果此前已经有 View 通过该方法添加到 TopBar，则新添加进去的 View 会出现在已有View的左侧
+     * 在 TopBar 的右侧添加 View，如果此前已经有 View 通过该方法添加到 TopBar，则新添加进去的 View 会出现在已有View的左侧。
      *
-     * @param view         要添加到 TopBar 右边的 View
+     * @param view         要添加到 TopBar 右边的 View。
      * @param viewId       该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @param layoutParams
+     * @param layoutParams 生成一个 LayoutParams，当把 Button addView 到 TopBar 时，使用这个 LayouyParams。
      */
     public void addRightView(View view, int viewId, LayoutParams layoutParams) {
         if (mRightLastViewId == DEFAULT_VIEW_ID) {
@@ -463,7 +459,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param drawableResId 按钮图片的 resourceId
      * @param viewId        该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId) {
         QMUIAlphaImageButton rightButton = generateTopBarImageButton(drawableResId);
@@ -476,7 +472,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param drawableResId 按钮图片的 resourceId
      * @param viewId        该按钮的 id，可在ids.xml中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId) {
         QMUIAlphaImageButton leftButton = generateTopBarImageButton(drawableResId);
@@ -498,7 +494,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param stringResId 按钮的文字的 resourceId
      * @param viewId      该按钮的id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public Button addLeftTextButton(int stringResId, int viewId) {
         return addLeftTextButton(getResources().getString(stringResId), viewId);
@@ -509,7 +505,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param buttonText 按钮的文字
      * @param viewId     该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public Button addLeftTextButton(String buttonText, int viewId) {
         Button button = generateTopBarTextButton(buttonText);
@@ -522,7 +518,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param stringResId 按钮的文字的 resourceId
      * @param viewId      该按钮的id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public Button addRightTextButton(int stringResId, int viewId) {
         return addRightTextButton(getResources().getString(stringResId), viewId);
@@ -533,7 +529,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param buttonText 按钮的文字
      * @param viewId     该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
-     * @return
+     * @return 返回生成的按钮
      */
     public Button addRightTextButton(String buttonText, int viewId) {
         Button button = generateTopBarTextButton(buttonText);
@@ -545,7 +541,7 @@ public class QMUITopBar extends RelativeLayout {
      * 生成一个文本按钮，并设置文字
      *
      * @param text 按钮的文字
-     * @return
+     * @return 返回生成的按钮
      */
     private Button generateTopBarTextButton(String text) {
         Button button = new Button(getContext());
@@ -717,7 +713,7 @@ public class QMUITopBar extends RelativeLayout {
                 }
             }
             // 计算 titleContainer 的最大宽度
-            int titleContainerWidth = 0;
+            int titleContainerWidth;
             if ((mTitleGravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
                 // 标题水平居中，左右两侧的占位要保持一致
                 titleContainerWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.max(leftViewWidth, rightViewWidth) * 2 - getPaddingLeft() - getPaddingRight();

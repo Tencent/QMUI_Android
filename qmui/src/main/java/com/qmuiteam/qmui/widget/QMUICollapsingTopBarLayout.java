@@ -678,7 +678,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout {
     }
 
     @Override
-    protected boolean verifyDrawable(Drawable who) {
+    protected boolean verifyDrawable(@NonNull Drawable who) {
         return super.verifyDrawable(who) || who == mContentScrim || who == mStatusBarScrim;
     }
 
@@ -1024,9 +1024,6 @@ public class QMUICollapsingTopBarLayout extends FrameLayout {
 
         private static final float DEFAULT_PARALLAX_MULTIPLIER = 0.5f;
 
-        /**
-         * @hide
-         */
         @RestrictTo(LIBRARY_GROUP)
         @IntDef({
                 COLLAPSE_MODE_OFF,
