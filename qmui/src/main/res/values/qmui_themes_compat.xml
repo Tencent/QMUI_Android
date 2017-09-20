@@ -193,7 +193,7 @@
         <!--**********************************************
         *                 qmui common list item          *
         ***********************************************-->
-        <item name="qmui_common_list_item_chevron">@drawable/icon_chevron</item>
+        <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
 
         <!--**********************************************
         *               qmui loading view                *
