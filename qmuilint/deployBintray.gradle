@@ -1,0 +1,84 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+Properties properties = new Properties()
+File projectPropertiesFile = project.file('project.properties')
+if (projectPropertiesFile.exists()) {
+    properties.load(projectPropertiesFile.newDataInputStream())
+} else {
+    throw new Error("Cannot find project.properties file in " + project.name + " folder")
+}
+File localPropertiesFile = project.file("deploy.properties")
+if (localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.newDataInputStream())
+} else {
+    throw new Error("Cannot find deploy.properties file in " + project.name + " folder")
+}
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging properties.getProperty("project.packaging")
+                // Add your description here
+                name properties.getProperty("project.name")
+                url properties.getProperty("project.siteUrl")
+                licenses {
+                    license {
+                        name properties.getProperty("license.name")
+                        url properties.getProperty("license.url")
+                    }
+                }
+                developers {
+                    developer {
+                        id properties.getProperty("developer.id")
+                        name properties.getProperty("developer.name")
+                        email properties.getProperty("developer.email")
+                    }
+                }
+                scm {
+                    connection properties.getProperty("project.gitUrl")
+                    developerConnection properties.getProperty("project.gitUrl")
+                    url properties.getProperty("project.siteUrl")
+                }
+            }
+        }
+    }
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = properties.getProperty("project.repo")
+        name = properties.getProperty("project.name")
+        websiteUrl = properties.getProperty("project.siteUrl")
+        vcsUrl = properties.getProperty("project.gitUrl")
+        licenses = ["MIT"]
+        publish = true
+    }
+}
+javadoc { //javadoc 采用 utf-8 编码否则会报“GBK的不可映射字符”错误
+    options{
+        encoding "UTF-8"
+        charSet "UTF-8"
+    }
+}
