@@ -37,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIDialog} 的使用示例。
  * Created by cgspine on 15/9/15.
  */
 @Widget(widgetClass = QMUIDialog.class, iconRes = R.mipmap.icon_grid_dialog)

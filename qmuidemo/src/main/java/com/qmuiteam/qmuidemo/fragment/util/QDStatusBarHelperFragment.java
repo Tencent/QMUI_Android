@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIStatusBarHelper} 的使用示例。
  * Created by Kayo on 2016/12/12.
  */
 

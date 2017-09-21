@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIBottomSheet} 的使用示例。
  * Created by cgspine on 15/9/15.
  */
 

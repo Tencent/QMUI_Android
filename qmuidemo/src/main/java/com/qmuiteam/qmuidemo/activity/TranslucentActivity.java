@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 沉浸式状态栏的调用示例。
  * Created by Kayo on 2016/12/12.
  */
 

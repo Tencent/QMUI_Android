@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIRadiusImageView} 的使用示例。
  * Created by cgspine on 15/9/15.
  */
 @Widget(widgetClass = QMUIRadiusImageView.class, iconRes = R.mipmap.icon_grid_radius_image_view)

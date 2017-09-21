@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIEmptyView} 的使用示例。
  * Created by cgspine on 15/9/14.
  */
 

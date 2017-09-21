@@ -19,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIGroupListView} 的使用示例。
  * Created by Kayo on 2016/11/21.
  */
 

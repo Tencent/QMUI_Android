@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 
 
+/**
+ * 用于作性能比较的控件。
+ */
+@SuppressWarnings({"JavaDoc", "UnusedReturnValue", "unused", "WeakerAccess"})
 public final class EmojiconHandler {
     private static final HashMap<String, Integer> sQQFaceMap = new HashMap<>();
     private static final List<QQFace> mQQFaceList = new ArrayList<>();

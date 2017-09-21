@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * QMUI 中各种 Span 的使用示例。
  * Created by Kayo on 2016/12/15.
  */
 

@@ -1,5 +1,6 @@
 package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
+import android.annotation.SuppressLint;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -90,6 +91,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 }
             }
 
+            @SuppressLint("CommitTransaction")
             @Override
             protected void populate(ViewGroup container, Object item, int position) {
                 String name = makeFragmentName(container.getId(), position);
@@ -110,6 +112,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 }
             }
 
+            @SuppressLint("CommitTransaction")
             @Override
             protected void destroy(ViewGroup container, int position, Object object) {
                 if (mCurrentTransaction == null) {

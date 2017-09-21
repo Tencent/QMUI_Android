@@ -9,10 +9,12 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 
 /**
+ * 基础的 Activity，配合 {@link BaseFragment} 使用。
  * Created by cgspine on 15/9/14.
  */
 public abstract class BaseFragmentActivity extends AppCompatActivity {
 
+    @SuppressWarnings("SameReturnValue")
     protected abstract int getContextViewId();
 
     @Override
@@ -30,9 +32,7 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
     }
 
     /**
-     * 获取当前fragment
-     *
-     * @return
+     * 获取当前的 Fragment。
      */
     public BaseFragment getCurrentFragment() {
         return (BaseFragment) getSupportFragmentManager().findFragmentById(getContextViewId());
@@ -50,12 +50,12 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
     }
 
     /**
-     * 返回
+     * 退出当前的 Fragment。
      */
     public void popBackStack() {
         if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             BaseFragment fragment = getCurrentFragment();
-            if(fragment == null){
+            if (fragment == null) {
                 finish();
                 return;
             }
@@ -90,8 +90,6 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
      *
      * 如果堆栈没有clazz或者就是当前的clazz（如上例的popBackStack(Detail.class)），就相当于popBackStack()
      * </pre>
-     *
-     * @param clazz
      */
     public void popBackStack(Class<? extends BaseFragment> clazz) {
         getSupportFragmentManager().popBackStack(clazz.getSimpleName(), 0);
@@ -103,12 +101,8 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
      *
      * 如果上一个是目标clazz，则会继续pop，直到上一个不是clazz。
      * </pre>
-     *
-     * @param clazz
      */
     public void popBackStackInclusive(Class<? extends BaseFragment> clazz) {
         getSupportFragmentManager().popBackStack(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
-
-
 }

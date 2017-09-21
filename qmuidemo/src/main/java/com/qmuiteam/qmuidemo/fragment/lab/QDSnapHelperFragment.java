@@ -22,7 +22,7 @@ import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
+/** 使用 {@link SnapHelper} 实现 {@link RecyclerView} 按页滚动。
  * Created by cgspine on 15/9/15.
  */
 

@@ -19,6 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 关于界面
+ *
  * Created by Kayo on 2016/11/18.
  */
 public class QDAboutFragment extends BaseFragment {

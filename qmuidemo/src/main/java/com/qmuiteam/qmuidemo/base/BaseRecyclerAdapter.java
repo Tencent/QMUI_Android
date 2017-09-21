@@ -83,6 +83,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         mLongClickListener = listener;
     }
 
+    @SuppressWarnings("SameReturnValue")
     abstract public int getItemLayoutId(int viewType);
 
     abstract public void bindData(RecyclerViewHolder holder, int position, T item);

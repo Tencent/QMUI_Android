@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIViewHelper#playViewBackgroundAnimation(View, int, int, long)} 的使用示例。
  * Created by Kayo on 2017/2/7.
  */
 

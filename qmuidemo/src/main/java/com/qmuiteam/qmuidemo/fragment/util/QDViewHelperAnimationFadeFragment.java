@@ -2,6 +2,7 @@ package com.qmuiteam.qmuidemo.fragment.util;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -17,6 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIViewHelper#fadeIn(View, int, Animation.AnimationListener, boolean)} 与
+ * {@link QMUIViewHelper#fadeOut(View, int, Animation.AnimationListener, boolean)} 的使用示例。
  * Created by Kayo on 2017/2/7.
  */
 
