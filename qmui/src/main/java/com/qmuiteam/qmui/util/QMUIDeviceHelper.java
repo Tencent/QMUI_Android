@@ -164,18 +164,12 @@ public class QMUIDeviceHelper {
      */
     public static boolean isZUKZ1() {
         final String board = android.os.Build.MODEL;
-        if (board == null) {
-            return false;
-        }
-        return board.toLowerCase().contains(ZUKZ1);
+        return board != null && board.toLowerCase().contains(ZUKZ1);
     }
 
-    public static boolean isZTKC2016(){
+    public static boolean isZTKC2016() {
         final String board = android.os.Build.MODEL;
-        if (board == null) {
-            return false;
-        }
-        return board.toLowerCase().contains(ZTEC2016);
+        return board != null && board.toLowerCase().contains(ZTEC2016);
     }
 
     private static boolean isPhone(String[] boards) {

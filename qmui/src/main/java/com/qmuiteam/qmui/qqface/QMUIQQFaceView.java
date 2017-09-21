@@ -1249,6 +1249,7 @@ public class QMUIQQFaceView extends View {
             invalidate(bounds);
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         public boolean onTouch(int x, int y) {
             int top = getPaddingTop();
             if (mStartLine > 1) {
@@ -1268,6 +1269,7 @@ public class QMUIQQFaceView extends View {
             int startLineBottom = top + mFontHeight;
             int endLineTop = bottom - mFontHeight;
             if (y > startLineBottom && y < endLineTop) {
+                //noinspection SimplifiableIfStatement
                 if (mEndLine - mStartLine == 1) {
                     return x >= mStartPoint && x <= mEndPoint;
                 }
