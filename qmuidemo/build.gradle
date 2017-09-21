@@ -56,7 +56,7 @@ configurations.all {
 // http://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':lint')
+    compile project(':qmuilint')
 //    compile 'com.qmuiteam:lint:0.0.1'
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile 'com.jakewharton:butterknife:8.4.0'
