@@ -20,10 +20,6 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
      * Hydrating an object is taking an object that exists in memory,
      * that doesn't yet contain any domain data ("real" data),
      * and then populating it with domain data.
-     *
-     * @param container
-     * @param position
-     * @return
      */
     protected abstract Object hydrate(ViewGroup container, int position);
 

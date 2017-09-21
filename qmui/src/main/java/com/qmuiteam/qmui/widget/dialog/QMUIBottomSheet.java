@@ -29,9 +29,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -73,6 +73,7 @@ public class QMUIBottomSheet extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //noinspection ConstantConditions
         getWindow().getDecorView().setPadding(0, 0, 0, 0);
 
         // 在底部，宽度撑满
@@ -237,9 +238,9 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * 设置要被选中的 Item 的下标
-         *
-         * 注意:仅当 {@link #mNeedRightMark} 为 true 时才有效
+         * 设置要被选中的 Item 的下标。
+         * <p>
+         * 注意:仅当 {@link #mNeedRightMark} 为 true 时才有效。
          */
         public BottomListSheetBuilder setCheckedIndex(int checkedIndex) {
             mCheckedIndex = checkedIndex;
@@ -247,7 +248,7 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * @param textAndTag name与tag相同
+         * @param textAndTag Item 的文字内容，同时会把内容设置为 tag。
          */
         public BottomListSheetBuilder addItem(String textAndTag) {
             mItems.add(new BottomSheetListItemData(textAndTag, textAndTag));
@@ -255,17 +256,17 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * @param image icon
-         * @param text  name与tag相同
+         * @param image      icon Item 的 icon。
+         * @param textAndTag Item 的文字内容，同时会把内容设置为 tag。
          */
-        public BottomListSheetBuilder addItem(Drawable image, String text) {
-            mItems.add(new BottomSheetListItemData(image, text, text));
+        public BottomListSheetBuilder addItem(Drawable image, String textAndTag) {
+            mItems.add(new BottomSheetListItemData(image, textAndTag, textAndTag));
             return this;
         }
 
         /**
-         * @param text
-         * @param tag
+         * @param text Item 的文字内容。
+         * @param tag  item 的 tag。
          */
         public BottomListSheetBuilder addItem(String text, String tag) {
             mItems.add(new BottomSheetListItemData(text, tag));
@@ -273,9 +274,9 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * @param imageRes icon res
-         * @param text
-         * @param tag
+         * @param imageRes Item 的图标 Resource。
+         * @param text     Item 的文字内容。
+         * @param tag      Item 的 tag。
          */
         public BottomListSheetBuilder addItem(int imageRes, String text, String tag) {
             Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
@@ -284,10 +285,10 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * @param imageRes    icon res
-         * @param text
-         * @param tag
-         * @param hasRedPoint 是否有红点
+         * @param imageRes    Item 的图标 Resource。
+         * @param text        Item 的文字内容。
+         * @param tag         Item 的 tag。
+         * @param hasRedPoint 是否显示红点。
          */
         public BottomListSheetBuilder addItem(int imageRes, String text, String tag, boolean hasRedPoint) {
             Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
@@ -296,11 +297,11 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         /**
-         * @param imageRes    icon res
-         * @param text
-         * @param tag
-         * @param hasRedPoint 是否有红点
-         * @param disabled    是否disabled
+         * @param imageRes    Item 的图标 Resource。
+         * @param text        Item 的文字内容。
+         * @param tag         Item 的 tag。
+         * @param hasRedPoint 是否显示红点。
+         * @param disabled    是否显示禁用态。
          */
         public BottomListSheetBuilder addItem(int imageRes, String text, String tag, boolean hasRedPoint, boolean disabled) {
             Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
@@ -575,6 +576,7 @@ public class QMUIBottomSheet extends Dialog {
         private boolean mIsShowButton = true;
         private CharSequence mButtonText = null;
         private View.OnClickListener mButtonClickListener = null;
+
         public BottomGridSheetBuilder(Context context) {
             mContext = context;
             mFirstLineViews = new SparseArray<>();

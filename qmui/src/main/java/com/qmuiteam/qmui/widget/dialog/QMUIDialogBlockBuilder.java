@@ -6,12 +6,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 /**
- *
  * @author cginechen
  * @date 2015-12-12
  */
@@ -20,66 +19,60 @@ public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBui
     private CharSequence mContent;
 
 
-
     public QMUIDialogBlockBuilder(Context context) {
         super(context);
         mContext = context;
     }
 
 
-
     /**
-     * 添加一个无图标的Action
-     * @param strRes
-     * @param listener
-     * @return
+     * 添加一个无图标的 Action
      */
-    public QMUIDialogBlockBuilder addAction(int strRes,QMUIDialogAction.ActionListener listener){
-        return addAction(0,strRes,listener);
+    public QMUIDialogBlockBuilder addAction(int strRes, QMUIDialogAction.ActionListener listener) {
+        return addAction(0, strRes, listener);
     }
-    public QMUIDialogBlockBuilder addAction(String str,QMUIDialogAction.ActionListener listener){
-        return addAction(0,str,listener);
+
+    public QMUIDialogBlockBuilder addAction(String str, QMUIDialogAction.ActionListener listener) {
+        return addAction(0, str, listener);
     }
 
 
     /**
-     * 添加一个Action
-     * @param iconRes 图标
-     * @param strRes 文字
-     * @param listener 点击事件
-     * @return
+     * 添加一个带图标的 Action
      */
-    public QMUIDialogBlockBuilder addAction(int iconRes,int strRes,QMUIDialogAction.ActionListener listener){
+    public QMUIDialogBlockBuilder addAction(int iconRes, int strRes, QMUIDialogAction.ActionListener listener) {
         return addAction(iconRes, strRes, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
     }
-    public QMUIDialogBlockBuilder addAction(int iconResId, String str, QMUIDialogAction.ActionListener listener){
+
+    public QMUIDialogBlockBuilder addAction(int iconResId, String str, QMUIDialogAction.ActionListener listener) {
         return addAction(iconResId, str, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
     }
 
     /**
-     * 添加正常类型的action
-     * @param iconRes 图标
-     * @param strRes 文案
-     * @param prop 属性
+     * 添加正常类型的 Action
+     *
+     * @param iconRes  图标
+     * @param strRes   文案
+     * @param prop     属性，具体请看 {@link QMUIDialogAction.Prop}
      * @param listener 事件监听
-     * @return
+     * @return 返回 QMUIDialogBlockBuilder，可继续链式调用。
      */
-    public QMUIDialogBlockBuilder addAction(int iconRes,int strRes,@QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener){
-        return addAction(iconRes, mContext.getResources().getString(strRes), prop,QMUIDialogAction.ACTION_TYPE_BLOCK, listener);
+    public QMUIDialogBlockBuilder addAction(int iconRes, int strRes, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
+        return addAction(iconRes, mContext.getResources().getString(strRes), prop, QMUIDialogAction.ACTION_TYPE_BLOCK, listener);
     }
 
 
-    public QMUIDialogBlockBuilder addAction(int iconRes,String str,@QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener){
+    public QMUIDialogBlockBuilder addAction(int iconRes, String str, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
         return addAction(iconRes, str, prop, QMUIDialogAction.ACTION_TYPE_BLOCK, listener);
     }
 
 
-    public QMUIDialogBlockBuilder setContent(CharSequence content){
+    public QMUIDialogBlockBuilder setContent(CharSequence content) {
         mContent = content;
         return this;
     }
 
-    public QMUIDialogBlockBuilder setContent(int contentRes){
+    public QMUIDialogBlockBuilder setContent(int contentRes) {
         mContent = mContext.getResources().getString(contentRes);
         return this;
     }
@@ -103,7 +96,7 @@ public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBui
     @Override
     protected void onCreateHandlerBar(QMUIDialog dialog, ViewGroup parent) {
         int size = mActions.size();
-        if(size>0){
+        if (size > 0) {
             LinearLayout layout = new LinearLayout(mContext);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -114,9 +107,9 @@ public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBui
                     QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_action_block_container_margin_bottom));
 
 
-            for(int i=0;i<mActions.size();i++){
+            for (int i = 0; i < mActions.size(); i++) {
                 QMUIDialogAction action = mActions.get(i);
-                layout.addView(action.generateActionView(mContext,dialog,i, true));
+                layout.addView(action.generateActionView(mContext, dialog, i, true));
             }
             parent.addView(layout);
 

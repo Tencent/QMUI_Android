@@ -686,6 +686,7 @@ public class QMUIDialog extends Dialog {
             });
             mRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 public void onGlobalLayout() {
+                    //noinspection ConstantConditions
                     View mDecor = mDialog.getWindow().getDecorView();
                     Rect r = new Rect();
                     mDecor.getWindowVisibleDisplayFrame(r);

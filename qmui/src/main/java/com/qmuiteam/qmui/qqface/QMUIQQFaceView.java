@@ -801,8 +801,7 @@ public class QMUIQQFaceView extends View {
     }
 
     /**
-     * @param startLeft
-     * @param paragraph 是否是段落切换
+     * 控制段落切换
      */
     private void toNewDrawLine(int startLeft, boolean paragraph) {
         int addOn = (paragraph ? mParagraphSpace : 0) + mLineSpace;

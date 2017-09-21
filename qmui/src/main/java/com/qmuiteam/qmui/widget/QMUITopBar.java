@@ -677,8 +677,6 @@ public class QMUITopBar extends RelativeLayout {
 
     /**
      * 设置是否要 Topbar 底部的分割线
-     *
-     * @param enabled
      */
     public void setBackgroundDividerEnabled(boolean enabled) {
         if (enabled) {

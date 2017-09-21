@@ -35,6 +35,7 @@ public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout
     @Override
     public boolean applySystemWindowInsets19(final Rect insets) {
         if (ViewCompat.getFitsSystemWindows(this)) {
+            //noinspection TryWithIdenticalCatches
             try {
                 Field field = AppBarLayout.class.getDeclaredField("mLastInsets");
                 field.setAccessible(true);

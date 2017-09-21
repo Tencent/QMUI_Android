@@ -20,6 +20,7 @@
 
         <TextView
             style="@style/QDCommonTitle"
+            android:ellipsize="end"
             android:text="@string/linkTextView_auto_identify"/>
 
         <com.qmuiteam.qmui.widget.textview.QMUILinkTextView

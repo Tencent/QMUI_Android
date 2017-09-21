@@ -27,13 +27,13 @@ import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -47,9 +47,9 @@ import java.util.List;
 /**
  * <p>用于横向多个 Tab 的布局，可以灵活配置 Tab</p>
  * <ul>
- *     <li>可以用 xml 和 QMUITabSegment 提供的 set 方法统一配置文字颜色、icon 位置、是否要下划线等</li>
- *     <li>每个 Tab 都可以非常灵活的配置，如果没有提供相关配置，则使用 QMUITabSegment 提供的配置，具体参考 {@link Tab}</li>
- *     <li>可以通过 {@link #setupWithViewPager(ViewPager)} 与 {@link ViewPager} 绑定</li>
+ * <li>可以用 xml 和 QMUITabSegment 提供的 set 方法统一配置文字颜色、icon 位置、是否要下划线等</li>
+ * <li>每个 Tab 都可以非常灵活的配置，如果没有提供相关配置，则使用 QMUITabSegment 提供的配置，具体参考 {@link Tab}</li>
+ * <li>可以通过 {@link #setupWithViewPager(ViewPager)} 与 {@link ViewPager} 绑定</li>
  * </ul>
  * <p>
  * <h3>使用case: </h3>
@@ -91,26 +91,18 @@ import java.util.List;
  * @date 2016-01-27
  */
 public class QMUITabSegment extends HorizontalScrollView {
+    // mode: 自适应宽度+滚动 / 均分
+    public static final int MODE_SCROLLABLE = 0;
+    public static final int MODE_FIXED = 1;
     // icon position
     private static final int ICON_POSITION_LEFT = 0;
     private static final int ICON_POSITION_TOP = 1;
     private static final int ICON_POSITION_RIGHT = 2;
     private static final int ICON_POSITION_BOTTOM = 4;
-
     // status: 用于记录tab的改变状态
     private static final int STATUS_NORMAL = 0;
     private static final int STATUS_PROGRESS = 1;
     private static final int STATUS_SELECTED = 2;
-
-    // mode: 自适应宽度+滚动 / 均分
-    public static final int MODE_SCROLLABLE = 0;
-    public static final int MODE_FIXED = 1;
-
-    @IntDef(value = {MODE_SCROLLABLE, MODE_FIXED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-    }
-
     /**
      * listener
      */
@@ -135,7 +127,6 @@ public class QMUITabSegment extends HorizontalScrollView {
      * indicator在顶部
      */
     private boolean mIndicatorTop = false;
-
     /**
      * indicator采用drawable
      */
@@ -164,27 +155,13 @@ public class QMUITabSegment extends HorizontalScrollView {
      * ScrollMode下item的间隙
      */
     private int mItemSpaceInScrollMode;
-
     /**
      * typeface
      */
     private TypefaceProvider mTypefaceProvider;
-
     private boolean mIsAnimating;
     private OnTabClickListener mOnTabClickListener;
-
     private boolean mForceIndicatorNotDoLayoutWhenParentLayout = false;
-
-    /**
-     * 与ViewPager的协同工作
-     */
-    private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
-    private DataSetObserver mPagerAdapterObserver;
-    private ViewPager.OnPageChangeListener mOnPageChangeListener;
-    private OnTabSelectedListener mViewPagerSelectedListener;
-//    private AdapterChangeListener mAdapterChangeListener;
-
     protected OnClickListener mTabOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -201,11 +178,20 @@ public class QMUITabSegment extends HorizontalScrollView {
             }
         }
     };
-
+    /**
+     * 与ViewPager的协同工作
+     */
+    private ViewPager mViewPager;
+    private PagerAdapter mPagerAdapter;
+    private DataSetObserver mPagerAdapterObserver;
+    private ViewPager.OnPageChangeListener mOnPageChangeListener;
+    private OnTabSelectedListener mViewPagerSelectedListener;
+//    private AdapterChangeListener mAdapterChangeListener;
 
     public QMUITabSegment(Context context) {
         this(context, null);
     }
+
 
     public QMUITabSegment(Context context, boolean hasIndicator) {
         this(context, null);
@@ -248,7 +234,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
         createTypefaceProvider(context, typefaceProviderName);
     }
-
 
     private void createTypefaceProvider(Context context, String className) {
         if (QMUILangHelper.isNullOrEmpty(className)) {
@@ -310,7 +295,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         return mContentLayout.getTabAdapter();
     }
 
-
     private void createIndicatorView() {
         if (mIndicatorView == null) {
             mIndicatorView = new View(getContext());
@@ -330,7 +314,7 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     /**
      * 清空已经存在的 Tab。
-     * 一般先调用 {@link #reset()} 清空已加上的 Tab, 然后重新 {@link #addTab(Tab)} 添加新的 Tab, 然后通过 {@link #notifyDataChanged()} 通知变动
+     * 一般先调用本方法清空已加上的 Tab, 然后重新 {@link #addTab(Tab)} 添加新的 Tab, 然后通过 {@link #notifyDataChanged()} 通知变动
      */
     public void reset() {
         mContentLayout.getTabAdapter().clear();
@@ -338,7 +322,7 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     /**
      * 通知 QMUITabSegment 数据变动。
-     * 一般先调用 {@link #reset()} 清空已加上的 Tab, 然后重新 {@link #addTab(Tab)} 添加新的 Tab, 然后通过 {@link #notifyDataChanged()} 通知变动
+     * 一般先调用 {@link #reset()} 清空已加上的 Tab, 然后重新 {@link #addTab(Tab)} 添加新的 Tab, 然后通过本方法通知变动
      */
     public void notifyDataChanged() {
         getAdapter().setup();
@@ -399,15 +383,15 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     }
 
+    public int getMode() {
+        return mMode;
+    }
+
     public void setMode(@Mode int mode) {
         if (mMode != mode) {
             mMode = mode;
             mContentLayout.invalidate();
         }
-    }
-
-    public int getMode() {
-        return mMode;
     }
 
     public void removeOnTabSelectedListener(@NonNull OnTabSelectedListener listener) {
@@ -418,9 +402,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         mSelectedListeners.clear();
     }
 
-    /**
-     * @param viewPager
-     */
     public void setupWithViewPager(@Nullable ViewPager viewPager) {
         setupWithViewPager(viewPager, true);
     }
@@ -429,11 +410,10 @@ public class QMUITabSegment extends HorizontalScrollView {
         setupWithViewPager(viewPager, useAdapterTitle, true);
     }
 
-
     /**
-     * @param viewPager
-     * @param useAdapterTitle 自动根据ViewPager的adapter.getTitle取值
-     * @param autoRefresh     adapter有更改时，刷新TabSegment
+     * @param viewPager       需要关联的 ViewPager。
+     * @param useAdapterTitle 自动根据ViewPager的adapter.getTitle取值。
+     * @param autoRefresh     adapter有更改时，刷新TabSegment。
      */
     public void setupWithViewPager(@Nullable final ViewPager viewPager, boolean useAdapterTitle, boolean autoRefresh) {
         if (mViewPager != null) {
@@ -512,18 +492,14 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     /**
-     * 设置tab正常状态下的颜色
-     *
-     * @param defaultNormalColor
+     * 设置 Tab 正常状态下的颜色
      */
     public void setDefaultNormalColor(@ColorInt int defaultNormalColor) {
         mDefaultNormalColor = defaultNormalColor;
     }
 
     /**
-     * 设置tab选中状态下的颜色
-     *
-     * @param defaultSelectedColor
+     * 设置 Tab 选中状态下的颜色
      */
     public void setDefaultSelectedColor(@ColorInt int defaultSelectedColor) {
         mDefaultSelectedColor = defaultSelectedColor;
@@ -559,8 +535,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     /**
-     * @param index
-     * @param preventAnim: 私有,只有点击tab才会自己产生动画变化,其它需要使用updateIndicatorPosition做驱动
+     * 只有点击 tab 才会自己产生动画变化，其它需要使用 updateIndicatorPosition 做驱动
      */
     private void selectTab(final int index, boolean preventAnim) {
         if (mContentLayout.getTabAdapter().getSize() == 0 || mContentLayout.getTabAdapter().getSize() <= index) {
@@ -677,8 +652,8 @@ public class QMUITabSegment extends HorizontalScrollView {
         animator.start();
     }
 
-    private void setTextViewTypeface(TextView tv, boolean selected){
-        if(mTypefaceProvider == null || tv == null){
+    private void setTextViewTypeface(TextView tv, boolean selected) {
+        if (mTypefaceProvider == null || tv == null) {
             return;
         }
         boolean isBold = selected ? mTypefaceProvider.isSelectedTabBold() : mTypefaceProvider.isNormalTabBold();
@@ -727,10 +702,10 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     /**
-     * 改变Tab的文案
+     * 改变 Tab 的文案
      *
-     * @param index
-     * @param text
+     * @param index Tab 的 index
+     * @param text  新文案
      */
     public void updateTabText(int index, String text) {
         Tab model = getAdapter().getItem(index);
@@ -742,10 +717,10 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     /**
-     * 整个tab替换
+     * 整个 Tab 替换
      *
-     * @param index
-     * @param model
+     * @param index 需要被替换的 Tab 的 index
+     * @param model 新的 Tab
      */
     public void replaceTab(int index, Tab model) {
         try {
@@ -879,8 +854,6 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     /**
      * 根据 index 在对应的 Tab 上隐藏红点
-     *
-     * @param index
      */
     public void hideSignCountView(int index) {
         Tab tab = getAdapter().getItem(index);
@@ -889,13 +862,15 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     /**
      * 获取当前的红点数值，如果没有红点则返回 0
-     *
-     * @param index
-     * @return
      */
     public int getSignCount(int index) {
         Tab tab = getAdapter().getItem(index);
         return tab.getSignCount();
+    }
+
+    @IntDef(value = {MODE_SCROLLABLE, MODE_FIXED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mode {
     }
 
     public interface OnTabClickListener {
@@ -935,6 +910,13 @@ public class QMUITabSegment extends HorizontalScrollView {
          * @param index 被双击的 Tab 下标
          */
         void onDoubleTap(int index);
+    }
+
+    public interface TypefaceProvider {
+
+        boolean isNormalTabBold();
+
+        boolean isSelectedTabBold();
     }
 
     public static class TabLayoutOnPageChangeListener implements ViewPager.OnPageChangeListener {
@@ -1313,6 +1295,27 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
     }
 
+//    private class AdapterChangeListener implements ViewPager.OnAdapterChangeListener {
+//        private boolean mAutoRefresh;
+//        private final boolean mUseAdapterTitle;
+//
+//        AdapterChangeListener(boolean useAdapterTitle) {
+//            mUseAdapterTitle = useAdapterTitle;
+//        }
+//
+//        @Override
+//        public void onAdapterChanged(@NonNull ViewPager viewPager,
+//                                     @Nullable PagerAdapter oldAdapter, @Nullable PagerAdapter newAdapter) {
+//            if (mViewPager == viewPager) {
+//                setPagerAdapter(newAdapter, mUseAdapterTitle, mAutoRefresh);
+//            }
+//        }
+//
+//        void setAutoRefresh(boolean autoRefresh) {
+//            mAutoRefresh = autoRefresh;
+//        }
+//    }
+
     public class TabItemView extends RelativeLayout {
         private InnerTextView mTextView;
         private GestureDetector mGestureDetector = null;
@@ -1359,27 +1362,6 @@ public class QMUITabSegment extends HorizontalScrollView {
             return mGestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
         }
     }
-
-//    private class AdapterChangeListener implements ViewPager.OnAdapterChangeListener {
-//        private boolean mAutoRefresh;
-//        private final boolean mUseAdapterTitle;
-//
-//        AdapterChangeListener(boolean useAdapterTitle) {
-//            mUseAdapterTitle = useAdapterTitle;
-//        }
-//
-//        @Override
-//        public void onAdapterChanged(@NonNull ViewPager viewPager,
-//                                     @Nullable PagerAdapter oldAdapter, @Nullable PagerAdapter newAdapter) {
-//            if (mViewPager == viewPager) {
-//                setPagerAdapter(newAdapter, mUseAdapterTitle, mAutoRefresh);
-//            }
-//        }
-//
-//        void setAutoRefresh(boolean autoRefresh) {
-//            mAutoRefresh = autoRefresh;
-//        }
-//    }
 
     private class PagerAdapterObserver extends DataSetObserver {
         private final boolean mUseAdapterTitle;
@@ -1533,12 +1515,5 @@ public class QMUITabSegment extends HorizontalScrollView {
             }
             mLastSelectedIndex = index;
         }
-    }
-
-    public interface TypefaceProvider {
-
-        boolean isNormalTabBold();
-
-        boolean isSelectedTabBold();
     }
 }

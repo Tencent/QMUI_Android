@@ -588,11 +588,7 @@ public class QMUIViewHelper {
     }
 
     /**
-     * @param parentView
-     * @param viewStubId
-     * @param inflatedViewId
-     * @param inflateLayoutResId
-     * @return
+     * inflate ViewStub 并返回对应的 View。
      */
     public static View findViewFromViewStub(View parentView, int viewStubId, int inflatedViewId, int inflateLayoutResId) {
         if (null == parentView) {

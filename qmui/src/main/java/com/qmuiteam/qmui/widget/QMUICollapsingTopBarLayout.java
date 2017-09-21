@@ -654,6 +654,8 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         }
     }
 
+    // 从系统源码获取，不作检测
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();

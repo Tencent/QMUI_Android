@@ -106,6 +106,7 @@ public class QMUIQQFaceCompiler {
         mCache = cache;
     }
 
+    @SuppressWarnings("ConstantConditions")
     private ElementList realCompile(CharSequence text, int start, int end, QMUITouchableSpan[] spans, int[] spanInfo) {
         int size = text.length();
         int nearSpanIndex = -1;

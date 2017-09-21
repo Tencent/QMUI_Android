@@ -39,14 +39,14 @@ public class QMUIStatusBarHelper {
     }
 
     /**
-     * 沉浸式状态栏
-     * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android
+     * 沉浸式状态栏。
+     * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android。
      *
-     * @param activity
+     * @param activity 需要被设置沉浸式状态栏的 Activity。
      */
     @TargetApi(19)
     public static void translucent(Activity activity, @ColorInt int colorOn5x) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
@@ -99,7 +99,7 @@ public class QMUIStatusBarHelper {
      */
     public static boolean setStatusBarLightMode(Activity activity) {
         // 无语系列：ZTK C2016只能时间和电池图标变色。。。。
-        if(QMUIDeviceHelper.isZTKC2016()){
+        if (QMUIDeviceHelper.isZTKC2016()) {
             return false;
         }
 
@@ -185,11 +185,11 @@ public class QMUIStatusBarHelper {
      * 设置状态栏字体图标为深色，Android 6
      *
      * @param window 需要设置的窗口
-     * @param light   是否把状态栏字体及图标颜色设置为深色
+     * @param light  是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回true
      */
     @TargetApi(23)
-    private static boolean Android6SetStatusBarLightMode(Window window, boolean light){
+    private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
         View decorView = window.getDecorView();
         int systemUi = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         systemUi = changeStatusBarModeRetainFlag(window, systemUi);
@@ -231,10 +231,8 @@ public class QMUIStatusBarHelper {
     /**
      * 更改状态栏图标、文字颜色的方案是否是MIUI自家的， MIUI9之后用回Android原生实现
      * 见小米开发文档说明：https://dev.mi.com/console/doc/detail?pId=1159
-     *
-     * @return
      */
-    private static boolean isMIUICustomStatusBarLightModeImpl(){
+    private static boolean isMIUICustomStatusBarLightModeImpl() {
         return QMUIDeviceHelper.isMIUIV5() || QMUIDeviceHelper.isMIUIV6() ||
                 QMUIDeviceHelper.isMIUIV7() || QMUIDeviceHelper.isMIUIV8();
     }
@@ -294,8 +292,6 @@ public class QMUIStatusBarHelper {
     /**
      * API19之前透明状态栏：获取设置透明状态栏的system ui visibility的值，这是部分有提供接口的rom使用的
      * http://stackoverflow.com/questions/21865621/transparent-status-bar-before-4-4-kitkat
-     *
-     * @return
      */
     public static Integer getStatusBarAPITransparentValue(Context context) {
         if (sTransparentValue != null) {
@@ -328,19 +324,14 @@ public class QMUIStatusBarHelper {
     }
 
     /**
-     * Android6.0是否可以启用 window.setStatusBarColor(Color.TRANSPARENT);
-     *
-     * @return
+     * 检测 Android 6.0 是否可以启用 window.setStatusBarColor(Color.TRANSPARENT)。
      */
     public static boolean supportTransclentStatusBar6() {
         return !(QMUIDeviceHelper.isZUKZ1() || QMUIDeviceHelper.isZTKC2016());
     }
 
     /**
-     * 获取状态栏的高度
-     *
-     * @param context
-     * @return
+     * 获取状态栏的高度。
      */
     public static int getStatusbarHeight(Context context) {
         if (sStatusbarHeight == -1) {

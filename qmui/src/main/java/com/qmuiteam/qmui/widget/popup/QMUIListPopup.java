@@ -19,12 +19,13 @@ public class QMUIListPopup extends QMUIPopup {
     private BaseAdapter mAdapter;
 
     /**
-     * Constructor.
+     * 构造方法。
      *
-     * @param context   Context
-     * @param direction
+     * @param context   传入一个 Context。
+     * @param direction Popup 的方向，为 {@link QMUIPopup#DIRECTION_NONE}, {@link QMUIPopup#DIRECTION_TOP} 和 {@link QMUIPopup#DIRECTION_BOTTOM} 中的其中一个值。
+     * @param adapter   列表的 Adapter
      */
-    public QMUIListPopup(Context context, int direction, BaseAdapter adapter) {
+    public QMUIListPopup(Context context, @Direction int direction, BaseAdapter adapter) {
         super(context, direction);
         mAdapter = adapter;
     }

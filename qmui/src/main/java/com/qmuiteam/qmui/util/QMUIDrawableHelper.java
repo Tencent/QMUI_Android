@@ -41,9 +41,8 @@ public class QMUIDrawableHelper {
      * 注意点：绘制之前要清掉 View 的焦点，因为焦点可能会改变一个 View 的 UI 状态。
      * 来源：https://github.com/tyrantgit/ExplosionField
      *
-     * @param view 传入一个 View，会获取这个 View 的内容创建 Bitmap。
+     * @param view  传入一个 View，会获取这个 View 的内容创建 Bitmap。
      * @param scale 缩放比例，对创建的 Bitmap 进行缩放，数值支持从 0 到 1。
-     * @return
      */
     public static Bitmap createBitmapFromView(View view, float scale) {
         if (view instanceof ImageView) {
@@ -79,7 +78,7 @@ public class QMUIDrawableHelper {
      */
     public static Bitmap createBitmapFromView(View view, int leftCrop, int topCrop, int rightCrop, int bottomCrop) {
         Bitmap originBitmap = QMUIDrawableHelper.createBitmapFromView(view);
-        if(originBitmap == null){
+        if (originBitmap == null) {
             return null;
         }
         Bitmap cutBitmap = createBitmapSafely(view.getWidth() - rightCrop - leftCrop, view.getHeight() - topCrop - bottomCrop, Bitmap.Config.ARGB_8888, 1);
@@ -99,9 +98,9 @@ public class QMUIDrawableHelper {
      * 安全的创建bitmap。
      * 如果新建 Bitmap 时产生了 OOM，可以主动进行一次 GC - System.gc()，然后再次尝试创建。
      *
-     * @param width Bitmap 宽度。
-     * @param height Bitmap 高度。
-     * @param config 传入一个 Bitmap.Config。
+     * @param width      Bitmap 宽度。
+     * @param height     Bitmap 高度。
+     * @param config     传入一个 Bitmap.Config。
      * @param retryCount 创建 Bitmap 时产生 OOM 后，主动重试的次数。
      * @return 返回创建的 Bitmap。
      */
@@ -216,8 +215,8 @@ public class QMUIDrawableHelper {
      * 动态创建带上分隔线或下分隔线的Drawable。
      *
      * @param separatorColor 分割线颜色。
-     * @param bgColor Drawable 的背景色。
-     * @param top true 则分割线为上分割线，false 则为下分割线。
+     * @param bgColor        Drawable 的背景色。
+     * @param top            true 则分割线为上分割线，false 则为下分割线。
      * @return 返回所创建的 Drawable。
      */
     public static LayerDrawable createItemSeparatorBg(@ColorInt int separatorColor, @ColorInt int bgColor, int separatorHeight, boolean top) {
@@ -240,7 +239,9 @@ public class QMUIDrawableHelper {
 
     /////////////// VectorDrawable /////////////////////
 
-    public static @Nullable Drawable getVectorDrawable(Context context, @DrawableRes int resVector) {
+    public static
+    @Nullable
+    Drawable getVectorDrawable(Context context, @DrawableRes int resVector) {
         try {
             return AppCompatDrawableManager.get().getDrawable(context, resVector);
         } catch (Exception e) {

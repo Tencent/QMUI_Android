@@ -79,7 +79,7 @@ public abstract class QMUIBasePopup {
     /**
      *
      * @param parent a parent view to get the {@link android.view.View#getWindowToken()} token from
-     * @param anchorView
+     * @param anchorView provide anchor for positioning
      */
     public final void show(View parent, View anchorView) {
         preShow();
