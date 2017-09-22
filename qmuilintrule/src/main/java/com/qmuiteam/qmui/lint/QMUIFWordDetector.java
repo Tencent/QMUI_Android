@@ -19,6 +19,10 @@ import lombok.ast.MethodInvocation;
 import lombok.ast.StrictListAccessor;
 import lombok.ast.VariableReference;
 
+/**
+ * 检测 QMUILog 中是否使用了 F Word。
+ * Created by Kayo on 2017/9/19.
+ */
 public class QMUIFWordDetector extends Detector
         implements Detector.JavaScanner, Detector.ClassScanner {
     public static final Issue ISSUE_F_WORD =

@@ -28,7 +28,6 @@ import static com.android.SdkConstants.ATTR_DRAWABLE_TOP;
 
 /**
  * 检测是否在 drawableLeft / drawableRight / drawableTop / drawableBottom 中传入了 Vector Drawable，在 4.0 及以下版本的系统中会导致 Crash
- * <p>
  * Created by Kayo on 2017/8/29.
  */
 

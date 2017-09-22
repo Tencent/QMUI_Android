@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 
 /**
  * 检测图片的尺寸的正确性，例如2倍图的宽高应该为偶数，3倍图的宽高应该为3的倍数
- * <p>
  * Created by Kayo on 2017/8/30.
  */
 
