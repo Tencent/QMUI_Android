@@ -35,7 +35,7 @@ public class QMUIRoundButton extends Button {
     }
 
     public QMUIRoundButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs, R.attr.QMUIButtonStyle);
         init(context, attrs, R.attr.QMUIButtonStyle);
     }
 
