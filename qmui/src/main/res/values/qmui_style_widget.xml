@@ -68,6 +68,7 @@
         <item name="qmui_topbar_bg_color">@color/qmui_config_color_white</item>
         <item name="qmui_topbar_need_separator">true</item>
         <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
+        <item name="qmui_topbar_title_gravity">center</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
     </style>

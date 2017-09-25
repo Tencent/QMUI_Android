@@ -57,7 +57,7 @@ public class QMUITopBar extends RelativeLayout {
 
     private Drawable mTopBarBgWithSeparatorDrawableCache;
 
-    private int mTitleGravity = Gravity.CENTER;
+    private int mTitleGravity;
     private int mLeftBackDrawableRes;
     private int mTopbarHeight = -1;
     private int mTopbarImageBtnWidth = -1;
@@ -114,6 +114,7 @@ public class QMUITopBar extends RelativeLayout {
         mTopBarSeparatorHeight = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_separator_height, 1);
         mTopBarBgColor = array.getColor(R.styleable.QMUITopBar_qmui_topbar_bg_color, Color.WHITE);
         mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.id.qmui_topbar_item_left_back);
+        mTitleGravity = array.getInt(R.styleable.QMUITopBar_qmui_topbar_title_gravity, Gravity.CENTER);
         boolean hasSeparator = array.getBoolean(R.styleable.QMUITopBar_qmui_topbar_need_separator, true);
         array.recycle();
 
