@@ -69,6 +69,10 @@
 
     <!--************ QMUITopBar ***********-->
     <declare-styleable name="QMUITopBar">
+        <attr name="qmui_topbar_title_gravity" format="enum">
+            <enum name="left_center" value="19"/>
+            <enum name="center" value="17"/>
+        </attr>
         <attr name="qmui_topbar_need_separator" format="boolean"/>
         <attr name="qmui_topbar_separator_color" format="color"/>
         <attr name="qmui_topbar_separator_height" format="dimension"/>
