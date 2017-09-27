@@ -246,6 +246,10 @@ public class QMUIStatusBarHelper {
      * @return boolean 成功执行返回true
      */
     public static boolean FlymeSetStatusBarLightMode(Window window, boolean dark) {
+
+        // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
+        Android6SetStatusBarLightMode(window, dark);
+
         boolean result = false;
         if (window != null) {
             try {
