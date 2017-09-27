@@ -117,7 +117,7 @@ public class QDProgressBarFragment extends BaseFragment {
         private WeakReference<QMUIProgressBar> weakRectProgressBar;
         private WeakReference<QMUIProgressBar> weakCircleProgressBar;
 
-        public void setProgressBar(QMUIProgressBar rectProgressBar, QMUIProgressBar circleProgressBar) {
+        void setProgressBar(QMUIProgressBar rectProgressBar, QMUIProgressBar circleProgressBar) {
             weakRectProgressBar = new WeakReference<>(rectProgressBar);
             weakCircleProgressBar = new WeakReference<>(circleProgressBar);
         }
