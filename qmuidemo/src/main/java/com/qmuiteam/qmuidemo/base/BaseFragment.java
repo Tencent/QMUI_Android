@@ -49,6 +49,12 @@ public abstract class BaseFragment extends Fragment {
         return !isRemoving() && mBaseView != null;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mBaseView = null;
+    }
+
     protected void startFragment(BaseFragment fragment) {
         BaseFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
@@ -109,6 +115,7 @@ public abstract class BaseFragment extends Fragment {
         if (mBaseView.getParent() != null) {
             ((ViewGroup) mBaseView.getParent()).removeView(mBaseView);
         }
+        getBaseFragmentActivity().clearDisappearInfo(mBaseView);
         return mBaseView;
     }
 
