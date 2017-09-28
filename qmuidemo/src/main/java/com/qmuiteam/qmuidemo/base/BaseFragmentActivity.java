@@ -1,6 +1,5 @@
 package com.qmuiteam.qmuidemo.base;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -43,6 +42,7 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("TryWithIdenticalCatches")
     public void clearDisappearInfo(View view) {
         if (view != null) {
             try {

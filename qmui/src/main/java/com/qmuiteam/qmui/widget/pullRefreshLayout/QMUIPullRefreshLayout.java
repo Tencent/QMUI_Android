@@ -104,7 +104,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private float mInitialDownX;
     @SuppressWarnings("FieldCanBeLocal") private float mInitialMotionY;
     private float mLastMotionY;
-    private float mDragRate = 0.65f;
+    @SuppressWarnings("FieldCanBeLocal") private float mDragRate = 0.65f;
     private RefreshOffsetCalculator mRefreshOffsetCalculator;
     private VelocityTracker mVelocityTracker;
     private float mMaxVelocity;
