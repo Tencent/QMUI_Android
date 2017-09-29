@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def cmd = 'git rev-list HEAD --count'
+def gitVersion = cmd.execute().text.trim().toInteger()
+
 android {
     signingConfigs {
         Properties properties = new Properties()
@@ -21,8 +24,8 @@ android {
         applicationId "com.qmuiteam.qmuidemo"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.3"
+        versionCode gitVersion
+        versionName "1.0.4"
     }
     buildTypes {
         debug {
