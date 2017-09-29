@@ -85,6 +85,8 @@ public class QMUIProgressBar extends View {
         mMaxValue = array.getInt(R.styleable.QMUIProgressBar_qmui_max_value, 100);
         mValue = array.getInt(R.styleable.QMUIProgressBar_qmui_value, 0);
 
+        boolean isRoundCap = array.getBoolean(R.styleable.QMUIProgressBar_qmui_stroke_round_cap, false);
+
         int textSize = DEFAULT_TEXT_SIZE;
         if (array.hasValue(R.styleable.QMUIProgressBar_android_textSize)) {
             textSize = array.getDimensionPixelSize(R.styleable.QMUIProgressBar_android_textSize, DEFAULT_TEXT_SIZE);
@@ -98,7 +100,7 @@ public class QMUIProgressBar extends View {
             mStrokeWidth = array.getDimensionPixelSize(R.styleable.QMUIProgressBar_qmui_stroke_width, DEFAULT_STROKE_WIDTH);
         }
         array.recycle();
-        configPaint(textColor, textSize);
+        configPaint(textColor, textSize, isRoundCap);
 
         setProgress(mValue);
     }
@@ -113,7 +115,7 @@ public class QMUIProgressBar extends View {
         }
     }
 
-    private void configPaint(int textColor, int textSize) {
+    private void configPaint(int textColor, int textSize, boolean isRoundCap) {
         mPaint.setColor(mProgressColor);
         mBackgroundPaint.setColor(mBackgroundColor);
         if (mType == TYPE_RECT) {
@@ -122,8 +124,13 @@ public class QMUIProgressBar extends View {
         } else {
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setStrokeWidth(mStrokeWidth);
+            mPaint.setAntiAlias(true);
+            if (isRoundCap) {
+                mPaint.setStrokeCap(Paint.Cap.ROUND);
+            }
             mBackgroundPaint.setStyle(Paint.Style.STROKE);
             mBackgroundPaint.setStrokeWidth(mStrokeWidth);
+            mBackgroundPaint.setAntiAlias(true);
         }
         mTextPaint.setColor(textColor);
         mTextPaint.setTextSize(textSize);
@@ -149,6 +156,14 @@ public class QMUIProgressBar extends View {
      */
     public void setTextColor(int textColor) {
         mTextPaint.setColor(textColor);
+        invalidate();
+    }
+
+    /**
+     * 设置环形进度条的两端是否有圆形的线帽，类型为{@link #TYPE_CIRCLE}时生效
+     */
+    public void setStrokeRoundCap(boolean isRoundCap) {
+        mPaint.setStrokeCap(isRoundCap ? Paint.Cap.ROUND : Paint.Cap.BUTT);
         invalidate();
     }
 

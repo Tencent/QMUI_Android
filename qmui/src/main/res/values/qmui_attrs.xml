@@ -165,6 +165,7 @@
         <attr name="qmui_max_value" format="integer"/>
         <attr name="qmui_value" format="integer"/>
         <attr name="qmui_stroke_width" format="dimension"/>
+        <attr name="qmui_stroke_round_cap" format="boolean"/>
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
     </declare-styleable>
