@@ -104,7 +104,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private float mInitialDownX;
     @SuppressWarnings("FieldCanBeLocal") private float mInitialMotionY;
     private float mLastMotionY;
-    private float mDragRate = 0.65f;
+    @SuppressWarnings("FieldCanBeLocal") private float mDragRate = 0.65f;
     private RefreshOffsetCalculator mRefreshOffsetCalculator;
     private VelocityTracker mVelocityTracker;
     private float mMaxVelocity;
@@ -405,12 +405,12 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 startDragging(x, y);
 
                 if (mIsDragging) {
-                    float dy = y - mLastMotionY;
+                    float dy = (y - mLastMotionY) * mDragRate;
                     if (dy >= 0) {
                         moveTargetView(dy, true);
                     } else {
                         int move = moveTargetView(dy, true);
-                        float delta = Math.abs(dy * mDragRate) - Math.abs(move);
+                        float delta = Math.abs(dy) - Math.abs(move);
                         if (delta > 0) {
                             // 重新dispatch一次down事件，使得列表可以继续滚动
                             ev.setAction(MotionEvent.ACTION_DOWN);
@@ -719,7 +719,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     private int moveTargetView(float dy, boolean isDragging) {
-        int target = (int) (mTargetCurrentOffset + dy * mDragRate);
+        int target = (int) (mTargetCurrentOffset + dy);
         return moveTargetViewTo(target, isDragging);
     }
 

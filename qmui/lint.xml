@@ -8,4 +8,5 @@
     <issue id="Deprecated" severity="warning">
         <ignore regexp="singleLine"/>
     </issue>
+    <issue id="RtlSymmetry" severity="ignore"/>
 </lint>
