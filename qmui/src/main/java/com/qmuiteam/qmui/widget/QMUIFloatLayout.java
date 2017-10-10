@@ -300,14 +300,15 @@ public class QMUIFloatLayout extends ViewGroup {
             }
             final int childw = child.getMeasuredWidth();
             final int childh = child.getMeasuredHeight();
-            lineHeight = Math.max(lineHeight, childh);
             if (childPositionX + childw > childMaxRight) {
+                // 换行
                 childPositionX = getPaddingLeft();
                 childPositionY += (lineHeight + mChildVerticalSpacing);
                 lineHeight = 0;
             }
             child.layout(childPositionX, childPositionY, childPositionX + childw, childPositionY + childh);
             childPositionX += childw + mChildHorizontalSpacing;
+            lineHeight = Math.max(lineHeight, childh);
         }
 
         // 如果布局的子View少于childCount，则表示有一些子View不需要布局
