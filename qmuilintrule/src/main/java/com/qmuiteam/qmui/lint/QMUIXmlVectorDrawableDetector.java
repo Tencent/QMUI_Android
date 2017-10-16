@@ -37,7 +37,7 @@ public class QMUIXmlVectorDrawableDetector extends ResourceXmlDetector {
             Issue.create("QMUIGetVectorDrawableWithWrongProperty",
                     "Should use the corresponding property to get vector drawable.",
                     "Using the normal property to get the vector drawable will cause a crash on Android versions below 4.0.",
-                    Category.ICONS, 2, Severity.ERROR,
+                    Category.CORRECTNESS, 8, Severity.ERROR,
                     new Implementation(QMUIXmlVectorDrawableDetector.class, Scope.RESOURCE_FILE_SCOPE));
 
     private static final Collection<String> mAttrList = Lists.newArrayList(ATTR_DRAWABLE_LEFT, ATTR_DRAWABLE_RIGHT, ATTR_DRAWABLE_TOP, ATTR_DRAWABLE_BOTTOM);

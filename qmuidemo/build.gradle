@@ -60,7 +60,7 @@ configurations.all {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':qmuilint')
-//    compile 'com.qmuiteam:qmuilint:1.0.0'
+//    compile 'com.qmuiteam:qmuilint:1.0.1'
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'

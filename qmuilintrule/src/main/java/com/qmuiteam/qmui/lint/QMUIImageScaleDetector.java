@@ -28,7 +28,7 @@ public class QMUIImageScaleDetector extends Detector implements Detector.BinaryR
             Issue.create("QMUIImageSizeDisproportionate",
                     "The size of this image is disproportionate.",
                     "Please check the size of the image, for example, the height and width of the 3x plot should be 1.5 times 2x plot.",
-                    Category.CORRECTNESS, 5, Severity.WARNING,
+                    Category.ICONS, 4, Severity.WARNING,
                     new Implementation(QMUIImageScaleDetector.class, Scope.BINARY_RESOURCE_FILE_SCOPE));
 
     private static final String IGNORE_IMAGE_NIGHT_PNG = ".9.png";

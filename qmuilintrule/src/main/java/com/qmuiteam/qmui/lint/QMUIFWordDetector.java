@@ -29,7 +29,7 @@ public class QMUIFWordDetector extends Detector
             Issue.create("QMUIDontUseTheFWordInLog",
                     "Please, don't use the f word, type something more nicely.",
                     "Do I need to explain this? \uD83D\uDD95",
-                    Category.MESSAGES, 5, Severity.WARNING,
+                    Category.MESSAGES, 2, Severity.WARNING,
                     new Implementation(QMUIFWordDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override

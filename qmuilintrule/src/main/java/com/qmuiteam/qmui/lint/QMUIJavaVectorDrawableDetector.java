@@ -33,7 +33,7 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
             Issue.create("QMUIGetVectorDrawableWithWrongFunction",
                     "Should use the corresponding method to get vector drawable.",
                     "Using the normal method to get the vector drawable will cause a crash on Android versions below 4.0",
-                    Category.ICONS, 2, Severity.ERROR,
+                    Category.CORRECTNESS, 8, Severity.ERROR,
                     new Implementation(QMUIJavaVectorDrawableDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override
