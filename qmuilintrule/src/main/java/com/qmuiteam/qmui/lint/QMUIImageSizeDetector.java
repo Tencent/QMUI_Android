@@ -27,7 +27,7 @@ public class QMUIImageSizeDetector extends Detector implements Detector.BinaryRe
             Issue.create("QMUIImageSizeInvalid",
                     "The size of this image is not correct.",
                     "Please check the size of the image, for example, the height and width of the 2x plot should be even.",
-                    Category.CORRECTNESS, 5, Severity.WARNING,
+                    Category.ICONS, 2, Severity.WARNING,
                     new Implementation(QMUIImageSizeDetector.class, Scope.BINARY_RESOURCE_FILE_SCOPE));
 
     private static final String IGNORE_IMAGE_NIGHT_PNG = ".9.png";
