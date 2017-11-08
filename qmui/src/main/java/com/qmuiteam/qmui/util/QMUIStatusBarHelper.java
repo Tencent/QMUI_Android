@@ -117,6 +117,10 @@ public class QMUIStatusBarHelper {
                 Android6SetStatusBarLightMode(activity.getWindow(), true);
                 mStatuBarType = STATUSBAR_TYPE_ANDROID6;
                 return true;
+            } else if(QMUIDeviceHelper.isMIUIV9() && MIUISetStatusBarLightMode(activity.getWindow(), true)) {
+                //适配 Android 6.0 以下的 MIUI9
+                mStatuBarType = STATUSBAR_TYPE_MIUI;
+                return true;
             }
         }
         return false;
