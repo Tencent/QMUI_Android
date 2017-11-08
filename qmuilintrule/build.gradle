@@ -16,3 +16,7 @@ jar {
         attributes('Lint-Registry': 'com.qmuiteam.qmui.lint.QMUIIssueRegistry')
     }
 }
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
