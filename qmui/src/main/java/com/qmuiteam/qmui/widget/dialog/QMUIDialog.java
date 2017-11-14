@@ -27,9 +27,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.util.ArrayList;
@@ -349,9 +349,11 @@ public class QMUIDialog extends Dialog {
         protected ArrayList<QMUIDialogMenuItemView> mMenuItemViews;
         protected LinearLayout mMenuItemContainer;
         protected LinearLayout.LayoutParams mMenuItemLp;
+        private int mContentAreaMaxHeight;
 
         public MenuBaseDialogBuilder(Context context) {
             super(context);
+            mContentAreaMaxHeight = (int) (QMUIDisplayHelper.getScreenHeight(context) * 0.75);
             mMenuItemViews = new ArrayList<>();
             mMenuItemLp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -384,6 +386,11 @@ public class QMUIDialog extends Dialog {
 
         }
 
+        public T setContentAreaMaxHeight(int contentAreaMaxHeight) {
+            mContentAreaMaxHeight = contentAreaMaxHeight;
+            return (T) this;
+        }
+
         @Override
         protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
             mMenuItemContainer = new LinearLayout(mContext);
@@ -409,7 +416,16 @@ public class QMUIDialog extends Dialog {
             for (QMUIDialogMenuItemView itemView : mMenuItemViews) {
                 mMenuItemContainer.addView(itemView, mMenuItemLp);
             }
-            parent.addView(mMenuItemContainer);
+            ScrollView scrollView = new ScrollView(mContext) {
+                @Override
+                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(mContentAreaMaxHeight,
+                            MeasureSpec.AT_MOST);
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                }
+            };
+            scrollView.addView(mMenuItemContainer);
+            parent.addView(scrollView);
         }
     }
 
