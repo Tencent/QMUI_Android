@@ -80,19 +80,20 @@ public abstract class BaseFragment extends Fragment {
      * 隐藏键盘
      */
     protected boolean hideKeyBoard() {
-//		return mBaseActivityImpl.hideKeyBoard();
         final InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         return imm.hideSoftInputFromWindow(getActivity().findViewById(android.R.id.content)
                 .getWindowToken(), 0);
     }
 
+
+    //============================= 生命周期 ================================
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = onCreateView();
         if (translucentFull()) {
-            if (mBaseView instanceof QMUIWindowInsetLayout) {
+            if (view instanceof QMUIWindowInsetLayout) {
                 view.setFitsSystemWindows(false);
                 mBaseView = view;
             } else {
@@ -105,17 +106,6 @@ public abstract class BaseFragment extends Fragment {
             mBaseView = view;
         }
         QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
-    }
-
-
-    //============================= 生命周期 ================================
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mBaseView.getParent() != null) {
-            ((ViewGroup) mBaseView.getParent()).removeView(mBaseView);
-        }
-        getBaseFragmentActivity().clearDisappearInfo(mBaseView);
         return mBaseView;
     }
 

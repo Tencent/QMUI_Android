@@ -42,28 +42,6 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressWarnings("TryWithIdenticalCatches")
-    public void clearDisappearInfo(View view) {
-        if (view != null) {
-            try {
-                Field field = ViewGroup.class.getDeclaredField("mDisappearingChildren");
-                field.setAccessible(true);
-                Object o = field.get(mFragmentContainer);
-                if(o != null && o instanceof ArrayList){
-                    ArrayList disappearingChildren = (ArrayList) o;
-                    if (disappearingChildren.contains(view)) {
-                        Log.i(TAG, "ViewGroup.mDisappearingChildren contain the targetView");
-                        disappearingChildren.remove(view);
-                    }
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      * 获取当前的 Fragment。
      */
