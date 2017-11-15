@@ -1,10 +1,11 @@
 package com.qmuiteam.qmui.alpha;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
 
-public class QMUIAlphaImageButton extends ImageButton {
+public class QMUIAlphaImageButton extends AppCompatImageButton {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 
