@@ -153,7 +153,8 @@
         <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
         <item name="qmui_topbar_title_text_size">17sp</item>
         <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
-        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">@dimen/qmui_content_padding_horizontal</item>
+        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">0dp</item>
+        <item name="qmui_topbar_title_container_padding_horizontal">8dp</item>
         <item name="qmui_topbar_subtitle_text_size" >11sp</item>
         <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_1</item>
         <item name="qmui_topbar_image_btn_width">48dp</item>

@@ -172,6 +172,7 @@
     <attr name="qmui_topbar_title_text_size" format="dimension"/>
     <attr name="qmui_topbar_title_text_size_with_subtitle" format="dimension"/>
     <attr name="qmui_topbar_title_margin_horizontal_when_no_btn_aside" format="dimension"/>
+    <attr name="qmui_topbar_title_container_padding_horizontal" format="dimension"/>
     <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
     <attr name="qmui_topbar_subtitle_color" format="color"/>
     <attr name="qmui_topbar_image_btn_width" format="dimension"/>

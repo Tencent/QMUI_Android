@@ -309,26 +309,14 @@ public class QMUITopBar extends RelativeLayout {
 
     // ========================= leftView、rightView 相关的方法
 
-    /**
-     * 若在 titleView 存在的情况下，改变 leftViews 和 rightViews，会导致 titleView 的位置不正确。
-     * 此时要调用该方法，保证 titleView 的位置重新调整
-     */
-    private void refreshTitleViewLp() {
-        // 若原本已经有 title，则需要将title移到新添加进去的按钮右边
-        if (mTitleView != null) {
-            LayoutParams titleLp = generateTitleContainerViewLp();
-            makeSureTitleContainerView().setLayoutParams(titleLp);
-
-        }
-    }
-
     private LinearLayout makeSureTitleContainerView() {
         if (mTitleContainerView == null) {
             mTitleContainerView = new LinearLayout(getContext());
             // 垂直，后面要支持水平的话可以加个接口来设置
             mTitleContainerView.setOrientation(LinearLayout.VERTICAL);
             mTitleContainerView.setGravity(Gravity.CENTER);
-            mTitleContainerView.setPadding(QMUIDisplayHelper.dp2px(getContext(), 8), 0, QMUIDisplayHelper.dp2px(getContext(), 8), 0);
+            int horPadding = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_title_container_padding_horizontal);
+            mTitleContainerView.setPadding(horPadding, 0, horPadding, 0);
             addView(mTitleContainerView, generateTitleContainerViewLp());
         }
         return mTitleContainerView;
@@ -340,20 +328,8 @@ public class QMUITopBar extends RelativeLayout {
      * 没有左右按钮时，该 View 距离 TopBar 左右边缘有固定的距离
      */
     private LayoutParams generateTitleContainerViewLp() {
-        LayoutParams titleLp = new LayoutParams(LayoutParams.MATCH_PARENT,
+        return new LayoutParams(LayoutParams.MATCH_PARENT,
                 QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_height));
-
-        // 左右没有按钮时，title 距离 TopBar 左右边缘的距离
-        int titleMarginHorizontalWithoutButton = QMUIResHelper.getAttrDimen(getContext(),
-                R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
-
-        if (mLeftLastViewId == DEFAULT_VIEW_ID && mRightLastViewId == DEFAULT_VIEW_ID) {
-            // 左右两边都没有按钮时，title 和 TopBar 两边保持一个按钮的距离
-            titleLp.leftMargin = titleMarginHorizontalWithoutButton;
-            titleLp.rightMargin = titleMarginHorizontalWithoutButton;
-        }
-
-        return titleLp;
     }
 
     /**
@@ -401,9 +377,6 @@ public class QMUITopBar extends RelativeLayout {
         view.setId(viewId);
         mLeftViewList.add(view);
         addView(view, layoutParams);
-
-        // 消除按钮变动对 titleView 造成的影响
-        refreshTitleViewLp();
     }
 
     /**
@@ -441,9 +414,6 @@ public class QMUITopBar extends RelativeLayout {
         view.setId(viewId);
         mRightViewList.add(view);
         addView(view, layoutParams);
-
-        // 消除按钮变动对 titleView 造成的影响
-        refreshTitleViewLp();
     }
 
     /**
@@ -629,14 +599,14 @@ public class QMUITopBar extends RelativeLayout {
         return mTopbarHeight;
     }
 
-    private int getTopBarImageBtnWidth() {
+    protected int getTopBarImageBtnWidth() {
         if (mTopbarImageBtnWidth == -1) {
             mTopbarImageBtnWidth = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_image_btn_height);
         }
         return mTopbarImageBtnWidth;
     }
 
-    private int getTopBarImageBtnHeight() {
+    protected int getTopBarImageBtnHeight() {
         if (mTopbarImageBtnHeight == -1) {
             mTopbarImageBtnHeight = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_image_btn_height);
         }
@@ -714,9 +684,27 @@ public class QMUITopBar extends RelativeLayout {
             // 计算 titleContainer 的最大宽度
             int titleContainerWidth;
             if ((mTitleGravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
+                if (leftViewWidth == 0 && rightViewWidth == 0) {
+                    // 左右没有按钮时，title 距离 TopBar 左右边缘的距离
+                    int titleMarginHorizontalWithoutButton = QMUIResHelper.getAttrDimen(getContext(),
+                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
+                    leftViewWidth += titleMarginHorizontalWithoutButton;
+                    rightViewWidth += titleMarginHorizontalWithoutButton;
+                }
+
                 // 标题水平居中，左右两侧的占位要保持一致
                 titleContainerWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.max(leftViewWidth, rightViewWidth) * 2 - getPaddingLeft() - getPaddingRight();
             } else {
+                // 标题非水平居中，左右没有按钮时，间距分别计算
+                if (leftViewWidth == 0) {
+                    leftViewWidth += QMUIResHelper.getAttrDimen(getContext(),
+                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
+                }
+                if (rightViewWidth == 0) {
+                    rightViewWidth += QMUIResHelper.getAttrDimen(getContext(),
+                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
+                }
+
                 // 标题非水平居中，左右两侧的占位按实际计算即可
                 titleContainerWidth = MeasureSpec.getSize(widthMeasureSpec) - leftViewWidth - rightViewWidth - getPaddingLeft() - getPaddingRight();
             }
@@ -744,6 +732,12 @@ public class QMUITopBar extends RelativeLayout {
                     if (view.getVisibility() != GONE) {
                         titleContainerViewLeft += view.getMeasuredWidth();
                     }
+                }
+
+                if (mLeftViewList.isEmpty()) {
+                    //左侧没有按钮，标题离左侧间距
+                    titleContainerViewLeft += QMUIResHelper.getAttrDimen(getContext(),
+                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
                 }
             }
             mTitleContainerView.layout(titleContainerViewLeft, titleContainerViewTop, titleContainerViewLeft + titleContainerViewWidth, titleContainerViewTop + titleContainerViewHeight);
