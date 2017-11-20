@@ -1363,6 +1363,23 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (mSelectedIndex != Integer.MIN_VALUE && mMode == MODE_SCROLLABLE) {
+            TabAdapter tabAdapter = getAdapter();
+            final TabItemView view = tabAdapter.getViews().get(mSelectedIndex);
+            if (getScrollX() > view.getLeft()) {
+                scrollTo(view.getLeft(), 0);
+            } else {
+                int realWidth = getWidth() - getPaddingRight() - getPaddingLeft();
+                if (getScrollX() + realWidth < view.getRight()) {
+                    scrollBy(view.getRight() - realWidth - getScrollX(), 0);
+                }
+            }
+        }
+    }
+
     private class PagerAdapterObserver extends DataSetObserver {
         private final boolean mUseAdapterTitle;
 
