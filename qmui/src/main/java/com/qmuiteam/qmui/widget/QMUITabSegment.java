@@ -850,6 +850,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     public void showSignCountView(Context context, int index, int count) {
         Tab tab = getAdapter().getItem(index);
         tab.showSignCountView(context, count);
+        notifyDataChanged();
     }
 
     /**
