@@ -138,9 +138,6 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
             isRadiusAdjustBounds = false;
         } else {
             bg.setCornerRadius(mRadius);
-            if(mRadius > 0){
-                isRadiusAdjustBounds = false;
-            }
         }
         bg.setIsRadiusAdjustBounds(isRadiusAdjustBounds);
         return bg;
