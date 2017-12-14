@@ -20,7 +20,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatDrawableManager;
+import android.support.v7.content.res.AppCompatResources;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -243,7 +243,7 @@ public class QMUIDrawableHelper {
     @Nullable
     Drawable getVectorDrawable(Context context, @DrawableRes int resVector) {
         try {
-            return AppCompatDrawableManager.get().getDrawable(context, resVector);
+            return AppCompatResources.getDrawable(context, resVector);
         } catch (Exception e) {
             QMUILog.d(TAG, "Error in getVectorDrawable. resVector=" + resVector + ", resName=" + context.getResources().getResourceName(resVector) + e.getMessage());
             return null;
