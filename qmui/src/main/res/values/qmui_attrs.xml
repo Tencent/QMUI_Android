@@ -42,6 +42,7 @@
     <attr name="QMUIGroupListViewStyle" format="reference"/>
     <attr name="QMUICommonListItemViewStyle" format="reference"/>
     <attr name="qmui_common_list_item_chevron" format="reference"/>
+    <attr name="qmui_common_list_item_switch" format="reference"/>
     <declare-styleable name="QMUICommonListItemView">
         <attr name="qmui_orientation"/>
         <attr name="qmui_accessory_type" format="enum">
