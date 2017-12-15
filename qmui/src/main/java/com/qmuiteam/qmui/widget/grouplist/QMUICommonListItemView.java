@@ -230,20 +230,12 @@ public class QMUICommonListItemView extends RelativeLayout {
         }
     }
 
-    public Object getDetailText() {
+    public CharSequence getDetailText() {
         return mDetailTextView.getText();
     }
 
-    public void setDetailText(StringBuilder text) {
-        mDetailTextView.setText(text);
-        if (QMUILangHelper.isNullOrEmpty(text)) {
-            mDetailTextView.setVisibility(View.GONE);
-        } else {
-            mDetailTextView.setVisibility(View.VISIBLE);
-        }
-    }
 
-    public void setDetailText(String text) {
+    public void setDetailText(CharSequence text) {
         mDetailTextView.setText(text);
         if (QMUILangHelper.isNullOrEmpty(text)) {
             mDetailTextView.setVisibility(View.GONE);
