@@ -1016,13 +1016,29 @@ public class QMUITabSegment extends HorizontalScrollView {
             this.text = text;
         }
 
-        public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor) {
+
+        public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor){
+            this(normalIcon, selectedIcon, text, dynamicChangeIconColor, true);
+        }
+        /**
+         * 如果你的 icon 显示大小和实际大小不吻合:
+         * 1. 设置icon 的 bounds
+         * 2. 使用此构造器
+         * 3. 最后一个参数（setIntrinsicSize）设置为false
+         *
+         * @param normalIcon 未选中态 icon
+         * @param selectedIcon 选中态 icon
+         * @param text 文字
+         * @param dynamicChangeIconColor 是否动态改变 icon 颜色
+         * @param setIntrinsicSize 是否设置 icon 的大小为 intrinsic width 和 intrinsic height。
+         */
+        public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor, boolean setIntrinsicSize) {
             this.normalIcon = normalIcon;
-            if (this.normalIcon != null) {
+            if (this.normalIcon != null && setIntrinsicSize) {
                 this.normalIcon.setBounds(0, 0, normalIcon.getIntrinsicWidth(), normalIcon.getIntrinsicHeight());
             }
             this.selectedIcon = selectedIcon;
-            if (this.selectedIcon != null) {
+            if (this.selectedIcon != null && setIntrinsicSize) {
                 this.selectedIcon.setBounds(0, 0, selectedIcon.getIntrinsicWidth(), selectedIcon.getIntrinsicHeight());
             }
             this.text = text;
