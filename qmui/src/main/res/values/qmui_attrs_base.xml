@@ -37,6 +37,7 @@
     <attr name="qmui_dialog_bg" format="reference"/>
     <attr name="qmui_dialog_margin_vertical" format="dimension"/>
     <attr name="qmui_dialog_padding_horizontal" format="dimension"/>
+    <attr name="qmui_dialog_background_dim_amount" format="float"/>
 
     <!-- title -->
     <attr name="qmui_dialog_title_text_color" format="color"/>
