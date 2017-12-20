@@ -78,7 +78,6 @@
         <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
         <item name="qmui_dialog_margin_vertical">20dp</item>
         <item name="qmui_dialog_padding_horizontal">24dp</item>
-        <item name="qmui_dialog_background_dim_amount">0.6</item>
 
         <!-- title -->
         <item name="qmui_dialog_title_text_color">?attr/qmui_config_color_black</item>
@@ -221,7 +220,6 @@
         *                 qmui common list item          *
         ***********************************************-->
         <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
-        <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
 
         <!--**********************************************
         *               qmui loading view                *

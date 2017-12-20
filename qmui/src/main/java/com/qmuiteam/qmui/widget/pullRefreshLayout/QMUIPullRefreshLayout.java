@@ -480,7 +480,6 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 if (!view.equals(mRefreshView)) {
                     onSureTargetView(view);
                     mTargetView = view;
-                    break;
                 }
             }
         }

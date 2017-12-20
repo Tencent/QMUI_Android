@@ -19,11 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -230,12 +230,20 @@ public class QMUICommonListItemView extends RelativeLayout {
         }
     }
 
-    public CharSequence getDetailText() {
+    public Object getDetailText() {
         return mDetailTextView.getText();
     }
 
+    public void setDetailText(StringBuilder text) {
+        mDetailTextView.setText(text);
+        if (QMUILangHelper.isNullOrEmpty(text)) {
+            mDetailTextView.setVisibility(View.GONE);
+        } else {
+            mDetailTextView.setVisibility(View.VISIBLE);
+        }
+    }
 
-    public void setDetailText(CharSequence text) {
+    public void setDetailText(String text) {
         mDetailTextView.setText(text);
         if (QMUILangHelper.isNullOrEmpty(text)) {
             mDetailTextView.setVisibility(View.GONE);
@@ -303,7 +311,7 @@ public class QMUICommonListItemView extends RelativeLayout {
             case ACCESSORY_TYPE_SWITCH: {
                 if (mSwitch == null) {
                     mSwitch = new CheckBox(getContext());
-                    mSwitch.setButtonDrawable(QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_common_list_item_switch));
+                    mSwitch.setButtonDrawable(R.drawable.qmui_s_icon_switch);
                     mSwitch.setLayoutParams(getAccessoryLayoutParams());
                     // disable掉且不可点击，然后通过整个item的点击事件来toggle开关的状态
                     mSwitch.setClickable(false);

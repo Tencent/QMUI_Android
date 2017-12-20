@@ -86,7 +86,6 @@
     <!--********************* Dialog *********************-->
 
     <style name="QMUI.Dialog" parent="android:Theme.Dialog">
-        <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
         <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
         <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
@@ -116,7 +115,6 @@
     </style>
 
     <style name="QMUI.BottomSheet" parent="android:Theme.Dialog">
-        <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@null</item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->

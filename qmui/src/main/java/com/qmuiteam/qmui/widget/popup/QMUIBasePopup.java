@@ -6,9 +6,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,15 +15,13 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
-
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 /**
  * 修改自 @author Lorensius W. L. T <lorenz@londatiga.net>
  */
 public abstract class QMUIBasePopup {
-    private static final String TAG = "QMUIBasePopup";
     protected Context mContext;
     protected PopupWindow mWindow;
     private RootView mRootViewWrapper;
@@ -70,62 +66,32 @@ public abstract class QMUIBasePopup {
     protected void onDismiss() {
     }
 
-    public View getDecorView(){
-        View decorView = null;
-        try {
-            if (mWindow.getBackground() == null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    decorView = (View) mWindow.getContentView().getParent();
-                } else {
-                    decorView = mWindow.getContentView();
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    decorView = (View) mWindow.getContentView().getParent().getParent();
-                } else {
-                    decorView = (View) mWindow.getContentView().getParent();
-                }
-            }
-        }catch (Exception ignore){
-
-        }
-
-        return decorView;
-    }
-
-
-    public void dimBehind(float dim) {
-        if (!isShowing()) {
-            throw new RuntimeException("should call after method show() or in onShowEnd()");
-        }
-        View decorView = getDecorView();
-        if(decorView != null){
-            WindowManager.LayoutParams p = (WindowManager.LayoutParams) decorView.getLayoutParams();
-            p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            p.dimAmount = dim;
-            mWindowManager.updateViewLayout(decorView, p);
-        }
+    /**
+     * On PreShow
+     */
+    protected void onPreShow() {
     }
 
     public final void show(View view) {
         show(view, view);
     }
 
-
+    /**
+     *
+     * @param parent a parent view to get the {@link android.view.View#getWindowToken()} token from
+     * @param anchorView provide anchor for positioning
+     */
     public final void show(View parent, View anchorView) {
-        if(!anchorView.isAttachedToWindow()){
-            return;
-        }
-        onShowConfig();
+        preShow();
+        Display screenDisplay = mWindowManager.getDefaultDisplay();
+        screenDisplay.getSize(mScreenSize);
         if (mWindowWidth == 0 || mWindowHeight == 0 || !mNeedCacheSize) {
             measureWindowSize();
         }
 
-        Point point = onShowBegin(parent, anchorView);
+        Point point = onShow(anchorView);
 
         mWindow.showAtLocation(parent, Gravity.NO_GRAVITY, point.x, point.y);
-
-        onShowEnd();
 
         // 在相关的View被移除时，window也自动移除。避免当Fragment退出后，Fragment中弹出的PopupWindow还存在于界面上。
         anchorView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -143,11 +109,17 @@ public abstract class QMUIBasePopup {
         });
     }
 
-    protected void onShowConfig() {
+    protected abstract Point onShow(View attachedView);
+
+    /**
+     * On pre show
+     */
+    private void preShow() {
         if (mRootViewWrapper == null)
             throw new IllegalStateException("setContentView was not called with a view to display.");
 
-        if (mBackground == null) {
+        onPreShow();
+        if (mBackground == null){
             mWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         } else {
             mWindow.setBackgroundDrawable(mBackground);
@@ -160,15 +132,6 @@ public abstract class QMUIBasePopup {
         mWindow.setOutsideTouchable(true);
 
         mWindow.setContentView(mRootViewWrapper);
-
-        Display screenDisplay = mWindowManager.getDefaultDisplay();
-        screenDisplay.getSize(mScreenSize);
-    }
-
-    protected abstract Point onShowBegin(View parent, View attachedView);
-
-    protected void onShowEnd() {
-
     }
 
     public boolean isShowing() {
@@ -176,22 +139,10 @@ public abstract class QMUIBasePopup {
     }
 
     private void measureWindowSize() {
-        int widthMeasureSpec = makeWidthMeasureSpec();
-        int heightMeasureSpec = makeHeightMeasureSpec();
-        mRootView.measure(widthMeasureSpec, heightMeasureSpec);
+        mRootView.measure(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         mWindowWidth = mRootView.getMeasuredWidth();
         mWindowHeight = mRootView.getMeasuredHeight();
-        Log.i(TAG, "measureWindowSize: mWindowWidth = " + mWindowWidth + " ;mWindowHeight = " + mWindowHeight);
     }
-
-    protected int makeWidthMeasureSpec() {
-        return View.MeasureSpec.makeMeasureSpec(QMUIDisplayHelper.getScreenWidth(mContext), View.MeasureSpec.AT_MOST);
-    }
-
-    protected int makeHeightMeasureSpec() {
-        return View.MeasureSpec.makeMeasureSpec(QMUIDisplayHelper.getScreenHeight(mContext), View.MeasureSpec.AT_MOST);
-    }
-
 
     /**
      * Set background drawable.
@@ -226,8 +177,6 @@ public abstract class QMUIBasePopup {
         });
     }
 
-    protected abstract void onWindowSizeChange();
-
 
     /**
      * Set content view.
@@ -255,7 +204,7 @@ public abstract class QMUIBasePopup {
         mNeedCacheSize = needCacheSize;
     }
 
-    public class RootView extends ViewGroup {
+    public class RootView extends FrameLayout {
         public RootView(Context context) {
             super(context);
         }
@@ -270,55 +219,7 @@ public abstract class QMUIBasePopup {
                 mWindow.dismiss();
             }
             QMUIBasePopup.this.onConfigurationChanged(newConfig);
-        }
 
-        @Override
-        public void addView(View child) {
-            if (getChildCount() > 0) {
-                throw new RuntimeException("only support one child");
-            }
-            super.addView(child);
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            if (getChildCount() == 0) {
-                setMeasuredDimension(0, 0);
-            }
-//            int parentWidthSize = MeasureSpec.getSize(widthMeasureSpec);
-            int parentHeightSize = MeasureSpec.getSize(heightMeasureSpec);
-            widthMeasureSpec = makeWidthMeasureSpec();
-            heightMeasureSpec = makeHeightMeasureSpec();
-//            int targetWidthSize = MeasureSpec.getSize(widthMeasureSpec);
-//            int targetWidthMode = MeasureSpec.getMode(widthMeasureSpec);
-            int targetHeightSize = MeasureSpec.getSize(heightMeasureSpec);
-            int targetHeightMode = MeasureSpec.getMode(heightMeasureSpec);
-            // fixme why parentWidthSize < screen width ?
-//            if (parentWidthSize < targetWidthSize) {
-//                widthMeasureSpec = MeasureSpec.makeMeasureSpec(parentWidthSize, targetWidthMode);
-//            }
-            if (parentHeightSize < targetHeightSize) {
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(parentHeightSize, targetHeightMode);
-            }
-            View child = getChildAt(0);
-            child.measure(widthMeasureSpec, heightMeasureSpec);
-            int oldWidth = mWindowWidth, oldHeight = mWindowHeight;
-            mWindowWidth = child.getMeasuredWidth();
-            mWindowHeight = child.getMeasuredHeight();
-            if (oldWidth != mWindowWidth || oldHeight != mWindowHeight && mWindow.isShowing()) {
-                onWindowSizeChange();
-            }
-            Log.i(TAG, "in measure: mWindowWidth = " + mWindowWidth + " ;mWindowHeight = " + mWindowHeight);
-            setMeasuredDimension(mWindowWidth, mWindowHeight);
-        }
-
-        @Override
-        protected void onLayout(boolean changed, int l, int t, int r, int b) {
-            if (getChildCount() == 0) {
-                return;
-            }
-            View child = getChildAt(0);
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
         }
     }
 }
