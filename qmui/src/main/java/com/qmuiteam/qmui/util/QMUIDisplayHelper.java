@@ -13,8 +13,6 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
@@ -44,8 +42,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取 DisplayMetrics
-     *
-     * @return
      */
     public static DisplayMetrics getDisplayMetrics(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -83,8 +79,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取屏幕宽度
-     *
-     * @return
      */
     public static int getScreenWidth(Context context) {
         return getDisplayMetrics(context).widthPixels;
@@ -92,8 +86,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取屏幕高度
-     *
-     * @return
      */
     public static int getScreenHeight(Context context) {
         return getDisplayMetrics(context).heightPixels;
@@ -101,13 +93,10 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取屏幕的真实宽高
-     *
-     * @param context
-     * @return
      */
     public static int[] getRealScreenSize(Context context) {
         int[] size = new int[2];
-        int widthPixels = 0, heightPixels = 0;
+        int widthPixels, heightPixels;
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = w.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -124,9 +113,6 @@ public class QMUIDisplayHelper {
         try {
             // used when SDK_INT >= 17; includes window decorations (statusbar bar/menu bar)
             Point realSize = new Point();
-            d.getRealSize(realSize);
-
-
             Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
             widthPixels = realSize.x;
             heightPixels = realSize.y;
@@ -139,23 +125,8 @@ public class QMUIDisplayHelper {
 
     }
 
-    public static boolean isNavMenuExist(Context context) {
-        //通过判断设备是否有返回键、菜单键(不是虚拟键,是手机屏幕外的按键)来确定是否有navigation bar
-        boolean hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey();
-        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-
-        if (!hasMenuKey && !hasBackKey) {
-            // 做任何你需要做的,这个设备有一个导航栏
-            return true;
-        }
-        return false;
-    }
-
     /**
      * 单位转换: dp -> px
-     *
-     * @param dp
-     * @return
      */
     public static int dp2px(Context context, int dp) {
         return (int) (getDensity(context) * dp + 0.5);
@@ -163,9 +134,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 单位转换:px -> dp
-     *
-     * @param px
-     * @return
      */
     public static int px2dp(Context context, int px) {
         return (int) (px / getDensity(context) + 0.5);
@@ -173,9 +141,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断是否有状态栏
-     *
-     * @param context
-     * @return
      */
     public static boolean hasStatusBar(Context context) {
         if (context instanceof Activity) {
@@ -188,9 +153,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取ActionBar高度
-     *
-     * @param context
-     * @return
      */
     public static int getActionBarHeight(Context context) {
         int actionBarHeight = 0;
@@ -204,9 +166,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取状态栏高度
-     *
-     * @param context
-     * @return
      */
     public static int getStatusBarHeight(Context context) {
         Class<?> c;
@@ -228,25 +187,12 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取虚拟菜单的高度,若无则返回0
-     *
-     * @param context
-     * @return
      */
     public static int getNavMenuHeight(Context context) {
-        if(!isNavMenuExist(context)){
-            return 0;
-        }
-        // 小米4没有nav bar, 而 navigation_bar_height 有值
-        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return context.getResources().getDimensionPixelSize(resourceId);
-        }
-
-        // 小米 MIX 有nav bar, 而 getRealScreenSize(context)[1] - getScreenHeight(context) = 0
         return getRealScreenSize(context)[1] - getScreenHeight(context);
     }
 
-    public static final boolean hasCamera(Context context) {
+    public static boolean hasCamera(Context context) {
         if (sHasCamera == null) {
             PackageManager pckMgr = context.getPackageManager();
             boolean flag = pckMgr
@@ -261,9 +207,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 是否有硬件menu
-     *
-     * @param context
-     * @return
      */
     @SuppressWarnings("SimplifiableIfStatement")
     public static boolean hasHardwareMenuKey(Context context) {
@@ -279,9 +222,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 是否有网络功能
-     *
-     * @param context
-     * @return
      */
     public static boolean hasInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -290,9 +230,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断是否存在pckName包
-     *
-     * @param pckName
-     * @return
      */
     public static boolean isPackageExist(Context context, String pckName) {
         try {
@@ -307,8 +244,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断 SD Card 是否 ready
-     *
-     * @return
      */
     public static boolean isSdcardReady() {
         return Environment.MEDIA_MOUNTED.equals(Environment
@@ -317,9 +252,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 获取当前国家的语言
-     *
-     * @param context
-     * @return
      */
     public static String getCurCountryLan(Context context) {
         Configuration config = context.getResources().getConfiguration();
@@ -337,9 +269,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断是否为中文环境
-     *
-     * @param context
-     * @return
      */
     public static boolean isZhCN(Context context) {
         Configuration config = context.getResources().getConfiguration();
@@ -356,8 +285,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 设置全屏
-     *
-     * @param context
      */
     public static void setFullScreen(Context context) {
         if (context instanceof Activity) {
@@ -372,8 +299,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 取消全屏
-     *
-     * @param context
      */
     public static void cancelFullScreen(Context context) {
         if (context instanceof Activity) {
@@ -387,9 +312,6 @@ public class QMUIDisplayHelper {
 
     /**
      * 判断是否全屏
-     *
-     * @param activity
-     * @return
      */
     public static boolean isFullScreen(Activity activity) {
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();

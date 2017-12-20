@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -617,25 +617,10 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         public BottomGridSheetBuilder addItem(int imageRes, CharSequence text, Object tag, @Style int style, int subscriptRes) {
-            QMUIBottomSheetItemView itemView = createItemView(AppCompatResources.getDrawable(mContext, imageRes), text, tag, subscriptRes);
-            return addItem(itemView, style);
-        }
-
-        public BottomGridSheetBuilder addItem(View view, @Style int style) {
-            switch (style) {
-                case FIRST_LINE:
-                    mFirstLineViews.append(mFirstLineViews.size(), view);
-                    break;
-                case SECOND_LINE:
-                    mSecondLineViews.append(mSecondLineViews.size(), view);
-                    break;
-            }
-            return this;
-        }
-
-        public QMUIBottomSheetItemView createItemView(Drawable drawable, CharSequence text, Object tag, int subscriptRes) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            QMUIBottomSheetItemView itemView = (QMUIBottomSheetItemView) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
+            // 给机会让用的人自定义ItemView
+            @SuppressLint("InflateParams") LinearLayout itemView = (LinearLayout) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
+            // 字体加粗
             TextView titleTV = (TextView) itemView.findViewById(R.id.grid_item_title);
             if (mItemTextTypeFace != null) {
                 titleTV.setTypeface(mItemTextTypeFace);
@@ -645,14 +630,23 @@ public class QMUIBottomSheet extends Dialog {
             itemView.setTag(tag);
             itemView.setOnClickListener(this);
             AppCompatImageView imageView = (AppCompatImageView) itemView.findViewById(R.id.grid_item_image);
-            imageView.setImageDrawable(drawable);
+            imageView.setImageResource(imageRes);
 
             if (subscriptRes != 0) {
                 ViewStub stub = (ViewStub) itemView.findViewById(R.id.grid_item_subscript);
                 View inflated = stub.inflate();
                 ((ImageView) inflated).setImageResource(subscriptRes);
             }
-            return itemView;
+
+            switch (style) {
+                case FIRST_LINE:
+                    mFirstLineViews.append(mFirstLineViews.size(), itemView);
+                    break;
+                case SECOND_LINE:
+                    mSecondLineViews.append(mSecondLineViews.size(), itemView);
+                    break;
+            }
+            return this;
         }
 
         public void setItemVisibility(Object tag, int visibility) {

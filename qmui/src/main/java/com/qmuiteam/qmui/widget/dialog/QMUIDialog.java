@@ -69,6 +69,7 @@ public class QMUIDialog extends Dialog {
         if (window == null) {
             return;
         }
+        window.setDimAmount(0.6f); // 部分刷机会导致背景透明，这里保证一次
         WindowManager.LayoutParams wmlp = window.getAttributes();
         wmlp.width = ViewGroup.LayoutParams.MATCH_PARENT;
         window.setAttributes(wmlp);
@@ -438,7 +439,7 @@ public class QMUIDialog extends Dialog {
         }
 
         /**
-         * 添加多个菜单项
+         * 添加菜单项
          *
          * @param items    所有菜单项的文字
          * @param listener 菜单项的点击事件
@@ -449,18 +450,6 @@ public class QMUIDialog extends Dialog {
             }
             return this;
         }
-
-        /**
-         * 添加单个菜单项
-         *
-         * @param item    菜单项的文字
-         * @param listener 菜单项的点击事件
-         */
-        public MenuDialogBuilder addItem(CharSequence item, OnClickListener listener) {
-            addItem(new QMUIDialogMenuItemView.TextItemView(mContext, item), listener);
-            return this;
-        }
-
     }
 
     /**
