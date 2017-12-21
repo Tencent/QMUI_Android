@@ -2,34 +2,35 @@ package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ListView;
 
 /**
- * 支持高度值为 wrap_content 的 {@link ListView}，解决原生 {@link ListView} 在设置高度为 wrap_content 时高度计算错误的 bug。
+ * height is wrapContent but limited by maxHeight
+ * <p>
+ * Created by cgspine on 2017/12/21.
  */
 
-public class QMUIWrapContentListView extends ListView {
+public class QMUIWrapContentScrollView extends QMUIObservableScrollView {
     private int mMaxHeight = Integer.MAX_VALUE >> 2;
 
-    public QMUIWrapContentListView(Context context){
+    public QMUIWrapContentScrollView(Context context) {
         super(context);
     }
 
-    public QMUIWrapContentListView(Context context, int maxHeight) {
+    public QMUIWrapContentScrollView(Context context, int maxHeight) {
         super(context);
         mMaxHeight = maxHeight;
     }
 
-    public QMUIWrapContentListView(Context context, AttributeSet attrs) {
+    public QMUIWrapContentScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public QMUIWrapContentListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public QMUIWrapContentScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     public void setMaxHeight(int maxHeight) {
-        if(mMaxHeight != maxHeight){
+        if (mMaxHeight != maxHeight) {
             mMaxHeight = maxHeight;
             requestLayout();
         }

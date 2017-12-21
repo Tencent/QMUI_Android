@@ -74,6 +74,7 @@ public class QDDialogFragment extends BaseFragment {
         String[] listItems = new String[]{
                 "消息类型对话框（蓝色按钮）",
                 "消息类型对话框（红色按钮）",
+                "消息类型对话框 (很长文案)",
                 "菜单类型对话框",
                 "带 Checkbox 的消息确认框",
                 "单选菜单类型对话框",
@@ -98,24 +99,27 @@ public class QDDialogFragment extends BaseFragment {
                         showMessageNegativeDialog();
                         break;
                     case 2:
-                        showMenuDialog();
+                        showLongMessageDialog();
                         break;
                     case 3:
-                        showConfirmMessageDialog();
+                        showMenuDialog();
                         break;
                     case 4:
-                        showSingleChoiceDialog();
+                        showConfirmMessageDialog();
                         break;
                     case 5:
-                        showMultiChoiceDialog();
+                        showSingleChoiceDialog();
                         break;
                     case 6:
-                        showNumerousMultiChoiceDialog();
+                        showMultiChoiceDialog();
                         break;
                     case 7:
-                        showEditTextDialog();
+                        showNumerousMultiChoiceDialog();
                         break;
                     case 8:
+                        showEditTextDialog();
+                        break;
+                    case 9:
                         showAutoDialog();
                         break;
                 }
@@ -164,10 +168,34 @@ public class QDDialogFragment extends BaseFragment {
                 .show();
     }
 
+    private void showLongMessageDialog() {
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("标题")
+                .setMessage("这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长长很长的文案")
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
     private void showConfirmMessageDialog() {
         new QMUIDialog.CheckBoxMessageDialogBuilder(getActivity())
                 .setTitle("退出后是否删除账号信息?")
-                .setMessage("删除账号信息").setChecked(true)
+                .setMessage("删除账号信息")
+                .setChecked(true)
                 .addAction("取消", new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {

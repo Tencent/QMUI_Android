@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.util.ArrayList;
@@ -50,10 +50,26 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
     protected TextView mTitleView;
     protected LinearLayout mActionContainer;
+    private int mContentAreaMaxHeight;
 
     public QMUIDialogBuilder(Context context) {
         this.mContext = context;
         mInflater = LayoutInflater.from(context);
+        mContentAreaMaxHeight = (int) (QMUIDisplayHelper.getScreenHeight(mContext) * 0.75);
+    }
+
+    protected int getContentAreaMaxHeight() {
+        return mContentAreaMaxHeight;
+    }
+
+    /**
+     * 设置内容区域最高的高度
+     *
+     * @param contentAreaMaxHeight
+     */
+    public T setContentAreaMaxHeight(int contentAreaMaxHeight) {
+        mContentAreaMaxHeight = contentAreaMaxHeight;
+        return (T) this;
     }
 
     /**
@@ -371,5 +387,4 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         }
         return output;
     }
-
 }
