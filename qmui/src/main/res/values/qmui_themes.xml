@@ -131,6 +131,21 @@
         <item name="qmui_tip_dialog_margin_horizontal">?attr/qmui_content_spacing_horizontal</item>
         <item name="qmui_tip_dialog_padding_vertical">12dp</item>
         <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+
+
+        <!--**********************************************
+        *              qmui common list                  *
+        **********************************************-->
+
+        <item name="qmui_common_list_item_icon_margin_right">12dp</item>
+        <item name="qmui_common_list_item_accessory_margin_left">14dp</item>
+        <item name="qmui_common_list_item_title_v_text_size">15sp</item>
+        <item name="qmui_common_list_item_title_h_text_size">16sp</item>
+        <item name="qmui_common_list_item_h_space_min_width">14dp</item>
+        <item name="qmui_common_list_item_detail_v_text_size">13sp</item>
+        <item name="qmui_common_list_item_detail_h_text_size">14sp</item>
+        <item name="qmui_common_list_item_detail_line_space">5dp</item>
+
         <!--**********************************************
         *             qmui list item bg                  *
         **********************************************-->

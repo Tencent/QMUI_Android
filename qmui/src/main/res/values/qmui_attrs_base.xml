@@ -91,6 +91,19 @@
     <attr name="qmui_tip_dialog_padding_horizontal" format="dimension"/>
     <attr name="qmui_tip_dialog_margin_horizontal" format="dimension"/>
 
+    <!--**********************************************
+    *              qmui common list                  *
+    **********************************************-->
+
+    <attr name="qmui_common_list_item_icon_margin_right" format="dimension"/>
+    <attr name="qmui_common_list_item_accessory_margin_left" format="dimension"/>
+    <attr name="qmui_common_list_item_title_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_title_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_h_space_min_width" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_line_space" format="dimension"/>
+
 
     <!--**********************************************
     *              qmui bottom sheet                 *
