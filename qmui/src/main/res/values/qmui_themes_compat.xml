@@ -15,7 +15,17 @@
         <item name="android:textViewStyle">@style/TextView.Compat</item>
     </style>
 
-    <style name="AppConfigTheme.Compat" parent="AppBaseTheme.Compat"/>
+
+    <style name="AppConfigTheme.Compat" parent="AppBaseTheme.Compat" >
+        <item name="colorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="colorPrimaryDark">?attr/qmui_config_color_blue</item>
+        <item name="colorAccent">?attr/qmui_config_color_blue</item>
+        <item name="colorControlNormal">@color/qmui_config_color_white</item>
+        <item name="android:textColorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="android:textColorSecondary">?attr/qmui_config_color_blue</item> <!--返回箭头也是用这个颜色-->
+        <item name="android:windowBackground">@color/qmui_config_color_white</item>
+        <item name="android:editTextColor">?attr/qmui_config_color_black</item>
+    </style>
 
     <style name="QMUI.Compat" parent="AppConfigTheme.Compat">
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
