@@ -45,7 +45,6 @@ public class QMUITipDialog extends Dialog {
     public QMUITipDialog(Context context, int themeResId) {
         super(context, themeResId);
         setCanceledOnTouchOutside(false);
-        setCancelable(false);
     }
 
     @Override
@@ -126,13 +125,19 @@ public class QMUITipDialog extends Dialog {
             return this;
         }
 
+        public QMUITipDialog create(){
+            return create(true);
+        }
+
         /**
          * 创建 Dialog, 但没有弹出来, 如果要弹出来, 请调用返回值的 {@link Dialog#show()} 方法
          *
+         * @param cancelable 按系统返回键是否可以取消
          * @return 创建的 Dialog
          */
-        public QMUITipDialog create() {
+        public QMUITipDialog create(boolean cancelable) {
             QMUITipDialog dialog = new QMUITipDialog(mContext);
+            dialog.setCancelable(cancelable);
             dialog.setContentView(R.layout.qmui_tip_dialog_layout);
             ViewGroup contentWrap = (ViewGroup) dialog.findViewById(R.id.contentWrap);
 
