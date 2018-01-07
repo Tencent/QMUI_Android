@@ -66,6 +66,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile project(':qmui')
     compile project(':lib')
+    compile project(':arch')
     annotationProcessor project(':compiler')
 
     //leak
