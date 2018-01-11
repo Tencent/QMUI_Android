@@ -527,13 +527,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
                     listener.onScrollOverThreshold();
                 }
             }
-
-            if (mScrollPercent >= 1) {
-                if (!mActivity.isFinishing()) {
-                    mActivity.finish();
-                    mActivity.overridePendingTransition(0, 0);
-                }
-            }
         }
 
         @Override

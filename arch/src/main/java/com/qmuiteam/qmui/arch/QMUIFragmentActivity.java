@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 /**
  * 基础的 Activity，配合 {@link QMUIFragment} 使用。
@@ -15,7 +16,7 @@ import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
  */
 public abstract class QMUIFragmentActivity extends AppCompatActivity {
     private static final String TAG = "QMUIFragmentActivity";
-    private FrameLayout mFragmentContainer;
+    private QMUIWindowInsetLayout mFragmentContainer;
 
     @SuppressWarnings("SameReturnValue")
     protected abstract int getContextViewId();
@@ -24,9 +25,13 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QMUIStatusBarHelper.translucent(this);
-        mFragmentContainer = new FrameLayout(this);
+        mFragmentContainer = new QMUIWindowInsetLayout(this);
         mFragmentContainer.setId(getContextViewId());
         setContentView(mFragmentContainer);
+    }
+
+    public FrameLayout getFragmentContainer() {
+        return mFragmentContainer;
     }
 
     @Override
