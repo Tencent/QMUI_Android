@@ -1,6 +1,5 @@
 package com.qmuiteam.qmui.arch;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -21,6 +20,8 @@ import java.util.List;
 
 /**
  * Created by cgspine on 2018/1/7.
+ * <p>
+ * modified from https://github.com/ikew0ng/SwipeBackLayout
  */
 
 
@@ -90,8 +91,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
      * this value;
      */
     private float mScrollThreshold = DEFAULT_SCROLL_THRESHOLD;
-
-    private Activity mActivity;
 
     private boolean mEnable = true;
 
@@ -350,8 +349,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         try {
             return mDragHelper.shouldInterceptTouchEvent(event);
         } catch (ArrayIndexOutOfBoundsException e) {
-            // FIXME: handle exception
-            // issues #9
             return false;
         }
     }
@@ -434,23 +431,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
             mShadowBottom.setAlpha((int) (mScrimOpacity * FULL_ALPHA));
             mShadowBottom.draw(canvas);
         }
-    }
-
-    public void attachToActivity(Activity activity) {
-        mActivity = activity;
-        TypedArray a = activity.getTheme().obtainStyledAttributes(new int[]{
-                android.R.attr.windowBackground
-        });
-        int background = a.getResourceId(0, 0);
-        a.recycle();
-
-        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
-        decorChild.setBackgroundResource(background);
-        decor.removeView(decorChild);
-        addView(decorChild);
-        setContentView(decorChild);
-        decor.addView(this);
     }
 
     @Override

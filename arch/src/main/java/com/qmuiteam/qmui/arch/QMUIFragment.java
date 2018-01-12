@@ -215,6 +215,11 @@ public abstract class QMUIFragment extends Fragment {
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    if (getActivity() != null) {
+                        getActivity().getWindow().getDecorView().setBackgroundColor(0);
+                        Utils.convertActivityToTranslucent(getActivity());
+                    }
                 }
 
             }
@@ -279,9 +284,9 @@ public abstract class QMUIFragment extends Fragment {
 
         if (swipeBackLayout.getParent() != null) {
             ViewGroup viewGroup = (ViewGroup) swipeBackLayout.getParent();
-            if(viewGroup.indexOfChild(swipeBackLayout) > -1){
+            if (viewGroup.indexOfChild(swipeBackLayout) > -1) {
                 viewGroup.removeView(swipeBackLayout);
-            }else{
+            } else {
                 // see https://issuetracker.google.com/issues/71879409
                 try {
                     Field parentField = View.class.getDeclaredField("mParent");
