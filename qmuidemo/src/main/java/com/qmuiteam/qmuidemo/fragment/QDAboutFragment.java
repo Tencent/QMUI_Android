@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 
 /**
  * 关于界面
- *
+ * <p>
  * Created by Kayo on 2016/11/18.
  */
 public class QDAboutFragment extends BaseFragment {
@@ -76,5 +76,10 @@ public class QDAboutFragment extends BaseFragment {
         });
 
         mTopBar.setTitle(getResources().getString(R.string.about_title));
+    }
+
+    @Override
+    public TransitionConfig onFetchTransitionConfig() {
+        return SCALE_TRANSITION_CONFIG;
     }
 }
