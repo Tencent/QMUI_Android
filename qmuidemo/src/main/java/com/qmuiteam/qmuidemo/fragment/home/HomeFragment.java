@@ -171,4 +171,9 @@ public class HomeFragment extends BaseFragment {
             }
         }
     }
+
+    @Override
+    protected boolean canDragBack() {
+        return false;
+    }
 }

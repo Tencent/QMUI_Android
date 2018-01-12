@@ -171,6 +171,10 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         mContentView = view;
     }
 
+    public View getContentView() {
+        return mContentView;
+    }
+
     public void setEnableGesture(boolean enable) {
         mEnable = enable;
     }
