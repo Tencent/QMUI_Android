@@ -45,12 +45,12 @@ public abstract class QMUIFragment extends Fragment {
 
     // === 提供两种默认的进入退出动画 ===
     protected static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
-            com.qmuiteam.qmui.arch.R.anim.slide_in_right, com.qmuiteam.qmui.arch.R.anim.slide_out_left,
-            com.qmuiteam.qmui.arch.R.anim.slide_in_left, com.qmuiteam.qmui.arch.R.anim.slide_out_right);
+            R.anim.slide_in_right, R.anim.slide_out_left,
+            R.anim.slide_in_left, R.anim.slide_out_right);
 
     protected static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
-            com.qmuiteam.qmui.arch.R.anim.scale_enter, com.qmuiteam.qmui.arch.R.anim.slide_still, com.qmuiteam.qmui.arch.R.anim.slide_still,
-            com.qmuiteam.qmui.arch.R.anim.scale_exit);
+            R.anim.scale_enter, R.anim.slide_still,
+            R.anim.slide_still, R.anim.scale_exit);
 
     private View mBaseView;
     private SwipeBackLayout mCacheView;
@@ -366,7 +366,7 @@ public abstract class QMUIFragment extends Fragment {
     protected abstract View onCreateView();
 
     /**
-     *  disable or enable drag back
+     * disable or enable drag back
      *
      * @return
      */
@@ -383,7 +383,7 @@ public abstract class QMUIFragment extends Fragment {
         return 0;
     }
 
-    protected int dragBackEdge(){
+    protected int dragBackEdge() {
         return EDGE_LEFT;
     }
 

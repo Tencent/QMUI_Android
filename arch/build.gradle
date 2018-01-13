@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 group = 'com.qmuiteam'
-version = "1.0.0"
+version = "0.0.1"
 
 android {
 
@@ -28,5 +28,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly("com.android.support:design:$supportVersion")
-    compile project(':qmui')
+    compileOnly project(':qmui')
+}
+
+// deploy
+File deployConfig = project.file('deploy.properties')
+if (deployConfig.exists()) {
+    apply from: "deployMaven.gradle"
+    apply from: "deployBintray.gradle"
 }
