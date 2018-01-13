@@ -1,6 +1,7 @@
 package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -59,10 +60,19 @@ public class QMUITopBar extends RelativeLayout {
 
     private int mTitleGravity;
     private int mLeftBackDrawableRes;
+    private int mTitleTextSize;
+    private int mTitleTextSizeWithSubTitle;
+    private int mSubTitleTextSize;
+    private int mTitleTextColor;
+    private int mSubTitleTextColor;
+    private int mTitleMarginHorWhenNoBtnAside;
+    private int mTitleContainerPaddingHor;
+    private int mTopBarImageBtnWidth;
+    private int mTopBarImageBtnHeight;
+    private int mTopBarTextBtnPaddingHor;
+    private ColorStateList mTopBarTextBtnTextColor;
+    private int mTopBarTextBtnTextSize;
     private int mTopbarHeight = -1;
-    private int mTopbarImageBtnWidth = -1;
-    private int mTopbarImageBtnHeight = -1;
-    private int mTopbarTextBtnPaddingHorizontal = -1;
     private Rect mTitleContainerRect;
 
     public QMUITopBar(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -85,18 +95,16 @@ public class QMUITopBar extends RelativeLayout {
     // ========================= title 相关的方法
 
     // 这个构造器只用于QMUI内部，不开放给外面用，目前用于QMUITopBarLayout
-    QMUITopBar(Context context, boolean inTopBarLayout, int leftBackDrawableRes) {
+    QMUITopBar(Context context, boolean inTopBarLayout) {
         super(context);
         initVar();
         if (inTopBarLayout) {
             int transparentColor = ContextCompat.getColor(context, R.color.qmui_config_color_transparent);
             mTopBarSeparatorColor = transparentColor;
             mTopBarSeparatorHeight = 0;
-            mLeftBackDrawableRes = leftBackDrawableRes;
             mTopBarBgColor = transparentColor;
         } else {
             init(context, null, R.attr.QMUITopBarStyle);
-            mLeftBackDrawableRes = leftBackDrawableRes;
         }
     }
 
@@ -113,12 +121,29 @@ public class QMUITopBar extends RelativeLayout {
                 ContextCompat.getColor(context, R.color.qmui_config_color_separator));
         mTopBarSeparatorHeight = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_separator_height, 1);
         mTopBarBgColor = array.getColor(R.styleable.QMUITopBar_qmui_topbar_bg_color, Color.WHITE);
-        mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.id.qmui_topbar_item_left_back);
-        mTitleGravity = array.getInt(R.styleable.QMUITopBar_qmui_topbar_title_gravity, Gravity.CENTER);
+        getCommonFieldFormTypedArray(context, array);
         boolean hasSeparator = array.getBoolean(R.styleable.QMUITopBar_qmui_topbar_need_separator, true);
         array.recycle();
 
         setBackgroundDividerEnabled(hasSeparator);
+    }
+
+    void getCommonFieldFormTypedArray(Context context, TypedArray array) {
+        mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.id.qmui_topbar_item_left_back);
+        mTitleGravity = array.getInt(R.styleable.QMUITopBar_qmui_topbar_title_gravity, Gravity.CENTER);
+        mTitleTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 17));
+        mTitleTextSizeWithSubTitle = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 16));
+        mSubTitleTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_subtitle_text_size, QMUIDisplayHelper.sp2px(context, 11));
+        mTitleTextColor = array.getColor(R.styleable.QMUITopBar_qmui_topbar_title_color, QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_1));
+        mSubTitleTextColor = array.getColor(R.styleable.QMUITopBar_qmui_topbar_subtitle_color, QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_4));
+        mTitleMarginHorWhenNoBtnAside = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_margin_horizontal_when_no_btn_aside, 0);
+        mTitleContainerPaddingHor = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_container_padding_horizontal, 0);
+        mTopBarImageBtnWidth = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_image_btn_width, QMUIDisplayHelper.dp2px(context, 48));
+        mTopBarImageBtnHeight = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_image_btn_height, QMUIDisplayHelper.dp2px(context, 48));
+        mTopBarTextBtnPaddingHor = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_text_btn_padding_horizontal, QMUIDisplayHelper.dp2px(context, 12));
+        mTopBarTextBtnTextColor = array.getColorStateList(R.styleable.QMUITopBar_qmui_topbar_text_btn_color_state_list);
+        mTopBarTextBtnTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_text_btn_text_size, QMUIDisplayHelper.sp2px(context, 16));
+
     }
 
     @Override
@@ -211,7 +236,7 @@ public class QMUITopBar extends RelativeLayout {
             mTitleView.setGravity(Gravity.CENTER);
             mTitleView.setSingleLine(true);
             mTitleView.setEllipsize(TruncateAt.MIDDLE);
-            mTitleView.setTextColor(QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_topbar_title_color));
+            mTitleView.setTextColor(mTitleTextColor);
             updateTitleViewStyle();
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
             makeSureTitleContainerView().addView(mTitleView, titleLp);
@@ -226,9 +251,9 @@ public class QMUITopBar extends RelativeLayout {
     private void updateTitleViewStyle() {
         if (mTitleView != null) {
             if (mSubTitleView == null || QMUILangHelper.isNullOrEmpty(mSubTitleView.getText())) {
-                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_title_text_size));
+                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTitleTextSize);
             } else {
-                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_title_text_size_with_subtitle));
+                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTitleTextSizeWithSubTitle);
             }
         }
     }
@@ -265,8 +290,8 @@ public class QMUITopBar extends RelativeLayout {
             mSubTitleView.setGravity(Gravity.CENTER);
             mSubTitleView.setSingleLine(true);
             mSubTitleView.setEllipsize(TruncateAt.MIDDLE);
-            mSubTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_subtitle_text_size));
-            mSubTitleView.setTextColor(QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_topbar_subtitle_color));
+            mSubTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubTitleTextSize);
+            mSubTitleView.setTextColor(mSubTitleTextColor);
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
             titleLp.topMargin = QMUIDisplayHelper.dp2px(getContext(), 1);
             makeSureTitleContainerView().addView(mSubTitleView, titleLp);
@@ -315,8 +340,7 @@ public class QMUITopBar extends RelativeLayout {
             // 垂直，后面要支持水平的话可以加个接口来设置
             mTitleContainerView.setOrientation(LinearLayout.VERTICAL);
             mTitleContainerView.setGravity(Gravity.CENTER);
-            int horPadding = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_title_container_padding_horizontal);
-            mTitleContainerView.setPadding(horPadding, 0, horPadding, 0);
+            mTitleContainerView.setPadding(mTitleContainerPaddingHor, 0, mTitleContainerPaddingHor, 0);
             addView(mTitleContainerView, generateTitleContainerViewLp());
         }
         return mTitleContainerView;
@@ -420,8 +444,8 @@ public class QMUITopBar extends RelativeLayout {
      * 生成一个 LayoutParams，当把 Button addView 到 TopBar 时，使用这个 LayouyParams
      */
     public LayoutParams generateTopBarImageButtonLayoutParams() {
-        LayoutParams lp = new LayoutParams(getTopBarImageBtnWidth(), getTopBarImageBtnHeight());
-        lp.topMargin = Math.max(0, (getTopBarHeight() - getTopBarImageBtnHeight()) / 2);
+        LayoutParams lp = new LayoutParams(mTopBarImageBtnWidth, mTopBarImageBtnHeight);
+        lp.topMargin = Math.max(0, (getTopBarHeight() - mTopBarImageBtnHeight) / 2);
         return lp;
     }
 
@@ -455,8 +479,8 @@ public class QMUITopBar extends RelativeLayout {
      * 生成一个LayoutParams，当把 Button addView 到 TopBar 时，使用这个 LayouyParams
      */
     public LayoutParams generateTopBarTextButtonLayoutParams() {
-        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, getTopBarImageBtnHeight());
-        lp.topMargin = Math.max(0, (getTopBarHeight() - getTopBarImageBtnHeight()) / 2);
+        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, mTopBarImageBtnHeight);
+        lp.topMargin = Math.max(0, (getTopBarHeight() - mTopBarImageBtnHeight) / 2);
         return lp;
     }
 
@@ -521,10 +545,9 @@ public class QMUITopBar extends RelativeLayout {
         button.setMinHeight(0);
         button.setMinimumWidth(0);
         button.setMinimumHeight(0);
-        int paddingHorizontal = getTopBarTextBtnPaddingHorizontal();
-        button.setPadding(paddingHorizontal, 0, paddingHorizontal, 0);
-        button.setTextColor(QMUIResHelper.getAttrColorStateList(getContext(), R.attr.qmui_topbar_text_btn_color_state_list));
-        button.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_text_btn_text_size));
+        button.setPadding(mTopBarTextBtnPaddingHor, 0, mTopBarTextBtnPaddingHor, 0);
+        button.setTextColor(mTopBarTextBtnTextColor);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTopBarTextBtnTextSize);
         button.setGravity(Gravity.CENTER);
         button.setText(text);
         return button;
@@ -599,27 +622,6 @@ public class QMUITopBar extends RelativeLayout {
         return mTopbarHeight;
     }
 
-    protected int getTopBarImageBtnWidth() {
-        if (mTopbarImageBtnWidth == -1) {
-            mTopbarImageBtnWidth = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_image_btn_height);
-        }
-        return mTopbarImageBtnWidth;
-    }
-
-    protected int getTopBarImageBtnHeight() {
-        if (mTopbarImageBtnHeight == -1) {
-            mTopbarImageBtnHeight = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_image_btn_height);
-        }
-        return mTopbarImageBtnHeight;
-    }
-
-    private int getTopBarTextBtnPaddingHorizontal() {
-        if (mTopbarTextBtnPaddingHorizontal == -1) {
-            mTopbarTextBtnPaddingHorizontal = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_text_btn_padding_horizontal);
-        }
-        return mTopbarTextBtnPaddingHorizontal;
-    }
-
     // ======================== TopBar自身相关的方法
 
     /**
@@ -686,10 +688,8 @@ public class QMUITopBar extends RelativeLayout {
             if ((mTitleGravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
                 if (leftViewWidth == 0 && rightViewWidth == 0) {
                     // 左右没有按钮时，title 距离 TopBar 左右边缘的距离
-                    int titleMarginHorizontalWithoutButton = QMUIResHelper.getAttrDimen(getContext(),
-                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
-                    leftViewWidth += titleMarginHorizontalWithoutButton;
-                    rightViewWidth += titleMarginHorizontalWithoutButton;
+                    leftViewWidth += mTitleMarginHorWhenNoBtnAside;
+                    rightViewWidth += mTitleMarginHorWhenNoBtnAside;
                 }
 
                 // 标题水平居中，左右两侧的占位要保持一致
@@ -697,12 +697,10 @@ public class QMUITopBar extends RelativeLayout {
             } else {
                 // 标题非水平居中，左右没有按钮时，间距分别计算
                 if (leftViewWidth == 0) {
-                    leftViewWidth += QMUIResHelper.getAttrDimen(getContext(),
-                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
+                    leftViewWidth += mTitleMarginHorWhenNoBtnAside;
                 }
                 if (rightViewWidth == 0) {
-                    rightViewWidth += QMUIResHelper.getAttrDimen(getContext(),
-                            R.attr.qmui_topbar_title_margin_horizontal_when_no_btn_aside);
+                    rightViewWidth += mTitleMarginHorWhenNoBtnAside;
                 }
 
                 // 标题非水平居中，左右两侧的占位按实际计算即可

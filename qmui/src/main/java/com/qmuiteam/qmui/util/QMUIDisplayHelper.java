@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -32,11 +33,8 @@ public class QMUIDisplayHelper {
      */
     public static final float DENSITY = Resources.getSystem()
             .getDisplayMetrics().density;
-    private static final String TAG = "Devices";
-    /**
-     * 屏幕密度
-     */
-    public static float sDensity = 0f;
+    private static final String TAG = "QMUIDisplayHelper";
+
     /**
      * 是否有摄像头
      */
@@ -75,10 +73,11 @@ public class QMUIDisplayHelper {
     }
 
     public static float getDensity(Context context) {
-        if (sDensity == 0f) {
-            sDensity = getDisplayMetrics(context).density;
-        }
-        return sDensity;
+        return context.getResources().getDisplayMetrics().density;
+    }
+
+    public static float getFontDensity(Context context) {
+        return context.getResources().getDisplayMetrics().scaledDensity;
     }
 
     /**
@@ -105,9 +104,10 @@ public class QMUIDisplayHelper {
      * @param context
      * @return
      */
+
     public static int[] getRealScreenSize(Context context) {
         int[] size = new int[2];
-        int widthPixels = 0, heightPixels = 0;
+        int widthPixels, heightPixels;
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = w.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -162,6 +162,16 @@ public class QMUIDisplayHelper {
     }
 
     /**
+     * 单位转换: sp -> px
+     *
+     * @param sp
+     * @return
+     */
+    public static int sp2px(Context context, int sp) {
+        return (int) (getFontDensity(context) * sp + 0.5);
+    }
+
+    /**
      * 单位转换:px -> dp
      *
      * @param px
@@ -169,6 +179,16 @@ public class QMUIDisplayHelper {
      */
     public static int px2dp(Context context, int px) {
         return (int) (px / getDensity(context) + 0.5);
+    }
+
+    /**
+     * 单位转换:px -> sp
+     *
+     * @param px
+     * @return
+     */
+    public static int px2sp(Context context, int px) {
+        return (int) (px / getFontDensity(context) + 0.5);
     }
 
     /**
@@ -233,7 +253,7 @@ public class QMUIDisplayHelper {
      * @return
      */
     public static int getNavMenuHeight(Context context) {
-        if(!isNavMenuExist(context)){
+        if (!isNavMenuExist(context)) {
             return 0;
         }
         // 小米4没有nav bar, 而 navigation_bar_height 有值

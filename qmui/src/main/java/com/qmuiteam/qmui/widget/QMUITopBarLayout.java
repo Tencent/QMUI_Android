@@ -13,11 +13,11 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 /**
  * 这是一个对 {@link QMUITopBar} 的代理类，需要它的原因是：
@@ -54,16 +54,17 @@ public class QMUITopBarLayout extends FrameLayout {
                 ContextCompat.getColor(context, R.color.qmui_config_color_separator));
         mTopBarSeparatorHeight = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_separator_height, 1);
         mTopBarBgColor = array.getColor(R.styleable.QMUITopBar_qmui_topbar_bg_color, Color.WHITE);
-        int leftBackResId = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.id.qmui_topbar_item_left_back);
         boolean hasSeparator = array.getBoolean(R.styleable.QMUITopBar_qmui_topbar_need_separator, true);
-        array.recycle();
 
         // 构造一个透明的背景且无分隔线的TopBar，背景与分隔线有QMUITopBarLayout控制
-        mTopBar = new QMUITopBar(context, true, leftBackResId);
+        mTopBar = new QMUITopBar(context, true);
+        mTopBar.getCommonFieldFormTypedArray(context, array);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 QMUIResHelper.getAttrDimen(context, R.attr.qmui_topbar_height));
         addView(mTopBar, lp);
+
+        array.recycle();
 
         setBackgroundDividerEnabled(hasSeparator);
     }
