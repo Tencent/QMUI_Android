@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -25,7 +26,7 @@ import butterknife.ButterKnife;
  */
 public class QDAboutFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.version) TextView mVersionTextView;
     @BindView(R.id.about_list) QMUIGroupListView mAboutGroupListView;
     @BindView(R.id.copyright) TextView mCopyrightTextView;
