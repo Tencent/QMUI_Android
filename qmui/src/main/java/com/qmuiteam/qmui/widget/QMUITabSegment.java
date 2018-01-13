@@ -22,7 +22,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
@@ -526,12 +525,12 @@ public class QMUITabSegment extends HorizontalScrollView {
         mForceIndicatorNotDoLayoutWhenParentLayout = false;
     }
 
-    private void changeTabColor(TextView textView, int color, Tab model, int status){
+    private void changeTabColor(TextView textView, int color, Tab model, int status) {
         changeTabColor(textView, color, model, status, false);
     }
 
     private void changeTabColor(TextView textView, int color, Tab model, int status, boolean preventColorChange) {
-        if(!preventColorChange){
+        if (!preventColorChange) {
             textView.setTextColor(color);
         }
 
@@ -544,7 +543,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             return;
         }
 
-        if(!preventColorChange){
+        if (!preventColorChange) {
             Drawable drawable = textView.getCompoundDrawables()[getTabIconPosition(model)];
             if (drawable == null) {
                 return;
@@ -606,8 +605,8 @@ public class QMUITabSegment extends HorizontalScrollView {
         if (preventAnim) {
             setTextViewTypeface(prevView.getTextView(), false);
             setTextViewTypeface(nowView.getTextView(), true);
-            changeTabColor(prevView.getTextView(), getTabNormalColor(prevModel), prevModel, STATUS_NORMAL, true);
-            changeTabColor(nowView.getTextView(), getTabSelectedColor(nowModel), nowModel, STATUS_SELECTED, true);
+            changeTabColor(prevView.getTextView(), getTabNormalColor(prevModel), prevModel, STATUS_NORMAL, mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE);
+            changeTabColor(nowView.getTextView(), getTabSelectedColor(nowModel), nowModel, STATUS_SELECTED, mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE);
             if (getScrollX() > nowView.getLeft()) {
                 smoothScrollTo(nowView.getLeft(), 0);
             } else {
@@ -1042,20 +1041,21 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
 
 
-        public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor){
+        public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor) {
             this(normalIcon, selectedIcon, text, dynamicChangeIconColor, true);
         }
+
         /**
          * 如果你的 icon 显示大小和实际大小不吻合:
          * 1. 设置icon 的 bounds
          * 2. 使用此构造器
          * 3. 最后一个参数（setIntrinsicSize）设置为false
          *
-         * @param normalIcon 未选中态 icon
-         * @param selectedIcon 选中态 icon
-         * @param text 文字
+         * @param normalIcon             未选中态 icon
+         * @param selectedIcon           选中态 icon
+         * @param text                   文字
          * @param dynamicChangeIconColor 是否动态改变 icon 颜色
-         * @param setIntrinsicSize 是否设置 icon 的大小为 intrinsic width 和 intrinsic height。
+         * @param setIntrinsicSize       是否设置 icon 的大小为 intrinsic width 和 intrinsic height。
          */
         public Tab(Drawable normalIcon, Drawable selectedIcon, CharSequence text, boolean dynamicChangeIconColor, boolean setIntrinsicSize) {
             this.normalIcon = normalIcon;
