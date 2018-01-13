@@ -26,16 +26,28 @@ import java.util.List;
  */
 public abstract class QMUIFragment extends Fragment {
     private static final String SWIPE_BACK_VIEW = "swipe_back_view";
-
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
-    // 资源，放在业务初始化，会在业务层
+    /**
+     * Edge flag indicating that the left edge should be affected.
+     */
+    public static final int EDGE_LEFT = SwipeBackLayout.EDGE_LEFT;
+
+    /**
+     * Edge flag indicating that the right edge should be affected.
+     */
+    public static final int EDGE_RIGHT = SwipeBackLayout.EDGE_RIGHT;
+
+    /**
+     * Edge flag indicating that the bottom edge should be affected.
+     */
+    public static final int EDGE_BOTTOM = SwipeBackLayout.EDGE_BOTTOM;
+
+    // === 提供两种默认的进入退出动画 ===
     protected static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             com.qmuiteam.qmui.arch.R.anim.slide_in_right, com.qmuiteam.qmui.arch.R.anim.slide_out_left,
             com.qmuiteam.qmui.arch.R.anim.slide_in_left, com.qmuiteam.qmui.arch.R.anim.slide_out_right);
 
-
-    //============================= UI ================================
     protected static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
             com.qmuiteam.qmui.arch.R.anim.scale_enter, com.qmuiteam.qmui.arch.R.anim.slide_still, com.qmuiteam.qmui.arch.R.anim.slide_still,
             com.qmuiteam.qmui.arch.R.anim.scale_exit);
@@ -103,7 +115,7 @@ public abstract class QMUIFragment extends Fragment {
         } else {
             rootView.setFitsSystemWindows(true);
         }
-        SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView);
+        SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge());
         swipeBackLayout.setEnableGesture(canDragBack());
         swipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
             @Override
@@ -162,7 +174,27 @@ public abstract class QMUIFragment extends Fragment {
                         popBackStack();
                     }
                 }
+            }
 
+            @Override
+            public void onScroll(int edgeFlag, float scrollPercent) {
+                int targetOffset = (int) (Math.abs(backViewInitOffset()) * (1 - scrollPercent));
+                ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
+                int childCount = container.getChildCount();
+                for (int i = childCount - 1; i >= 0; i--) {
+                    View view = container.getChildAt(i);
+                    Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
+                    if (tag != null && SWIPE_BACK_VIEW.equals(tag)) {
+                        if (edgeFlag == EDGE_BOTTOM) {
+                            ViewCompat.offsetTopAndBottom(view, targetOffset - view.getTop());
+                        } else if (edgeFlag == EDGE_RIGHT) {
+                            ViewCompat.offsetLeftAndRight(view, targetOffset - view.getLeft());
+                        } else {
+                            Log.i(TAG, "targetOffset = " + targetOffset + " ; view.getLeft() = " + view.getLeft());
+                            ViewCompat.offsetLeftAndRight(view, -targetOffset - view.getLeft());
+                        }
+                    }
+                }
             }
 
             @Override
@@ -203,6 +235,14 @@ public abstract class QMUIFragment extends Fragment {
                                         if (baseView != null) {
                                             baseView.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
                                             container.addView(baseView, 0);
+                                            int offset = Math.abs(backViewInitOffset());
+                                            if (edgeFlag == EDGE_BOTTOM) {
+                                                ViewCompat.offsetTopAndBottom(baseView, offset);
+                                            } else if (edgeFlag == EDGE_RIGHT) {
+                                                ViewCompat.offsetLeftAndRight(baseView, offset);
+                                            } else {
+                                                ViewCompat.offsetLeftAndRight(baseView, -1 * offset);
+                                            }
                                         }
                                     }
                                 }
@@ -244,7 +284,7 @@ public abstract class QMUIFragment extends Fragment {
         } else {
             boolean isInRemoving = false;
             try {
-                Method method = getClass().getDeclaredMethod("getAnimatingAway");
+                Method method = Fragment.class.getDeclaredMethod("getAnimatingAway");
                 method.setAccessible(true);
                 Object object = method.invoke(this);
                 if (object != null) {
@@ -325,8 +365,26 @@ public abstract class QMUIFragment extends Fragment {
      */
     protected abstract View onCreateView();
 
+    /**
+     *  disable or enable drag back
+     *
+     * @return
+     */
     protected boolean canDragBack() {
         return true;
+    }
+
+    /**
+     * if enable drag back,
+     *
+     * @return
+     */
+    protected int backViewInitOffset() {
+        return 0;
+    }
+
+    protected int dragBackEdge(){
+        return EDGE_LEFT;
     }
 
     //============================= 新流程 ================================

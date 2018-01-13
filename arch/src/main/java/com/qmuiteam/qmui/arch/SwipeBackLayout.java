@@ -257,6 +257,14 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         void onScrollStateChange(int state, float scrollPercent);
 
         /**
+         * Invoke when scrolling
+         *
+         * @param edgeFlag flag to describe edge
+         * @param scrollPercent scroll percent of this view
+         */
+        void onScroll(int edgeFlag, float scrollPercent);
+
+        /**
          * Invoke when edge touched
          *
          * @param edgeFlag edge flag describing the edge being touched
@@ -503,12 +511,16 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
             if (mScrollPercent < mScrollThreshold && !mIsScrollOverValid) {
                 mIsScrollOverValid = true;
             }
-            if (mListeners != null && !mListeners.isEmpty()
-                    && mDragHelper.getViewDragState() == STATE_DRAGGING
-                    && mScrollPercent >= mScrollThreshold && mIsScrollOverValid) {
-                mIsScrollOverValid = false;
+            if (mListeners != null && !mListeners.isEmpty()){
+                if(mDragHelper.getViewDragState() == STATE_DRAGGING &&
+                        mScrollPercent >= mScrollThreshold && mIsScrollOverValid){
+                    mIsScrollOverValid = false;
+                    for (SwipeListener listener : mListeners) {
+                        listener.onScrollOverThreshold();
+                    }
+                }
                 for (SwipeListener listener : mListeners) {
-                    listener.onScrollOverThreshold();
+                    listener.onScroll(mTrackingEdge, mScrollPercent);
                 }
             }
         }
@@ -565,8 +577,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
     }
 
-    public static SwipeBackLayout wrap(View child) {
+    public static SwipeBackLayout wrap(View child, int edgeFlag) {
         SwipeBackLayout wrapper = new SwipeBackLayout(child.getContext());
+        wrapper.setEdgeTrackingEnabled(edgeFlag);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         child.setLayoutParams(lp);
         wrapper.addView(child);
