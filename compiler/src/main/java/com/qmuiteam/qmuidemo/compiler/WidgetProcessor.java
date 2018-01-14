@@ -45,7 +45,7 @@ public class WidgetProcessor extends AbstractProcessor {
     private boolean mIsFileCreated = false;
 
     private final String mClassName = "QDWidgetContainer";
-    private final String mPackageName = "com.qmuiteam.qmuidemo";
+    private final String mPackageName = "com.qmuiteam.qmuidemo.manager";
 
     ClassName mMapName = ClassName.get("java.util", "Map");
     ClassName mHashMapName = ClassName.get("java.util", "HashMap");

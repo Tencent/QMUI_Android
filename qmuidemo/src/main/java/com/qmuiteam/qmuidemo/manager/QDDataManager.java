@@ -1,4 +1,4 @@
-package com.qmuiteam.qmuidemo;
+package com.qmuiteam.qmuidemo.manager;
 
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDBottomSheetFragment;

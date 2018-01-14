@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
+import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -20,10 +21,13 @@ public class QDApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
         }
         LeakCanary.install(this);
+
+        QDUpgradeManager.getInstance(this).check();
     }
 }

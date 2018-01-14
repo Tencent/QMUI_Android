@@ -198,71 +198,71 @@ public abstract class QMUIFragment extends Fragment {
             }
 
             @Override
-            public void onEdgeTouch(int edgeFlag) {
-                Log.i(TAG, "SwipeListener:onEdgeTouch: edgeFlag = " + edgeFlag);
-                FragmentManager fragmentManager = getFragmentManager();
-                if (fragmentManager == null) {
-                    return;
-                }
-                int backstackCount = fragmentManager.getBackStackEntryCount();
-                if (backstackCount > 1) {
-                    try {
-                        FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backstackCount - 1);
+public void onEdgeTouch(int edgeFlag) {
+    Log.i(TAG, "SwipeListener:onEdgeTouch: edgeFlag = " + edgeFlag);
+    FragmentManager fragmentManager = getFragmentManager();
+    if (fragmentManager == null) {
+        return;
+    }
+    int backstackCount = fragmentManager.getBackStackEntryCount();
+    if (backstackCount > 1) {
+        try {
+            FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backstackCount - 1);
 
-                        Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
-                        opsField.setAccessible(true);
-                        Object opsObj = opsField.get(backStackEntry);
-                        if (opsObj instanceof List<?>) {
-                            List<?> ops = (List<?>) opsObj;
-                            for (Object op : ops) {
-                                Field cmdField = op.getClass().getDeclaredField("cmd");
-                                cmdField.setAccessible(true);
-                                int cmd = (int) cmdField.get(op);
-                                if (cmd == 3) {
-                                    Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
-                                    popEnterAnimField.setAccessible(true);
-                                    popEnterAnimField.set(op, 0);
+            Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
+            opsField.setAccessible(true);
+            Object opsObj = opsField.get(backStackEntry);
+            if (opsObj instanceof List<?>) {
+                List<?> ops = (List<?>) opsObj;
+                for (Object op : ops) {
+                    Field cmdField = op.getClass().getDeclaredField("cmd");
+                    cmdField.setAccessible(true);
+                    int cmd = (int) cmdField.get(op);
+                    if (cmd == 3) {
+                        Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
+                        popEnterAnimField.setAccessible(true);
+                        popEnterAnimField.set(op, 0);
 
-                                    Field fragmentField = op.getClass().getDeclaredField("fragment");
-                                    fragmentField.setAccessible(true);
-                                    Object fragmentObject = fragmentField.get(op);
-                                    if (fragmentObject instanceof QMUIFragment) {
-                                        QMUIFragment fragment = (QMUIFragment) fragmentObject;
-                                        ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
-                                        fragment.isCreateForSwipeBack = true;
-                                        View baseView = fragment.onCreateView(LayoutInflater.from(getContext()), container, null);
-                                        fragment.isCreateForSwipeBack = false;
-                                        if (baseView != null) {
-                                            baseView.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
-                                            container.addView(baseView, 0);
-                                            int offset = Math.abs(backViewInitOffset());
-                                            if (edgeFlag == EDGE_BOTTOM) {
-                                                ViewCompat.offsetTopAndBottom(baseView, offset);
-                                            } else if (edgeFlag == EDGE_RIGHT) {
-                                                ViewCompat.offsetLeftAndRight(baseView, offset);
-                                            } else {
-                                                ViewCompat.offsetLeftAndRight(baseView, -1 * offset);
-                                            }
-                                        }
-                                    }
+                        Field fragmentField = op.getClass().getDeclaredField("fragment");
+                        fragmentField.setAccessible(true);
+                        Object fragmentObject = fragmentField.get(op);
+                        if (fragmentObject instanceof QMUIFragment) {
+                            QMUIFragment fragment = (QMUIFragment) fragmentObject;
+                            ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
+                            fragment.isCreateForSwipeBack = true;
+                            View baseView = fragment.onCreateView(LayoutInflater.from(getContext()), container, null);
+                            fragment.isCreateForSwipeBack = false;
+                            if (baseView != null) {
+                                baseView.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
+                                container.addView(baseView, 0);
+                                int offset = Math.abs(backViewInitOffset());
+                                if (edgeFlag == EDGE_BOTTOM) {
+                                    ViewCompat.offsetTopAndBottom(baseView, offset);
+                                } else if (edgeFlag == EDGE_RIGHT) {
+                                    ViewCompat.offsetLeftAndRight(baseView, offset);
+                                } else {
+                                    ViewCompat.offsetLeftAndRight(baseView, -1 * offset);
                                 }
                             }
                         }
-
-
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    if (getActivity() != null) {
-                        getActivity().getWindow().getDecorView().setBackgroundColor(0);
-                        Utils.convertActivityToTranslucent(getActivity());
                     }
                 }
-
             }
+
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    } else {
+        if (getActivity() != null) {
+            getActivity().getWindow().getDecorView().setBackgroundColor(0);
+            Utils.convertActivityToTranslucent(getActivity());
+        }
+    }
+
+}
 
             @Override
             public void onScrollOverThreshold() {
@@ -273,75 +273,75 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        SwipeBackLayout swipeBackLayout;
-        if (mCacheView == null) {
+public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    SwipeBackLayout swipeBackLayout;
+    if (mCacheView == null) {
+        swipeBackLayout = newSwipeBackLayout();
+        mCacheView = swipeBackLayout;
+    } else if (isCreateForSwipeBack) {
+        // in swipe back, must not in animation
+        swipeBackLayout = mCacheView;
+    } else {
+        boolean isInRemoving = false;
+        try {
+            Method method = Fragment.class.getDeclaredMethod("getAnimatingAway");
+            method.setAccessible(true);
+            Object object = method.invoke(this);
+            if (object != null) {
+                isInRemoving = true;
+            }
+        } catch (NoSuchMethodException e) {
+            isInRemoving = true;
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            isInRemoving = true;
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            isInRemoving = true;
+            e.printStackTrace();
+        }
+        if (isInRemoving) {
             swipeBackLayout = newSwipeBackLayout();
             mCacheView = swipeBackLayout;
-        } else if (isCreateForSwipeBack) {
-            // in swipe back, must not in animation
-            swipeBackLayout = mCacheView;
         } else {
-            boolean isInRemoving = false;
+            swipeBackLayout = mCacheView;
+        }
+    }
+
+
+    if (!isCreateForSwipeBack) {
+        mBaseView = swipeBackLayout.getContentView();
+        swipeBackLayout.setTag(R.id.qmui_arch_swipe_layout_in_back, null);
+    }
+
+    ViewCompat.setTranslationZ(swipeBackLayout, mBackStackIndex);
+
+    swipeBackLayout.setFitsSystemWindows(false);
+
+    if (getActivity() != null) {
+        QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
+    }
+
+    if (swipeBackLayout.getParent() != null) {
+        ViewGroup viewGroup = (ViewGroup) swipeBackLayout.getParent();
+        if (viewGroup.indexOfChild(swipeBackLayout) > -1) {
+            viewGroup.removeView(swipeBackLayout);
+        } else {
+            // see https://issuetracker.google.com/issues/71879409
             try {
-                Method method = Fragment.class.getDeclaredMethod("getAnimatingAway");
-                method.setAccessible(true);
-                Object object = method.invoke(this);
-                if (object != null) {
-                    isInRemoving = true;
-                }
-            } catch (NoSuchMethodException e) {
-                isInRemoving = true;
+                Field parentField = View.class.getDeclaredField("mParent");
+                parentField.setAccessible(true);
+                parentField.set(swipeBackLayout, null);
+            } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-                isInRemoving = true;
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                isInRemoving = true;
                 e.printStackTrace();
             }
-            if (isInRemoving) {
-                swipeBackLayout = newSwipeBackLayout();
-                mCacheView = swipeBackLayout;
-            } else {
-                swipeBackLayout = mCacheView;
-            }
         }
-
-
-        if (!isCreateForSwipeBack) {
-            mBaseView = swipeBackLayout.getContentView();
-            swipeBackLayout.setTag(R.id.qmui_arch_swipe_layout_in_back, null);
-        }
-
-        ViewCompat.setTranslationZ(swipeBackLayout, mBackStackIndex);
-
-        swipeBackLayout.setFitsSystemWindows(false);
-
-        if (getActivity() != null) {
-            QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
-        }
-
-        if (swipeBackLayout.getParent() != null) {
-            ViewGroup viewGroup = (ViewGroup) swipeBackLayout.getParent();
-            if (viewGroup.indexOfChild(swipeBackLayout) > -1) {
-                viewGroup.removeView(swipeBackLayout);
-            } else {
-                // see https://issuetracker.google.com/issues/71879409
-                try {
-                    Field parentField = View.class.getDeclaredField("mParent");
-                    parentField.setAccessible(true);
-                    parentField.set(swipeBackLayout, null);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return swipeBackLayout;
     }
+
+    return swipeBackLayout;
+}
 
     protected void popBackStack() {
         getBaseFragmentActivity().popBackStack();
