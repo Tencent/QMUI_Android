@@ -28,6 +28,13 @@ public class QMUIWrapContentListView extends ListView {
         super(context, attrs, defStyleAttr);
     }
 
+    public void setMaxHeight(int maxHeight) {
+        if(mMaxHeight != maxHeight){
+            mMaxHeight = maxHeight;
+            requestLayout();
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int expandSpec = MeasureSpec.makeMeasureSpec(mMaxHeight,

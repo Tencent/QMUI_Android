@@ -96,7 +96,7 @@ public class QMUIPopup extends QMUIBasePopup {
     }
 
     @Override
-    protected Point onShow(View attachedView) {
+    protected Point onShowBegin(View parent, View attachedView) {
         calculatePosition(attachedView);
 
         showArrow();
@@ -110,6 +110,11 @@ public class QMUIPopup extends QMUIBasePopup {
             offsetY = mOffsetYWhenBottom;
         }
         return new Point(mX + mOffsetX, mY + offsetY);
+    }
+
+    @Override
+    protected void onWindowSizeChange() {
+
     }
 
     private void calculatePosition(View attachedView) {

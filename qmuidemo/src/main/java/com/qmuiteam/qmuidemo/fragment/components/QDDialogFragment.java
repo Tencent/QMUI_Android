@@ -23,11 +23,11 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
-import com.qmuiteam.qmuidemo.QDDataManager;
-import com.qmuiteam.qmuidemo.model.QDItemDescription;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,10 +74,12 @@ public class QDDialogFragment extends BaseFragment {
         String[] listItems = new String[]{
                 "消息类型对话框（蓝色按钮）",
                 "消息类型对话框（红色按钮）",
+                "消息类型对话框 (很长文案)",
                 "菜单类型对话框",
                 "带 Checkbox 的消息确认框",
                 "单选菜单类型对话框",
                 "多选菜单类型对话框",
+                "多选菜单类型对话框(item 数量很多)",
                 "带输入框的对话框",
                 "高度适应键盘升降的对话框"
         };
@@ -97,21 +99,27 @@ public class QDDialogFragment extends BaseFragment {
                         showMessageNegativeDialog();
                         break;
                     case 2:
-                        showMenuDialog();
+                        showLongMessageDialog();
                         break;
                     case 3:
-                        showConfirmMessageDialog();
+                        showMenuDialog();
                         break;
                     case 4:
-                        showSingleChoiceDialog();
+                        showConfirmMessageDialog();
                         break;
                     case 5:
-                        showMultiChoiceDialog();
+                        showSingleChoiceDialog();
                         break;
                     case 6:
-                        showEditTextDialog();
+                        showMultiChoiceDialog();
                         break;
                     case 7:
+                        showNumerousMultiChoiceDialog();
+                        break;
+                    case 8:
+                        showEditTextDialog();
+                        break;
+                    case 9:
                         showAutoDialog();
                         break;
                 }
@@ -160,10 +168,34 @@ public class QDDialogFragment extends BaseFragment {
                 .show();
     }
 
+    private void showLongMessageDialog() {
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("标题")
+                .setMessage("这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长长很长的文案")
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
     private void showConfirmMessageDialog() {
         new QMUIDialog.CheckBoxMessageDialogBuilder(getActivity())
                 .setTitle("退出后是否删除账号信息?")
-                .setMessage("删除账号信息").setChecked(true)
+                .setMessage("删除账号信息")
+                .setChecked(true)
                 .addAction("取消", new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
@@ -237,6 +269,40 @@ public class QDDialogFragment extends BaseFragment {
         builder.show();
     }
 
+    private void showNumerousMultiChoiceDialog() {
+        final String[] items = new String[]{
+                "选项1", "选项2", "选项3", "选项4", "选项5", "选项6",
+                "选项7", "选项8", "选项9", "选项10", "选项11", "选项12",
+                "选项13", "选项14", "选项15", "选项16", "选项17", "选项18"
+        };
+        final QMUIDialog.MultiCheckableDialogBuilder builder = new QMUIDialog.MultiCheckableDialogBuilder(getActivity())
+                .setCheckedItems(new int[]{1, 3})
+                .addItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.addAction("取消", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+        builder.addAction("提交", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                String result = "你选择了 ";
+                for (int i = 0; i < builder.getCheckedItemIndexes().length; i++) {
+                    result += "" + builder.getCheckedItemIndexes()[i] + "; ";
+                }
+                Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
     private void showEditTextDialog() {
         final QMUIDialog.EditTextDialogBuilder builder = new QMUIDialog.EditTextDialogBuilder(getActivity());
         builder.setTitle("标题")
@@ -256,7 +322,7 @@ public class QDDialogFragment extends BaseFragment {
                             Toast.makeText(getActivity(), "您的昵称: " + text, Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         } else {
-                            Toast.makeText(getActivity(), "请填入昵称" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "请填入昵称", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })

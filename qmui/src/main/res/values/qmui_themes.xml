@@ -78,6 +78,7 @@
         <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
         <item name="qmui_dialog_margin_vertical">20dp</item>
         <item name="qmui_dialog_padding_horizontal">24dp</item>
+        <item name="qmui_dialog_background_dim_amount">0.6</item>
 
         <!-- title -->
         <item name="qmui_dialog_title_text_color">?attr/qmui_config_color_black</item>
@@ -130,6 +131,21 @@
         <item name="qmui_tip_dialog_margin_horizontal">?attr/qmui_content_spacing_horizontal</item>
         <item name="qmui_tip_dialog_padding_vertical">12dp</item>
         <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+
+
+        <!--**********************************************
+        *              qmui common list                  *
+        **********************************************-->
+
+        <item name="qmui_common_list_item_icon_margin_right">12dp</item>
+        <item name="qmui_common_list_item_accessory_margin_left">14dp</item>
+        <item name="qmui_common_list_item_title_v_text_size">15sp</item>
+        <item name="qmui_common_list_item_title_h_text_size">16sp</item>
+        <item name="qmui_common_list_item_h_space_min_width">14dp</item>
+        <item name="qmui_common_list_item_detail_v_text_size">13sp</item>
+        <item name="qmui_common_list_item_detail_h_text_size">14sp</item>
+        <item name="qmui_common_list_item_detail_line_space">5dp</item>
+
         <!--**********************************************
         *             qmui list item bg                  *
         **********************************************-->
@@ -175,17 +191,6 @@
         *                  qmui topbar                   *
         ***********************************************-->
         <item name="qmui_topbar_height">56dp</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_title_text_size">17sp</item>
-        <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
-        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">@dimen/qmui_content_padding_horizontal</item>
-        <item name="qmui_topbar_subtitle_text_size" >11sp</item>
-        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_image_btn_width">48dp</item>
-        <item name="qmui_topbar_image_btn_height">48dp</item>
-        <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_topbar_text_color</item>
-        <item name="qmui_topbar_text_btn_text_size">16sp</item>
 
         <!--**********************************************
         *                 qmui bottom sheet              *
@@ -219,6 +224,7 @@
         *                 qmui common list item          *
         ***********************************************-->
         <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
+        <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
 
         <!--**********************************************
         *               qmui loading view                *

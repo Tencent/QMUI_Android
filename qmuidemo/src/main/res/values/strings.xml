@@ -3,6 +3,9 @@
     <!-- common -->
     <string name="app_name">QMUI</string>
     <string name="common_example">示例图片</string>
+    <string name="app_upgrade_tip_title">更新提示(%1$s)</string>
+    <string name="ok">确&#160;定</string>
+    <string name="cancel">取&#160;消</string>
 
     <!-- Components 系列界面 -->
 

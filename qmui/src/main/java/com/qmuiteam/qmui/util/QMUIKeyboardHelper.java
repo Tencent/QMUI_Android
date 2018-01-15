@@ -25,13 +25,18 @@ public class QMUIKeyboardHelper {
     private static final String TAG = "QMUIKeyboardHelper";
     private final static int KEYBOARD_VISIBLE_THRESHOLD_DP = 100;
 
+
+    public static void showKeyboard(final EditText editText, boolean delay) {
+        showKeyboard(editText, delay ? SHOW_KEYBOARD_DELAY_TIME : 0);
+    }
+
+
     /**
      * 针对给定的editText显示软键盘（editText会先获得焦点）. 可以和{@link #hideKeyboard(View)}
      * 搭配使用，进行键盘的显示隐藏控制。
-     *
      */
 
-    public static void showKeyboard(final EditText editText, boolean delay) {
+    public static void showKeyboard(final EditText editText, int delay) {
         if (null == editText)
             return;
 
@@ -39,7 +44,7 @@ public class QMUIKeyboardHelper {
             Log.w(TAG, "showSoftInput() can not get focus");
             return;
         }
-        if (delay) {
+        if (delay > 0) {
             editText.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -47,7 +52,7 @@ public class QMUIKeyboardHelper {
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
                 }
-            }, SHOW_KEYBOARD_DELAY_TIME);
+            }, delay);
         } else {
             InputMethodManager imm = (InputMethodManager) editText.getContext().getApplicationContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);

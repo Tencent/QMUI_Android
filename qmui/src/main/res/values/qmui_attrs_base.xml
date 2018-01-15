@@ -37,6 +37,7 @@
     <attr name="qmui_dialog_bg" format="reference"/>
     <attr name="qmui_dialog_margin_vertical" format="dimension"/>
     <attr name="qmui_dialog_padding_horizontal" format="dimension"/>
+    <attr name="qmui_dialog_background_dim_amount" format="float"/>
 
     <!-- title -->
     <attr name="qmui_dialog_title_text_color" format="color"/>
@@ -89,6 +90,19 @@
     <attr name="qmui_tip_dialog_padding_vertical" format="dimension"/>
     <attr name="qmui_tip_dialog_padding_horizontal" format="dimension"/>
     <attr name="qmui_tip_dialog_margin_horizontal" format="dimension"/>
+
+    <!--**********************************************
+    *              qmui common list                  *
+    **********************************************-->
+
+    <attr name="qmui_common_list_item_icon_margin_right" format="dimension"/>
+    <attr name="qmui_common_list_item_accessory_margin_left" format="dimension"/>
+    <attr name="qmui_common_list_item_title_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_title_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_h_space_min_width" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_line_space" format="dimension"/>
 
 
     <!--**********************************************
@@ -168,17 +182,6 @@
     *                  qmui topbar                   *
     ***********************************************-->
     <attr name="qmui_topbar_height" format="dimension"/>
-    <attr name="qmui_topbar_title_color" format="color"/>
-    <attr name="qmui_topbar_title_text_size" format="dimension"/>
-    <attr name="qmui_topbar_title_text_size_with_subtitle" format="dimension"/>
-    <attr name="qmui_topbar_title_margin_horizontal_when_no_btn_aside" format="dimension"/>
-    <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
-    <attr name="qmui_topbar_subtitle_color" format="color"/>
-    <attr name="qmui_topbar_image_btn_width" format="dimension"/>
-    <attr name="qmui_topbar_image_btn_height" format="dimension"/>
-    <attr name="qmui_topbar_text_btn_padding_horizontal" format="dimension"/>
-    <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
-    <attr name="qmui_topbar_text_btn_text_size" format="dimension"/>
 
     <!--**********************************************
     *               qmui loading view                *

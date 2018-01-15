@@ -10,11 +10,6 @@
 
         <!-- 配置qmui提供的theme -->
         <item name="qmui_config_color_blue">@color/app_color_blue</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
-        <item name="qmui_topbar_height">48dp</item>
-        <item name="qmui_topbar_image_btn_height">48dp</item>
         <item name="qmui_round_btn_bg_color">@color/s_btn_blue_bg</item>
         <item name="qmui_round_btn_border_color">@color/s_btn_blue_border</item>
         <item name="qmui_round_btn_text_color">@color/s_btn_blue_text</item>
@@ -62,6 +57,11 @@
 
     <style name="QDTopBar" parent="QMUI.TopBar">
         <item name="qmui_topbar_bg_color">?attr/app_primary_color</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
+        <item name="qmui_topbar_height">48dp</item>
+        <item name="qmui_topbar_image_btn_height">48dp</item>
     </style>
 
     <style name="QDRadiusButton" parent="@style/Button">

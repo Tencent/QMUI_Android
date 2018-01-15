@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.qmuiteam.qmui.widget.dialog.QMUIBottomSheetItemView xmlns:android="http://schemas.android.com/apk/res/android"
                                                android:layout_width="?attr/qmui_bottom_sheet_grid_item_mini_width"
                                                android:layout_height="wrap_content"
                                                android:gravity="center_horizontal"
@@ -33,4 +33,4 @@
         android:gravity="center_horizontal"
         android:maxLines="2"
         android:textAppearance="?attr/qmui_bottom_sheet_grid_item_text_appearance"/>
-</com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout>
+</com.qmuiteam.qmui.widget.dialog.QMUIBottomSheetItemView>

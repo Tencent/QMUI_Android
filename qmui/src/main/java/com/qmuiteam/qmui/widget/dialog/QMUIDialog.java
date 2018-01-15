@@ -27,10 +27,12 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.util.ArrayList;
 
@@ -69,7 +71,6 @@ public class QMUIDialog extends Dialog {
         if (window == null) {
             return;
         }
-        window.setDimAmount(0.6f); // 部分刷机会导致背景透明，这里保证一次
         WindowManager.LayoutParams wmlp = window.getAttributes();
         wmlp.width = ViewGroup.LayoutParams.MATCH_PARENT;
         window.setAttributes(wmlp);
@@ -80,15 +81,18 @@ public class QMUIDialog extends Dialog {
      */
     public static class MessageDialogBuilder extends QMUIDialogBuilder<MessageDialogBuilder> {
         protected CharSequence mMessage;
-
-        private TextView mTextView;
+        private final QMUIWrapContentScrollView mScrollContainer;
+        private QMUISpanTouchFixTextView mTextView;
 
         public MessageDialogBuilder(Context context) {
             super(context);
-            mTextView = new TextView(mContext);
+            mTextView = new QMUISpanTouchFixTextView(mContext);
             mTextView.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_4));
             mTextView.setLineSpacing(QMUIDisplayHelper.dpToPx(2), 1.0f);
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_message_text_size));
+
+            mScrollContainer = new QMUIWrapContentScrollView(mContext);
+            mScrollContainer.addView(mTextView);
         }
 
         /**
@@ -109,7 +113,7 @@ public class QMUIDialog extends Dialog {
         @Override
         protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
             if (mMessage != null && mMessage.length() != 0) {
-
+                mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
                 mTextView.setText(mMessage);
                 mTextView.setPadding(
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
@@ -117,11 +121,11 @@ public class QMUIDialog extends Dialog {
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom)
                 );
-                parent.addView(mTextView);
+                parent.addView(mScrollContainer);
             }
         }
 
-        public TextView getTextView() {
+        public QMUISpanTouchFixTextView getTextView() {
             return mTextView;
         }
     }
@@ -131,19 +135,21 @@ public class QMUIDialog extends Dialog {
      */
     public static class CheckBoxMessageDialogBuilder extends QMUIDialogBuilder<CheckBoxMessageDialogBuilder> {
 
+        private final QMUIWrapContentScrollView mScrollContainer;
         protected String mMessage;
         private boolean mIsChecked = false;
         private Drawable mCheckMarkDrawable;
-        private TextView mTextView;
+        private QMUISpanTouchFixTextView mTextView;
 
         public CheckBoxMessageDialogBuilder(Context context) {
             super(context);
             mCheckMarkDrawable = QMUIResHelper.getAttrDrawable(context, R.attr.qmui_s_checkbox);
-
-            mTextView = new TextView(mContext);
+            mScrollContainer = new QMUIWrapContentScrollView(mContext);
+            mTextView = new QMUISpanTouchFixTextView(mContext);
             mTextView.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_4));
             mTextView.setLineSpacing(QMUIDisplayHelper.dpToPx(2), 1.0f);
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_message_text_size));
+            mScrollContainer.addView(mTextView);
         }
 
         /**
@@ -185,7 +191,7 @@ public class QMUIDialog extends Dialog {
         @Override
         protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
             if (mMessage != null && mMessage.length() != 0) {
-
+                mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
                 mTextView.setText(mMessage);
                 mTextView.setPadding(
                         QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
@@ -203,11 +209,11 @@ public class QMUIDialog extends Dialog {
                     }
                 });
                 mTextView.setSelected(mIsChecked);
-                parent.addView(mTextView);
+                parent.addView(mScrollContainer);
             }
         }
 
-        public TextView getTextView() {
+        public QMUISpanTouchFixTextView getTextView() {
             return mTextView;
         }
 
@@ -409,7 +415,16 @@ public class QMUIDialog extends Dialog {
             for (QMUIDialogMenuItemView itemView : mMenuItemViews) {
                 mMenuItemContainer.addView(itemView, mMenuItemLp);
             }
-            parent.addView(mMenuItemContainer);
+            ScrollView scrollView = new ScrollView(mContext) {
+                @Override
+                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(getContentAreaMaxHeight(),
+                            MeasureSpec.AT_MOST);
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                }
+            };
+            scrollView.addView(mMenuItemContainer);
+            parent.addView(scrollView);
         }
     }
 
@@ -423,7 +438,7 @@ public class QMUIDialog extends Dialog {
         }
 
         /**
-         * 添加菜单项
+         * 添加多个菜单项
          *
          * @param items    所有菜单项的文字
          * @param listener 菜单项的点击事件
@@ -434,6 +449,18 @@ public class QMUIDialog extends Dialog {
             }
             return this;
         }
+
+        /**
+         * 添加单个菜单项
+         *
+         * @param item     菜单项的文字
+         * @param listener 菜单项的点击事件
+         */
+        public MenuDialogBuilder addItem(CharSequence item, OnClickListener listener) {
+            addItem(new QMUIDialogMenuItemView.TextItemView(mContext, item), listener);
+            return this;
+        }
+
     }
 
     /**

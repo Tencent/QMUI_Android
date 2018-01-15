@@ -41,7 +41,6 @@
     **********************************************-->
     <dimen name="qmui_list_item_height">56dp</dimen>
     <dimen name="qmui_list_item_height_higher">103dp</dimen>
-    <dimen name="qmui_list_item_detail_lineSpacingExtra">5dp</dimen>
     <dimen name="qmui_group_list_section_header_footer_padding_vertical">8dp</dimen>
     <dimen name="qmui_group_list_section_header_footer_textSize">13sp</dimen>
 

@@ -1,13 +1,13 @@
 package com.qmuiteam.qmui.alpha;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaTextView extends TextView {
+public class QMUIAlphaTextView extends AppCompatTextView {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 

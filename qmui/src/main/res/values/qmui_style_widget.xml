@@ -35,6 +35,7 @@
     <style name="QMUI.GroupListView">
         <item name="separatorStyle">none</item>
     </style>
+
     <style name="QMUI.CommonListItemView">
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
@@ -46,8 +47,12 @@
     <style name="QMUI.GroupListSectionView">
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
-        <item name="android:paddingTop">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
-        <item name="android:paddingBottom">@dimen/qmui_group_list_section_header_footer_padding_vertical</item>
+        <item name="android:paddingTop">
+            @dimen/qmui_group_list_section_header_footer_padding_vertical
+        </item>
+        <item name="android:paddingBottom">
+            @dimen/qmui_group_list_section_header_footer_padding_vertical
+        </item>
     </style>
 
     <!--********************* Loading *********************-->
@@ -71,21 +76,34 @@
         <item name="qmui_topbar_title_gravity">center</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
+        <item name="qmui_topbar_title_color">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_title_text_size">17sp</item>
+        <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
+        <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">0dp</item>
+        <item name="qmui_topbar_title_container_padding_horizontal">8dp</item>
+        <item name="qmui_topbar_subtitle_text_size">11sp</item>
+        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_image_btn_width">48dp</item>
+        <item name="qmui_topbar_image_btn_height">48dp</item>
+        <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_topbar_text_color</item>
+        <item name="qmui_topbar_text_btn_text_size">16sp</item>
     </style>
 
     <style name="QMUI.CollapsingTopBarLayoutExpanded">
-        <item name="android:textColor">?attr/qmui_topbar_title_color</item>
+        <item name="android:textColor">@color/qmui_config_color_white</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="QMUI.CollapsingTopBarLayoutCollapsed">
-        <item name="android:textColor">?attr/qmui_topbar_title_color</item>
-        <item name="android:textSize">?attr/qmui_topbar_title_text_size</item>
+        <item name="android:textColor">@color/qmui_config_color_white</item>
+        <item name="android:textSize">17sp</item>
     </style>
 
     <!--********************* Dialog *********************-->
 
     <style name="QMUI.Dialog" parent="android:Theme.Dialog">
+        <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
         <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
         <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
@@ -115,9 +133,11 @@
     </style>
 
     <style name="QMUI.BottomSheet" parent="android:Theme.Dialog">
+        <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@null</item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
+        <item name="android:windowAnimationStyle">@null
+        </item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
         <item name="android:layout_width">match_parent</item>
     </style>
 
@@ -159,9 +179,9 @@
         <item name="qmui_special_drawable_padding">5dp</item>
     </style>
 
-    <style name="QMUI.Animation" parent="@android:style/Animation" />
+    <style name="QMUI.Animation" parent="@android:style/Animation"/>
 
-    <style name="QMUI.Animation.PopUpMenu" />
+    <style name="QMUI.Animation.PopUpMenu"/>
 
     <style name="QMUI.Animation.PopUpMenu.Center">
         <item name="android:windowEnterAnimation">@anim/grow_from_bottom</item>
@@ -178,7 +198,7 @@
         <item name="android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
     </style>
 
-    <style name="QMUI.Animation.PopDownMenu" />
+    <style name="QMUI.Animation.PopDownMenu"/>
 
     <style name="QMUI.Animation.PopDownMenu.Center">
         <item name="android:windowEnterAnimation">@anim/grow_from_top</item>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@anim/decelerate_factor_interpolator">
+
+    <translate
+        android:duration="@integer/qmui_anim_duration"
+        android:fromXDelta="-40%p"
+        android:toXDelta="0%p" />
+
+    <alpha
+        android:duration="@integer/qmui_anim_duration"
+        android:fromAlpha="0.85"
+        android:toAlpha="1" />
+ 
+</set>

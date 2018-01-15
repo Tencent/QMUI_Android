@@ -11,7 +11,7 @@ import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUICenterGravityRefreshOffset
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIDefaultRefreshOffsetCalculator;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIFollowRefreshOffsetCalculator;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
@@ -42,7 +42,7 @@ public class QDPullRefreshFragment extends BaseFragment {
         View root = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_pull_refresh_listview, null);
         ButterKnife.bind(this, root);
 
-        QDDataManager QDDataManager = com.qmuiteam.qmuidemo.QDDataManager.getInstance();
+        QDDataManager QDDataManager = com.qmuiteam.qmuidemo.manager.QDDataManager.getInstance();
         mQDItemDescription = QDDataManager.getDescription(this.getClass());
         initTopBar();
         initData();

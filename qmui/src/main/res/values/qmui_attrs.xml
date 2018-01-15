@@ -42,6 +42,7 @@
     <attr name="QMUIGroupListViewStyle" format="reference"/>
     <attr name="QMUICommonListItemViewStyle" format="reference"/>
     <attr name="qmui_common_list_item_chevron" format="reference"/>
+    <attr name="qmui_common_list_item_switch" format="reference"/>
     <declare-styleable name="QMUICommonListItemView">
         <attr name="qmui_orientation"/>
         <attr name="qmui_accessory_type" format="enum">
@@ -78,6 +79,18 @@
         <attr name="qmui_topbar_separator_height" format="dimension"/>
         <attr name="qmui_topbar_bg_color" format="color"/>
         <attr name="qmui_topbar_left_back_drawable_id" format="reference"/>
+        <attr name="qmui_topbar_title_text_size" format="dimension"/>
+        <attr name="qmui_topbar_title_text_size_with_subtitle" format="dimension"/>
+        <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
+        <attr name="qmui_topbar_title_color" format="color"/>
+        <attr name="qmui_topbar_subtitle_color" format="color"/>
+        <attr name="qmui_topbar_title_margin_horizontal_when_no_btn_aside" format="dimension"/>
+        <attr name="qmui_topbar_title_container_padding_horizontal" format="dimension"/>
+        <attr name="qmui_topbar_image_btn_width" format="dimension"/>
+        <attr name="qmui_topbar_image_btn_height" format="dimension"/>
+        <attr name="qmui_topbar_text_btn_padding_horizontal" format="dimension"/>
+        <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
+        <attr name="qmui_topbar_text_btn_text_size" format="dimension"/>
     </declare-styleable>
     <attr name="QMUITopBarStyle" format="reference"/>
 

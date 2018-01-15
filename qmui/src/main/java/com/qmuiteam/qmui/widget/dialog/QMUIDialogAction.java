@@ -141,6 +141,11 @@ public class QMUIDialogAction {
 		if(mActionType == ACTION_TYPE_BLOCK){
 			BlockActionView actionView = new BlockActionView(context, mStr, mIconRes);
 			mButton = actionView.getButton();
+			if(mActionProp == ACTION_PROP_NEGATIVE){
+				mButton.setTextColor(QMUIResHelper.getAttrColorStateList(mContext, R.attr.qmui_dialog_action_text_negative_color));
+			}else{
+				mButton.setTextColor(QMUIResHelper.getAttrColorStateList(mContext, R.attr.qmui_dialog_action_text_color));
+			}
 			if (mOnClickListener != null) {
 				actionView.setOnClickListener(new View.OnClickListener() {
 					@Override

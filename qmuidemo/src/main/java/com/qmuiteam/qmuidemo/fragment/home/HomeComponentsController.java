@@ -2,7 +2,7 @@ package com.qmuiteam.qmuidemo.fragment.home;
 
 import android.content.Context;
 
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
 /**
  * @author cginechen

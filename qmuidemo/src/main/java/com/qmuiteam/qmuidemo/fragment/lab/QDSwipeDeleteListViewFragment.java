@@ -13,7 +13,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ListView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.adaptor.QDSimpleAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
