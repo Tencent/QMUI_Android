@@ -354,7 +354,8 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, 
             // the parent is removed (as all children are first removed from the parent)
             // See https://code.google.com/p/android/issues/detail?id=55228
             Animation doNothingAnim = new AlphaAnimation(1, 1);
-            doNothingAnim.setDuration(R.integer.qmui_anim_duration);
+            int duration = getResources().getInteger(R.integer.qmui_anim_duration);
+            doNothingAnim.setDuration(duration);
             return doNothingAnim;
         }
         return null;
