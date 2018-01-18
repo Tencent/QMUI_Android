@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.arch;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,8 @@ import java.util.List;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment {
+    public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
+    public static final int RESULT_OK = Activity.RESULT_OK;
     private static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -56,6 +59,9 @@ public abstract class QMUIFragment extends Fragment {
     private SwipeBackLayout mCacheView;
     private boolean isCreateForSwipeBack = false;
     private int mBackStackIndex = 0;
+    private RequestInfo requestInfo;
+    private int resultCode;
+    private Bundle resultBundle;
 
     public QMUIFragment() {
         super();
@@ -88,6 +94,9 @@ public abstract class QMUIFragment extends Fragment {
         }
     }
 
+    public void onFragmentResult(int resultCode, int requestCode, Bundle bundle) {
+
+    }
 
     //============================= 生命周期 ================================
 
@@ -95,6 +104,10 @@ public abstract class QMUIFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            requestInfo = arguments.getParcelable(QMUIFragmentActivity.REQUEST_CODE_TAG);
+        }
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager != null) {
             int backStackEntryCount = fragmentManager.getBackStackEntryCount();
@@ -344,7 +357,29 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, 
 }
 
     protected void popBackStack() {
+        fragmentForResult();
         getBaseFragmentActivity().popBackStack();
+    }
+
+    public void setResult(int resultCode) {
+        setResult(resultCode, null);
+    }
+
+    public void setResult(int resultCode, Bundle bundle) {
+        this.resultCode = resultCode;
+        this.resultBundle = bundle == null ? new Bundle() : bundle;
+    }
+
+    private void fragmentForResult() {
+        if (requestInfo != null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                Fragment whoFragment = fragmentManager.findFragmentById(requestInfo.getmResultWho());
+                if (whoFragment != null) {
+                    getBaseFragmentActivity().onActivityFragmentResult(requestInfo.getmResultWho(), requestInfo.getmRequestCode(), resultCode, resultBundle);
+                }
+            }
+        }
     }
 
     @Override
