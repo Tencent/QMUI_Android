@@ -2,6 +2,7 @@ package com.qmuiteam.qmui.arch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragmentActivity extends AppCompatActivity {
+    public static final String REQUEST_CODE_TAG = "QMUI_REQUEST_CODE_TAG";
     private static final String TAG = "QMUIFragmentActivity";
     private QMUIWindowInsetLayout mFragmentContainer;
 
@@ -38,7 +40,7 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
     public void onBackPressed() {
         QMUIFragment fragment = getCurrentFragment();
         if (fragment != null) {
-            popBackStack();
+            fragment.popBackStack();
         }
     }
 
@@ -50,7 +52,19 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
     }
 
     public void startFragment(QMUIFragment fragment) {
+        startFragment(fragment, null);
+    }
+
+    public void startFragment(QMUIFragment fragment, Bundle bundle) {
         Log.i(TAG, "startFragment");
+        if (bundle != null) {
+            Bundle arguments = fragment.getArguments();
+            if (arguments == null) {
+                arguments = new Bundle();
+            }
+            arguments.putAll(bundle);
+            fragment.setArguments(arguments);
+        }
         QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
         String tagName = fragment.getClass().getSimpleName();
         getSupportFragmentManager()
@@ -59,6 +73,32 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
                 .replace(getContextViewId(), fragment, tagName)
                 .addToBackStack(tagName)
                 .commit();
+    }
+
+    public void startFragmentForResult(QMUIFragment fromQmuiFragment, QMUIFragment tofragment, int requestCode) {
+        startFragmentForResult(fromQmuiFragment, tofragment, requestCode, null);
+    }
+
+    public void startFragmentForResult(QMUIFragment fromQmuiFragment, QMUIFragment tofragment, int requestCode, Bundle bundle) {
+        Log.i(TAG, "startFragment");
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putParcelable(REQUEST_CODE_TAG, new RequestInfo(fromQmuiFragment.getId(), requestCode, bundle));
+        startFragment(tofragment, bundle);
+    }
+
+    public void onActivityFragmentResult(int fragmentId, int requestCode, int resultCode, Bundle data) {
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        Fragment fragmentById = supportFragmentManager.findFragmentById(fragmentId);
+        if (fragmentById != null) {
+            if (fragmentById instanceof QMUIFragment) {
+                QMUIFragment qmuiFragment = (QMUIFragment) fragmentById;
+                if (qmuiFragment.isAdded()) {
+                    qmuiFragment.onFragmentResult(resultCode, requestCode, data);
+                }
+            }
+        }
     }
 
     /**
