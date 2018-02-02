@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -113,7 +114,7 @@ public abstract class QMUIBasePopup {
 
 
     public final void show(View parent, View anchorView) {
-        if(!anchorView.isAttachedToWindow()){
+        if(!ViewCompat.isAttachedToWindow(anchorView)){
             return;
         }
         onShowConfig();
@@ -128,7 +129,7 @@ public abstract class QMUIBasePopup {
         onShowEnd();
 
         // 在相关的View被移除时，window也自动移除。避免当Fragment退出后，Fragment中弹出的PopupWindow还存在于界面上。
-        anchorView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+        parent.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
 
