@@ -196,6 +196,11 @@ public class QMUIStatusBarHelper {
         int systemUi = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         systemUi = changeStatusBarModeRetainFlag(window, systemUi);
         decorView.setSystemUiVisibility(systemUi);
+        if(QMUIDeviceHelper.isMIUIV9()){
+            // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
+            // https://github.com/QMUI/QMUI_Android/issues/160
+            MIUISetStatusBarLightMode(window, light);
+        }
         return true;
     }
 
@@ -203,11 +208,11 @@ public class QMUIStatusBarHelper {
      * 设置状态栏字体图标为深色，需要 MIUIV6 以上
      *
      * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @param light   是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回 true
      */
     @SuppressWarnings("unchecked")
-    public static boolean MIUISetStatusBarLightMode(Window window, boolean dark) {
+    public static boolean MIUISetStatusBarLightMode(Window window, boolean light) {
         boolean result = false;
         if (window != null) {
             Class clazz = window.getClass();
@@ -217,7 +222,7 @@ public class QMUIStatusBarHelper {
                 Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
                 darkModeFlag = field.getInt(layoutParams);
                 Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
-                if (dark) {
+                if (light) {
                     extraFlagField.invoke(window, darkModeFlag, darkModeFlag);//状态栏透明且黑色字体
                 } else {
                     extraFlagField.invoke(window, 0, darkModeFlag);//清除黑色字体
@@ -244,13 +249,13 @@ public class QMUIStatusBarHelper {
      * 可以用来判断是否为 Flyme 用户
      *
      * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @param light   是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回true
      */
-    public static boolean FlymeSetStatusBarLightMode(Window window, boolean dark) {
+    public static boolean FlymeSetStatusBarLightMode(Window window, boolean light) {
 
         // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
-        Android6SetStatusBarLightMode(window, dark);
+        Android6SetStatusBarLightMode(window, light);
 
         boolean result = false;
         if (window != null) {
@@ -264,7 +269,7 @@ public class QMUIStatusBarHelper {
                 meizuFlags.setAccessible(true);
                 int bit = darkFlag.getInt(null);
                 int value = meizuFlags.getInt(lp);
-                if (dark) {
+                if (light) {
                     value |= bit;
                 } else {
                     value &= ~bit;
