@@ -241,6 +241,27 @@ public class QMUIQQFaceView extends View {
         }
     }
 
+    public void setTypeface(Typeface tf, int style) {
+        if (style > 0) {
+            if (tf == null) {
+                tf = Typeface.defaultFromStyle(style);
+            } else {
+                tf = Typeface.create(tf, style);
+            }
+
+            setTypeface(tf);
+            // now compute what (if any) algorithmic styling is needed
+            int typefaceStyle = tf != null ? tf.getStyle() : 0;
+            int need = style & ~typefaceStyle;
+            mPaint.setFakeBoldText((need & Typeface.BOLD) != 0);
+            mPaint.setTextSkewX((need & Typeface.ITALIC) != 0 ? -0.25f : 0);
+        } else {
+            mPaint.setFakeBoldText(false);
+            mPaint.setTextSkewX(0);
+            setTypeface(tf);
+        }
+    }
+
     public void setParagraphSpace(int paragraphSpace) {
         if (mParagraphSpace != paragraphSpace) {
             mParagraphSpace = paragraphSpace;
