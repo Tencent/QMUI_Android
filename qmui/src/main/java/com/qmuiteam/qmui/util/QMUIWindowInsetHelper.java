@@ -110,9 +110,11 @@ public class QMUIWindowInsetHelper {
                     showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
 
             computeInsetsWithGravity(child, childInsets);
-            ViewCompat.dispatchApplyWindowInsets(child, insets.replaceSystemWindowInsets(childInsets));
+            WindowInsetsCompat windowInsetsCompat = ViewCompat.dispatchApplyWindowInsets(child, insets.replaceSystemWindowInsets(childInsets));
 
-            consumed = true;
+            if(windowInsetsCompat.isConsumed()){
+                consumed = true;
+            }
         }
 
         return consumed;
