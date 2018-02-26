@@ -71,7 +71,7 @@ public class QMUIAlphaViewHelper {
         } else {
             alphaForIsEnable = mNormalAlpha;
         }
-        if (current != target) {
+        if (current != target && target.isEnabled() != enabled) {
             target.setEnabled(enabled);
         }
         target.setAlpha(alphaForIsEnable);
