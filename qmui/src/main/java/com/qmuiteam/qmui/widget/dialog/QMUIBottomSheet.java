@@ -571,6 +571,7 @@ public class QMUIBottomSheet extends Dialog {
         private int mMiniItemWidth = -1;
         private OnSheetItemClickListener mOnSheetItemClickListener;
         private Typeface mItemTextTypeFace = null;
+        private ViewGroup mBottomButtonContainer;
         private TextView mBottomButton;
         private Typeface mBottomButtonTypeFace = null;
         private boolean mIsShowButton = true;
@@ -699,7 +700,8 @@ public class QMUIBottomSheet extends Dialog {
             baseLinearLayout = (LinearLayout) View.inflate(mContext, getContentViewLayoutId(), null);
             LinearLayout firstLine = (LinearLayout) baseLinearLayout.findViewById(R.id.bottom_sheet_first_linear_layout);
             LinearLayout secondLine = (LinearLayout) baseLinearLayout.findViewById(R.id.bottom_sheet_second_linear_layout);
-            mBottomButton = (TextView) baseLinearLayout.findViewById(R.id.bottom_sheet_button);
+            mBottomButtonContainer = (ViewGroup) baseLinearLayout.findViewById(R.id.bottom_sheet_button_container);
+            mBottomButton = (TextView) baseLinearLayout.findViewById(R.id.bottom_sheet_close_button);
 
             int maxItemCountEachLine = Math.max(mFirstLineViews.size(), mSecondLineViews.size());
             int screenWidth = QMUIDisplayHelper.getScreenWidth(mContext);
@@ -727,13 +729,13 @@ public class QMUIBottomSheet extends Dialog {
             }
 
             // button 在用户自定义了contentView的情况下可能不存在
-            if (mBottomButton != null) {
+            if (mBottomButtonContainer != null) {
                 if (mIsShowButton) {
-                    mBottomButton.setVisibility(View.VISIBLE);
+                    mBottomButtonContainer.setVisibility(View.VISIBLE);
                     int dimen = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_bottom_sheet_grid_padding_vertical);
                     baseLinearLayout.setPadding(0, dimen, 0, 0);
                 } else {
-                    mBottomButton.setVisibility(View.GONE);
+                    mBottomButtonContainer.setVisibility(View.GONE);
                 }
                 if (mBottomButtonTypeFace != null) {
                     mBottomButton.setTypeface(mBottomButtonTypeFace);

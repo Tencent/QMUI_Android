@@ -218,7 +218,7 @@
         <item name="qmui_bottom_sheet_button_height">56dp</item>
         <item name="qmui_bottom_sheet_button_text_size">15sp</item>
         <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
-        <item name="qmui_bottom_sheet_button_text_background">@drawable/qmui_s_list_item_bg_with_border_top</item>
+        <item name="qmui_bottom_sheet_button_background">@drawable/qmui_divider_top_bitmap</item>
 
         <!--**********************************************
         *                 qmui common list item          *

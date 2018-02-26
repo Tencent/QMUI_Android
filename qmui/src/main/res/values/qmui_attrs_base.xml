@@ -132,7 +132,8 @@
     <attr name="qmui_bottom_sheet_button_height" format="dimension"/>
     <attr name="qmui_bottom_sheet_button_text_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_button_text_color" format="reference"/>
-    <attr name="qmui_bottom_sheet_button_text_background" format="reference"/>
+    <attr name="qmui_bottom_sheet_button_background" format="reference"/>
+
 
     <!--**********************************************
     *             qmui list item bg                  *
