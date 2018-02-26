@@ -38,6 +38,12 @@ public class QMUIStatusBarHelper {
         translucent(activity, 0x40000000);
     }
 
+    private static boolean supportTranslucent() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                // Essential Phone 不支持沉浸式，否则系统又不从状态栏下方开始布局又给你下发 WindowInsets
+                && !Build.BRAND.toLowerCase().contains("essential");
+    }
+
     /**
      * 沉浸式状态栏。
      * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android。
@@ -46,7 +52,7 @@ public class QMUIStatusBarHelper {
      */
     @TargetApi(19)
     public static void translucent(Activity activity, @ColorInt int colorOn5x) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+        if (!supportTranslucent()) {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
