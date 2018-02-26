@@ -18,12 +18,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 
 /**
  * 提供为图片添加圆角、边框、剪裁到圆形或其他形状等功能。
@@ -281,7 +281,8 @@ public class QMUIRadiusImageView extends AppCompatImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMeasuredWidth(), height = getMeasuredHeight();
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
         if (mIsCircle) {
             int size = Math.min(width, height);
             setMeasuredDimension(size, size);
@@ -291,38 +292,44 @@ public class QMUIRadiusImageView extends AppCompatImageView {
             if (mBitmap == null) {
                 return;
             }
-            if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED ||
-                    heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
+            boolean widthWrapContent = widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED;
+            boolean heightWrapContent = heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED;
+            float bmWidth = mBitmap.getWidth(), bmHeight = mBitmap.getHeight();
+            float scaleX = width / bmWidth, scaleY = height / bmHeight;
+            if (widthWrapContent && heightWrapContent) {
                 // 保证长宽比
-                float bmWidth = mBitmap.getWidth(), bmHeight = mBitmap.getHeight();
-                float scaleX = width / bmWidth, scaleY = height / bmHeight;
-                if (scaleX == scaleY) {
+                if (scaleX >= 1 && scaleY >= 1) {
+                    setMeasuredDimension((int) bmWidth, (int) bmHeight);
                     return;
                 }
+
+                if (scaleX >= 1) {
+                    setMeasuredDimension((int) (bmHeight * scaleY), height);
+                    return;
+                }
+
+                if (scaleY >= 1) {
+                    setMeasuredDimension(width, (int) (bmHeight * scaleX));
+                    return;
+                }
+
                 if (scaleX < scaleY) {
                     setMeasuredDimension(width, (int) (bmHeight * scaleX));
                 } else {
                     setMeasuredDimension((int) (bmWidth * scaleY), height);
                 }
+            } else if (widthWrapContent) {
+                setMeasuredDimension((int) (bmWidth * scaleY), height);
+            } else if (heightWrapContent) {
+                setMeasuredDimension(width, (int) (bmHeight * scaleX));
             }
         }
     }
 
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        setupBitmap();
-    }
 
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
-        setupBitmap();
-    }
-
-    @Override
-    public void setImageResource(@DrawableRes int resId) {
-        super.setImageResource(resId);
         setupBitmap();
     }
 
@@ -339,7 +346,22 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         }
 
         if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            float bmWidth = bitmap.getWidth(), bmHeight = bitmap.getHeight();
+            if(bmWidth == 0 || bmHeight == 0){
+                return null;
+            }
+            // ensure minWidth and minHeight
+            float minScaleX = getMinimumWidth() / bmWidth, minScaleY = getMinimumHeight() / bmHeight;
+            if(minScaleX > 1 || minScaleY > 1){
+                float scale = Math.max(minScaleX, minScaleY);
+                Matrix matrix = new Matrix();
+                matrix.postScale(scale, scale);
+
+                return Bitmap.createBitmap(bitmap, 0, 0, (int)bmWidth, (int)bmHeight, matrix, false);
+            }else{
+                return bitmap;
+            }
         }
 
         try {
@@ -367,7 +389,7 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         if (bm == mBitmap) {
             return;
         }
-        mBitmap = getBitmap();
+        mBitmap = bm;
         if (mBitmap == null) {
             mBitmapShader = null;
             invalidate();
