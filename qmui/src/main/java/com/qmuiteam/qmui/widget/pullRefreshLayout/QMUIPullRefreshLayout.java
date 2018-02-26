@@ -493,11 +493,18 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     }
 
-    protected void finishPull(int vy) {
+    protected void onFinishPull(int vy, int refreshInitOffset, int refreshEndOffset, int refreshViewHeight,
+                                int targetCurrentOffset, int targetInitOffset, int targetRefreshOffset) {
+
+    }
+
+    private void finishPull(int vy) {
         Log.i(TAG, "finishPull: vy = " + vy + " ; mTargetCurrentOffset = " + mTargetCurrentOffset +
                 " ; mTargetRefreshOffset = " + mTargetRefreshOffset + " ; mTargetInitOffset = " + mTargetInitOffset +
                 " ; mScroller.isFinished() = " + mScroller.isFinished());
         int miniVy = vy / 1000; // 向下拖拽时， 速度不能太大
+        onFinishPull(miniVy, mRefreshInitOffset, mRefreshEndOffset, mRefreshView.getHeight(),
+                mTargetCurrentOffset, mTargetInitOffset, mTargetRefreshOffset);
         if (mTargetCurrentOffset >= mTargetRefreshOffset) {
             if (miniVy > 0) {
                 mScrollFlag = FLAG_NEED_SCROLL_TO_REFRESH_POSITION | FLAG_NEED_DO_REFRESH;
@@ -849,6 +856,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         } else if (hasFlag(FLAG_NEED_DO_REFRESH)) {
             removeFlag(FLAG_NEED_DO_REFRESH);
             onRefresh();
+            moveTargetViewTo(mTargetRefreshOffset, false, true);
         } else {
             deliverVelocity();
         }
