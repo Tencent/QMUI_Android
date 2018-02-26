@@ -40,6 +40,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     protected QMUIDialog mDialog;
     protected LayoutInflater mInflater;
     protected String mTitle;
+    private boolean mCancelable = true;
 
     protected LinearLayout mRootView;
     protected LinearLayout mDialogWrapper;
@@ -89,6 +90,13 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     public T setTitle(int resId) {
         return setTitle(mContext.getResources().getString(resId));
     }
+
+    @SuppressWarnings("unchecked")
+    public T setCancelable(boolean cancelable) {
+        mCancelable = cancelable;
+        return (T) this;
+    }
+
 
     //region 添加action
 
@@ -270,7 +278,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
         mDialog.addContentView(mRootView, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+        mDialog.setCancelable(mCancelable);
         onAfter(mDialog, mRootView);
         return mDialog;
     }
