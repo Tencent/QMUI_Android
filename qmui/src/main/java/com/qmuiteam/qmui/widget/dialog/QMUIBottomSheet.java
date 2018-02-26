@@ -636,7 +636,7 @@ public class QMUIBottomSheet extends Dialog {
 
         public QMUIBottomSheetItemView createItemView(Drawable drawable, CharSequence text, Object tag, int subscriptRes) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            QMUIBottomSheetItemView itemView = (QMUIBottomSheetItemView) inflater.inflate(R.layout.qmui_bottom_sheet_grid_item, null, false);
+            QMUIBottomSheetItemView itemView = (QMUIBottomSheetItemView) inflater.inflate(getItemViewLayoutId(), null, false);
             TextView titleTV = (TextView) itemView.findViewById(R.id.grid_item_title);
             if (mItemTextTypeFace != null) {
                 titleTV.setTypeface(mItemTextTypeFace);
@@ -762,6 +762,10 @@ public class QMUIBottomSheet extends Dialog {
 
         protected int getContentViewLayoutId() {
             return R.layout.qmui_bottom_sheet_grid;
+        }
+
+        protected int getItemViewLayoutId() {
+            return R.layout.qmui_bottom_sheet_grid_item;
         }
 
         /**
