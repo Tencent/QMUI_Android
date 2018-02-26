@@ -148,7 +148,7 @@ public class QMUIViewHelper {
      * @param stepDuration 每一步变化的时长
      * @param endAction    动画结束后的回调
      */
-    public static void playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration, final Runnable endAction) {
+    public static Animator playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration, final Runnable endAction) {
         int animationCount = alphaArray.length - 1;
 
         Drawable bgDrawable = new ColorDrawable(bgColor);
@@ -186,6 +186,7 @@ public class QMUIViewHelper {
         });
         animatorSet.playSequentially(animatorList);
         animatorSet.start();
+        return animatorSet;
     }
 
     public static void playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration) {
@@ -347,10 +348,13 @@ public class QMUIViewHelper {
         }
     }
 
-    public static void clearValueAnimator(ValueAnimator animator) {
+    public static void clearValueAnimator(Animator animator) {
         if (animator != null) {
             animator.removeAllListeners();
-            animator.removeAllUpdateListeners();
+            if(animator instanceof ValueAnimator){
+                ((ValueAnimator)animator).removeAllUpdateListeners();
+            }
+
             if (Build.VERSION.SDK_INT >= 19) {
                 animator.pause();
             }
