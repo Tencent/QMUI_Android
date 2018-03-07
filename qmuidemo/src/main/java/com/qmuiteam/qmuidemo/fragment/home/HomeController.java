@@ -1,18 +1,21 @@
 package com.qmuiteam.qmuidemo.fragment.home;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.decorator.GridDividerItemDecoration;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
 import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
+import com.qmuiteam.qmuidemo.decorator.GridDividerItemDecoration;
 import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
@@ -33,6 +36,7 @@ public abstract class HomeController extends FrameLayout {
 
     private HomeControlListener mHomeControlListener;
     private ItemAdapter mItemAdapter;
+    private int mDiffRecyclerViewSaveStateId = QMUIViewHelper.generateViewId();
 
     public HomeController(Context context) {
         super(context);
@@ -90,6 +94,22 @@ public abstract class HomeController extends FrameLayout {
 
     public interface HomeControlListener {
         void startFragment(BaseFragment fragment);
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        int id = mRecyclerView.getId();
+        mRecyclerView.setId(mDiffRecyclerViewSaveStateId);
+        super.dispatchSaveInstanceState(container);
+        mRecyclerView.setId(id);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        int id = mRecyclerView.getId();
+        mRecyclerView.setId(mDiffRecyclerViewSaveStateId);
+        super.dispatchRestoreInstanceState(container);
+        mRecyclerView.setId(id);
     }
 
     static class ItemAdapter extends BaseRecyclerAdapter<QDItemDescription> {
