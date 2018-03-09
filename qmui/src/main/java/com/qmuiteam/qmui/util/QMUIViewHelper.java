@@ -617,9 +617,10 @@ public class QMUIViewHelper {
 
     public static void safeSetImageViewSelected(ImageView imageView, boolean selected){
         // imageView setSelected 实现有问题。
-        // resizeFromDrawable 中判断 drawable size 改变而调用 requestLayout，看似合理，但不会被调用
+        // resizeFromDrawable 中判断 drawable size 是否改变而调用 requestLayout，看似合理，但不会被调用
         // 因为 super.setSelected(selected) 会调用 refreshDrawableState
-        // 而 ImageView.refreshDrawableState 里就已经处理了 drawable size 改变的问题
+        // 而从 android 6 以后， ImageView 会重载refreshDrawableState，并在里面处理了 drawable size 改变的问题,
+        // 从而导致 resizeFromDrawable 的判断失效
         Drawable drawable = imageView.getDrawable();
         if(drawable == null){
             return;
