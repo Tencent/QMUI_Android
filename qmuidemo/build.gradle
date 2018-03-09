@@ -61,14 +61,14 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':qmuilint')
 //    compile 'com.qmuiteam:qmuilint:1.0.1'
-    compile 'com.qmuiteam:arch:0.0.1'
-    compile 'com.qmuiteam:qmui:1.0.7'
+//    compile 'com.qmuiteam:arch:0.0.1'
+//    compile 'com.qmuiteam:qmui:1.0.7'
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile project(':lib')
-//    compile project(':qmui')
-//    compile project(':arch')
+    compile project(':qmui')
+    compile project(':arch')
     annotationProcessor project(':compiler')
 
     //leak
