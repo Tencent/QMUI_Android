@@ -2,6 +2,7 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -149,7 +150,7 @@ public class QMUIDialogMenuItemView extends RelativeLayout {
 
         @Override
         protected void notifyCheckChange(boolean isChecked) {
-            mCheckedView.setSelected(isChecked);
+            QMUIViewHelper.safeSetImageViewSelected(mCheckedView, isChecked);
         }
     }
 
@@ -199,7 +200,7 @@ public class QMUIDialogMenuItemView extends RelativeLayout {
 
         @Override
         protected void notifyCheckChange(boolean isChecked) {
-            mCheckedView.setSelected(isChecked);
+            QMUIViewHelper.safeSetImageViewSelected(mCheckedView, isChecked);
         }
     }
 }

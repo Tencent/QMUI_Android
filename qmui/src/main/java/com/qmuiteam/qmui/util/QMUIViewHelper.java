@@ -615,6 +615,23 @@ public class QMUIViewHelper {
         return view;
     }
 
+    public static void safeSetImageViewSelected(ImageView imageView, boolean selected){
+        // imageView setSelected 实现有问题。
+        // resizeFromDrawable 中判断 drawable size 改变而调用 requestLayout，看似合理，但不会被调用
+        // 因为 super.setSelected(selected) 会调用 refreshDrawableState
+        // 而 ImageView.refreshDrawableState 里就已经处理了 drawable size 改变的问题
+        Drawable drawable = imageView.getDrawable();
+        if(drawable == null){
+            return;
+        }
+        int drawableWidth = drawable.getIntrinsicWidth();
+        int drawableHeight = drawable.getIntrinsicHeight();
+        imageView.setSelected(selected);
+        if(drawable.getIntrinsicWidth() != drawableWidth || drawable.getIntrinsicHeight() != drawableHeight){
+            imageView.requestLayout();
+        }
+    }
+
 
     public static ColorFilter setImageViewTintColor(ImageView imageView, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
