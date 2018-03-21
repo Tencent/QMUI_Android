@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.os.Build;
+import android.os.Looper;
 
 import java.lang.reflect.Method;
 
@@ -100,6 +101,17 @@ public class Utils {
             convertToTranslucent.setAccessible(true);
             convertToTranslucent.invoke(activity, null, options);
         } catch (Throwable ignore) {
+        }
+    }
+
+    public static void assertInMainThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            String methodMsg = null;
+            if (elements != null && elements.length >= 4) {
+                methodMsg = elements[3].toString();
+            }
+            throw new IllegalStateException("Call the method must be in main thread: " + methodMsg);
         }
     }
 }
