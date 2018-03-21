@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 group = 'com.qmuiteam'
-version = "0.0.1"
+version = "0.0.2"
 
 android {
 
