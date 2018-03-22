@@ -147,7 +147,7 @@ public class QMUIPopup extends QMUIBasePopup {
                     break;
                 case DIRECTION_BOTTOM:
                     mY = attachedViewLocation[1] + attachedView.getHeight();
-                    if (mY > mScreenSize.y - mPopupTopBottomMinMargin) {
+                    if (mY > mScreenSize.y - mPopupTopBottomMinMargin - mWindowHeight) {
                         mY = attachedViewLocation[1] - mWindowHeight;
                         mDirection = DIRECTION_TOP;
                     }
