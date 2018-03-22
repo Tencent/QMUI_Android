@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="qmui_paddingTopWhenNotTitle" format="dimension"/>
+    <attr name="qmui_paddingBottomWhenNotContent" format="dimension"/>
+    <attr name="qmui_dialog_menu_item_check_mark_margin_hor" format="dimension"/>
+
+    <declare-styleable name="QMUITextCommonStyleDef">
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:background"/>
+        <attr name="android:gravity"/>
+        <attr name="android:paddingTop"/>
+        <attr name="android:paddingLeft"/>
+        <attr name="android:paddingRight"/>
+        <attr name="android:paddingBottom"/>
+        <attr name="android:singleLine"/>
+        <attr name="android:ellipsize"/>
+        <attr name="android:maxLines"/>
+        <attr name="android:lineSpacingExtra"/>
+        <attr name="android:drawablePadding"/>
+        <attr name="android:textColorHint"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogTitleTvCustomDef">
+        <attr name="qmui_paddingBottomWhenNotContent"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogMessageTvCustomDef">
+        <attr name="qmui_paddingTopWhenNotTitle"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogActionContainerCustomDef">
+        <attr name="qmui_dialog_action_container_justify_content" format="enum">
+            <enum name="start" value="0"/>
+            <enum name="end" value="1"/>
+            <enum name="stretch" value="2"/>
+            <enum name="custom" value="3"/>
+        </attr>
+        <attr name="qmui_dialog_action_container_custom_space_index" format="integer"/>
+        <attr name="qmui_dialog_action_height" format="dimension"/>
+        <attr name="qmui_dialog_action_space" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogActionStyleDef">
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:background"/>
+        <attr name="android:gravity"/>
+        <attr name="android:minWidth"/>
+        <attr name="qmui_dialog_action_button_padding_horizontal" format="dimension"/>
+        <attr name="qmui_dialog_action_icon_space" format="dimension"/>
+        <attr name="qmui_dialog_positive_action_text_color" format="color|reference"/>
+        <attr name="qmui_dialog_negative_action_text_color" format="color|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogMenuContainerStyleDef">
+        <attr name="android:paddingTop"/>
+        <attr name="android:paddingBottom"/>
+        <attr name="qmui_dialog_menu_container_single_padding_vertical" format="dimension"/>
+        <attr name="qmui_dialog_menu_container_padding_top_when_title_exist" format="dimension"/>
+        <attr name="qmui_dialog_menu_container_padding_bottom_when_action_exist" format="dimension"/>
+        <attr name="qmui_dialog_menu_item_height" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogMenuTextStyleDef">
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogMenuMarkDef">
+        <attr name="qmui_dialog_menu_item_mark_drawable" format="reference"/>
+        <attr name="qmui_dialog_menu_item_check_mark_margin_hor"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIDialogMenuCheckDef">
+        <attr name="qmui_dialog_menu_item_check_drawable" format="reference"/>
+        <attr name="qmui_dialog_menu_item_check_mark_margin_hor"/>
+    </declare-styleable>
+</resources>

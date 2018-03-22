@@ -2,16 +2,14 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 
@@ -22,25 +20,31 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
  * @date 2016-1-20
  */
 
-public class QMUIDialogMenuItemView extends RelativeLayout {
+public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
     private int index = -1;
     private MenuItemViewListener mListener;
     private boolean mIsChecked = false;
 
     public QMUIDialogMenuItemView(Context context) {
-        super(context);
-        QMUIViewHelper.setBackgroundKeepingPadding(this, QMUIResHelper.getAttrDrawable(context, R.attr.qmui_dialog_content_list_item_bg));
-        setPadding(
-                QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_padding_horizontal), 0,
-                QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_padding_horizontal), 0
-        );
+        super(context, null, R.attr.qmui_dialog_menu_item_style);
     }
 
     public static TextView createItemTextView(Context context) {
         TextView tv = new TextView(context);
-        tv.setTextColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_dialog_menu_item_text_color));
-        tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_content_list_item_text_size));
+        TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuTextStyleDef, R.attr.qmui_dialog_menu_item_style, 0);
+        int count = a.getIndexCount();
+        for (int i = 0; i < count; i++) {
+            int attr = a.getIndex(i);
+            if (attr == R.styleable.QMUIDialogMenuTextStyleDef_android_gravity) {
+                tv.setGravity(a.getInt(attr, -1));
+            } else if (attr == R.styleable.QMUIDialogMenuTextStyleDef_android_textColor) {
+                tv.setTextColor(a.getColorStateList(attr));
+            } else if (attr == R.styleable.QMUIDialogMenuTextStyleDef_android_textSize) {
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimensionPixelSize(attr, 0));
+            }
+        }
+        a.recycle();
+
         tv.setSingleLine(true);
         tv.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         tv.setDuplicateParentStateEnabled(false);
@@ -124,12 +128,26 @@ public class QMUIDialogMenuItemView extends RelativeLayout {
             super(context);
             mContext = context;
             mCheckedView = new ImageView(mContext);
-            mCheckedView.setImageResource(R.drawable.qmui_s_dialog_check_mark);
             mCheckedView.setId(QMUIViewHelper.generateViewId());
+
+            TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuMarkDef,
+                    R.attr.qmui_dialog_menu_item_style, 0);
+            int markMarginHor = 0;
+            int count = a.getIndexCount();
+            for (int i = 0; i < count; i++) {
+                int attr = a.getIndex(i);
+                if (attr == R.styleable.QMUIDialogMenuMarkDef_qmui_dialog_menu_item_check_mark_margin_hor) {
+                    markMarginHor = a.getDimensionPixelSize(attr, 0);
+                } else if (attr == R.styleable.QMUIDialogMenuMarkDef_qmui_dialog_menu_item_mark_drawable) {
+                    mCheckedView.setImageDrawable(a.getDrawable(attr));
+                }
+            }
+            a.recycle();
+
             LayoutParams checkLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             checkLp.addRule(CENTER_VERTICAL, TRUE);
             checkLp.addRule(ALIGN_PARENT_RIGHT, TRUE);
-            checkLp.leftMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_menu_item_check_icon_margin_horizontal);
+            checkLp.leftMargin = markMarginHor;
             addView(mCheckedView, checkLp);
 
             mTextView = createItemTextView(mContext);
@@ -164,16 +182,30 @@ public class QMUIDialogMenuItemView extends RelativeLayout {
             super(context);
             mContext = context;
             mCheckedView = new ImageView(mContext);
-            mCheckedView.setImageDrawable(QMUIResHelper.getAttrDrawable(context, R.attr.qmui_s_checkbox));
             mCheckedView.setId(QMUIViewHelper.generateViewId());
+
+            TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuCheckDef,
+                    R.attr.qmui_dialog_menu_item_style, 0);
+            int markMarginHor = 0;
+            int count = a.getIndexCount();
+            for (int i = 0; i < count; i++) {
+                int attr = a.getIndex(i);
+                if (attr == R.styleable.QMUIDialogMenuCheckDef_qmui_dialog_menu_item_check_mark_margin_hor) {
+                    markMarginHor = a.getDimensionPixelSize(attr, 0);
+                } else if (attr == R.styleable.QMUIDialogMenuCheckDef_qmui_dialog_menu_item_check_drawable) {
+                    mCheckedView.setImageDrawable(a.getDrawable(attr));
+                }
+            }
+            a.recycle();
+
             LayoutParams checkLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             checkLp.addRule(CENTER_VERTICAL, TRUE);
             if (right) {
                 checkLp.addRule(ALIGN_PARENT_RIGHT, TRUE);
-                checkLp.leftMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_menu_item_check_icon_margin_horizontal);
+                checkLp.leftMargin = markMarginHor;
             } else {
                 checkLp.addRule(ALIGN_PARENT_LEFT, TRUE);
-                checkLp.rightMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_menu_item_check_icon_margin_horizontal);
+                checkLp.rightMargin = markMarginHor;
             }
 
             addView(mCheckedView, checkLp);
@@ -196,6 +228,10 @@ public class QMUIDialogMenuItemView extends RelativeLayout {
 
         public void setText(CharSequence text) {
             mTextView.setText(text);
+        }
+
+        public CharSequence getText() {
+            return mTextView.getText();
         }
 
         @Override

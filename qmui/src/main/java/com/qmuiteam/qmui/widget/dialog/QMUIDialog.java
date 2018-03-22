@@ -1,16 +1,18 @@
 package com.qmuiteam.qmui.widget.dialog;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.text.InputType;
 import android.text.method.TransformationMethod;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +31,8 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
@@ -45,6 +47,10 @@ import java.util.ArrayList;
  * @see QMUIDialogBuilder
  */
 public class QMUIDialog extends Dialog {
+    boolean mCancelable = true;
+    private boolean mCanceledOnTouchOutside = true;
+    private boolean mCanceledOnTouchOutsideSet;
+    private Context mBaseContext;
 
     public QMUIDialog(Context context) {
         this(context, R.style.QMUI_Dialog);
@@ -52,6 +58,7 @@ public class QMUIDialog extends Dialog {
 
     public QMUIDialog(Context context, int styleRes) {
         super(context, styleRes);
+        mBaseContext = context;
         init();
     }
 
@@ -63,17 +70,91 @@ public class QMUIDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initDialogWidth();
+        initDialog();
     }
 
-    private void initDialogWidth() {
+    private void initDialog() {
         Window window = getWindow();
         if (window == null) {
             return;
         }
         WindowManager.LayoutParams wmlp = window.getAttributes();
         wmlp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        wmlp.gravity = Gravity.CENTER;
         window.setAttributes(wmlp);
+    }
+
+    @Override
+    public void setCancelable(boolean cancelable) {
+        super.setCancelable(cancelable);
+        mCancelable = cancelable;
+    }
+
+    @Override
+    public void setCanceledOnTouchOutside(boolean cancel) {
+        super.setCanceledOnTouchOutside(cancel);
+        if (cancel && !mCancelable) {
+            mCancelable = true;
+        }
+        mCanceledOnTouchOutside = cancel;
+        mCanceledOnTouchOutsideSet = true;
+    }
+
+    boolean shouldWindowCloseOnTouchOutside() {
+        if (!mCanceledOnTouchOutsideSet) {
+            if (Build.VERSION.SDK_INT < 11) {
+                mCanceledOnTouchOutside = true;
+            } else {
+                TypedArray a = getContext().obtainStyledAttributes(
+                        new int[]{android.R.attr.windowCloseOnTouchOutside});
+                mCanceledOnTouchOutside = a.getBoolean(0, true);
+                a.recycle();
+            }
+            mCanceledOnTouchOutsideSet = true;
+        }
+        return mCanceledOnTouchOutside;
+    }
+
+    void cancelOutSide() {
+        if (mCancelable && isShowing() && shouldWindowCloseOnTouchOutside()) {
+            cancel();
+        }
+    }
+
+    public void showWithImmersiveCheck(Activity activity) {
+        // http://stackoverflow.com/questions/22794049/how-to-maintain-the-immersive-mode-in-dialogs
+        Window window = getWindow();
+        if (window == null) {
+            return;
+        }
+
+        Window activityWindow = activity.getWindow();
+        int activitySystemUi = activityWindow.getDecorView().getSystemUiVisibility();
+        if ((activitySystemUi & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN ||
+                (activitySystemUi & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            window.getDecorView().setSystemUiVisibility(
+                    activity.getWindow().getDecorView().getSystemUiVisibility());
+            super.show();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        } else {
+            super.show();
+        }
+    }
+
+    public void showWithImmersiveCheck() {
+        if (!(mBaseContext instanceof Activity)) {
+            super.show();
+            return;
+        }
+        Activity activity = (Activity) mBaseContext;
+        showWithImmersiveCheck(activity);
+    }
+
+    @Override
+    public void show() {
+        super.show();
     }
 
     /**
@@ -81,18 +162,11 @@ public class QMUIDialog extends Dialog {
      */
     public static class MessageDialogBuilder extends QMUIDialogBuilder<MessageDialogBuilder> {
         protected CharSequence mMessage;
-        private final QMUIWrapContentScrollView mScrollContainer;
+        private QMUIWrapContentScrollView mScrollContainer;
         private QMUISpanTouchFixTextView mTextView;
 
         public MessageDialogBuilder(Context context) {
             super(context);
-            mTextView = new QMUISpanTouchFixTextView(mContext);
-            mTextView.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_4));
-            mTextView.setLineSpacing(QMUIDisplayHelper.dpToPx(2), 1.0f);
-            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_message_text_size));
-
-            mScrollContainer = new QMUIWrapContentScrollView(mContext);
-            mScrollContainer.addView(mTextView);
         }
 
         /**
@@ -107,26 +181,71 @@ public class QMUIDialog extends Dialog {
          * 设置对话框的消息文本
          */
         public MessageDialogBuilder setMessage(int resId) {
-            return setMessage(mContext.getResources().getString(resId));
+            return setMessage(getBaseContext().getResources().getString(resId));
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
             if (mMessage != null && mMessage.length() != 0) {
-                mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
+                mTextView = new QMUISpanTouchFixTextView(context);
+                assignMessageTvWithAttr(mTextView, hasTitle(), R.attr.qmui_dialog_message_content_style);
                 mTextView.setText(mMessage);
-                mTextView.setPadding(
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                        QMUIResHelper.getAttrDimen(mContext, hasTitle() ? R.attr.qmui_dialog_content_padding_top : R.attr.qmui_dialog_content_padding_top_when_no_title),
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom)
-                );
+
+
+                mScrollContainer = new QMUIWrapContentScrollView(context);
+                mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
+                mScrollContainer.setVerticalScrollBarEnabled(false);
+                mScrollContainer.addView(mTextView);
                 parent.addView(mScrollContainer);
+            }
+        }
+
+        @Override
+        protected void onConfigTitleView(TextView titleView) {
+            super.onConfigTitleView(titleView);
+            if (mMessage == null || mMessage.length() == 0) {
+                TypedArray a = titleView.getContext().obtainStyledAttributes(null,
+                        R.styleable.QMUIDialogTitleTvCustomDef, R.attr.qmui_dialog_title_style, 0);
+                int count = a.getIndexCount();
+                for (int i = 0; i < count; i++) {
+                    int attr = a.getIndex(i);
+                    if (attr == R.styleable.QMUIDialogTitleTvCustomDef_qmui_paddingBottomWhenNotContent) {
+                        titleView.setPadding(
+                                titleView.getPaddingLeft(),
+                                titleView.getPaddingTop(),
+                                titleView.getPaddingRight(),
+                                a.getDimensionPixelSize(attr, titleView.getPaddingBottom())
+                        );
+                    }
+                }
+                a.recycle();
             }
         }
 
         public QMUISpanTouchFixTextView getTextView() {
             return mTextView;
+        }
+
+        public static void assignMessageTvWithAttr(TextView messageTv, boolean hasTitle, int defAttr) {
+            QMUIResHelper.assignTextViewWithAttr(messageTv, defAttr);
+
+            if (!hasTitle) {
+                TypedArray a = messageTv.getContext().obtainStyledAttributes(null,
+                        R.styleable.QMUIDialogMessageTvCustomDef, defAttr, 0);
+                int count = a.getIndexCount();
+                for (int i = 0; i < count; i++) {
+                    int attr = a.getIndex(i);
+                    if (attr == R.styleable.QMUIDialogMessageTvCustomDef_qmui_paddingTopWhenNotTitle) {
+                        messageTv.setPadding(
+                                messageTv.getPaddingLeft(),
+                                a.getDimensionPixelSize(attr, messageTv.getPaddingTop()),
+                                messageTv.getPaddingRight(),
+                                messageTv.getPaddingBottom()
+                        );
+                    }
+                }
+                a.recycle();
+            }
         }
     }
 
@@ -135,7 +254,7 @@ public class QMUIDialog extends Dialog {
      */
     public static class CheckBoxMessageDialogBuilder extends QMUIDialogBuilder<CheckBoxMessageDialogBuilder> {
 
-        private final QMUIWrapContentScrollView mScrollContainer;
+        private QMUIWrapContentScrollView mScrollContainer;
         protected String mMessage;
         private boolean mIsChecked = false;
         private Drawable mCheckMarkDrawable;
@@ -144,12 +263,6 @@ public class QMUIDialog extends Dialog {
         public CheckBoxMessageDialogBuilder(Context context) {
             super(context);
             mCheckMarkDrawable = QMUIResHelper.getAttrDrawable(context, R.attr.qmui_s_checkbox);
-            mScrollContainer = new QMUIWrapContentScrollView(mContext);
-            mTextView = new QMUISpanTouchFixTextView(mContext);
-            mTextView.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_4));
-            mTextView.setLineSpacing(QMUIDisplayHelper.dpToPx(2), 1.0f);
-            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_message_text_size));
-            mScrollContainer.addView(mTextView);
         }
 
         /**
@@ -164,7 +277,7 @@ public class QMUIDialog extends Dialog {
          * 设置对话框的消息文本
          */
         public CheckBoxMessageDialogBuilder setMessage(int resid) {
-            return setMessage(mContext.getResources().getString(resid));
+            return setMessage(getBaseContext().getResources().getString(resid));
         }
 
         /**
@@ -189,19 +302,18 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
             if (mMessage != null && mMessage.length() != 0) {
+                mScrollContainer = new QMUIWrapContentScrollView(context);
+                mTextView = new QMUISpanTouchFixTextView(context);
+                MessageDialogBuilder.assignMessageTvWithAttr(mTextView, hasTitle(), R.attr.qmui_dialog_message_content_style);
+
+                mScrollContainer.addView(mTextView);
+                mScrollContainer.setVerticalScrollBarEnabled(false);
                 mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
                 mTextView.setText(mMessage);
-                mTextView.setPadding(
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                        QMUIResHelper.getAttrDimen(mContext, hasTitle() ? R.attr.qmui_dialog_confirm_content_padding_top : R.attr.qmui_dialog_content_padding_top_when_no_title),
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                        QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_confirm_content_padding_bottom)
-                );
                 mCheckMarkDrawable.setBounds(0, 0, mCheckMarkDrawable.getIntrinsicWidth(), mCheckMarkDrawable.getIntrinsicHeight());
                 mTextView.setCompoundDrawables(mCheckMarkDrawable, null, null, null);
-                mTextView.setCompoundDrawablePadding(QMUIDisplayHelper.dpToPx(12));
                 mTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -229,22 +341,10 @@ public class QMUIDialog extends Dialog {
         protected EditText mEditText;
         protected ImageView mRightImageView;
         private int mInputType = InputType.TYPE_CLASS_TEXT;
+        private CharSequence mDefaultText = null;
 
         public EditTextDialogBuilder(Context context) {
             super(context);
-            mEditText = new EditText(mContext);
-            mEditText.setHintTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_3));
-            mEditText.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_black));
-            mEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_message_text_size));
-            mEditText.setFocusable(true);
-            mEditText.setFocusableInTouchMode(true);
-            mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
-            mEditText.setGravity(Gravity.CENTER_VERTICAL);
-            mEditText.setId(R.id.qmui_dialog_edit_input);
-
-            mRightImageView = new ImageView(mContext);
-            mRightImageView.setId(R.id.qmui_dialog_edit_right_icon);
-            mRightImageView.setVisibility(View.GONE);
         }
 
         /**
@@ -259,7 +359,12 @@ public class QMUIDialog extends Dialog {
          * 设置输入框的 placeholder
          */
         public EditTextDialogBuilder setPlaceholder(int resId) {
-            return setPlaceholder(mContext.getResources().getString(resId));
+            return setPlaceholder(getBaseContext().getResources().getString(resId));
+        }
+
+        public EditTextDialogBuilder setDefaultText(CharSequence defaultText) {
+            mDefaultText = defaultText;
+            return this;
         }
 
         /**
@@ -279,13 +384,28 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            mMainLayout = new RelativeLayout(mContext);
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+            mEditText = new EditText(context);
+            MessageDialogBuilder.assignMessageTvWithAttr(mEditText, hasTitle(), R.attr.qmui_dialog_edit_content_style);
+            mEditText.setFocusable(true);
+            mEditText.setFocusableInTouchMode(true);
+            mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
+            mEditText.setId(R.id.qmui_dialog_edit_input);
+
+            if (!QMUILangHelper.isNullOrEmpty(mDefaultText)) {
+                mEditText.setText(mDefaultText);
+            }
+
+            mRightImageView = new ImageView(context);
+            mRightImageView.setId(R.id.qmui_dialog_edit_right_icon);
+            mRightImageView.setVisibility(View.GONE);
+
+            mMainLayout = new RelativeLayout(context);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.topMargin = QMUIResHelper.getAttrDimen(mContext, hasTitle() ? R.attr.qmui_dialog_edit_content_padding_top : R.attr.qmui_dialog_content_padding_top_when_no_title);
-            lp.leftMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal);
-            lp.rightMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal);
-            lp.bottomMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_edit_content_padding_bottom);
+            lp.topMargin = mEditText.getPaddingTop();
+            lp.leftMargin = mEditText.getPaddingLeft();
+            lp.rightMargin = mEditText.getPaddingRight();
+            lp.bottomMargin = mEditText.getPaddingBottom();
             mMainLayout.setBackgroundResource(R.drawable.qmui_edittext_bg_border_bottom);
             mMainLayout.setLayoutParams(lp);
 
@@ -325,19 +445,20 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onAfter(QMUIDialog dialog, LinearLayout parent) {
-            super.onAfter(dialog, parent);
+        protected void onAfter(QMUIDialog dialog, LinearLayout parent, Context context) {
+            super.onAfter(dialog, parent, context);
+            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             dialog.setOnDismissListener(new OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    ((InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+                    inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
                 }
             });
             mEditText.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mEditText.requestFocus();
-                    ((InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(mEditText, 0);
+                    inputMethodManager.showSoftInput(mEditText, 0);
                 }
             }, 300);
         }
@@ -351,19 +472,16 @@ public class QMUIDialog extends Dialog {
         }
     }
 
+
     private static class MenuBaseDialogBuilder<T extends QMUIDialogBuilder> extends QMUIDialogBuilder<T> {
         protected ArrayList<QMUIDialogMenuItemView> mMenuItemViews;
         protected LinearLayout mMenuItemContainer;
+        protected QMUIWrapContentScrollView mContentScrollView;
         protected LinearLayout.LayoutParams mMenuItemLp;
 
         public MenuBaseDialogBuilder(Context context) {
             super(context);
             mMenuItemViews = new ArrayList<>();
-            mMenuItemLp = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_list_item_height)
-            );
-            mMenuItemLp.gravity = Gravity.CENTER_VERTICAL;
         }
 
         public void clear() {
@@ -391,40 +509,64 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            mMenuItemContainer = new LinearLayout(mContext);
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+
+            mMenuItemContainer = new LinearLayout(context);
+            mMenuItemContainer.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            mMenuItemContainer.setPadding(
-                    0, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_top_when_list),
-                    0, QMUIResHelper.getAttrDimen(mContext, mActions.size() > 0 ? R.attr.qmui_dialog_content_padding_bottom : R.attr.qmui_dialog_content_padding_bottom_when_no_action)
-            );
             mMenuItemContainer.setLayoutParams(layoutParams);
-            mMenuItemContainer.setOrientation(LinearLayout.VERTICAL);
-            if (mMenuItemViews.size() == 1) {
-                mMenuItemContainer.setPadding(0, 0, 0, 0
-                );
-                if (hasTitle()) {
-                    QMUIViewHelper.setPaddingTop(mMenuItemContainer, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_top_when_list));
-                }
-                if (mActions.size() > 0) {
-                    QMUIViewHelper.setPaddingBottom(mMenuItemContainer, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom));
+
+            TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuContainerStyleDef, R.attr.qmui_dialog_menu_container_style, 0);
+            int count = a.getIndexCount();
+            int paddingTop = 0, paddingBottom = 0, paddingVerWhenSingle = 0,
+                    paddingTopWhenTitle = 0, paddingBottomWhenAction = 0, itemHeight = -1;
+            for (int i = 0; i < count; i++) {
+                int attr = a.getIndex(i);
+                if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_android_paddingTop) {
+                    paddingTop = a.getDimensionPixelSize(attr, paddingTop);
+                } else if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_android_paddingBottom) {
+                    paddingBottom = a.getDimensionPixelSize(attr, paddingBottom);
+                } else if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_qmui_dialog_menu_container_single_padding_vertical) {
+                    paddingVerWhenSingle = a.getDimensionPixelSize(attr, paddingVerWhenSingle);
+                } else if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_qmui_dialog_menu_container_padding_top_when_title_exist) {
+                    paddingTopWhenTitle = a.getDimensionPixelSize(attr, paddingTopWhenTitle);
+                } else if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_qmui_dialog_menu_container_padding_bottom_when_action_exist) {
+                    paddingBottomWhenAction = a.getDimensionPixelSize(attr, paddingBottomWhenAction);
+                } else if (attr == R.styleable.QMUIDialogMenuContainerStyleDef_qmui_dialog_menu_item_height) {
+                    itemHeight = a.getDimensionPixelSize(attr, itemHeight);
                 }
             }
+            a.recycle();
+
+            mMenuItemLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, itemHeight);
+            mMenuItemLp.gravity = Gravity.CENTER_VERTICAL;
+
+            if (mMenuItemViews.size() == 1) {
+                paddingBottom = paddingTop = paddingVerWhenSingle;
+            }
+
+            if (hasTitle()) {
+                paddingTop = paddingTopWhenTitle;
+            }
+
+            if (mActions.size() > 0) {
+                paddingBottom = paddingBottomWhenAction;
+            }
+
+            mMenuItemContainer.setPadding(0, paddingTop, 0, paddingBottom);
+
+
             for (QMUIDialogMenuItemView itemView : mMenuItemViews) {
                 mMenuItemContainer.addView(itemView, mMenuItemLp);
             }
-            ScrollView scrollView = new ScrollView(mContext) {
-                @Override
-                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(getContentAreaMaxHeight(),
-                            MeasureSpec.AT_MOST);
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                }
-            };
-            scrollView.addView(mMenuItemContainer);
-            parent.addView(scrollView);
+
+            mContentScrollView = new QMUIWrapContentScrollView(context);
+            mContentScrollView.setMaxHeight(getContentAreaMaxHeight());
+            mContentScrollView.addView(mMenuItemContainer);
+            mContentScrollView.setVerticalScrollBarEnabled(false);
+            parent.addView(mContentScrollView);
         }
     }
 
@@ -445,7 +587,7 @@ public class QMUIDialog extends Dialog {
          */
         public MenuDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
             for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.TextItemView(mContext, item), listener);
+                addItem(new QMUIDialogMenuItemView.TextItemView(getBaseContext(), item), listener);
             }
             return this;
         }
@@ -457,7 +599,7 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件
          */
         public MenuDialogBuilder addItem(CharSequence item, OnClickListener listener) {
-            addItem(new QMUIDialogMenuItemView.TextItemView(mContext, item), listener);
+            addItem(new QMUIDialogMenuItemView.TextItemView(getBaseContext(), item), listener);
             return this;
         }
 
@@ -495,8 +637,8 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            super.onCreateContent(dialog, parent);
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+            super.onCreateContent(dialog, parent, context);
             if (mCheckedIndex > -1 && mCheckedIndex < mMenuItemViews.size()) {
                 mMenuItemViews.get(mCheckedIndex).setChecked(true);
             }
@@ -523,7 +665,7 @@ public class QMUIDialog extends Dialog {
          */
         public CheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
             for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.MarkItemView(mContext, item), listener);
+                addItem(new QMUIDialogMenuItemView.MarkItemView(getBaseContext(), item), listener);
             }
             return this;
         }
@@ -561,8 +703,10 @@ public class QMUIDialog extends Dialog {
          */
         public MultiCheckableDialogBuilder setCheckedItems(int[] checkedIndexes) {
             int checkedItemRecord = 0;
-            for (int checkedIndexe : checkedIndexes) {
-                checkedItemRecord += 2 << (checkedIndexe);
+            if (checkedIndexes != null && checkedIndexes.length > 0) {
+                for (int checkedIndexe : checkedIndexes) {
+                    checkedItemRecord += 2 << (checkedIndexe);
+                }
             }
             return setCheckedItems(checkedItemRecord);
         }
@@ -575,14 +719,14 @@ public class QMUIDialog extends Dialog {
          */
         public MultiCheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
             for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.CheckItemView(mContext, true, item), listener);
+                addItem(new QMUIDialogMenuItemView.CheckItemView(getBaseContext(), true, item), listener);
             }
             return this;
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            super.onCreateContent(dialog, parent);
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+            super.onCreateContent(dialog, parent, context);
             for (int i = 0; i < mMenuItemViews.size(); i++) {
                 QMUIDialogMenuItemView itemView = mMenuItemViews.get(i);
                 int v = 2 << i;
@@ -658,8 +802,8 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            parent.addView(LayoutInflater.from(mContext).inflate(mLayoutId, parent, false));
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+            parent.addView(LayoutInflater.from(context).inflate(mLayoutId, parent, false));
         }
     }
 
@@ -679,17 +823,17 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
-        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-            mScrollerView = new ScrollView(mContext);
+        protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+            mScrollerView = new ScrollView(context);
             mScrollerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, onGetScrollHeight()));
             mScrollerView.addView(onBuildContent(dialog, mScrollerView));
             parent.addView(mScrollerView);
         }
 
         @Override
-        protected void onAfter(QMUIDialog dialog, LinearLayout parent) {
-            super.onAfter(dialog, parent);
-            bindEvent();
+        protected void onAfter(QMUIDialog dialog, LinearLayout parent, Context context) {
+            super.onAfter(dialog, parent, context);
+            bindEvent(context);
         }
 
         public abstract View onBuildContent(QMUIDialog dialog, ScrollView parent);
@@ -698,7 +842,7 @@ public class QMUIDialog extends Dialog {
             return ScrollView.LayoutParams.WRAP_CONTENT;
         }
 
-        private void bindEvent() {
+        private void bindEvent(final Context context) {
             mAnchorTopView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -717,7 +861,7 @@ public class QMUIDialog extends Dialog {
                     View mDecor = mDialog.getWindow().getDecorView();
                     Rect r = new Rect();
                     mDecor.getWindowVisibleDisplayFrame(r);
-                    mScreenHeight = QMUIDisplayHelper.getScreenHeight(mContext);
+                    mScreenHeight = QMUIDisplayHelper.getScreenHeight(context);
                     int anchorShouldHeight = mScreenHeight - r.bottom;
                     if (anchorShouldHeight != mAnchorHeight) {
                         mAnchorHeight = anchorShouldHeight;
@@ -740,7 +884,7 @@ public class QMUIDialog extends Dialog {
                     } else {
                         //如果内容过高,anchorShouldHeight=0,但实际下半部分会被截断,因此需要保护
                         //由于高度超过后,actionContainer并不会去测量和布局,所以这里拿不到action的高度,因此用比例估算一个值
-                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDialogWrapper.getLayoutParams();
+                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDialogView.getLayoutParams();
                         int dialogLayoutMaxHeight = mScreenHeight - lp.bottomMargin - lp.topMargin - r.top;
                         int scrollLayoutHeight = mScrollerView.getMeasuredHeight();
                         if (scrollLayoutHeight > dialogLayoutMaxHeight * 0.8) {

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!--********************* TabSegment *********************-->
     <style name="QMUI.TabSegment">
         <item name="qmui_tab_has_indicator">false</item>
@@ -108,15 +107,10 @@
         <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
         <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
         <item name="android:windowIsFloating">true</item><!-- 在中间弹框、背后有遮罩的效果 -->
-        <item name="android:minWidth">?attr/qmui_dialog_min_width</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginLeft">?attr/qmui_dialog_margin_horizontal</item>
-        <item name="android:layout_marginRight">?attr/qmui_dialog_margin_horizontal</item>
     </style>
 
     <style name="QMUI.Dialog.FullWidth" parent="QMUI.Dialog">
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginRight">0dp</item>
+        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper.FullScreen</item>
     </style>
 
     <style name="QMUI.Dialog.FullWidth.NoAnimation" parent="QMUI.Dialog.FullWidth">
@@ -139,6 +133,95 @@
         <item name="android:windowAnimationStyle">@null
         </item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
         <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="QMUI.Dialog.Wrapper">
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:paddingRight">40dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.Wrapper.FullScreen">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.Title">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="qmui_paddingBottomWhenNotContent">27dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.ActionContainer">
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="qmui_dialog_action_container_justify_content">end</item>
+        <item name="qmui_dialog_action_height">36dp</item>
+        <item name="qmui_dialog_action_space">8dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.Action">
+        <item name="android:textColor">@color/qmui_config_color_blue</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:background">@null</item>
+        <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
+        <item name="qmui_dialog_action_icon_space">6dp</item>
+        <item name="qmui_dialog_positive_action_text_color">@color/qmui_config_color_blue</item>
+        <item name="qmui_dialog_negative_action_text_color">@color/qmui_config_color_red</item>
+    </style>
+
+    <style name="QMUI.Dialog.MessageContent">
+        <item name="android:textColor">?attr/qmui_config_color_gray_4</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingBottom">28dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="qmui_paddingTopWhenNotTitle">27dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.EditContent" parent="QMUI.Dialog.MessageContent">
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:textColorHint">?attr/qmui_config_color_gray_3</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">31dp</item>
+    </style>
+
+    <style name="QMUI.Dialog.MenuContainer">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="qmui_dialog_menu_container_single_padding_vertical">0dp</item>
+        <item name="qmui_dialog_menu_container_padding_top_when_title_exist">14dp</item>
+        <item name="qmui_dialog_menu_container_padding_bottom_when_action_exist">27dp</item>
+        <item name="qmui_dialog_menu_item_height">48dp</item>
+    </style>
+
+    <style name="QMUI.Dialog_MenuItem">
+        <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_dialog_padding_horizontal</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">?attr/qmui_config_color_black</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="qmui_dialog_menu_item_mark_drawable">@drawable/qmui_s_dialog_check_mark</item>
+        <item name="qmui_dialog_menu_item_check_drawable">@drawable/qmui_s_checkbox</item>
+        <item name="qmui_dialog_menu_item_check_mark_margin_hor">6dp</item>
     </style>
 
     <!--********************* Tip *********************-->

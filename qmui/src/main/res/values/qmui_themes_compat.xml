@@ -57,59 +57,26 @@
         <item name="qmui_alpha_pressed">0.5</item>
         <item name="qmui_alpha_disabled">0.5</item>
 
+        <item name="qmui_general_shadow_elevation">14dp</item>
+        <item name="qmui_general_shadow_alpha">0.25</item>
+
         <!--**********************************************
         *                qmui dialog                     *
         **********************************************-->
-        <item name="qmui_dialog_margin_horizontal">40dp</item>
-        <item name="qmui_dialog_min_width">280dp</item>
+        <item name="qmui_dialog_min_width">260dp</item>
+        <item name="qmui_dialog_max_width">360dp</item>
         <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
         <item name="qmui_dialog_margin_vertical">20dp</item>
         <item name="qmui_dialog_padding_horizontal">24dp</item>
         <item name="qmui_dialog_background_dim_amount">0.6</item>
-
-        <!-- title -->
-        <item name="qmui_dialog_title_text_color">?attr/qmui_config_color_black</item>
-        <item name="qmui_dialog_title_margin_top">24dp</item>
-        <item name="qmui_dialog_title_text_size">17sp</item>
-
-        <!-- menu -->
-        <item name="qmui_dialog_menu_item_check_icon_margin_horizontal">6dp</item>
-
-        <!-- content -->
-        <item name="qmui_dialog_content_padding_top">14dp</item>
-        <item name="qmui_dialog_content_padding_top_when_no_title">27dp</item>
-        <item name="qmui_dialog_content_padding_top_when_list">8dp</item>
-        <item name="qmui_dialog_content_padding_bottom">28dp</item>
-        <item name="qmui_dialog_content_padding_bottom_when_no_action">8dp</item>
-        <item name="qmui_dialog_content_padding_bottom_when_action_block">16dp</item>
-        <item name="qmui_dialog_content_message_text_size">16sp</item>
-        <item name="qmui_dialog_content_list_item_height">48dp</item>
-        <item name="qmui_dialog_content_list_item_text_size">15sp</item>
-        <item name="qmui_dialog_content_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
-        <item name="qmui_dialog_confirm_content_padding_top">28dp</item>
-        <item name="qmui_dialog_confirm_content_padding_bottom">22dp</item>
-        <item name="qmui_dialog_edit_content_padding_top">28dp</item>
-        <item name="qmui_dialog_edit_content_padding_bottom">31dp</item>
-        <item name="qmui_dialog_block_content_text_size">14sp</item>
-        <item name="qmui_dialog_menu_item_text_color">?attr/qmui_config_color_black</item>
-
-        <!-- action -->
-        <item name="qmui_dialog_action_container_margin_bottom">12dp</item>
-        <item name="qmui_dialog_action_container_margin_horizontal">12dp</item>
-        <item name="qmui_dialog_action_button_min_width">64dp</item>
-        <item name="qmui_dialog_action_button_height">36dp</item>
-        <item name="qmui_dialog_action_button_margin_left">8dp</item>
-        <item name="qmui_dialog_action_drawable_padding">6dp</item>
-        <item name="qmui_dialog_action_button_text_size">14sp</item>
-        <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
-
-        <item name="qmui_dialog_action_block_container_margin_bottom">12dp</item>
-        <item name="qmui_dialog_action_block_btn_height">36dp</item>
-
-        <item name="qmui_dialog_action_text_negative_color">@color/qmui_dialog_action_text_negative_color</item>
-        <item name="qmui_dialog_action_text_color">@color/qmui_dialog_action_text_color</item>
-        <item name="qmui_dialog_action_btn_bg">@drawable/qmui_dialog_action_btn_bg</item>
-        <item name="qmui_dialog_action_block_btn_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper</item>
+        <item name="qmui_dialog_title_style">@style/QMUI.Dialog.Title</item>
+        <item name="qmui_dialog_action_container_style">@style/QMUI.Dialog.ActionContainer</item>
+        <item name="qmui_dialog_action_style">@style/QMUI.Dialog.Action</item>
+        <item name="qmui_dialog_message_content_style">@style/QMUI.Dialog.MessageContent</item>
+        <item name="qmui_dialog_edit_content_style">@style/QMUI.Dialog.EditContent</item>
+        <item name="qmui_dialog_menu_container_style">@style/QMUI.Dialog.MenuContainer</item>
+        <item name="qmui_dialog_menu_item_style">@style/QMUI.Dialog_MenuItem</item>
 
         <!-- tip -->
         <item name="qmui_tip_dialog_bg">@drawable/qmui_tip_dialog_bg</item>

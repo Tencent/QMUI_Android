@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.widget.Button;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.alpha.QMUIAlphaButton;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 /**
@@ -27,7 +28,7 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
  * @see QMUIRoundButtonDrawable
  * </p>
  */
-public class QMUIRoundButton extends Button {
+public class QMUIRoundButton extends QMUIAlphaButton {
 
     public QMUIRoundButton(Context context) {
         super(context);
@@ -47,5 +48,7 @@ public class QMUIRoundButton extends Button {
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         QMUIRoundButtonDrawable bg = QMUIRoundButtonDrawable.fromAttributeSet(context, attrs, defStyleAttr);
         QMUIViewHelper.setBackgroundKeepingPadding(this, bg);
+        setChangeAlphaWhenDisable(false);
+        setChangeAlphaWhenPress(false);
     }
 }
