@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
@@ -47,6 +49,7 @@ public class QDDialogFragment extends BaseFragment {
     @BindView(R.id.listview) ListView mListView;
 
     private QDItemDescription mQDItemDescription;
+    private int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
 
     @Override
     protected View onCreateView() {
@@ -65,6 +68,14 @@ public class QDDialogFragment extends BaseFragment {
                 popBackStack();
             }
         });
+
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showBottomSheet();
+                    }
+                });
 
         mTopBar.setTitle(mQDItemDescription.getName());
     }
@@ -145,7 +156,7 @@ public class QDDialogFragment extends BaseFragment {
                         Toast.makeText(getActivity(), "发送成功", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMessageNegativeDialog() {
@@ -165,7 +176,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showLongMessageDialog() {
@@ -188,7 +199,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showConfirmMessageDialog() {
@@ -208,7 +219,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMenuDialog() {
@@ -221,7 +232,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showSingleChoiceDialog() {
@@ -236,7 +247,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMultiChoiceDialog() {
@@ -266,7 +277,7 @@ public class QDDialogFragment extends BaseFragment {
                 dialog.dismiss();
             }
         });
-        builder.show();
+        builder.create(mCurrentDialogStyle).show();
     }
 
     private void showNumerousMultiChoiceDialog() {
@@ -300,7 +311,7 @@ public class QDDialogFragment extends BaseFragment {
                 dialog.dismiss();
             }
         });
-        builder.show();
+        builder.create(mCurrentDialogStyle).show();
     }
 
     private void showEditTextDialog() {
@@ -326,7 +337,7 @@ public class QDDialogFragment extends BaseFragment {
                         }
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showAutoDialog() {
@@ -344,7 +355,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 });
-        autoTestDialogBuilder.show();
+        autoTestDialogBuilder.create(mCurrentDialogStyle).show();
         QMUIKeyboardHelper.showKeyboard(autoTestDialogBuilder.getEditText(), true);
     }
 
@@ -386,5 +397,27 @@ public class QDDialogFragment extends BaseFragment {
             layout.addView(textView);
             return layout;
         }
+    }
+
+
+    private void showBottomSheet() {
+        new QMUIBottomSheet.BottomListSheetBuilder(getContext())
+                .addItem("使用 QMUI 默认 Dialog 样式")
+                .addItem("自定义样式")
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        switch (position) {
+                            case 0:
+                                mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
+                                break;
+                            case 1:
+                                mCurrentDialogStyle = R.style.DialogTheme2;
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 }

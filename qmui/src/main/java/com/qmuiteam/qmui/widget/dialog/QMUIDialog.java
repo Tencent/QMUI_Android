@@ -307,8 +307,10 @@ public class QMUIDialog extends Dialog {
                 mScrollContainer = new QMUIWrapContentScrollView(context);
                 mTextView = new QMUISpanTouchFixTextView(context);
                 MessageDialogBuilder.assignMessageTvWithAttr(mTextView, hasTitle(), R.attr.qmui_dialog_message_content_style);
-
-                mScrollContainer.addView(mTextView);
+                ScrollView.LayoutParams lp = new ScrollView.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.gravity = mTextView.getGravity();
+                mScrollContainer.addView(mTextView, lp);
                 mScrollContainer.setVerticalScrollBarEnabled(false);
                 mScrollContainer.setMaxHeight(getContentAreaMaxHeight());
                 mTextView.setText(mMessage);

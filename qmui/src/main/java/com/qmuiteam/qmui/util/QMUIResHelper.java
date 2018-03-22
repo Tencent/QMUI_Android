@@ -94,7 +94,7 @@ public class QMUIResHelper {
             }else if(attr == R.styleable.QMUITextCommonStyleDef_android_maxLines){
                 textView.setMaxLines(a.getInt(attr, -1));
             }else if(attr == R.styleable.QMUITextCommonStyleDef_android_background){
-                textView.setBackground(a.getDrawable(attr));
+                QMUIViewHelper.setBackgroundKeepingPadding(textView, a.getDrawable(attr));
             }else if(attr == R.styleable.QMUITextCommonStyleDef_android_lineSpacingExtra){
                 textView.setLineSpacing(a.getDimensionPixelSize(attr, 0), 1f);
             }else if(attr == R.styleable.QMUITextCommonStyleDef_android_drawablePadding){
