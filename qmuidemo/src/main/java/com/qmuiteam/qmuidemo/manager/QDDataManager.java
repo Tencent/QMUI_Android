@@ -8,6 +8,7 @@ import com.qmuiteam.qmuidemo.fragment.components.QDDialogFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDEmptyViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDFloatLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDGroupListViewFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDLinkTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment;
@@ -84,6 +85,7 @@ public class QDDataManager {
         mComponentsNames.add(QDSpanFragment.class);
         mComponentsNames.add(QDCollapsingTopBarLayoutFragment.class);
         mComponentsNames.add(QDViewPagerFragment.class);
+        mComponentsNames.add(QDLayoutFragment.class);
     }
 
     /**

@@ -86,7 +86,7 @@ public class QMUILayoutHelper {
     private RectF mBorderRect;
     private int mBorderColor = 0;
     private int mBorderWidth = 1;
-    private int mOuterNormalColor;
+    private int mOuterNormalColor = 0;
     private WeakReference<View> mOwner;
     private boolean mIsOutlineExcludePadding = false;
     private Path mPath = new Path();
@@ -112,7 +112,6 @@ public class QMUILayoutHelper {
         mClipPaint.setAntiAlias(true);
         mShadowAlpha = QMUIResHelper.getAttrFloatValue(context, R.attr.qmui_general_shadow_alpha);
         mBorderRect = new RectF();
-        mOuterNormalColor = ContextCompat.getColor(context, R.color.qmui_config_color_white);
 
         int radius = 0, shadow = 0;
         boolean useThemeGeneralShadowElevation = false;
@@ -555,7 +554,7 @@ public class QMUILayoutHelper {
         if (owner == null) {
             return;
         }
-        if (mBorderColor == 0) {
+        if (mBorderColor == 0 && (mRadius == 0 || mOuterNormalColor == 0)) {
             return;
         }
 
@@ -564,8 +563,7 @@ public class QMUILayoutHelper {
         }
 
         int width = canvas.getWidth(), height = canvas.getHeight();
-        mClipPaint.setColor(mBorderColor);
-        mClipPaint.setStrokeWidth(mBorderWidth);
+
         // react
         if (mIsOutlineExcludePadding) {
             mBorderRect.set(1 + owner.getPaddingLeft(), 1 + owner.getPaddingTop(),
@@ -574,7 +572,7 @@ public class QMUILayoutHelper {
             mBorderRect.set(1, 1, width - 1, height - 1);
         }
 
-        if (mRadius == 0) {
+        if (mRadius == 0 || (!useFeature() && mOuterNormalColor == 0)) {
             mClipPaint.setStyle(Paint.Style.STROKE);
             canvas.drawRect(mBorderRect, mClipPaint);
             return;
@@ -584,6 +582,7 @@ public class QMUILayoutHelper {
         if (!useFeature()) {
             int layerId = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
             canvas.drawColor(mOuterNormalColor);
+            mClipPaint.setColor(mOuterNormalColor);
             mClipPaint.setStyle(Paint.Style.FILL);
             mClipPaint.setXfermode(mMode);
             if (mRadiusArray == null) {
@@ -595,6 +594,8 @@ public class QMUILayoutHelper {
             canvas.restoreToCount(layerId);
         }
 
+        mClipPaint.setColor(mBorderColor);
+        mClipPaint.setStrokeWidth(mBorderWidth);
         mClipPaint.setStyle(Paint.Style.STROKE);
         if (mRadiusArray == null) {
             canvas.drawRoundRect(mBorderRect, mRadius, mRadius, mClipPaint);

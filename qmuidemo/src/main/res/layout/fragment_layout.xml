@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="?attr/qmui_config_color_background">
+    <com.qmuiteam.qmuidemo.view.QDShadowAdjustLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:fitsSystemWindows="true">
+
+        <com.qmuiteam.qmui.layout.QMUILinearLayout
+            android:id="@id/layout_for_test"
+            android:layout_width="260dp"
+            android:layout_height="300dp"
+            android:background="@color/qmui_config_color_white"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            app:qmui_outerNormalColor="?attr/qmui_config_color_background"
+            app:qmui_borderColor="?attr/qmui_config_color_separator"
+            app:qmui_showBorderOnlyBeforeL="true">
+
+            <TextView
+                android:id="@+id/alpha_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/elevation_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </com.qmuiteam.qmui.layout.QMUILinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/common_content_spacing"
+            android:paddingRight="@dimen/common_content_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="alpha"/>
+
+                <SeekBar
+                    android:id="@+id/test_seekbar_alpha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="elevation"/>
+
+                <SeekBar
+                    android:id="@+id/test_seekbar_elevation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="配置取消一个边的圆角（阴影会丢失）"/>
+            <RadioGroup
+                android:id="@+id/hide_radius_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/hide_radius_none"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textSize="12sp"
+                    android:text="none"
+                    android:gravity="center"/>
+
+                <RadioButton
+                    android:id="@+id/hide_radius_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textSize="12sp"
+                    android:text="top"
+                    android:background="@null"/>
+
+                <RadioButton
+                    android:id="@+id/hide_radius_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textSize="12sp"
+                    android:text="right"
+                    android:background="@null"/>
+
+                <RadioButton
+                    android:id="@+id/hide_radius_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textSize="12sp"
+                    android:text="bottom"
+                    android:background="@null"/>
+
+                <RadioButton
+                    android:id="@+id/hide_radius_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textSize="12sp"
+                    android:text="left"
+                    android:background="@null"/>
+            </RadioGroup>
+        </LinearLayout>
+    </com.qmuiteam.qmuidemo.view.QDShadowAdjustLayout>
+    <com.qmuiteam.qmui.widget.QMUITopBarLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"/>
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
