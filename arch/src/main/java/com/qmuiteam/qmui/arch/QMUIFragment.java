@@ -1,5 +1,7 @@
 package com.qmuiteam.qmui.arch;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.reflect.Field;
@@ -54,6 +57,17 @@ public abstract class QMUIFragment extends Fragment {
     protected static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
             R.anim.scale_enter, R.anim.slide_still,
             R.anim.slide_still, R.anim.scale_exit);
+
+
+    public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
+    public static final int RESULT_OK = Activity.RESULT_CANCELED;
+    public static final int RESULT_FIRST_USER = Activity.RESULT_FIRST_USER;
+
+    private static final int NO_REQUEST_CODE = 0;
+    private int mSourceRequestCode = NO_REQUEST_CODE;
+    private Intent mResultData = null;
+    private int mResultCode = RESULT_CANCELED;
+
 
     private View mBaseView;
     private SwipeBackLayout mCacheView;
@@ -95,6 +109,43 @@ public abstract class QMUIFragment extends Fragment {
         }
     }
 
+    /**
+     * 模拟 startActivityForResult/onActivityResult
+     * fragment1 通过 startActivityForResult(fragment2, requestCode) 启动 fragment2
+     * fragment2 处理完之后，通过 fragment2.setFragmentResult(RESULT_OK, data) 回调数据给 fragment1
+     * fragment1，通过 onFragmentResult(requestCode, RESULT_OK, data) 取得回调的数据
+     *
+     * @param fragment    resultCode
+     * @param requestCode data
+     */
+    public void startFragmentForResult(QMUIFragment fragment, int requestCode) {
+        if (requestCode == NO_REQUEST_CODE) {
+            throw new RuntimeException("requestCode can not be " + NO_REQUEST_CODE);
+        }
+        fragment.setTargetFragment(this, requestCode);
+        mSourceRequestCode = requestCode;
+        startFragment(fragment);
+    }
+
+
+    public void setFragmentResult(int resultCode, Intent data) {
+        int targetRequestCode = getTargetRequestCode();
+        if (targetRequestCode == 0) {
+            QMUILog.w(TAG, "call setFragmentResult, but not requestCode exists");
+            return;
+        }
+        Fragment fragment = getTargetFragment();
+        if (fragment == null || !(fragment instanceof QMUIFragment)) {
+            return;
+        }
+        QMUIFragment targetFragment = (QMUIFragment) fragment;
+
+        if (targetFragment.mSourceRequestCode == targetRequestCode) {
+            targetFragment.mResultCode = resultCode;
+            targetFragment.mResultData = data;
+        }
+    }
+
 
     //============================= 生命周期 ================================
 
@@ -112,6 +163,22 @@ public abstract class QMUIFragment extends Fragment {
                     break;
                 }
             }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        int requestCode = mSourceRequestCode;
+        int resultCode = mResultCode;
+        Intent data = mResultData;
+
+        mSourceRequestCode = NO_REQUEST_CODE;
+        mResultCode = RESULT_CANCELED;
+        mResultData = null;
+
+        if (requestCode != NO_REQUEST_CODE) {
+            onFragmentResult(requestCode, resultCode, data);
         }
     }
 
@@ -416,6 +483,16 @@ public abstract class QMUIFragment extends Fragment {
      * onCreateView
      */
     protected abstract View onCreateView();
+
+    /**
+     * 将在 onStart 中执行
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
+
+    }
 
     /**
      * disable or enable drag back
