@@ -35,4 +35,4 @@ QMUI Android 支持 API Level 14+。
 
 或扫二维码至官网下载：
 
-![QMUI Website](http://qmuiteam.com/android/public/style/images/independent/DownloadQRCode.png?v=website)
+![QMUI Website](http://qmuiteam.com/themes/qmui/public/style/images/independent/AndroidDownloadQRCode_2x.png)
