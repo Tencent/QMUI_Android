@@ -12,7 +12,7 @@ import com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout;
  * @date 2017-03-10
  */
 
-public class QMUILinearLayout extends QMUIAlphaLinearLayout {
+public class QMUILinearLayout extends QMUIAlphaLinearLayout implements IQMUILayout {
     private QMUILayoutHelper mLayoutHelper;
 
     public QMUILinearLayout(Context context) {
@@ -78,8 +78,27 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout {
         invalidate();
     }
 
-    public void setDividerAlpha(int dividerAlpha) {
-        mLayoutHelper.setDividerAlpha(dividerAlpha);
+    @Override
+    public void setTopDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setTopDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setBottomDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setBottomDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setLeftDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setLeftDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setRightDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setRightDividerAlpha(dividerAlpha);
         invalidate();
     }
 
@@ -90,7 +109,7 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int minW = mLayoutHelper.handleMiniWidth(widthMeasureSpec, getMeasuredWidth());
         int minH = mLayoutHelper.handleMiniHeight(heightMeasureSpec, getMeasuredHeight());
-        if(widthMeasureSpec != minW || heightMeasureSpec != minH){
+        if (widthMeasureSpec != minW || heightMeasureSpec != minH) {
             super.onMeasure(minW, minH);
         }
     }
@@ -104,11 +123,21 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout {
     }
 
     public void setRadius(int radius) {
-        setRadius(radius, mLayoutHelper.getHideRadiusSide());
+        mLayoutHelper.setRadius(radius);
     }
 
     public void setRadius(int radius, @QMUILayoutHelper.HideRadiusSide int hideRadiusSide) {
-        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, mLayoutHelper.getShadowElevation(), mLayoutHelper.getShadowAlpha());
+        mLayoutHelper.setRadius(radius, hideRadiusSide);
+    }
+
+    @Override
+    public int getRadius() {
+        return mLayoutHelper.getRadius();
+    }
+
+    @Override
+    public void setOutlineInset(int left, int top, int right, int bottom) {
+        mLayoutHelper.setOutlineInset(left, top, right, bottom);
     }
 
     public void setBorderColor(@ColorInt int borderColor) {
@@ -126,31 +155,57 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout {
         invalidate();
     }
 
-    public void setWidthLimit(int widthLimit) {
+    @Override
+    public void setHideRadiusSide(int hideRadiusSide) {
+        mLayoutHelper.setHideRadiusSide(hideRadiusSide);
+    }
+
+    @Override
+    public int getHideRadiusSide() {
+        return mLayoutHelper.getHideRadiusSide();
+    }
+
+    public boolean setWidthLimit(int widthLimit) {
         if (mLayoutHelper.setWidthLimit(widthLimit)) {
             requestLayout();
             invalidate();
         }
-
+        return true;
     }
 
-    public void setHeightLimit(int heightLimit) {
+    public boolean setHeightLimit(int heightLimit) {
         if (mLayoutHelper.setHeightLimit(heightLimit)) {
             requestLayout();
             invalidate();
         }
+        return true;
     }
 
     public void setUseThemeGeneralShadowElevation() {
         mLayoutHelper.setUseThemeGeneralShadowElevation();
     }
 
+    @Override
+    public void setOutlineExcludePadding(boolean outlineExcludePadding) {
+        mLayoutHelper.setOutlineExcludePadding(outlineExcludePadding);
+    }
+
     public void setShadowElevation(int elevation) {
         mLayoutHelper.setShadowElevation(elevation);
     }
 
+    @Override
+    public int getShadowElevation() {
+        return mLayoutHelper.getShadowElevation();
+    }
+
     public void setShadowAlpha(float shadowAlpha) {
         mLayoutHelper.setShadowAlpha(shadowAlpha);
+    }
+
+    @Override
+    public float getShadowAlpha() {
+        return mLayoutHelper.getShadowAlpha();
     }
 
     @Override

@@ -12,7 +12,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.ColorInt;
-import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,8 +20,6 @@ import android.view.ViewOutlineProvider;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 
 /**
@@ -30,19 +27,7 @@ import java.lang.ref.WeakReference;
  * @date 2017-03-10
  */
 
-public class QMUILayoutHelper {
-    public static final int HIDE_RADIUS_SIDE_NONE = 0;
-    public static final int HIDE_RADIUS_SIDE_TOP = 1;
-    public static final int HIDE_RADIUS_SIDE_RIGHT = 2;
-    public static final int HIDE_RADIUS_SIDE_BOTTOM = 3;
-    public static final int HIDE_RADIUS_SIDE_LEFT = 4;
-
-    @IntDef(value = {HIDE_RADIUS_SIDE_NONE, HIDE_RADIUS_SIDE_TOP, HIDE_RADIUS_SIDE_RIGHT,
-            HIDE_RADIUS_SIDE_BOTTOM, HIDE_RADIUS_SIDE_LEFT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface HideRadiusSide {
-    }
-
+public class QMUILayoutHelper implements IQMUILayout {
     private Context mContext;
     // size
     private int mWidthLimit = 0;
@@ -81,7 +66,7 @@ public class QMUILayoutHelper {
     private Paint mClipPaint;
     private PorterDuffXfermode mMode;
     private int mRadius;
-    private @HideRadiusSide int mHideRadiusSide = HIDE_RADIUS_SIDE_NONE;
+    private @IQMUILayout.HideRadiusSide int mHideRadiusSide = HIDE_RADIUS_SIDE_NONE;
     private float[] mRadiusArray;
     private RectF mBorderRect;
     private int mBorderColor = 0;
@@ -199,11 +184,13 @@ public class QMUILayoutHelper {
         setRadiusAndShadow(radius, mHideRadiusSide, shadow, mShadowAlpha);
     }
 
+    @Override
     public void setUseThemeGeneralShadowElevation() {
         mShadowElevation = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_general_shadow_elevation);
         setRadiusAndShadow(mRadius, mHideRadiusSide, mShadowElevation, mShadowAlpha);
     }
 
+    @Override
     public void setOutlineExcludePadding(boolean outlineExcludePadding) {
         if (useFeature()) {
             View owner = mOwner.get();
@@ -216,6 +203,7 @@ public class QMUILayoutHelper {
 
     }
 
+    @Override
     public boolean setWidthLimit(int widthLimit) {
         if (mWidthLimit != widthLimit) {
             mWidthLimit = widthLimit;
@@ -224,6 +212,7 @@ public class QMUILayoutHelper {
         return false;
     }
 
+    @Override
     public boolean setHeightLimit(int heightLimit) {
         if (mHeightLimit != heightLimit) {
             mHeightLimit = heightLimit;
@@ -232,14 +221,17 @@ public class QMUILayoutHelper {
         return false;
     }
 
+    @Override
     public int getShadowElevation() {
         return mShadowElevation;
     }
 
+    @Override
     public float getShadowAlpha() {
         return mShadowAlpha;
     }
 
+    @Override
     public void setOutlineInset(int left, int top, int right, int bottom) {
         if (useFeature()) {
             View owner = mOwner.get();
@@ -255,10 +247,13 @@ public class QMUILayoutHelper {
     }
 
 
+    @Override
     public void setShowBorderOnlyBeforeL(boolean showBorderOnlyBeforeL) {
         mIsShowBorderOnlyBeforeL = showBorderOnlyBeforeL;
+        invalidate();
     }
 
+    @Override
     public void setShadowElevation(int elevation) {
         if (mShadowElevation == elevation) {
             return;
@@ -267,6 +262,7 @@ public class QMUILayoutHelper {
         invalidate();
     }
 
+    @Override
     public void setShadowAlpha(float shadowAlpha) {
         if (mShadowAlpha == shadowAlpha) {
             return;
@@ -290,15 +286,46 @@ public class QMUILayoutHelper {
         }
     }
 
+    @Override
+    public void setHideRadiusSide(@HideRadiusSide int hideRadiusSide) {
+        if (mHideRadiusSide == hideRadiusSide) {
+            return;
+        }
+        setRadiusAndShadow(mRadius, hideRadiusSide, mShadowElevation, mShadowAlpha);
+    }
+
+    @Override
     public int getHideRadiusSide() {
         return mHideRadiusSide;
     }
 
+    @Override
+    public void setRadius(int radius) {
+        if (mRadius != radius) {
+            setRadiusAndShadow(radius, mShadowElevation, mShadowAlpha);
+        }
+    }
+
+    @Override
+    public void setRadius(int radius, @IQMUILayout.HideRadiusSide int hideRadiusSide) {
+        if (mRadius == radius && hideRadiusSide == mHideRadiusSide) {
+            return;
+        }
+        setRadiusAndShadow(radius, hideRadiusSide, mShadowElevation, mShadowAlpha);
+    }
+
+    @Override
+    public int getRadius() {
+        return mRadius;
+    }
+
+    @Override
     public void setRadiusAndShadow(int radius, int shadowElevation, float shadowAlpha) {
         setRadiusAndShadow(radius, mHideRadiusSide, shadowElevation, shadowAlpha);
     }
 
-    public void setRadiusAndShadow(int radius, @HideRadiusSide int hideRadiusSide, int shadowElevation, float shadowAlpha) {
+    @Override
+    public void setRadiusAndShadow(int radius, @IQMUILayout.HideRadiusSide int hideRadiusSide, int shadowElevation, float shadowAlpha) {
         View owner = mOwner.get();
         if (owner == null) {
             return;
@@ -388,6 +415,7 @@ public class QMUILayoutHelper {
         return mRadius > 0 && mHideRadiusSide != HIDE_RADIUS_SIDE_NONE;
     }
 
+    @Override
     public void updateTopDivider(int topInsetLeft, int topInsetRight, int topDividerHeight, int topDividerColor) {
         mTopDividerInsetLeft = topInsetLeft;
         mTopDividerInsetRight = topInsetRight;
@@ -395,6 +423,7 @@ public class QMUILayoutHelper {
         mTopDividerColor = topDividerColor;
     }
 
+    @Override
     public void updateBottomDivider(int bottomInsetLeft, int bottomInsetRight, int bottomDividerHeight, int bottomDividerColor) {
         mBottomDividerInsetLeft = bottomInsetLeft;
         mBottomDividerInsetRight = bottomInsetRight;
@@ -402,6 +431,7 @@ public class QMUILayoutHelper {
         mBottomDividerHeight = bottomDividerHeight;
     }
 
+    @Override
     public void updateLeftDivider(int leftInsetTop, int leftInsetBottom, int leftDividerWidth, int leftDividerColor) {
         mLeftDividerInsetTop = leftInsetTop;
         mLeftDividerInsetBottom = leftInsetBottom;
@@ -409,6 +439,7 @@ public class QMUILayoutHelper {
         mLeftDividerColor = leftDividerColor;
     }
 
+    @Override
     public void updateRightDivider(int rightInsetTop, int rightInsetBottom, int rightDividerWidth, int rightDividerColor) {
         mRightDividerInsetTop = rightInsetTop;
         mRightDividerInsetBottom = rightInsetBottom;
@@ -416,6 +447,7 @@ public class QMUILayoutHelper {
         mRightDividerColor = rightDividerColor;
     }
 
+    @Override
     public void onlyShowTopDivider(int topInsetLeft, int topInsetRight,
                                    int topDividerHeight, int topDividerColor) {
         updateTopDivider(topInsetLeft, topInsetRight, topDividerHeight, topDividerColor);
@@ -424,6 +456,7 @@ public class QMUILayoutHelper {
         mBottomDividerHeight = 0;
     }
 
+    @Override
     public void onlyShowBottomDivider(int bottomInsetLeft, int bottomInsetRight,
                                       int bottomDividerHeight, int bottomDividerColor) {
         updateBottomDivider(bottomInsetLeft, bottomInsetRight, bottomDividerHeight, bottomDividerColor);
@@ -432,6 +465,7 @@ public class QMUILayoutHelper {
         mTopDividerHeight = 0;
     }
 
+    @Override
     public void onlyShowLeftDivider(int leftInsetTop, int leftInsetBottom, int leftDividerWidth, int leftDividerColor) {
         updateLeftDivider(leftInsetTop, leftInsetBottom, leftDividerWidth, leftDividerColor);
         mRightDividerWidth = 0;
@@ -439,6 +473,7 @@ public class QMUILayoutHelper {
         mBottomDividerHeight = 0;
     }
 
+    @Override
     public void onlyShowRightDivider(int rightInsetTop, int rightInsetBottom, int rightDividerWidth, int rightDividerColor) {
         updateRightDivider(rightInsetTop, rightInsetBottom, rightDividerWidth, rightDividerColor);
         mLeftDividerWidth = 0;
@@ -446,28 +481,38 @@ public class QMUILayoutHelper {
         mBottomDividerHeight = 0;
     }
 
-    /**
-     * 设置上下分割线的透明度
-     * <p>由于设置透明度的场景(通常是滚动列表时不断设置)与设置颜色的场景(通常是在View初始化时设置一次)通常都不重合, 所以拆开两个方法分别设置</p>
-     * <p>上下分割线的alpha一起设置, 如果有需要再拆开两个方法</p>
-     *
-     * @param dividerAlpha [0, 255]
-     */
-    public void setDividerAlpha(int dividerAlpha) {
-        mTopDividerAlpha = mBottomDividerAlpha = dividerAlpha;
+    @Override
+    public void setTopDividerAlpha(int dividerAlpha) {
+        mTopDividerAlpha = dividerAlpha;
     }
 
+    @Override
+    public void setBottomDividerAlpha(int dividerAlpha) {
+        mBottomDividerAlpha = dividerAlpha;
+    }
+
+    @Override
+    public void setLeftDividerAlpha(int dividerAlpha) {
+        mLeftDividerAlpha = dividerAlpha;
+    }
+
+    @Override
+    public void setRightDividerAlpha(int dividerAlpha) {
+        mRightDividerAlpha = dividerAlpha;
+    }
+
+
     public int handleMiniWidth(int widthMeasureSpec, int measuredWidth) {
-        if(View.MeasureSpec.getMode(widthMeasureSpec) != View.MeasureSpec.EXACTLY
-                && measuredWidth < mWidthMini){
+        if (View.MeasureSpec.getMode(widthMeasureSpec) != View.MeasureSpec.EXACTLY
+                && measuredWidth < mWidthMini) {
             return View.MeasureSpec.makeMeasureSpec(mWidthMini, View.MeasureSpec.EXACTLY);
         }
         return widthMeasureSpec;
     }
 
     public int handleMiniHeight(int heightMeasureSpec, int measuredHeight) {
-        if(View.MeasureSpec.getMode(heightMeasureSpec) != View.MeasureSpec.EXACTLY
-                && measuredHeight < mHeightMini){
+        if (View.MeasureSpec.getMode(heightMeasureSpec) != View.MeasureSpec.EXACTLY
+                && measuredHeight < mHeightMini) {
             return View.MeasureSpec.makeMeasureSpec(mHeightMini, View.MeasureSpec.EXACTLY);
         }
         return heightMeasureSpec;
@@ -504,10 +549,12 @@ public class QMUILayoutHelper {
         return heightMeasureSpec;
     }
 
+    @Override
     public void setBorderColor(@ColorInt int borderColor) {
         mBorderColor = borderColor;
     }
 
+    @Override
     public void setBorderWidth(int borderWidth) {
         mBorderWidth = borderWidth;
     }
