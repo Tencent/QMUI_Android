@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  * Created by cgspine on 2018/3/22.
  */
 
-@Widget(name = "QMUILayout", iconRes = R.mipmap.icon_grid_dialog)
+@Widget(name = "QMUILayout", iconRes = R.mipmap.icon_grid_layout)
 public class QDLayoutFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
