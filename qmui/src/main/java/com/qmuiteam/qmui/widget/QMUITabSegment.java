@@ -14,8 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -172,7 +175,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     protected OnClickListener mTabOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mIsAnimating) {
+            if (mIsAnimating || mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE) {
                 return;
             }
             int index = (int) v.getTag();
@@ -194,6 +197,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private OnTabSelectedListener mViewPagerSelectedListener;
 //    private AdapterChangeListener mAdapterChangeListener;
+    private boolean mIsInSelectTab = false;
 
     public QMUITabSegment(Context context) {
         this(context, null);
@@ -563,16 +567,23 @@ public class QMUITabSegment extends HorizontalScrollView {
      * 只有点击 tab 才会自己产生动画变化，其它需要使用 updateIndicatorPosition 做驱动
      */
     private void selectTab(final int index, boolean preventAnim) {
+        if(mIsInSelectTab){
+            return;
+        }
+        mIsInSelectTab = true;
         if (mContentLayout.getTabAdapter().getSize() == 0 || mContentLayout.getTabAdapter().getSize() <= index) {
+            mIsInSelectTab = false;
             return;
         }
         if (mSelectedIndex == index) {
             dispatchTabReselected(index);
+            mIsInSelectTab = false;
             return;
         }
 
         if (mIsAnimating) {
             mPendingSelectedIndex = index;
+            mIsInSelectTab = false;
             return;
         }
 
@@ -594,6 +605,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             changeTabColor(selectedTv, getTabSelectedColor(model), model, STATUS_SELECTED);
             dispatchTabSelected(index);
             mSelectedIndex = index;
+            mIsInSelectTab = false;
             return;
         }
         final int prev = mSelectedIndex;
@@ -603,6 +615,8 @@ public class QMUITabSegment extends HorizontalScrollView {
         final TabItemView nowView = listViews.get(index);
 
         if (preventAnim) {
+            dispatchTabUnselected(prev);
+            dispatchTabSelected(index);
             setTextViewTypeface(prevView.getTextView(), false);
             setTextViewTypeface(nowView.getTextView(), true);
             changeTabColor(prevView.getTextView(), getTabNormalColor(prevModel), prevModel, STATUS_NORMAL, mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE);
@@ -615,10 +629,8 @@ public class QMUITabSegment extends HorizontalScrollView {
                     smoothScrollBy(nowView.getRight() - realWidth - getScrollX(), 0);
                 }
             }
-
-            dispatchTabUnselected(prev);
-            dispatchTabSelected(index);
             mSelectedIndex = index;
+            mIsInSelectTab = false;
             return;
         }
 
@@ -677,6 +689,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         });
         animator.setDuration(200);
         animator.start();
+        mIsInSelectTab = false;
     }
 
     private void setTextViewTypeface(TextView tv, boolean selected) {
@@ -687,13 +700,11 @@ public class QMUITabSegment extends HorizontalScrollView {
         tv.setTypeface(null, isBold ? Typeface.BOLD : Typeface.NORMAL);
     }
 
-    public void updateIndicatorPosition(int index, float offsetPercent) {
-        if (mIsAnimating) {
+    public void updateIndicatorPosition(final int index, float offsetPercent) {
+        if (mIsAnimating || mIsInSelectTab || offsetPercent == 0) {
             return;
         }
-        if (offsetPercent == 0) {
-            return;
-        }
+
         int targetIndex;
         if (offsetPercent < 0) {
             targetIndex = index - 1;
@@ -1334,7 +1345,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
     }
 
-    public class InnerTextView extends TextView {
+    public class InnerTextView extends AppCompatTextView {
 
         public InnerTextView(Context context) {
             super(context);
