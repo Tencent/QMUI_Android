@@ -93,6 +93,12 @@
         <item name="qmui_dialog_menu_item_style">@style/DialogTheme2MenuItemStyle</item>
     </style>
 
+    <style name="ReleaseDialogTheme" parent="DialogTheme2">
+        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper</item>
+        <item name="qmui_dialog_message_content_style">@style/ReleaseMessageContentStyle</item>
+
+    </style>
+
     <style name="dialog_wrapper_style_63">
         <item name="android:paddingLeft">63dp</item>
         <item name="android:paddingRight">63dp</item>
@@ -139,6 +145,11 @@
         <item name="android:paddingBottom">27dp</item>
         <item name="android:lineSpacingExtra">5dp</item>
         <item name="qmui_paddingTopWhenNotTitle">27dp</item>
+    </style>
+
+    <style name="ReleaseMessageContentStyle" parent="DialogTheme2MessageContentStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">left</item>
     </style>
 
     <style name="DialogTheme2MenuItemStyle" parent="@style/QMUI.Dialog_MenuItem">
