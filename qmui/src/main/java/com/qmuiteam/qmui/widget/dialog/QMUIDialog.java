@@ -190,6 +190,7 @@ public class QMUIDialog extends Dialog {
                 mTextView = new QMUISpanTouchFixTextView(context);
                 assignMessageTvWithAttr(mTextView, hasTitle(), R.attr.qmui_dialog_message_content_style);
                 mTextView.setText(mMessage);
+                mTextView.setMovementMethodDefault();
 
 
                 mScrollContainer = new QMUIWrapContentScrollView(context);
@@ -306,6 +307,7 @@ public class QMUIDialog extends Dialog {
             if (mMessage != null && mMessage.length() != 0) {
                 mScrollContainer = new QMUIWrapContentScrollView(context);
                 mTextView = new QMUISpanTouchFixTextView(context);
+                mTextView.setMovementMethodDefault();
                 MessageDialogBuilder.assignMessageTvWithAttr(mTextView, hasTitle(), R.attr.qmui_dialog_message_content_style);
                 ScrollView.LayoutParams lp = new ScrollView.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

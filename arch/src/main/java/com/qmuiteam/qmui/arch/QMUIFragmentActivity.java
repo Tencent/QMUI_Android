@@ -38,7 +38,7 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
     public void onBackPressed() {
         QMUIFragment fragment = getCurrentFragment();
         if (fragment != null) {
-            popBackStack();
+            fragment.popBackStack();
         }
     }
 

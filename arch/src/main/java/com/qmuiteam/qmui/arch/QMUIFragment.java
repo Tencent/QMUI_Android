@@ -63,6 +63,11 @@ public abstract class QMUIFragment extends Fragment {
     public static final int RESULT_OK = Activity.RESULT_CANCELED;
     public static final int RESULT_FIRST_USER = Activity.RESULT_FIRST_USER;
 
+    public static final int ANIMATION_ENTER_STATUS_NOT_START = -1;
+    public static final int ANIMATION_ENTER_STATUS_STARTED = 0;
+    public static final int ANIMATION_ENTER_STATUS_END = 1;
+
+
     private static final int NO_REQUEST_CODE = 0;
     private int mSourceRequestCode = NO_REQUEST_CODE;
     private Intent mResultData = null;
@@ -74,7 +79,7 @@ public abstract class QMUIFragment extends Fragment {
     private boolean isCreateForSwipeBack = false;
     private int mBackStackIndex = 0;
 
-    private boolean mIsEnterAnimationEnd = true;
+    private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     private boolean mCalled = true;
     private ArrayList<Runnable> mDelayRenderRunnableList = new ArrayList<>();
 
@@ -189,8 +194,16 @@ public abstract class QMUIFragment extends Fragment {
         } else {
             rootView.setFitsSystemWindows(true);
         }
-        SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge());
-        swipeBackLayout.setEnableGesture(canDragBack());
+        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge());
+        swipeBackLayout.setEnableGesture(false);
+        if(canDragBack()){
+            runAfterAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    swipeBackLayout.setEnableGesture(true);
+                }
+            }, true);
+        }
         swipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
             @Override
             public void onScrollStateChange(int state, float scrollPercent) {
@@ -353,7 +366,7 @@ public abstract class QMUIFragment extends Fragment {
             swipeBackLayout = newSwipeBackLayout();
             mCacheView = swipeBackLayout;
         } else if (isCreateForSwipeBack) {
-            // in swipe back, must not in animation
+            // in swipe back, exactly not in animation
             swipeBackLayout = mCacheView;
         } else {
             boolean isInRemoving = false;
@@ -418,6 +431,9 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     protected void popBackStack() {
+        if(mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END){
+            return;
+        }
         getBaseFragmentActivity().popBackStack();
     }
 
@@ -432,8 +448,8 @@ public abstract class QMUIFragment extends Fragment {
             doNothingAnim.setDuration(duration);
             return doNothingAnim;
         }
+        Animation animation = null;
         if (enter) {
-            Animation animation = null;
             try {
                 animation = AnimationUtils.loadAnimation(getContext(), nextAnim);
 
@@ -442,7 +458,6 @@ public abstract class QMUIFragment extends Fragment {
             } catch (RuntimeException ignored) {
 
             }
-
             if (animation != null) {
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
@@ -464,9 +479,8 @@ public abstract class QMUIFragment extends Fragment {
                 onEnterAnimationStart(null);
                 checkAndCallOnEnterAnimationEnd(null);
             }
-            return animation;
         }
-        return null;
+        return animation;
     }
 
 
@@ -517,14 +531,26 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * 异步数据渲染时，调用这个方法可以保证数据是在转场动画结束后进行渲染。
-     * 转场动画过程中进行数据渲染时，会造成卡顿，从而影响用户体验
+     * 在动画开始前或动画结束后都会被直接执行
      *
      * @param runnable
      */
     public void runAfterAnimation(Runnable runnable) {
+        runAfterAnimation(runnable, false);
+    }
+
+    /**
+     * 异步数据渲染时，调用这个方法可以保证数据是在转场动画结束后进行渲染。
+     * 转场动画过程中进行数据渲染时，会造成卡顿，从而影响用户体验
+     *
+     * @param runnable
+     * @param onlyEnd
+     */
+    public void runAfterAnimation(Runnable runnable, boolean onlyEnd){
         Utils.assertInMainThread();
-        if (mIsEnterAnimationEnd) {
+        boolean ok = onlyEnd ? mEnterAnimationStatus == ANIMATION_ENTER_STATUS_END :
+                mEnterAnimationStatus != ANIMATION_ENTER_STATUS_STARTED;
+        if (ok) {
             runnable.run();
         } else {
             mDelayRenderRunnableList.add(runnable);
@@ -534,7 +560,7 @@ public abstract class QMUIFragment extends Fragment {
     //============================= 新流程 ================================
 
     protected void onEnterAnimationStart(@Nullable Animation animation) {
-        mIsEnterAnimationEnd = false;
+        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_STARTED;
     }
 
     protected void onEnterAnimationEnd(@Nullable Animation animation) {
@@ -542,7 +568,7 @@ public abstract class QMUIFragment extends Fragment {
             throw new IllegalAccessError("don't call #onEnterAnimationEnd() directly");
         }
         mCalled = true;
-        mIsEnterAnimationEnd = true;
+        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
         if (mDelayRenderRunnableList.size() > 0) {
             for (int i = 0; i < mDelayRenderRunnableList.size(); i++) {
                 mDelayRenderRunnableList.get(i).run();
