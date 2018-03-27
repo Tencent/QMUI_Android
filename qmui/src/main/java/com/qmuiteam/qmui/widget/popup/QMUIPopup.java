@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.IntDef;
+import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class QMUIPopup extends QMUIBasePopup {
     private int mOffsetYWhenTop = 0;
     // 计算位置后的偏移y值，当浮层在View的下方时使用
     private int mOffsetYWhenBottom = 0;
+
     public QMUIPopup(Context context) {
         this(context, DIRECTION_NONE);
     }
@@ -242,13 +244,23 @@ public class QMUIPopup extends QMUIBasePopup {
     @Override
     public void setContentView(View root) {
         @SuppressLint("InflateParams") FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
-                .inflate(R.layout.qmui_popup_layout, null, false);
+                .inflate(getRootLayout(), null, false);
         mArrowDown = (ImageView) layout.findViewById(R.id.arrow_down);
         mArrowUp = (ImageView) layout.findViewById(R.id.arrow_up);
         FrameLayout box = (FrameLayout) layout.findViewById(R.id.box);
         box.addView(root);
 
         super.setContentView(layout);
+    }
+
+    /**
+     * the root layout: must provide ids: arrow_down(ImageView), arrow_up(ImageView), box(FrameLayout)
+     *
+     * @return
+     */
+    @LayoutRes
+    protected int getRootLayout() {
+        return R.layout.qmui_popup_layout;
     }
 
     private void setViewVisibility(View view, boolean visible) {
