@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AppOpsManager;
 import android.content.Context;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
  * @author cginechen
  * @date 2016-08-11
  */
+@SuppressLint("PrivateApi")
 public class QMUIDeviceHelper {
     private final static String TAG = "QMUIDeviceHelper";
     private final static String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
@@ -37,22 +39,31 @@ public class QMUIDeviceHelper {
     private static boolean sIsTabletValue = false;
 
     static {
-        FileInputStream fileInputStream = null;
+        Properties properties = new Properties();
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // android 8.0，读取 /system/uild.prop 会报 permission denied
+            FileInputStream fileInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(new File(Environment.getRootDirectory(), "build.prop"));
+                properties.load(fileInputStream);
+            } catch (Exception e) {
+                QMUILog.printErrStackTrace(TAG, e, "read file error");
+            } finally {
+                QMUILangHelper.close(fileInputStream);
+            }
+        }
+
+        Class<?> clzSystemProperties = null;
         try {
-            fileInputStream = new FileInputStream(new File(Environment.getRootDirectory(), "build.prop"));
-            Properties properties = new Properties();
-            properties.load(fileInputStream);
-            Class<?> clzSystemProperties = Class.forName("android.os.SystemProperties");
+            clzSystemProperties = Class.forName("android.os.SystemProperties");
             Method getMethod = clzSystemProperties.getDeclaredMethod("get", String.class);
             // miui
-            sMiuiVersionName =getLowerCaseName(properties, getMethod, KEY_MIUI_VERSION_NAME);
+            sMiuiVersionName = getLowerCaseName(properties, getMethod, KEY_MIUI_VERSION_NAME);
             //flyme
             sFlymeVersionName = getLowerCaseName(properties, getMethod, KEY_FLYME_VERSION_NAME);
-
         } catch (Exception e) {
-            QMUILog.printErrStackTrace(TAG, e, "getProperty error");
-        } finally {
-            QMUILangHelper.close(fileInputStream);
+            QMUILog.printErrStackTrace(TAG, e, "read SystemProperties error");
         }
     }
 
@@ -110,7 +121,7 @@ public class QMUIDeviceHelper {
     public static boolean isFlymeVersionHigher5_2_4() {
         //查不到默认高于5.2.4
         boolean isHigher = true;
-        if(sFlymeVersionName != null && !sFlymeVersionName.equals("")){
+        if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
             Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
             Matcher matcher = pattern.matcher(sFlymeVersionName);
             if (matcher.find()) {
@@ -152,9 +163,10 @@ public class QMUIDeviceHelper {
 
     /**
      * 判断是否为小米
+     * https://dev.mi.com/doc/?p=254
      */
     public static boolean isXiaomi() {
-        return Build.BRAND.toLowerCase().contains("xiaomi");
+        return Build.MANUFACTURER.toLowerCase().equals("xiaomi");
     }
 
 
@@ -225,7 +237,8 @@ public class QMUIDeviceHelper {
         if (name == null) {
             try {
                 name = (String) get.invoke(null, key);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         if (name != null) name = name.toLowerCase();
         return name;
