@@ -25,7 +25,7 @@ android {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode gitVersion
-        versionName "1.1.0"
+        versionName "1.1.1"
     }
     buildTypes {
         debug {

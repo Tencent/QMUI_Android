@@ -27,21 +27,8 @@ public abstract class BaseFragment extends QMUIFragment {
     @Override
     public void onResume() {
         super.onResume();
-        checkAndShowUpgradeTip();
+        QDUpgradeManager.getInstance(getContext()).runUpgradeTipTaskIfExist(getActivity());
 
     }
 
-    private void checkAndShowUpgradeTip() {
-        QDPreferenceManager preferenceManager = QDPreferenceManager.getInstance(getContext());
-        if (preferenceManager.isNeedShowUpgradeTip()) {
-            preferenceManager.setNeedShowUpgradeTip(false);
-            String title = String.format(getString(R.string.app_upgrade_tip_title), QMUIPackageHelper.getAppVersion(getContext()));
-            CharSequence message = QDUpgradeManager.getInstance(getContext()).getUpgradeWord(getActivity());
-            new QMUIDialog.MessageDialogBuilder(getContext())
-                    .setTitle(title)
-                    .setMessage(message)
-                    .create(R.style.ReleaseDialogTheme)
-                    .show();
-        }
-    }
 }

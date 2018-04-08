@@ -13,7 +13,6 @@ public class QDPreferenceManager {
     private static QDPreferenceManager sQDPreferenceManager = null;
 
     private static final String APP_VERSION_CODE = "app_version_code";
-    private static final String APP_NEED_SHOW_UPGRADE_TIP = "app_has_show_upgrade_tip";
 
     private QDPreferenceManager(Context context) {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -34,15 +33,5 @@ public class QDPreferenceManager {
 
     public int getVersionCode() {
         return sPreferences.getInt(APP_VERSION_CODE, QDUpgradeManager.INVALIDATE_VERSION_CODE);
-    }
-
-    public void setNeedShowUpgradeTip(boolean needShowUpgradeTip) {
-        final SharedPreferences.Editor editor = sPreferences.edit();
-        editor.putBoolean(APP_NEED_SHOW_UPGRADE_TIP, needShowUpgradeTip);
-        editor.apply();
-    }
-
-    public boolean isNeedShowUpgradeTip() {
-        return sPreferences.getBoolean(APP_NEED_SHOW_UPGRADE_TIP, false);
     }
 }
