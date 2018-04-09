@@ -64,7 +64,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 //    compile 'com.qmuiteam:qmuilint:1.0.1'
 //    compile 'com.qmuiteam:arch:0.0.1'
-//    compile 'com.qmuiteam:qmui:1.0.8'
+//    compile 'com.qmuiteam:qmui:1.1.1'
     compile project(':lib')
     compile project(':qmuilint')
     compile project(':qmui')
