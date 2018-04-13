@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.arch;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -205,6 +206,9 @@ public abstract class QMUIFragment extends Fragment {
             }, true);
         }
         swipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
+
+            private QMUIFragment mModifiedFragment = null;
+
             @Override
             public void onScrollStateChange(int state, float scrollPercent) {
                 Log.i(TAG, "SwipeListener:onScrollStateChange: state = " + state + " ;scrollPercent = " + scrollPercent);
@@ -217,6 +221,28 @@ public abstract class QMUIFragment extends Fragment {
                             Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
                             if (tag != null && SWIPE_BACK_VIEW.equals(tag)) {
                                 container.removeView(view);
+                                if(mModifiedFragment != null){
+                                    // give up swipe back, we should reset the revise
+                                    try {
+                                        Field viewField = Fragment.class.getDeclaredField("mView");
+                                        viewField.setAccessible(true);
+                                        viewField.set(mModifiedFragment, null);
+                                        FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
+                                        Method dispatchCreatedMethod = childFragmentManager.getClass().getMethod("dispatchCreate");
+                                        dispatchCreatedMethod.setAccessible(true);
+                                        dispatchCreatedMethod.invoke(childFragmentManager);
+                                    } catch (NoSuchFieldException e) {
+                                        e.printStackTrace();
+                                    } catch (NoSuchMethodException e) {
+                                        e.printStackTrace();
+                                    } catch (IllegalAccessException e) {
+                                        e.printStackTrace();
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                    mModifiedFragment = null;
+                                }
+
                             }
                         }
                     } else if (scrollPercent >= 1.0F) {
@@ -284,6 +310,7 @@ public abstract class QMUIFragment extends Fragment {
                 }
             }
 
+            @SuppressLint("PrivateApi")
             @Override
             public void onEdgeTouch(int edgeFlag) {
                 Log.i(TAG, "SwipeListener:onEdgeTouch: edgeFlag = " + edgeFlag);
@@ -314,14 +341,24 @@ public abstract class QMUIFragment extends Fragment {
                                     fragmentField.setAccessible(true);
                                     Object fragmentObject = fragmentField.get(op);
                                     if (fragmentObject instanceof QMUIFragment) {
-                                        QMUIFragment fragment = (QMUIFragment) fragmentObject;
+                                        mModifiedFragment = (QMUIFragment) fragmentObject;
                                         ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
-                                        fragment.isCreateForSwipeBack = true;
-                                        View baseView = fragment.onCreateView(LayoutInflater.from(getContext()), container, null);
-                                        fragment.isCreateForSwipeBack = false;
+                                        mModifiedFragment.isCreateForSwipeBack = true;
+                                        View baseView = mModifiedFragment.onCreateView(LayoutInflater.from(getContext()), container, null);
+                                        mModifiedFragment.isCreateForSwipeBack = false;
                                         if (baseView != null) {
                                             baseView.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
                                             container.addView(baseView, 0);
+
+                                            // handle issue #235
+                                            Field viewField = Fragment.class.getDeclaredField("mView");
+                                            viewField.setAccessible(true);
+                                            viewField.set(mModifiedFragment, baseView);
+                                            FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
+                                            Method dispatchCreatedMethod = childFragmentManager.getClass().getMethod("dispatchActivityCreated");
+                                            dispatchCreatedMethod.setAccessible(true);
+                                            dispatchCreatedMethod.invoke(childFragmentManager);
+
                                             int offset = Math.abs(backViewInitOffset());
                                             if (edgeFlag == EDGE_BOTTOM) {
                                                 ViewCompat.offsetTopAndBottom(baseView, offset);
@@ -340,6 +377,10 @@ public abstract class QMUIFragment extends Fragment {
                     } catch (NoSuchFieldException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 } else {

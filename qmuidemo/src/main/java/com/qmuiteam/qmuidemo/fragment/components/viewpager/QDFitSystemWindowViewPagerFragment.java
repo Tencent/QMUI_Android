@@ -17,6 +17,7 @@ import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDButtonFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import butterknife.BindView;
@@ -69,7 +70,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
             public CharSequence getPageTitle(int position) {
                 switch (position) {
                     case 0:
-                        return "Button";
+                        return "TabSegment";
                     case 1:
                         return "CollapsingTopBar";
                     case 2:
@@ -82,7 +83,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
             protected Object hydrate(ViewGroup container, int position) {
                 switch (position) {
                     case 0:
-                        return new QDButtonFragment();
+                        return new QDTabSegmentFragment();
                     case 1:
                         return new QDCollapsingTopBarLayoutFragment();
                     case 2:

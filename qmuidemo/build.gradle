@@ -51,7 +51,10 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        force "com.android.support:support-annotations:${supportVersion}"
+        force "com.android.support:recyclerview-v7:$supportVersion"
+        force "com.android.support:appcompat-v7:$supportVersion"
+        force "com.android.support:design:$supportVersion"
+        force "com.android.support:support-vector-drawable:$supportVersion"
     }
 }
 

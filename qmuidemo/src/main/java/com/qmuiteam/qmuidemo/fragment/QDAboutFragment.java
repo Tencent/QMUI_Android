@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
-import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmuidemo.R;
