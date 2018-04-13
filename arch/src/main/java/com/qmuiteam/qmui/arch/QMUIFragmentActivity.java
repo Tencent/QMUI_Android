@@ -3,6 +3,7 @@ package com.qmuiteam.qmui.arch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
@@ -49,16 +50,22 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
         return (QMUIFragment) getSupportFragmentManager().findFragmentById(getContextViewId());
     }
 
-    public void startFragment(QMUIFragment fragment) {
+    public void startFragment(QMUIFragment fragment){
+        startFragment(fragment, true);
+    }
+
+    public void startFragment(QMUIFragment fragment, boolean addToBackStack) {
         Log.i(TAG, "startFragment");
         QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
         String tagName = fragment.getClass().getSimpleName();
-        getSupportFragmentManager()
+        FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
-                .replace(getContextViewId(), fragment, tagName)
-                .addToBackStack(tagName)
-                .commit();
+                .replace(getContextViewId(), fragment, tagName);
+        if(addToBackStack){
+            transaction.addToBackStack(tagName);
+        }
+        transaction.commit();
     }
 
     /**

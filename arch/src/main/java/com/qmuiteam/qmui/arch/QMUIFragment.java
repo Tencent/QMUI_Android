@@ -103,10 +103,14 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     protected void startFragment(QMUIFragment fragment) {
+        startFragment(fragment, true);
+    }
+
+    protected void startFragment(QMUIFragment fragment, boolean addToBackStack) {
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
             if (this.isAttachedToActivity()) {
-                baseFragmentActivity.startFragment(fragment);
+                baseFragmentActivity.startFragment(fragment, addToBackStack);
             } else {
                 Log.e("QMUIFragment", "fragment not attached:" + this);
             }
