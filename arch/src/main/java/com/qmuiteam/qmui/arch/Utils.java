@@ -6,8 +6,13 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.os.Build;
 import android.os.Looper;
+import android.support.v4.app.FragmentManager;
 
+import com.qmuiteam.qmui.QMUILog;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by Chaojun Wang on 6/9/14.
@@ -113,5 +118,45 @@ public class Utils {
             }
             throw new IllegalStateException("Call the method must be in main thread: " + methodMsg);
         }
+    }
+
+    static void findAndModifyOpInBackStackRecord(FragmentManager fragmentManager, int backStackIndex, OpHandler handler){
+        if (fragmentManager == null || handler == null) {
+            return;
+        }
+        int backStackCount = fragmentManager.getBackStackEntryCount();
+        if (backStackCount > 0) {
+            if(backStackIndex >= backStackCount || backStackIndex < -backStackCount){
+                QMUILog.d("findAndModifyOpInBackStackRecord", "backStackIndex error: " +
+                        "backStackIndex = " + backStackIndex + " ; backStackCount = " + backStackCount);
+                return;
+            }
+            if(backStackIndex < 0){
+                backStackIndex = backStackCount + backStackIndex;
+            }
+            try {
+                FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backStackIndex);
+
+                Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
+                opsField.setAccessible(true);
+                Object opsObj = opsField.get(backStackEntry);
+                if (opsObj instanceof List<?>) {
+                    List<?> ops = (List<?>) opsObj;
+                    for (Object op : ops) {
+                        if(handler.handle(op)){
+                            return;
+                        }
+                    }
+                }
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    interface OpHandler {
+        boolean handle(Object op);
     }
 }

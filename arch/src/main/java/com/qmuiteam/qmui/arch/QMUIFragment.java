@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 基础 Fragment 类，提供各种基础功能。
+ * With the use of {@link QMUIFragmentActivity}, {@link QMUIFragment} brings more features,
+ * such as swipe back, transition config, and so on.
+ *
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment {
@@ -102,15 +104,34 @@ public abstract class QMUIFragment extends Fragment {
         mBaseView = null;
     }
 
-    protected void startFragment(QMUIFragment fragment) {
-        startFragment(fragment, true);
+    protected void startFragmentAndDestroyCurrent(QMUIFragment fragment) {
+        startFragmentAndDestroyCurrent(fragment, true);
     }
 
-    protected void startFragment(QMUIFragment fragment, boolean addToBackStack) {
+    /**
+     * see {@link QMUIFragmentActivity#startFragmentAndDestroyCurrent(QMUIFragment, boolean)}
+     *
+     * @param fragment
+     * @param useNewTransitionConfigWhenPop
+     */
+    protected void startFragmentAndDestroyCurrent(QMUIFragment fragment, boolean useNewTransitionConfigWhenPop) {
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
             if (this.isAttachedToActivity()) {
-                baseFragmentActivity.startFragment(fragment, addToBackStack);
+                baseFragmentActivity.startFragmentAndDestroyCurrent(fragment, useNewTransitionConfigWhenPop);
+            } else {
+                Log.e("QMUIFragment", "fragment not attached:" + this);
+            }
+        } else {
+            Log.e("QMUIFragment", "startFragment null:" + this);
+        }
+    }
+
+    protected void startFragment(QMUIFragment fragment) {
+        QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
+        if (baseFragmentActivity != null) {
+            if (this.isAttachedToActivity()) {
+                baseFragmentActivity.startFragment(fragment);
             } else {
                 Log.e("QMUIFragment", "fragment not attached:" + this);
             }
@@ -201,7 +222,7 @@ public abstract class QMUIFragment extends Fragment {
         }
         final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge());
         swipeBackLayout.setEnableGesture(false);
-        if(canDragBack()){
+        if (canDragBack()) {
             runAfterAnimation(new Runnable() {
                 @Override
                 public void run() {
@@ -225,7 +246,7 @@ public abstract class QMUIFragment extends Fragment {
                             Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
                             if (tag != null && SWIPE_BACK_VIEW.equals(tag)) {
                                 container.removeView(view);
-                                if(mModifiedFragment != null){
+                                if (mModifiedFragment != null) {
                                     // give up swipe back, we should reset the revise
                                     try {
                                         Field viewField = Fragment.class.getDeclaredField("mView");
@@ -258,36 +279,32 @@ public abstract class QMUIFragment extends Fragment {
                             }
                         }
                         FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager == null) {
-                            return;
-                        }
-                        int backstackCount = fragmentManager.getBackStackEntryCount();
-                        if (backstackCount > 0) {
-                            try {
-                                FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backstackCount - 1);
-
-                                Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
-                                opsField.setAccessible(true);
-                                Object opsObj = opsField.get(backStackEntry);
-                                if (opsObj instanceof List<?>) {
-                                    List<?> ops = (List<?>) opsObj;
-                                    for (Object op : ops) {
-                                        Field cmdField = op.getClass().getDeclaredField("cmd");
-                                        cmdField.setAccessible(true);
-                                        int cmd = (int) cmdField.get(op);
-                                        if (cmd == 1) {
-                                            Field popEnterAnimField = op.getClass().getDeclaredField("popExitAnim");
-                                            popEnterAnimField.setAccessible(true);
-                                            popEnterAnimField.set(op, 0);
-                                        }
+                        Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
+                            @Override
+                            public boolean handle(Object op) {
+                                Field cmdField = null;
+                                try {
+                                    cmdField = op.getClass().getDeclaredField("cmd");
+                                    cmdField.setAccessible(true);
+                                    int cmd = (int) cmdField.get(op);
+                                    if (cmd == 1) {
+                                        Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
+                                        popEnterAnimField.setAccessible(true);
+                                        popEnterAnimField.set(op, 0);
+                                    }else if(cmd == 3){
+                                        Field popExitAnimField = op.getClass().getDeclaredField("popExitAnim");
+                                        popExitAnimField.setAccessible(true);
+                                        popExitAnimField.set(op, 0);
                                     }
+                                } catch (NoSuchFieldException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (NoSuchFieldException e) {
-                                e.printStackTrace();
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
+
+                                return false;
                             }
-                        }
+                        });
                         popBackStack();
                     }
                 }
@@ -476,7 +493,7 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     protected void popBackStack() {
-        if(mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END){
+        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
             return;
         }
         getBaseFragmentActivity().popBackStack();
@@ -545,6 +562,7 @@ public abstract class QMUIFragment extends Fragment {
 
     /**
      * 将在 onStart 中执行
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -591,7 +609,7 @@ public abstract class QMUIFragment extends Fragment {
      * @param runnable
      * @param onlyEnd
      */
-    public void runAfterAnimation(Runnable runnable, boolean onlyEnd){
+    public void runAfterAnimation(Runnable runnable, boolean onlyEnd) {
         Utils.assertInMainThread();
         boolean ok = onlyEnd ? mEnterAnimationStatus == ANIMATION_ENTER_STATUS_END :
                 mEnterAnimationStatus != ANIMATION_ENTER_STATUS_STARTED;
