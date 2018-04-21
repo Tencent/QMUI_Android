@@ -21,6 +21,7 @@ import com.qmuiteam.qmuidemo.fragment.components.QDVerticalTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceFragment;
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDAnimationListViewFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDSnapHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDColorHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDDeviceHelperFragment;
@@ -107,6 +108,7 @@ public class QDDataManager {
         mLabNames = new ArrayList<>();
         mLabNames.add(QDAnimationListViewFragment.class);
         mLabNames.add(QDSnapHelperFragment.class);
+        mLabNames.add(QDArchTestFragment.class);
     }
 
     public QDItemDescription getDescription(Class<? extends BaseFragment> cls) {
