@@ -393,9 +393,7 @@ public class QMUIStatusBarHelper {
             //状态栏高度大于25dp的平板，状态栏通常在下方
             sStatusbarHeight = 0;
         } else {
-            if (sStatusbarHeight <= 0
-                    || sStatusbarHeight > QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP * 2)) {
-                //安卓默认状态栏高度为25dp，如果获取的状态高度大于2倍25dp的话，这个数值可能有问题，用回桌面定义的值从新获取。出现这种可能性较低，只有小部分手机出现
+            if (sStatusbarHeight <= 0) {
                 if (sVirtualDensity == -1) {
                     sStatusbarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
                 } else {
