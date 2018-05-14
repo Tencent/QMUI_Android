@@ -9,4 +9,6 @@
 
 #### 问题截图 ####
 
+#### Layout Inspector 文件([如何获取](https://github.com/QMUI/QMUI_Android/wiki/%E6%8F%90%E4%BE%9B-Layout-Inspector-%E6%96%87%E4%BB%B6)) ####
+
 #### 异常日志（堆栈） ####
