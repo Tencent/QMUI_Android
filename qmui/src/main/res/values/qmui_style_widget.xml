@@ -250,7 +250,6 @@
 
     <!-- QMUIRadiusImageView -->
     <style name="QMUI.RadiusImageView">
-        <item name="qmui_is_circle">true</item>
         <item name="qmui_border_width">1px</item>
         <item name="qmui_border_color">?attr/qmui_config_color_gray_4</item>
         <item name="qmui_is_touch_select_mode_enabled">true</item>
