@@ -710,9 +710,10 @@ public class QMUITabSegment extends HorizontalScrollView {
         } else {
             targetIndex = index + 1;
         }
+
         TabAdapter tabAdapter = getAdapter();
         final List<TabItemView> listViews = tabAdapter.getViews();
-        if (listViews.size() < index || listViews.size() < targetIndex) {
+        if (listViews.size() <= index || listViews.size() <= targetIndex) {
             return;
         }
         Tab preModel = tabAdapter.getItem(index);

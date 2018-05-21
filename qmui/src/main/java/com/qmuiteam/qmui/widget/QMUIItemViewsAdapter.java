@@ -102,7 +102,7 @@ public abstract class QMUIItemViewsAdapter<T, V extends View> {
         if (mItemData == null) {
             return null;
         }
-        if (position < 0 || position > mItemData.size()) {
+        if (position < 0 || position >= mItemData.size()) {
             return null;
         }
         return mItemData.get(position);
