@@ -17,8 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.Pair;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -196,7 +194,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     private DataSetObserver mPagerAdapterObserver;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private OnTabSelectedListener mViewPagerSelectedListener;
-//    private AdapterChangeListener mAdapterChangeListener;
+    //    private AdapterChangeListener mAdapterChangeListener;
     private boolean mIsInSelectTab = false;
 
     public QMUITabSegment(Context context) {
@@ -567,7 +565,7 @@ public class QMUITabSegment extends HorizontalScrollView {
      * 只有点击 tab 才会自己产生动画变化，其它需要使用 updateIndicatorPosition 做驱动
      */
     private void selectTab(final int index, boolean preventAnim) {
-        if(mIsInSelectTab){
+        if (mIsInSelectTab) {
             return;
         }
         mIsInSelectTab = true;
@@ -831,13 +829,16 @@ public class QMUITabSegment extends HorizontalScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 
         if (getChildCount() > 0) {
             final View child = getChildAt(0);
             int paddingHor = getPaddingLeft() + getPaddingRight();
             child.measure(MeasureSpec.makeMeasureSpec(widthSize - paddingHor, MeasureSpec.EXACTLY), heightMeasureSpec);
-            setMeasuredDimension(Math.min(widthSize, child.getMeasuredWidth() + paddingHor), heightMeasureSpec);
-            return;
+            if (widthMode == MeasureSpec.AT_MOST) {
+                setMeasuredDimension(Math.min(widthSize, child.getMeasuredWidth() + paddingHor), heightMeasureSpec);
+                return;
+            }
         }
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
