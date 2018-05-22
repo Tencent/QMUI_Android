@@ -18,10 +18,10 @@ public class QMUISpanHelper {
      * 在text左边或者右边添加icon,
      * 默认TextView添加leftDrawable或rightDrawable不能适应TextView match_parent的情况
      *
-     * @param left
-     * @param text
-     * @param icon
-     * @return
+     * @param left true 则在文字左边添加 icon，false 则在文字右边添加 icon
+     * @param text 文字内容
+     * @param icon 需要被添加的 icon
+     * @return 返回带有 icon 的文字
      */
     public static CharSequence generateSideIconText(boolean left, int iconPadding, CharSequence text, Drawable icon) {
         if (icon == null) {

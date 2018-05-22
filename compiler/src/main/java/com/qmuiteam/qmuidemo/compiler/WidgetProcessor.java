@@ -40,12 +40,12 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class WidgetProcessor extends AbstractProcessor {
     private Filer mFiler; //文件相关的辅助类
-    private Elements mElementUtils; //元素相关的辅助类
+    @SuppressWarnings("FieldCanBeLocal") private Elements mElementUtils; //元素相关的辅助类
     private Messager mMessager; //日志相关的辅助类
     private boolean mIsFileCreated = false;
 
     private final String mClassName = "QDWidgetContainer";
-    private final String mPackageName = "com.qmuiteam.qmuidemo";
+    private final String mPackageName = "com.qmuiteam.qmuidemo.manager";
 
     ClassName mMapName = ClassName.get("java.util", "Map");
     ClassName mHashMapName = ClassName.get("java.util", "HashMap");

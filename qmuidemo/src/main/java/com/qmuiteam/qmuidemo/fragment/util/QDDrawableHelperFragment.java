@@ -15,7 +15,7 @@ import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIDrawableHelper} 的使用示例。
  * Created by Kayo on 2016/12/5.
  */
 

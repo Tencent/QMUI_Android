@@ -1,6 +1,9 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
+import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,7 +13,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ListView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.adaptor.QDSimpleAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -18,7 +21,6 @@ import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,7 +38,7 @@ public class QDSwipeDeleteListViewFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.listview) ListView mListView;
-    HashMap<Long, Integer> mItemIdTopMap = new HashMap<>();
+    LongSparseArray<Integer> mItemIdTopMap = new LongSparseArray<>();
 
     private MyAdapter mAdapter;
 
@@ -73,6 +75,7 @@ public class QDSwipeDeleteListViewFragment extends BaseFragment {
             float mDownX;
             private int mSwipeSlop = -1;
 
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean onTouch(final View v, MotionEvent event) {
                 if (mSwipeSlop < 0) {
@@ -181,6 +184,7 @@ public class QDSwipeDeleteListViewFragment extends BaseFragment {
         mAdapter.remove(position);
         final ViewTreeObserver observer = listview.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
                 boolean firstAnimation = true;

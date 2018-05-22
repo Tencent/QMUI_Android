@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.ColorInt;
+import android.support.annotation.RequiresApi;
 import android.support.v4.text.TextDirectionHeuristicsCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
@@ -49,7 +50,10 @@ public final class QMUICollapsingTextHelper {
     private static final Paint DEBUG_DRAW_PAINT;
 
     static {
+        // 测试逻辑，不作检测
+        // noinspection ConstantConditions
         DEBUG_DRAW_PAINT = DEBUG_DRAW ? new Paint() : null;
+        // noinspection ConstantConditions
         if (DEBUG_DRAW_PAINT != null) {
             DEBUG_DRAW_PAINT.setAntiAlias(true);
             DEBUG_DRAW_PAINT.setColor(Color.MAGENTA);
@@ -250,6 +254,7 @@ public final class QMUICollapsingTextHelper {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private Typeface readFontFamilyTypeface(int resId) {
         final TypedArray a = mView.getContext().obtainStyledAttributes(resId,
                 new int[]{android.R.attr.fontFamily});
@@ -470,6 +475,8 @@ public final class QMUICollapsingTextHelper {
                 fraction, mPositionInterpolator);
     }
 
+    // 系统类原有代码，不作检测
+    @SuppressWarnings("UnusedAssignment")
     public void draw(Canvas canvas) {
         final int saveCount = canvas.save();
 
@@ -646,7 +653,7 @@ public final class QMUICollapsingTextHelper {
     /**
      * Set the title to display
      *
-     * @param text
+     * @param text content of title
      */
     public void setText(CharSequence text) {
         if (text == null || !text.equals(mText)) {

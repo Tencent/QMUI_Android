@@ -1,8 +1,9 @@
 apply plugin: 'com.android.library'
 
 group = 'com.qmuiteam'
-version = "1.0.1" // QMUI 发布到 bintray 的版本号
+version = "1.1.2" // QMUI 发布到 bintray 的版本号
 
+//noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
@@ -13,8 +14,6 @@ android {
     defaultConfig {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 //        vectorDrawables.useSupportLibrary = true // 与 com.android.support:support-vector-drawable 搭配使用,禁掉 Android Studio 自动生成 png 的功能
     }
     buildTypes {

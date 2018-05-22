@@ -6,9 +6,11 @@ import android.view.View;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import java.lang.ref.WeakReference;
+
 public class QMUIAlphaViewHelper {
 
-    private View mTarget;
+    private WeakReference<View> mTarget;
 
     /**
      * 设置是否要在 press 时改变透明度
@@ -25,14 +27,28 @@ public class QMUIAlphaViewHelper {
     private float mDisabledAlpha = .5f;
 
     public QMUIAlphaViewHelper(@NonNull View target) {
-        mTarget = target;
+        mTarget = new WeakReference<>(target);
         mPressedAlpha = QMUIResHelper.getAttrFloatValue(target.getContext(), R.attr.qmui_alpha_pressed);
         mDisabledAlpha = QMUIResHelper.getAttrFloatValue(target.getContext(), R.attr.qmui_alpha_disabled);
     }
 
-    public void onPressedChanged(View target, boolean pressed) {
-        if (mTarget.isEnabled()) {
-            mTarget.setAlpha(mChangeAlphaWhenPress && pressed && target.isClickable()? mPressedAlpha : mNormalAlpha);
+    public QMUIAlphaViewHelper(@NonNull View target, float pressedAlpha, float disabledAlpha) {
+        mTarget = new WeakReference<>(target);
+        mPressedAlpha = pressedAlpha;
+        mDisabledAlpha = disabledAlpha;
+    }
+
+    /**
+     * @param current the view to be handled, maybe not equal to target view
+     * @param pressed
+     */
+    public void onPressedChanged(View current, boolean pressed) {
+        View target = mTarget.get();
+        if (target == null) {
+            return;
+        }
+        if (current.isEnabled()) {
+            target.setAlpha(mChangeAlphaWhenPress && pressed && current.isClickable() ? mPressedAlpha : mNormalAlpha);
         } else {
             if (mChangeAlphaWhenDisable) {
                 target.setAlpha(mDisabledAlpha);
@@ -40,12 +56,23 @@ public class QMUIAlphaViewHelper {
         }
     }
 
-    public void onEnabledChanged(View target, boolean enabled) {
+    /**
+     * @param current the view to be handled, maybe not  equal to target view
+     * @param enabled
+     */
+    public void onEnabledChanged(View current, boolean enabled) {
+        View target = mTarget.get();
+        if (target == null) {
+            return;
+        }
         float alphaForIsEnable;
         if (mChangeAlphaWhenDisable) {
             alphaForIsEnable = enabled ? mNormalAlpha : mDisabledAlpha;
         } else {
             alphaForIsEnable = mNormalAlpha;
+        }
+        if (current != target && target.isEnabled() != enabled) {
+            target.setEnabled(enabled);
         }
         target.setAlpha(alphaForIsEnable);
     }
@@ -66,7 +93,11 @@ public class QMUIAlphaViewHelper {
      */
     public void setChangeAlphaWhenDisable(boolean changeAlphaWhenDisable) {
         mChangeAlphaWhenDisable = changeAlphaWhenDisable;
-        onEnabledChanged(mTarget, mTarget.isEnabled());
+        View target = mTarget.get();
+        if (target != null) {
+            onEnabledChanged(target, target.isEnabled());
+        }
+
     }
 
 }

@@ -10,11 +10,6 @@
 
         <!-- 配置qmui提供的theme -->
         <item name="qmui_config_color_blue">@color/app_color_blue</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
-        <item name="qmui_topbar_height">48dp</item>
-        <item name="qmui_topbar_image_btn_height">48dp</item>
         <item name="qmui_round_btn_bg_color">@color/s_btn_blue_bg</item>
         <item name="qmui_round_btn_border_color">@color/s_btn_blue_border</item>
         <item name="qmui_round_btn_text_color">@color/s_btn_blue_text</item>
@@ -62,6 +57,11 @@
 
     <style name="QDTopBar" parent="QMUI.TopBar">
         <item name="qmui_topbar_bg_color">?attr/app_primary_color</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
+        <item name="qmui_topbar_height">48dp</item>
+        <item name="qmui_topbar_image_btn_height">48dp</item>
     </style>
 
     <style name="QDRadiusButton" parent="@style/Button">
@@ -81,6 +81,88 @@
         <item name="android:paddingTop">24dp</item>
         <item name="android:paddingBottom">24dp</item>
         <item name="android:background">@drawable/qmui_divider_bottom_bitmap</item>
+    </style>
+
+    <style name="DialogTheme2" parent="QMUI.Dialog">
+        <item name="qmui_dialog_wrapper_style">@style/dialog_wrapper_style_63</item>
+        <item name="qmui_dialog_title_style">@style/DialogTheme2TitleStyle</item>
+        <item name="qmui_dialog_action_container_style">@style/DialogTheme2ActionContainerStyle</item>
+        <item name="qmui_dialog_action_style">@style/DialogTheme2ActionStyle</item>
+        <item name="qmui_dialog_message_content_style">@style/DialogTheme2MessageContentStyle</item>
+        <item name="qmui_dialog_menu_container_style">@style/DialogTheme2MenuContainerStyle</item>
+        <item name="qmui_dialog_menu_item_style">@style/DialogTheme2MenuItemStyle</item>
+    </style>
+
+    <style name="ReleaseDialogTheme" parent="DialogTheme2">
+        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper</item>
+        <item name="qmui_dialog_message_content_style">@style/ReleaseMessageContentStyle</item>
+
+    </style>
+
+    <style name="dialog_wrapper_style_63">
+        <item name="android:paddingLeft">63dp</item>
+        <item name="android:paddingRight">63dp</item>
+    </style>
+
+    <style name="DialogTheme2TitleStyle" parent="QMUI.Dialog.Title">
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">28dp</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+    </style>
+
+    <style name="DialogTheme2ActionContainerStyle">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="qmui_dialog_action_container_justify_content">stretch</item>
+        <item name="qmui_dialog_action_height">56dp</item>
+        <item name="qmui_dialog_action_space">8dp</item>
+        <item name="qmui_topDividerColor">?attr/qmui_config_color_separator</item>
+        <item name="qmui_topDividerHeight">1px</item>
+    </style>
+
+    <style name="DialogTheme2ActionStyle">
+        <item name="android:textColor">?attr/qmui_config_color_blue</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:background">@null</item>
+        <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
+        <item name="qmui_dialog_action_icon_space">6dp</item>
+        <item name="qmui_dialog_positive_action_text_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_dialog_negative_action_text_color">?attr/qmui_config_color_red</item>
+    </style>
+
+    <style name="DialogTheme2MessageContentStyle" parent="QMUI.Dialog.MessageContent">
+        <item name="android:textColor">?attr/qmui_config_color_gray_4</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">27dp</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="qmui_paddingTopWhenNotTitle">27dp</item>
+    </style>
+
+    <style name="ReleaseMessageContentStyle" parent="DialogTheme2MessageContentStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="DialogTheme2MenuItemStyle" parent="@style/QMUI.Dialog_MenuItem">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+    </style>
+
+    <style name="DialogTheme2MenuContainerStyle" parent="@style/QMUI.Dialog.MenuContainer">
+        <item name="qmui_dialog_menu_item_height">52dp</item>
+        <item name="qmui_dialog_menu_container_padding_top_when_title_exist">23dp</item>
+        <item name="qmui_dialog_menu_container_padding_bottom_when_action_exist">24dp</item>
     </style>
 
 </resources>

@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  * 使 {@link ListView} 支持添加/删除 Item 的动画，支持自定义动画效果。
- *
+ * <p>
  * https://github.com/cypressious/AnimationListView/blob/master/AnimationListView/src/de/cypressworks/animationlistview/AnimationListView.java
  * <p>
  * 一个痛点：
@@ -161,12 +161,12 @@ public class QMUIAnimationListView extends ListView {
         }
     }
 
-    public void setOffsetDurationUnit(float offsetDurationUnit) {
-        mOffsetDurationUnit = offsetDurationUnit;
-    }
-
     public float getOffsetDurationUnit() {
         return mOffsetDurationUnit;
+    }
+
+    public void setOffsetDurationUnit(float offsetDurationUnit) {
+        mOffsetDurationUnit = offsetDurationUnit;
     }
 
     private long getOffsetDuration(int start, int end) {
@@ -175,9 +175,9 @@ public class QMUIAnimationListView extends ListView {
     }
 
     /**
-     * 是否启用CHANGE-DISAPPEAR动画
+     * 是否启用 CHANGE-DISAPPEAR 动画。
      *
-     * @param openChangeDisappearAnimation
+     * @param openChangeDisappearAnimation true 为启用 CHANGE-DISAPPEAR 动画，false 则不启用。
      */
     public void setOpenChangeDisappearAnimation(boolean openChangeDisappearAnimation) {
         mOpenChangeDisappearAnimation = openChangeDisappearAnimation;
@@ -478,7 +478,7 @@ public class QMUIAnimationListView extends ListView {
         anim.setDuration(duration);
 
         if (postBack) {
-            final WeakReference<View> wr = new WeakReference<View>(view);
+            final WeakReference<View> wr = new WeakReference<>(view);
             anim.addListener(new ManipulateAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -502,32 +502,18 @@ public class QMUIAnimationListView extends ListView {
         return -1;
     }
 
-    public interface Manipulator<T extends ListAdapter> {
-        void manipulate(T adapter);
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return isEnabled() && super.dispatchTouchEvent(ev);
     }
 
-    private abstract class ManipulateAnimatorListener implements Animator.AnimatorListener {
-
-        @Override
-        public void onAnimationStart(Animator animation) {
-
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-
-        }
+    public interface Manipulator<T extends ListAdapter> {
+        void manipulate(T adapter);
     }
 
     private static class WrapperAdapter extends BaseAdapter {
         private ListAdapter mAdapter;
         private boolean mShouldNotifyChange = true;
-        private boolean mIsAnimationEnabled = false;
         private final DataSetObserver mObserver = new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -541,6 +527,7 @@ public class QMUIAnimationListView extends ListView {
                 notifyDataSetInvalidated();
             }
         };
+        private boolean mIsAnimationEnabled = false;
 
         public WrapperAdapter(ListAdapter adapter) {
             mAdapter = adapter;
@@ -586,27 +573,28 @@ public class QMUIAnimationListView extends ListView {
         }
 
         @Override
-        public boolean isEnabled(int position) {
-            return super.isEnabled(position);
-        }
-
-        @Override
         public boolean hasStableIds() {
             boolean stable = mAdapter.hasStableIds();
-            if (!stable) {
-                mIsAnimationEnabled = false;
-            } else {
-                mIsAnimationEnabled = true;
-            }
+            mIsAnimationEnabled = stable;
             return stable;
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isEnabled()) {
-            return super.dispatchTouchEvent(ev);
+    private abstract class ManipulateAnimatorListener implements Animator.AnimatorListener {
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+
         }
-        return false;
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }

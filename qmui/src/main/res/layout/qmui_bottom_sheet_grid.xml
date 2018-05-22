@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/qmui_config_color_white"
     android:orientation="vertical"
     android:paddingTop="?attr/qmui_bottom_sheet_grid_padding_vertical"
-    android:paddingBottom="?attr/qmui_bottom_sheet_grid_padding_vertical">
+    android:paddingBottom="?attr/qmui_bottom_sheet_grid_padding_vertical"
+    tools:ignore="Overdraw">
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -42,15 +44,23 @@
             android:orientation="horizontal"/>
     </HorizontalScrollView>
 
-    <TextView
-        android:id="@+id/bottom_sheet_button"
+    <LinearLayout
+        android:id="@+id/bottom_sheet_button_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/qmui_bottom_sheet_button_height"
-        android:gravity="center"
-        android:textSize="?attr/qmui_bottom_sheet_button_text_size"
-        android:textColor="?attr/qmui_bottom_sheet_button_text_color"
-        android:background="?attr/qmui_bottom_sheet_button_text_background"
+        android:layout_height="wrap_content"
         android:layout_marginTop="?attr/qmui_bottom_sheet_grid_padding_vertical"
-        android:text="关 闭"/>
+        android:background="?attr/qmui_bottom_sheet_button_background"
+        android:orientation="horizontal">
+
+        <com.qmuiteam.qmui.alpha.QMUIAlphaTextView
+            android:id="@+id/bottom_sheet_close_button"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/qmui_bottom_sheet_button_height"
+            android:gravity="center"
+            android:text="关 闭"
+            android:textColor="?attr/qmui_bottom_sheet_button_text_color"
+            android:textSize="?attr/qmui_bottom_sheet_button_text_size"/>
+
+    </LinearLayout>
 
 </LinearLayout>

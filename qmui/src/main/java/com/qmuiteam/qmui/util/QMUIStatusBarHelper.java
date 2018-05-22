@@ -38,15 +38,21 @@ public class QMUIStatusBarHelper {
         translucent(activity, 0x40000000);
     }
 
+    private static boolean supportTranslucent() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                // Essential Phone 不支持沉浸式，否则系统又不从状态栏下方开始布局又给你下发 WindowInsets
+                && !Build.BRAND.toLowerCase().contains("essential");
+    }
+
     /**
-     * 沉浸式状态栏
-     * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android
+     * 沉浸式状态栏。
+     * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android。
      *
-     * @param activity
+     * @param activity 需要被设置沉浸式状态栏的 Activity。
      */
     @TargetApi(19)
     public static void translucent(Activity activity, @ColorInt int colorOn5x) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+        if (!supportTranslucent()) {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
@@ -98,8 +104,9 @@ public class QMUIStatusBarHelper {
      * @param activity 需要被处理的 Activity
      */
     public static boolean setStatusBarLightMode(Activity activity) {
+        if (activity == null) return false;
         // 无语系列：ZTK C2016只能时间和电池图标变色。。。。
-        if(QMUIDeviceHelper.isZTKC2016()){
+        if (QMUIDeviceHelper.isZTKC2016()) {
             return false;
         }
 
@@ -146,6 +153,7 @@ public class QMUIStatusBarHelper {
      * 支持 4.4 以上版本 MIUI 和 Flyme，以及 6.0 以上版本的其他 Android
      */
     public static boolean setStatusBarDarkMode(Activity activity) {
+        if (activity == null) return false;
         if (mStatuBarType == STATUSBAR_TYPE_DEFAULT) {
             // 默认状态，不需要处理
             return true;
@@ -185,15 +193,20 @@ public class QMUIStatusBarHelper {
      * 设置状态栏字体图标为深色，Android 6
      *
      * @param window 需要设置的窗口
-     * @param light   是否把状态栏字体及图标颜色设置为深色
+     * @param light  是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回true
      */
     @TargetApi(23)
-    private static boolean Android6SetStatusBarLightMode(Window window, boolean light){
+    private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
         View decorView = window.getDecorView();
         int systemUi = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         systemUi = changeStatusBarModeRetainFlag(window, systemUi);
         decorView.setSystemUiVisibility(systemUi);
+        if(QMUIDeviceHelper.isMIUIV9()){
+            // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
+            // https://github.com/QMUI/QMUI_Android/issues/160
+            MIUISetStatusBarLightMode(window, light);
+        }
         return true;
     }
 
@@ -201,10 +214,11 @@ public class QMUIStatusBarHelper {
      * 设置状态栏字体图标为深色，需要 MIUIV6 以上
      *
      * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @param light   是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回 true
      */
-    public static boolean MIUISetStatusBarLightMode(Window window, boolean dark) {
+    @SuppressWarnings("unchecked")
+    public static boolean MIUISetStatusBarLightMode(Window window, boolean light) {
         boolean result = false;
         if (window != null) {
             Class clazz = window.getClass();
@@ -214,13 +228,13 @@ public class QMUIStatusBarHelper {
                 Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
                 darkModeFlag = field.getInt(layoutParams);
                 Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
-                if (dark) {
+                if (light) {
                     extraFlagField.invoke(window, darkModeFlag, darkModeFlag);//状态栏透明且黑色字体
                 } else {
                     extraFlagField.invoke(window, 0, darkModeFlag);//清除黑色字体
                 }
                 result = true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -228,12 +242,13 @@ public class QMUIStatusBarHelper {
     }
 
     /**
-     * 更改状态栏图标、文字颜色的方案是否是MIUI自家的， MIUI9之后用回Android原生实现
+     * 更改状态栏图标、文字颜色的方案是否是MIUI自家的， MIUI9 && Android 6 之后用回Android原生实现
      * 见小米开发文档说明：https://dev.mi.com/console/doc/detail?pId=1159
-     *
-     * @return
      */
-    private static boolean isMIUICustomStatusBarLightModeImpl(){
+    private static boolean isMIUICustomStatusBarLightModeImpl() {
+        if (QMUIDeviceHelper.isMIUIV9() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+            return true;
+        }
         return QMUIDeviceHelper.isMIUIV5() || QMUIDeviceHelper.isMIUIV6() ||
                 QMUIDeviceHelper.isMIUIV7() || QMUIDeviceHelper.isMIUIV8();
     }
@@ -243,10 +258,14 @@ public class QMUIStatusBarHelper {
      * 可以用来判断是否为 Flyme 用户
      *
      * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @param light   是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回true
      */
-    public static boolean FlymeSetStatusBarLightMode(Window window, boolean dark) {
+    public static boolean FlymeSetStatusBarLightMode(Window window, boolean light) {
+
+        // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
+        Android6SetStatusBarLightMode(window, light);
+
         boolean result = false;
         if (window != null) {
             try {
@@ -259,7 +278,7 @@ public class QMUIStatusBarHelper {
                 meizuFlags.setAccessible(true);
                 int bit = darkFlag.getInt(null);
                 int value = meizuFlags.getInt(lp);
-                if (dark) {
+                if (light) {
                     value |= bit;
                 } else {
                     value &= ~bit;
@@ -267,7 +286,7 @@ public class QMUIStatusBarHelper {
                 meizuFlags.setInt(lp, value);
                 window.setAttributes(lp);
                 result = true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -293,8 +312,6 @@ public class QMUIStatusBarHelper {
     /**
      * API19之前透明状态栏：获取设置透明状态栏的system ui visibility的值，这是部分有提供接口的rom使用的
      * http://stackoverflow.com/questions/21865621/transparent-status-bar-before-4-4-kitkat
-     *
-     * @return
      */
     public static Integer getStatusBarAPITransparentValue(Context context) {
         if (sTransparentValue != null) {
@@ -317,30 +334,24 @@ public class QMUIStatusBarHelper {
                 if (field != null) {
                     Class<?> type = field.getType();
                     if (type == int.class) {
-                        int value = field.getInt(null);
-                        sTransparentValue = value;
+                        sTransparentValue = field.getInt(null);
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return sTransparentValue;
     }
 
     /**
-     * Android6.0是否可以启用 window.setStatusBarColor(Color.TRANSPARENT);
-     *
-     * @return
+     * 检测 Android 6.0 是否可以启用 window.setStatusBarColor(Color.TRANSPARENT)。
      */
     public static boolean supportTransclentStatusBar6() {
         return !(QMUIDeviceHelper.isZUKZ1() || QMUIDeviceHelper.isZTKC2016());
     }
 
     /**
-     * 获取状态栏的高度
-     *
-     * @param context
-     * @return
+     * 获取状态栏的高度。
      */
     public static int getStatusbarHeight(Context context) {
         if (sStatusbarHeight == -1) {
@@ -350,7 +361,7 @@ public class QMUIStatusBarHelper {
     }
 
     private static void initStatusBarHeight(Context context) {
-        Class<?> clazz = null;
+        Class<?> clazz;
         Object obj = null;
         Field field = null;
         try {
@@ -382,9 +393,7 @@ public class QMUIStatusBarHelper {
             //状态栏高度大于25dp的平板，状态栏通常在下方
             sStatusbarHeight = 0;
         } else {
-            if (sStatusbarHeight <= 0
-                    || sStatusbarHeight > QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP * 2)) {
-                //安卓默认状态栏高度为25dp，如果获取的状态高度大于2倍25dp的话，这个数值可能有问题，用回桌面定义的值从新获取。出现这种可能性较低，只有小部分手机出现
+            if (sStatusbarHeight <= 0) {
                 if (sVirtualDensity == -1) {
                     sStatusbarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
                 } else {

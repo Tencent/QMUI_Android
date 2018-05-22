@@ -1,9 +1,9 @@
 package com.qmuiteam.qmuidemo.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 沉浸式状态栏的调用示例。
  * Created by Kayo on 2016/12/12.
  */
 
@@ -50,7 +51,7 @@ public class TranslucentActivity extends AppCompatActivity {
     }
 
     private void initTopBar() {
-        mTopBar.setBackgroundColor(getResources().getColor(R.color.app_color_theme_4));
+        mTopBar.setBackgroundColor(ContextCompat.getColor(this, R.color.app_color_theme_4));
         mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

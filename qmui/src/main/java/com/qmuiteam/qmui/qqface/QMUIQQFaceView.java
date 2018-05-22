@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
@@ -19,11 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.QMUILog;
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.link.ITouchableSpan;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
-import com.qmuiteam.qmui.R;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ import static android.view.View.MeasureSpec.AT_MOST;
 
 /**
  * 表情控件
- *
+ * <p>
  * <ul>
  * <li>支持显示表情的伪 {@link android.widget.TextView}（继续自定义 {@link View}，而不是真正的 {@link android.widget.TextView})，
  * 实现了 {@link android.widget.TextView} 的 maxLine、ellipsize、textSize、textColor 等基本功能。</li>
@@ -237,6 +238,27 @@ public class QMUIQQFaceView extends View {
             mPaint.setTypeface(typeface);
             requestLayout();
             invalidate();
+        }
+    }
+
+    public void setTypeface(Typeface tf, int style) {
+        if (style > 0) {
+            if (tf == null) {
+                tf = Typeface.defaultFromStyle(style);
+            } else {
+                tf = Typeface.create(tf, style);
+            }
+
+            setTypeface(tf);
+            // now compute what (if any) algorithmic styling is needed
+            int typefaceStyle = tf != null ? tf.getStyle() : 0;
+            int need = style & ~typefaceStyle;
+            mPaint.setFakeBoldText((need & Typeface.BOLD) != 0);
+            mPaint.setTextSkewX((need & Typeface.ITALIC) != 0 ? -0.25f : 0);
+        } else {
+            mPaint.setFakeBoldText(false);
+            mPaint.setTextSkewX(0);
+            setTypeface(tf);
         }
     }
 
@@ -524,11 +546,7 @@ public class QMUIQQFaceView extends View {
             mNeedDrawLine = mMaxLine;
         }
 
-        if (mLines > mNeedDrawLine) {
-            mIsNeedEllipsize = true;
-        } else {
-            mIsNeedEllipsize = false;
-        }
+        mIsNeedEllipsize = mLines > mNeedDrawLine;
     }
 
     private void calculateLinesInner(List<QMUIQQFaceCompiler.Element> elements, int limitWidth) {
@@ -538,10 +556,11 @@ public class QMUIQQFaceView extends View {
             if (mJumpHandleMeasureAndDraw) {
                 break;
             }
-//            if (mCurrentCalLine > mMaxLine && mEllipsize == TextUtils.TruncateAt.END) {
-//                // 如果超过最大行数，就打断测量，但这样存在的问题是getLines获取不到真实的行数
-//                break;
-//            }
+            if (mCurrentCalLine > mMaxLine && mEllipsize == TextUtils.TruncateAt.END
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // 针对4.x的手机，如果超过最大行数，就打断测量，但这样存在的问题是getLines获取不到真实的行数
+                break;
+            }
             element = elements.get(i);
             if (element.getType() == QMUIQQFaceCompiler.ElementType.DRAWABLE) {
                 if (mCurrentCalWidth + mQQFaceSize > widthEnd) {
@@ -616,30 +635,30 @@ public class QMUIQQFaceView extends View {
     }
 
     private void measureText(CharSequence text, int widthStart, int widthEnd) {
-        int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-        int breakPoint;
-        if (mCurrentCalWidth >= widthEnd) {
-            gotoCalNextLine(widthStart);
-        }
-        int loopCount = 0;
-        while (textWidth + mCurrentCalWidth > widthEnd) {
-            loopCount++;
-            if (loopCount >= 10 && loopCount % 10 == 0) {
-                QMUILog.d(TAG, "measureText: text = %s, mCurrentCalWidth = %d, " +
-                                "widthStart = %d, widthEnd = %d,loopCount = %d",
-                        text, mCurrentCalWidth, widthStart, widthEnd, loopCount);
-            }
-            breakPoint = mPaint.breakText(text, 0, text.length(), true, widthEnd - mCurrentCalWidth, null);
-            if (breakPoint == 0 && mCurrentCalWidth == widthStart) {
+
+        float[] widths = new float[text.length()];
+        mPaint.getTextWidths(text.toString(), widths);
+        int contentWidth = widthEnd - widthStart;
+        long loop_start = System.currentTimeMillis();
+        for (int i = 0; i < widths.length; i++) {
+            if (contentWidth < widths[i]) {
                 // mCurrentCalWidth已经是最小值，但又一个字都容纳不下，只能说明widthEnd太小，可能还在测量中
                 mJumpHandleMeasureAndDraw = true;
                 return;
             }
-            gotoCalNextLine(widthStart);
-            text = text.subSequence(breakPoint, text.length());
-            textWidth = (int) Math.ceil((mPaint.measureText(text, 0, text.length())));
+            if (System.currentTimeMillis() - loop_start > 2000) {
+                // 3s还没有measure完，那就忽略本次measure以及draw
+                QMUILog.d(TAG, "measureText: text = %s, mCurrentCalWidth = %d, " +
+                                "widthStart = %d, widthEnd = %d",
+                        text, mCurrentCalWidth, widthStart, widthEnd);
+                mJumpHandleMeasureAndDraw = true;
+                break;
+            }
+            if (mCurrentCalWidth + widths[i] > widthEnd) {
+                gotoCalNextLine(widthStart);
+            }
+            mCurrentCalWidth += Math.ceil(widths[i]);
         }
-        mCurrentCalWidth += textWidth;
     }
 
     public void setListener(QQFaceViewListener listener) {
@@ -805,8 +824,7 @@ public class QMUIQQFaceView extends View {
     }
 
     /**
-     * @param startLeft
-     * @param paragraph 是否是段落切换
+     * 控制段落切换
      */
     private void toNewDrawLine(int startLeft, boolean paragraph) {
         int addOn = (paragraph ? mParagraphSpace : 0) + mLineSpace;
@@ -1254,6 +1272,7 @@ public class QMUIQQFaceView extends View {
             invalidate(bounds);
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         public boolean onTouch(int x, int y) {
             int top = getPaddingTop();
             if (mStartLine > 1) {
@@ -1273,6 +1292,7 @@ public class QMUIQQFaceView extends View {
             int startLineBottom = top + mFontHeight;
             int endLineTop = bottom - mFontHeight;
             if (y > startLineBottom && y < endLineTop) {
+                //noinspection SimplifiableIfStatement
                 if (mEndLine - mStartLine == 1) {
                     return x >= mStartPoint && x <= mEndPoint;
                 }

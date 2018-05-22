@@ -2,7 +2,6 @@ package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 /**
@@ -27,6 +26,13 @@ public class QMUIWrapContentListView extends ListView {
 
     public QMUIWrapContentListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void setMaxHeight(int maxHeight) {
+        if(mMaxHeight != maxHeight){
+            mMaxHeight = maxHeight;
+            requestLayout();
+        }
     }
 
     @Override

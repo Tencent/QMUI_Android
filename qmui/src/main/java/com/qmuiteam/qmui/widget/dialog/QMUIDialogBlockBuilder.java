@@ -1,126 +1,98 @@
 package com.qmuiteam.qmui.widget.dialog;
 
 import android.content.Context;
-import android.util.TypedValue;
+import android.content.res.TypedArray;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 /**
- *
  * @author cginechen
  * @date 2015-12-12
  */
 public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBuilder> {
-    private Context mContext;
     private CharSequence mContent;
-
 
 
     public QMUIDialogBlockBuilder(Context context) {
         super(context);
-        mContext = context;
+        setActionDivider(1, R.color.qmui_config_color_separator, 0, 0);
     }
 
 
-
-    /**
-     * 添加一个无图标的Action
-     * @param strRes
-     * @param listener
-     * @return
-     */
-    public QMUIDialogBlockBuilder addAction(int strRes,QMUIDialogAction.ActionListener listener){
-        return addAction(0,strRes,listener);
-    }
-    public QMUIDialogBlockBuilder addAction(String str,QMUIDialogAction.ActionListener listener){
-        return addAction(0,str,listener);
-    }
-
-
-    /**
-     * 添加一个Action
-     * @param iconRes 图标
-     * @param strRes 文字
-     * @param listener 点击事件
-     * @return
-     */
-    public QMUIDialogBlockBuilder addAction(int iconRes,int strRes,QMUIDialogAction.ActionListener listener){
-        return addAction(iconRes, strRes, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
-    }
-    public QMUIDialogBlockBuilder addAction(int iconResId, String str, QMUIDialogAction.ActionListener listener){
-        return addAction(iconResId, str, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
-    }
-
-    /**
-     * 添加正常类型的action
-     * @param iconRes 图标
-     * @param strRes 文案
-     * @param prop 属性
-     * @param listener 事件监听
-     * @return
-     */
-    public QMUIDialogBlockBuilder addAction(int iconRes,int strRes,@QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener){
-        return addAction(iconRes, mContext.getResources().getString(strRes), prop,QMUIDialogAction.ACTION_TYPE_BLOCK, listener);
-    }
-
-
-    public QMUIDialogBlockBuilder addAction(int iconRes,String str,@QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener){
-        return addAction(iconRes, str, prop, QMUIDialogAction.ACTION_TYPE_BLOCK, listener);
-    }
-
-
-    public QMUIDialogBlockBuilder setContent(CharSequence content){
+    public QMUIDialogBlockBuilder setContent(CharSequence content) {
         mContent = content;
         return this;
     }
 
-    public QMUIDialogBlockBuilder setContent(int contentRes){
-        mContent = mContext.getResources().getString(contentRes);
+    public QMUIDialogBlockBuilder setContent(int contentRes) {
+        mContent = getBaseContext().getResources().getString(contentRes);
         return this;
     }
 
     @Override
-    protected void onCreateContent(QMUIDialog dialog, ViewGroup parent) {
-        TextView contentTv = new TextView(mContext);
-        contentTv.setTextColor(QMUIResHelper.getAttrColor(mContext, R.attr.qmui_config_color_gray_4));
-        contentTv.setText(mContent);
-        contentTv.setTextSize(TypedValue.COMPLEX_UNIT_PX, QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_block_content_text_size));
-        contentTv.setLineSpacing(QMUIDisplayHelper.dpToPx(2), 1.0f);
-        contentTv.setPadding(
-                QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                QMUIResHelper.getAttrDimen(mContext, hasTitle() ? R.attr.qmui_dialog_content_padding_top : R.attr.qmui_dialog_content_padding_top_when_no_title),
-                QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_padding_horizontal),
-                QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_content_padding_bottom_when_action_block)
-        );
-        parent.addView(contentTv);
-    }
-
-    @Override
-    protected void onCreateHandlerBar(QMUIDialog dialog, ViewGroup parent) {
-        int size = mActions.size();
-        if(size>0){
-            LinearLayout layout = new LinearLayout(mContext);
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            layout.setPadding(
-                    0,
-                    0,
-                    0,
-                    QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_dialog_action_block_container_margin_bottom));
-
-
-            for(int i=0;i<mActions.size();i++){
-                QMUIDialogAction action = mActions.get(i);
-                layout.addView(action.generateActionView(mContext,dialog,i, true));
+    protected void onConfigTitleView(TextView titleView) {
+        super.onConfigTitleView(titleView);
+        if(mContent == null || mContent.length() == 0){
+            TypedArray a = titleView.getContext().obtainStyledAttributes(null,
+                    R.styleable.QMUIDialogTitleTvCustomDef, R.attr.qmui_dialog_title_style, 0);
+            int count = a.getIndexCount();
+            for (int i = 0; i < count; i++) {
+                int attr = a.getIndex(i);
+                if (attr == R.styleable.QMUIDialogTitleTvCustomDef_qmui_paddingBottomWhenNotContent) {
+                    titleView.setPadding(
+                            titleView.getPaddingLeft(),
+                            titleView.getPaddingTop(),
+                            titleView.getPaddingRight(),
+                            a.getDimensionPixelSize(attr, titleView.getPaddingBottom())
+                    );
+                }
             }
-            parent.addView(layout);
-
+            a.recycle();
         }
     }
 
+    @Override
+    protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
+        if(mContent != null && mContent.length() > 0){
+            TextView contentTv = new QMUISpanTouchFixTextView(context);
+            QMUIResHelper.assignTextViewWithAttr(contentTv, R.attr.qmui_dialog_message_content_style);
+
+            if (!hasTitle()) {
+                TypedArray a = context.obtainStyledAttributes(null,
+                        R.styleable.QMUIDialogMessageTvCustomDef,
+                        R.attr.qmui_dialog_message_content_style, 0);
+                int count = a.getIndexCount();
+                for (int i = 0; i < count; i++) {
+                    int attr = a.getIndex(i);
+                    if (attr == R.styleable.QMUIDialogMessageTvCustomDef_qmui_paddingTopWhenNotTitle) {
+                        contentTv.setPadding(
+                                contentTv.getPaddingLeft(),
+                                a.getDimensionPixelSize(attr, contentTv.getPaddingTop()),
+                                contentTv.getPaddingRight(),
+                                contentTv.getPaddingBottom()
+                        );
+                    }
+                }
+                a.recycle();
+            }
+            contentTv.setText(mContent);
+
+
+            QMUIWrapContentScrollView scrollView = new QMUIWrapContentScrollView(context);
+            scrollView.setMaxHeight(getContentAreaMaxHeight());
+            scrollView.addView(contentTv);
+            parent.addView(scrollView);
+        }
+    }
+
+    @Override
+    public QMUIDialog create(int style) {
+        setActionContainerOrientation(VERTICAL);
+        return super.create(style);
+    }
 }

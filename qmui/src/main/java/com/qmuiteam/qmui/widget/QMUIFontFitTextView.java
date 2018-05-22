@@ -13,7 +13,7 @@ import com.qmuiteam.qmui.R;
 /**
  * 使 {@link TextView} 在宽度固定的情况下，文字多到一行放不下时能缩小文字大小来自适应
  *
- * @from http://stackoverflow.com/questions/2617266/how-to-adjust-text-font-size-to-fit-textview
+ * http://stackoverflow.com/questions/2617266/how-to-adjust-text-font-size-to-fit-textview
  */
 public class QMUIFontFitTextView extends TextView {
 

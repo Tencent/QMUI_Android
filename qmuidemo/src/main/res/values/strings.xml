@@ -2,6 +2,10 @@
 
     <!-- common -->
     <string name="app_name">QMUI</string>
+    <string name="common_example">示例图片</string>
+    <string name="app_upgrade_tip_title">Release Notes (%1$s)</string>
+    <string name="ok">确&#160;定</string>
+    <string name="cancel">取&#160;消</string>
 
     <!-- Components 系列界面 -->
 
@@ -120,11 +124,6 @@
     <string name="spanUtils_block_space_title">整行的空白 Span，可用来用于制作段间距</string>
     <string name="spanUtils_custom_type_face_title">自定义部分文字的字体</string>
     <string name="spanUtils_rmb">¥</string><!-- ¥相当于&#xA5 -->
-
-    <!-- ViewHelper View 处理工具 -->
-    <string name="viewHelper_scale_origin">原始</string>
-    <string name="viewHelper_scale_result">%1$.1f等比缩放</string>
-    <string name="viewHelper_background_animation_blink_title">做背景闪动的动画</string>
 
     <!-- 其他界面 -->
 

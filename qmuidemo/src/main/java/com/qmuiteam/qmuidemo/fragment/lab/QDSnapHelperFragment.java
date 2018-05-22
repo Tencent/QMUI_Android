@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.adaptor.QDRecyclerViewAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
@@ -22,7 +22,7 @@ import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
+/** 使用 {@link SnapHelper} 实现 {@link RecyclerView} 按页滚动。
  * Created by cgspine on 15/9/15.
  */
 

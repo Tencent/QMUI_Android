@@ -13,6 +13,7 @@
         android:layout_width="?attr/qmui_bottom_sheet_list_item_icon_size"
         android:layout_height="?attr/qmui_bottom_sheet_list_item_icon_size"
         android:layout_marginRight="?attr/qmui_bottom_sheet_list_item_icon_margin_right"
+        android:contentDescription="Item icon"
         android:scaleType="centerInside"/>
 
     <TextView
@@ -22,19 +23,22 @@
         android:ellipsize="middle"
         android:singleLine="true"
         android:textAppearance="?attr/qmui_bottom_sheet_list_item_text_appearance"/>
+
     <ImageView
         android:id="@+id/bottom_dialog_list_item_point"
+        style="?attr/QMUITipPointStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?attr/QMUITipPointStyle"
+        android:contentDescription="Tips dot"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="?attr/qmui_bottom_sheet_list_item_tip_point_margin_left"
         android:visibility="gone"/>
+
     <View
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
-    
+
     <ViewStub
         android:id="@+id/bottom_dialog_list_item_mark_view_stub"
         android:layout_width="wrap_content"

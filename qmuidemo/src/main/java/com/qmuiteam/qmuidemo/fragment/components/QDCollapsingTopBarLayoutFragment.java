@@ -1,13 +1,15 @@
 package com.qmuiteam.qmuidemo.fragment.components;
 
+import android.animation.ValueAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.adaptor.QDRecyclerViewAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -21,10 +23,10 @@ import butterknife.ButterKnife;
  * @date 2017-09-02
  */
 
-@Widget(widgetClass = QMUICollapsingTopBarLayout.class)
+@Widget(widgetClass = QMUICollapsingTopBarLayout.class, iconRes = R.mipmap.icon_grid_collapse_top_bar)
 public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
+    private static final String TAG = "CollapsingTopBarLayout";
 
-    private View mRootView;
     QDRecyclerViewAdapter mRecyclerViewAdapter;
     LinearLayoutManager mPagerLayoutManager;
 
@@ -35,8 +37,8 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_collapsing_topbar_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_collapsing_topbar_layout, null);
+        ButterKnife.bind(this, rootView);
         initTopBar();
         mPagerLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mPagerLayoutManager);
@@ -44,7 +46,14 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
         mRecyclerViewAdapter.setItemCount(10);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
-        return mRootView;
+        mCollapsingTopBarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.i(TAG, "scrim: " + animation.getAnimatedValue());
+            }
+        });
+
+        return rootView;
     }
 
     @Override

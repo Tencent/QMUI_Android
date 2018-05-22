@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFixModeFragment;
 import com.qmuiteam.qmuidemo.fragment.components.qqface.pageView.QDEmojiconPagerView;
@@ -34,7 +34,6 @@ public class QDQQFacePerformanceTestFragment extends BaseFragment {
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
     @BindView(R.id.contentViewPager) ViewPager mContentViewPager;
 
-    private View mRootView;
     private Map<Page, View> mPageMap = new HashMap<>();
     private Page mDestPage = Page.QMUIQQFaceView;
     private PagerAdapter mPagerAdapter = new PagerAdapter() {
@@ -75,13 +74,13 @@ public class QDQQFacePerformanceTestFragment extends BaseFragment {
 
     @Override
     protected View onCreateView() {
-        mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
-        ButterKnife.bind(this, mRootView);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
+        ButterKnife.bind(this, rootView);
 
         initTopBar();
         initTabAndPager();
 
-        return mRootView;
+        return rootView;
     }
 
     private void initTopBar() {

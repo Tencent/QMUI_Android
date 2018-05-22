@@ -107,6 +107,7 @@ public class QMUISpanTouchFixTextView extends TextView implements ISpanTouchFix 
         }
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean performClick() {
         if (!mTouchSpanHit && !mNeedForceEventToParent) {
@@ -115,6 +116,7 @@ public class QMUISpanTouchFixTextView extends TextView implements ISpanTouchFix 
         return false;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean performLongClick() {
         if (!mTouchSpanHit && !mNeedForceEventToParent) {

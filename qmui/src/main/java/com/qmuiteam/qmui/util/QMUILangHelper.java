@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * @author cginechen
@@ -35,7 +36,7 @@ public class QMUILangHelper {
      * @return 保留两位小数的价格字符串
      */
     public static String regularizePrice(float price) {
-        return String.format("%.2f", price);
+        return String.format(Locale.CHINESE, "%.2f", price);
     }
 
     /**
@@ -45,7 +46,7 @@ public class QMUILangHelper {
      * @return 保留两位小数的价格字符串
      */
     public static String regularizePrice(double price) {
-        return String.format("%.2f", price);
+        return String.format(Locale.CHINESE, "%.2f", price);
     }
 
 

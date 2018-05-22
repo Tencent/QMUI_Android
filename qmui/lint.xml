@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Disable the given check in this project -->
+    <issue id="HardcodedText" severity="ignore"/>
+    <issue id="SmallSp" severity="ignore"/>
+    <issue id="IconMissingDensityFolder" severity="ignore"/>
+    <issue id="RtlHardcoded" severity="ignore"/>
+    <issue id="Deprecated" severity="warning">
+        <ignore regexp="singleLine"/>
+    </issue>
+    <issue id="RtlSymmetry" severity="ignore"/>
+</lint>

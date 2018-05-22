@@ -63,9 +63,6 @@ public class QMUIViewHelper {
 
     /**
      * 获取activity的根view
-     *
-     * @param activity
-     * @return
      */
     public static View getActivityRoot(Activity activity) {
         return ((ViewGroup) activity.findViewById(Window.ID_ANDROID_CONTENT)).getChildAt(0);
@@ -73,8 +70,6 @@ public class QMUIViewHelper {
 
     /**
      * 触发window的insets的广播，使得view的fitSystemWindows得以生效
-     *
-     * @param window
      */
     @SuppressWarnings("deprecation")
     public static void requestApplyInsets(Window window) {
@@ -153,14 +148,14 @@ public class QMUIViewHelper {
      * @param stepDuration 每一步变化的时长
      * @param endAction    动画结束后的回调
      */
-    public static void playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration, final Runnable endAction) {
+    public static Animator playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration, final Runnable endAction) {
         int animationCount = alphaArray.length - 1;
 
         Drawable bgDrawable = new ColorDrawable(bgColor);
         final Drawable oldBgDrawable = v.getBackground();
         setBackgroundKeepingPadding(v, bgDrawable);
 
-        List<Animator> animatorList = new ArrayList<Animator>();
+        List<Animator> animatorList = new ArrayList<>();
         for (int i = 0; i < animationCount; i++) {
             ObjectAnimator animator = ObjectAnimator.ofInt(v.getBackground(), "alpha", alphaArray[i], alphaArray[i + 1]);
             animatorList.add(animator);
@@ -191,6 +186,7 @@ public class QMUIViewHelper {
         });
         animatorSet.playSequentially(animatorList);
         animatorSet.start();
+        return animatorSet;
     }
 
     public static void playViewBackgroundAnimation(final View v, @ColorInt int bgColor, int[] alphaArray, int stepDuration) {
@@ -352,10 +348,13 @@ public class QMUIViewHelper {
         }
     }
 
-    public static void clearValueAnimator(ValueAnimator animator) {
+    public static void clearValueAnimator(Animator animator) {
         if (animator != null) {
             animator.removeAllListeners();
-            animator.removeAllUpdateListeners();
+            if(animator instanceof ValueAnimator){
+                ((ValueAnimator)animator).removeAllUpdateListeners();
+            }
+
             if (Build.VERSION.SDK_INT >= 19) {
                 animator.pause();
             }
@@ -593,11 +592,7 @@ public class QMUIViewHelper {
     }
 
     /**
-     * @param parentView
-     * @param viewStubId
-     * @param inflatedViewId
-     * @param inflateLayoutResId
-     * @return
+     * inflate ViewStub 并返回对应的 View。
      */
     public static View findViewFromViewStub(View parentView, int viewStubId, int inflatedViewId, int inflateLayoutResId) {
         if (null == parentView) {
@@ -620,6 +615,24 @@ public class QMUIViewHelper {
         return view;
     }
 
+    public static void safeSetImageViewSelected(ImageView imageView, boolean selected){
+        // imageView setSelected 实现有问题。
+        // resizeFromDrawable 中判断 drawable size 是否改变而调用 requestLayout，看似合理，但不会被调用
+        // 因为 super.setSelected(selected) 会调用 refreshDrawableState
+        // 而从 android 6 以后， ImageView 会重载refreshDrawableState，并在里面处理了 drawable size 改变的问题,
+        // 从而导致 resizeFromDrawable 的判断失效
+        Drawable drawable = imageView.getDrawable();
+        if(drawable == null){
+            return;
+        }
+        int drawableWidth = drawable.getIntrinsicWidth();
+        int drawableHeight = drawable.getIntrinsicHeight();
+        imageView.setSelected(selected);
+        if(drawable.getIntrinsicWidth() != drawableWidth || drawable.getIntrinsicHeight() != drawableHeight){
+            imageView.requestLayout();
+        }
+    }
+
 
     public static ColorFilter setImageViewTintColor(ImageView imageView, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
@@ -628,10 +641,10 @@ public class QMUIViewHelper {
     }
 
     /**
-     * 判断 ListView 是否已经滚动到底部
+     * 判断 ListView 是否已经滚动到底部。
      *
-     * @param listView 需要被判断的 ListView
-     * @return
+     * @param listView 需要被判断的 ListView。
+     * @return ListView 已经滚动到底部则返回 true，否则返回 false。
      */
     public static boolean isListViewAlreadyAtBottom(ListView listView) {
         if (listView.getAdapter() == null || listView.getHeight() == 0) {

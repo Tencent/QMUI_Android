@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIViewHelper#playViewBackgroundAnimation(View, int, int, long)} 的使用示例。
  * Created by Kayo on 2017/2/7.
  */
 

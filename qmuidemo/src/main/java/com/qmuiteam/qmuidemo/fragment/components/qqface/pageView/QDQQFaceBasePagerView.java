@@ -20,7 +20,6 @@ import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceTestData;
  */
 
 public abstract class QDQQFaceBasePagerView extends LinearLayout {
-    private ListView mListView;
     private TextView mLogTv;
 
     private QDQQFaceTestData mTestData;
@@ -31,14 +30,14 @@ public abstract class QDQQFaceBasePagerView extends LinearLayout {
         mTestData = new QDQQFaceTestData();
 
         setOrientation(VERTICAL);
-        mListView = new ListView(context);
+        ListView listView = new ListView(context);
         LinearLayout.LayoutParams listLp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         listLp.weight = 1;
-        mListView.setLayoutParams(listLp);
-        mListView.setDivider(null);
-        mListView.setDividerHeight(0);
-        mListView.setAdapter(new MyAdapter());
-        addView(mListView);
+        listView.setLayoutParams(listLp);
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
+        listView.setAdapter(new MyAdapter());
+        addView(listView);
 
         mLogTv = new TextView(context);
         LinearLayout.LayoutParams logLp = new LayoutParams(

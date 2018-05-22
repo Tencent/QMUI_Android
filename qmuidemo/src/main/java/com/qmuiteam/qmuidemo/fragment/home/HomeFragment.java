@@ -10,8 +10,8 @@ import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseFragment;
 
 import java.util.HashMap;
 
@@ -86,11 +86,31 @@ public class HomeFragment extends BaseFragment {
         int selectColor = QMUIResHelper.getAttrColor(getActivity(), R.attr.qmui_config_color_blue);
         mTabSegment.setDefaultNormalColor(normalColor);
         mTabSegment.setDefaultSelectedColor(selectColor);
+//        mTabSegment.setDefaultTabIconPosition(QMUITabSegment.ICON_POSITION_BOTTOM);
+
+//        // 如果你的 icon 显示大小和实际大小不吻合:
+//        // 1. 设置icon 的 bounds
+//        // 2. Tab 使用拥有5个参数的构造器
+//        // 3. 最后一个参数（setIntrinsicSize）设置为false
+//        int iconShowSize = QMUIDisplayHelper.dp2px(getContext(), 20);
+//        Drawable normalDrawable = ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component);
+//        normalDrawable.setBounds(0, 0, iconShowSize, iconShowSize);
+//        Drawable selectDrawable = ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected);
+//
+//        selectDrawable.setBounds(0, 0, iconShowSize, iconShowSize);
+//
+//        QMUITabSegment.Tab component = new QMUITabSegment.Tab(
+//                normalDrawable,
+//                normalDrawable,
+//                "Components", false, false
+//        );
+
         QMUITabSegment.Tab component = new QMUITabSegment.Tab(
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component),
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected),
                 "Components", false
         );
+
         QMUITabSegment.Tab util = new QMUITabSegment.Tab(
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util),
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected),
@@ -148,5 +168,10 @@ public class HomeFragment extends BaseFragment {
                     return COMPONENT;
             }
         }
+    }
+
+    @Override
+    protected boolean canDragBack() {
+        return false;
     }
 }

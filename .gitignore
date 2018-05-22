@@ -1,5 +1,5 @@
 /*.bin
-/*.iml
+*.iml
 .DS_Store
 /.gradle
 /.gradletasknamecache
@@ -7,3 +7,4 @@
 /bin
 /build
 /local.properties
+/captures

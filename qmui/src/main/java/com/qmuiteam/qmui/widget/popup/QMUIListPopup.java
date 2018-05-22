@@ -16,28 +16,28 @@ import com.qmuiteam.qmui.widget.QMUIWrapContentListView;
  */
 
 public class QMUIListPopup extends QMUIPopup {
-    private ListView mListView;
     private BaseAdapter mAdapter;
 
     /**
-     * Constructor.
+     * 构造方法。
      *
-     * @param context   Context
-     * @param direction
+     * @param context   传入一个 Context。
+     * @param direction Popup 的方向，为 {@link QMUIPopup#DIRECTION_NONE}, {@link QMUIPopup#DIRECTION_TOP} 和 {@link QMUIPopup#DIRECTION_BOTTOM} 中的其中一个值。
+     * @param adapter   列表的 Adapter
      */
-    public QMUIListPopup(Context context, int direction, BaseAdapter adapter) {
+    public QMUIListPopup(Context context, @Direction int direction, BaseAdapter adapter) {
         super(context, direction);
         mAdapter = adapter;
     }
 
     public void create(int width, int maxHeight, AdapterView.OnItemClickListener onItemClickListener) {
-        mListView = new QMUIWrapContentListView(mContext, maxHeight);
+        ListView listView = new QMUIWrapContentListView(mContext, maxHeight);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, maxHeight);
-        mListView.setLayoutParams(lp);
-        mListView.setAdapter(mAdapter);
-        mListView.setVerticalScrollBarEnabled(false);
-        mListView.setOnItemClickListener(onItemClickListener);
-        mListView.setDivider(null);
-        setContentView(mListView);
+        listView.setLayoutParams(lp);
+        listView.setAdapter(mAdapter);
+        listView.setVerticalScrollBarEnabled(false);
+        listView.setOnItemClickListener(onItemClickListener);
+        listView.setDivider(null);
+        setContentView(listView);
     }
 }

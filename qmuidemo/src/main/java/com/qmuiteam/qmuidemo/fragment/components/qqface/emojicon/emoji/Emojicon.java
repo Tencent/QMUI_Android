@@ -62,7 +62,7 @@ public class Emojicon implements Serializable {
         return emoji.hashCode();
     }
 
-    public static final String newString(int codePoint) {
+    public static String newString(int codePoint) {
     	// Character.charCount 指定字符是否是等于或大于0x10000的，那么该方法返回2。否则，该方法返回1。
         if (Character.charCount(codePoint) == 1) {
             return String.valueOf(codePoint);

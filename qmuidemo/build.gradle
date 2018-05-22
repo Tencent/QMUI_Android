@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def cmd = 'git rev-list HEAD --count'
+def gitVersion = cmd.execute().text.trim().toInteger()
+
 android {
     signingConfigs {
         Properties properties = new Properties()
@@ -21,8 +24,8 @@ android {
         applicationId "com.qmuiteam.qmuidemo"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode gitVersion
+        versionName "1.1.2"
     }
     buildTypes {
         debug {
@@ -48,7 +51,10 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        force "com.android.support:support-annotations:${supportVersion}"
+        force "com.android.support:recyclerview-v7:$supportVersion"
+        force "com.android.support:appcompat-v7:$supportVersion"
+        force "com.android.support:design:$supportVersion"
+        force "com.android.support:support-vector-drawable:$supportVersion"
     }
 }
 
@@ -59,8 +65,13 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile project(':qmui')
+//    compile 'com.qmuiteam:qmuilint:1.0.1'
+//    compile 'com.qmuiteam:arch:0.0.1'
+//    compile 'com.qmuiteam:qmui:1.1.1'
     compile project(':lib')
+    compile project(':qmuilint')
+    compile project(':qmui')
+    compile project(':arch')
     annotationProcessor project(':compiler')
 
     //leak

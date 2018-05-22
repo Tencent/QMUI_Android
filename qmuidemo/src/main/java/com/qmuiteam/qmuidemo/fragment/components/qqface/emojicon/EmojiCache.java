@@ -2,6 +2,7 @@ package com.qmuiteam.qmuidemo.fragment.components.qqface.emojicon;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LruCache;
 
 public class EmojiCache {
@@ -27,7 +28,7 @@ public class EmojiCache {
             @Override
             protected int sizeOf(Integer key, Drawable value) {
                 return 1;
-            };
+            }
             
             @Override
             protected void entryRemoved(boolean evicted, Integer key, Drawable oldValue, Drawable newValue) {
@@ -42,7 +43,7 @@ public class EmojiCache {
 	public Drawable getDrawable(Context context, int resourceId) {
 		Drawable drawable = mCache.get(resourceId);
 		if (drawable == null) {
-			drawable = context.getResources().getDrawable(resourceId);
+			drawable = ContextCompat.getDrawable(context, resourceId);
 			mCache.put(resourceId, drawable);
 		}
 		

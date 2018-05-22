@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="12dp"
+        android:layout_marginRight="?attr/qmui_common_list_item_icon_margin_right"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
         android:visibility="gone"/>
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="14dp"
+        android:layout_marginLeft="?attr/qmui_common_list_item_accessory_margin_left"
         android:visibility="gone"/>
 
     <LinearLayout
@@ -35,23 +35,29 @@
 
         <TextView
             android:id="@+id/group_list_item_textView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="left|center_vertical"
             android:includeFontPadding="false"
             android:textColor="?attr/qmui_config_color_gray_1"
-            android:textSize="@dimen/list_item_textSize_title"/>
+            android:textSize="?attr/qmui_common_list_item_title_h_text_size"/>
+
+        <android.support.v4.widget.Space
+            android:id="@+id/group_list_item_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="?attr/qmui_common_list_item_h_space_min_width"/>
 
         <TextView
             android:id="@+id/group_list_item_detailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
-            android:lineSpacingExtra="@dimen/qmui_list_item_detail_lineSpacingExtra"
+            android:lineSpacingExtra="?attr/qmui_common_list_item_detail_line_space"
             android:textColor="?attr/qmui_config_color_gray_5"
-            android:textSize="@dimen/list_item_textSize_detail"
+            android:textSize="?attr/qmui_common_list_item_detail_h_text_size"
             android:visibility="gone"/>
 
     </LinearLayout>
@@ -60,6 +66,7 @@
     <ImageView
         android:id="@+id/group_list_item_tips_dot"
         style="?attr/QMUITipPointStyle"
+        android:contentDescription="Red dot"
         android:visibility="gone"/>
 
     <!-- 更新提示 -->

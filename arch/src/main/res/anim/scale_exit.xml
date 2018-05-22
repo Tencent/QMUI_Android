@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/transparent">
+
+    <scale
+        android:duration="@integer/qmui_anim_duration"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:interpolator="@android:interpolator/decelerate_quad"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="0.8"
+        android:toYScale="0.8" />
+
+    <alpha
+        android:duration="@integer/qmui_anim_duration"
+        android:fromAlpha="1.0"
+        android:interpolator="@android:interpolator/decelerate_quad"
+        android:toAlpha="0.0" />
+
+</set>

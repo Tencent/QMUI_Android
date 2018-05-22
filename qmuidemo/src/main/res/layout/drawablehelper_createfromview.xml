@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:contentDescription="截图当前界面显示"
         android:background="@color/qmui_config_color_gray_3"
         android:padding="1px"/>
 

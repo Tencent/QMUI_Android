@@ -1,6 +1,7 @@
 package com.qmuiteam.qmuidemo.fragment.components;
 
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,7 +13,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUIFloatLayout;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
@@ -23,6 +24,7 @@ import butterknife.ButterKnife;
 
 @Widget(widgetClass = QMUIFloatLayout.class, iconRes = R.mipmap.icon_grid_float_layout)
 public class QDFloatLayoutFragment extends BaseFragment {
+    private static final String TAG = "QDFloatLayoutFragment";
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.qmuidemo_floatlayout) QMUIFloatLayout mFloatLayout;
@@ -39,6 +41,12 @@ public class QDFloatLayoutFragment extends BaseFragment {
         for (int i = 0; i < 8; i++) {
             addItemToFloatLayout(mFloatLayout);
         }
+        mFloatLayout.setOnLineCountChangeListener(new QMUIFloatLayout.OnLineCountChangeListener() {
+            @Override
+            public void onChange(int oldLineCount, int newLineCount) {
+                Log.i(TAG, "oldLineCount = " + oldLineCount + " ;newLineCount = " + newLineCount);
+            }
+        });
         return root;
     }
 

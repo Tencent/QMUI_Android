@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +22,24 @@ import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
-import com.qmuiteam.qmuidemo.QDDataManager;
-import com.qmuiteam.qmuidemo.model.QDItemDescription;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIDialog} 的使用示例。
  * Created by cgspine on 15/9/15.
  */
 @Widget(widgetClass = QMUIDialog.class, iconRes = R.mipmap.icon_grid_dialog)
@@ -45,6 +49,7 @@ public class QDDialogFragment extends BaseFragment {
     @BindView(R.id.listview) ListView mListView;
 
     private QDItemDescription mQDItemDescription;
+    private int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
 
     @Override
     protected View onCreateView() {
@@ -64,6 +69,14 @@ public class QDDialogFragment extends BaseFragment {
             }
         });
 
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showBottomSheet();
+                    }
+                });
+
         mTopBar.setTitle(mQDItemDescription.getName());
     }
 
@@ -72,18 +85,18 @@ public class QDDialogFragment extends BaseFragment {
         String[] listItems = new String[]{
                 "消息类型对话框（蓝色按钮）",
                 "消息类型对话框（红色按钮）",
+                "消息类型对话框 (很长文案)",
                 "菜单类型对话框",
                 "带 Checkbox 的消息确认框",
                 "单选菜单类型对话框",
                 "多选菜单类型对话框",
+                "多选菜单类型对话框(item 数量很多)",
                 "带输入框的对话框",
                 "高度适应键盘升降的对话框"
         };
         List<String> data = new ArrayList<>();
 
-        for (String listItem : listItems) {
-            data.add(listItem);
-        }
+        Collections.addAll(data, listItems);
 
         mListView.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.simple_list_item, data));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,21 +110,27 @@ public class QDDialogFragment extends BaseFragment {
                         showMessageNegativeDialog();
                         break;
                     case 2:
-                        showMenuDialog();
+                        showLongMessageDialog();
                         break;
                     case 3:
-                        showConfirmMessageDialog();
+                        showMenuDialog();
                         break;
                     case 4:
-                        showSingleChoiceDialog();
+                        showConfirmMessageDialog();
                         break;
                     case 5:
-                        showMultiChoiceDialog();
+                        showSingleChoiceDialog();
                         break;
                     case 6:
-                        showEditTextDialog();
+                        showMultiChoiceDialog();
                         break;
                     case 7:
+                        showNumerousMultiChoiceDialog();
+                        break;
+                    case 8:
+                        showEditTextDialog();
+                        break;
+                    case 9:
                         showAutoDialog();
                         break;
                 }
@@ -137,7 +156,7 @@ public class QDDialogFragment extends BaseFragment {
                         Toast.makeText(getActivity(), "发送成功", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMessageNegativeDialog() {
@@ -157,13 +176,37 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
+    }
+
+    private void showLongMessageDialog() {
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("标题")
+                .setMessage("这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很" +
+                        "长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长" +
+                        "很长很长很长很长很长很长很长很长很长很长很长很长很长很长长很长的文案")
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showConfirmMessageDialog() {
         new QMUIDialog.CheckBoxMessageDialogBuilder(getActivity())
                 .setTitle("退出后是否删除账号信息?")
-                .setMessage("删除账号信息").setChecked(true)
+                .setMessage("删除账号信息")
+                .setChecked(true)
                 .addAction("取消", new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
@@ -176,7 +219,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMenuDialog() {
@@ -189,7 +232,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showSingleChoiceDialog() {
@@ -204,7 +247,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showMultiChoiceDialog() {
@@ -234,7 +277,41 @@ public class QDDialogFragment extends BaseFragment {
                 dialog.dismiss();
             }
         });
-        builder.show();
+        builder.create(mCurrentDialogStyle).show();
+    }
+
+    private void showNumerousMultiChoiceDialog() {
+        final String[] items = new String[]{
+                "选项1", "选项2", "选项3", "选项4", "选项5", "选项6",
+                "选项7", "选项8", "选项9", "选项10", "选项11", "选项12",
+                "选项13", "选项14", "选项15", "选项16", "选项17", "选项18"
+        };
+        final QMUIDialog.MultiCheckableDialogBuilder builder = new QMUIDialog.MultiCheckableDialogBuilder(getActivity())
+                .setCheckedItems(new int[]{1, 3})
+                .addItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.addAction("取消", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+        builder.addAction("提交", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                String result = "你选择了 ";
+                for (int i = 0; i < builder.getCheckedItemIndexes().length; i++) {
+                    result += "" + builder.getCheckedItemIndexes()[i] + "; ";
+                }
+                Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        builder.create(mCurrentDialogStyle).show();
     }
 
     private void showEditTextDialog() {
@@ -256,11 +333,11 @@ public class QDDialogFragment extends BaseFragment {
                             Toast.makeText(getActivity(), "您的昵称: " + text, Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         } else {
-                            Toast.makeText(getActivity(), "请填入昵称" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "请填入昵称", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .show();
+                .create(mCurrentDialogStyle).show();
     }
 
     private void showAutoDialog() {
@@ -278,7 +355,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 });
-        autoTestDialogBuilder.show();
+        autoTestDialogBuilder.create(mCurrentDialogStyle).show();
         QMUIKeyboardHelper.showKeyboard(autoTestDialogBuilder.getEditText(), true);
     }
 
@@ -320,5 +397,27 @@ public class QDDialogFragment extends BaseFragment {
             layout.addView(textView);
             return layout;
         }
+    }
+
+
+    private void showBottomSheet() {
+        new QMUIBottomSheet.BottomListSheetBuilder(getContext())
+                .addItem("使用 QMUI 默认 Dialog 样式")
+                .addItem("自定义样式")
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        switch (position) {
+                            case 0:
+                                mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
+                                break;
+                            case 1:
+                                mCurrentDialogStyle = R.style.DialogTheme2;
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 }

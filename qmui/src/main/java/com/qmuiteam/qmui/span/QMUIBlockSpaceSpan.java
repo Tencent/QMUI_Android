@@ -2,6 +2,7 @@ package com.qmuiteam.qmui.span;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.text.style.ReplacementSpan;
 
 import com.qmuiteam.qmui.util.QMUIDeviceHelper;
@@ -20,7 +21,7 @@ public class QMUIBlockSpaceSpan extends ReplacementSpan {
     }
 
     @Override
-    public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+    public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         if (fm != null && !QMUIDeviceHelper.isMeizu()) {
             //return后宽度为0，因此实际空隙和段落开始在同一行，需要加上一行的高度
             fm.ascent = fm.top = -mHeight - paint.getFontMetricsInt(fm);
@@ -30,7 +31,7 @@ public class QMUIBlockSpaceSpan extends ReplacementSpan {
     }
 
     @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
 
     }
 }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUIColorHelper} 的使用示例。
  * Created by Kayo on 2016/12/1.
  */
 

@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+group = 'com.qmuiteam'
+version = "0.1.0"
+
+android {
+
+    compileSdkVersion parent.ext.compileSdkVersion
+    buildToolsVersion parent.ext.buildToolsVersion
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        minSdkVersion parent.ext.minSdkVersion
+        targetSdkVersion parent.ext.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly("com.android.support:design:$supportVersion")
+    compileOnly project(':qmui')
+}
+
+// deploy
+File deployConfig = project.file('deploy.properties')
+if (deployConfig.exists()) {
+    apply from: "deployMaven.gradle"
+    apply from: "deployBintray.gradle"
+}

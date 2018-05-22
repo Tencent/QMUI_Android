@@ -15,9 +15,9 @@ import java.util.List;
  */
 
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
-    protected final List<T> mData;
-    protected final Context mContext;
-    protected LayoutInflater mInflater;
+    private final List<T> mData;
+    private final Context mContext;
+    private LayoutInflater mInflater;
     private OnItemClickListener mClickListener;
     private OnItemLongClickListener mLongClickListener;
 
@@ -83,6 +83,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         mLongClickListener = listener;
     }
 
+    @SuppressWarnings("SameReturnValue")
     abstract public int getItemLayoutId(int viewType);
 
     abstract public void bindData(RecyclerViewHolder holder, int position, T item);

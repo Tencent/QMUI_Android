@@ -29,58 +29,26 @@
     <attr name="qmui_alpha_pressed" format="float"/>
     <attr name="qmui_alpha_disabled" format="float"/>
 
+    <attr name="qmui_general_shadow_elevation" format="dimension"/>
+    <attr name="qmui_general_shadow_alpha" format="float"/>
+
     <!--**********************************************
     *                qmui dialog                     *
     **********************************************-->
-    <attr name="qmui_dialog_margin_horizontal" format="dimension"/>
     <attr name="qmui_dialog_min_width" format="dimension"/>
+    <attr name="qmui_dialog_max_width" format="dimension"/>
     <attr name="qmui_dialog_bg" format="reference"/>
     <attr name="qmui_dialog_margin_vertical" format="dimension"/>
     <attr name="qmui_dialog_padding_horizontal" format="dimension"/>
-
-    <!-- title -->
-    <attr name="qmui_dialog_title_text_color" format="color"/>
-    <attr name="qmui_dialog_title_margin_top" format="dimension"/>
-    <attr name="qmui_dialog_title_text_size" format="dimension"/>
-
-    <!-- menu -->
-    <attr name="qmui_dialog_menu_item_check_icon_margin_horizontal" format="dimension"/>
-
-    <!-- content -->
-    <attr name="qmui_dialog_content_padding_top" format="dimension"/>
-    <attr name="qmui_dialog_content_padding_top_when_no_title" format="dimension"/>
-    <attr name="qmui_dialog_content_padding_top_when_list" format="dimension"/>
-    <attr name="qmui_dialog_content_padding_bottom" format="dimension"/>
-    <attr name="qmui_dialog_content_padding_bottom_when_no_action" format="dimension"/>
-    <attr name="qmui_dialog_content_padding_bottom_when_action_block" format="dimension"/>
-    <attr name="qmui_dialog_content_message_text_size" format="dimension"/>
-    <attr name="qmui_dialog_content_list_item_height" format="dimension"/>
-    <attr name="qmui_dialog_content_list_item_text_size" format="dimension"/>
-    <attr name="qmui_dialog_content_list_item_bg" format="reference"/>
-    <attr name="qmui_dialog_confirm_content_padding_top" format="dimension"/>
-    <attr name="qmui_dialog_confirm_content_padding_bottom" format="dimension"/>
-    <attr name="qmui_dialog_edit_content_padding_top" format="dimension"/>
-    <attr name="qmui_dialog_edit_content_padding_bottom" format="dimension"/>
-    <attr name="qmui_dialog_block_content_text_size" format="dimension"/>
-
-    <attr name="qmui_dialog_menu_item_text_color" format="color"/>
-
-    <!-- action -->
-    <attr name="qmui_dialog_action_container_margin_bottom" format="dimension"/>
-    <attr name="qmui_dialog_action_container_margin_horizontal" format="dimension"/>
-    <attr name="qmui_dialog_action_button_min_width" format="dimension"/>
-    <attr name="qmui_dialog_action_button_height" format="dimension"/>
-    <attr name="qmui_dialog_action_button_margin_left" format="dimension"/>
-    <attr name="qmui_dialog_action_drawable_padding" format="dimension"/>
-    <attr name="qmui_dialog_action_button_text_size" format="dimension"/>
-    <attr name="qmui_dialog_action_button_padding_horizontal" format="dimension"/>
-
-    <attr name="qmui_dialog_action_block_container_margin_bottom" format="dimension"/>
-    <attr name="qmui_dialog_action_block_btn_height" format="dimension"/>
-    <attr name="qmui_dialog_action_btn_bg" format="reference"/>
-    <attr name="qmui_dialog_action_block_btn_bg" format="reference"/>
-    <attr name="qmui_dialog_action_text_negative_color" format="reference"/>
-    <attr name="qmui_dialog_action_text_color" format="reference"/>
+    <attr name="qmui_dialog_background_dim_amount" format="float"/>
+    <attr name="qmui_dialog_wrapper_style" format="reference"/>
+    <attr name="qmui_dialog_title_style" format="reference"/>
+    <attr name="qmui_dialog_action_container_style" format="reference"/>
+    <attr name="qmui_dialog_action_style" format="reference"/>
+    <attr name="qmui_dialog_message_content_style" format="reference"/>
+    <attr name="qmui_dialog_edit_content_style" format="reference"/>
+    <attr name="qmui_dialog_menu_container_style" format="reference"/>
+    <attr name="qmui_dialog_menu_item_style" format="reference"/>
 
     <!-- tips -->
     <attr name="qmui_tip_dialog_bg" format="reference"/>
@@ -89,6 +57,19 @@
     <attr name="qmui_tip_dialog_padding_vertical" format="dimension"/>
     <attr name="qmui_tip_dialog_padding_horizontal" format="dimension"/>
     <attr name="qmui_tip_dialog_margin_horizontal" format="dimension"/>
+
+    <!--**********************************************
+    *              qmui common list                  *
+    **********************************************-->
+
+    <attr name="qmui_common_list_item_icon_margin_right" format="dimension"/>
+    <attr name="qmui_common_list_item_accessory_margin_left" format="dimension"/>
+    <attr name="qmui_common_list_item_title_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_title_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_h_space_min_width" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_v_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_h_text_size" format="dimension"/>
+    <attr name="qmui_common_list_item_detail_line_space" format="dimension"/>
 
 
     <!--**********************************************
@@ -118,7 +99,8 @@
     <attr name="qmui_bottom_sheet_button_height" format="dimension"/>
     <attr name="qmui_bottom_sheet_button_text_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_button_text_color" format="reference"/>
-    <attr name="qmui_bottom_sheet_button_text_background" format="reference"/>
+    <attr name="qmui_bottom_sheet_button_background" format="reference"/>
+
 
     <!--**********************************************
     *             qmui list item bg                  *
@@ -168,17 +150,6 @@
     *                  qmui topbar                   *
     ***********************************************-->
     <attr name="qmui_topbar_height" format="dimension"/>
-    <attr name="qmui_topbar_title_color" format="color"/>
-    <attr name="qmui_topbar_title_text_size" format="dimension"/>
-    <attr name="qmui_topbar_title_text_size_with_subtitle" format="dimension"/>
-    <attr name="qmui_topbar_title_margin_horizontal_when_no_btn_aside" format="dimension"/>
-    <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
-    <attr name="qmui_topbar_subtitle_color" format="color"/>
-    <attr name="qmui_topbar_image_btn_width" format="dimension"/>
-    <attr name="qmui_topbar_image_btn_height" format="dimension"/>
-    <attr name="qmui_topbar_text_btn_padding_horizontal" format="dimension"/>
-    <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
-    <attr name="qmui_topbar_text_btn_text_size" format="dimension"/>
 
     <!--**********************************************
     *               qmui loading view                *

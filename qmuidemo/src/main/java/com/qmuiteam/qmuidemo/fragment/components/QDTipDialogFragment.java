@@ -8,19 +8,21 @@ import android.widget.ListView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link QMUITipDialog} 的使用示例。
  * Created by Kayo on 2016/11/21.
  */
 @Widget(widgetClass = QMUITipDialog.class, iconRes = R.mipmap.icon_grid_tip_dialog)
@@ -67,9 +69,7 @@ public class QDTipDialogFragment extends BaseFragment {
         };
         List<String> data = new ArrayList<>();
 
-        for (String listItem : listItems) {
-            data.add(listItem);
-        }
+        Collections.addAll(data, listItems);
 
         mListView.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.simple_list_item, data));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

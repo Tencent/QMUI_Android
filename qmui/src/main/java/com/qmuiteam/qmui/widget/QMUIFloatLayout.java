@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -30,6 +31,8 @@ public class QMUIFloatLayout extends ViewGroup {
     private static final int NUMBER = 1;
     private int mMaxMode = LINES;
     private int mMaximum = Integer.MAX_VALUE;
+    private int mLineCount = 0;
+    private OnLineCountChangeListener mOnLineCountChangeListener;
 
     /**
      * <p>每一行的item数目，下标表示行下标，在onMeasured的时候计算得出，供onLayout去使用。</p>
@@ -79,6 +82,7 @@ public class QMUIFloatLayout extends ViewGroup {
         array.recycle();
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -207,6 +211,13 @@ public class QMUIFloatLayout extends ViewGroup {
             }
         }
         setMeasuredDimension(resultWidth, resultHeight);
+        int meausureLineCount = lineIndex + 1;
+        if(mLineCount != meausureLineCount){
+            if(mOnLineCountChangeListener != null){
+                mOnLineCountChangeListener.onChange(mLineCount, meausureLineCount);
+            }
+            mLineCount = meausureLineCount;
+        }
     }
 
     @Override
@@ -237,7 +248,6 @@ public class QMUIFloatLayout extends ViewGroup {
         int nextChildPositionX;
         int nextChildPositionY = getPaddingTop();
         int lineHeight = 0;
-
         // 遍历每一行
         for (int i = 0; i < mItemNumberInEachLine.length; i++) {
             // 如果这一行已经没item了，则退出循环
@@ -249,11 +259,8 @@ public class QMUIFloatLayout extends ViewGroup {
                 break;
             }
 
-            // 子View的最小x值
-            int childMinX = (parentWidth - getPaddingLeft() - getPaddingRight() - mWidthSumInEachLine[i]) / 2 + getPaddingLeft();
-
             // 遍历该行内的元素，布局每个元素
-            nextChildPositionX = childMinX;
+            nextChildPositionX = (parentWidth - getPaddingLeft() - getPaddingRight() - mWidthSumInEachLine[i]) / 2 + getPaddingLeft(); // 子 View 的最小 x 值
             for (int j = nextChildIndex; j < nextChildIndex + mItemNumberInEachLine[i]; j++) {
                 final View childView = getChildAt(j);
                 if (childView.getVisibility() == GONE) {
@@ -301,14 +308,15 @@ public class QMUIFloatLayout extends ViewGroup {
             }
             final int childw = child.getMeasuredWidth();
             final int childh = child.getMeasuredHeight();
-            lineHeight = Math.max(lineHeight, childh);
             if (childPositionX + childw > childMaxRight) {
+                // 换行
                 childPositionX = getPaddingLeft();
                 childPositionY += (lineHeight + mChildVerticalSpacing);
                 lineHeight = 0;
             }
             child.layout(childPositionX, childPositionY, childPositionX + childw, childPositionY + childh);
             childPositionX += childw + mChildHorizontalSpacing;
+            lineHeight = Math.max(lineHeight, childh);
         }
 
         // 如果布局的子View少于childCount，则表示有一些子View不需要布局
@@ -343,11 +351,8 @@ public class QMUIFloatLayout extends ViewGroup {
                 break;
             }
 
-            // 子View的最小x值
-            int childMinX = parentWidth - getPaddingRight() - mWidthSumInEachLine[i];
-
             // 遍历该行内的元素，布局每个元素
-            nextChildPositionX = childMinX;
+            nextChildPositionX = parentWidth - getPaddingRight() - mWidthSumInEachLine[i]; // 初始值为子 View 的最小 x 值
             for (int j = nextChildIndex; j < nextChildIndex + mItemNumberInEachLine[i]; j++) {
                 final View childView = getChildAt(j);
                 if (childView.getVisibility() == GONE) {
@@ -423,6 +428,14 @@ public class QMUIFloatLayout extends ViewGroup {
         requestLayout();
     }
 
+    public void setOnLineCountChangeListener(OnLineCountChangeListener onLineCountChangeListener) {
+        mOnLineCountChangeListener = onLineCountChangeListener;
+    }
+
+    public int getLineCount() {
+        return mLineCount;
+    }
+
     /**
      * 获取最多可显示的行数
      *
@@ -446,5 +459,9 @@ public class QMUIFloatLayout extends ViewGroup {
     public void setChildVerticalSpacing(int spacing) {
         mChildVerticalSpacing = spacing;
         invalidate();
+    }
+
+    public interface OnLineCountChangeListener {
+        void onChange(int oldLineCount, int newLineCount);
     }
 }

@@ -1,7 +1,10 @@
 package com.qmuiteam.qmui.widget.popup;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
+import android.support.annotation.IntDef;
+import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +13,12 @@ import android.widget.ImageView;
 
 import com.qmuiteam.qmui.R;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * 提供一个浮层，支持自定义浮层的内容，支持在指定 {@link View} 的任一方向旁边展示该浮层，支持自定义浮层出现/消失的动画。
- *
+ * <p>
  * Created by cgspine on 15/11/24.
  */
 public class QMUIPopup extends QMUIBasePopup {
@@ -24,24 +30,18 @@ public class QMUIPopup extends QMUIBasePopup {
     public static final int DIRECTION_TOP = 0;
     public static final int DIRECTION_BOTTOM = 1;
     public static final int DIRECTION_NONE = 2;
-
-    // 该PopupWindow的View距离屏幕左右的最小距离
-    private int mPopupLeftRightMinMargin = 0;
-
-    // 该PopupWindow的View距离屏幕上下的最小距离
-    private int mPopupTopBottomMinMargin = 0;
-
     protected ImageView mArrowUp;
     protected ImageView mArrowDown;
     protected int mAnimStyle;
-    private int mPreferredDirection;
     protected int mDirection;
-
-
     protected int mX = -1;
     protected int mY = -1;
     protected int mArrowCenter;
-
+    // 该PopupWindow的View距离屏幕左右的最小距离
+    private int mPopupLeftRightMinMargin = 0;
+    // 该PopupWindow的View距离屏幕上下的最小距离
+    private int mPopupTopBottomMinMargin = 0;
+    private int mPreferredDirection;
     // 计算位置后的偏移x值
     private int mOffsetX = 0;
     // 计算位置后的偏移y值，当浮层在View的上方时使用
@@ -53,14 +53,12 @@ public class QMUIPopup extends QMUIBasePopup {
         this(context, DIRECTION_NONE);
     }
 
-
-    public QMUIPopup(Context context, int preferredDirection) {
+    public QMUIPopup(Context context, @Direction int preferredDirection) {
         super(context);
         mAnimStyle = ANIM_AUTO;
         mPreferredDirection = preferredDirection;
         mDirection = mPreferredDirection;
     }
-
 
     public void setPopupLeftRightMinMargin(int popupLeftRightMinMargin) {
         mPopupLeftRightMinMargin = popupLeftRightMinMargin;
@@ -77,7 +75,6 @@ public class QMUIPopup extends QMUIBasePopup {
         mOffsetX = offsetX;
     }
 
-
     /**
      * 设置根据计算得到的位置后的偏移值
      *
@@ -86,7 +83,6 @@ public class QMUIPopup extends QMUIBasePopup {
     public void setPositionOffsetYWhenTop(int offsetYWhenTop) {
         mOffsetYWhenTop = offsetYWhenTop;
     }
-
 
     /**
      * 设置根据计算得到的位置后的偏移值
@@ -102,7 +98,7 @@ public class QMUIPopup extends QMUIBasePopup {
     }
 
     @Override
-    protected Point onShow(View attachedView) {
+    protected Point onShowBegin(View parent, View attachedView) {
         calculatePosition(attachedView);
 
         showArrow();
@@ -116,6 +112,11 @@ public class QMUIPopup extends QMUIBasePopup {
             offsetY = mOffsetYWhenBottom;
         }
         return new Point(mX + mOffsetX, mY + offsetY);
+    }
+
+    @Override
+    protected void onWindowSizeChange() {
+
     }
 
     private void calculatePosition(View attachedView) {
@@ -148,7 +149,7 @@ public class QMUIPopup extends QMUIBasePopup {
                     break;
                 case DIRECTION_BOTTOM:
                     mY = attachedViewLocation[1] + attachedView.getHeight();
-                    if (mY > mScreenSize.y - mPopupTopBottomMinMargin) {
+                    if (mY > mScreenSize.y - mPopupTopBottomMinMargin - mWindowHeight) {
                         mY = attachedViewLocation[1] - mWindowHeight;
                         mDirection = DIRECTION_TOP;
                     }
@@ -240,11 +241,10 @@ public class QMUIPopup extends QMUIBasePopup {
         this.mAnimStyle = mAnimStyle;
     }
 
-
     @Override
     public void setContentView(View root) {
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
-                .inflate(R.layout.qmui_popup_layout, null, false);
+        @SuppressLint("InflateParams") FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
+                .inflate(getRootLayout(), null, false);
         mArrowDown = (ImageView) layout.findViewById(R.id.arrow_down);
         mArrowUp = (ImageView) layout.findViewById(R.id.arrow_up);
         FrameLayout box = (FrameLayout) layout.findViewById(R.id.box);
@@ -253,6 +253,15 @@ public class QMUIPopup extends QMUIBasePopup {
         super.setContentView(layout);
     }
 
+    /**
+     * the root layout: must provide ids: arrow_down(ImageView), arrow_up(ImageView), box(FrameLayout)
+     *
+     * @return
+     */
+    @LayoutRes
+    protected int getRootLayout() {
+        return R.layout.qmui_popup_layout;
+    }
 
     private void setViewVisibility(View view, boolean visible) {
         if (view != null) {
@@ -260,8 +269,13 @@ public class QMUIPopup extends QMUIBasePopup {
         }
     }
 
-    public ViewGroup.LayoutParams generateLayoutParam(int width, int height){
+    public ViewGroup.LayoutParams generateLayoutParam(int width, int height) {
         return new FrameLayout.LayoutParams(width, height);
+    }
+
+    @IntDef({DIRECTION_NONE, DIRECTION_TOP, DIRECTION_BOTTOM})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Direction {
     }
 
 }

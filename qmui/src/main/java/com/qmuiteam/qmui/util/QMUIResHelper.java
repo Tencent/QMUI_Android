@@ -5,7 +5,13 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.ViewConfiguration;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.qmuiteam.qmui.R;
 
 /**
  *
@@ -44,5 +50,60 @@ public class QMUIResHelper {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(attrRes, typedValue, true);
         return TypedValue.complexToDimensionPixelSize(typedValue.data, QMUIDisplayHelper.getDisplayMetrics(context));
+    }
+
+    public static void assignTextViewWithAttr(TextView textView, int attrRes){
+        TypedArray a = textView.getContext().obtainStyledAttributes(null, R.styleable.QMUITextCommonStyleDef, attrRes, 0);
+        int count = a.getIndexCount();
+        int paddingLeft = textView.getPaddingLeft(), paddingRight = textView.getPaddingRight(),
+                paddingTop = textView.getPaddingTop(), paddingBottom = textView.getPaddingBottom();
+        for(int i = 0; i < count; i++){
+            int attr = a.getIndex(i);
+            if(attr == R.styleable.QMUITextCommonStyleDef_android_gravity){
+                textView.setGravity(a.getInt(attr, -1));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textColor){
+                textView.setTextColor(a.getColorStateList(attr));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textSize){
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimensionPixelSize(attr, 0));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_paddingLeft){
+                paddingLeft = a.getDimensionPixelSize(attr, 0);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_paddingRight){
+                paddingRight = a.getDimensionPixelSize(attr, 0);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_paddingTop){
+                paddingTop = a.getDimensionPixelSize(attr, 0);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_paddingBottom){
+                paddingBottom = a.getDimensionPixelSize(attr, 0);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_singleLine){
+                textView.setSingleLine(a.getBoolean(attr, false));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_ellipsize){
+                int ellipsize = a.getInt(attr, 3);
+                switch (ellipsize) {
+                    case 1:
+                        textView.setEllipsize(TextUtils.TruncateAt.START);
+                        break;
+                    case 2:
+                        textView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+                        break;
+                    case 3:
+                        textView.setEllipsize(TextUtils.TruncateAt.END);
+                        break;
+                    case 4:
+                        textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                        break;
+                }
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_maxLines){
+                textView.setMaxLines(a.getInt(attr, -1));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_background){
+                QMUIViewHelper.setBackgroundKeepingPadding(textView, a.getDrawable(attr));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_lineSpacingExtra){
+                textView.setLineSpacing(a.getDimensionPixelSize(attr, 0), 1f);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_drawablePadding){
+                textView.setCompoundDrawablePadding(a.getDimensionPixelSize(attr, 0));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textColorHint){
+                textView.setHintTextColor(a.getColor(attr, 0));
+            }
+        }
+        textView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        a.recycle();
     }
 }

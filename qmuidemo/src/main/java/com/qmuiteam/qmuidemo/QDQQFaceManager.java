@@ -7,7 +7,6 @@ import android.util.SparseIntArray;
 
 import com.qmuiteam.qmui.qqface.IQMUIQQFaceManager;
 import com.qmuiteam.qmui.qqface.QQFace;
-import com.qmuiteam.qmuidemo.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,132 +22,9 @@ public class QDQQFaceManager implements IQMUIQQFaceManager {
     private static final List<QQFace> mQQFaceList = new ArrayList<>();
     private static final SparseIntArray sEmojisMap = new SparseIntArray(846);
     private static final SparseIntArray sSoftbanksMap = new SparseIntArray(471);
-    private static final ArrayMap<String,String> mQQFaceFileNameList = new ArrayMap();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") private static final ArrayMap<String, String> mQQFaceFileNameList = new ArrayMap<>();//存储QQ表情对应的文件名,方便混淆后可以获取到原文件名
 
     private static QDQQFaceManager sQDQQFaceManager = new QDQQFaceManager();
-
-    public static QDQQFaceManager getInstance(){
-        return sQDQQFaceManager;
-    }
-
-    @Override
-    public Drawable getSpecialBoundsDrawable(CharSequence text) {
-        return null;
-    }
-
-    @Override
-    public int getSpecialDrawableMaxHeight() {
-        return 0;
-    }
-
-    @Override
-    public boolean maybeSoftBankEmoji(char c) {
-        return ((c >> 12) == 0xe);
-    }
-
-    @Override
-    public boolean maybeEmoji(int codePoint) {
-        return codePoint > 0xff;
-    }
-
-    @Override
-    public int getEmojiResource(int codePoint) {
-        return sEmojisMap.get(codePoint);
-    }
-
-    @Override
-    public int getSoftbankEmojiResource(char c) {
-        return sSoftbanksMap.get(c);
-    }
-
-    @Override
-    public int getDoubleUnicodeEmoji(int currentCodePoint, int nextCodePoint) {
-        int icon = 0;
-        if (nextCodePoint == 0x20e3) {
-            switch (currentCodePoint) {
-                case 0x0031:
-                    icon = R.drawable.emoji_0031;
-                    break;
-                case 0x0032:
-                    icon = R.drawable.emoji_0032;
-                    break;
-                case 0x0033:
-                    icon = R.drawable.emoji_0033;
-                    break;
-                case 0x0034:
-                    icon = R.drawable.emoji_0034;
-                    break;
-                case 0x0035:
-                    icon = R.drawable.emoji_0035;
-                    break;
-                case 0x0036:
-                    icon = R.drawable.emoji_0036;
-                    break;
-                case 0x0037:
-                    icon = R.drawable.emoji_0037;
-                    break;
-                case 0x0038:
-                    icon = R.drawable.emoji_0038;
-                    break;
-                case 0x0039:
-                    icon = R.drawable.emoji_0039;
-                    break;
-                case 0x0030:
-                    icon = R.drawable.emoji_0030;
-                    break;
-                case 0x0023:
-                    icon = R.drawable.emoji_0023;
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            switch (currentCodePoint) {
-                case 0x1f1ef:
-                    icon = (nextCodePoint == 0x1f1f5) ? R.drawable.emoji_1f1ef_1f1f5 : 0;
-                    break;
-                case 0x1f1fa:
-                    icon = (nextCodePoint == 0x1f1f8) ? R.drawable.emoji_1f1fa_1f1f8 : 0;
-                    break;
-                case 0x1f1eb:
-                    icon = (nextCodePoint == 0x1f1f7) ? R.drawable.emoji_1f1eb_1f1f7 : 0;
-                    break;
-                case 0x1f1e9:
-                    icon = (nextCodePoint == 0x1f1ea) ? R.drawable.emoji_1f1e9_1f1ea : 0;
-                    break;
-                case 0x1f1ee:
-                    icon = (nextCodePoint == 0x1f1f9) ? R.drawable.emoji_1f1ee_1f1f9 : 0;
-                    break;
-                case 0x1f1ec:
-                    icon = (nextCodePoint == 0x1f1e7) ? R.drawable.emoji_1f1ec_1f1e7 : 0;
-                    break;
-                case 0x1f1ea:
-                    icon = (nextCodePoint == 0x1f1f8) ? R.drawable.emoji_1f1ea_1f1f8 : 0;
-                    break;
-                case 0x1f1f7:
-                    icon = (nextCodePoint == 0x1f1fa) ? R.drawable.emoji_1f1f7_1f1fa : 0;
-                    break;
-                case 0x1f1e8:
-                    icon = (nextCodePoint == 0x1f1f3) ? R.drawable.emoji_1f1e8_1f1f3 : 0;
-                    break;
-                case 0x1f1f0:
-                    icon = (nextCodePoint == 0x1f1f7) ? R.drawable.emoji_1f1f0_1f1f7 : 0;
-                    break;
-                default:
-                    break;
-            }
-        }
-        return icon;
-    }
-
-    @Override
-    public int getQQfaceResource(CharSequence text) {
-        Integer integer =  sQQFaceMap.get(text);
-        if(integer == null){
-            return 0;
-        }
-        return integer;
-    }
 
     static {
         long start = System.currentTimeMillis();
@@ -1195,7 +1071,6 @@ public class QDQQFaceManager implements IQMUIQQFaceManager {
         sEmojisMap.append(0x1f6c5, R.drawable.emoji_1f6c5);
 
 
-
         sSoftbanksMap.append(0xe001, R.drawable.emoji_1f466);
         sSoftbanksMap.append(0xe002, R.drawable.emoji_1f467);
         sSoftbanksMap.append(0xe003, R.drawable.emoji_1f48b);
@@ -1669,5 +1544,128 @@ public class QDQQFaceManager implements IQMUIQQFaceManager {
         sSoftbanksMap.append(0xe537, R.drawable.emoji_2122);
 
         Log.d("emoji", String.format("init emoji cost: %dms", (System.currentTimeMillis() - start)));
+    }
+
+    public static QDQQFaceManager getInstance() {
+        return sQDQQFaceManager;
+    }
+
+    @Override
+    public Drawable getSpecialBoundsDrawable(CharSequence text) {
+        return null;
+    }
+
+    @Override
+    public int getSpecialDrawableMaxHeight() {
+        return 0;
+    }
+
+    @Override
+    public boolean maybeSoftBankEmoji(char c) {
+        return ((c >> 12) == 0xe);
+    }
+
+    @Override
+    public boolean maybeEmoji(int codePoint) {
+        return codePoint > 0xff;
+    }
+
+    @Override
+    public int getEmojiResource(int codePoint) {
+        return sEmojisMap.get(codePoint);
+    }
+
+    @Override
+    public int getSoftbankEmojiResource(char c) {
+        return sSoftbanksMap.get(c);
+    }
+
+    @Override
+    public int getDoubleUnicodeEmoji(int currentCodePoint, int nextCodePoint) {
+        int icon = 0;
+        if (nextCodePoint == 0x20e3) {
+            switch (currentCodePoint) {
+                case 0x0031:
+                    icon = R.drawable.emoji_0031;
+                    break;
+                case 0x0032:
+                    icon = R.drawable.emoji_0032;
+                    break;
+                case 0x0033:
+                    icon = R.drawable.emoji_0033;
+                    break;
+                case 0x0034:
+                    icon = R.drawable.emoji_0034;
+                    break;
+                case 0x0035:
+                    icon = R.drawable.emoji_0035;
+                    break;
+                case 0x0036:
+                    icon = R.drawable.emoji_0036;
+                    break;
+                case 0x0037:
+                    icon = R.drawable.emoji_0037;
+                    break;
+                case 0x0038:
+                    icon = R.drawable.emoji_0038;
+                    break;
+                case 0x0039:
+                    icon = R.drawable.emoji_0039;
+                    break;
+                case 0x0030:
+                    icon = R.drawable.emoji_0030;
+                    break;
+                case 0x0023:
+                    icon = R.drawable.emoji_0023;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (currentCodePoint) {
+                case 0x1f1ef:
+                    icon = (nextCodePoint == 0x1f1f5) ? R.drawable.emoji_1f1ef_1f1f5 : 0;
+                    break;
+                case 0x1f1fa:
+                    icon = (nextCodePoint == 0x1f1f8) ? R.drawable.emoji_1f1fa_1f1f8 : 0;
+                    break;
+                case 0x1f1eb:
+                    icon = (nextCodePoint == 0x1f1f7) ? R.drawable.emoji_1f1eb_1f1f7 : 0;
+                    break;
+                case 0x1f1e9:
+                    icon = (nextCodePoint == 0x1f1ea) ? R.drawable.emoji_1f1e9_1f1ea : 0;
+                    break;
+                case 0x1f1ee:
+                    icon = (nextCodePoint == 0x1f1f9) ? R.drawable.emoji_1f1ee_1f1f9 : 0;
+                    break;
+                case 0x1f1ec:
+                    icon = (nextCodePoint == 0x1f1e7) ? R.drawable.emoji_1f1ec_1f1e7 : 0;
+                    break;
+                case 0x1f1ea:
+                    icon = (nextCodePoint == 0x1f1f8) ? R.drawable.emoji_1f1ea_1f1f8 : 0;
+                    break;
+                case 0x1f1f7:
+                    icon = (nextCodePoint == 0x1f1fa) ? R.drawable.emoji_1f1f7_1f1fa : 0;
+                    break;
+                case 0x1f1e8:
+                    icon = (nextCodePoint == 0x1f1f3) ? R.drawable.emoji_1f1e8_1f1f3 : 0;
+                    break;
+                case 0x1f1f0:
+                    icon = (nextCodePoint == 0x1f1f7) ? R.drawable.emoji_1f1f0_1f1f7 : 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return icon;
+    }
+
+    @Override
+    public int getQQfaceResource(CharSequence text) {
+        Integer integer = sQQFaceMap.get(text.toString());
+        if (integer == null) {
+            return 0;
+        }
+        return integer;
     }
 }

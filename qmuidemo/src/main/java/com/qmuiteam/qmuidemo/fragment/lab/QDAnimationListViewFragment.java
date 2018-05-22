@@ -3,11 +3,12 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIAnimationListView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.adaptor.QDSimpleAdapter;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -31,7 +32,6 @@ public class QDAnimationListViewFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.listview) QMUIAnimationListView mListView;
 
-    private MyAdapter mAdapter;
     private List<String> mData = new ArrayList<>();
 
     @Override
@@ -63,14 +63,6 @@ public class QDAnimationListViewFragment extends BaseFragment {
                         mData.add(position + 1, "item add" + (current + 1));
                         mData.add(position + 2, "item add" + (current + 2));
                         mData.add(position + 3, "item add" + (current + 3));
-                        mData.add(position + 4, "item add" + (current + 4));
-                        mData.add(position + 5, "item add" + (current + 5));
-                        mData.add(position + 6, "item add" + (current + 6));
-                        mData.add(position + 7, "item add" + (current + 7));
-                        mData.add(position + 8, "item add" + (current + 8));
-                        mData.add(position + 9, "item add" + (current + 9));
-                        mData.add(position + 10, "item add" + (current + 10));
-                        mData.add(position + 11, "item add" + (current + 11));
                     }
                 });
 
@@ -83,8 +75,13 @@ public class QDAnimationListViewFragment extends BaseFragment {
                     @Override
                     public void manipulate(MyAdapter adapter) {
                         int position = mListView.getFirstVisiblePosition();
-                        mData.remove(position + 1);
-                        mData.remove(position + 3);
+                        if(mData.size() > position + 4){
+                            mData.remove(position + 1);
+                            mData.remove(position + 3);
+                        }else{
+                            Toast.makeText(getContext(), "item 已经很少了，不如先添加几个？", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
             }
@@ -95,8 +92,8 @@ public class QDAnimationListViewFragment extends BaseFragment {
         for (int i = 0; i < 20; i++) {
             mData.add("item " + (i + 1));
         }
-        mAdapter = new MyAdapter(getContext(), mData);
-        mListView.setAdapter(mAdapter);
+        MyAdapter adapter = new MyAdapter(getContext(), mData);
+        mListView.setAdapter(adapter);
     }
 
 

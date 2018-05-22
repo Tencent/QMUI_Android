@@ -106,10 +106,9 @@ public class QMUIGroupListView extends LinearLayout {
     }
 
     /**
-     * 创建一个 Section
+     * 创建一个 Section。
      *
-     * @param context
-     * @return
+     * @return 返回新创建的 Section。
      */
     public static Section newSection(Context context) {
         return new Section(context);
@@ -124,7 +123,7 @@ public class QMUIGroupListView extends LinearLayout {
     /**
      * 设置分割线风格，具体风格可以在 {@link SeparatorStyle} 中选择。
      *
-     * @param separatorStyle
+     * @param separatorStyle {@link #SEPARATOR_STYLE_NORMAL} 或 {@link #SEPARATOR_STYLE_NONE} 其中一个值。
      */
     public void setSeparatorStyle(@SeparatorStyle int separatorStyle) {
         mSeparatorStyle = separatorStyle;

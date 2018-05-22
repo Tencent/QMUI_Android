@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Demo 中通用的 RecyclerView Adapter。
  * Created by sm on 2015/5/3.
  */
 public class QDRecyclerViewAdapter extends RecyclerView.Adapter<QDRecyclerViewAdapter.ViewHolder> {
@@ -25,7 +26,7 @@ public class QDRecyclerViewAdapter extends RecyclerView.Adapter<QDRecyclerViewAd
     }
 
     public static List<Data> generateDatas(int count) {
-        ArrayList<Data> mDatas = new ArrayList<Data>();
+        ArrayList<Data> mDatas = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             mDatas.add(new Data(String.valueOf(i)));
         }
