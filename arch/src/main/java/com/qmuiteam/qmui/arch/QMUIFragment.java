@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * With the use of {@link QMUIFragmentActivity}, {@link QMUIFragment} brings more features,
  * such as swipe back, transition config, and so on.
- *
+ * <p>
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment {
@@ -52,7 +52,6 @@ public abstract class QMUIFragment extends Fragment {
      */
     public static final int EDGE_BOTTOM = SwipeBackLayout.EDGE_BOTTOM;
 
-    // === 提供两种默认的进入退出动画 ===
     protected static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             R.anim.slide_in_right, R.anim.slide_out_left,
             R.anim.slide_in_left, R.anim.slide_out_right);
@@ -141,13 +140,13 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * 模拟 startActivityForResult/onActivityResult
-     * fragment1 通过 startActivityForResult(fragment2, requestCode) 启动 fragment2
-     * fragment2 处理完之后，通过 fragment2.setFragmentResult(RESULT_OK, data) 回调数据给 fragment1
-     * fragment1，通过 onFragmentResult(requestCode, RESULT_OK, data) 取得回调的数据
+     * simulate the behavior of startActivityForResult/onActivityResult:
+     * 1. Jump fragment1 to fragment2 via startActivityForResult(fragment2, requestCode)
+     * 2. Pass data from fragment2 to fragment1 via setFragmentResult(RESULT_OK, data)
+     * 3. Get data in fragment1 through onFragmentResult(requestCode, resultCode, data)
      *
-     * @param fragment    resultCode
-     * @param requestCode data
+     * @param fragment    target fragment
+     * @param requestCode request code
      */
     public void startFragmentForResult(QMUIFragment fragment, int requestCode) {
         if (requestCode == NO_REQUEST_CODE) {
@@ -176,10 +175,6 @@ public abstract class QMUIFragment extends Fragment {
             targetFragment.mResultData = data;
         }
     }
-
-
-    //============================= 生命周期 ================================
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -220,16 +215,16 @@ public abstract class QMUIFragment extends Fragment {
         } else {
             rootView.setFitsSystemWindows(true);
         }
-        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge());
-        swipeBackLayout.setEnableGesture(false);
-        if (canDragBack()) {
-            runAfterAnimation(new Runnable() {
-                @Override
-                public void run() {
-                    swipeBackLayout.setEnableGesture(true);
-                }
-            }, true);
-        }
+        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackEdge(),
+                new SwipeBackLayout.Callback() {
+                    @Override
+                    public boolean canSwipeBack() {
+                        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
+                            return false;
+                        }
+                        return canDragBack();
+                    }
+                });
         swipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
 
             private QMUIFragment mModifiedFragment = null;
@@ -282,7 +277,7 @@ public abstract class QMUIFragment extends Fragment {
                         Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
                             @Override
                             public boolean handle(Object op) {
-                                Field cmdField = null;
+                                Field cmdField;
                                 try {
                                     cmdField = op.getClass().getDeclaredField("cmd");
                                     cmdField.setAccessible(true);
@@ -291,7 +286,7 @@ public abstract class QMUIFragment extends Fragment {
                                         Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
                                         popEnterAnimField.setAccessible(true);
                                         popEnterAnimField.set(op, 0);
-                                    }else if(cmd == 3){
+                                    } else if (cmd == 3) {
                                         Field popExitAnimField = op.getClass().getDeclaredField("popExitAnim");
                                         popExitAnimField.setAccessible(true);
                                         popExitAnimField.set(op, 0);
@@ -561,11 +556,11 @@ public abstract class QMUIFragment extends Fragment {
     protected abstract View onCreateView();
 
     /**
-     * 将在 onStart 中执行
+     * Will be performed in onStart
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode request code
+     * @param resultCode  result code
+     * @param data        extra data
      */
     protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
 
@@ -594,20 +589,23 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * 在动画开始前或动画结束后都会被直接执行
+     * the action will be performed before the start of the enter animation start or after the
+     * enter animation is finished
      *
-     * @param runnable
+     * @param runnable the action to perform
      */
     public void runAfterAnimation(Runnable runnable) {
         runAfterAnimation(runnable, false);
     }
 
     /**
-     * 异步数据渲染时，调用这个方法可以保证数据是在转场动画结束后进行渲染。
-     * 转场动画过程中进行数据渲染时，会造成卡顿，从而影响用户体验
+     * When data is rendered duration the transition animation, it will cause a stall. this method
+     * will promise the data is rendered before or after transition animation
      *
-     * @param runnable
-     * @param onlyEnd
+     * @param runnable the action to perform
+     * @param onlyEnd  if true, the action is only performed after the enter animation is finished,
+     *                 otherwise it can be performed before the start of the enter animation start
+     *                 or after the enter animation is finished.
      */
     public void runAfterAnimation(Runnable runnable, boolean onlyEnd) {
         Utils.assertInMainThread();
@@ -619,8 +617,6 @@ public abstract class QMUIFragment extends Fragment {
             mDelayRenderRunnableList.add(runnable);
         }
     }
-
-    //============================= 新流程 ================================
 
     protected void onEnterAnimationStart(@Nullable Animation animation) {
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_STARTED;
@@ -641,14 +637,19 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * 沉浸式处理，返回 false，则状态栏下为内容区域，返回 true, 则状态栏下为 padding 区域
+     * Immersive processing
+     *
+     * @return if true, the area under status bar belongs to content; otherwise it belongs to padding
      */
     protected boolean translucentFull() {
         return false;
     }
 
     /**
-     * 如果是最后一个Fragment，finish后执行的方法
+     * When finishing to pop back last fragment, let activity have a chance to do something
+     * like start a new fragment
+     *
+     * @return QMUIFragment to start a new fragment or Intent to start a new Activity
      */
     @SuppressWarnings("SameReturnValue")
     public Object onLastFragmentFinish() {
@@ -656,13 +657,13 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * 转场动画控制
+     * Fragment Transition Controller
      */
     public TransitionConfig onFetchTransitionConfig() {
         return SLIDE_TRANSITION_CONFIG;
     }
 
-    ////////界面跳转动画
+
     public static final class TransitionConfig {
         public final int enter;
         public final int exit;

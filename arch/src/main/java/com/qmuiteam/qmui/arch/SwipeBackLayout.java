@@ -92,8 +92,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
      */
     private float mScrollThreshold = DEFAULT_SCROLL_THRESHOLD;
 
-    private boolean mEnable = true;
-
     private View mContentView;
 
     private ViewDragHelper mDragHelper;
@@ -127,6 +125,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
      * Edge being dragged
      */
     private int mTrackingEdge;
+
+    private Callback mCallback;
 
     public SwipeBackLayout(Context context) {
         this(context, null);
@@ -174,8 +174,12 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         return mContentView;
     }
 
-    public void setEnableGesture(boolean enable) {
-        mEnable = enable;
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
+    private boolean canSwipeBack(){
+        return mCallback == null || mCallback.canSwipeBack();
     }
 
     /**
@@ -351,7 +355,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (!mEnable) {
+        if (!canSwipeBack()) {
             return false;
         }
         try {
@@ -363,7 +367,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!mEnable) {
+        if (!canSwipeBack()) {
             return false;
         }
         mDragHelper.processTouchEvent(event);
@@ -577,13 +581,18 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
     }
 
-    public static SwipeBackLayout wrap(View child, int edgeFlag) {
+    public static SwipeBackLayout wrap(View child, int edgeFlag, Callback callback) {
         SwipeBackLayout wrapper = new SwipeBackLayout(child.getContext());
         wrapper.setEdgeTrackingEnabled(edgeFlag);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         child.setLayoutParams(lp);
         wrapper.addView(child);
         wrapper.setContentView(child);
+        wrapper.setCallback(callback);
         return wrapper;
+    }
+
+    public interface Callback {
+        boolean canSwipeBack();
     }
 }
