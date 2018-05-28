@@ -19,7 +19,8 @@
             app:qmui_contentScrim="?attr/qmui_config_color_blue"
             app:qmui_expandedTitleGravity="center_horizontal|bottom"
             app:qmui_expandedTitleMarginBottom="20dp"
-            app:qmui_statusBarScrim="?attr/qmui_config_color_blue">
+            app:qmui_statusBarScrim="?attr/qmui_config_color_blue"
+            android:minHeight="?attr/qmui_topbar_height">
 
             <ImageView
                 android:layout_width="match_parent"
