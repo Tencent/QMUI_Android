@@ -162,4 +162,9 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
         mViewPager.setAdapter(pagerAdapter);
         mTabSegment.setupWithViewPager(mViewPager);
     }
+
+    @Override
+    protected boolean canDragBack() {
+        return mViewPager.getCurrentItem() == 0;
+    }
 }
