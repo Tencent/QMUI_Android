@@ -599,7 +599,7 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     /**
-     * When data is rendered duration the transition animation, it will cause a stall. this method
+     * When data is rendered duration the transition animation, it will cause a choppy. this method
      * will promise the data is rendered before or after transition animation
      *
      * @param runnable the action to perform

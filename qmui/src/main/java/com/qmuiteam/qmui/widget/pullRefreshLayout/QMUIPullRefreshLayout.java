@@ -10,6 +10,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,9 +20,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ImageView;
 import android.widget.Scroller;
 
+import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.drawable.QMUIMaterialProgressDrawable;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -329,8 +330,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         int pointerIndex;
 
         if (!isEnabled() || canChildScrollUp() || mNestedScrollInProgress) {
-            Log.d(TAG, "fast end onIntercept: isEnabled = " + isEnabled() + "; canChildScrollUp = "
-                    + canChildScrollUp() + " ; mNestedScrollInProgress = " + mNestedScrollInProgress);
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "fast end onIntercept: isEnabled = " + isEnabled() + "; canChildScrollUp = "
+                        + canChildScrollUp() + " ; mNestedScrollInProgress = " + mNestedScrollInProgress);
+            }
             return false;
         }
         switch (action) {
@@ -499,7 +502,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     private void finishPull(int vy) {
-        Log.i(TAG, "finishPull: vy = " + vy + " ; mTargetCurrentOffset = " + mTargetCurrentOffset +
+        info("finishPull: vy = " + vy + " ; mTargetCurrentOffset = " + mTargetCurrentOffset +
                 " ; mTargetRefreshOffset = " + mTargetRefreshOffset + " ; mTargetInitOffset = " + mTargetInitOffset +
                 " ; mScroller.isFinished() = " + mScroller.isFinished());
         int miniVy = vy / 1000; // 向下拖拽时， 速度不能太大
@@ -556,6 +559,9 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 }
                 invalidate();
             } else {
+                if(mTargetCurrentOffset == mTargetInitOffset){
+                    return;
+                }
                 if (mAutoScrollToRefreshMinOffset >= 0 && mTargetCurrentOffset >= mAutoScrollToRefreshMinOffset) {
                     mScroller.startScroll(0, mTargetCurrentOffset, 0, mTargetRefreshOffset - mTargetCurrentOffset);
                     mScrollFlag = FLAG_NEED_DO_REFRESH;
@@ -653,20 +659,20 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        Log.i(TAG, "onStartNestedScroll: nestedScrollAxes = " + nestedScrollAxes);
+        info("onStartNestedScroll: nestedScrollAxes = " + nestedScrollAxes);
         return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
-        Log.i(TAG, "onNestedScrollAccepted: axes = " + axes);
+        info("onNestedScrollAccepted: axes = " + axes);
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
         mNestedScrollInProgress = true;
     }
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        Log.i(TAG, "onNestedPreScroll: dx = " + dx + " ; dy = " + dy);
+        info("onNestedPreScroll: dx = " + dx + " ; dy = " + dy);
         int parentCanConsume = mTargetCurrentOffset - mTargetInitOffset;
         if (dy > 0 && parentCanConsume > 0) {
             if (dy >= parentCanConsume) {
@@ -681,7 +687,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        Log.i(TAG, "onNestedScroll: dxConsumed = " + dxConsumed + " ; dyConsumed = " + dyConsumed +
+        info("onNestedScroll: dxConsumed = " + dxConsumed + " ; dyConsumed = " + dyConsumed +
                 " ; dxUnconsumed = " + dxUnconsumed + " ; dyUnconsumed = " + dyUnconsumed);
         if (dyUnconsumed < 0 && !canChildScrollUp()) {
             moveTargetView(-dyUnconsumed, true);
@@ -695,7 +701,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     @Override
     public void onStopNestedScroll(View child) {
-        Log.i(TAG, "onStopNestedScroll");
+        info("onStopNestedScroll: mNestedScrollInProgress = " + mNestedScrollInProgress);
         mNestedScrollingParentHelper.onStopNestedScroll(child);
         if (mNestedScrollInProgress) {
             mNestedScrollInProgress = false;
@@ -705,7 +711,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        Log.i(TAG, "onNestedPreFling: mTargetCurrentOffset = " + mTargetCurrentOffset +
+        info("onNestedPreFling: mTargetCurrentOffset = " + mTargetCurrentOffset +
                 " ; velocityX = " + velocityX + " ; velocityY = " + velocityY);
         if (mTargetCurrentOffset > mTargetInitOffset) {
             mNestedScrollInProgress = false;
@@ -866,8 +872,8 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         if (hasFlag(FLAG_NEED_DELIVER_VELOCITY)) {
             removeFlag(FLAG_NEED_DELIVER_VELOCITY);
             if (mScroller.getCurrVelocity() > mMiniVelocity) {
-                Log.i(TAG, "deliver velocity: " + mScroller.getCurrVelocity());
-                // 如果还有速度，则传递给子view
+                info("deliver velocity: " + mScroller.getCurrVelocity());
+                // if there is a velocity, pass it on
                 if (mTargetView instanceof RecyclerView) {
                     ((RecyclerView) mTargetView).fling(0, (int) mScroller.getCurrVelocity());
                 } else if (mTargetView instanceof AbsListView && android.os.Build.VERSION.SDK_INT >= 21) {
@@ -877,6 +883,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         }
     }
 
+    private void info(String msg) {
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, msg);
+        }
+    }
 
     public interface OnPullListener {
 
@@ -917,7 +928,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         void onPull(int offset, int total, int overPull);
     }
 
-    public static class RefreshView extends ImageView implements IRefreshView {
+    public static class RefreshView extends AppCompatImageView implements IRefreshView {
         private static final int MAX_ALPHA = 255;
         private static final float TRIM_RATE = 0.85f;
         private static final float TRIM_OFFSET = 0.4f;
