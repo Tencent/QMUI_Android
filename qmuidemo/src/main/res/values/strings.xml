@@ -76,9 +76,9 @@
     <string name="spanTouchFix_qmui_fix_behavior">QMUI修复后行为</string>
 
     <!-- PullRefreshView -->
-    <string name="pull_refresh_default_offset_calculator">默认效果: RefreshView 下拉到一定距离后不动</string>
-    <string name="pull_refresh_follow_offset_calculator">RefreshView 一直跟随下拉的效果</string>
-    <string name="pull_refresh_center_gravity_offset_calculator">RefreshView 处于下拉区域的中间的效果</string>
+    <string name="pull_refresh_default_offset_calculator">默认效果: ListView 下拉到一定距离后不动</string>
+    <string name="pull_refresh_follow_offset_calculator">ListView 一直跟随下拉的效果</string>
+    <string name="pull_refresh_center_gravity_offset_calculator">ListView 处于下拉区域的中间的效果</string>
 
 
     <string name="system_behavior_1">\@qmui:点击span区域会同时出发span的点击事件和 TextView 的点击事件 #qmui#</string>
