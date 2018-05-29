@@ -51,10 +51,10 @@ public class UpgradeTipTask implements UpgradeTask {
         SpannableStringBuilder text = new SpannableStringBuilder();
         if(mNewVersion == QDUpgradeManager.VERSION_1_1_3){
             text.append("1. Feature: delay validation of QMUIFragment.canDragBack() until a pop " +
-                    "gesture occurs, This feature allow you to control pop gesture in runtime.\n");
+                    "gesture occurs. This feature allows you to control pop gesture on the fly.\n");
             appendBlockSpace(activity, text);
-            text.append("2. Replace QMUIMaterialProgressDrawable with the official provided " +
-                    "CircularProgressDrawable.\n");
+            text.append("2. Replace QMUIMaterialProgressDrawable with CircularProgressDrawable, " +
+                    "an official implementation.\n");
             appendBlockSpace(activity, text);
             text.append("3. Issue fixes: ");
             final String[] issues = new String[]{
