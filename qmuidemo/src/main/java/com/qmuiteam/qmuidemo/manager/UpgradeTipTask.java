@@ -49,7 +49,19 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_1_2) {
+        if(mNewVersion == QDUpgradeManager.VERSION_1_1_3){
+            text.append("1. Feature: delay validation of QMUIFragment.canDragBack() until a pop " +
+                    "gesture occurs, This feature allow you to control pop gesture in runtime.\n");
+            appendBlockSpace(activity, text);
+            text.append("2. Replace QMUIMaterialProgressDrawable with the official provided " +
+                    "CircularProgressDrawable.\n");
+            appendBlockSpace(activity, text);
+            text.append("3. Issue fixes: ");
+            final String[] issues = new String[]{
+                    "254", "258", "284", "285", "293", "294"
+            };
+            handleIssues(activity, text, issues);
+        } else if(mNewVersion == QDUpgradeManager.VERSION_1_1_2) {
             text.append("1. Updated arch library to 0.0.4 to fix issue #235.\n");
             appendBlockSpace(activity, text);
             text.append("2. Added API to get line count in QMUIFloatLayout");
@@ -70,36 +82,40 @@ public class UpgradeTipTask implements UpgradeTask {
             final String[] issues = new String[]{
                     "125", "127", "132", "141", "177", "184", "198", "200", "209", "213"
             };
-            final String issueBaseUrl = "https://github.com/QMUI/QMUI_Android/issues/";
-            int start, end;
-            for (int i = 0; i < issues.length; i++) {
-                if (i == issues.length - 1) {
-                    text.append("and ");
-                }
-                final String issue = issues[i];
-                start = text.length();
-                text.append("#");
-                text.append(issue);
-                end = text.length();
-                int normalColor = ContextCompat.getColor(activity, R.color.app_color_blue);
-                int pressedColor = ContextCompat.getColor(activity, R.color.app_color_blue_pressed);
-                text.setSpan(new QMUITouchableSpan(normalColor, pressedColor, 0, 0) {
-                    @Override
-                    public void onSpanClick(View widget) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(issueBaseUrl + issue));
-                        activity.startActivity(intent);
-                    }
-                }, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                if (i < issues.length - 1) {
-                    text.append(", ");
-                } else {
-                    text.append(".");
-                }
-            }
+            handleIssues(activity, text, issues);
         } else {
             text.append("welcome to QMUI!");
         }
         return text;
+    }
+
+    private void handleIssues(final Activity activity, SpannableStringBuilder text,  String[] issues){
+        final String issueBaseUrl = "https://github.com/QMUI/QMUI_Android/issues/";
+        int start, end;
+        for (int i = 0; i < issues.length; i++) {
+            if (i == issues.length - 1) {
+                text.append("and ");
+            }
+            final String issue = issues[i];
+            start = text.length();
+            text.append("#");
+            text.append(issue);
+            end = text.length();
+            int normalColor = ContextCompat.getColor(activity, R.color.app_color_blue);
+            int pressedColor = ContextCompat.getColor(activity, R.color.app_color_blue_pressed);
+            text.setSpan(new QMUITouchableSpan(normalColor, pressedColor, 0, 0) {
+                @Override
+                public void onSpanClick(View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(issueBaseUrl + issue));
+                    activity.startActivity(intent);
+                }
+            }, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            if (i < issues.length - 1) {
+                text.append(", ");
+            } else {
+                text.append(".");
+            }
+        }
     }
 }
