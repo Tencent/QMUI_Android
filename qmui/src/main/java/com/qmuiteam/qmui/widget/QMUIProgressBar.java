@@ -234,7 +234,11 @@ public class QMUIProgressBar extends View {
     }
 
     public void setProgress(int progress) {
-        if (progress > mValue && progress < 0) {
+        setProgress(progress, true);
+    }
+    
+    public void setProgress(int progress, boolean animated) {
+        if (progress > mMaxValue && progress < 0) {
             return;
         }
         if (isAnimating) {
@@ -243,7 +247,11 @@ public class QMUIProgressBar extends View {
         }
         int oldValue = mValue;
         mValue = progress;
-        startAnimation(oldValue, progress);
+        if (animated) {
+            startAnimation(oldValue, progress);
+        } else {
+            invalidate();
+        }
     }
 
     public int getMaxValue() {
