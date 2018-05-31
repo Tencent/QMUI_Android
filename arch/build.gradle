@@ -27,13 +27,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    compileOnly("com.android.support:design:$supportVersion")
+    compileOnly "com.android.support:design:$supportVersion"
     compileOnly project(':qmui')
 }
 
 // deploy
-//File deployConfig = project.file('deploy.properties')
-//if (deployConfig.exists()) {
-//    apply from: "deployMaven.gradle"
-//    apply from: "deployBintray.gradle"
-//}
+File deployConfig = project.file('deploy.properties')
+if (deployConfig.exists()) {
+    apply from: "deployMaven.gradle"
+    apply from: "deployBintray.gradle"
+}
