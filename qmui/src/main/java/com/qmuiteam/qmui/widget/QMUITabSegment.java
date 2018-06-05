@@ -1041,8 +1041,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         private List<View> mCustomViews;
         private int mSignCountDigits = 2;
         private TextView mSignCountTextView;
-        //        private RelativeLayout.LayoutParams mSignCountLp;
-        private int mSignCountMarginRight = 0;
+        private int mSignCountMarginLeft = 0;
         private int mSignCountMarginTop = 0;
         /**
          * 是否动态更改icon颜色，如果为true, selectedIcon将失效
@@ -1182,14 +1181,14 @@ public class QMUITabSegment extends HorizontalScrollView {
         /**
          * 设置红点的位置, 注意红点的默认位置是在内容的右侧并顶对齐
          *
-         * @param marginRight 在红点默认位置的基础上添加的 marginRight
+         * @param marginLeft 在红点默认位置的基础上添加的 marginLeft
          * @param marginTop   在红点默认位置的基础上添加的 marginTop
          */
-        public void setSignCountMargin(int marginRight, int marginTop) {
-            mSignCountMarginRight = marginRight;
+        public void setSignCountMargin(int marginLeft, int marginTop) {
+            mSignCountMarginLeft = marginLeft;
             mSignCountMarginTop = marginTop;
             if (mSignCountTextView != null && mSignCountTextView.getLayoutParams() != null) {
-                ((MarginLayoutParams) mSignCountTextView.getLayoutParams()).rightMargin = marginRight;
+                ((MarginLayoutParams) mSignCountTextView.getLayoutParams()).leftMargin = marginLeft;
                 ((MarginLayoutParams) mSignCountTextView.getLayoutParams()).topMargin = marginTop;
             }
         }
@@ -1204,7 +1203,7 @@ public class QMUITabSegment extends HorizontalScrollView {
                 addCustomView(mSignCountTextView);
             }
             // 确保在先 setMargin 后 create 的情况下 margin 会生效
-            setSignCountMargin(mSignCountMarginRight, mSignCountMarginTop);
+            setSignCountMargin(mSignCountMarginLeft, mSignCountMarginTop);
             return mSignCountTextView;
         }
 
