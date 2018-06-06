@@ -310,18 +310,18 @@
 
     <!-- QMUICollapsingTopBarLayout start -->
     <declare-styleable name="QMUICollapsingTopBarLayout">
-        <attr format="dimension" name="qmui_expandedTitleMargin"/>
-        <attr format="dimension" name="qmui_expandedTitleMarginStart"/>
-        <attr format="dimension" name="qmui_expandedTitleMarginTop"/>
-        <attr format="dimension" name="qmui_expandedTitleMarginEnd"/>
-        <attr format="dimension" name="qmui_expandedTitleMarginBottom"/>
-        <attr format="reference" name="qmui_expandedTitleTextAppearance"/>
-        <attr format="reference" name="qmui_collapsedTitleTextAppearance"/>
-        <attr format="color" name="qmui_contentScrim"/>
-        <attr format="color" name="qmui_statusBarScrim"/>
-        <attr format="reference" name="qmui_topBarId"/>
-        <attr format="dimension" name="qmui_scrimVisibleHeightTrigger"/>
-        <attr format="integer" name="qmui_scrimAnimationDuration"/>
+        <attr name="qmui_expandedTitleMargin" format="dimension"/>
+        <attr name="qmui_expandedTitleMarginStart" format="dimension"/>
+        <attr name="qmui_expandedTitleMarginTop" format="dimension"/>
+        <attr name="qmui_expandedTitleMarginEnd" format="dimension"/>
+        <attr name="qmui_expandedTitleMarginBottom" format="dimension"/>
+        <attr name="qmui_expandedTitleTextAppearance" format="reference"/>
+        <attr name="qmui_collapsedTitleTextAppearance" format="reference"/>
+        <attr name="qmui_contentScrim" format="color"/>
+        <attr name="qmui_statusBarScrim" format="color"/>
+        <attr name="qmui_topBarId" format="reference"/>
+        <attr name="qmui_scrimVisibleHeightTrigger" format="dimension"/>
+        <attr name="qmui_scrimAnimationDuration" format="integer"/>
         <attr name="qmui_collapsedTitleGravity">
             <flag name="top" value="0x30"/>
             <flag name="bottom" value="0x50"/>
@@ -346,7 +346,7 @@
             <flag name="start" value="0x00800003"/>
             <flag name="end" value="0x00800005"/>
         </attr>
-        <attr format="boolean" name="qmui_titleEnabled"/>
+        <attr name="qmui_titleEnabled" format="boolean"/>
         <attr name="qmui_title"/>
     </declare-styleable>
     <declare-styleable name="QMUICollapsingTopBarLayout_Layout">
@@ -355,9 +355,18 @@
             <enum name="pin" value="1"/>
             <enum name="parallax" value="2"/>
         </attr>
-        <attr format="float" name="qmui_layout_collapseParallaxMultiplier"/>
+        <attr name="qmui_layout_collapseParallaxMultiplier" format="float"/>
     </declare-styleable>
     <!-- QMUICollapsingTopBarLayout end -->
+
+    <declare-styleable name="QMUIPriorityLinearLayout_Layout">
+        <attr name="qmui_layout_priority" format="enum">
+            <enum name="disposable" value="1"/>
+            <enum name="mini_content_protection" value="2"/>
+            <enum name="incompressible" value="3"/>
+        </attr>
+        <attr name="qmui_layout_miniContentProtectionSize" format="dimension"/>
+    </declare-styleable>
 
     <declare-styleable name="QMUITextAppearance">
         <attr name="android:textSize"/>

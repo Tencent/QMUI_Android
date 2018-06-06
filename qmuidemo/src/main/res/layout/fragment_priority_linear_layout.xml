@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="@color/qmui_config_color_white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="内容超出，压缩每一个child"/>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="提高某些 child 的权重，不被压缩"/>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="1. 这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="2. 测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="3. 测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="4. 测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+
+            <com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="5. 测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="测试文案测试文案测试"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="这个元素将不被压缩"
+                    app:qmui_layout_priority="incompressible"/>
+            </com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.qmuiteam.qmui.widget.QMUITopBarLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"/>
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
