@@ -49,7 +49,18 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_1_3){
+        if (mNewVersion == QDUpgradeManager.VERSION_1_1_4) {
+            text.append("1. Added a new widget: QMUIPriorityLinearLayout.\n");
+            appendBlockSpace(activity, text);
+            text.append("2. Bug fix: marginRight does not make sense for controlling " +
+                    "the position of signCount, it should use marginLeft.\n");
+            appendBlockSpace(activity, text);
+            text.append("3. Issue fixes: ");
+            final String[] issues = new String[]{
+                    "165", "247"
+            };
+            handleIssues(activity, text, issues);
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_3) {
             text.append("1. Feature: delay validation of QMUIFragment.canDragBack() until a pop " +
                     "gesture occurs. This feature allows you to control pop gesture on the fly.\n");
             appendBlockSpace(activity, text);
@@ -61,7 +72,7 @@ public class UpgradeTipTask implements UpgradeTask {
                     "254", "258", "284", "285", "293", "294"
             };
             handleIssues(activity, text, issues);
-        } else if(mNewVersion == QDUpgradeManager.VERSION_1_1_2) {
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_2) {
             text.append("1. Updated arch library to 0.0.4 to fix issue #235.\n");
             appendBlockSpace(activity, text);
             text.append("2. Added API to get line count in QMUIFloatLayout");
@@ -89,7 +100,7 @@ public class UpgradeTipTask implements UpgradeTask {
         return text;
     }
 
-    private void handleIssues(final Activity activity, SpannableStringBuilder text,  String[] issues){
+    private void handleIssues(final Activity activity, SpannableStringBuilder text, String[] issues) {
         final String issueBaseUrl = "https://github.com/QMUI/QMUI_Android/issues/";
         int start, end;
         for (int i = 0; i < issues.length; i++) {
