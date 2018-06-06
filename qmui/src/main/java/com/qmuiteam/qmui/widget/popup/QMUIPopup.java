@@ -12,6 +12,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -243,6 +246,17 @@ public class QMUIPopup extends QMUIBasePopup {
 
     @Override
     public void setContentView(View root) {
+        if (root.getBackground() != null) {
+            if (root instanceof IQMUILayout) {
+                ((IQMUILayout) root).setRadius(getRootLayoutRadius(mContext));
+            } else {
+                QMUIFrameLayout clipLayout = new QMUIFrameLayout(mContext);
+                clipLayout.setRadius(getRootLayoutRadius(mContext));
+                clipLayout.addView(root);
+                root = clipLayout;
+            }
+
+        }
         @SuppressLint("InflateParams") FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
                 .inflate(getRootLayout(), null, false);
         mArrowDown = (ImageView) layout.findViewById(R.id.arrow_down);
@@ -261,6 +275,10 @@ public class QMUIPopup extends QMUIBasePopup {
     @LayoutRes
     protected int getRootLayout() {
         return R.layout.qmui_popup_layout;
+    }
+
+    protected int getRootLayoutRadius(Context context) {
+        return QMUIDisplayHelper.dp2px(context, 5);
     }
 
     private void setViewVisibility(View view, boolean visible) {
