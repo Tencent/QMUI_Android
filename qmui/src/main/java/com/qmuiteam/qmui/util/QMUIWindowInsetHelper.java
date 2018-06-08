@@ -71,12 +71,13 @@ public class QMUIWindowInsetHelper {
                 child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
             } else {
                 if (child instanceof IWindowInsetLayout) {
-                    ((IWindowInsetLayout) child).applySystemWindowInsets19(childInsets);
+                    boolean output = ((IWindowInsetLayout) child).applySystemWindowInsets19(childInsets);
+                    consumed = consumed || output;
                 } else {
-                    defaultApplySystemWindowInsets19((ViewGroup) child, childInsets);
+                    boolean output = defaultApplySystemWindowInsets19((ViewGroup) child, childInsets);
+                    consumed = consumed || output;
                 }
             }
-            consumed = true;
         }
 
         return consumed;
@@ -111,10 +112,7 @@ public class QMUIWindowInsetHelper {
 
             computeInsetsWithGravity(child, childInsets);
             WindowInsetsCompat windowInsetsCompat = ViewCompat.dispatchApplyWindowInsets(child, insets.replaceSystemWindowInsets(childInsets));
-
-            if(windowInsetsCompat.isConsumed()){
-                consumed = true;
-            }
+            consumed = consumed || windowInsetsCompat.isConsumed();
         }
 
         return consumed;
