@@ -519,7 +519,9 @@ public class QMUIViewHelper {
      * @param value 设置的值
      */
     public static void setPaddingLeft(View view, int value) {
-        view.setPadding(value, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
+        if(value != view.getPaddingLeft()){
+            view.setPadding(value, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
+        }
     }
 
     /**
@@ -529,7 +531,9 @@ public class QMUIViewHelper {
      * @param value 设置的值
      */
     public static void setPaddingTop(View view, int value) {
-        view.setPadding(view.getPaddingLeft(), value, view.getPaddingRight(), view.getPaddingBottom());
+        if(value != view.getPaddingTop()){
+            view.setPadding(view.getPaddingLeft(), value, view.getPaddingRight(), view.getPaddingBottom());
+        }
     }
 
     /**
@@ -539,7 +543,9 @@ public class QMUIViewHelper {
      * @param value 设置的值
      */
     public static void setPaddingRight(View view, int value) {
-        view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), value, view.getPaddingBottom());
+        if(value != view.getPaddingRight()){
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), value, view.getPaddingBottom());
+        }
     }
 
     /**
@@ -549,7 +555,9 @@ public class QMUIViewHelper {
      * @param value 设置的值
      */
     public static void setPaddingBottom(View view, int value) {
-        view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), value);
+        if(value != view.getPaddingBottom()){
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), value);
+        }
     }
 
     /**

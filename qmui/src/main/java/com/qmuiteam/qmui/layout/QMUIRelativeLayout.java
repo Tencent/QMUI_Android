@@ -204,6 +204,10 @@ public class QMUIRelativeLayout extends QMUIAlphaRelativeLayout implements IQMUI
         mLayoutHelper.setShadowAlpha(shadowAlpha);
     }
 
+    public void setOuterNormalColor(int color) {
+        mLayoutHelper.setOuterNormalColor(color);
+    }
+
     @Override
     public float getShadowAlpha() {
         return mLayoutHelper.getShadowAlpha();

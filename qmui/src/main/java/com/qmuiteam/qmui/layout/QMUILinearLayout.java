@@ -203,6 +203,10 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout implements IQMUILayo
         mLayoutHelper.setShadowAlpha(shadowAlpha);
     }
 
+    public void setOuterNormalColor(int color) {
+        mLayoutHelper.setOuterNormalColor(color);
+    }
+
     @Override
     public float getShadowAlpha() {
         return mLayoutHelper.getShadowAlpha();

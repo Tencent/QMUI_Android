@@ -206,6 +206,10 @@ public class QMUIFrameLayout extends QMUIAlphaFrameLayout implements IQMUILayout
         mLayoutHelper.setShadowAlpha(shadowAlpha);
     }
 
+    public void setOuterNormalColor(int color) {
+        mLayoutHelper.setOuterNormalColor(color);
+    }
+
     @Override
     public float getShadowAlpha() {
         return mLayoutHelper.getShadowAlpha();

@@ -567,7 +567,9 @@ public class QMUILayoutHelper implements IQMUILayout {
         if (mTopDividerHeight > 0) {
             mDividerPaint.setStrokeWidth(mTopDividerHeight);
             mDividerPaint.setColor(mTopDividerColor);
-            mDividerPaint.setAlpha(mTopDividerAlpha);
+            if (mTopDividerAlpha < 255) {
+                mDividerPaint.setAlpha(mTopDividerAlpha);
+            }
             float y = mTopDividerHeight * 1f / 2;
             canvas.drawLine(mTopDividerInsetLeft, y, w - mTopDividerInsetRight, y, mDividerPaint);
         }
@@ -575,7 +577,9 @@ public class QMUILayoutHelper implements IQMUILayout {
         if (mBottomDividerHeight > 0) {
             mDividerPaint.setStrokeWidth(mBottomDividerHeight);
             mDividerPaint.setColor(mBottomDividerColor);
-            mDividerPaint.setAlpha(mBottomDividerAlpha);
+            if (mTopDividerAlpha < 255) {
+                mDividerPaint.setAlpha(mBottomDividerAlpha);
+            }
             float y = (float) Math.floor(h - mBottomDividerHeight * 1f / 2);
             canvas.drawLine(mBottomDividerInsetLeft, y, w - mBottomDividerInsetRight, y, mDividerPaint);
         }
@@ -583,14 +587,18 @@ public class QMUILayoutHelper implements IQMUILayout {
         if (mLeftDividerWidth > 0) {
             mDividerPaint.setStrokeWidth(mLeftDividerWidth);
             mDividerPaint.setColor(mLeftDividerColor);
-            mDividerPaint.setAlpha(mLeftDividerAlpha);
+            if (mLeftDividerAlpha < 255) {
+                mDividerPaint.setAlpha(mLeftDividerAlpha);
+            }
             canvas.drawLine(0, mLeftDividerInsetTop, 0, h - mLeftDividerInsetBottom, mDividerPaint);
         }
 
         if (mRightDividerWidth > 0) {
             mDividerPaint.setStrokeWidth(mRightDividerWidth);
             mDividerPaint.setColor(mRightDividerColor);
-            mDividerPaint.setAlpha(mRightDividerAlpha);
+            if (mRightDividerAlpha < 255) {
+                mDividerPaint.setAlpha(mRightDividerAlpha);
+            }
             canvas.drawLine(w, mRightDividerInsetTop, w, h - mRightDividerInsetBottom, mDividerPaint);
         }
     }
@@ -656,6 +664,14 @@ public class QMUILayoutHelper implements IQMUILayout {
         mPath.addRoundRect(rect, radiusArray, Path.Direction.CW);
         canvas.drawPath(mPath, paint);
 
+    }
+
+    public void setOuterNormalColor(int color) {
+        mOuterNormalColor = color;
+        View owner = mOwner.get();
+        if (owner != null) {
+            owner.invalidate();
+        }
     }
 
     public static boolean useFeature() {
