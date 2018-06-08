@@ -6,10 +6,10 @@ import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.textview.QMUILinkTextView;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +32,26 @@ public class QDLinkTextViewFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         initTopBar();
         mLinkTextView.setOnLinkClickListener(mOnLinkClickListener);
+        mLinkTextView.setOnLinkLongClickListener(new QMUILinkTextView.OnLinkLongClickListener() {
+            @Override
+            public void onLongClick(String text) {
+                Toast.makeText(getContext(), "long click: " + text, Toast.LENGTH_SHORT).show();
+            }
+        });
+        mLinkTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "click TextView", Toast.LENGTH_SHORT).show();
+            }
+        });
+        // if parent click event should be triggered when TextView area is clicked
+//        mLinkTextView.setNeedForceEventToParent(true);
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(getContext(), "forceEventToParent", Toast.LENGTH_SHORT).show();
+//            }
+//        });
         return view;
     }
 

@@ -19,9 +19,9 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.link.QMUILinkify;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
+import com.qmuiteam.qmui.link.QMUILinkify;
 import com.qmuiteam.qmui.span.QMUIOnSpanClickListener;
 
 import java.util.HashSet;
@@ -228,6 +228,14 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
         if (mOnLinkLongClickListener != null) {
             mOnLinkLongClickListener.onLongClick(text);
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean performClick() {
+        if (!mTouchSpanHit && !mNeedForceEventToParent) {
+            return super.performClick();
         }
         return false;
     }
