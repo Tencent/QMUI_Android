@@ -23,7 +23,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 
 /**
  * 提供为图片添加圆角、边框、剪裁到圆形或其他形状等功能。
@@ -348,18 +347,18 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         if (drawable instanceof BitmapDrawable) {
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
             float bmWidth = bitmap.getWidth(), bmHeight = bitmap.getHeight();
-            if(bmWidth == 0 || bmHeight == 0){
+            if (bmWidth == 0 || bmHeight == 0) {
                 return null;
             }
             // ensure minWidth and minHeight
             float minScaleX = getMinimumWidth() / bmWidth, minScaleY = getMinimumHeight() / bmHeight;
-            if(minScaleX > 1 || minScaleY > 1){
+            if (minScaleX > 1 || minScaleY > 1) {
                 float scale = Math.max(minScaleX, minScaleY);
                 Matrix matrix = new Matrix();
                 matrix.postScale(scale, scale);
 
-                return Bitmap.createBitmap(bitmap, 0, 0, (int)bmWidth, (int)bmHeight, matrix, false);
-            }else{
+                return Bitmap.createBitmap(bitmap, 0, 0, (int) bmWidth, (int) bmHeight, matrix, false);
+            } else {
                 return bitmap;
             }
         }
@@ -423,10 +422,62 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         mBitmapPaint.setShader(mBitmapShader);
     }
 
+    private void drawBitmap(Canvas canvas, int borderWidth) {
+        final float halfBorderWidth = borderWidth * 1.0f / 2;
+        mBitmapPaint.setColorFilter(mIsSelected ? mSelectedColorFilter : mColorFilter);
+
+        if (mIsCircle) {
+            int center = getWidth() / 2;
+            canvas.drawCircle(center, center, center - halfBorderWidth, mBitmapPaint);
+        } else {
+            mRectF.left = halfBorderWidth;
+            //noinspection SuspiciousNameCombination
+            mRectF.top = halfBorderWidth;
+            mRectF.right = getWidth() - halfBorderWidth;
+            mRectF.bottom = getHeight() - halfBorderWidth;
+            if (mIsOval) {
+                canvas.drawOval(mRectF, mBitmapPaint);
+            } else {
+                canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBitmapPaint);
+            }
+        }
+    }
+
+    private void drawBorder(Canvas canvas, int borderWidth) {
+        if (borderWidth <= 0) {
+            return;
+        }
+        final float halfBorderWidth = borderWidth * 1.0f / 2;
+        mBorderPaint.setColor(mIsSelected ? mSelectedBorderColor : mBorderColor);
+        mBorderPaint.setStrokeWidth(borderWidth);
+        if (mIsCircle) {
+            int radius = getWidth() / 2;
+            canvas.drawCircle(radius, radius, radius - halfBorderWidth, mBorderPaint);
+        } else {
+            mRectF.left = halfBorderWidth;
+            //noinspection SuspiciousNameCombination
+            mRectF.top = halfBorderWidth;
+            mRectF.right = getWidth() - halfBorderWidth;
+            mRectF.bottom = getHeight() - halfBorderWidth;
+            if (mIsOval) {
+                canvas.drawOval(mRectF, mBorderPaint);
+            } else {
+                canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBorderPaint);
+            }
+        }
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         int width = getWidth(), height = getHeight();
-        if (width <= 0 || height <= 0 || mBitmap == null || mBitmapShader == null) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        int borderWidth = mIsSelected ? mSelectedBorderWidth : mBorderWidth;
+
+        if (mBitmap == null || mBitmapShader == null) {
+            drawBorder(canvas, borderWidth);
             return;
         }
 
@@ -435,39 +486,8 @@ public class QMUIRadiusImageView extends AppCompatImageView {
             mHeight = height;
             updateBitmapShader();
         }
-
-        mBorderPaint.setColor(mIsSelected ? mSelectedBorderColor : mBorderColor);
-        mBitmapPaint.setColorFilter(mIsSelected ? mSelectedColorFilter : mColorFilter);
-        int borderWidth = mIsSelected ? mSelectedBorderWidth : mBorderWidth;
-        mBorderPaint.setStrokeWidth(borderWidth);
-        final float halfBorderWidth = borderWidth * 1.0f / 2;
-
-
-        if (mIsCircle) {
-            int radius = getWidth() / 2;
-            canvas.drawCircle(radius, radius, radius, mBitmapPaint);
-            if (borderWidth > 0) {
-                canvas.drawCircle(radius, radius, radius - halfBorderWidth, mBorderPaint);
-            }
-
-        } else {
-            mRectF.left = halfBorderWidth;
-            //noinspection SuspiciousNameCombination
-            mRectF.top = halfBorderWidth;
-            mRectF.right = width - halfBorderWidth;
-            mRectF.bottom = height - halfBorderWidth;
-            if (mIsOval) {
-                canvas.drawOval(mRectF, mBitmapPaint);
-                if (borderWidth > 0) {
-                    canvas.drawOval(mRectF, mBorderPaint);
-                }
-            } else {
-                canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBitmapPaint);
-                if (borderWidth > 0) {
-                    canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBorderPaint);
-                }
-            }
-        }
+        drawBitmap(canvas, borderWidth);
+        drawBorder(canvas, borderWidth);
     }
 
     @Override
