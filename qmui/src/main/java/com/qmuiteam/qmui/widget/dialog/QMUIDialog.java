@@ -477,7 +477,7 @@ public class QMUIDialog extends Dialog {
     }
 
 
-    private static class MenuBaseDialogBuilder<T extends QMUIDialogBuilder> extends QMUIDialogBuilder<T> {
+    public static class MenuBaseDialogBuilder<T extends QMUIDialogBuilder> extends QMUIDialogBuilder<T> {
         protected ArrayList<QMUIDialogMenuItemView> mMenuItemViews;
         protected LinearLayout mMenuItemContainer;
         protected QMUIWrapContentScrollView mContentScrollView;

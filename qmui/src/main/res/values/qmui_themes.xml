@@ -77,8 +77,9 @@
         *                qmui dialog                     *
         **********************************************-->
         <item name="qmui_dialog_min_width">260dp</item>
-        <item name="qmui_dialog_max_width">420dp</item>
+        <item name="qmui_dialog_max_width">304dp</item>
         <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
+        <item name="qmui_dialog_radius">@dimen/qmui_dialog_radius</item>
         <item name="qmui_dialog_margin_vertical">20dp</item>
         <item name="qmui_dialog_padding_horizontal">24dp</item>
         <item name="qmui_dialog_background_dim_amount">0.6</item>

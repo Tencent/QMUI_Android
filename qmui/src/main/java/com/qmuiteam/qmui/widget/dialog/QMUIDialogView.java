@@ -71,6 +71,14 @@ public class QMUIDialogView extends QMUILinearLayout {
         }
     }
 
+    public void setMinWidth(int minWidth) {
+        mMinWidth = minWidth;
+    }
+
+    public void setMaxWidth(int maxWidth) {
+        mMaxWidth = maxWidth;
+    }
+
     public interface OnDecorationListener{
         void onDraw(Canvas canvas, QMUIDialogView view);
         void onDrawOver(Canvas canvas, QMUIDialogView view);

@@ -50,6 +50,14 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
+    /**
+     * A global theme provider, use to distinguish theme from different builder type
+     */
+    private static OnProvideDefaultTheme sOnProvideDefaultTheme = null;
+
+    public static void setOnProvideDefaultTheme(OnProvideDefaultTheme onProvideDefaultTheme) {
+        QMUIDialogBuilder.sOnProvideDefaultTheme = onProvideDefaultTheme;
+    }
 
     private Context mContext;
     protected QMUIDialog mDialog;
@@ -62,7 +70,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     protected View mAnchorTopView;
     protected View mAnchorBottomView;
     protected List<QMUIDialogAction> mActions = new ArrayList<>();
-    private  QMUIDialogView.OnDecorationListener mOnDecorationListener;
+    private QMUIDialogView.OnDecorationListener mOnDecorationListener;
 
     protected TextView mTitleView;
     protected QMUILinearLayout mActionContainer;
@@ -271,6 +279,12 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @see #create(int)
      */
     public QMUIDialog create() {
+        if (sOnProvideDefaultTheme != null) {
+            int theme = sOnProvideDefaultTheme.getThemeForBuilder(this);
+            if (theme > 0) {
+                return create(theme);
+            }
+        }
         return create(R.style.QMUI_Dialog);
     }
 
@@ -483,5 +497,9 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
             }
         }
         return output;
+    }
+
+    public interface OnProvideDefaultTheme {
+        int getThemeForBuilder(QMUIDialogBuilder builder);
     }
 }

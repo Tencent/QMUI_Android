@@ -5,7 +5,6 @@
     *                  Dialog                    *
     **********************************************-->
     <dimen name="qmui_dialog_radius">2dp</dimen>
-    <dimen name="qmui_dialog_action_button_radius">2dp</dimen>
 
     <!--**********************************************
     *                  Button                        *

@@ -38,6 +38,7 @@
     <attr name="qmui_dialog_min_width" format="dimension"/>
     <attr name="qmui_dialog_max_width" format="dimension"/>
     <attr name="qmui_dialog_bg" format="reference"/>
+    <attr name="qmui_dialog_radius" format="dimension"/>
     <attr name="qmui_dialog_margin_vertical" format="dimension"/>
     <attr name="qmui_dialog_padding_horizontal" format="dimension"/>
     <attr name="qmui_dialog_background_dim_amount" format="float"/>

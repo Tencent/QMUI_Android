@@ -7,7 +7,7 @@
     **********************************************-->
     <style name="qmui_dialog_wrap">
         <item name="android:background">?attr/qmui_dialog_bg</item>
-        <item name="qmui_radius">@dimen/qmui_dialog_radius</item>
+        <item name="qmui_radius">?attr/qmui_dialog_radius</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">?attr/qmui_dialog_margin_vertical</item>
