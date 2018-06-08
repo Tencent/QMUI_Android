@@ -121,7 +121,16 @@ public class QMUIKeyboardHelper {
 
                         wasOpened = isOpen;
 
-                        listener.onVisibilityChanged(isOpen);
+                        boolean removeListener = listener.onVisibilityChanged(isOpen, heightDiff);
+                        if (removeListener) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                activityRoot.getViewTreeObserver()
+                                        .removeOnGlobalLayoutListener(this);
+                            } else {
+                                activityRoot.getViewTreeObserver()
+                                        .removeGlobalOnLayoutListener(this);
+                            }
+                        }
                     }
                 };
         activityRoot.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
@@ -163,6 +172,9 @@ public class QMUIKeyboardHelper {
 
     public interface KeyboardVisibilityEventListener {
 
-        void onVisibilityChanged(boolean isOpen);
+        /**
+         * @return to remove global listener or not
+         */
+        boolean onVisibilityChanged(boolean isOpen, int heightDiff);
     }
 }
