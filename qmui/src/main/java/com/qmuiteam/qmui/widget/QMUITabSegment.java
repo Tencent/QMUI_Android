@@ -558,13 +558,10 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     public void selectTab(int index) {
-        selectTab(index, true);
+        selectTab(index, false);
     }
 
-    /**
-     * 只有点击 tab 才会自己产生动画变化，其它需要使用 updateIndicatorPosition 做驱动
-     */
-    private void selectTab(final int index, boolean preventAnim) {
+    public void selectTab(final int index, boolean preventAnim) {
         if (mIsInSelectTab) {
             return;
         }
@@ -591,13 +588,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         if (mSelectedIndex == Integer.MIN_VALUE) {
             tabAdapter.setup();
             Tab model = tabAdapter.getItem(index);
-            if (mIndicatorView != null && listViews.size() > 1) {
-                if (mIndicatorDrawable != null) {
-                    QMUIViewHelper.setBackgroundKeepingPadding(mIndicatorView, mIndicatorDrawable);
-                } else {
-                    mIndicatorView.setBackgroundColor(getTabSelectedColor(model));
-                }
-            }
+            reLayoutIndicator(listViews, model);
             TextView selectedTv = listViews.get(index).getTextView();
             setTextViewTypeface(selectedTv, true);
             changeTabColor(selectedTv, getTabSelectedColor(model), model, STATUS_SELECTED);
@@ -629,6 +620,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             }
             mSelectedIndex = index;
             mIsInSelectTab = false;
+            reLayoutIndicator(listViews, nowModel);
             return;
         }
 
@@ -690,6 +682,21 @@ public class QMUITabSegment extends HorizontalScrollView {
         mIsInSelectTab = false;
     }
 
+    private void reLayoutIndicator(List<TabItemView> listViews, Tab model) {
+        if (mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE &&
+                mIndicatorView != null && listViews.size() > 1) {
+            if (mIndicatorDrawable != null) {
+                QMUIViewHelper.setBackgroundKeepingPadding(mIndicatorView, mIndicatorDrawable);
+            } else {
+                mIndicatorView.setBackgroundColor(getTabSelectedColor(model));
+            }
+            if (model.contentWidth > 0) {
+                mIndicatorView.layout(model.contentLeft, mIndicatorView.getTop(),
+                        model.contentLeft + model.contentWidth, mIndicatorView.getBottom());
+            }
+        }
+    }
+
     private void setTextViewTypeface(TextView tv, boolean selected) {
         if (mTypefaceProvider == null || tv == null) {
             return;
@@ -724,7 +731,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         int targetColor = QMUIColorHelper.computeColor(getTabNormalColor(targetModel), getTabSelectedColor(targetModel), offsetPercent);
         preventLayoutToChangeTabColor(preTv, preColor, preModel, STATUS_PROGRESS);
         preventLayoutToChangeTabColor(nowTv, targetColor, targetModel, STATUS_PROGRESS);
-        mForceIndicatorNotDoLayoutWhenParentLayout = false;
         if (mIndicatorView != null && listViews.size() > 1) {
             final int leftDistance = targetModel.getContentLeft() - preModel.getContentLeft();
             final int widthDistance = targetModel.getContentWidth() - preModel.getContentWidth();
@@ -822,7 +828,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         if (mViewPager != null && adapterCount > 0) {
             final int curItem = mViewPager.getCurrentItem();
             if (curItem != mSelectedIndex && curItem < adapterCount) {
-                selectTab(curItem);
+                selectTab(curItem, true);
             }
         }
     }
@@ -995,7 +1001,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             final QMUITabSegment tabSegment = mTabSegmentRef.get();
             if (tabSegment != null && tabSegment.getSelectedIndex() != position
                     && position < tabSegment.getTabCount()) {
-                tabSegment.selectTab(position);
+                tabSegment.selectTab(position, true);
             }
         }
     }
@@ -1182,7 +1188,7 @@ public class QMUITabSegment extends HorizontalScrollView {
          * 设置红点的位置, 注意红点的默认位置是在内容的右侧并顶对齐
          *
          * @param marginLeft 在红点默认位置的基础上添加的 marginLeft
-         * @param marginTop   在红点默认位置的基础上添加的 marginTop
+         * @param marginTop  在红点默认位置的基础上添加的 marginTop
          */
         public void setSignCountMargin(int marginLeft, int marginTop) {
             mSignCountMarginLeft = marginLeft;
@@ -1246,7 +1252,7 @@ public class QMUITabSegment extends HorizontalScrollView {
          * 获取该 Tab 的未读数
          */
         public int getSignCount() {
-            if(mSignCountTextView == null || mSignCountTextView.getVisibility() != VISIBLE){
+            if (mSignCountTextView == null || mSignCountTextView.getVisibility() != VISIBLE) {
                 return 0;
             }
             if (!QMUILangHelper.isNullOrEmpty(mSignCountTextView.getText())) {
