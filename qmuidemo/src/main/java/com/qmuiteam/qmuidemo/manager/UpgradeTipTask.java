@@ -49,7 +49,24 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if (mNewVersion == QDUpgradeManager.VERSION_1_1_4) {
+        if (mNewVersion == QDUpgradeManager.VERSION_1_1_5) {
+            text.append("1. Code optimization for QMUIDialog.\n");
+            appendBlockSpace(activity, text);
+            text.append("2. Added a return value to KeyboardVisibilityEventListener, which " +
+                    "determines whether OnGlobalLayoutListener is deleted.\n");
+            appendBlockSpace(activity, text);
+            text.append("3. Bug fix: getSignCount() in QMUITabSegment should return 0 " +
+                    "if view is not visible.\n");
+            appendBlockSpace(activity, text);
+            text.append("4. Bug fix: fixed incorrect layout of translucent status bar may " +
+                    "appear in Android 4.4.\n");
+            appendBlockSpace(activity, text);
+            text.append("5. Issue fixes: ");
+            final String[] issues = new String[]{
+                    "304", "308"
+            };
+            handleIssues(activity, text, issues);
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_4) {
             text.append("1. Added a new widget: QMUIPriorityLinearLayout.\n");
             appendBlockSpace(activity, text);
             text.append("2. Bug fix: marginRight does not make sense for controlling " +
