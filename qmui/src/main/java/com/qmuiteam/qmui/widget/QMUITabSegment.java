@@ -1246,7 +1246,10 @@ public class QMUITabSegment extends HorizontalScrollView {
          * 获取该 Tab 的未读数
          */
         public int getSignCount() {
-            if (mSignCountTextView != null && !QMUILangHelper.isNullOrEmpty(mSignCountTextView.getText())) {
+            if(mSignCountTextView == null || mSignCountTextView.getVisibility() != VISIBLE){
+                return 0;
+            }
+            if (!QMUILangHelper.isNullOrEmpty(mSignCountTextView.getText())) {
                 return Integer.parseInt(mSignCountTextView.getText().toString());
             } else {
                 return 0;
