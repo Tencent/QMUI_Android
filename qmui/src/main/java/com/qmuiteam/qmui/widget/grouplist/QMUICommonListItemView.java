@@ -123,6 +123,7 @@ public class QMUICommonListItemView extends RelativeLayout {
     private ImageView mRedDot;
     private ViewStub mNewTipViewStub;
     private View mNewTip;
+    private Drawable mSwitchDrawable;
 
     public QMUICommonListItemView(Context context) {
         this(context, null);
@@ -300,7 +301,9 @@ public class QMUICommonListItemView extends RelativeLayout {
             case ACCESSORY_TYPE_SWITCH: {
                 if (mSwitch == null) {
                     mSwitch = new CheckBox(getContext());
-                    mSwitch.setButtonDrawable(QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_common_list_item_switch));
+                    if (mSwitchDrawable == null)
+                        mSwitchDrawable = QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_common_list_item_switch);
+                    mSwitch.setButtonDrawable(mSwitchDrawable);
                     mSwitch.setLayoutParams(getAccessoryLayoutParams());
                     // disable掉且不可点击，然后通过整个item的点击事件来toggle开关的状态
                     mSwitch.setClickable(false);
@@ -346,6 +349,14 @@ public class QMUICommonListItemView extends RelativeLayout {
 
     public ViewGroup getAccessoryContainerView() {
         return mAccessoryView;
+    }
+
+    public Drawable getmSwitchDrawable() {
+        return mSwitchDrawable;
+    }
+
+    public void setmSwitchDrawable(Drawable mSwitchDrawable) {
+        this.mSwitchDrawable = mSwitchDrawable;
     }
 
     /**
