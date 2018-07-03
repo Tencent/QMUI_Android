@@ -1,6 +1,5 @@
 package com.qmuiteam.qmui.util;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -11,6 +10,7 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -20,6 +20,7 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Locale;
 
 /**
@@ -419,5 +420,72 @@ public class QMUIDisplayHelper {
 
     public static boolean isElevationSupported() {
         return android.os.Build.VERSION.SDK_INT >= 21;
+    }
+
+    public static boolean hasNavigationBar(Context context) {
+        boolean hasNav = deviceHasNavigationBar();
+        if (!hasNav) {
+            return false;
+        }
+        if (QMUIDeviceHelper.isVivo()) {
+            return vivoNavigationGestureEnabled(context);
+        }
+        return true;
+    }
+
+    /**
+     * 判断设备是否存在NavigationBar
+     *
+     * @return true 存在, false 不存在
+     */
+    private static boolean deviceHasNavigationBar() {
+        boolean haveNav = false;
+        try {
+            //1.通过WindowManagerGlobal获取windowManagerService
+            // 反射方法：IWindowManager windowManagerService = WindowManagerGlobal.getWindowManagerService();
+            Class<?> windowManagerGlobalClass = Class.forName("android.view.WindowManagerGlobal");
+            Method getWmServiceMethod = windowManagerGlobalClass.getDeclaredMethod("getWindowManagerService");
+            getWmServiceMethod.setAccessible(true);
+            //getWindowManagerService是静态方法，所以invoke null
+            Object iWindowManager = getWmServiceMethod.invoke(null);
+
+            //2.获取windowMangerService的hasNavigationBar方法返回值
+            // 反射方法：haveNav = windowManagerService.hasNavigationBar();
+            Class<?> iWindowManagerClass = iWindowManager.getClass();
+            Method hasNavBarMethod = iWindowManagerClass.getDeclaredMethod("hasNavigationBar");
+            hasNavBarMethod.setAccessible(true);
+            haveNav = (Boolean) hasNavBarMethod.invoke(iWindowManager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return haveNav;
+    }
+
+    // ====================== Setting ===========================
+    private static final String VIVO_NAVIGATION_GESTURE = "navigation_gesture_on";
+    private static final String HUAWAI_DISPLAY_NOTCH_STATUS = "display_notch_status";
+
+    /**
+     * 获取vivo手机设置中的"navigation_gesture_on"值，判断当前系统是使用导航键还是手势导航操作
+     *
+     * @param context app Context
+     * @return false 表示使用的是虚拟导航键(NavigationBar)， true 表示使用的是手势， 默认是false
+     */
+    public static boolean vivoNavigationGestureEnabled(Context context) {
+        int val = Settings.Secure.getInt(context.getContentResolver(), VIVO_NAVIGATION_GESTURE, 0);
+        return val != 0;
+    }
+
+    public static boolean huaweiIsNotchSetToShowInSetting(Context context) {
+        // 0: 默认
+        // 1: 隐藏显示区域
+        int result = Settings.Secure.getInt(context.getContentResolver(), HUAWAI_DISPLAY_NOTCH_STATUS, 0);
+        return result == 0;
+    }
+
+    public static boolean xiaomiIsNotchSetToShowInSetting(Context context){
+        // 0: 默认
+        // 1: 隐藏显示区域
+        return Settings.Global.getInt(context.getContentResolver(), "force_black", 0) == 0;
     }
 }

@@ -41,7 +41,7 @@ public class QMUIStatusBarHelper {
     private static boolean supportTranslucent() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 // Essential Phone 不支持沉浸式，否则系统又不从状态栏下方开始布局又给你下发 WindowInsets
-                && !Build.BRAND.toLowerCase().contains("essential");
+                && !QMUIDeviceHelper.isEssentialPhone();
     }
 
     /**
@@ -202,7 +202,7 @@ public class QMUIStatusBarHelper {
         int systemUi = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         systemUi = changeStatusBarModeRetainFlag(window, systemUi);
         decorView.setSystemUiVisibility(systemUi);
-        if(QMUIDeviceHelper.isMIUIV9()){
+        if (QMUIDeviceHelper.isMIUIV9()) {
             // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
             // https://github.com/QMUI/QMUI_Android/issues/160
             MIUISetStatusBarLightMode(window, light);
@@ -214,7 +214,7 @@ public class QMUIStatusBarHelper {
      * 设置状态栏字体图标为深色，需要 MIUIV6 以上
      *
      * @param window 需要设置的窗口
-     * @param light   是否把状态栏字体及图标颜色设置为深色
+     * @param light  是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回 true
      */
     @SuppressWarnings("unchecked")
@@ -258,16 +258,15 @@ public class QMUIStatusBarHelper {
      * 可以用来判断是否为 Flyme 用户
      *
      * @param window 需要设置的窗口
-     * @param light   是否把状态栏字体及图标颜色设置为深色
+     * @param light  是否把状态栏字体及图标颜色设置为深色
      * @return boolean 成功执行返回true
      */
     public static boolean FlymeSetStatusBarLightMode(Window window, boolean light) {
-
-        // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
-        Android6SetStatusBarLightMode(window, light);
-
         boolean result = false;
         if (window != null) {
+            // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
+            Android6SetStatusBarLightMode(window, light);
+
             try {
                 WindowManager.LayoutParams lp = window.getAttributes();
                 Field darkFlag = WindowManager.LayoutParams.class

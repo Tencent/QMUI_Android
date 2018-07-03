@@ -32,11 +32,13 @@ public class QMUIDeviceHelper {
     private final static String FLYME = "flyme";
     private final static String ZTEC2016 = "zte c2016";
     private final static String ZUKZ1 = "zuk z1";
+    private final static String ESSENTIAL = "essential";
     private final static String MEIZUBOARD[] = {"m9", "M9", "mx", "MX"};
     private static String sMiuiVersionName;
     private static String sFlymeVersionName;
     private static boolean sIsTabletChecked = false;
     private static boolean sIsTabletValue = false;
+    private static final String BRAND = Build.BRAND.toLowerCase();
 
     static {
         Properties properties = new Properties();
@@ -154,9 +156,6 @@ public class QMUIDeviceHelper {
         return isMeizu() && isHigher;
     }
 
-    /**
-     * 判断是否为魅族
-     */
     public static boolean isMeizu() {
         return isPhone(MEIZUBOARD) || isFlyme();
     }
@@ -167,6 +166,22 @@ public class QMUIDeviceHelper {
      */
     public static boolean isXiaomi() {
         return Build.MANUFACTURER.toLowerCase().equals("xiaomi");
+    }
+
+    public static boolean isVivo() {
+        return BRAND.contains("vivo") || BRAND.contains("bbk");
+    }
+
+    public static boolean isOppo() {
+        return BRAND.contains("oppo");
+    }
+
+    public static boolean isHuawei() {
+        return BRAND.contains("huawei") || BRAND.contains("honor");
+    }
+
+    public static boolean isEssentialPhone(){
+        return BRAND.contains("essential");
     }
 
 
