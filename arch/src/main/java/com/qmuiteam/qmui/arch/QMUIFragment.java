@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.qmuiteam.qmui.QMUILog;
+import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.reflect.Field;
@@ -334,6 +335,7 @@ public abstract class QMUIFragment extends Fragment {
                 if (fragmentManager == null) {
                     return;
                 }
+                QMUIKeyboardHelper.hideKeyboard(swipeBackLayout);
                 int backstackCount = fragmentManager.getBackStackEntryCount();
                 if (backstackCount > 1) {
                     try {
