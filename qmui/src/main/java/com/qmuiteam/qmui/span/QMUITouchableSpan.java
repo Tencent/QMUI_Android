@@ -47,6 +47,14 @@ public abstract class QMUITouchableSpan extends ClickableSpan implements IToucha
         return mNormalBackgroundColor;
     }
 
+    public void setNormalTextColor(int normalTextColor) {
+        mNormalTextColor = normalTextColor;
+    }
+
+    public void setPressedTextColor(int pressedTextColor) {
+        mPressedTextColor = pressedTextColor;
+    }
+
     public int getNormalTextColor() {
         return mNormalTextColor;
     }
