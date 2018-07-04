@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -41,6 +42,9 @@ public class QMUIDisplayHelper {
      * 是否有摄像头
      */
     private static Boolean sHasCamera = null;
+
+    private static int[] sPortraitRealSizeCache = null;
+    private static int[] sLandscapeRealSizeCache = null;
 
     /**
      * 获取 DisplayMetrics
@@ -108,6 +112,21 @@ public class QMUIDisplayHelper {
      */
 
     public static int[] getRealScreenSize(Context context) {
+        int orientation = context.getResources().getConfiguration().orientation;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if(sLandscapeRealSizeCache == null){
+                sLandscapeRealSizeCache = doGetRealScreenSize(context);
+            }
+            return sLandscapeRealSizeCache;
+        }else{
+            if(sPortraitRealSizeCache == null){
+                sPortraitRealSizeCache = doGetRealScreenSize(context);
+            }
+            return sPortraitRealSizeCache;
+        }
+    }
+
+    private static int[] doGetRealScreenSize(Context context){
         int[] size = new int[2];
         int widthPixels, heightPixels;
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -123,21 +142,88 @@ public class QMUIDisplayHelper {
             heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
         } catch (Exception ignored) {
         }
-        try {
-            // used when SDK_INT >= 17; includes window decorations (statusbar bar/menu bar)
-            Point realSize = new Point();
-            d.getRealSize(realSize);
+        if(Build.VERSION.SDK_INT >= 17){
+            try {
+                // used when SDK_INT >= 17; includes window decorations (statusbar bar/menu bar)
+                Point realSize = new Point();
+                d.getRealSize(realSize);
 
 
-            Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
-            widthPixels = realSize.x;
-            heightPixels = realSize.y;
-        } catch (Exception ignored) {
+                Display.class.getMethod("getRealSize", Point.class).invoke(d, realSize);
+                widthPixels = realSize.x;
+                heightPixels = realSize.y;
+            } catch (Exception ignored) {
+            }
         }
 
         size[0] = widthPixels;
         size[1] = heightPixels;
         return size;
+    }
+
+    /**
+     * 剔除挖孔屏等导致的不可用区域后的 width
+     * @param context
+     * @return
+     */
+    public static int getUsefulScreenWidth(Context context){
+        int result = getRealScreenSize(context)[0];
+        int orientation = context.getResources().getConfiguration().orientation;
+        boolean isLandscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
+        if(!QMUINotchHelper.hasNotch(context)){
+            if(isLandscape && QMUIDeviceHelper.isEssentialPhone()){
+                // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
+                // 这里说挖孔屏是状态栏高度的两倍， 但横屏好像小了一点点
+                result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
+                return result;
+            }
+            return result;
+        }
+        if(isLandscape){
+            // 华为挖孔屏横屏时，会把整个 window 往后移动，因此，可用区域减小
+            if (QMUIDeviceHelper.isHuawei() && !QMUIDisplayHelper.huaweiIsNotchSetToShowInSetting(context)) {
+                result -= QMUINotchHelper.getNotchSizeInHuawei(context)[1];
+            }
+
+            // TODO verify for MIUI
+            if (QMUIDeviceHelper.isXiaomi() && !QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context)) {
+                result -= QMUINotchHelper.getNotchHeightInXiaomi(context);
+            }
+
+            // TODO vivo 设置-系统导航-导航手势样式-显示手势操作区域 打开的情况下，应该减去手势操作区域的高度，但无API
+            // TODO vivo 设置-显示与亮度-第三方应用显示比例 选为安全区域显示时，整个 window 会移动，应该减去移动区域，但无API
+            // TODO oppo 设置-显示与亮度-应用全屏显示-凹形区域显示控制 关闭是，整个 window 会移动，应该减去移动区域，但无API
+        }
+        return result;
+    }
+
+    /**
+     * 剔除挖孔屏等导致的不可用区域后的 height
+     * @param context
+     * @return
+     */
+    public static int getUsefulScreenHeight(Context context){
+        int result = getRealScreenSize(context)[1];
+        int orientation = context.getResources().getConfiguration().orientation;
+        boolean isPortrait = orientation == Configuration.ORIENTATION_PORTRAIT;
+        if(!QMUINotchHelper.hasNotch(context)){
+            if(isPortrait &&  QMUIDeviceHelper.isEssentialPhone()){
+                // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
+                // 这里说挖孔屏是状态栏高度的两倍
+                result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
+            }
+            return result;
+        }
+        if(isPortrait){
+            if (QMUIDeviceHelper.isXiaomi() && !QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context)) {
+                // TODO verify for MIUI
+                result -= QMUINotchHelper.getNotchHeightInXiaomi(context);
+            }
+            // TODO vivo 设置-系统导航-导航手势样式-显示手势操作区域 打开的情况下，应该减去手势操作区域的高度，但无API
+            // TODO vivo 设置-显示与亮度-第三方应用显示比例 选为安全区域显示时，整个 window 会移动，应该减去移动区域，但无API
+            // TODO oppo 设置-显示与亮度-应用全屏显示-凹形区域显示控制 关闭是，整个 window 会移动，应该减去移动区域，但无API
+        }
+        return result;
     }
 
     public static boolean isNavMenuExist(Context context) {
@@ -304,6 +390,7 @@ public class QMUIDisplayHelper {
      * @param context
      * @return
      */
+    @SuppressLint("MissingPermission")
     public static boolean hasInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
@@ -485,8 +572,6 @@ public class QMUIDisplayHelper {
 
     @TargetApi(17)
     public static boolean xiaomiIsNotchSetToShowInSetting(Context context){
-        // 0: 默认
-        // 1: 隐藏显示区域
         return Settings.Global.getInt(context.getContentResolver(), "force_black", 0) == 0;
     }
 }
