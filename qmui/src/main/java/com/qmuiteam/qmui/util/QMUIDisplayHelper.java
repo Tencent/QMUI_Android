@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -137,7 +138,6 @@ public class QMUIDisplayHelper {
         size[0] = widthPixels;
         size[1] = heightPixels;
         return size;
-
     }
 
     public static boolean isNavMenuExist(Context context) {
@@ -402,7 +402,7 @@ public class QMUIDisplayHelper {
             WindowManager.LayoutParams params = activity.getWindow().getAttributes();
             params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
             activity.getWindow().setAttributes(params);
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
     }
 
@@ -483,6 +483,7 @@ public class QMUIDisplayHelper {
         return result == 0;
     }
 
+    @TargetApi(17)
     public static boolean xiaomiIsNotchSetToShowInSetting(Context context){
         // 0: 默认
         // 1: 隐藏显示区域

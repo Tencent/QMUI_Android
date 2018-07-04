@@ -27,6 +27,7 @@ import com.qmuiteam.qmuidemo.fragment.lab.QDSnapHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDColorHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDDeviceHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDDrawableHelperFragment;
+import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDSpanFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDStatusBarHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDViewHelperFragment;
@@ -101,6 +102,7 @@ public class QDDataManager {
         mUtilNames.add(QDDrawableHelperFragment.class);
         mUtilNames.add(QDStatusBarHelperFragment.class);
         mUtilNames.add(QDViewHelperFragment.class);
+        mUtilNames.add(QDNotchHelperFragment.class);
     }
 
     /**

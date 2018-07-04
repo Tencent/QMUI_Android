@@ -2,9 +2,11 @@ package com.qmuiteam.qmui.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
@@ -15,8 +17,10 @@ public class QMUINotchHelper {
     private static final int NOTCH_IN_SCREEN_VOIO = 0x00000020;
     private static final String MIUI_NOTCH = "ro.miui.notch";
     private static Boolean sHasNotch = null;
-    private static Rect sLandscapeSafeInset = null;
-    private static Rect sPortraitSafeInset = null;
+    private static Rect sRotation0SafeInset = null;
+    private static Rect sRotation90SafeInset = null;
+    private static Rect sRotation180SafeInset = null;
+    private static Rect sRotation270SafeInset = null;
     private static int[] sNotchSizeInHawei = null;
     private static Boolean sHuaweiIsNotchSetToShow = null;
     private static Boolean sXiaomiIsNotchSetToShow = null;
@@ -124,76 +128,165 @@ public class QMUINotchHelper {
         return getSafeInsetRect(context).right;
     }
 
+    private static void clearAllRectInfo() {
+        sRotation0SafeInset = null;
+        sRotation90SafeInset = null;
+        sRotation180SafeInset = null;
+        sRotation270SafeInset = null;
+    }
+
+    private static void clearPortraitRectInfo() {
+        sRotation0SafeInset = null;
+        sRotation180SafeInset = null;
+    }
+
+    private static void clearLandscapeRectInfo() {
+        sRotation90SafeInset = null;
+        sRotation270SafeInset = null;
+    }
+
     private static Rect getSafeInsetRect(Context context) {
         // 全面屏设置项更改
         if (QMUIDeviceHelper.isHuawei()) {
             boolean isHuaweiNotchSetToShow = QMUIDisplayHelper.huaweiIsNotchSetToShowInSetting(context);
             if (sHuaweiIsNotchSetToShow != null && sHuaweiIsNotchSetToShow != isHuaweiNotchSetToShow) {
-                sLandscapeSafeInset = null;
+                clearLandscapeRectInfo();
             }
             sHuaweiIsNotchSetToShow = isHuaweiNotchSetToShow;
         } else if (QMUIDeviceHelper.isXiaomi()) {
             boolean isXiaomiNotchSetToShow = QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context);
             if (sXiaomiIsNotchSetToShow != null && sXiaomiIsNotchSetToShow != isXiaomiNotchSetToShow) {
-                sLandscapeSafeInset = null;
-                sPortraitSafeInset = null;
+                clearAllRectInfo();
             }
             sXiaomiIsNotchSetToShow = isXiaomiNotchSetToShow;
         }
-
-        int orientation = context.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (sPortraitSafeInset == null) {
-                sPortraitSafeInset = new Rect();
-                if (!hasNotch(context)) {
-                    return sPortraitSafeInset;
-                }
-                if (QMUIDeviceHelper.isVivo()) {
-                    sPortraitSafeInset.top = QMUIDisplayHelper.dp2px(context, 32);
-                    // TODO vivo 系统导航-导航手势样式-显示手势操作区域
-                    sPortraitSafeInset.bottom = 0;
-                } else if (QMUIDeviceHelper.isOppo()) {
-                    sPortraitSafeInset.top = QMUIStatusBarHelper.getStatusbarHeight(context);
-                    sPortraitSafeInset.bottom = 0;
-                } else if (QMUIDeviceHelper.isHuawei()) {
-                    int[] notchSize = getNotchSizeInHuawei(context);
-                    sPortraitSafeInset.top = notchSize[1];
-                    sPortraitSafeInset.bottom = 0;
-                } else if (QMUIDeviceHelper.isXiaomi()) {
-                    sPortraitSafeInset.top = getNotchHeightInXiaomi(context);
-                    sPortraitSafeInset.bottom = 0;
-                }
+        int screenRotation = getScreenRotataion(context);
+        if (screenRotation == Surface.ROTATION_90) {
+            if (sRotation90SafeInset == null) {
+                sRotation90SafeInset = getRectInfoRotation90(context);
             }
-            return sPortraitSafeInset;
+            return sRotation90SafeInset;
+        } else if (screenRotation == Surface.ROTATION_180) {
+            if (sRotation180SafeInset == null) {
+                sRotation180SafeInset = getRectInfoRotation180(context);
+            }
+            return sRotation180SafeInset;
+        } else if (screenRotation == Surface.ROTATION_270) {
+            if (sRotation270SafeInset == null) {
+                sRotation270SafeInset = getRectInfoRotation270(context);
+            }
+            return sRotation270SafeInset;
         } else {
-            if (sLandscapeSafeInset == null) {
-                sLandscapeSafeInset = new Rect();
-                if (!hasNotch(context)) {
-                    return sLandscapeSafeInset;
-                }
-                int safeInsetHor = 0;
-                if (QMUIDeviceHelper.isVivo()) {
-                    safeInsetHor = QMUIDisplayHelper.dp2px(context, 32);
-                } else if (QMUIDeviceHelper.isOppo()) {
-                    safeInsetHor = QMUIStatusBarHelper.getStatusbarHeight(context);
-                } else if (QMUIDeviceHelper.isHuawei()) {
-                    if (sHuaweiIsNotchSetToShow) {
-                        safeInsetHor = getNotchSizeInHuawei(context)[1];
-                    } else {
-                        safeInsetHor = 0;
-                    }
-                } else if (QMUIDeviceHelper.isXiaomi()) {
-                    if (sXiaomiIsNotchSetToShow) {
-                        safeInsetHor = getNotchHeightInXiaomi(context);
-                    } else {
-                        safeInsetHor = 0;
-                    }
-                }
-                sLandscapeSafeInset.left = safeInsetHor;
-                sLandscapeSafeInset.right = safeInsetHor;
+            if (sRotation0SafeInset == null) {
+                sRotation0SafeInset = getRectInfoRotation0(context);
             }
-            return sLandscapeSafeInset;
+            return sRotation0SafeInset;
         }
+    }
+
+    private static Rect getRectInfoRotation0(Context context) {
+        Rect rect = new Rect();
+        if (!hasNotch(context)) {
+            return rect;
+        }
+        if (QMUIDeviceHelper.isVivo()) {
+            // TODO vivo 显示与亮度-第三方应用显示比例
+            rect.top = getNotchHeightInVivo(context);
+            rect.bottom = 0;
+        } else if (QMUIDeviceHelper.isOppo()) {
+            // TODO OPPO 设置-显示-应用全屏显示-凹形区域显示控制
+            rect.top = QMUIStatusBarHelper.getStatusbarHeight(context);
+            rect.bottom = 0;
+        } else if (QMUIDeviceHelper.isHuawei()) {
+            int[] notchSize = getNotchSizeInHuawei(context);
+            rect.top = notchSize[1];
+            rect.bottom = 0;
+        } else if (QMUIDeviceHelper.isXiaomi()) {
+            rect.top = getNotchHeightInXiaomi(context);
+            rect.bottom = 0;
+        }
+        return rect;
+    }
+
+    private static Rect getRectInfoRotation90(Context context) {
+        Rect rect = new Rect();
+        if (!hasNotch(context)) {
+            return rect;
+        }
+
+        if (QMUIDeviceHelper.isVivo()) {
+            rect.left = getNotchHeightInVivo(context);
+            rect.right = 0;
+        } else if (QMUIDeviceHelper.isOppo()) {
+            rect.left = QMUIStatusBarHelper.getStatusbarHeight(context);
+            rect.right = 0;
+        } else if (QMUIDeviceHelper.isHuawei()) {
+            if (sHuaweiIsNotchSetToShow) {
+                rect.left = getNotchSizeInHuawei(context)[1];
+            } else {
+                rect.left = 0;
+            }
+            rect.right = 0;
+        } else if (QMUIDeviceHelper.isXiaomi()) {
+            if (sXiaomiIsNotchSetToShow) {
+                rect.left = getNotchHeightInXiaomi(context);
+            } else {
+                rect.left = 0;
+            }
+            rect.right = 0;
+        }
+        return rect;
+    }
+
+    private static Rect getRectInfoRotation180(Context context) {
+        Rect rect = new Rect();
+        if (!hasNotch(context)) {
+            return rect;
+        }
+        if (QMUIDeviceHelper.isVivo()) {
+            rect.top = 0;
+            rect.bottom = getNotchHeightInVivo(context);
+        } else if (QMUIDeviceHelper.isOppo()) {
+            rect.top = 0;
+            rect.bottom = QMUIStatusBarHelper.getStatusbarHeight(context);
+        } else if (QMUIDeviceHelper.isHuawei()) {
+            int[] notchSize = getNotchSizeInHuawei(context);
+            rect.top = 0;
+            rect.bottom = notchSize[1];
+        } else if (QMUIDeviceHelper.isXiaomi()) {
+            rect.top = 0;
+            rect.bottom = getNotchHeightInXiaomi(context);
+        }
+        return rect;
+    }
+
+    private static Rect getRectInfoRotation270(Context context) {
+        Rect rect = new Rect();
+        if (!hasNotch(context)) {
+            return rect;
+        }
+        if (QMUIDeviceHelper.isVivo()) {
+            rect.right = getNotchHeightInVivo(context);
+            rect.left = 0;
+        } else if (QMUIDeviceHelper.isOppo()) {
+            rect.right = QMUIStatusBarHelper.getStatusbarHeight(context);
+            rect.left = 0;
+        } else if (QMUIDeviceHelper.isHuawei()) {
+            if (sHuaweiIsNotchSetToShow) {
+                rect.right = getNotchSizeInHuawei(context)[1];
+            } else {
+                rect.right = 0;
+            }
+            rect.left = 0;
+        } else if (QMUIDeviceHelper.isXiaomi()) {
+            if (sXiaomiIsNotchSetToShow) {
+                rect.right = getNotchHeightInXiaomi(context);
+            } else {
+                rect.right = 0;
+            }
+            rect.left = 0;
+        }
+        return rect;
     }
 
 
@@ -231,6 +324,33 @@ public class QMUINotchHelper {
             return context.getResources().getDimensionPixelSize(resourceId);
         }
         return -1;
+    }
+
+    public static int getNotchWidthInVivo(Context context){
+        return QMUIDisplayHelper.dp2px(context, 100);
+    }
+
+    public static int getNotchHeightInVivo(Context context){
+        return QMUIDisplayHelper.dp2px(context, 27);
+    }
+
+    /**
+     * this method is private, because we do not need to handle tablet
+     *
+     * @param context
+     * @return
+     */
+    private static int getScreenRotataion(Context context) {
+        WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (w == null) {
+            return Surface.ROTATION_0;
+        }
+        Display display = w.getDefaultDisplay();
+        if (display == null) {
+            return Surface.ROTATION_0;
+        }
+
+        return display.getRotation();
     }
 
 }

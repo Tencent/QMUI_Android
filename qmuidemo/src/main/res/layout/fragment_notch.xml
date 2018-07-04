@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/qmui_config_color_white">
+
+    <FrameLayout
+        android:id="@+id/not_safe_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/safe_area_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="false"
+            android:background="?attr/qmui_config_color_gray_2"
+            android:textColor="@color/qmui_config_color_white"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:text="安全区域\nTODO vivo 显示与亮度-第三方应用显示比例\nTODO OPPO 设置-显示-应用全屏显示-凹形区域显示控制"/>
+    </FrameLayout>
+
+
+    <com.qmuiteam.qmui.widget.QMUITopBarLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"/>
+
+    <FrameLayout
+        android:id="@+id/tabs_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:fitsSystemWindows="true">
+        <com.qmuiteam.qmui.widget.QMUITabSegment
+            android:id="@+id/tabs"
+            android:background="?attr/qmui_list_item_bg_with_border_top"
+            android:textSize="12sp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/home_tab_height"/>
+    </FrameLayout>
+
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
