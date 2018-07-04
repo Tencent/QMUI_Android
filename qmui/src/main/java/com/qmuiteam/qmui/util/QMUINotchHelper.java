@@ -160,7 +160,7 @@ public class QMUINotchHelper {
             }
             sXiaomiIsNotchSetToShow = isXiaomiNotchSetToShow;
         }
-        int screenRotation = getScreenRotataion(context);
+        int screenRotation = getScreenRotation(context);
         if (screenRotation == Surface.ROTATION_90) {
             if (sRotation90SafeInset == null) {
                 sRotation90SafeInset = getRectInfoRotation90(context);
@@ -340,7 +340,7 @@ public class QMUINotchHelper {
      * @param context
      * @return
      */
-    private static int getScreenRotataion(Context context) {
+    private static int getScreenRotation(Context context) {
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (w == null) {
             return Surface.ROTATION_0;
