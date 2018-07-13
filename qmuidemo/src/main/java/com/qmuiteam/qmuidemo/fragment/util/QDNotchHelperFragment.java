@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -29,6 +30,7 @@ import butterknife.OnClick;
 
 @Widget(group = Group.Helper, name = "QMUINotchHelper", iconRes = R.mipmap.icon_grid_span)
 public class QDNotchHelperFragment extends BaseFragment {
+    private static final String TAG = "QDNotchHelperFragment";
     @BindView(R.id.not_safe_bg) FrameLayout mNoSafeBgLayout;
     @BindView(R.id.safe_area_tv) TextView mSafeAreaTv;
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
@@ -56,6 +58,18 @@ public class QDNotchHelperFragment extends BaseFragment {
                 QMUINotchHelper.getSafeInsetRight(getContext()),
                 QMUINotchHelper.getSafeInsetBottom(getContext())
         );
+        mNoSafeBgLayout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                int height = bottom - top;
+                int width = right - left;
+                int screenUsefulWidth = QMUIDisplayHelper.getUsefulScreenWidth(getContext());
+                int screenUsefulHeight = QMUIDisplayHelper.getUsefulScreenHeight(getContext());
+                Log.i(TAG, "width = " + width + "; height = " + height +
+                        "; screenUsefulWidth = " + screenUsefulWidth +
+                        "; screenUsefulHeight = " + screenUsefulHeight);
+            }
+        });
         return layout;
     }
 

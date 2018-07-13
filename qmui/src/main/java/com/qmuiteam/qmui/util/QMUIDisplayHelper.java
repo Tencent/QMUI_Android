@@ -112,6 +112,10 @@ public class QMUIDisplayHelper {
      */
 
     public static int[] getRealScreenSize(Context context) {
+        if(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            // Essential Phone 8.0版本后，Display size 会根据挖孔屏的设置而得到不同的结果，不能信任 cache
+            return doGetRealScreenSize(context);
+        }
         int orientation = context.getResources().getConfiguration().orientation;
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             if(sLandscapeRealSizeCache == null){
@@ -171,11 +175,11 @@ public class QMUIDisplayHelper {
         int orientation = context.getResources().getConfiguration().orientation;
         boolean isLandscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
         if(!QMUINotchHelper.hasNotch(context)){
-            if(isLandscape && QMUIDeviceHelper.isEssentialPhone()){
+            if(isLandscape && QMUIDeviceHelper.isEssentialPhone()
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                 // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
                 // 这里说挖孔屏是状态栏高度的两倍， 但横屏好像小了一点点
                 result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
-                return result;
             }
             return result;
         }
@@ -207,7 +211,8 @@ public class QMUIDisplayHelper {
         int orientation = context.getResources().getConfiguration().orientation;
         boolean isPortrait = orientation == Configuration.ORIENTATION_PORTRAIT;
         if(!QMUINotchHelper.hasNotch(context)){
-            if(isPortrait &&  QMUIDeviceHelper.isEssentialPhone()){
+            if(isPortrait &&  QMUIDeviceHelper.isEssentialPhone()
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                 // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
                 // 这里说挖孔屏是状态栏高度的两倍
                 result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
