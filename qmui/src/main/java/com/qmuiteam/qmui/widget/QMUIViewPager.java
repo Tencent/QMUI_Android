@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
@@ -104,6 +105,11 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
     @Override
     public boolean applySystemWindowInsets21(WindowInsetsCompat insets) {
         return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
+    }
+
+    @Override
+    public boolean applySystemWindowInsets(WindowInsets insets) {
+        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets(this, insets);
     }
 
     @Override

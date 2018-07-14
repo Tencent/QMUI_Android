@@ -56,16 +56,22 @@ public class QMUIStatusBarHelper {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
+        Window window = activity.getWindow();
         // 小米和魅族4.4 以上版本支持沉浸式
         if (QMUIDeviceHelper.isMeizu() || QMUIDeviceHelper.isMIUI()) {
-            Window window = activity.getWindow();
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             return;
         }
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams
+                    .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            window.setAttributes(params);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = activity.getWindow();
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && supportTransclentStatusBar6()) {

@@ -48,6 +48,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
@@ -1062,6 +1063,11 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             mLastInsets = newInsets;
             requestLayout();
         }
+        return true;
+    }
+
+    @Override
+    public boolean applySystemWindowInsets(WindowInsets insets) {
         return true;
     }
 

@@ -18,7 +18,9 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
 
 import java.lang.reflect.Field;
@@ -112,25 +114,25 @@ public class QMUIDisplayHelper {
      */
 
     public static int[] getRealScreenSize(Context context) {
-        if(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Essential Phone 8.0版本后，Display size 会根据挖孔屏的设置而得到不同的结果，不能信任 cache
             return doGetRealScreenSize(context);
         }
         int orientation = context.getResources().getConfiguration().orientation;
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if(sLandscapeRealSizeCache == null){
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (sLandscapeRealSizeCache == null) {
                 sLandscapeRealSizeCache = doGetRealScreenSize(context);
             }
             return sLandscapeRealSizeCache;
-        }else{
-            if(sPortraitRealSizeCache == null){
+        } else {
+            if (sPortraitRealSizeCache == null) {
                 sPortraitRealSizeCache = doGetRealScreenSize(context);
             }
             return sPortraitRealSizeCache;
         }
     }
 
-    private static int[] doGetRealScreenSize(Context context){
+    private static int[] doGetRealScreenSize(Context context) {
         int[] size = new int[2];
         int widthPixels, heightPixels;
         WindowManager w = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -146,7 +148,7 @@ public class QMUIDisplayHelper {
             heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
         } catch (Exception ignored) {
         }
-        if(Build.VERSION.SDK_INT >= 17){
+        if (Build.VERSION.SDK_INT >= 17) {
             try {
                 // used when SDK_INT >= 17; includes window decorations (statusbar bar/menu bar)
                 Point realSize = new Point();
@@ -167,23 +169,32 @@ public class QMUIDisplayHelper {
 
     /**
      * 剔除挖孔屏等导致的不可用区域后的 width
-     * @param context
+     *
+     * @param activity
      * @return
      */
-    public static int getUsefulScreenWidth(Context context){
+    public static int getUsefulScreenWidth(Activity activity) {
+        return getUsefulScreenWidth(activity, QMUINotchHelper.hasNotch(activity));
+    }
+
+    public static int getUsefulScreenWidth(View view) {
+        return getUsefulScreenWidth(view.getContext(), QMUINotchHelper.hasNotch(view));
+    }
+
+    public static int getUsefulScreenWidth(Context context, boolean hasNotch) {
         int result = getRealScreenSize(context)[0];
         int orientation = context.getResources().getConfiguration().orientation;
         boolean isLandscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
-        if(!QMUINotchHelper.hasNotch(context)){
-            if(isLandscape && QMUIDeviceHelper.isEssentialPhone()
-                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+        if (!hasNotch) {
+            if (isLandscape && QMUIDeviceHelper.isEssentialPhone()
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
                 // 这里说挖孔屏是状态栏高度的两倍， 但横屏好像小了一点点
                 result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
             }
             return result;
         }
-        if(isLandscape){
+        if (isLandscape) {
             // 华为挖孔屏横屏时，会把整个 window 往后移动，因此，可用区域减小
             if (QMUIDeviceHelper.isHuawei() && !QMUIDisplayHelper.huaweiIsNotchSetToShowInSetting(context)) {
                 result -= QMUINotchHelper.getNotchSizeInHuawei(context)[1];
@@ -203,23 +214,32 @@ public class QMUIDisplayHelper {
 
     /**
      * 剔除挖孔屏等导致的不可用区域后的 height
-     * @param context
+     *
+     * @param activity
      * @return
      */
-    public static int getUsefulScreenHeight(Context context){
+    public static int getUsefulScreenHeight(Activity activity) {
+        return getUsefulScreenHeight(activity, QMUINotchHelper.hasNotch(activity));
+    }
+
+    public static int getUsefulScreenHeight(View view) {
+        return getUsefulScreenHeight(view.getContext(), QMUINotchHelper.hasNotch(view));
+    }
+
+    private static int getUsefulScreenHeight(Context context, boolean hasNotch) {
         int result = getRealScreenSize(context)[1];
         int orientation = context.getResources().getConfiguration().orientation;
         boolean isPortrait = orientation == Configuration.ORIENTATION_PORTRAIT;
-        if(!QMUINotchHelper.hasNotch(context)){
-            if(isPortrait &&  QMUIDeviceHelper.isEssentialPhone()
-                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+        if (!hasNotch) {
+            if (isPortrait && QMUIDeviceHelper.isEssentialPhone()
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 // https://arstechnica.com/gadgets/2017/09/essential-phone-review-impressive-for-a-new-company-but-not-competitive/
                 // 这里说挖孔屏是状态栏高度的两倍
                 result -= 2 * QMUIStatusBarHelper.getStatusbarHeight(context);
             }
             return result;
         }
-        if(isPortrait){
+        if (isPortrait) {
             if (QMUIDeviceHelper.isXiaomi() && !QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context)) {
                 // TODO verify for MIUI
                 result -= QMUINotchHelper.getNotchHeightInXiaomi(context);
@@ -470,32 +490,24 @@ public class QMUIDisplayHelper {
     /**
      * 设置全屏
      *
-     * @param context
+     * @param activity
      */
-    public static void setFullScreen(Context context) {
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-            params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            activity.getWindow().setAttributes(params);
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }
+    public static void setFullScreen(Activity activity) {
+        Window window = activity.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     }
 
     /**
      * 取消全屏
      *
-     * @param context
+     * @param activity
      */
-    public static void cancelFullScreen(Context context) {
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-            params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            activity.getWindow().setAttributes(params);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }
+    public static void cancelFullScreen(Activity activity) {
+        Window window = activity.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     /**
@@ -576,7 +588,7 @@ public class QMUIDisplayHelper {
     }
 
     @TargetApi(17)
-    public static boolean xiaomiIsNotchSetToShowInSetting(Context context){
+    public static boolean xiaomiIsNotchSetToShowInSetting(Context context) {
         return Settings.Global.getInt(context.getContentResolver(), "force_black", 0) == 0;
     }
 }

@@ -5,21 +5,29 @@
     android:layout_height="match_parent"
     android:background="@color/qmui_config_color_white">
 
-    <FrameLayout
+    <com.qmuiteam.qmui.widget.QMUINotchConsumeLayout
         android:id="@+id/not_safe_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/safe_area_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="false"
             android:background="?attr/qmui_config_color_gray_2"
+            android:fitsSystemWindows="false"
+            android:gravity="center_horizontal"
+            android:text="安全区域\nTODO vivo 显示与亮度-第三方应用显示比例\nTODO OPPO 设置-显示-应用全屏显示-凹形区域显示控制"
             android:textColor="@color/qmui_config_color_white"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:text="安全区域\nTODO vivo 显示与亮度-第三方应用显示比例\nTODO OPPO 设置-显示-应用全屏显示-凹形区域显示控制"/>
-    </FrameLayout>
+            android:textSize="16sp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="40dp"
+            android:padding="24dp"/>
+    </com.qmuiteam.qmui.widget.QMUINotchConsumeLayout>
 
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout
@@ -34,12 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:fitsSystemWindows="true">
+
         <com.qmuiteam.qmui.widget.QMUITabSegment
             android:id="@+id/tabs"
-            android:background="?attr/qmui_list_item_bg_with_border_top"
-            android:textSize="12sp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/home_tab_height"/>
+            android:layout_height="@dimen/home_tab_height"
+            android:background="?attr/qmui_list_item_bg_with_border_top"
+            android:textSize="12sp"/>
     </FrameLayout>
 
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
