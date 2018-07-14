@@ -5,17 +5,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUICenterGravityRefreshOffsetCalculator;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIDefaultRefreshOffsetCalculator;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIFollowRefreshOffsetCalculator;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
+import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,9 +31,12 @@ import butterknife.ButterKnife;
 
 @Widget(widgetClass = QMUIPullRefreshLayout.class, iconRes = R.mipmap.icon_grid_pull_refresh_layout)
 public class QDPullRefreshFragment extends BaseFragment {
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.pull_to_refresh) QMUIPullRefreshLayout mPullRefreshLayout;
-    @BindView(R.id.listview) ListView mListView;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.pull_to_refresh)
+    QMUIPullRefreshLayout mPullRefreshLayout;
+    @BindView(R.id.listview)
+    ListView mListView;
 
     private QDItemDescription mQDItemDescription;
 

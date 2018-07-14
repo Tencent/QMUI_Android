@@ -11,13 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.popup.QMUIListPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,9 +37,12 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 @Widget(widgetClass = QMUIPopup.class, iconRes = R.mipmap.icon_grid_popup)
 public class QDPopupFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.actiontBtn1) Button mActionButton1;
-    @BindView(R.id.actiontBtn2) Button mActionButton2;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.actiontBtn1)
+    Button mActionButton1;
+    @BindView(R.id.actiontBtn2)
+    Button mActionButton2;
 
     private QMUIPopup mNormalPopup;
     private QMUIListPopup mListPopup;

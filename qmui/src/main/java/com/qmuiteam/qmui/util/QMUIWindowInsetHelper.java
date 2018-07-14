@@ -33,7 +33,7 @@ public class QMUIWindowInsetHelper {
         mWindowInsetLayoutWR = new WeakReference<>(windowInsetLayout);
         KEYBOARD_HEIGHT_BOUNDARY = QMUIDisplayHelper.dp2px(viewGroup.getContext(), 100);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (QMUINotchHelper.isNotchOfficialSupport()) {
             // WindowInsetsCompat does not exist DisplayCutout stuff...
             viewGroup.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @Override
@@ -138,7 +138,7 @@ public class QMUIWindowInsetHelper {
     @TargetApi(23)
     public boolean defaultApplySystemWindowInsets(ViewGroup viewGroup, WindowInsets insets) {
         sApplySystemWindowInsetsCount++;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (QMUINotchHelper.isNotchOfficialSupport()) {
             if (sApplySystemWindowInsetsCount == 1) {
                 // avoid dispatching multiple times
                 dispatchNotchInsetChange(viewGroup);

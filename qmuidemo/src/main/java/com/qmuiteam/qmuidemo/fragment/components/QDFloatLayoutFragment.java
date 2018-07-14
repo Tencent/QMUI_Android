@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUIFloatLayout;
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
+import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,8 +26,10 @@ import butterknife.ButterKnife;
 public class QDFloatLayoutFragment extends BaseFragment {
     private static final String TAG = "QDFloatLayoutFragment";
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.qmuidemo_floatlayout) QMUIFloatLayout mFloatLayout;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.qmuidemo_floatlayout)
+    QMUIFloatLayout mFloatLayout;
 
     private QDItemDescription mQDItemDescription;
 

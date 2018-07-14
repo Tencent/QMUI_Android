@@ -6,13 +6,13 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUILoadingView;
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import butterknife.BindView;
@@ -26,8 +26,10 @@ import butterknife.ButterKnife;
 @Widget(widgetClass = QMUIGroupListView.class, iconRes = R.mipmap.icon_grid_group_list_view)
 public class QDGroupListViewFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.groupListView) QMUIGroupListView mGroupListView;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.groupListView)
+    QMUIGroupListView mGroupListView;
 
     private QDItemDescription mQDItemDescription;
 

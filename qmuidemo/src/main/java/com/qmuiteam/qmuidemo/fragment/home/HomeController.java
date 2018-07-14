@@ -10,7 +10,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
@@ -29,10 +30,12 @@ import butterknife.ButterKnife;
  * @date 2016-10-20
  */
 
-public abstract class HomeController extends FrameLayout {
+public abstract class HomeController extends QMUIWindowInsetLayout {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.recyclerView) RecyclerView mRecyclerView;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     private HomeControlListener mHomeControlListener;
     private ItemAdapter mItemAdapter;

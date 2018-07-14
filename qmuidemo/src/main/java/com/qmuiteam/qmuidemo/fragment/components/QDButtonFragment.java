@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -16,7 +17,8 @@ import butterknife.ButterKnife;
 @Widget(name = "RoundButton", iconRes = R.mipmap.icon_grid_button)
 public class QDButtonFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
 
     private QDItemDescription mQDItemDescription;
 
