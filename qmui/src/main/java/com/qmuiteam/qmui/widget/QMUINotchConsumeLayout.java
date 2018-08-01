@@ -22,6 +22,14 @@ public class QMUINotchConsumeLayout extends FrameLayout implements INotchInsetCo
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (!QMUINotchHelper.isNotchOfficialSupport()) {
+            notifyInsetMaybeChanged();
+        }
+    }
+
+    @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (!QMUINotchHelper.isNotchOfficialSupport()) {
