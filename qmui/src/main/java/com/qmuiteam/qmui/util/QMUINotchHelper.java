@@ -127,7 +127,7 @@ public class QMUINotchHelper {
         return sHasNotch;
     }
 
-    private static boolean has3rdNotch(Context context){
+    public static boolean has3rdNotch(Context context){
         if (QMUIDeviceHelper.isHuawei()) {
             return hasNotchInHuawei(context);
         } else if (QMUIDeviceHelper.isVivo()) {

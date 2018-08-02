@@ -41,9 +41,19 @@ public class QMUIResHelper {
     public static Drawable getAttrDrawable(Context context, int attrRes){
         int[] attrs = new int[] { attrRes };
         TypedArray ta = context.obtainStyledAttributes(attrs);
-        Drawable drawable = ta.getDrawable(0);
+        Drawable drawable = getAttrDrawable(context, ta, 0);
         ta.recycle();
         return drawable;
+    }
+
+    public static Drawable getAttrDrawable(Context context, TypedArray typedArray, int index){
+        TypedValue value = typedArray.peekValue(index);
+        if(value != null){
+            if(value.type != TypedValue.TYPE_ATTRIBUTE && value.resourceId != 0){
+                return QMUIDrawableHelper.getVectorDrawable(context, value.resourceId);
+            }
+        }
+        return null;
     }
 
     public static int getAttrDimen(Context context, int attrRes){
@@ -101,6 +111,9 @@ public class QMUIResHelper {
                 textView.setCompoundDrawablePadding(a.getDimensionPixelSize(attr, 0));
             }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textColorHint){
                 textView.setHintTextColor(a.getColor(attr, 0));
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textStyle){
+                int styleIndex = a.getInt(attr, -1);
+                textView.setTypeface(null, styleIndex);
             }
         }
         textView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);

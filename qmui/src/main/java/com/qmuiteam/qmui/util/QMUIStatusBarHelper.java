@@ -40,8 +40,8 @@ public class QMUIStatusBarHelper {
 
     private static boolean supportTranslucent() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                // Essential Phone 不支持沉浸式，否则系统又不从状态栏下方开始布局又给你下发 WindowInsets
-                && !QMUIDeviceHelper.isEssentialPhone();
+                // Essential Phone 在 Android 8 之前沉浸式做得不全，系统不从状态栏顶部开始布局却会下发 WindowInsets
+                && !(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT < Build.VERSION_CODES.O);
     }
 
     /**

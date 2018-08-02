@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
@@ -103,7 +104,7 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
     }
 
     @Override
-    public boolean applySystemWindowInsets21(WindowInsetsCompat insets) {
+    public boolean applySystemWindowInsets21(Object insets) {
         return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
     }
 

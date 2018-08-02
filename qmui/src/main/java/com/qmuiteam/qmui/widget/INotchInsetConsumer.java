@@ -1,5 +1,9 @@
 package com.qmuiteam.qmui.widget;
 
 public interface INotchInsetConsumer {
-    void notifyInsetMaybeChanged();
+    /**
+     *
+     * @return if true stop dispatch to child view
+     */
+    boolean notifyInsetMaybeChanged();
 }

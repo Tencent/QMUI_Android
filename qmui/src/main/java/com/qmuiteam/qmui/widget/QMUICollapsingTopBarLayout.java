@@ -55,6 +55,7 @@ import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
+import com.qmuiteam.qmui.util.QMUINotchHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
@@ -101,8 +102,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
     int mCurrentOffset;
 
-    WindowInsetsCompat mLastInsets;
-    Rect mLastInsetRect;
+    Object mLastInsets;
 
     public QMUICollapsingTopBarLayout(Context context) {
         this(context, null);
@@ -265,10 +265,13 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
     private int getWindowInsetTop() {
         if (mLastInsets != null) {
-            return mLastInsets.getSystemWindowInsetTop();
-        }
-        if (mLastInsetRect != null) {
-            return mLastInsetRect.top;
+            if(QMUINotchHelper.isNotchOfficialSupport()){
+                return ((WindowInsets) mLastInsets).getSystemWindowInsetTop();
+            }else if(mLastInsets instanceof WindowInsetsCompat){
+                return ((WindowInsetsCompat) mLastInsets).getSystemWindowInsetTop();
+            }else if(mLastInsets instanceof Rect){
+                return ((Rect) mLastInsets).top;
+            }
         }
         return 0;
     }
@@ -357,7 +360,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (mLastInsets != null || mLastInsetRect != null) {
+        if (mLastInsets != null) {
             // Shift down any views which are not set to fit system windows
             final int insetTop = getWindowInsetTop();
             for (int i = 0, z = getChildCount(); i < z; i++) {
@@ -1040,7 +1043,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
         // If our insets have changed, keep them and invalidate the scroll ranges...
         if (!QMUILangHelper.objectEquals(mLastInsets, newInsets)) {
-            mLastInsetRect = newInsets;
+            mLastInsets = newInsets;
             requestLayout();
         }
 
@@ -1050,9 +1053,8 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
     }
 
     @Override
-    public boolean applySystemWindowInsets21(WindowInsetsCompat insets) {
-        WindowInsetsCompat newInsets = null;
-
+    public boolean applySystemWindowInsets21(Object insets) {
+        Object newInsets = null;
         if (ViewCompat.getFitsSystemWindows(this)) {
             // If we're set to fit system windows, keep the insets
             newInsets = insets;
