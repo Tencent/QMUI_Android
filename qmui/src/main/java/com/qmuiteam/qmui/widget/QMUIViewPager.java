@@ -1,19 +1,17 @@
 package com.qmuiteam.qmui.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
@@ -64,6 +62,12 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
             }
         }
 
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+        ViewCompat.requestApplyInsets(this);
     }
 
     @Override
