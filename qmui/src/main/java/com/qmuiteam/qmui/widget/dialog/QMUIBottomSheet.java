@@ -732,8 +732,10 @@ public class QMUIBottomSheet extends Dialog {
             if (mBottomButtonContainer != null) {
                 if (mIsShowButton) {
                     mBottomButtonContainer.setVisibility(View.VISIBLE);
-                    int dimen = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_bottom_sheet_grid_padding_vertical);
-                    baseLinearLayout.setPadding(0, dimen, 0, 0);
+                    baseLinearLayout.setPadding(baseLinearLayout.getPaddingLeft(),
+                            baseLinearLayout.getPaddingTop(),
+                            baseLinearLayout.getPaddingRight(),
+                            0);
                 } else {
                     mBottomButtonContainer.setVisibility(View.GONE);
                 }

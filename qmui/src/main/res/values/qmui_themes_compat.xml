@@ -203,10 +203,12 @@
         <item name="qmui_bottom_sheet_grid_line_padding_horizontal">12dp</item>
         <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
         <item name="qmui_bottom_sheet_grid_item_mini_width">84dp</item>
+        <item name="qmui_bottom_sheet_grid_item_paddingTop">0dp</item>
+        <item name="qmui_bottom_sheet_grid_item_paddingBottom">8dp</item>
         <item name="qmui_bottom_sheet_grid_item_icon_size">56dp</item>
-        <item name="qmui_bottom_sheet_grid_item_text_appearance">
-            @style/QMUITextAppearance.GridItem.Small
-        </item>
+        <item name="qmui_bottom_sheet_grid_item_icon_marginTop">12dp</item>
+        <item name="qmui_bottom_sheet_grid_item_icon_marginBottom">9dp</item>
+        <item name="qmui_bottom_sheet_grid_item_text_appearance">@style/QMUITextAppearance.GridItem.Small</item>
 
         <item name="qmui_bottom_sheet_button_background">@drawable/qmui_divider_top_bitmap</item>
         <item name="qmui_bottom_sheet_button_height">56dp</item>

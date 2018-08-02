@@ -94,7 +94,11 @@
     <attr name="qmui_bottom_sheet_grid_line_vertical_space" format="dimension"/>
 
     <attr name="qmui_bottom_sheet_grid_item_mini_width" format="dimension"/>
+    <attr name="qmui_bottom_sheet_grid_item_paddingTop" format="dimension"/>
+    <attr name="qmui_bottom_sheet_grid_item_paddingBottom" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_item_icon_size" format="dimension"/>
+    <attr name="qmui_bottom_sheet_grid_item_icon_marginTop" format="dimension"/>
+    <attr name="qmui_bottom_sheet_grid_item_icon_marginBottom" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_item_text_appearance" format="reference"/>
 
     <attr name="qmui_bottom_sheet_button_height" format="dimension"/>
