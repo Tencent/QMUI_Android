@@ -478,23 +478,25 @@ public class QMUIDialog extends Dialog {
 
 
     public static class MenuBaseDialogBuilder<T extends QMUIDialogBuilder> extends QMUIDialogBuilder<T> {
-        protected ArrayList<QMUIDialogMenuItemView> mMenuItemViews;
+        protected ArrayList<ItemViewFactory> mMenuItemViewsFactoryList;
         protected LinearLayout mMenuItemContainer;
         protected QMUIWrapContentScrollView mContentScrollView;
         protected LinearLayout.LayoutParams mMenuItemLp;
+        protected ArrayList<QMUIDialogMenuItemView> mMenuItemViews = new ArrayList<>();
 
         public MenuBaseDialogBuilder(Context context) {
             super(context);
-            mMenuItemViews = new ArrayList<>();
+            mMenuItemViewsFactoryList = new ArrayList<>();
         }
 
         public void clear() {
-            mMenuItemViews.clear();
+            mMenuItemViewsFactoryList.clear();
         }
 
         @SuppressWarnings("unchecked")
-        public T addItem(QMUIDialogMenuItemView itemView, final OnClickListener listener) {
-            itemView.setMenuIndex(mMenuItemViews.size());
+        @Deprecated
+        public T addItem(final QMUIDialogMenuItemView itemView, final OnClickListener listener) {
+            itemView.setMenuIndex(mMenuItemViewsFactoryList.size());
             itemView.setListener(new QMUIDialogMenuItemView.MenuItemViewListener() {
                 @Override
                 public void onClick(int index) {
@@ -504,7 +506,33 @@ public class QMUIDialog extends Dialog {
                     }
                 }
             });
-            mMenuItemViews.add(itemView);
+            mMenuItemViewsFactoryList.add(new ItemViewFactory() {
+                @Override
+                public QMUIDialogMenuItemView createItemView(Context context) {
+                    return itemView;
+                }
+            });
+            return (T) this;
+        }
+
+        public T addItem(final ItemViewFactory itemViewFactory, final OnClickListener listener) {
+            mMenuItemViewsFactoryList.add(new ItemViewFactory() {
+                @Override
+                public QMUIDialogMenuItemView createItemView(Context context) {
+                    QMUIDialogMenuItemView itemView = itemViewFactory.createItemView(context);
+                    itemView.setMenuIndex(mMenuItemViewsFactoryList.indexOf(this));
+                    itemView.setListener(new QMUIDialogMenuItemView.MenuItemViewListener() {
+                        @Override
+                        public void onClick(int index) {
+                            onItemClick(index);
+                            if (listener != null) {
+                                listener.onClick(mDialog, index);
+                            }
+                        }
+                    });
+                    return itemView;
+                }
+            });
             return (T) this;
         }
 
@@ -547,7 +575,7 @@ public class QMUIDialog extends Dialog {
             mMenuItemLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, itemHeight);
             mMenuItemLp.gravity = Gravity.CENTER_VERTICAL;
 
-            if (mMenuItemViews.size() == 1) {
+            if (mMenuItemViewsFactoryList.size() == 1) {
                 paddingBottom = paddingTop = paddingVerWhenSingle;
             }
 
@@ -562,15 +590,23 @@ public class QMUIDialog extends Dialog {
             mMenuItemContainer.setPadding(0, paddingTop, 0, paddingBottom);
 
 
-            for (QMUIDialogMenuItemView itemView : mMenuItemViews) {
+            mMenuItemViews.clear();
+            for (ItemViewFactory factory : mMenuItemViewsFactoryList) {
+                QMUIDialogMenuItemView itemView = factory.createItemView(context);
                 mMenuItemContainer.addView(itemView, mMenuItemLp);
+                mMenuItemViews.add(itemView);
             }
+
 
             mContentScrollView = new QMUIWrapContentScrollView(context);
             mContentScrollView.setMaxHeight(getContentAreaMaxHeight());
             mContentScrollView.addView(mMenuItemContainer);
             mContentScrollView.setVerticalScrollBarEnabled(false);
             parent.addView(mContentScrollView);
+        }
+
+        public interface ItemViewFactory {
+            QMUIDialogMenuItemView createItemView(Context context);
         }
     }
 
@@ -590,8 +626,8 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件
          */
         public MenuDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.TextItemView(getBaseContext(), item), listener);
+            for (final CharSequence item : items) {
+                addItem(item, listener);
             }
             return this;
         }
@@ -602,8 +638,13 @@ public class QMUIDialog extends Dialog {
          * @param item     菜单项的文字
          * @param listener 菜单项的点击事件
          */
-        public MenuDialogBuilder addItem(CharSequence item, OnClickListener listener) {
-            addItem(new QMUIDialogMenuItemView.TextItemView(getBaseContext(), item), listener);
+        public MenuDialogBuilder addItem(final CharSequence item, OnClickListener listener) {
+            addItem(new ItemViewFactory() {
+                @Override
+                public QMUIDialogMenuItemView createItemView(Context context) {
+                    return new QMUIDialogMenuItemView.TextItemView(context, item);
+                }
+            }, listener);
             return this;
         }
 
@@ -668,8 +709,13 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件,可以在点击事件里调用 {@link #setCheckedIndex(int)} 来设置选中某些菜单项
          */
         public CheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.MarkItemView(getBaseContext(), item), listener);
+            for (final CharSequence item : items) {
+                addItem(new ItemViewFactory() {
+                    @Override
+                    public QMUIDialogMenuItemView createItemView(Context context) {
+                        return new QMUIDialogMenuItemView.MarkItemView(context, item);
+                    }
+                }, listener);
             }
             return this;
         }
@@ -722,8 +768,13 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件,可以在点击事件里调用 {@link #setCheckedItems(int[])}} 来设置选中某些菜单项
          */
         public MultiCheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
-            for (CharSequence item : items) {
-                addItem(new QMUIDialogMenuItemView.CheckItemView(getBaseContext(), true, item), listener);
+            for (final CharSequence item : items) {
+                addItem(new ItemViewFactory() {
+                    @Override
+                    public QMUIDialogMenuItemView createItemView(Context context) {
+                        return new QMUIDialogMenuItemView.CheckItemView(context, true, item);
+                    }
+                }, listener);
             }
             return this;
         }

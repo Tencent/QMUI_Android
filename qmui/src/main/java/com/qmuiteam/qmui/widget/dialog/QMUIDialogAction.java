@@ -151,6 +151,9 @@ public class QMUIDialogAction {
                 negativeTextColor = a.getColorStateList(attr);
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_qmui_dialog_action_icon_space) {
                 iconSpace = a.getDimensionPixelSize(attr, 0);
+            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textStyle){
+                int styleIndex = a.getInt(attr, -1);
+                button.setTypeface(null, styleIndex);
             }
         }
 

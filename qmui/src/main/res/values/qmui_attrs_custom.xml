@@ -19,6 +19,7 @@
         <attr name="android:lineSpacingExtra"/>
         <attr name="android:drawablePadding"/>
         <attr name="android:textColorHint"/>
+        <attr name="android:textStyle"/>
     </declare-styleable>
 
     <declare-styleable name="QMUIDialogTitleTvCustomDef">
@@ -47,6 +48,7 @@
         <attr name="android:background"/>
         <attr name="android:gravity"/>
         <attr name="android:minWidth"/>
+        <attr name="android:textStyle"/>
         <attr name="qmui_dialog_action_button_padding_horizontal" format="dimension"/>
         <attr name="qmui_dialog_action_icon_space" format="dimension"/>
         <attr name="qmui_dialog_positive_action_text_color" format="color|reference"/>

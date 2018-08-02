@@ -3,6 +3,7 @@ package com.qmuiteam.qmui.widget.dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.widget.ImageView;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
+import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 
@@ -139,7 +142,7 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
                 if (attr == R.styleable.QMUIDialogMenuMarkDef_qmui_dialog_menu_item_check_mark_margin_hor) {
                     markMarginHor = a.getDimensionPixelSize(attr, 0);
                 } else if (attr == R.styleable.QMUIDialogMenuMarkDef_qmui_dialog_menu_item_mark_drawable) {
-                    mCheckedView.setImageDrawable(a.getDrawable(attr));
+                    mCheckedView.setImageDrawable(QMUIResHelper.getAttrDrawable(context, a, attr));
                 }
             }
             a.recycle();
@@ -193,7 +196,7 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
                 if (attr == R.styleable.QMUIDialogMenuCheckDef_qmui_dialog_menu_item_check_mark_margin_hor) {
                     markMarginHor = a.getDimensionPixelSize(attr, 0);
                 } else if (attr == R.styleable.QMUIDialogMenuCheckDef_qmui_dialog_menu_item_check_drawable) {
-                    mCheckedView.setImageDrawable(a.getDrawable(attr));
+                    mCheckedView.setImageDrawable(QMUIResHelper.getAttrDrawable(context, a, attr));
                 }
             }
             a.recycle();
