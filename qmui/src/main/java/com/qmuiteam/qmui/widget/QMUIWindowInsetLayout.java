@@ -1,13 +1,10 @@
 package com.qmuiteam.qmui.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
@@ -57,11 +54,6 @@ public class QMUIWindowInsetLayout extends FrameLayout implements IWindowInsetLa
     @Override
     public boolean applySystemWindowInsets21(Object insets) {
         return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
-    }
-
-    @Override
-    public boolean applySystemWindowInsets(WindowInsets insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets(this, insets);
     }
 
     @Override

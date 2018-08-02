@@ -38,12 +38,13 @@ public class QMUINotchConsumeLayout extends FrameLayout implements INotchInsetCo
     }
 
     @Override
-    public void notifyInsetMaybeChanged() {
+    public boolean notifyInsetMaybeChanged() {
         setPadding(
                 QMUINotchHelper.getSafeInsetLeft(this),
                 QMUINotchHelper.getSafeInsetTop(this),
                 QMUINotchHelper.getSafeInsetRight(this),
                 QMUINotchHelper.getSafeInsetBottom(this)
         );
+        return true;
     }
 }

@@ -109,11 +109,6 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
     }
 
     @Override
-    public boolean applySystemWindowInsets(WindowInsets insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets(this, insets);
-    }
-
-    @Override
     public void setAdapter(PagerAdapter adapter) {
         if (adapter instanceof QMUIPagerAdapter) {
             super.setAdapter(new WrapperPagerAdapter((QMUIPagerAdapter) adapter));

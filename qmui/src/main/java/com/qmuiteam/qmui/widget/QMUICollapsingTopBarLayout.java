@@ -1068,11 +1068,6 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         return true;
     }
 
-    @Override
-    public boolean applySystemWindowInsets(WindowInsets insets) {
-        return true;
-    }
-
     public static class LayoutParams extends FrameLayout.LayoutParams {
 
         private static final float DEFAULT_PARALLAX_MULTIPLIER = 0.5f;

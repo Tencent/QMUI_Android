@@ -76,9 +76,4 @@ public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout
     public boolean applySystemWindowInsets21(Object insets) {
         return true;
     }
-
-    @Override
-    public boolean applySystemWindowInsets(WindowInsets insets) {
-        return true;
-    }
 }
