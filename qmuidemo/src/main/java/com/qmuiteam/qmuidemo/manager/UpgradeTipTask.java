@@ -50,7 +50,7 @@ public class UpgradeTipTask implements UpgradeTask {
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
         if(mNewVersion == QDUpgradeManager.VERSION_1_1_6){
-            text.append("1. Feature: QMUINotchHelper, a new helper class for notch compatible. \n");
+            text.append("1. Feature: QMUINotchHelper, a new helper class for notch compatibility. \n");
             appendBlockSpace(activity, text);
             text.append("2. Added \"more\" click event to QMUIQQFaceView.\n");
             appendBlockSpace(activity, text);
@@ -58,7 +58,7 @@ public class UpgradeTipTask implements UpgradeTask {
             appendBlockSpace(activity, text);
             text.append("4. The method startFragmentAndDestroyCurrent in QMUIFragment supports transfer of target fragment.\n");
             appendBlockSpace(activity, text);
-            text.append("5. Issue fixes: ");
+            text.append("5. Fixed issues: ");
             final String[] issues = new String[]{
                     "334", "352"
             };
@@ -75,7 +75,7 @@ public class UpgradeTipTask implements UpgradeTask {
             text.append("4. Bug fix: fixed incorrect layout of translucent status bar may " +
                     "appear in Android 4.4.\n");
             appendBlockSpace(activity, text);
-            text.append("5. Issue fixes: ");
+            text.append("5. Fixed issues: ");
             final String[] issues = new String[]{
                     "304", "308"
             };
@@ -86,7 +86,7 @@ public class UpgradeTipTask implements UpgradeTask {
             text.append("2. Bug fix: marginRight does not make sense for controlling " +
                     "the position of signCount, it should use marginLeft.\n");
             appendBlockSpace(activity, text);
-            text.append("3. Issue fixes: ");
+            text.append("3. Fixed issues: ");
             final String[] issues = new String[]{
                     "165", "247"
             };
@@ -98,7 +98,7 @@ public class UpgradeTipTask implements UpgradeTask {
             text.append("2. Replace QMUIMaterialProgressDrawable with CircularProgressDrawable, " +
                     "an official implementation.\n");
             appendBlockSpace(activity, text);
-            text.append("3. Issue fixes: ");
+            text.append("3. Fixed issues: ");
             final String[] issues = new String[]{
                     "254", "258", "284", "285", "293", "294"
             };
