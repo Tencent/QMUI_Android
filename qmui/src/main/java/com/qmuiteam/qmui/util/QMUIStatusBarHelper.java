@@ -35,13 +35,11 @@ public class QMUIStatusBarHelper {
     private static Integer sTransparentValue;
 
     public static void translucent(Activity activity) {
-        translucent(activity, 0x40000000);
+        translucent(activity.getWindow());
     }
 
-    private static boolean supportTranslucent() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                // Essential Phone 在 Android 8 之前沉浸式做得不全，系统不从状态栏顶部开始布局却会下发 WindowInsets
-                && !(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT < Build.VERSION_CODES.O);
+    public static void translucent(Window window) {
+        translucent(window, 0x40000000);
     }
 
     /**
@@ -50,13 +48,16 @@ public class QMUIStatusBarHelper {
      *
      * @param activity 需要被设置沉浸式状态栏的 Activity。
      */
-    @TargetApi(19)
     public static void translucent(Activity activity, @ColorInt int colorOn5x) {
+        translucent(activity.getWindow(), colorOn5x);
+    }
+
+    @TargetApi(19)
+    public static void translucent(Window window, @ColorInt int colorOn5x) {
         if (!supportTranslucent()) {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
-        Window window = activity.getWindow();
         // 小米和魅族4.4 以上版本支持沉浸式
         if (QMUIDeviceHelper.isMeizu() || QMUIDeviceHelper.isMIUI()) {
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
@@ -64,11 +65,8 @@ public class QMUIStatusBarHelper {
             return;
         }
 
-        if(QMUINotchHelper.isNotchOfficialSupport()){
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams
-                    .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            window.setAttributes(params);
+        if (QMUINotchHelper.isNotchOfficialSupport()) {
+            handleDisplayCutoutMode(window);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -101,6 +99,20 @@ public class QMUIStatusBarHelper {
 //                window.getDecorView().setSystemUiVisibility(transparentValue);
 //            }
         }
+    }
+
+    @TargetApi(28)
+    private static void handleDisplayCutoutMode(Window window) {
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.layoutInDisplayCutoutMode = WindowManager.LayoutParams
+                .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        window.setAttributes(params);
+    }
+
+    private static boolean supportTranslucent() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                // Essential Phone 在 Android 8 之前沉浸式做得不全，系统不从状态栏顶部开始布局却会下发 WindowInsets
+                && !(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT < Build.VERSION_CODES.O);
     }
 
     /**
@@ -252,7 +264,7 @@ public class QMUIStatusBarHelper {
      * 见小米开发文档说明：https://dev.mi.com/console/doc/detail?pId=1159
      */
     private static boolean isMIUICustomStatusBarLightModeImpl() {
-        if (QMUIDeviceHelper.isMIUIV9() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+        if (QMUIDeviceHelper.isMIUIV9() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
         return QMUIDeviceHelper.isMIUIV5() || QMUIDeviceHelper.isMIUIV6() ||

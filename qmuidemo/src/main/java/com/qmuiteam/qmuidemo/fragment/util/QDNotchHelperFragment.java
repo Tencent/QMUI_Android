@@ -116,7 +116,7 @@ public class QDNotchHelperFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        changeToFullScreen();
+        changeToFullScreen();
     }
 
     private void changeToFullScreen() {
