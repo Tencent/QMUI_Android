@@ -1,6 +1,8 @@
 package com.qmuiteam.qmuidemo.fragment.home;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +14,14 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
 import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
 import com.qmuiteam.qmuidemo.decorator.GridDividerItemDecoration;
 import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
+import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.List;
@@ -81,7 +85,17 @@ public abstract class HomeController extends QMUIWindowInsetLayout {
                 QDItemDescription item = mItemAdapter.getItem(pos);
                 try {
                     BaseFragment fragment = item.getDemoClass().newInstance();
-                    startFragment(fragment);
+                    if(fragment instanceof QDNotchHelperFragment){
+                        Context context = getContext();
+                        Intent intent = QDMainActivity.createNotchHelperIntent(context);
+                        context.startActivity(intent);
+                        if(context instanceof Activity){
+                            ((Activity)context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
+                    }else{
+                        startFragment(fragment);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

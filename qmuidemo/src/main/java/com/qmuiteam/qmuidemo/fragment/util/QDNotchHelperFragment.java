@@ -27,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-@Widget(group = Group.Helper, name = "QMUINotchHelper", iconRes = R.mipmap.icon_grid_span)
+@Widget(group = Group.Helper, name = "QMUINotchHelper", iconRes = R.mipmap.icon_grid_status_bar_helper)
 public class QDNotchHelperFragment extends BaseFragment {
     private static final String TAG = "QDNotchHelperFragment";
     @BindView(R.id.not_safe_bg)

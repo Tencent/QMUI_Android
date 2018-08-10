@@ -74,7 +74,5 @@ public class QDViewPagerFragment extends BaseFragment {
                     }
                 })
                 .addTo(mGroupListView);
-
-
     }
 }

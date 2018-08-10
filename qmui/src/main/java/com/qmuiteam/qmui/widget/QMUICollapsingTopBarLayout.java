@@ -265,9 +265,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
     private int getWindowInsetTop() {
         if (mLastInsets != null) {
-            if(QMUINotchHelper.isNotchOfficialSupport()){
-                return ((WindowInsets) mLastInsets).getSystemWindowInsetTop();
-            }else if(mLastInsets instanceof WindowInsetsCompat){
+            if(mLastInsets instanceof WindowInsetsCompat){
                 return ((WindowInsetsCompat) mLastInsets).getSystemWindowInsetTop();
             }else if(mLastInsets instanceof Rect){
                 return ((Rect) mLastInsets).top;
