@@ -49,7 +49,21 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if (mNewVersion == QDUpgradeManager.VERSION_1_1_5) {
+        if(mNewVersion == QDUpgradeManager.VERSION_1_1_6){
+            text.append("1. Feature: QMUINotchHelper, a new helper class for notch compatible. \n");
+            appendBlockSpace(activity, text);
+            text.append("2. Added \"more\" click event to QMUIQQFaceView.\n");
+            appendBlockSpace(activity, text);
+            text.append("3. Added text color setter for QMUITouchableSpan.\n");
+            appendBlockSpace(activity, text);
+            text.append("4. The method startFragmentAndDestroyCurrent in QMUIFragment supports transfer of target fragment.\n");
+            appendBlockSpace(activity, text);
+            text.append("5. Issue fixes: ");
+            final String[] issues = new String[]{
+                    "334", "352"
+            };
+            handleIssues(activity, text, issues);
+        }else if (mNewVersion == QDUpgradeManager.VERSION_1_1_5) {
             text.append("1. Code optimization for QMUIDialog.\n");
             appendBlockSpace(activity, text);
             text.append("2. Added a return value to KeyboardVisibilityEventListener, which " +
