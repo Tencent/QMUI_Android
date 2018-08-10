@@ -115,6 +115,11 @@ public abstract class QMUIFragment extends Fragment {
      * @param useNewTransitionConfigWhenPop
      */
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment, boolean useNewTransitionConfigWhenPop) {
+        if (getTargetFragment() != null) {
+            // transfer target fragment
+            fragment.setTargetFragment(getTargetFragment(), getTargetRequestCode());
+            setTargetFragment(null, 0);
+        }
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
             if (this.isAttachedToActivity()) {

@@ -1,6 +1,9 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -18,7 +21,10 @@ import butterknife.ButterKnife;
 
 @Widget(name = "QMUIFragment",iconRes = R.mipmap.icon_grid_layout)
 public class QDArchTestFragment extends BaseFragment {
+    private static final String TAG = "QDArchTestFragment";
     private static final String ARG_INDEX = "arg_index";
+    private static final int REQUEST_CODE = 1;
+    private static final String DATA_TEST = "data_test";
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.title) TextView mTitleTv;
@@ -50,12 +56,21 @@ public class QDArchTestFragment extends BaseFragment {
                 if (destroyCurrent) {
                     startFragmentAndDestroyCurrent(fragment);
                 } else {
-                    startFragment(fragment);
+                    startFragmentForResult(fragment, REQUEST_CODE);
                 }
 
             }
         });
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent();
+        intent.putExtra(DATA_TEST, "test");
+        setFragmentResult(RESULT_OK, intent);
     }
 
     public static QDArchTestFragment newInstance(int index) {
@@ -64,5 +79,13 @@ public class QDArchTestFragment extends BaseFragment {
         QDArchTestFragment fragment = new QDArchTestFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        if(data != null){
+            Log.i(TAG, data.getStringExtra(DATA_TEST));
+        }
     }
 }
