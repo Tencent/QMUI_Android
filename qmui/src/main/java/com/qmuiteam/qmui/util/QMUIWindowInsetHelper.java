@@ -63,9 +63,9 @@ public class QMUIWindowInsetHelper {
                         mWindowInsetLayoutWR.get().applySystemWindowInsets21(windowInsets)) {
                     windowInsets = windowInsets.consumeSystemWindowInsets();
                     DisplayCutout displayCutout = windowInsets.getDisplayCutout();
-            		if (displayCutout != null) {
-                		windowInsets = windowInsets.consumeDisplayCutout();
-            		}
+                    if (displayCutout != null) {
+                        windowInsets = windowInsets.consumeDisplayCutout();
+                    }
                     return windowInsets;
                 }
                 return windowInsets;
@@ -160,10 +160,8 @@ public class QMUIWindowInsetHelper {
                 // avoid dispatching multiple times
                 dispatchNotchInsetChange(viewGroup);
             }
-            DisplayCutout displayCutout = insets.getDisplayCutout();
-            if (displayCutout != null) {
-                insets = insets.consumeDisplayCutout();
-            }
+            // always consume display cutout!!
+            insets = insets.consumeDisplayCutout();
         }
 
         boolean consumed = false;
