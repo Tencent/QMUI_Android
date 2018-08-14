@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -101,12 +102,39 @@ public class QMUIStatusBarHelper {
         }
     }
 
+
     @TargetApi(28)
-    private static void handleDisplayCutoutMode(Window window) {
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.layoutInDisplayCutoutMode = WindowManager.LayoutParams
-                .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        window.setAttributes(params);
+    private static void handleDisplayCutoutMode(final Window window) {
+        View decorView = window.getDecorView();
+        if (decorView != null) {
+            if (ViewCompat.isAttachedToWindow(decorView)) {
+                realHandleDisplayCutoutMode(window, decorView);
+            } else {
+                decorView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        v.removeOnAttachStateChangeListener(this);
+                        realHandleDisplayCutoutMode(window, v);
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+
+                    }
+                });
+            }
+        }
+    }
+
+    @TargetApi(28)
+    private static void realHandleDisplayCutoutMode(Window window, View decorView) {
+        if (decorView.getRootWindowInsets() != null &&
+                decorView.getRootWindowInsets().getDisplayCutout() != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams
+                    .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            window.setAttributes(params);
+        }
     }
 
     private static boolean supportTranslucent() {
