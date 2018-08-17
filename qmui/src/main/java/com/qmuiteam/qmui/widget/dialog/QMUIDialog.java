@@ -747,9 +747,10 @@ public class QMUIDialog extends Dialog {
             String s = Integer.toBinaryString(checkedItems);
             char[] chars = s.toCharArray();
             ensureInitCheckedItems(32);
-            int length = chars.length;
+            int length = chars.length - 1;
             for (int i = 0; i < length; i++) {
-                char it = chars[i];
+                int index = length - i - 1;
+                char it = chars[index];
                 if (it == '1') {
                     mCheckedItems[i] = 1;
                 }
