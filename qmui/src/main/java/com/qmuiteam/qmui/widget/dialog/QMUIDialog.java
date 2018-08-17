@@ -37,6 +37,8 @@ import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * QMUIDialog 对话框一般由 {@link QMUIDialogBuilder} 及其子类创建, 不同的 Builder 可以创建不同类型的对话框,
@@ -727,9 +729,9 @@ public class QMUIDialog extends Dialog {
     public static class MultiCheckableDialogBuilder extends MenuBaseDialogBuilder<MultiCheckableDialogBuilder> {
 
         /**
-         * 该 int 的每一位标识菜单的每一项是否被选中 (1为选中,0位不选中)
+         * 该 int 数组 的每一位标识菜单的每一项是否被选中 (1为选中,0位不选中)
          */
-        private int mCheckedItems;
+        private int[] mCheckedItems;
 
         public MultiCheckableDialogBuilder(Context context) {
             super(context);
@@ -742,8 +744,27 @@ public class QMUIDialog extends Dialog {
          *                     <p>如 20 表示选中下标为 1、3 的菜单项, 因为 (2<<1) + (2<<3) = 20</p>
          */
         public MultiCheckableDialogBuilder setCheckedItems(int checkedItems) {
-            mCheckedItems = checkedItems;
+            String s = Integer.toBinaryString(checkedItems);
+            char[] chars = s.toCharArray();
+            ensureInitCheckedItems(32);
+            int length = chars.length;
+            for (int i = 0; i < length; i++) {
+                char it = chars[i];
+                if (it == '1') {
+                    mCheckedItems[i] = 1;
+                }
+            }
             return this;
+        }
+
+        private void ensureInitCheckedItems(int maxIndex) {
+            if (mCheckedItems == null) {
+                mCheckedItems = new int[maxIndex + 1];
+            } else {
+                if (mCheckedItems.length < (maxIndex + 1)) {
+                    throw new IllegalStateException("index is big than added items length");
+                }
+            }
         }
 
         /**
@@ -752,13 +773,13 @@ public class QMUIDialog extends Dialog {
          * @param checkedIndexes 被选中的菜单项的下标组成的数组,如 [1,3] 表示选中下标为 1、3 的菜单项
          */
         public MultiCheckableDialogBuilder setCheckedItems(int[] checkedIndexes) {
-            int checkedItemRecord = 0;
-            if (checkedIndexes != null && checkedIndexes.length > 0) {
-                for (int checkedIndexe : checkedIndexes) {
-                    checkedItemRecord += 2 << (checkedIndexe);
-                }
+            Arrays.sort(checkedIndexes);
+            int maxIndex = checkedIndexes[checkedIndexes.length - 1];
+            ensureInitCheckedItems(maxIndex);
+            for (int index : checkedIndexes) {
+                mCheckedItems[index] = 1;
             }
-            return setCheckedItems(checkedItemRecord);
+            return this;
         }
 
         /**
@@ -768,6 +789,13 @@ public class QMUIDialog extends Dialog {
          * @param listener 菜单项的点击事件,可以在点击事件里调用 {@link #setCheckedItems(int[])}} 来设置选中某些菜单项
          */
         public MultiCheckableDialogBuilder addItems(CharSequence[] items, OnClickListener listener) {
+            if (mCheckedItems == null) {
+                mCheckedItems = new int[items.length];
+            } else if (mCheckedItems.length < items.length) {
+                int[] oldCheckedItems = mCheckedItems;
+                mCheckedItems = new int[items.length];
+                System.arraycopy(oldCheckedItems, 0, mCheckedItems, 0, oldCheckedItems.length);
+            }
             for (final CharSequence item : items) {
                 addItem(new ItemViewFactory() {
                     @Override
@@ -784,8 +812,7 @@ public class QMUIDialog extends Dialog {
             super.onCreateContent(dialog, parent, context);
             for (int i = 0; i < mMenuItemViews.size(); i++) {
                 QMUIDialogMenuItemView itemView = mMenuItemViews.get(i);
-                int v = 2 << i;
-                itemView.setChecked((v & mCheckedItems) == v);
+                itemView.setChecked(mCheckedItems[i] == 1);
             }
         }
 
@@ -793,47 +820,51 @@ public class QMUIDialog extends Dialog {
         protected void onItemClick(int index) {
             QMUIDialogMenuItemView itemView = mMenuItemViews.get(index);
             itemView.setChecked(!itemView.isChecked());
+            mCheckedItems[index] = itemView.isChecked() ? 1 : 0;
         }
 
         /**
          * @return 被选中的菜单项的下标 <b>注意: 如果选中的是1，3项(以0开始)，因为 (2<<1) + (2<<3) = 20</b>
          */
+        @Deprecated
         public int getCheckedItemRecord() {
-            int output = 0;
-            int length = mMenuItemViews.size();
-
+            // 超过32 位的无法用 int 表示
+            int length = mCheckedItems.length;
+            int value = 0;
             for (int i = 0; i < length; i++) {
-                QMUIDialogMenuItemView itemView = mMenuItemViews.get(i);
-                if (itemView.isChecked()) {
-                    output += 2 << itemView.getMenuIndex();
+                int flag = mCheckedItems[i];
+                if (flag == 1) {
+                    value += 2 << i;
                 }
             }
-            mCheckedItems = output;
-            return output;
+            return value;
         }
 
         /**
          * @return 被选中的菜单项的下标数组。如果选中的是1，3项(以0开始)，则返回[1,3]
          */
         public int[] getCheckedItemIndexes() {
-            ArrayList<Integer> array = new ArrayList<>();
-            int length = mMenuItemViews.size();
-
+            List<Integer> checkedIndexList = new ArrayList<>();
+            int length = mCheckedItems.length;
             for (int i = 0; i < length; i++) {
-                QMUIDialogMenuItemView itemView = mMenuItemViews.get(i);
-                if (itemView.isChecked()) {
-                    array.add(itemView.getMenuIndex());
+                int flag = mCheckedItems[i];
+                if (flag == 1) {
+                    checkedIndexList.add(i);
                 }
             }
-            int[] output = new int[array.size()];
-            for (int i = 0; i < array.size(); i++) {
-                output[i] = array.get(i);
+            int size = checkedIndexList.size();
+            int[] checkedArray = new int[size];
+            for (int i = 0; i < size; i++) {
+                checkedArray[i] = checkedIndexList.get(i);
             }
-            return output;
+            return checkedArray;
         }
 
         protected boolean existCheckedItem() {
-            return getCheckedItemRecord() <= 0;
+            for (int it : mCheckedItems) {
+                if (it == 1) return true;
+            }
+            return false;
         }
     }
 
