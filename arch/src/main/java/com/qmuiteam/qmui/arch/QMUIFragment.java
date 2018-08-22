@@ -423,6 +423,10 @@ public abstract class QMUIFragment extends Fragment {
         return swipeBackLayout;
     }
 
+    private boolean canNotUseCacheViewInCreateView(){
+        return mCacheView.getParent() != null || ViewCompat.isAttachedToWindow(mCacheView);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         SwipeBackLayout swipeBackLayout;
@@ -433,31 +437,24 @@ public abstract class QMUIFragment extends Fragment {
             // in swipe back, exactly not in animation
             swipeBackLayout = mCacheView;
         } else {
-            boolean isInRemoving = false;
-            try {
-                Method method = Fragment.class.getDeclaredMethod("getAnimatingAway");
-                method.setAccessible(true);
-                Object object = method.invoke(this);
-                if (object != null) {
-                    isInRemoving = true;
-                }
-            } catch (NoSuchMethodException e) {
-                isInRemoving = true;
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                isInRemoving = true;
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                isInRemoving = true;
-                e.printStackTrace();
+
+            if (canNotUseCacheViewInCreateView()) {
+                // try removeView first
+                container.removeView(mCacheView);
             }
-            if (isInRemoving) {
+
+            if(canNotUseCacheViewInCreateView()){
+                // give up!!!
+                Log.i(TAG, "can not use cache view, this may happen " +
+                        "if invoke popBackStack duration fragment transition");
                 swipeBackLayout = newSwipeBackLayout();
                 mCacheView = swipeBackLayout;
-            } else {
+            }else{
                 swipeBackLayout = mCacheView;
             }
         }
+
+
 
 
         if (!isCreateForSwipeBack) {
@@ -471,24 +468,6 @@ public abstract class QMUIFragment extends Fragment {
 
         if (getActivity() != null) {
             QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
-        }
-
-        if (swipeBackLayout.getParent() != null) {
-            ViewGroup viewGroup = (ViewGroup) swipeBackLayout.getParent();
-            if (viewGroup.indexOfChild(swipeBackLayout) > -1) {
-                viewGroup.removeView(swipeBackLayout);
-            } else {
-                // see https://issuetracker.google.com/issues/71879409
-                try {
-                    Field parentField = View.class.getDeclaredField("mParent");
-                    parentField.setAccessible(true);
-                    parentField.set(swipeBackLayout, null);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         return swipeBackLayout;
@@ -634,13 +613,13 @@ public abstract class QMUIFragment extends Fragment {
             throw new IllegalAccessError("don't call #onEnterAnimationEnd() directly");
         }
         mCalled = true;
-        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
         if (mDelayRenderRunnableList.size() > 0) {
             for (int i = 0; i < mDelayRenderRunnableList.size(); i++) {
                 mDelayRenderRunnableList.get(i).run();
             }
             mDelayRenderRunnableList.clear();
         }
+        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
     }
 
     /**
