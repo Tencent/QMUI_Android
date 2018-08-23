@@ -819,7 +819,9 @@ public class QMUIQQFaceView extends View {
                 onDrawQQFace(canvas, 0, element.getSpecialBoundsDrawable(), startLeft, endWidth, i == 0, i == elements.size() - 1);
             } else if (type == QMUIQQFaceCompiler.ElementType.TEXT) {
                 CharSequence text = element.getText();
-                onDrawText(canvas, text, startLeft, endWidth);
+                float[] fontWidths = new float[text.length()];
+                mPaint.getTextWidths(text.toString(), fontWidths);
+                onDrawText(canvas, text, fontWidths, 0, startLeft, endWidth);
             } else if (type == QMUIQQFaceCompiler.ElementType.SPAN) {
                 QMUIQQFaceCompiler.ElementList spanElementList = element.getChildList();
                 mCurrentDrawSpan = element.getTouchableSpan();
@@ -886,25 +888,41 @@ public class QMUIQQFaceView extends View {
             } else {
                 mCurrentDrawBaseLine += mFontHeight + addOn;
             }
+            if(mCurrentDrawBaseLine > getHeight() - getPaddingBottom()){
+                QMUILog.d(TAG, "draw outside the visible height, the ellipsize is inaccurate: " +
+                        "mEllipsize = " + mEllipsize.name() +
+                        "mCurrentDrawLine = " + mCurrentDrawLine + "" +
+                        "mNeedDrawLine = " + mNeedDrawLine +
+                        "viewWidth = " + getWidth() +
+                        "viewHeight = " + getHeight() +
+                        "paddingLeft = " + getPaddingLeft() +
+                        "paddingRight = " + getPaddingRight() +
+                        "paddingTop = " + getPaddingTop() +
+                        "paddingBottom = " + getPaddingBottom() +
+                        "text = " + mOriginText);
+            }
         } else {
             mCurrentDrawBaseLine += mFontHeight + addOn;
         }
         mCurrentDrawUsedWidth = startLeft;
     }
 
-    private void onRealDrawText(Canvas canvas, CharSequence text, int widthStart, int widthEnd) {
-        int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-        int breakPoint;
-        while (textWidth + mCurrentDrawUsedWidth > widthEnd) {
-            breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                    widthEnd - mCurrentDrawUsedWidth, null);
-            drawText(canvas, text, 0, breakPoint, widthEnd - mCurrentDrawUsedWidth);
-            toNewDrawLine(widthStart);
-            text = text.subSequence(breakPoint, text.length());
-            textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
+    private void onRealDrawText(Canvas canvas, CharSequence text, float[] fontWidths, int offset, int widthStart, int widthEnd) {
+        int startPos = offset;
+        int targetUsedWidth = mCurrentDrawUsedWidth;
+        for(int i = offset; i < fontWidths.length; i++){
+            if(targetUsedWidth + fontWidths[i] > widthEnd){
+                drawText(canvas, text, startPos, i, widthEnd - mCurrentDrawUsedWidth);
+                toNewDrawLine(widthStart);
+                targetUsedWidth = mCurrentDrawUsedWidth;
+                startPos = i;
+            }
+            targetUsedWidth += fontWidths[i];
         }
-        drawText(canvas, text, 0, text.length(), textWidth);
-        mCurrentDrawUsedWidth += textWidth;
+        if(startPos < fontWidths.length){
+            drawText(canvas, text, startPos, fontWidths.length, targetUsedWidth - mCurrentDrawUsedWidth);
+            mCurrentDrawUsedWidth = targetUsedWidth;
+        }
     }
 
     private int getMiddleEllipsizeLine() {
@@ -921,176 +939,182 @@ public class QMUIQQFaceView extends View {
     private int mMiddleEllipsizeWidthRecord = -1;
     private boolean mIsExecutedMiddleEllipsize = false;
 
-    private void onDrawText(Canvas canvas, CharSequence text, int widthStart, int widthEnd) {
+    private void onDrawText(Canvas canvas, CharSequence text, float[] fontWidths, int offset, int widthStart, int widthEnd) {
+        if(offset >= text.length()){
+            return;
+        }
         if (mIsNeedEllipsize) {
             if (mEllipsize == TextUtils.TruncateAt.START) {
                 if (mCurrentDrawLine > mLines - mNeedDrawLine) {
-                    onRealDrawText(canvas, text, widthStart, widthEnd);
+                    onRealDrawText(canvas, text, fontWidths, offset, widthStart, widthEnd);
                 } else if (mCurrentDrawLine < mLines - mNeedDrawLine) {
-                    int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-                    if (textWidth + mCurrentDrawUsedWidth > widthEnd) {
-                        int breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                                widthEnd - mCurrentDrawUsedWidth, null);
-                        toNewDrawLine(widthStart);
-                        onDrawText(canvas, text.subSequence(breakPoint, text.length()), widthStart, widthEnd);
-                    } else {
-                        mCurrentDrawUsedWidth += textWidth;
+                    for(int i = offset; i < text.length(); i++){
+                        if(mCurrentDrawUsedWidth + fontWidths[i] <= widthEnd){
+                            mCurrentDrawUsedWidth += fontWidths[i];
+                        }else{
+                            toNewDrawLine(widthStart);
+                            onDrawText(canvas, text, fontWidths, i, widthStart, widthEnd);
+                            return;
+                        }
                     }
                 } else {
-                    int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-                    int needStopWidth = mCurrentCalWidth + mEllipsizeTextLength
-                            + QMUIDisplayHelper.dp2px(getContext(), 5); // 测量会存在误差
-                    if (textWidth + mCurrentDrawUsedWidth < needStopWidth) {
-                        mCurrentDrawUsedWidth += textWidth;
-                    } else if (textWidth + mCurrentDrawUsedWidth == needStopWidth) {
-                        toNewDrawLine(widthStart + mEllipsizeTextLength);
-                    } else {
-                        int breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                                needStopWidth - mCurrentDrawUsedWidth, null);
-                        toNewDrawLine(widthStart + mEllipsizeTextLength);
-                        onDrawText(canvas, text.subSequence(breakPoint, text.length()), widthStart, widthEnd);
+                    int needStopWidth = mCurrentCalWidth + mEllipsizeTextLength;
+                    for(int i = offset; i < text.length(); i++){
+                        if(mCurrentDrawUsedWidth + fontWidths[i] <= needStopWidth){
+                            mCurrentDrawUsedWidth += fontWidths[i];
+                        }else {
+                            int newStart = i + 1;
+                            if(mCurrentDrawUsedWidth > needStopWidth){
+                                newStart = i;
+                            }
+                            toNewDrawLine(widthStart + mEllipsizeTextLength);
+                            onDrawText(canvas, text, fontWidths, newStart, widthStart, widthEnd);
+                            return;
+                        }
                     }
                 }
             } else if (mEllipsize == TextUtils.TruncateAt.MIDDLE) {
                 int ellipsizeLine = getMiddleEllipsizeLine();
-                int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-                int breakPoint;
                 if (mCurrentDrawLine < ellipsizeLine) {
-                    if (textWidth + mCurrentDrawUsedWidth > widthEnd) {
-                        breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                                widthEnd - mCurrentDrawUsedWidth, null);
-                        drawText(canvas, text, 0, breakPoint, widthEnd - mCurrentDrawUsedWidth);
-                        toNewDrawLine(widthStart);
-                        text = text.subSequence(breakPoint, text.length());
-                        onDrawText(canvas, text, widthStart, widthEnd);
-                    } else {
-                        drawText(canvas, text, 0, text.length(), textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
-                    }
-                } else if (mCurrentDrawLine == ellipsizeLine) {
-                    int needStop = getWidth() / 2 - mEllipsizeTextLength / 2;
-                    if (mIsExecutedMiddleEllipsize) {
-                        handleTextAfterMiddleEllipsize(canvas, text, widthStart,
-                                widthEnd, ellipsizeLine, textWidth);
-                    } else if (textWidth + mCurrentDrawUsedWidth < needStop) {
-                        drawText(canvas, text, 0, text.length(), textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
-                    } else if (textWidth + mCurrentDrawUsedWidth == needStop) {
-                        drawText(canvas, text, 0, text.length(), textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
-                        drawText(canvas, mEllipsizeText, 0, mEllipsizeText.length(), mEllipsizeTextLength);
-                        mCurrentDrawUsedWidth += mEllipsizeTextLength;
-                        mMiddleEllipsizeWidthRecord = mCurrentDrawUsedWidth;
-                        mIsExecutedMiddleEllipsize = true;
-                    } else {
-                        breakPoint = mPaint.breakText(text, 0, text.length(), true, needStop - mCurrentDrawUsedWidth, null);
-                        textWidth = (int) Math.ceil(mPaint.measureText(text, 0, breakPoint));
-                        drawText(canvas, text, 0, breakPoint, textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
-                        drawText(canvas, mEllipsizeText, 0, mEllipsizeText.length(), mEllipsizeTextLength);
-                        mCurrentDrawUsedWidth += mEllipsizeTextLength;
-                        mMiddleEllipsizeWidthRecord = mCurrentDrawUsedWidth;
-                        mIsExecutedMiddleEllipsize = true;
-                        if (breakPoint < text.length()) {
-                            text = text.subSequence(breakPoint, text.length());
-                            textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-                            handleTextAfterMiddleEllipsize(canvas, text, widthStart,
-                                    widthEnd, ellipsizeLine, textWidth);
+                    int targetDrawWidth = mCurrentDrawUsedWidth;
+                    for(int i = offset; i < fontWidths.length; i++){
+                        if(targetDrawWidth + fontWidths[i] <= widthEnd){
+                            targetDrawWidth += fontWidths[i];
+                        }else{
+                            drawText(canvas, text, offset, i, widthEnd - mCurrentDrawUsedWidth);
+                            toNewDrawLine(widthStart);
+                            onDrawText(canvas, text, fontWidths, i, widthStart, widthEnd);
+                            return;
                         }
+                    }
+                    drawText(canvas, text, offset, text.length(), targetDrawWidth - mCurrentDrawUsedWidth);
+                    mCurrentDrawUsedWidth = targetDrawWidth;
+                } else if (mCurrentDrawLine == ellipsizeLine) {
+                    if (mIsExecutedMiddleEllipsize) {
+                        handleTextAfterMiddleEllipsize(canvas, text, fontWidths, offset,
+                                ellipsizeLine, widthStart, widthEnd);
+                    } else {
+                        int needStop = (widthEnd + widthStart)/ 2 - mEllipsizeTextLength / 2;
+                        int targetDrawWidth = mCurrentDrawUsedWidth;
+                        for(int i = offset; i < fontWidths.length; i++){
+                            if(targetDrawWidth + fontWidths[i] <= needStop){
+                                targetDrawWidth += fontWidths[i];
+                            }else{
+                                drawText(canvas, text, offset, i, targetDrawWidth - mCurrentDrawUsedWidth);
+                                mCurrentDrawUsedWidth = targetDrawWidth;
+                                drawText(canvas, mEllipsizeText, 0, mEllipsizeText.length(), mEllipsizeTextLength);
+                                mCurrentDrawUsedWidth += mEllipsizeTextLength;
+                                mMiddleEllipsizeWidthRecord = mCurrentDrawUsedWidth;
+                                mIsExecutedMiddleEllipsize = true;
+                                int newStart = i + 1;
+                                if(targetDrawWidth >= needStop){
+                                    newStart = i;
+                                }
+                                handleTextAfterMiddleEllipsize(canvas, text, fontWidths, newStart,
+                                        ellipsizeLine, widthStart, widthEnd);
+                                return;
+                            }
+                        }
+                        drawText(canvas, text, offset, text.length(), targetDrawWidth - mCurrentDrawUsedWidth);
+                        mCurrentDrawUsedWidth = targetDrawWidth;
                     }
                 } else {
-                    handleTextAfterMiddleEllipsize(canvas, text, widthStart,
-                            widthEnd, ellipsizeLine, textWidth);
+                    handleTextAfterMiddleEllipsize(canvas, text, fontWidths, offset,
+                            ellipsizeLine, widthStart, widthEnd);
                 }
             } else {
-                int textWidth = (int) Math.ceil(mPaint.measureText(text, 0, text.length()));
-                int breakPoint;
-                if (mCurrentDrawLine == mNeedDrawLine) {
-                    int ellipsizeLength = mEllipsizeTextLength + mMoreActionTextLength;
-                    if (textWidth + mCurrentDrawUsedWidth >= widthEnd - ellipsizeLength) {
-                        if (textWidth + mCurrentDrawUsedWidth > widthEnd - ellipsizeLength) {
-                            breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                                    widthEnd - mCurrentDrawUsedWidth - ellipsizeLength, null);
-                            drawText(canvas, text, 0, breakPoint, textWidth);
-                            textWidth = (int) Math.ceil(mPaint.measureText(text, 0, breakPoint));
-                            mCurrentDrawUsedWidth += textWidth;
-                        } else {
-                            drawText(canvas, text, 0, text.length(), textWidth);
-                            mCurrentDrawUsedWidth += textWidth;
+                if(mCurrentDrawLine < mNeedDrawLine){
+                    int targetUsedWidth = mCurrentDrawUsedWidth;
+                    for(int i = offset; i < fontWidths.length; i++){
+                        if(targetUsedWidth + fontWidths[i] <= widthEnd){
+                            targetUsedWidth += fontWidths[i];
+                        }else{
+                            drawText(canvas, text, offset, i, widthEnd - mCurrentDrawUsedWidth);
+                            toNewDrawLine(widthStart);
+                            onDrawText(canvas, text, fontWidths, i, widthStart, widthEnd);
+                            return;
                         }
-                        drawText(canvas, mEllipsizeText, 0, mEllipsizeText.length(), mEllipsizeTextLength);
-                        mCurrentDrawUsedWidth += mEllipsizeTextLength;
-                        drawMoreActionText(canvas, widthEnd);
-                        // 依然要去到下一行，使得后续不会进入这个逻辑
-                        toNewDrawLine(widthStart);
-                    } else {
-                        drawText(canvas, text, 0, text.length(), textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
                     }
-                } else if (mCurrentDrawLine < mNeedDrawLine) {
-                    if (textWidth + mCurrentDrawUsedWidth > widthEnd) {
-                        breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                                widthEnd - mCurrentDrawUsedWidth, null);
-                        drawText(canvas, text, 0, breakPoint, widthEnd - mCurrentDrawUsedWidth);
-                        toNewDrawLine(widthStart);
-                        text = text.subSequence(breakPoint, text.length());
-                        onDrawText(canvas, text, widthStart, widthEnd);
-                    } else {
-                        drawText(canvas, text, 0, text.length(), textWidth);
-                        mCurrentDrawUsedWidth += textWidth;
+                    drawText(canvas, text, offset, fontWidths.length, targetUsedWidth - mCurrentDrawUsedWidth);
+                    mCurrentDrawUsedWidth = targetUsedWidth;
+                } else if(mCurrentDrawLine == mNeedDrawLine){
+                    int ellipsizeLength = mEllipsizeTextLength + mMoreActionTextLength;
+                    int targetUsedWidth = mCurrentDrawUsedWidth;
+                    for(int i = offset; i < fontWidths.length; i++){
+                        if(targetUsedWidth + fontWidths[i] <= widthEnd - ellipsizeLength){
+                            targetUsedWidth += fontWidths[i];
+                        }else{
+                            drawText(canvas, text, offset, i, targetUsedWidth - mCurrentDrawUsedWidth);
+                            mCurrentDrawUsedWidth = targetUsedWidth;
+                            drawText(canvas, mEllipsizeText, 0, mEllipsizeText.length(), mEllipsizeTextLength);
+                            mCurrentDrawUsedWidth += mEllipsizeTextLength;
+                            drawMoreActionText(canvas, widthEnd);
+                            // 依然要去到下一行，使得后续不会进入这个逻辑
+                            toNewDrawLine(widthStart);
+                            return;
+                        }
                     }
+                    drawText(canvas, text, offset, fontWidths.length, targetUsedWidth - mCurrentDrawUsedWidth);
+                    mCurrentDrawUsedWidth = targetUsedWidth;
                 }
             }
 
         } else {
-            onRealDrawText(canvas, text, widthStart, widthEnd);
+            onRealDrawText(canvas, text, fontWidths, 0, widthStart, widthEnd);
         }
     }
 
-    private void handleTextAfterMiddleEllipsize(Canvas canvas, CharSequence text,
-                                                int widthStart, int widthEnd, int ellipsizeLine, int textWidth) {
+    private void handleTextAfterMiddleEllipsize(Canvas canvas, CharSequence text, float[] fontWidths,
+                                                int offset, int ellipsizeLine, int widthStart, int widthEnd) {
+        if(offset >= text.length()){
+            return;
+        }
         if (mMiddleEllipsizeWidthRecord == -1) {
-            onRealDrawText(canvas, text, widthStart, widthEnd);
+            onRealDrawText(canvas, text, fontWidths, offset, widthStart, widthEnd);
             return;
         }
         int endLines = mNeedDrawLine - ellipsizeLine;
-        int breakPoint;
-        int borrowWidth = (widthEnd - mMiddleEllipsizeWidthRecord) - mCurrentCalWidth;
+        int borrowWidth = widthEnd - mCurrentCalWidth - (mMiddleEllipsizeWidthRecord - widthStart);
         int needStopLine = borrowWidth > 0 ? mLines - endLines - 1 : mLines - endLines;
-        int needStopWidth = (borrowWidth > 0 ? widthEnd - borrowWidth :
-                mMiddleEllipsizeWidthRecord - (widthEnd - mCurrentCalWidth)) +
-                QMUIDisplayHelper.dp2px(getContext(), 5);
+        int needStopWidth = borrowWidth > 0 ? widthEnd - borrowWidth :
+                mMiddleEllipsizeWidthRecord - (widthEnd - mCurrentCalWidth);
+
 
         if (mCurrentDrawLine < needStopLine) {
-            if (textWidth + mCurrentDrawUsedWidth > widthEnd) {
-                breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                        widthEnd - mCurrentDrawUsedWidth, null);
-                toNewDrawLine(widthStart);
-                onDrawText(canvas, text.subSequence(breakPoint, text.length()), widthStart, widthEnd);
-            } else {
-                mCurrentDrawUsedWidth += textWidth;
+            for(int i = offset; i < fontWidths.length; i++){
+                if(mCurrentDrawUsedWidth + fontWidths[i] <= widthEnd){
+                    mCurrentDrawUsedWidth += fontWidths[i];
+                }else{
+                    toNewDrawLine(widthStart);
+                    handleTextAfterMiddleEllipsize(canvas, text, fontWidths, i, ellipsizeLine, widthStart, widthEnd);
+                    return;
+                }
             }
         } else if (mCurrentDrawLine == needStopLine) {
-            if (textWidth + mCurrentDrawUsedWidth < needStopWidth) {
-                mCurrentDrawUsedWidth += textWidth;
-            } else if (textWidth + mCurrentDrawUsedWidth == needStopWidth) {
-                mCurrentDrawUsedWidth = mMiddleEllipsizeWidthRecord;
-                mMiddleEllipsizeWidthRecord = -1;
-                mLastNeedStopLineRecord = needStopLine;
-            } else {
-                breakPoint = mPaint.breakText(text, 0, text.length(), true,
-                        needStopWidth - mCurrentDrawUsedWidth, null);
-                mCurrentDrawUsedWidth = mMiddleEllipsizeWidthRecord;
-                mMiddleEllipsizeWidthRecord = -1;
-                mLastNeedStopLineRecord = needStopLine;
-                onRealDrawText(canvas, text.subSequence(breakPoint, text.length()), widthStart, widthEnd);
+            for(int i = offset; i < fontWidths.length; i++){
+                if(mCurrentDrawUsedWidth + fontWidths[i] <= needStopWidth){
+                    mCurrentDrawUsedWidth += fontWidths[i];
+                }else{
+                    int newStart = i + 1;
+                    if(mCurrentDrawUsedWidth >= needStopWidth){
+                        newStart = i;
+                    }
+                    mCurrentDrawUsedWidth = mMiddleEllipsizeWidthRecord;
+                    mMiddleEllipsizeWidthRecord = -1;
+                    mLastNeedStopLineRecord = needStopLine;
+                    onRealDrawText(canvas, text, fontWidths, newStart, widthStart, widthEnd);
+                    return;
+                }
             }
         } else {
-            onRealDrawText(canvas, text, widthStart, widthEnd);
+            onRealDrawText(canvas, text, fontWidths, offset, widthStart, widthEnd);
         }
     }
 
     private void drawText(Canvas canvas, CharSequence text, int start, int end, int textWidth) {
+        if(end <= start || end > text.length() || start >= text.length()){
+            return;
+        }
         if (mIsInDrawSpan && mCurrentDrawSpan != null) {
             @ColorInt int color = mCurrentDrawSpan.isPressed() ? mCurrentDrawSpan.getPressedBackgroundColor() :
                     mCurrentDrawSpan.getNormalBackgroundColor();
@@ -1200,11 +1224,10 @@ public class QMUIQQFaceView extends View {
         }
 
         int endLines = mNeedDrawLine - ellipsizeLine;
-        int borrowWidth = (widthEnd - mMiddleEllipsizeWidthRecord) - mCurrentCalWidth;
+        int borrowWidth = widthEnd - mCurrentCalWidth - (mMiddleEllipsizeWidthRecord - widthStart);
         int needStopLine = borrowWidth > 0 ? mLines - endLines - 1 : mLines - endLines;
-        int needStopWidth = (borrowWidth > 0 ? widthEnd - borrowWidth :
-                mMiddleEllipsizeWidthRecord - (widthEnd - mCurrentCalWidth)) +
-                QMUIDisplayHelper.dp2px(getContext(), 5);
+        int needStopWidth = borrowWidth > 0 ? widthEnd - borrowWidth :
+                mMiddleEllipsizeWidthRecord - (widthEnd - mCurrentCalWidth);
 
         if (mCurrentDrawLine < needStopLine) {
             if (size + mCurrentDrawUsedWidth > widthEnd) {
@@ -1214,12 +1237,19 @@ public class QMUIQQFaceView extends View {
                 mCurrentDrawUsedWidth += size;
             }
         } else if (mCurrentDrawLine == needStopLine) {
-            if (size + mCurrentDrawUsedWidth < needStopWidth) {
+            if (size + mCurrentDrawUsedWidth <= needStopWidth) {
                 mCurrentDrawUsedWidth += size;
             } else {
+                boolean drawCurrentFace = false;
+                if(mCurrentDrawUsedWidth >= needStopWidth){
+                    drawCurrentFace = true;
+                }
                 mCurrentDrawUsedWidth = mMiddleEllipsizeWidthRecord;
                 mMiddleEllipsizeWidthRecord = -1;
                 mLastNeedStopLineRecord = needStopLine;
+                if(drawCurrentFace){
+                    onDrawQQFace(canvas, res, specialDrawable, widthStart, widthEnd, isFirst, isLast);
+                }
             }
         } else {
             onRealDrawQQFace(canvas, res, specialDrawable, ellipsizeLine - needStopLine, widthStart, widthEnd, isFirst, isLast);
