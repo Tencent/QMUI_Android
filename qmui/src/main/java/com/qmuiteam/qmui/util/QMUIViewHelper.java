@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,19 +108,23 @@ public class QMUIViewHelper {
 
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static void setBackgroundKeepingPadding(View view, Drawable drawable) {
-        int[] padding = new int[]{view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom()};
+    public static void setBackground(View view, Drawable drawable){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             view.setBackground(drawable);
         } else {
             view.setBackgroundDrawable(drawable);
         }
+    }
+
+    public static void setBackgroundKeepingPadding(View view, Drawable drawable) {
+        int[] padding = new int[]{view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom()};
+        setBackground(view, drawable);
         view.setPadding(padding[0], padding[1], padding[2], padding[3]);
     }
 
     @SuppressWarnings("deprecation")
     public static void setBackgroundKeepingPadding(View view, int backgroundResId) {
-        setBackgroundKeepingPadding(view, view.getResources().getDrawable(backgroundResId));
+        setBackgroundKeepingPadding(view, ContextCompat.getDrawable(view.getContext(), backgroundResId));
     }
 
     public static void setBackgroundColorKeepPadding(View view, @ColorInt int color) {

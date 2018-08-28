@@ -12,6 +12,7 @@ import android.view.View;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
 import com.qmuiteam.qmui.util.QMUISpanHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -120,7 +121,7 @@ public class QMUIDialogAction {
     private QMUIButton generateActionButton(Context context, CharSequence text, int iconRes) {
         // button 有提供 buttonStyle, 覆盖第三个参数不是好选择
         QMUIButton button = new QMUIButton(context);
-        button.setBackground(null);
+        QMUIViewHelper.setBackground(button, null);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
         button.setChangeAlphaWhenDisable(true);
@@ -140,7 +141,7 @@ public class QMUIDialogAction {
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_qmui_dialog_action_button_padding_horizontal) {
                 paddingHor = a.getDimensionPixelSize(attr, 0);
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_android_background) {
-                button.setBackground(a.getDrawable(attr));
+                QMUIViewHelper.setBackground(button, a.getDrawable(attr));
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_android_minWidth) {
                 int miniWidth = a.getDimensionPixelSize(attr, 0);
                 button.setMinWidth(miniWidth);
