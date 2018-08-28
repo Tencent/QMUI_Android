@@ -54,10 +54,7 @@ public class QMUIDisplayHelper {
      * @return
      */
     public static DisplayMetrics getDisplayMetrics(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getMetrics(displayMetrics);
-        return displayMetrics;
+        return context.getResources().getDisplayMetrics();
     }
 
     /**
@@ -103,7 +100,11 @@ public class QMUIDisplayHelper {
      * @return
      */
     public static int getScreenHeight(Context context) {
-        return getDisplayMetrics(context).heightPixels;
+        int screenHeight = getDisplayMetrics(context).heightPixels;
+        if(QMUIDeviceHelper.isXiaomi() && xiaomiNavigationGestureEnabled(context)){
+            screenHeight += getResourceNavHeight(context);
+        }
+        return screenHeight;
     }
 
     /**
@@ -200,11 +201,6 @@ public class QMUIDisplayHelper {
                 result -= QMUINotchHelper.getNotchSizeInHuawei(context)[1];
             }
 
-            // TODO verify for MIUI
-            if (QMUIDeviceHelper.isXiaomi() && !QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context)) {
-                result -= QMUINotchHelper.getNotchHeightInXiaomi(context);
-            }
-
             // TODO vivo 设置-系统导航-导航手势样式-显示手势操作区域 打开的情况下，应该减去手势操作区域的高度，但无API
             // TODO vivo 设置-显示与亮度-第三方应用显示比例 选为安全区域显示时，整个 window 会移动，应该减去移动区域，但无API
             // TODO oppo 设置-显示与亮度-应用全屏显示-凹形区域显示控制 关闭是，整个 window 会移动，应该减去移动区域，但无API
@@ -239,15 +235,11 @@ public class QMUIDisplayHelper {
             }
             return result;
         }
-        if (isPortrait) {
-            if (QMUIDeviceHelper.isXiaomi() && !QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context)) {
-                // TODO verify for MIUI
-                result -= QMUINotchHelper.getNotchHeightInXiaomi(context);
-            }
+//        if (isPortrait) {
             // TODO vivo 设置-系统导航-导航手势样式-显示手势操作区域 打开的情况下，应该减去手势操作区域的高度，但无API
             // TODO vivo 设置-显示与亮度-第三方应用显示比例 选为安全区域显示时，整个 window 会移动，应该减去移动区域，但无API
             // TODO oppo 设置-显示与亮度-应用全屏显示-凹形区域显示控制 关闭是，整个 window 会移动，应该减去移动区域，但无API
-        }
+//        }
         return result;
     }
 
@@ -341,17 +333,21 @@ public class QMUIDisplayHelper {
      * @return
      */
     public static int getStatusBarHeight(Context context) {
-        Class<?> c;
-        Object obj;
-        Field field;
-        int x;
+        if(QMUIDeviceHelper.isXiaomi()){
+            int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                return context.getResources().getDimensionPixelSize(resourceId);
+            }
+            return 0;
+        }
         try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            return context.getResources()
-                    .getDimensionPixelSize(x);
+            Class<?> c = Class.forName("com.android.internal.R$dimen");
+            Object obj = c.newInstance();
+            Field field = c.getField("status_bar_height");
+            int x = Integer.parseInt(field.get(obj).toString());
+            if(x > 0){
+                return context.getResources().getDimensionPixelSize(x);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -368,14 +364,22 @@ public class QMUIDisplayHelper {
         if (!isNavMenuExist(context)) {
             return 0;
         }
+        int resourceNavHeight = getResourceNavHeight(context);
+        if (resourceNavHeight >= 0) {
+            return resourceNavHeight;
+        }
+
+        // 小米 MIX 有nav bar, 而 getRealScreenSize(context)[1] - getScreenHeight(context) = 0
+        return getRealScreenSize(context)[1] - getScreenHeight(context);
+    }
+
+    private static int getResourceNavHeight(Context context){
         // 小米4没有nav bar, 而 navigation_bar_height 有值
         int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return context.getResources().getDimensionPixelSize(resourceId);
         }
-
-        // 小米 MIX 有nav bar, 而 getRealScreenSize(context)[1] - getScreenHeight(context) = 0
-        return getRealScreenSize(context)[1] - getScreenHeight(context);
+        return -1;
     }
 
     public static final boolean hasCamera(Context context) {
@@ -568,6 +572,8 @@ public class QMUIDisplayHelper {
     // ====================== Setting ===========================
     private static final String VIVO_NAVIGATION_GESTURE = "navigation_gesture_on";
     private static final String HUAWAI_DISPLAY_NOTCH_STATUS = "display_notch_status";
+    private static final String XIAOMI_DISPLAY_NOTCH_STATUS = "force_black";
+    private static final String XIAOMI_FULLSCREEN_GESTURE = "force_fsg_nav_bar";
 
     /**
      * 获取vivo手机设置中的"navigation_gesture_on"值，判断当前系统是使用导航键还是手势导航操作
@@ -580,6 +586,13 @@ public class QMUIDisplayHelper {
         return val != 0;
     }
 
+
+    public static boolean xiaomiNavigationGestureEnabled(Context context) {
+        int val = Settings.Global.getInt(context.getContentResolver(), XIAOMI_FULLSCREEN_GESTURE, 0);
+        return val != 0;
+    }
+
+
     public static boolean huaweiIsNotchSetToShowInSetting(Context context) {
         // 0: 默认
         // 1: 隐藏显示区域
@@ -589,6 +602,6 @@ public class QMUIDisplayHelper {
 
     @TargetApi(17)
     public static boolean xiaomiIsNotchSetToShowInSetting(Context context) {
-        return Settings.Global.getInt(context.getContentResolver(), "force_black", 0) == 0;
+        return Settings.Global.getInt(context.getContentResolver(), XIAOMI_DISPLAY_NOTCH_STATUS, 0) == 0;
     }
 }

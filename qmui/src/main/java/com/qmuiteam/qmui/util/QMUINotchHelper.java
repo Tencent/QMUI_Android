@@ -16,6 +16,8 @@ import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
 public class QMUINotchHelper {
 
     private static final String TAG = "QMUINotchHelper";
@@ -29,7 +31,6 @@ public class QMUINotchHelper {
     private static Rect sRotation270SafeInset = null;
     private static int[] sNotchSizeInHawei = null;
     private static Boolean sHuaweiIsNotchSetToShow = null;
-    private static Boolean sXiaomiIsNotchSetToShow = null;
 
     public static boolean hasNotchInVivo(Context context) {
         boolean ret = false;
@@ -77,13 +78,16 @@ public class QMUINotchHelper {
                 .hasSystemFeature("com.oppo.feature.screen.heteromorphism");
     }
 
+    @SuppressLint("PrivateApi")
     public static boolean hasNotchInXiaomi(Context context) {
         try {
-            @SuppressLint("PrivateApi") Class spClass = Class.forName("android.os.SystemProperties");
-            Method getMethod = spClass.getDeclaredMethod("getInt", String.class, Integer.class);
+            Class spClass = Class.forName("android.os.SystemProperties");
+            Method getMethod = spClass.getDeclaredMethod("getInt", String.class, int.class);
+            getMethod.setAccessible(true);
             int hasNotch = (int) getMethod.invoke(null, MIUI_NOTCH, 0);
             return hasNotch == 1;
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -250,12 +254,6 @@ public class QMUINotchHelper {
                 clearLandscapeRectInfo();
             }
             sHuaweiIsNotchSetToShow = isHuaweiNotchSetToShow;
-        } else if (QMUIDeviceHelper.isXiaomi()) {
-            boolean isXiaomiNotchSetToShow = QMUIDisplayHelper.xiaomiIsNotchSetToShowInSetting(context);
-            if (sXiaomiIsNotchSetToShow != null && sXiaomiIsNotchSetToShow != isXiaomiNotchSetToShow) {
-                clearAllRectInfo();
-            }
-            sXiaomiIsNotchSetToShow = isXiaomiNotchSetToShow;
         }
         int screenRotation = getScreenRotation(context);
         if (screenRotation == Surface.ROTATION_90) {
@@ -318,11 +316,7 @@ public class QMUINotchHelper {
             }
             rect.right = 0;
         } else if (QMUIDeviceHelper.isXiaomi()) {
-            if (sXiaomiIsNotchSetToShow) {
-                rect.left = getNotchHeightInXiaomi(context);
-            } else {
-                rect.left = 0;
-            }
+            rect.left = getNotchHeightInXiaomi(context);
             rect.right = 0;
         }
         return rect;
@@ -363,11 +357,7 @@ public class QMUINotchHelper {
             }
             rect.left = 0;
         } else if (QMUIDeviceHelper.isXiaomi()) {
-            if (sXiaomiIsNotchSetToShow) {
-                rect.right = getNotchHeightInXiaomi(context);
-            } else {
-                rect.right = 0;
-            }
+            rect.right = getNotchHeightInXiaomi(context);
             rect.left = 0;
         }
         return rect;
@@ -407,7 +397,7 @@ public class QMUINotchHelper {
         if (resourceId > 0) {
             return context.getResources().getDimensionPixelSize(resourceId);
         }
-        return -1;
+        return QMUIDisplayHelper.getStatusBarHeight(context);
     }
 
     public static int getNotchWidthInVivo(Context context){
@@ -439,6 +429,15 @@ public class QMUINotchHelper {
 
     public static boolean isNotchOfficialSupport(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
+    }
+
+    /**
+     * fitSystemWindows 对小米挖孔屏横屏挖孔区域无效
+     * @param view
+     * @return
+     */
+    public static boolean needFixLandscapeNotchAreaFitSystemWindow(View view){
+       return QMUIDeviceHelper.isXiaomi() && QMUINotchHelper.hasNotch(view);
     }
 
 }

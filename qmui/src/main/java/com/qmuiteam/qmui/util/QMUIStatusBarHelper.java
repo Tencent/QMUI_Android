@@ -10,6 +10,7 @@ import android.support.annotation.IntDef;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 
 import java.lang.annotation.Retention;
@@ -43,6 +44,12 @@ public class QMUIStatusBarHelper {
         translucent(window, 0x40000000);
     }
 
+    private static boolean supportTranslucent() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                // Essential Phone 在 Android 8 之前沉浸式做得不全，系统不从状态栏顶部开始布局却会下发 WindowInsets
+                && !(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT < 26);
+    }
+
     /**
      * 沉浸式状态栏。
      * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android。
@@ -50,7 +57,8 @@ public class QMUIStatusBarHelper {
      * @param activity 需要被设置沉浸式状态栏的 Activity。
      */
     public static void translucent(Activity activity, @ColorInt int colorOn5x) {
-        translucent(activity.getWindow(), colorOn5x);
+        Window window = activity.getWindow();
+        translucent(window, colorOn5x);
     }
 
     @TargetApi(19)
@@ -102,7 +110,6 @@ public class QMUIStatusBarHelper {
         }
     }
 
-
     @TargetApi(28)
     private static void handleDisplayCutoutMode(final Window window) {
         View decorView = window.getDecorView();
@@ -135,12 +142,6 @@ public class QMUIStatusBarHelper {
                     .LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             window.setAttributes(params);
         }
-    }
-
-    private static boolean supportTranslucent() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                // Essential Phone 在 Android 8 之前沉浸式做得不全，系统不从状态栏顶部开始布局却会下发 WindowInsets
-                && !(QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT < Build.VERSION_CODES.O);
     }
 
     /**

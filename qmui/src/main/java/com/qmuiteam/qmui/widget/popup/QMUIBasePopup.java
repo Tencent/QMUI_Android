@@ -102,7 +102,7 @@ public abstract class QMUIBasePopup {
         View decorView = getDecorView();
         if(decorView != null){
             WindowManager.LayoutParams p = (WindowManager.LayoutParams) decorView.getLayoutParams();
-            p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             p.dimAmount = dim;
             mWindowManager.updateViewLayout(decorView, p);
         }
@@ -177,19 +177,19 @@ public abstract class QMUIBasePopup {
     }
 
     private void measureWindowSize() {
-        int widthMeasureSpec = makeWidthMeasureSpec();
-        int heightMeasureSpec = makeHeightMeasureSpec();
+        int widthMeasureSpec = makeWidthMeasureSpec(mRootView);
+        int heightMeasureSpec = makeHeightMeasureSpec(mRootView);
         mRootView.measure(widthMeasureSpec, heightMeasureSpec);
         mWindowWidth = mRootView.getMeasuredWidth();
         mWindowHeight = mRootView.getMeasuredHeight();
         Log.i(TAG, "measureWindowSize: mWindowWidth = " + mWindowWidth + " ;mWindowHeight = " + mWindowHeight);
     }
 
-    protected int makeWidthMeasureSpec() {
+    protected int makeWidthMeasureSpec(View view) {
         return View.MeasureSpec.makeMeasureSpec(QMUIDisplayHelper.getScreenWidth(mContext), View.MeasureSpec.AT_MOST);
     }
 
-    protected int makeHeightMeasureSpec() {
+    protected int makeHeightMeasureSpec(View view) {
         return View.MeasureSpec.makeMeasureSpec(QMUIDisplayHelper.getScreenHeight(mContext), View.MeasureSpec.AT_MOST);
     }
 
@@ -258,7 +258,7 @@ public abstract class QMUIBasePopup {
 
     public class RootView extends ViewGroup {
         public RootView(Context context) {
-            super(context);
+            this(context, null);
         }
 
         public RootView(Context context, AttributeSet attrs) {
@@ -286,18 +286,18 @@ public abstract class QMUIBasePopup {
             if (getChildCount() == 0) {
                 setMeasuredDimension(0, 0);
             }
-//            int parentWidthSize = MeasureSpec.getSize(widthMeasureSpec);
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            int parentWidthSize = MeasureSpec.getSize(widthMeasureSpec);
             int parentHeightSize = MeasureSpec.getSize(heightMeasureSpec);
-            widthMeasureSpec = makeWidthMeasureSpec();
-            heightMeasureSpec = makeHeightMeasureSpec();
-//            int targetWidthSize = MeasureSpec.getSize(widthMeasureSpec);
-//            int targetWidthMode = MeasureSpec.getMode(widthMeasureSpec);
+            widthMeasureSpec = makeWidthMeasureSpec(this);
+            heightMeasureSpec = makeHeightMeasureSpec(this);
+            int targetWidthSize = MeasureSpec.getSize(widthMeasureSpec);
+            int targetWidthMode = MeasureSpec.getMode(widthMeasureSpec);
             int targetHeightSize = MeasureSpec.getSize(heightMeasureSpec);
             int targetHeightMode = MeasureSpec.getMode(heightMeasureSpec);
-            // fixme why parentWidthSize < screen width ?
-//            if (parentWidthSize < targetWidthSize) {
-//                widthMeasureSpec = MeasureSpec.makeMeasureSpec(parentWidthSize, targetWidthMode);
-//            }
+            if (parentWidthSize < targetWidthSize) {
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(parentWidthSize, targetWidthMode);
+            }
             if (parentHeightSize < targetHeightSize) {
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(parentHeightSize, targetHeightMode);
             }
