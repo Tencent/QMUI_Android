@@ -22,6 +22,10 @@
             android:name="android.max_aspect"
             android:value="2.34"/>
 
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape"/>
+
         <activity
             android:name=".QDMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
