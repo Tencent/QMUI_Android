@@ -8,15 +8,22 @@ import android.support.annotation.ColorInt;
  * @date 2016-03-17
  */
 public class QMUIColorHelper {
+
+    public static int setColorAlpha(@ColorInt int color, float alpha){
+        return setColorAlpha(color, alpha, true);
+    }
+
     /**
      * 设置颜色的alpha值
      *
      * @param color 需要被设置的颜色值
      * @param alpha 取值为[0,1]，0表示全透明，1表示不透明
+     * @param override 覆盖原本的 alpha
      * @return 返回改变了 alpha 值的颜色值
      */
-    public static int setColorAlpha(@ColorInt int color, float alpha) {
-        return color & 0x00ffffff | (int) (alpha * 255) << 24; // 清掉alpha信息后加上新的alpha信息
+    public static int setColorAlpha(@ColorInt int color, float alpha, boolean override) {
+        int origin = override ? 0xff : (color >> 24) & 0xff;
+        return color & 0x00ffffff | (int) (alpha * origin) << 24;
     }
 
     /**
