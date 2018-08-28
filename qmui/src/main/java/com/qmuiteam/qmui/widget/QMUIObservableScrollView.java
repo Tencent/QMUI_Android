@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class QMUIObservableScrollView extends ScrollView {
 
+    private int mScrollOffset = 0;
+
     private List<OnScrollChangedListener> mOnScrollChangedListeners;
 
     public QMUIObservableScrollView(Context context) {
@@ -51,11 +53,16 @@ public class QMUIObservableScrollView extends ScrollView {
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
+        mScrollOffset = t;
         if (mOnScrollChangedListeners != null && !mOnScrollChangedListeners.isEmpty()) {
             for (OnScrollChangedListener listener : mOnScrollChangedListeners) {
                 listener.onScrollChanged(this, l, t, oldl, oldt);
             }
         }
+    }
+
+    public int getScrollOffset() {
+        return mScrollOffset;
     }
 
     public interface OnScrollChangedListener {
