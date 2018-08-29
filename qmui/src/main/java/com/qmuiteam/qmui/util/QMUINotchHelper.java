@@ -1,6 +1,7 @@
 package com.qmuiteam.qmui.util;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
@@ -95,21 +96,16 @@ public class QMUINotchHelper {
     public static boolean hasNotch(View view){
         if (sHasNotch == null) {
             if(isNotchOfficialSupport()){
-                WindowInsets windowInsets = view.getRootWindowInsets();
-                if(windowInsets != null){
-                    DisplayCutout displayCutout = windowInsets.getDisplayCutout();
-                    sHasNotch = displayCutout != null;
-                }else{
-                    // view not attached
+                if(!attachHasOfficialNotch(view)){
                     return false;
                 }
-
             }else {
                 sHasNotch = has3rdNotch(view.getContext());
             }
         }
         return sHasNotch;
     }
+
 
     public static boolean hasNotch(Activity activity) {
         if (sHasNotch == null) {
@@ -122,13 +118,32 @@ public class QMUINotchHelper {
                 if(decorView == null){
                     return false;
                 }
-                DisplayCutout displayCutout = decorView.getRootWindowInsets().getDisplayCutout();
-                sHasNotch = displayCutout != null;
+                if(!attachHasOfficialNotch(decorView)){
+                    return false;
+                }
             }else {
                 sHasNotch = has3rdNotch(activity);
             }
         }
         return sHasNotch;
+    }
+
+    /**
+     *
+     * @param view
+     * @return false indicates the failure to get the result
+     */
+    @TargetApi(28)
+    private static boolean attachHasOfficialNotch(View view){
+        WindowInsets windowInsets = view.getRootWindowInsets();
+        if(windowInsets != null){
+            DisplayCutout displayCutout = windowInsets.getDisplayCutout();
+            sHasNotch = displayCutout != null;
+            return true;
+        }else{
+            // view not attached, do nothing
+            return false;
+        }
     }
 
     public static boolean has3rdNotch(Context context){
@@ -222,12 +237,8 @@ public class QMUINotchHelper {
     private static Rect getSafeInsetRect(Activity activity) {
         if(isNotchOfficialSupport()){
             Rect rect = new Rect();
-            DisplayCutout displayCutout = activity.getWindow().getDecorView()
-                    .getRootWindowInsets().getDisplayCutout();
-            if(displayCutout != null){
-                rect.set(displayCutout.getSafeInsetLeft(), displayCutout.getSafeInsetTop(),
-                        displayCutout.getSafeInsetRight(), displayCutout.getSafeInsetBottom());
-            }
+            View decorView = activity.getWindow().getDecorView();
+            getOfficialSafeInsetRect(decorView, rect);
             return rect;
         }
         return get3rdSafeInsetRect(activity);
@@ -236,14 +247,26 @@ public class QMUINotchHelper {
     private static Rect getSafeInsetRect(View view) {
         if(isNotchOfficialSupport()){
             Rect rect = new Rect();
-            DisplayCutout displayCutout = view.getRootWindowInsets().getDisplayCutout();
-            if(displayCutout != null){
-                rect.set(displayCutout.getSafeInsetLeft(), displayCutout.getSafeInsetTop(),
-                        displayCutout.getSafeInsetRight(), displayCutout.getSafeInsetBottom());
-            }
+            getOfficialSafeInsetRect(view, rect);
             return rect;
         }
         return get3rdSafeInsetRect(view.getContext());
+    }
+
+    @TargetApi(28)
+    private static void getOfficialSafeInsetRect(View view, Rect out) {
+        if(view == null){
+            return;
+        }
+        WindowInsets rootWindowInsets = view.getRootWindowInsets();
+        if(rootWindowInsets == null){
+            return;
+        }
+        DisplayCutout displayCutout = rootWindowInsets.getDisplayCutout();
+        if(displayCutout != null){
+            out.set(displayCutout.getSafeInsetLeft(), displayCutout.getSafeInsetTop(),
+                    displayCutout.getSafeInsetRight(), displayCutout.getSafeInsetBottom());
+        }
     }
 
     private static Rect get3rdSafeInsetRect(Context context){

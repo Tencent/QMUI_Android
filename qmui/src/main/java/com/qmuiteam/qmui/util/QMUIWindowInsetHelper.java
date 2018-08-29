@@ -2,6 +2,7 @@ package com.qmuiteam.qmui.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
@@ -109,6 +110,7 @@ public class QMUIWindowInsetHelper {
         return consumed;
     }
 
+    @TargetApi(21)
     public boolean defaultApplySystemWindowInsets21(ViewGroup viewGroup, Object insets) {
         if (QMUINotchHelper.isNotchOfficialSupport()) {
             return defaultApplySystemWindowInsets(viewGroup, (WindowInsets) insets);
@@ -138,10 +140,18 @@ public class QMUIWindowInsetHelper {
                 continue;
             }
 
+            int insetLeft =  insets.getSystemWindowInsetLeft();
+            int insetRight = insets.getSystemWindowInsetRight();
+            if(QMUINotchHelper.needFixLandscapeNotchAreaFitSystemWindow(viewGroup) &&
+                    viewGroup.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+                insetLeft = Math.max(insetLeft, QMUINotchHelper.getSafeInsetLeft(viewGroup));
+                insetRight = Math.max(insetRight, QMUINotchHelper.getSafeInsetRight(viewGroup));
+            }
+
             Rect childInsets = new Rect(
-                    insets.getSystemWindowInsetLeft(),
+                    insetLeft,
                     insets.getSystemWindowInsetTop(),
-                    insets.getSystemWindowInsetRight(),
+                    insetRight,
                     showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
 
             computeInsetsWithGravity(child, childInsets);
