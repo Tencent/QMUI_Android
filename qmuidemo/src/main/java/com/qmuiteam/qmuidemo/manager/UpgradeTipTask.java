@@ -49,7 +49,12 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_1_6){
+        if(mNewVersion == QDUpgradeManager.VERSION_1_1_7){
+            text.append("1. Improved QMUINotchHelper to support Xiaomi. \n");
+            text.append("2. Improved drawing effect of QMUIQQFaceView. \n");
+            text.append("3. Fixed a bug where UI would become unresponsive " +
+                    "if popBackStack was invoked during fragment transitions.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_1_1_6){
             text.append("1. Feature: QMUINotchHelper, a new helper class for notch compatibility. \n");
             appendBlockSpace(activity, text);
             text.append("2. Added \"more\" click event to QMUIQQFaceView.\n");
