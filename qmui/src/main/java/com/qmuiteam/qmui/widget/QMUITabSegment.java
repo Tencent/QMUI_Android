@@ -179,7 +179,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             int index = (int) v.getTag();
             Tab model = getAdapter().getItem(index);
             if (model != null) {
-                selectTab(index, !model.isDynamicChangeIconColor());
+                selectTab(index, !mHasIndicator && !model.isDynamicChangeIconColor());
             }
             if (mOnTabClickListener != null) {
                 mOnTabClickListener.onTabClick(index);
