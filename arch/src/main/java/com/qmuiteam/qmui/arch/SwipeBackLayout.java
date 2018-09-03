@@ -128,6 +128,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     private Callback mCallback;
 
+    private boolean mPreventSwipeBackWhenDown = false;
+
     public SwipeBackLayout(Context context) {
         this(context, null);
     }
@@ -353,9 +355,18 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         invalidate();
     }
 
+    private boolean preventSwipeBack(MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            mPreventSwipeBackWhenDown = !canSwipeBack();
+            return mPreventSwipeBackWhenDown;
+        }else{
+            return !canSwipeBack() || mPreventSwipeBackWhenDown;
+        }
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (!canSwipeBack()) {
+        if(preventSwipeBack(event)){
             return false;
         }
         try {
@@ -367,7 +378,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!canSwipeBack()) {
+        if(preventSwipeBack(event)){
             return false;
         }
         mDragHelper.processTouchEvent(event);
