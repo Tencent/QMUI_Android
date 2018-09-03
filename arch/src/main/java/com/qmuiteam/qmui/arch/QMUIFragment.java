@@ -78,7 +78,8 @@ public abstract class QMUIFragment extends Fragment {
 
 
     private View mBaseView;
-    private SwipeBackLayout mCacheView;
+    private SwipeBackLayout mCacheSwipeBackLayout;
+    private View mCacheRootView;
     private boolean isCreateForSwipeBack = false;
     private int mBackStackIndex = 0;
 
@@ -215,7 +216,15 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     private SwipeBackLayout newSwipeBackLayout() {
-        View rootView = onCreateView();
+        View rootView = mCacheRootView;
+        if(rootView == null){
+            rootView = onCreateView();
+            mCacheRootView = rootView;
+        }else{
+            if(rootView.getParent() != null){
+                ((ViewGroup)rootView.getParent()).removeView(rootView);
+            }
+        }
         if (translucentFull()) {
             rootView.setFitsSystemWindows(false);
         } else {
@@ -341,10 +350,10 @@ public abstract class QMUIFragment extends Fragment {
                     return;
                 }
                 QMUIKeyboardHelper.hideKeyboard(swipeBackLayout);
-                int backstackCount = fragmentManager.getBackStackEntryCount();
-                if (backstackCount > 1) {
+                int backStackCount = fragmentManager.getBackStackEntryCount();
+                if (backStackCount > 1) {
                     try {
-                        FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backstackCount - 1);
+                        FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backStackCount - 1);
 
                         Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
                         opsField.setAccessible(true);
@@ -406,7 +415,7 @@ public abstract class QMUIFragment extends Fragment {
                     } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     }
-                } else {
+                } else if(getParentFragment() == null){
                     if (getActivity() != null) {
                         getActivity().getWindow().getDecorView().setBackgroundColor(0);
                         Utils.convertActivityToTranslucent(getActivity());
@@ -424,37 +433,35 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     private boolean canNotUseCacheViewInCreateView(){
-        return mCacheView.getParent() != null || ViewCompat.isAttachedToWindow(mCacheView);
+        return mCacheSwipeBackLayout.getParent() != null || ViewCompat.isAttachedToWindow(mCacheSwipeBackLayout);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         SwipeBackLayout swipeBackLayout;
-        if (mCacheView == null) {
+        if (mCacheSwipeBackLayout == null) {
             swipeBackLayout = newSwipeBackLayout();
-            mCacheView = swipeBackLayout;
+            mCacheSwipeBackLayout = swipeBackLayout;
         } else if (isCreateForSwipeBack) {
             // in swipe back, exactly not in animation
-            swipeBackLayout = mCacheView;
+            swipeBackLayout = mCacheSwipeBackLayout;
         } else {
 
             if (canNotUseCacheViewInCreateView()) {
                 // try removeView first
-                container.removeView(mCacheView);
+                container.removeView(mCacheSwipeBackLayout);
             }
 
             if(canNotUseCacheViewInCreateView()){
                 // give up!!!
-                Log.i(TAG, "can not use cache view, this may happen " +
+                Log.i(TAG, "can not use cache swipeBackLayout, this may happen " +
                         "if invoke popBackStack duration fragment transition");
                 swipeBackLayout = newSwipeBackLayout();
-                mCacheView = swipeBackLayout;
+                mCacheSwipeBackLayout = swipeBackLayout;
             }else{
-                swipeBackLayout = mCacheView;
+                swipeBackLayout = mCacheSwipeBackLayout;
             }
         }
-
-
 
 
         if (!isCreateForSwipeBack) {
