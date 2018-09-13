@@ -63,7 +63,7 @@ public abstract class QMUIFragment extends Fragment {
 
 
     public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
-    public static final int RESULT_OK = Activity.RESULT_CANCELED;
+    public static final int RESULT_OK = Activity.RESULT_OK;
     public static final int RESULT_FIRST_USER = Activity.RESULT_FIRST_USER;
 
     public static final int ANIMATION_ENTER_STATUS_NOT_START = -1;
