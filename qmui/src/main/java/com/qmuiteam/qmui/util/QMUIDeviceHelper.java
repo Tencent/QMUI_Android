@@ -169,15 +169,15 @@ public class QMUIDeviceHelper {
     }
 
     public static boolean isVivo() {
-        return BRAND.contains("vivo") || BRAND.contains("bbk");
+        return BRAND.toLowerCase().contains("vivo") || BRAND.toLowerCase().contains("bbk");
     }
 
     public static boolean isOppo() {
-        return BRAND.contains("oppo");
+        return BRAND.toLowerCase().contains("oppo");
     }
 
     public static boolean isHuawei() {
-        return BRAND.contains("huawei") || BRAND.contains("honor");
+        return BRAND.toLowerCase().contains("huawei") || BRAND.toLowerCase().contains("honor");
     }
 
     public static boolean isEssentialPhone(){
