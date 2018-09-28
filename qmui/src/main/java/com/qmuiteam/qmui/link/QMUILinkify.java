@@ -102,6 +102,28 @@ public class QMUILinkify {
      */
     private static final int PHONE_NUMBER_MINIMUM_DIGITS = 7;
 
+    public static final WebUrlMatcher QMUI_WEB_URL_MATCHER = new WebUrlMatcher() {
+        @Override
+        public Pattern getPattern() {
+            return WebUrlPattern.WEB_URL;
+        }
+    };
+
+    private static WebUrlMatcher sWebUrlMatcher = new WebUrlMatcher() {
+        @Override
+        public Pattern getPattern() {
+            return Patterns.WEB_URL;
+        }
+    };
+
+    public static void useQmuiWebUrlMatcher(){
+        sWebUrlMatcher = QMUI_WEB_URL_MATCHER;
+    }
+
+    public static void setWebUrlMatcher(WebUrlMatcher webUrlMatcher) {
+        sWebUrlMatcher = webUrlMatcher;
+    }
+
     /**
      * Filters out web URL matches that occur after an at-sign (@).  This is
      * to prevent turning the domain name in an email address into a web link.
@@ -237,7 +259,7 @@ public class QMUILinkify {
         ArrayList<LinkSpec> links = new ArrayList<>();
 
         if ((mask & WEB_URLS) != 0) {
-            gatherLinks(links, text, Patterns.WEB_URL,
+            gatherLinks(links, text, sWebUrlMatcher.getPattern(),
                     new String[]{"http://", "https://", "rtsp://"},
                     sUrlMatchFilter, null);
         }
@@ -679,5 +701,95 @@ public class QMUILinkify {
         String url;
         int start;
         int end;
+    }
+
+    private static class WebUrlPattern {
+
+        // all domain names
+        private static final String[] EXT = {
+                "top", "com", "net", "org", "edu", "gov", "int", "mil", "tel", "biz", "cc", "tv", "info", "zw",
+                "name", "hk", "mobi", "asia", "cd", "travel", "pro", "museum", "coop", "aero", "ad", "ae", "af",
+                "ag", "ai", "al", "am", "an", "ao", "aq", "ar", "as", "at", "au", "aw", "az", "ba", "bb", "bd",
+                "be", "bf", "bg", "bh", "bi", "bj", "bm", "bn", "bo", "br", "bs", "bt", "bv", "bw", "by", "bz",
+                "ca", "cc", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cq", "cr", "cu", "cv", "cx",
+                "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "eh", "es", "et", "ev", "fi",
+                "fj", "fk", "fm", "fo", "fr", "ga", "gb", "gd", "ge", "gf", "gh", "gi", "gl", "gm", "gn", "gp",
+                "gr", "gt", "gu", "gw", "gy", "hk", "hm", "hn", "hr", "ht", "hu", "id", "ie", "il", "in", "io",
+                "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw",
+                "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly", "ma", "mc", "md",
+                "mg", "mh", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mv", "mw", "mx", "my", "mz",
+                "na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nt", "nu", "nz", "om", "qa", "pa",
+                "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "pt", "pw", "py", "re", "ro", "ru", "rw",
+                "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "st",
+                "su", "sy", "sz", "tc", "td", "tf", "tg", "th", "tj", "tk", "tm", "tn", "to", "tp", "tr", "tt",
+                "tv", "tw", "tz", "ua", "ug", "uk", "us", "uy", "va", "vc", "ve", "vg", "vn", "vu", "wf", "ws",
+                "ye", "yu", "za", "zm", "zr"
+        };
+
+        private static final String PROTOCOL = "(?i:http|https|rtsp)://";
+        private static final String IP_ADDRESS =
+                "((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4]"
+                        + "[0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]"
+                        + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}"
+                        + "|[1-9][0-9]|[0-9]))";
+        /**
+         * Valid UCS characters defined in RFC 3987. Excludes space characters.
+         */
+        private static final String UCS_CHAR = "[" +
+                "\u00A0-\uD7FF" +
+                "\uF900-\uFDCF" +
+                "\uFDF0-\uFFEF" +
+                "\uD800\uDC00-\uD83F\uDFFD" +
+                "\uD840\uDC00-\uD87F\uDFFD" +
+                "\uD880\uDC00-\uD8BF\uDFFD" +
+                "\uD8C0\uDC00-\uD8FF\uDFFD" +
+                "\uD900\uDC00-\uD93F\uDFFD" +
+                "\uD940\uDC00-\uD97F\uDFFD" +
+                "\uD980\uDC00-\uD9BF\uDFFD" +
+                "\uD9C0\uDC00-\uD9FF\uDFFD" +
+                "\uDA00\uDC00-\uDA3F\uDFFD" +
+                "\uDA40\uDC00-\uDA7F\uDFFD" +
+                "\uDA80\uDC00-\uDABF\uDFFD" +
+                "\uDAC0\uDC00-\uDAFF\uDFFD" +
+                "\uDB00\uDC00-\uDB3F\uDFFD" +
+                "\uDB44\uDC00-\uDB7F\uDFFD" +
+                "&&[^\u00A0[\u2000-\u200A]\u2028\u2029\u202F\u3000]]";
+
+        /**
+         * Valid characters for IRI label defined in RFC 3987.
+         */
+        private static final String LABEL_CHAR = "a-zA-Z0-9" + UCS_CHAR;
+
+        private static final String PORT_NUMBER = "\\:\\d{1,5}";
+        private static final String PATH_AND_QUERY = "[/\\?](?:(?:[" + LABEL_CHAR
+                + ";/\\?:@&=#~"  // plus optional query params
+                + "\\-\\.\\+!\\*'\\(\\),_\\$])|(?:%[a-fA-F0-9]{2}))*";
+        private static Pattern WEB_URL;
+
+
+
+        static {
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            for (int i = 0; i < EXT.length; i++) {
+                if(i != 0){
+                    sb.append("|");
+                }
+                sb.append(EXT[i]);
+            }
+            sb.append(")");
+
+            String host = "((?:(www\\.|[a-zA-Z\\.\\-]+\\.)?[a-zA-Z0-9\\-]+)" + "\\." + sb.toString() + ")";
+            WEB_URL = Pattern.compile("("
+                    + "(" + PROTOCOL + ")?"
+                    + "(" + IP_ADDRESS + "|" + host +")"
+                    + "(" + PORT_NUMBER + ")?"
+                    + "(" + PATH_AND_QUERY + ")?"
+                    + ")");
+        }
+    }
+
+    public interface WebUrlMatcher {
+        Pattern getPattern();
     }
 }
