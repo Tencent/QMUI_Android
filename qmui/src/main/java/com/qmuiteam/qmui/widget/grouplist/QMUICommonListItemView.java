@@ -170,6 +170,14 @@ public class QMUICommonListItemView extends RelativeLayout {
         setAccessoryType(accessoryType);
     }
 
+
+    public void updateImageViewLp(LayoutParamConfig lpConfig) {
+        if(lpConfig != null){
+            LayoutParams lp = (LayoutParams) mImageView.getLayoutParams();
+            mImageView.setLayoutParams(lpConfig.onConfig(lp));
+        }
+    }
+
     public void setImageDrawable(Drawable drawable) {
         if (drawable == null) {
             mImageView.setVisibility(View.GONE);
@@ -404,4 +412,7 @@ public class QMUICommonListItemView extends RelativeLayout {
     }
 
 
+    public interface LayoutParamConfig {
+        RelativeLayout.LayoutParams onConfig(RelativeLayout.LayoutParams lp);
+    }
 }

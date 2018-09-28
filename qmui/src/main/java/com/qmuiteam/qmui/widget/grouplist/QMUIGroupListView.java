@@ -8,7 +8,9 @@ import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.R;
@@ -212,6 +214,8 @@ public class QMUIGroupListView extends LinearLayout {
         private int mSeparatorDrawableForTop = 0;
         private int mSeparatorDrawableForBottom = 0;
         private int mSeparatorDrawableForMiddle = 0;
+        private int mLeftIconWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
+        private int mLeftIconHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
 
         public Section(Context context) {
             mContext = context;
@@ -301,6 +305,12 @@ public class QMUIGroupListView extends LinearLayout {
             return this;
         }
 
+        public Section setLeftIconSize(int width, int height) {
+            mLeftIconHeight = height;
+            mLeftIconWidth = width;
+            return this;
+        }
+
         /**
          * 将 Section 添加到 {@link QMUIGroupListView} 上
          */
@@ -335,6 +345,14 @@ public class QMUIGroupListView extends LinearLayout {
             }
 
             final int itemViewCount = mItemViews.size();
+            QMUICommonListItemView.LayoutParamConfig leftIconLpConfig = new QMUICommonListItemView.LayoutParamConfig() {
+                @Override
+                public RelativeLayout.LayoutParams onConfig(RelativeLayout.LayoutParams lp) {
+                    lp.width = mLeftIconWidth;
+                    lp.height = mLeftIconHeight;
+                    return lp;
+                }
+            };
             for (int i = 0; i < itemViewCount; i++) {
                 QMUICommonListItemView itemView = mItemViews.get(i);
                 int resDrawableId;
@@ -351,6 +369,7 @@ public class QMUIGroupListView extends LinearLayout {
                 } else {
                     resDrawableId = R.drawable.qmui_s_list_item_bg_with_border_none;
                 }
+                itemView.updateImageViewLp(leftIconLpConfig);
                 QMUIViewHelper.setBackgroundKeepingPadding(itemView, resDrawableId);
                 groupListView.addView(itemView);
             }

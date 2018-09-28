@@ -3,7 +3,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/group_list_item_imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,7 +11,8 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="?attr/qmui_common_list_item_icon_margin_right"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:visibility="gone"/>
 
     <FrameLayout

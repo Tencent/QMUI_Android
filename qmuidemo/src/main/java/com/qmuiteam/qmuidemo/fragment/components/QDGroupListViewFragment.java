@@ -1,10 +1,13 @@
 package com.qmuiteam.qmuidemo.fragment.components;
 
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -58,10 +61,20 @@ public class QDGroupListViewFragment extends BaseFragment {
     }
 
     private void initGroupListView() {
-        QMUICommonListItemView normalItem = mGroupListView.createItemView("Item 1");
+        QMUICommonListItemView normalItem = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "Item 1",
+                null,
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_NONE);
         normalItem.setOrientation(QMUICommonListItemView.VERTICAL);
 
-        QMUICommonListItemView itemWithDetail = mGroupListView.createItemView("Item 2");
+        QMUICommonListItemView itemWithDetail = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.example_image0),
+                "Item 2",
+                null,
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_NONE);
         itemWithDetail.setDetailText("在右方的详细信息");
 
         QMUICommonListItemView itemWithDetailBelow = mGroupListView.createItemView("Item 3");
@@ -95,9 +108,11 @@ public class QDGroupListViewFragment extends BaseFragment {
             }
         };
 
+        int size = QMUIDisplayHelper.dp2px(getContext(), 20);
         QMUIGroupListView.newSection(getContext())
                 .setTitle("Section 1: 默认提供的样式")
                 .setDescription("Section 1 的描述")
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(normalItem, onClickListener)
                 .addItemView(itemWithDetail, onClickListener)
                 .addItemView(itemWithDetailBelow, onClickListener)
