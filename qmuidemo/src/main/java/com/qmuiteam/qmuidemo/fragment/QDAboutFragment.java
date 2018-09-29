@@ -1,11 +1,12 @@
 package com.qmuiteam.qmuidemo.fragment;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
@@ -17,6 +18,9 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 
 /**
  * 关于界面
@@ -43,19 +47,25 @@ public class QDAboutFragment extends BaseFragment {
                 .addItemView(mAboutGroupListView.createItemView(getResources().getString(R.string.about_item_homepage)), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String url = "http://qmuiteam.com/android/page/index.html";
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
-                        startActivity(intent);
+                        String url = "https://qmuiteam.com/android";
+                        Bundle bundle = new Bundle();
+                        bundle.putString(EXTRA_URL, url);
+                        bundle.putString(EXTRA_TITLE, getResources().getString(R.string.about_item_homepage));
+                        QMUIFragment fragment = new QDWebExplorerFragment();
+                        fragment.setArguments(bundle);
+                        startFragment(fragment);
                     }
                 })
                 .addItemView(mAboutGroupListView.createItemView(getResources().getString(R.string.about_item_github)), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String url = "https://github.com/QMUI/QMUI_Android";
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
-                        startActivity(intent);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(EXTRA_URL, url);
+                        bundle.putString(EXTRA_TITLE, getResources().getString(R.string.about_item_github));
+                        QMUIFragment fragment = new QDWebExplorerFragment();
+                        fragment.setArguments(bundle);
+                        startFragment(fragment);
                     }
                 })
                 .addTo(mAboutGroupListView);
