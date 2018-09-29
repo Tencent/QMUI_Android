@@ -1,5 +1,9 @@
 package com.qmuiteam.qmui.arch;
 
+import android.arch.lifecycle.GenericLifecycleObserver;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -215,27 +219,21 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     }
 
     /**
-     * Register a callback to be invoked when a swipe event is sent to this
-     * view.
-     *
-     * @param listener the swipe listener to attach to this view
-     * @deprecated use {@link #addSwipeListener} instead
-     */
-    @Deprecated
-    public void setSwipeListener(SwipeListener listener) {
-        addSwipeListener(listener);
-    }
-
-    /**
      * Add a callback to be invoked when a swipe event is sent to this view.
      *
      * @param listener the swipe listener to attach to this view
      */
-    public void addSwipeListener(SwipeListener listener) {
+    public ListenerRemover addSwipeListener(final SwipeListener listener) {
         if (mListeners == null) {
             mListeners = new ArrayList<>();
         }
         mListeners.add(listener);
+        return new ListenerRemover() {
+            @Override
+            public void remove() {
+                mListeners.remove(listener);
+            }
+        };
     }
 
     /**
@@ -248,6 +246,14 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
             return;
         }
         mListeners.remove(listener);
+    }
+
+    public void clearSwipeListeners(){
+        if (mListeners == null) {
+            return;
+        }
+        mListeners.clear();
+        mListeners = null;
     }
 
     public interface SwipeListener {
@@ -605,5 +611,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     public interface Callback {
         boolean canSwipeBack();
+    }
+
+    public interface ListenerRemover {
+        void remove();
     }
 }
