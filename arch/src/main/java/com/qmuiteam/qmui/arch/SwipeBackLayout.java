@@ -9,6 +9,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
@@ -607,6 +608,18 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         wrapper.setContentView(child);
         wrapper.setCallback(callback);
         return wrapper;
+    }
+
+    @Override
+    public void clearAnimation() {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P && getParent() != null){
+            // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
+            // but does not call endViewTransition. It's fine in Android P,
+            // because OneShotPreDrawListener in EndViewTransitionAnimator
+            // has a chance to run, but I don't know why it is called.
+            ((ViewGroup)getParent()).endViewTransition(this);
+        }
+        super.clearAnimation();
     }
 
     public interface Callback {
