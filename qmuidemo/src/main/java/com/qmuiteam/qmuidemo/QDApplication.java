@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
+import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -29,5 +30,6 @@ public class QDApplication extends Application {
         LeakCanary.install(this);
 
         QDUpgradeManager.getInstance(this).check();
+        QMUISwipeBackActivityManager.init(this);
     }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
@@ -18,7 +17,7 @@ import java.lang.reflect.Field;
  * the container activity for {@link QMUIFragment}.
  * Created by cgspine on 15/9/14.
  */
-public abstract class QMUIFragmentActivity extends AppCompatActivity {
+public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     private static final String TAG = "QMUIFragmentActivity";
     private QMUIWindowInsetLayout mFragmentContainer;
 
@@ -41,7 +40,7 @@ public abstract class QMUIFragmentActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         QMUIFragment fragment = getCurrentFragment();
-        if (fragment != null) {
+        if (fragment != null && !fragment.isInSwipeBack()) {
             fragment.popBackStack();
         }
     }

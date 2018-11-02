@@ -9,8 +9,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
@@ -43,6 +45,14 @@ public class QDArchTestFragment extends BaseFragment {
                 popBackStack();
             }
         });
+        mTopBar.addRightTextButton("new Activity", QMUIViewHelper.generateViewId())
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = QDMainActivity.createArchTestIntent(getContext());
+                        startActivity(intent);
+                    }
+                });
         mTopBar.setTitle(String.valueOf(index));
         mTitleTv.setText(String.valueOf(index));
         final int next = index + 1;

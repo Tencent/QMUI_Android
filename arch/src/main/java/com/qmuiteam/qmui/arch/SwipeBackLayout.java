@@ -1,9 +1,5 @@
 package com.qmuiteam.qmui.arch;
 
-import android.arch.lifecycle.GenericLifecycleObserver;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -13,6 +9,8 @@ import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -185,7 +183,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         mCallback = callback;
     }
 
-    private boolean canSwipeBack(){
+    private boolean canSwipeBack() {
         return mCallback == null || mCallback.canSwipeBack();
     }
 
@@ -249,7 +247,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         mListeners.remove(listener);
     }
 
-    public void clearSwipeListeners(){
+    public void clearSwipeListeners() {
         if (mListeners == null) {
             return;
         }
@@ -272,7 +270,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         /**
          * Invoke when scrolling
          *
-         * @param edgeFlag flag to describe edge
+         * @param edgeFlag      flag to describe edge
          * @param scrollPercent scroll percent of this view
          */
         void onScroll(int edgeFlag, float scrollPercent);
@@ -339,41 +337,19 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         setShadow(getResources().getDrawable(resId), edgeFlag);
     }
 
-    /**
-     * Scroll out contentView and finish the activity
-     */
-    public void scrollToFinishActivity() {
-        final int childWidth = mContentView.getWidth();
-        final int childHeight = mContentView.getHeight();
 
-        int left = 0, top = 0;
-        if ((mEdgeFlag & EDGE_LEFT) != 0) {
-            left = childWidth + mShadowLeft.getIntrinsicWidth() + OVERSCROLL_DISTANCE;
-            mTrackingEdge = EDGE_LEFT;
-        } else if ((mEdgeFlag & EDGE_RIGHT) != 0) {
-            left = -childWidth - mShadowRight.getIntrinsicWidth() - OVERSCROLL_DISTANCE;
-            mTrackingEdge = EDGE_RIGHT;
-        } else if ((mEdgeFlag & EDGE_BOTTOM) != 0) {
-            top = -childHeight - mShadowBottom.getIntrinsicHeight() - OVERSCROLL_DISTANCE;
-            mTrackingEdge = EDGE_BOTTOM;
-        }
-
-        mDragHelper.smoothSlideViewTo(mContentView, left, top);
-        invalidate();
-    }
-
-    private boolean preventSwipeBack(MotionEvent event){
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
+    private boolean preventSwipeBack(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             mPreventSwipeBackWhenDown = !canSwipeBack();
             return mPreventSwipeBackWhenDown;
-        }else{
+        } else {
             return !canSwipeBack() || mPreventSwipeBackWhenDown;
         }
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if(preventSwipeBack(event)){
+        if (preventSwipeBack(event)) {
             return false;
         }
         try {
@@ -385,7 +361,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(preventSwipeBack(event)){
+        if (preventSwipeBack(event)) {
             return false;
         }
         mDragHelper.processTouchEvent(event);
@@ -442,8 +418,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         child.getHitRect(childRect);
 
         if ((mEdgeFlag & EDGE_LEFT) != 0) {
-            mShadowLeft.setBounds(childRect.left - mShadowLeft.getIntrinsicWidth(), childRect.top,
-                    childRect.left, childRect.bottom);
+            mShadowLeft.setBounds(childRect.left - mShadowLeft.getIntrinsicWidth(),
+                    childRect.top, childRect.left, childRect.bottom);
             mShadowLeft.setAlpha((int) (mScrimOpacity * FULL_ALPHA));
             mShadowLeft.draw(canvas);
         }
@@ -533,9 +509,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
             if (mScrollPercent < mScrollThreshold && !mIsScrollOverValid) {
                 mIsScrollOverValid = true;
             }
-            if (mListeners != null && !mListeners.isEmpty()){
-                if(mDragHelper.getViewDragState() == STATE_DRAGGING &&
-                        mScrollPercent >= mScrollThreshold && mIsScrollOverValid){
+            if (mListeners != null && !mListeners.isEmpty()) {
+                if (mDragHelper.getViewDragState() == STATE_DRAGGING &&
+                        mScrollPercent >= mScrollThreshold && mIsScrollOverValid) {
                     mIsScrollOverValid = false;
                     for (SwipeListener listener : mListeners) {
                         listener.onScrollOverThreshold();
@@ -599,27 +575,57 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
     }
 
+    @Override
+    public void clearAnimation() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && getParent() != null) {
+            // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
+            // but does not call endViewTransition. It's fine in Android P,
+            // because OneShotPreDrawListener in EndViewTransitionAnimator
+            // has a chance to run, but I don't know why it is called.
+            ((ViewGroup) getParent()).endViewTransition(this);
+        }
+        super.clearAnimation();
+    }
+
     public static SwipeBackLayout wrap(View child, int edgeFlag, Callback callback) {
         SwipeBackLayout wrapper = new SwipeBackLayout(child.getContext());
         wrapper.setEdgeTrackingEnabled(edgeFlag);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        child.setLayoutParams(lp);
-        wrapper.addView(child);
+        wrapper.addView(child, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         wrapper.setContentView(child);
         wrapper.setCallback(callback);
         return wrapper;
     }
 
-    @Override
-    public void clearAnimation() {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P && getParent() != null){
-            // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
-            // but does not call endViewTransition. It's fine in Android P,
-            // because OneShotPreDrawListener in EndViewTransitionAnimator
-            // has a chance to run, but I don't know why it is called.
-            ((ViewGroup)getParent()).endViewTransition(this);
+    public static SwipeBackLayout wrap(Context context, int childRes, int edgeFlag, Callback callback) {
+        SwipeBackLayout wrapper = new SwipeBackLayout(context);
+        wrapper.setEdgeTrackingEnabled(edgeFlag);
+        View child = LayoutInflater.from(context).inflate(childRes, wrapper, false);
+        wrapper.addView(child, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        wrapper.setContentView(child);
+        wrapper.setCallback(callback);
+        return wrapper;
+    }
+
+    static void offsetInEdgeTouch(View view, int edgeFlag, int offset){
+        if (edgeFlag == EDGE_BOTTOM) {
+            ViewCompat.offsetTopAndBottom(view, offset);
+        } else if (edgeFlag == EDGE_RIGHT) {
+            ViewCompat.offsetLeftAndRight(view, offset);
+        } else {
+            ViewCompat.offsetLeftAndRight(view, -1 * offset);
         }
-        super.clearAnimation();
+    }
+
+    static void offsetInScroll(View view, int edgeFlag, int targetOffset){
+        if (edgeFlag == EDGE_BOTTOM) {
+            ViewCompat.offsetTopAndBottom(view, targetOffset - view.getTop());
+        } else if (edgeFlag == EDGE_RIGHT) {
+            ViewCompat.offsetLeftAndRight(view, targetOffset - view.getLeft());
+        } else {
+            ViewCompat.offsetLeftAndRight(view, -targetOffset - view.getLeft());
+        }
     }
 
     public interface Callback {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- some machines will flash black if the duration == 0 or fromXDelta > 0%p -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+           android:duration="1"
+           android:fromXDelta="0%p"
+           android:fromYDelta="0"
+           android:toXDelta="100%p"
+           android:toYDelta="0"/>

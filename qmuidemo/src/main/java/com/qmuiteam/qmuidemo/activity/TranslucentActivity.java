@@ -11,6 +11,7 @@ import android.view.View;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.base.BaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,28 +21,13 @@ import butterknife.ButterKnife;
  * Created by Kayo on 2016/12/12.
  */
 
-public class TranslucentActivity extends AppCompatActivity {
+public class TranslucentActivity extends BaseActivity {
 
-    private final static String ARG_CHANGE_TRANSLUCENT = "ARG_CHANGE_TRANSLUCENT";
-    private final static String ARG_STATUSBAR_MODE = "ARG_STATUSBAR_MODE";
     @BindView(R.id.topbar) QMUITopBar mTopBar;
-
-    public static Intent createActivity(Context context, boolean isTranslucent) {
-        Intent intent = new Intent(context, TranslucentActivity.class);
-        intent.putExtra(ARG_CHANGE_TRANSLUCENT, isTranslucent);
-        return intent;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        if (intent != null) {
-            boolean isTranslucent = intent.getBooleanExtra(ARG_CHANGE_TRANSLUCENT, true);
-            if (isTranslucent) {
-                QMUIStatusBarHelper.translucent(this); // 沉浸式状态栏
-            }
-        }
 
         View root = LayoutInflater.from(this).inflate(R.layout.activity_translucent, null);
         ButterKnife.bind(this, root);
