@@ -30,8 +30,7 @@ public class QMUIActivity extends InnerBaseActivity {
                         mSwipeBackgroundView.unBind();
                         mSwipeBackgroundView = null;
                     } else if (scrollPercent >= 1.0F) {
-                        mSwipeBackgroundView.unBind();
-                        mSwipeBackgroundView = null;
+                        // unBind mSwipeBackgroundView until onDestroy
                         finish();
                         overridePendingTransition(R.anim.swipe_back_enter, R.anim.swipe_back_exit);
                     }
@@ -122,10 +121,14 @@ public class QMUIActivity extends InnerBaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mListenerRemover != null) {
             mListenerRemover.remove();
         }
-        super.onDestroy();
+        if(mSwipeBackgroundView != null){
+            mSwipeBackgroundView.unBind();
+            mSwipeBackgroundView = null;
+        }
     }
 
     /**

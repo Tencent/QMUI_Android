@@ -260,8 +260,7 @@ public abstract class QMUIFragment extends Fragment {
                         mSwipeBackgroundView.unBind();
                         mSwipeBackgroundView = null;
                     }else if (scrollPercent >= 1.0F){
-                        mSwipeBackgroundView.unBind();
-                        mSwipeBackgroundView = null;
+                        // unbind mSwipeBackgroundView util onDestroy
                         if(getActivity() != null){
                             getActivity().finish();
                             getActivity().overridePendingTransition(R.anim.swipe_back_enter, R.anim.swipe_back_exit);
@@ -655,6 +654,10 @@ public abstract class QMUIFragment extends Fragment {
         super.onDestroy();
         if(mListenerRemover != null){
             mListenerRemover.remove();
+        }
+        if(mSwipeBackgroundView != null){
+            mSwipeBackgroundView.unBind();
+            mSwipeBackgroundView = null;
         }
     }
 

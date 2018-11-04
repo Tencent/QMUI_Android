@@ -16,6 +16,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.activity.ArchTestActivity;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
@@ -109,6 +110,7 @@ public class QDArchTestFragment extends BaseFragment {
                 .addItem("Normal Arch Test")
                 .addItem("WebView Test")
                 .addItem("SurfaceView Test")
+                .addItem("Directly Activity")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
@@ -123,6 +125,9 @@ public class QDArchTestFragment extends BaseFragment {
                             context.startActivity(intent);
                         } else if(position == 2){
                             Intent intent = QDMainActivity.createSurfaceTestIntent(context);
+                            context.startActivity(intent);
+                        } else  if(position == 3){
+                            Intent intent = new Intent(context, ArchTestActivity.class);
                             context.startActivity(intent);
                         }
                     }
