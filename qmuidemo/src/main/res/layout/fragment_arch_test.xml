@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="?attr/app_primary_color">
-
-    <com.qmuiteam.qmui.widget.QMUITopBar
-        android:id="@+id/topbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/qmui_topbar_height"/>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
-        android:background="@color/qmui_config_color_white">
+        android:background="@color/qmui_config_color_white"
+        android:fitsSystemWindows="true">
 
         <Space
             android:id="@+id/anchor"
@@ -49,4 +44,10 @@
             android:text="圆角为高度的一半"
             app:qmui_isRadiusAdjustBounds="true"/>
     </RelativeLayout>
-</FrameLayout>
+
+    <com.qmuiteam.qmui.widget.QMUITopBarLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"/>
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

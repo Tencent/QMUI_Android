@@ -8,13 +8,22 @@ import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDArchWebViewTestFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
+
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 
 public class QDMainActivity extends BaseFragmentActivity {
     private static final String KEY_FRAGMENT = "key_fragment";
+    private static final String KEY_URL = "key_url";
+    private static final String KEY_TITLE = "key_title";
     private static final int VALUE_FRAGMENT_HOME = 0;
     private static final int VALUE_FRAGMENT_NOTCH_HELPER = 1;
     private static final int VALUE_FRAGMENT_ARCH_TEST = 2;
+    private static final int VALUE_FRAGMENT_WEB_EXPLORER_TEST = 3;
+    private static final int VALUE_FRAGMENT_SURFACE_TEST = 4;
 
     @Override
     protected int getContextViewId() {
@@ -43,6 +52,14 @@ public class QDMainActivity extends BaseFragmentActivity {
             fragment = new QDNotchHelperFragment();
         } else if (ret == VALUE_FRAGMENT_ARCH_TEST) {
             fragment = new QDArchTestFragment();
+        } else if (ret == VALUE_FRAGMENT_WEB_EXPLORER_TEST) {
+            Bundle bundle = new Bundle();
+            bundle.putString(EXTRA_URL, intent.getStringExtra(KEY_URL));
+            bundle.putString(EXTRA_TITLE, intent.getStringExtra(KEY_TITLE));
+            fragment = new QDArchWebViewTestFragment();
+            fragment.setArguments(bundle);
+        } else if (ret == VALUE_FRAGMENT_SURFACE_TEST) {
+            fragment = new QDArchSurfaceTestFragment();
         } else {
             fragment = new HomeFragment();
         }
@@ -59,6 +76,20 @@ public class QDMainActivity extends BaseFragmentActivity {
     public static Intent createArchTestIntent(Context context) {
         Intent intent = new Intent(context, QDMainActivity.class);
         intent.putExtra(KEY_FRAGMENT, VALUE_FRAGMENT_ARCH_TEST);
+        return intent;
+    }
+
+    public static Intent createWebExplorerIntent(Context context, String url, String title) {
+        Intent intent = new Intent(context, QDMainActivity.class);
+        intent.putExtra(KEY_FRAGMENT, VALUE_FRAGMENT_WEB_EXPLORER_TEST);
+        intent.putExtra(KEY_URL, url);
+        intent.putExtra(KEY_TITLE, title);
+        return intent;
+    }
+
+    public static Intent createSurfaceTestIntent(Context context) {
+        Intent intent = new Intent(context, QDMainActivity.class);
+        intent.putExtra(KEY_FRAGMENT, VALUE_FRAGMENT_SURFACE_TEST);
         return intent;
     }
 }

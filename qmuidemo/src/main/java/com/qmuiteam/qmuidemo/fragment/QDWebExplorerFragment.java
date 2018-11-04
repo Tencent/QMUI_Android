@@ -48,7 +48,7 @@ public class QDWebExplorerFragment extends BaseFragment {
     private final static int PROGRESS_GONE = 1;
 
 
-    @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
+    @BindView(R.id.topbar) protected QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.webview_container) FrameLayout mWebViewContainer;
     @BindView(R.id.progress_bar) ProgressBar mProgressBar;
     private QDWebView mWebView;
@@ -105,7 +105,7 @@ public class QDWebExplorerFragment extends BaseFragment {
         mWebView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                boolean needConfirm = !url.startsWith("http://cgsdream.org") && !url.startsWith("https://cgsdream.org");
+                boolean needConfirm = !url.startsWith("http://qmuiteam.com") && !url.startsWith("https://qmuiteam.com");
                 if (needConfirm) {
                     final String finalURL = url;
                     new QMUIDialog.MessageDialogBuilder(getContext())
