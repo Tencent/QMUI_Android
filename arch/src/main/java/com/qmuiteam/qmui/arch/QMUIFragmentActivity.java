@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     private static final String TAG = "QMUIFragmentActivity";
     private QMUIWindowInsetLayout mFragmentContainer;
+    private boolean mIsInSuperSaveInstanceState = false;
 
     @SuppressWarnings("SameReturnValue")
     protected abstract int getContextViewId();
@@ -43,6 +44,18 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         if (fragment != null && !fragment.isInSwipeBack()) {
             fragment.popBackStack();
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        mIsInSuperSaveInstanceState = true;
+        super.onSaveInstanceState(outState);
+        mIsInSuperSaveInstanceState = false;
+    }
+
+    boolean isInSuperSaveInstanceState() {
+        return mIsInSuperSaveInstanceState;
     }
 
     /**

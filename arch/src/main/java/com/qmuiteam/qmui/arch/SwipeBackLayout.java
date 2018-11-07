@@ -577,14 +577,17 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public void clearAnimation() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && getParent() != null) {
-            // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
-            // but does not call endViewTransition. It's fine in Android P,
-            // because OneShotPreDrawListener in EndViewTransitionAnimator
-            // has a chance to run, but I don't know why it is called.
-            ((ViewGroup) getParent()).endViewTransition(this);
-        }
+        // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
+        // but does not call endViewTransition. this may freeze the UI. #399
+        // It's fine in Android P because OneShotPreDrawListener in EndViewTransitionAnimator
+        // has a chance to run, I haven't found the reason why it was called temporarily.
         super.clearAnimation();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P && mCallback != null
+                && mCallback.needFixFragmentManagerEndAnimatingAwayError()){
+            if(getParent() != null){
+                ((ViewGroup) getParent()).endViewTransition(SwipeBackLayout.this);
+            }
+        }
     }
 
     public static SwipeBackLayout wrap(View child, int edgeFlag, Callback callback) {
@@ -630,6 +633,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     public interface Callback {
         boolean canSwipeBack();
+        boolean needFixFragmentManagerEndAnimatingAwayError();
     }
 
     public interface ListenerRemover {

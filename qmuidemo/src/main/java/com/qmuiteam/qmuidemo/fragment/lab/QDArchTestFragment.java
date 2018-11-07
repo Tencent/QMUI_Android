@@ -34,6 +34,7 @@ public class QDArchTestFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.title) TextView mTitleTv;
     @BindView(R.id.btn) QMUIRoundButton mBtn;
+    @BindView(R.id.btn_1) QMUIRoundButton mBtn1;
 
 
     @Override
@@ -65,6 +66,14 @@ public class QDArchTestFragment extends BaseFragment {
                     startFragmentForResult(fragment, REQUEST_CODE);
                 }
 
+            }
+        });
+        mBtn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popBackStack();
+                Intent intent = QDMainActivity.createArchTestIntent(getContext());
+                startActivity(intent);
             }
         });
         return view;
