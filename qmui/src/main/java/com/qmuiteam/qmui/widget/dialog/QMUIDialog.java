@@ -131,7 +131,7 @@ public class QMUIDialog extends Dialog {
         Window activityWindow = activity.getWindow();
         int activitySystemUi = activityWindow.getDecorView().getSystemUiVisibility();
         if ((activitySystemUi & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN ||
-                (activitySystemUi & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) {
+                (activitySystemUi & View.SYSTEM_UI_FLAG_FULLSCREEN) == View.SYSTEM_UI_FLAG_FULLSCREEN) {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             window.getDecorView().setSystemUiVisibility(
@@ -467,6 +467,7 @@ public class QMUIDialog extends Dialog {
             }, 300);
         }
 
+        @Deprecated
         public EditText getEditText() {
             return mEditText;
         }

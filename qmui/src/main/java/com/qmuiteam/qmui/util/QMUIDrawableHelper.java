@@ -154,7 +154,9 @@ public class QMUIDrawableHelper {
      */
     public static ColorFilter setDrawableTintColor(Drawable drawable, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
-        drawable.setColorFilter(colorFilter);
+        if(drawable != null){
+            drawable.setColorFilter(colorFilter);
+        }
         return colorFilter;
     }
 

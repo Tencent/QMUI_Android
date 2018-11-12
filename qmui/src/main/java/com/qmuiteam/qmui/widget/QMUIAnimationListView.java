@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.ViewCompat;
@@ -24,6 +25,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.qmuiteam.qmui.QMUILog;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -114,7 +117,7 @@ public class QMUIAnimationListView extends ListView {
     @Override
     public void setAdapter(ListAdapter adapter) {
         mRealAdapter = adapter;
-        mWrapperAdapter = new WrapperAdapter(mRealAdapter);
+        mWrapperAdapter = adapter != null ? new WrapperAdapter(mRealAdapter) : null;
         super.setAdapter(mWrapperAdapter);
     }
 
@@ -540,6 +543,15 @@ public class QMUIAnimationListView extends ListView {
 
         public boolean isAnimationEnabled() {
             return mIsAnimationEnabled;
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            if (Looper.myLooper() != Looper.getMainLooper()) {
+                QMUILog.d(TAG, "notifyDataSetChanged not in main Thread");
+                return;
+            }
+            super.notifyDataSetChanged();
         }
 
         @Override

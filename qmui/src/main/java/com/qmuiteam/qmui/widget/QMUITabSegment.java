@@ -1268,12 +1268,12 @@ public class QMUITabSegment extends HorizontalScrollView {
 
         private String getNumberDigitsFormattingValue(int number) {
             if (QMUILangHelper.getNumberDigits(number) > mSignCountDigits) {
-                String result = "";
+                StringBuilder result = new StringBuilder();
                 for (int digit = 1; digit <= mSignCountDigits; digit++) {
-                    result += "9";
+                    result.append("9");
                 }
-                result += "+";
-                return result;
+                result.append("+");
+                return result.toString();
             } else {
                 return String.valueOf(number);
             }
@@ -1478,7 +1478,6 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     private final class Container extends ViewGroup {
-        private int mLastSelectedIndex = -1;
         private TabAdapter mTabAdapter;
 
         public Container(Context context) {
@@ -1609,7 +1608,6 @@ public class QMUITabSegment extends HorizontalScrollView {
                     mIndicatorView.setVisibility(GONE);
                 }
             }
-            mLastSelectedIndex = index;
         }
     }
 }

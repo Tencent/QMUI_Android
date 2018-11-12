@@ -346,6 +346,9 @@ public class QMUIRadiusImageView extends AppCompatImageView {
 
         if (drawable instanceof BitmapDrawable) {
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (bitmap == null) {
+                return null;
+            }
             float bmWidth = bitmap.getWidth(), bmHeight = bitmap.getHeight();
             if (bmWidth == 0 || bmHeight == 0) {
                 return null;

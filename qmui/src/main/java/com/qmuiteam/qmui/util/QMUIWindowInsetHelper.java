@@ -156,7 +156,7 @@ public class QMUIWindowInsetHelper {
 
             computeInsetsWithGravity(child, childInsets);
             WindowInsetsCompat windowInsetsCompat = ViewCompat.dispatchApplyWindowInsets(child, insets.replaceSystemWindowInsets(childInsets));
-            consumed = consumed || windowInsetsCompat.isConsumed();
+            consumed = consumed || (windowInsetsCompat != null && windowInsetsCompat.isConsumed());
         }
 
         return consumed;

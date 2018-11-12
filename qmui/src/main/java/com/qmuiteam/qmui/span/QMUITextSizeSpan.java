@@ -2,6 +2,7 @@ package com.qmuiteam.qmui.span;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.text.style.ReplacementSpan;
 
@@ -17,16 +18,23 @@ public class QMUITextSizeSpan extends ReplacementSpan {
     private int mTextSize;
     private int mVerticalOffset;
     private Paint mPaint;
+    private Typeface mTypeface;
 
     public QMUITextSizeSpan(int textSize, int verticalOffset){
+       this(textSize, verticalOffset, null);
+    }
+
+    public QMUITextSizeSpan(int textSize, int verticalOffset, Typeface typeface){
         mTextSize = textSize;
         mVerticalOffset = verticalOffset;
+        mTypeface = typeface;
     }
 
     @Override
     public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         mPaint = new Paint(paint);
         mPaint.setTextSize(mTextSize);
+        mPaint.setTypeface(mTypeface);
         if(mTextSize > paint.getTextSize() && fm != null){
             Paint.FontMetricsInt newFm = mPaint.getFontMetricsInt();
             fm.descent = newFm.descent;
