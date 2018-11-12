@@ -18,6 +18,7 @@ import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDButtonFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentScrollableModeFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import butterknife.BindView;
@@ -63,7 +64,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
 
             @Override
             public int getCount() {
-                return 3;
+                return 4;
             }
 
             @Override
@@ -74,8 +75,10 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                     case 1:
                         return "CollapsingTopBar";
                     case 2:
-                    default:
                         return "About";
+                    case 3:
+                    default:
+                        return "ViewPager";
                 }
             }
 
@@ -83,12 +86,14 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
             protected Object hydrate(ViewGroup container, int position) {
                 switch (position) {
                     case 0:
-                        return new QDTabSegmentFragment();
+                        return new QDTabSegmentScrollableModeFragment();
                     case 1:
                         return new QDCollapsingTopBarLayoutFragment();
                     case 2:
-                    default:
                         return new QDAboutFragment();
+                    case 3:
+                    default:
+                        return new QDViewPagerFragment();
                 }
             }
 
