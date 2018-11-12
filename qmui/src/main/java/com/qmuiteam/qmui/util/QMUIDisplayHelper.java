@@ -120,16 +120,27 @@ public class QMUIDisplayHelper {
             return doGetRealScreenSize(context);
         }
         int orientation = context.getResources().getConfiguration().orientation;
+        int[] result;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (sLandscapeRealSizeCache == null) {
-                sLandscapeRealSizeCache = doGetRealScreenSize(context);
+            result = sLandscapeRealSizeCache;
+            if (result == null) {
+                result = doGetRealScreenSize(context);
+                if(result[0] > result[1]){
+                    // the result may be wrong sometimes, do not cache !!!!
+                    sLandscapeRealSizeCache = result;
+                }
             }
-            return sLandscapeRealSizeCache;
+            return result;
         } else {
-            if (sPortraitRealSizeCache == null) {
-                sPortraitRealSizeCache = doGetRealScreenSize(context);
+            result = sPortraitRealSizeCache;
+            if (result == null) {
+                result = doGetRealScreenSize(context);
+                if(result[0] < result[1]){
+                    // the result may be wrong sometimes, do not cache !!!!
+                    sPortraitRealSizeCache = result;
+                }
             }
-            return sPortraitRealSizeCache;
+            return result;
         }
     }
 
