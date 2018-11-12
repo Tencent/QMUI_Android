@@ -18,6 +18,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by cgspine on 2018/3/22.
@@ -38,6 +39,16 @@ public class QDLayoutFragment extends BaseFragment {
     private float mShadowAlpha = 0.25f;
     private int mShadowElevationDp = 14;
     private int mRadius;
+
+    @OnClick(R.id.shadow_color_red)
+    void changeToShadowColorRed(){
+        mTestLayout.setShadowColor(0xffff0000);
+    }
+
+    @OnClick(R.id.shadow_color_blue)
+    void changeToShadowColorBlue(){
+        mTestLayout.setShadowColor(0xff0000ff);
+    }
 
     @Override
     protected View onCreateView() {

@@ -242,7 +242,7 @@ public abstract class QMUIFragment extends Fragment {
                     public boolean needFixFragmentManagerEndAnimatingAwayError() {
                         // track FragmentManagerImpl#endAnimatingAwayFragments,
                         // find it's called duration onSaveInstanceState
-                        return getBaseFragmentActivity().isInSuperSaveInstanceState();
+                        return getBaseFragmentActivity() != null && getBaseFragmentActivity().isInSuperSaveInstanceState();
                     }
                 });
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);

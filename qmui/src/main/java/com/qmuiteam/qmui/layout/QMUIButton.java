@@ -142,6 +142,11 @@ public class QMUIButton extends QMUIAlphaButton implements IQMUILayout {
     }
 
     @Override
+    public void setRadiusAndShadow(int radius, int hideRadiusSide, int shadowElevation, int shadowColor, float shadowAlpha) {
+        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, shadowElevation,  shadowColor, shadowAlpha);
+    }
+
+    @Override
     public void setRadius(int radius) {
         mLayoutHelper.setRadius(radius);
     }
@@ -227,6 +232,20 @@ public class QMUIButton extends QMUIAlphaButton implements IQMUILayout {
         return mLayoutHelper.getShadowAlpha();
     }
 
+    @Override
+    public void setShadowColor(int shadowColor) {
+        mLayoutHelper.setShadowColor(shadowColor);
+    }
+
+    @Override
+    public int getShadowColor() {
+        return mLayoutHelper.getShadowColor();
+    }
+
+    @Override
+    public void setOuterNormalColor(int color) {
+        mLayoutHelper.setOuterNormalColor(color);
+    }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {

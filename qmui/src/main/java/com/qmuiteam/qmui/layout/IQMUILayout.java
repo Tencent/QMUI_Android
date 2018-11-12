@@ -85,6 +85,19 @@ public interface IQMUILayout {
     float getShadowAlpha();
 
     /**
+     *
+     * @param shadowColor opaque color
+     * @return
+     */
+    void setShadowColor(int shadowColor);
+
+    /**
+     *
+     * @return opaque color
+     */
+    int getShadowColor();
+
+    /**
      * set the layout radius
      * @param radius
      */
@@ -156,6 +169,18 @@ public interface IQMUILayout {
      * @param shadowAlpha
      */
     void setRadiusAndShadow(int radius, @HideRadiusSide int hideRadiusSide, int shadowElevation, float shadowAlpha);
+
+
+    /**
+     *  this method will determine the radius and shadow (support shadowColor if after android 9)with one or none side be hidden
+     *
+     * @param radius
+     * @param hideRadiusSide
+     * @param shadowElevation
+     * @param shadowColor
+     * @param shadowAlpha
+     */
+    void setRadiusAndShadow(int radius, @HideRadiusSide int hideRadiusSide, int shadowElevation, int shadowColor, float shadowAlpha);
 
     /**
      * border color, if you don not set it, the layout will not draw the border
@@ -273,5 +298,11 @@ public interface IQMUILayout {
      * @param dividerAlpha [0, 255]
      */
     void setRightDividerAlpha(int dividerAlpha);
+
+    /**
+     * only available before android L
+     * @param color
+     */
+    void setOuterNormalColor(int color);
 
 }
