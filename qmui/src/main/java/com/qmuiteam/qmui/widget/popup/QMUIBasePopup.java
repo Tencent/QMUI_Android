@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,6 +21,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 /**
@@ -34,13 +37,11 @@ public abstract class QMUIBasePopup {
     protected Drawable mBackground = null;
     protected WindowManager mWindowManager;
     private PopupWindow.OnDismissListener mDismissListener;
+    private View mParentViewForShow;
 
     protected Point mScreenSize = new Point();
     protected int mWindowHeight = 0;
     protected int mWindowWidth = 0;
-
-    //cache
-    private boolean mNeedCacheSize = true;
 
     /**
      * Constructor.
@@ -108,23 +109,31 @@ public abstract class QMUIBasePopup {
         }
     }
 
-    public final void show(View view) {
+    public final void show(@NonNull View view) {
         show(view, view);
     }
 
 
-    public final void show(View parent, View anchorView) {
+    public final void show(@NonNull View parent, @NonNull View anchorView) {
         if(!ViewCompat.isAttachedToWindow(anchorView)){
             return;
         }
         onShowConfig();
-        if (mWindowWidth == 0 || mWindowHeight == 0 || !mNeedCacheSize) {
+        if (mWindowWidth == 0 || mWindowHeight == 0 || mRootViewWrapper.isLayoutRequested() || shouldForceReMeasure()) {
             measureWindowSize();
         }
+
+        mWindow.setWidth(mWindowWidth);
+        mWindow.setHeight(mWindowHeight);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1){
+            mWindow.setAttachedInDecor(false);
+        }
+
 
         Point point = onShowBegin(parent, anchorView);
 
         mWindow.showAtLocation(parent, Gravity.NO_GRAVITY, point.x, point.y);
+        mParentViewForShow = parent;
 
         onShowEnd();
 
@@ -144,6 +153,10 @@ public abstract class QMUIBasePopup {
         });
     }
 
+    public View getParentViewForShow() {
+        return mParentViewForShow;
+    }
+
     protected void onShowConfig() {
         if (mRootViewWrapper == null)
             throw new IllegalStateException("setContentView was not called with a view to display.");
@@ -154,8 +167,6 @@ public abstract class QMUIBasePopup {
             mWindow.setBackgroundDrawable(mBackground);
         }
 
-        mWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        mWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         mWindow.setTouchable(true);
         mWindow.setFocusable(true);
         mWindow.setOutsideTouchable(true);
@@ -166,19 +177,18 @@ public abstract class QMUIBasePopup {
         screenDisplay.getSize(mScreenSize);
     }
 
-    protected abstract Point onShowBegin(View parent, View attachedView);
+    protected abstract Point onShowBegin(@NonNull View parent, @NonNull View attachedView);
 
     protected void onShowEnd() {
-
     }
 
     public boolean isShowing() {
         return mWindow != null && mWindow.isShowing();
     }
 
-    private void measureWindowSize() {
-        int widthMeasureSpec = makeWidthMeasureSpec(mRootView);
-        int heightMeasureSpec = makeHeightMeasureSpec(mRootView);
+    protected void measureWindowSize() {
+        int widthMeasureSpec = makeWidthMeasureSpec(mRootViewWrapper);
+        int heightMeasureSpec = makeHeightMeasureSpec(mRootViewWrapper);
         mRootView.measure(widthMeasureSpec, heightMeasureSpec);
         mWindowWidth = mRootView.getMeasuredWidth();
         mWindowHeight = mRootView.getMeasuredHeight();
@@ -252,11 +262,11 @@ public abstract class QMUIBasePopup {
 
     }
 
-    public void setNeedCacheSize(boolean needCacheSize) {
-        mNeedCacheSize = needCacheSize;
+    protected boolean shouldForceReMeasure(){
+        return false;
     }
 
-    public class RootView extends ViewGroup {
+    public class RootView extends QMUIFrameLayout {
         public RootView(Context context) {
             this(context, null);
         }
@@ -286,7 +296,6 @@ public abstract class QMUIBasePopup {
             if (getChildCount() == 0) {
                 setMeasuredDimension(0, 0);
             }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             int parentWidthSize = MeasureSpec.getSize(widthMeasureSpec);
             int parentHeightSize = MeasureSpec.getSize(heightMeasureSpec);
             widthMeasureSpec = makeWidthMeasureSpec(this);
@@ -319,7 +328,7 @@ public abstract class QMUIBasePopup {
                 return;
             }
             View child = getChildAt(0);
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
+            child.layout(getPaddingLeft(), getPaddingTop(), child.getMeasuredWidth(), child.getMeasuredHeight());
         }
     }
 }
