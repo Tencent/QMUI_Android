@@ -67,15 +67,16 @@ public class QMUIStatusBarHelper {
             // 版本小于4.4，绝对不考虑沉浸式
             return;
         }
+
+        if (QMUINotchHelper.isNotchOfficialSupport()) {
+            handleDisplayCutoutMode(window);
+        }
+
         // 小米和魅族4.4 以上版本支持沉浸式
         if (QMUIDeviceHelper.isMeizu() || QMUIDeviceHelper.isMIUI()) {
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             return;
-        }
-
-        if (QMUINotchHelper.isNotchOfficialSupport()) {
-            handleDisplayCutoutMode(window);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
