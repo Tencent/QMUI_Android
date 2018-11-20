@@ -321,11 +321,11 @@ public abstract class QMUIFragment extends Fragment {
                                 cmdField.setAccessible(true);
                                 int cmd = (int) cmdField.get(op);
                                 if (cmd == 1) {
-                                    Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
+                                    Field popEnterAnimField = op.getClass().getDeclaredField("popExitAnim");
                                     popEnterAnimField.setAccessible(true);
                                     popEnterAnimField.set(op, 0);
                                 } else if (cmd == 3) {
-                                    Field popExitAnimField = op.getClass().getDeclaredField("popExitAnim");
+                                    Field popExitAnimField = op.getClass().getDeclaredField("popEnterAnim");
                                     popExitAnimField.setAccessible(true);
                                     popExitAnimField.set(op, 0);
                                 }
