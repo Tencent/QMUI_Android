@@ -5,17 +5,19 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.webview.QMUIWebView;
+import com.qmuiteam.qmuidemo.R;
 
 /**
  * Created by cgspine on 2017/12/5.
  */
 
-public class QDWebView extends WebView {
+public class QDWebView extends QMUIWebView {
 
     public QDWebView(Context context) {
         this(context, null);
@@ -40,6 +42,7 @@ public class QDWebView extends WebView {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setTextZoom(100);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,5 +70,10 @@ public class QDWebView extends WebView {
         } else {
             loadUrl(jsCode);
         }
+    }
+
+    @Override
+    protected int getExtraInsetTop(float density) {
+        return (int) (QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_height) / density);
     }
 }

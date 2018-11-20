@@ -5,14 +5,13 @@
     android:layout_height="match_parent"
     android:background="?attr/qmui_config_color_background">
 
-    <FrameLayout
+    <com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer
         android:id="@+id/webview_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/qmui_topbar_height"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
-    </FrameLayout>
+    </com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer>
+
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout
         android:id="@+id/topbar"
