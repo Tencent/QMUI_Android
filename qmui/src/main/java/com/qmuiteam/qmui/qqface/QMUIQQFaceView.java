@@ -447,6 +447,7 @@ public class QMUIQQFaceView extends View {
             return;
         }
         mOriginText = charSequence;
+        setContentDescription(charSequence);
         if (mOpenQQFace && mCompiler == null) {
             throw new RuntimeException("mCompiler == null");
         }
@@ -1415,7 +1416,6 @@ public class QMUIQQFaceView extends View {
 
         }
     }
-
 
     public static class PressCancelAction implements Runnable {
         private WeakReference<SpanInfo> mWeakReference;
