@@ -22,7 +22,7 @@ import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
  * @date 2016-03-25
  */
 public class QMUIWindowInsetLayout extends QMUIFrameLayout implements IWindowInsetLayout {
-    private QMUIWindowInsetHelper mQMUIWindowInsetHelper;
+    protected QMUIWindowInsetHelper mQMUIWindowInsetHelper;
 
     public QMUIWindowInsetLayout(Context context) {
         this(context, null);

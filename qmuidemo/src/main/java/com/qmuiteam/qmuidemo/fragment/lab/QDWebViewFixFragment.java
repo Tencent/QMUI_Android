@@ -1,6 +1,7 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;

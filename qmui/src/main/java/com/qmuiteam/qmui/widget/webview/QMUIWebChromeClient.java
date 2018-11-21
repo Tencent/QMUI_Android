@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.webview;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebChromeClient;
 
@@ -9,7 +10,7 @@ public class QMUIWebChromeClient extends WebChromeClient {
 
     private WeakReference<QMUIWebViewContainer> mWebViewContainer;
 
-    public QMUIWebChromeClient(QMUIWebViewContainer webViewContainer) {
+    public QMUIWebChromeClient(@Nullable QMUIWebViewContainer webViewContainer) {
         mWebViewContainer = new WeakReference<>(webViewContainer);
     }
 

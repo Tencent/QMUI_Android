@@ -183,6 +183,7 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         mAwContents = null;
         mWebContents = null;
         mSetDisplayCutoutSafeAreaMethod = null;
+        stopLoading();
         super.destroy();
     }
 
