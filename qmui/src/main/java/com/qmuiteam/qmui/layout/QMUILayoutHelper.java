@@ -621,7 +621,7 @@ public class QMUILayoutHelper implements IQMUILayout {
         if (mBottomDividerHeight > 0) {
             mDividerPaint.setStrokeWidth(mBottomDividerHeight);
             mDividerPaint.setColor(mBottomDividerColor);
-            if (mTopDividerAlpha < 255) {
+            if (mBottomDividerAlpha < 255) {
                 mDividerPaint.setAlpha(mBottomDividerAlpha);
             }
             float y = (float) Math.floor(h - mBottomDividerHeight * 1f / 2);
