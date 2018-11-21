@@ -781,6 +781,22 @@ public class QMUIDialog extends Dialog {
         }
 
         @Override
+        public MultiCheckableDialogBuilder addItem(QMUIDialogMenuItemView itemView, OnClickListener listener) {
+            if(mMenuItemViewsFactoryList.size() >= 32){
+                throw new RuntimeException("there are more than 32 items, please use LiseView to improve performance!!");
+            }
+            return super.addItem(itemView, listener);
+        }
+
+        @Override
+        public MultiCheckableDialogBuilder addItem(ItemViewFactory itemViewFactory, OnClickListener listener) {
+            if(mMenuItemViewsFactoryList.size() >= 32){
+                throw new RuntimeException("there are more than 32 items, please use LiseView to improve performance!!");
+            }
+            return super.addItem(itemViewFactory, listener);
+        }
+
+        @Override
         protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
             super.onCreateContent(dialog, parent, context);
             for (int i = 0; i < mMenuItemViews.size(); i++) {
