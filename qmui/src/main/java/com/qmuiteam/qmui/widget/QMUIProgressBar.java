@@ -238,7 +238,7 @@ public class QMUIProgressBar extends View {
     }
     
     public void setProgress(int progress, boolean animated) {
-        if (progress > mMaxValue && progress < 0) {
+        if (progress > mMaxValue || progress < 0) {
             return;
         }
         if (isAnimating) {
