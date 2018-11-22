@@ -57,12 +57,23 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
                 }
             });
         }
-        addView(mWebView, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        addView(mWebView, getWebViewLayoutParams());
     }
 
-    public void setCustomView(@NonNull View customView) {
+    protected FrameLayout.LayoutParams getWebViewLayoutParams() {
+        return new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
+
+    public final void setCustomView(@NonNull View customView) {
         mCustomView = customView;
+        onSetCustomView(customView);
+        if (mCallback != null) {
+            mCallback.onShowCustomView();
+        }
+    }
+
+    protected void onSetCustomView(@NonNull View customView) {
         addView(customView, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -81,25 +92,25 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
                 }
             }
         }
+    }
 
-        if (mCallback != null) {
-            mCallback.onShowCustomView();
+    public final void removeCustomView() {
+        if (mCustomView != null) {
+            onRemoveCustomView(mCustomView);
+            mCustomView = null;
+            if (mCallback != null) {
+                mCallback.onHideCustomView();
+            }
         }
+    }
+
+    protected void onRemoveCustomView(@NonNull View customView) {
+        removeView(customView);
     }
 
     public void setNeedDispatchSafeAreaInset(boolean needDispatchSafeAreaInset) {
         if (mWebView != null) {
             mWebView.setNeedDispatchSafeAreaInset(needDispatchSafeAreaInset);
-        }
-    }
-
-    public void removeCustomView() {
-        if (mCustomView != null) {
-            removeView(mCustomView);
-            mCustomView = null;
-            if (mCallback != null) {
-                mCallback.onHideCustomView();
-            }
         }
     }
 
@@ -170,19 +181,19 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
         return super.applySystemWindowInsets21(insets);
     }
 
-    public int getWebContentScrollY(){
-        if(mCustomView instanceof ViewGroup && ((ViewGroup)mCustomView).getChildCount() > 0){
-            ((ViewGroup)mCustomView).getChildAt(0).getScrollY();
-        }else if(mWebView != null){
+    public int getWebContentScrollY() {
+        if (mCustomView instanceof ViewGroup && ((ViewGroup) mCustomView).getChildCount() > 0) {
+            ((ViewGroup) mCustomView).getChildAt(0).getScrollY();
+        } else if (mWebView != null) {
             return mWebView.getScrollY();
         }
         return 0;
     }
 
-    public int getWebContentScrollX(){
-        if(mCustomView instanceof ViewGroup && ((ViewGroup)mCustomView).getChildCount() > 0){
-            ((ViewGroup)mCustomView).getChildAt(0).getScrollX();
-        }else if(mWebView != null){
+    public int getWebContentScrollX() {
+        if (mCustomView instanceof ViewGroup && ((ViewGroup) mCustomView).getChildCount() > 0) {
+            ((ViewGroup) mCustomView).getChildAt(0).getScrollX();
+        } else if (mWebView != null) {
             return mWebView.getScrollX();
         }
         return 0;
