@@ -75,7 +75,7 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
 
     @Override
     public void setWebChromeClient(WebChromeClient client) {
-        if (!(client instanceof QMUIWebChromeClient)) {
+        if (client != null && !(client instanceof QMUIWebChromeClient)) {
             throw new IllegalArgumentException("must use the instance of QMUIWebChromeClient");
         }
         super.setWebChromeClient(client);
@@ -83,7 +83,7 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
 
     @Override
     public void setWebViewClient(WebViewClient client) {
-        if (!(client instanceof QMUIWebViewClient)) {
+        if (client != null && !(client instanceof QMUIWebViewClient)) {
             throw new IllegalArgumentException("must use the instance of QMUIWebViewClient");
         }
         super.setWebViewClient(client);
