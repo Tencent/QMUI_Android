@@ -49,7 +49,10 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if (mNewVersion == QDUpgradeManager.VERSION_1_1_8) {
+        if(mNewVersion == QDUpgradeManager.VERSION_1_1_9){
+            text.append("1. Fixed an error that fitSystemWindows does not work in QMUIWebContainer.\n");
+            text.append("2. Fixed an error that swiping back would blink.\n");
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_8) {
             text.append("1. Implemented QMUIWebView (beta), where supports for env(safe-area-inset-*) in css were added.\n");
             text.append("2. Feature: QMUIQQFaceView supports gravity(left/right/center-horizontal) attribute.\n");
             text.append("3. Feature: allows setting shadow color on Android ROM version 9 and higher.\n");
