@@ -170,6 +170,24 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
         return super.applySystemWindowInsets21(insets);
     }
 
+    public int getWebContentScrollY(){
+        if(mCustomView instanceof ViewGroup && ((ViewGroup)mCustomView).getChildCount() > 0){
+            ((ViewGroup)mCustomView).getChildAt(0).getScrollY();
+        }else if(mWebView != null){
+            return mWebView.getScrollY();
+        }
+        return 0;
+    }
+
+    public int getWebContentScrollX(){
+        if(mCustomView instanceof ViewGroup && ((ViewGroup)mCustomView).getChildCount() > 0){
+            ((ViewGroup)mCustomView).getChildAt(0).getScrollX();
+        }else if(mWebView != null){
+            return mWebView.getScrollX();
+        }
+        return 0;
+    }
+
     public interface Callback {
         void onShowCustomView();
 
