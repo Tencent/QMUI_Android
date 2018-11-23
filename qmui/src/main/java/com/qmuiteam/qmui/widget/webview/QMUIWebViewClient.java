@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.widget.webview;
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -15,16 +16,35 @@ public class QMUIWebViewClient extends WebViewClient {
     public static final int JS_FAKE_KEY_CODE_EVENT = 112; // F1
 
     private boolean mNeedDispatchSafeAreaInset;
-    private boolean mDisableVideoFullscreenBtnAlways = false;
+    private boolean mDisableVideoFullscreenBtnAlways;
+    private boolean mIsPageFinished = false;
 
     public QMUIWebViewClient(boolean needDispatchSafeAreaInset, boolean disableVideoFullscreenBtnAlways) {
         mNeedDispatchSafeAreaInset = needDispatchSafeAreaInset;
         mDisableVideoFullscreenBtnAlways = disableVideoFullscreenBtnAlways;
     }
 
+
+    public void setNeedDispatchSafeAreaInset(QMUIWebView webView) {
+        if (!mNeedDispatchSafeAreaInset) {
+            mNeedDispatchSafeAreaInset = true;
+            if (mIsPageFinished) {
+                dispatchFullscreenRequestAction(webView);
+            }
+        }
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        mIsPageFinished = false;
+        super.onPageStarted(view, url, favicon);
+    }
+
+
     @Override
     public void onPageFinished(final WebView view, String url) {
         super.onPageFinished(view, url);
+        mIsPageFinished = true;
         if (mDisableVideoFullscreenBtnAlways) {
             runJsCode(view, getJsCodeForDisableVideoFullscreenBtn(), null);
         }
