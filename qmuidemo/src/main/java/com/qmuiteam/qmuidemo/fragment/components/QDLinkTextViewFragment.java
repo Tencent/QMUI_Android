@@ -24,6 +24,7 @@ public class QDLinkTextViewFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.link_text_view) QMUILinkTextView mLinkTextView;
+    @BindView(R.id.link_text_view2) QMUILinkTextView mLinkTv2;
 
 
     @Override
@@ -52,6 +53,9 @@ public class QDLinkTextViewFragment extends BaseFragment {
 //                Toast.makeText(getContext(), "forceEventToParent", Toast.LENGTH_SHORT).show();
 //            }
 //        });
+        mLinkTv2.setOnLinkClickListener(mOnLinkClickListener);
+        mLinkTv2.setText(R.string.linkTextVIew_allowUnderLine_maxLimit_word);
+
         return view;
     }
 

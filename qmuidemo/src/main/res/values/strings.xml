@@ -69,6 +69,7 @@
     <!-- LinkTextView 展示界面 -->
     <string name="linkTextView_auto_identify">URL/Mail/Tel自动识别</string>
     <string name="linkTextView_auto_identify_word">可以自动识别网页链接，例如 http://www.qmuiteam.com。\n可以自动识别电话号码，例如 13600000000。\n也可以识别邮件地址，例如 qmuiteam@gmail.com。\n我们可以为其添加自定义的点击事件。</string>
+    <string name="linkTextVIew_allowUnderLine_maxLimit_word">可以允许是否设置显示链接拥有下划线 例如 http://www.qmuiteam.com ,超长链接超过指定长度显示三个点，依然可以自动识别电话号码等，例如 13600000000，并且如果如果链接所在的连接地址超过指定长度，则不显示链接，https://www.baidu.com/#iact=wiseindex%2Ftabs%2Fnews%2Factivity%2Fnewsdetail%3D%257B%2522linkData%2522%253A%257B%2522name%2522%253A%2522iframe%252Fmib-iframe%2522%252C%2522id%2522%253A%2522feed%2522%252C%2522index%2522%253A0%252C%2522url%2522%253A%2522https%253A%252F%252Fmbd.baidu.com%252Fnewspage%252Fdata%252Flandingpage%253Fs_type%253Dnews%2526dsp%253Dwise%2526context%253D%25257B%252522nid%252522%25253A%252522news_9441325276163769821%252522%25257D%2526pageType%253D1%2526n_type%253D1%2526p_from%253D-1%2526rec_src%253D52%2526innerIframe%253D1%2522%252C%2522isThird%2522%253Afalse%252C%2522title%2522%253Anull%257D%257D</string>
 
     <!-- SpanTouchFixTextView -->
     <string name="spanTouchFix_description">QMUISpanTouchFixTextView 主要用于修正 TextView 添加 ClickSpan 后的点击行为与事件传递</string>

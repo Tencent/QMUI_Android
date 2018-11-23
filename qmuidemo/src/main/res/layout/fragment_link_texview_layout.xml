@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="?attr/app_primary_color">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/app_primary_color">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/topbar"
@@ -33,6 +34,18 @@
             android:text="@string/linkTextView_auto_identify_word"
             app:qmui_linkBackgroundColor="@color/s_app_color_gray"
             app:qmui_linkTextColor="@color/s_app_color_blue_2"/>
+
+        <com.qmuiteam.qmui.widget.textview.QMUILinkTextView
+            android:id="@+id/link_text_view2"
+            style="@style/QDCommonDescription"
+            android:layout_marginBottom="20dp"
+            android:gravity="left"
+            app:qmui_ellipsizeEnable="true"
+            app:qmui_allowUnderLine="true"
+            tools:text="@string/linkTextVIew_allowUnderLine_maxLimit_word"
+            android:maxLength="150"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

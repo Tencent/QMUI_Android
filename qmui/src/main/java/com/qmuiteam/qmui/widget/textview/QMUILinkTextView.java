@@ -70,7 +70,7 @@ public class QMUILinkTextView extends AppCompatTextView implements QMUIOnSpanCli
     /**
      * 是否允许显示链接下划线
      */
-    private boolean mAllowUnderLine = true;
+    private boolean mAllowUnderLine = false;
 
     private int mAutoLinkMaskCompat;
     private OnLinkClickListener mOnLinkClickListener;
