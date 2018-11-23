@@ -1,7 +1,8 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.os.Bundle;
-import android.view.ViewGroup;
+import android.view.View;
+import android.webkit.WebChromeClient;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
@@ -47,18 +48,22 @@ public class QDWebViewFixFragment extends QDWebExplorerFragment {
                         .show();
             }
         });
+    }
 
-        webViewContainer.setCallback(new QMUIWebViewContainer.Callback() {
+    @Override
+    protected WebChromeClient getWebViewChromeClient() {
+        return new ExplorerWebViewChromeClient(this) {
             @Override
-            public void onShowCustomView() {
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                super.onShowCustomView(view, callback);
                 mTopBarLayout.setBackgroundAlpha(0);
             }
 
             @Override
             public void onHideCustomView() {
-
+                super.onHideCustomView();
             }
-        });
+        };
     }
 
     @Override

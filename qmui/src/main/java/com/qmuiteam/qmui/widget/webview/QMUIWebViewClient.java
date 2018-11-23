@@ -1,8 +1,9 @@
 package com.qmuiteam.qmui.widget.webview;
 
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.webkit.ValueCallback;
@@ -14,42 +15,37 @@ public class QMUIWebViewClient extends WebViewClient {
     public static final int JS_FAKE_KEY_CODE_EVENT = 112; // F1
 
     private boolean mNeedDispatchSafeAreaInset;
-    private boolean mIsPageFinished = false;
+    private boolean mDisableVideoFullscreenBtnAlways = false;
 
-    public QMUIWebViewClient(boolean needDispatchSafeAreaInset) {
+    public QMUIWebViewClient(boolean needDispatchSafeAreaInset, boolean disableVideoFullscreenBtnAlways) {
         mNeedDispatchSafeAreaInset = needDispatchSafeAreaInset;
-    }
-
-    public void setNeedDispatchSafeAreaInset(QMUIWebView webView, boolean needDispatchSafeAreaInset) {
-        if (mNeedDispatchSafeAreaInset != needDispatchSafeAreaInset) {
-            mNeedDispatchSafeAreaInset = needDispatchSafeAreaInset;
-            if (mNeedDispatchSafeAreaInset && mIsPageFinished) {
-                dispatchFullscreenRequestAction(webView);
-            }
-        }
-    }
-
-    @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mIsPageFinished = false;
-        super.onPageStarted(view, url, favicon);
+        mDisableVideoFullscreenBtnAlways = disableVideoFullscreenBtnAlways;
     }
 
     @Override
     public void onPageFinished(final WebView view, String url) {
         super.onPageFinished(view, url);
-        mIsPageFinished = true;
+        if (mDisableVideoFullscreenBtnAlways) {
+            runJsCode(view, getJsCodeForDisableVideoFullscreenBtn(), null);
+        }
         if (mNeedDispatchSafeAreaInset && view instanceof QMUIWebView) {
             dispatchFullscreenRequestAction((QMUIWebView) view);
         }
     }
 
-    private void dispatchFullscreenRequestAction(final QMUIWebView webView) {
-        boolean sureNotSupportModifyCssEnv = webView.isNotSupportChangeCssEnv();
-        if (sureNotSupportModifyCssEnv) {
-            return;
-        }
-        String jsCode = "(function(){\n" +
+    private String getJsCodeForDisableVideoFullscreenBtn() {
+        return "(function(){\n" +
+                // disable fullscreen btn on video
+                "   var head = document.getElementsByTagName('head')[0];\n" +
+                "   var style = document.createElement('style');\n" +
+                "   style.type = 'text/css';" +
+                "   style.innerHTML = 'video::-webkit-media-controls-fullscreen-button{display: none !important;}'\n" +
+                "   head.appendChild(style);\n" +
+                "})()";
+    }
+
+    private String getJsCodeForFullscreenHtml() {
+        return "(function(){\n" +
                 "   document.body.addEventListener('keydown', function(e){\n" +
                 "        if(e.keyCode == " + JS_FAKE_KEY_CODE_EVENT + "){\n" +
                 "             var html = document.documentElement;\n" +
@@ -58,23 +54,23 @@ public class QMUIWebViewClient extends WebViewClient {
                 "        }\n" +
                 "    })\n" +
                 "})()";
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
-                @Override
-                public void onReceiveValue(String value) {
-                    dispatchFullscreenRequestEvent(webView);
-                }
-            });
-        } else {
-            // Usually, there is no chance to come here.
-            webView.loadUrl("javascript:" + jsCode);
-            webView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dispatchFullscreenRequestEvent(webView);
-                }
-            }, 250);
+    }
+
+    private void dispatchFullscreenRequestAction(final QMUIWebView webView) {
+        boolean sureNotSupportModifyCssEnv = webView.isNotSupportChangeCssEnv();
+        if (sureNotSupportModifyCssEnv) {
+            return;
         }
+
+        if (!mDisableVideoFullscreenBtnAlways) {
+            runJsCode(webView, getJsCodeForDisableVideoFullscreenBtn(), null);
+        }
+        runJsCode(webView, getJsCodeForFullscreenHtml(), new Runnable() {
+            @Override
+            public void run() {
+                dispatchFullscreenRequestEvent(webView);
+            }
+        });
     }
 
     private void dispatchFullscreenRequestEvent(WebView webView) {
@@ -82,5 +78,33 @@ public class QMUIWebViewClient extends WebViewClient {
                 SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_F1,
                 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0);
         webView.dispatchKeyEvent(keyEvent);
+    }
+
+    private void runJsCode(WebView webView, @NonNull String jsCode, @Nullable final Runnable finishAction) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            if (finishAction == null) {
+                webView.evaluateJavascript(jsCode, null);
+            } else {
+                webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        finishAction.run();
+                    }
+                });
+            }
+
+        } else {
+            // Usually, there is no chance to come here.
+            webView.loadUrl("javascript:" + jsCode);
+            if (finishAction != null) {
+                webView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finishAction.run();
+                    }
+                }, 250);
+            }
+
+        }
     }
 }

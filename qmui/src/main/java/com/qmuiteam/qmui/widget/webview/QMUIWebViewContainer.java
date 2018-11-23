@@ -8,7 +8,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -20,10 +19,7 @@ import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
 
     private QMUIWebView mWebView;
-    private View mCustomView;
     private QMUIWebView.OnScrollChangeListener mOnScrollChangeListener;
-    private Callback mCallback;
-
 
     public QMUIWebViewContainer(Context context) {
         super(context);
@@ -33,9 +29,6 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
         super(context, attrs);
     }
 
-    public void setCallback(Callback callback) {
-        mCallback = callback;
-    }
 
     public void addWebView(@NonNull QMUIWebView webView, boolean needDispatchSafeAreaInset) {
         mWebView = webView;
@@ -65,48 +58,6 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
-    public final void setCustomView(@NonNull View customView) {
-        mCustomView = customView;
-        onSetCustomView(customView);
-        if (mCallback != null) {
-            mCallback.onShowCustomView();
-        }
-    }
-
-    protected void onSetCustomView(@NonNull View customView) {
-        addView(customView, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // TODO only support for Android M+ ?
-            if (customView instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) customView;
-                if (viewGroup.getChildCount() > 0) {
-                    viewGroup.getChildAt(0).setOnScrollChangeListener(new OnScrollChangeListener() {
-                        @Override
-                        public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                            if (mOnScrollChangeListener != null) {
-                                mOnScrollChangeListener.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    public final void removeCustomView() {
-        if (mCustomView != null) {
-            onRemoveCustomView(mCustomView);
-            mCustomView = null;
-            if (mCallback != null) {
-                mCallback.onHideCustomView();
-            }
-        }
-    }
-
-    protected void onRemoveCustomView(@NonNull View customView) {
-        removeView(customView);
-    }
 
     public void setNeedDispatchSafeAreaInset(boolean needDispatchSafeAreaInset) {
         if (mWebView != null) {
@@ -117,22 +68,14 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
     public void destroy() {
         removeView(mWebView);
         removeAllViews();
-        mCustomView = null;
+        mWebView.setWebChromeClient(null);
+        mWebView.setWebViewClient(null);
         mWebView.destroy();
     }
 
 
     public void setCustomOnScrollChangeListener(QMUIWebView.OnScrollChangeListener onScrollChangeListener) {
         mOnScrollChangeListener = onScrollChangeListener;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && mCustomView != null) {
-            // webView will consume this event and cancel fullscreen state, this is not expected
-            return false;
-        }
-        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -179,29 +122,5 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
         }
 
         return super.applySystemWindowInsets21(insets);
-    }
-
-    public int getWebContentScrollY() {
-        if (mCustomView instanceof ViewGroup && ((ViewGroup) mCustomView).getChildCount() > 0) {
-            ((ViewGroup) mCustomView).getChildAt(0).getScrollY();
-        } else if (mWebView != null) {
-            return mWebView.getScrollY();
-        }
-        return 0;
-    }
-
-    public int getWebContentScrollX() {
-        if (mCustomView instanceof ViewGroup && ((ViewGroup) mCustomView).getChildCount() > 0) {
-            ((ViewGroup) mCustomView).getChildAt(0).getScrollX();
-        } else if (mWebView != null) {
-            return mWebView.getScrollX();
-        }
-        return 0;
-    }
-
-    public interface Callback {
-        void onShowCustomView();
-
-        void onHideCustomView();
     }
 }

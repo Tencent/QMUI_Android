@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowInsets;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -71,14 +70,6 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         if (mOnScrollChangeListener != null) {
             mOnScrollChangeListener.onScrollChange(this, l, t, oldl, oldt);
         }
-    }
-
-    @Override
-    public void setWebChromeClient(WebChromeClient client) {
-        if (client != null && !(client instanceof QMUIWebChromeClient)) {
-            throw new IllegalArgumentException("must use the instance of QMUIWebChromeClient");
-        }
-        super.setWebChromeClient(client);
     }
 
     @Override
@@ -326,9 +317,9 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         /**
          * Called when the scroll position of a view changes.
          *
-         * @param v The view whose scroll position has changed.
-         * @param scrollX Current horizontal scroll origin.
-         * @param scrollY Current vertical scroll origin.
+         * @param v          The view whose scroll position has changed.
+         * @param scrollX    Current horizontal scroll origin.
+         * @param scrollY    Current vertical scroll origin.
          * @param oldScrollX Previous horizontal scroll origin.
          * @param oldScrollY Previous vertical scroll origin.
          */

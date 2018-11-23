@@ -9,8 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.DownloadListener;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -21,7 +21,6 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
-import com.qmuiteam.qmui.widget.webview.QMUIWebChromeClient;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmui.widget.webview.QMUIWebViewClient;
 import com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer;
@@ -160,11 +159,11 @@ public class QDWebExplorerFragment extends BaseFragment {
         mWebView.loadUrl(mUrl);
     }
 
-    protected void configWebView(QMUIWebViewContainer webViewContainer, QMUIWebView webView){
+    protected void configWebView(QMUIWebViewContainer webViewContainer, QMUIWebView webView) {
 
     }
 
-    protected void onScrollWebContent( int scrollX, int scrollY, int oldScrollX, int oldScrollY){
+    protected void onScrollWebContent(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
     }
 
@@ -182,8 +181,8 @@ public class QDWebExplorerFragment extends BaseFragment {
         }
     }
 
-    protected QMUIWebChromeClient getWebViewChromeClient() {
-        return new ExplorerWebViewChromeClient(mWebViewContainer);
+    protected WebChromeClient getWebViewChromeClient() {
+        return new ExplorerWebViewChromeClient(this);
     }
 
     protected QMUIWebViewClient getWebViewClient() {
@@ -227,32 +226,43 @@ public class QDWebExplorerFragment extends BaseFragment {
         }
     }
 
-    protected class ExplorerWebViewChromeClient extends QMUIWebChromeClient {
+    public static class ExplorerWebViewChromeClient extends WebChromeClient {
+        private QDWebExplorerFragment mFragment;
 
-        public ExplorerWebViewChromeClient(QMUIWebViewContainer webViewContainer) {
-            super(webViewContainer);
+        public ExplorerWebViewChromeClient(QDWebExplorerFragment fragment) {
+            mFragment = fragment;
         }
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             // 修改进度条
-            if (newProgress > mProgressHandler.mDstProgressIndex) {
-                sendProgressMessage(PROGRESS_PROCESS, newProgress, 100);
+            if (newProgress > mFragment.mProgressHandler.mDstProgressIndex) {
+                mFragment.sendProgressMessage(PROGRESS_PROCESS, newProgress, 100);
             }
         }
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
-            updateTitle(view.getTitle());
+            mFragment.updateTitle(view.getTitle());
+        }
+
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            callback.onCustomViewHidden();
+        }
+
+        @Override
+        public void onHideCustomView() {
+
         }
     }
 
     protected class ExplorerWebViewClient extends QMUIWebViewClient {
 
         public ExplorerWebViewClient(boolean needDispatchSafeAreaInset) {
-            super(needDispatchSafeAreaInset);
+            super(needDispatchSafeAreaInset, true);
         }
 
         @Override
