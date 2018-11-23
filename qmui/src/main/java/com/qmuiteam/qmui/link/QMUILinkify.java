@@ -278,7 +278,7 @@ public class QMUILinkify {
         }
 
         if ((mask & MAP_ADDRESSES) != 0) {
-            gatherMapLinks(links, text);
+            gatherMapLinks(links, text,maxLength);
         }
 
         pruneOverlaps(links);
@@ -436,7 +436,7 @@ public class QMUILinkify {
         return hasMatches;
     }
 
-    private static void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, boolean allowUnderline, QMUIOnSpanClickListener l) {
+    private static void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, final boolean allowUnderline, QMUIOnSpanClickListener l) {
         text.setSpan(new StyleableURLSpan(url, l) {
 
             @Override
