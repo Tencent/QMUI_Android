@@ -239,6 +239,8 @@
     <declare-styleable name="QMUILinkTextView">
         <attr name="qmui_linkBackgroundColor" format="color"/>
         <attr name="qmui_linkTextColor" format="color"/>
+        <attr name="qmui_allowUnderLine" format="boolean" />
+        <attr name="qmui_ellipsizeEnable" format="boolean" />
     </declare-styleable>
 
     <!-- RoundWidget start -->

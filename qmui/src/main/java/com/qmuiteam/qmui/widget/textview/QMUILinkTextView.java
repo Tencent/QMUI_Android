@@ -10,7 +10,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatTextView;
+import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -24,6 +27,7 @@ import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
 import com.qmuiteam.qmui.link.QMUILinkify;
 import com.qmuiteam.qmui.span.QMUIOnSpanClickListener;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +44,7 @@ import java.util.Set;
  * @author cginechen
  * @date 2017-03-17
  */
-public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListener, ISpanTouchFix {
+public class QMUILinkTextView extends AppCompatTextView implements QMUIOnSpanClickListener, ISpanTouchFix {
     private static final String TAG = "LinkTextView";
     private static final int MSG_CHECK_DOUBLE_TAP_TIMEOUT = 1000;
     public static int AUTO_LINK_MASK_REQUIRED = QMUILinkify.PHONE_NUMBERS | QMUILinkify.EMAIL_ADDRESSES | QMUILinkify.WEB_URLS;
@@ -63,11 +67,20 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
      */
     private ColorStateList mLinkBgColor;
 
+    /**
+     * 是否允许显示链接下划线
+     */
+    private boolean mAllowUnderLine = true;
+
     private int mAutoLinkMaskCompat;
     private OnLinkClickListener mOnLinkClickListener;
     private OnLinkLongClickListener mOnLinkLongClickListener;
     private boolean mNeedForceEventToParent = false;
-
+    /**
+     * 是否允许链接，号码等，设置最大字数限制，超过显示getMoreString()
+     * 还需要设置 maxLength 属性显示最大字数才能一起生效
+     */
+    private boolean mEllipsizeEnable = false;
     /**
      * 记录当前 Touch 事件对应的点是不是点在了 span 上面
      */
@@ -98,6 +111,8 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.QMUILinkTextView);
         mLinkBgColor = array.getColorStateList(R.styleable.QMUILinkTextView_qmui_linkBackgroundColor);
         mLinkTextColor = array.getColorStateList(R.styleable.QMUILinkTextView_qmui_linkTextColor);
+        mAllowUnderLine = array.getBoolean(R.styleable.QMUILinkTextView_qmui_allowUnderLine, mAllowUnderLine);
+        mEllipsizeEnable = array.getBoolean(R.styleable.QMUILinkTextView_qmui_ellipsizeEnable, mEllipsizeEnable);
         array.recycle();
         if (mOriginText != null) {
             setText(mOriginText);
@@ -149,11 +164,28 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
     @Override
     public void setText(CharSequence text, BufferType type) {
         mOriginText = text;
+        int mMax = Integer.MAX_VALUE;
         if (!TextUtils.isEmpty(text)) {
+            if (mEllipsizeEnable) {
+                // 还必须设置maxLength
+                InputFilter[] filters = getFilters();
+                for (InputFilter filter : filters) {
+                    if (filter instanceof InputFilter.LengthFilter) {
+                        mMax = (int)getFieldValue(filter, "mMax");
+                    }
+                }
+
+                int offset = getMoreString().length();
+                if (text.length() > mMax) {
+                    text = text.subSequence(0, mMax - offset) + getMoreString();
+                }
+            }
+
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
-            QMUILinkify.addLinks(builder, mAutoLinkMaskCompat, mLinkTextColor, mLinkBgColor, this);
+            QMUILinkify.addLinks(builder, mOriginText, mMax, mAutoLinkMaskCompat, mLinkTextColor, mLinkBgColor, mAllowUnderLine, this);
             text = builder;
         }
+
         super.setText(text, type);
         if (mNeedForceEventToParent && getLinksClickable()) {
             setFocusable(false);
@@ -308,5 +340,35 @@ public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListene
 
     public interface OnLinkLongClickListener {
         void onLongClick(String text);
+    }
+    public void setEllipsizeEnable(boolean ellipsizeEnable) {
+        this.mEllipsizeEnable = ellipsizeEnable;
+    }
+
+    @NonNull
+    private String getMoreString() {
+        return "...";
+    }
+
+    /**
+     * 通过反射, 获取obj对象的 指定成员变量的值
+     */
+    public static Object getFieldValue(Object obj, String fieldName) {
+        if (obj == null || TextUtils.isEmpty(fieldName)) {
+            return null;
+        }
+
+        Class<?> clazz = obj.getClass();
+        while (clazz != Object.class) {
+            try {
+                Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field.get(obj);
+            } catch (Exception e) {
+                Log.e("tag","错误:" + e.getMessage());
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return null;
     }
 }

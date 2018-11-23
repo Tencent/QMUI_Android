@@ -245,7 +245,9 @@ public class QMUILinkify {
      * attached to the Spannable, to avoid problems if you call it
      * repeatedly on the same text.
      */
-    public static boolean addLinks(Spannable text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    public static boolean addLinks(Spannable text, CharSequence originText, int maxLength
+            , int mask, ColorStateList linkColor, ColorStateList bgColor
+            , boolean allowUnderLine, QMUIOnSpanClickListener l) {
         if (mask == 0) {
             return false;
         }
@@ -259,19 +261,19 @@ public class QMUILinkify {
         ArrayList<LinkSpec> links = new ArrayList<>();
 
         if ((mask & WEB_URLS) != 0) {
-            gatherLinks(links, text, sWebUrlMatcher.getPattern(),
+            gatherLinks(links, originText, maxLength, sWebUrlMatcher.getPattern(),
                     new String[]{"http://", "https://", "rtsp://"},
                     sUrlMatchFilter, null);
         }
 
         if ((mask & EMAIL_ADDRESSES) != 0) {
-            gatherLinks(links, text, Patterns.EMAIL_ADDRESS,
+            gatherLinks(links, originText, maxLength, Patterns.EMAIL_ADDRESS,
                     new String[]{"mailto:"},
                     null, null);
         }
 
         if ((mask & PHONE_NUMBERS) != 0) {
-            gatherPhoneLinks(links, text, WECHAT_PHONE, new Pattern[]{NOT_PHONE},
+            gatherPhoneLinks(links, originText, maxLength, WECHAT_PHONE, new Pattern[]{NOT_PHONE},
                     new String[]{"tel:"}, sPhoneNumberMatchFilter, sPhoneNumberTransformFilter);
         }
 
@@ -286,7 +288,7 @@ public class QMUILinkify {
         }
 
         for (LinkSpec link : links) {
-            applyLink(link.url, link.start, link.end, text, linkColor, bgColor, l);
+            applyLink(link.url, link.start, link.end, text, linkColor, bgColor, allowUnderLine, l);
         }
 
         return true;
@@ -298,7 +300,7 @@ public class QMUILinkify {
      * are found the movement method for the TextView is set to
      * LinkMovementMethod.
      */
-    public static boolean addLinks(TextView text, int mask, ColorStateList linkColor, ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    public static boolean addLinks(TextView text, int mask, ColorStateList linkColor, ColorStateList bgColor, boolean allowUnderLine, QMUIOnSpanClickListener l) {
         if (mask == 0) {
             return false;
         }
@@ -306,7 +308,7 @@ public class QMUILinkify {
         CharSequence t = text.getText();
 
         if (t instanceof Spannable) {
-            if (addLinks((Spannable) t, mask, linkColor, bgColor, l)) {
+            if (addLinks((Spannable) t, t, Integer.MAX_VALUE, mask, linkColor, bgColor, allowUnderLine, l)) {
                 addLinkMovementMethod(text);
                 return true;
             }
@@ -315,7 +317,7 @@ public class QMUILinkify {
         } else {
             SpannableString s = SpannableString.valueOf(t);
 
-            if (addLinks(s, mask, linkColor, bgColor, l)) {
+            if (addLinks(s, t, Integer.MAX_VALUE, mask, linkColor, bgColor, allowUnderLine, l)) {
                 addLinkMovementMethod(text);
                 text.setText(s);
 
@@ -426,7 +428,7 @@ public class QMUILinkify {
                 String url = makeUrl(m.group(0), new String[]{prefix},
                         m, transformFilter);
 
-                applyLink(url, start, end, s, null, null, null);
+                applyLink(url, start, end, s, null, null, false, null);
                 hasMatches = true;
             }
         }
@@ -434,7 +436,7 @@ public class QMUILinkify {
         return hasMatches;
     }
 
-    private static void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, QMUIOnSpanClickListener l) {
+    private static void applyLink(String url, int start, int end, Spannable text, final ColorStateList linkColor, final ColorStateList bgColor, boolean allowUnderline, QMUIOnSpanClickListener l) {
         text.setSpan(new StyleableURLSpan(url, l) {
 
             @Override
@@ -450,7 +452,7 @@ public class QMUILinkify {
                     ds.bgColor = mPressed ? pressedBgColor : normalBgColor;
                 }
                 super.updateDrawState(ds);
-                ds.setUnderlineText(false);
+                ds.setUnderlineText(allowUnderline);
             }
 
         }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -514,7 +516,7 @@ public class QMUILinkify {
     }
 
     private static void gatherLinks(ArrayList<LinkSpec> links,
-                                    Spannable s, Pattern pattern, String[] schemes,
+                                    CharSequence s, int maxLength, Pattern pattern, String[] schemes,
                                     MatchFilter matchFilter, TransformFilter transformFilter) {
         Matcher m = pattern.matcher(s);
 
@@ -522,12 +524,22 @@ public class QMUILinkify {
             int start = m.start();
             int end = m.end();
 
+            if (start >= maxLength) {
+                break;
+            }
+
             if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
                 LinkSpec spec = new LinkSpec();
 
                 spec.url = makeUrl(m.group(0), schemes, m, transformFilter);
                 spec.start = start;
-                spec.end = end;
+                if (end > maxLength) {
+                    spec.end = maxLength;
+                    links.add(spec);
+                    break;
+                } else {
+                    spec.end = end;
+                }
 
                 links.add(spec);
             }
@@ -535,7 +547,7 @@ public class QMUILinkify {
     }
 
     private static void gatherPhoneLinks(ArrayList<LinkSpec> links,
-                                         Spannable s, Pattern pattern, Pattern[] excepts, String[] schemes,
+                                         CharSequence s, int maxLength, Pattern pattern, Pattern[] excepts, String[] schemes,
                                          MatchFilter matchFilter, TransformFilter transformFilter) {
         Matcher m = pattern.matcher(s);
 
@@ -547,11 +559,21 @@ public class QMUILinkify {
             int start = m.start();
             int end = m.end();
 
+            if (start >= maxLength) {
+                break;
+            }
+
             if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
                 LinkSpec spec = new LinkSpec();
 
                 spec.url = makeUrl(m.group(0), schemes, m, transformFilter);
                 spec.start = start;
+                if (end > maxLength) {
+                    end = maxLength;
+                    spec.end = end;
+                    links.add(spec);
+                    break;
+                }
                 spec.end = end;
 
                 links.add(spec);
@@ -603,7 +625,7 @@ public class QMUILinkify {
 //        }
 //    }
 
-    private static void gatherMapLinks(ArrayList<LinkSpec> links, Spannable s) {
+    private static void gatherMapLinks(ArrayList<LinkSpec> links, CharSequence s, int maxLength) {
         String string = s.toString();
         String address;
         int base = 0;
@@ -619,13 +641,30 @@ public class QMUILinkify {
                 LinkSpec spec = new LinkSpec();
                 int length = address.length();
                 int end = start + length;
-
-                spec.start = base + start;
-                spec.end = base + end;
-                string = string.substring(end);
-                base += end;
+                if (base + start >= maxLength) {
+                    break;
+                }
 
                 String encodedAddress;
+
+                int exactEnd = base + end;
+                if (exactEnd > maxLength) {
+                    exactEnd = maxLength;
+                    spec.start = base + start;
+                    spec.end = exactEnd;
+                    try {
+                        encodedAddress = URLEncoder.encode(address, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        break;
+                    }
+                    spec.url = "geo:0,0?q=" + encodedAddress;
+                    links.add(spec);
+                    break;
+                }
+                spec.start = base + start;
+                spec.end = exactEnd;
+                string = string.substring(end);
+                base += end;
 
                 try {
                     encodedAddress = URLEncoder.encode(address, "UTF-8");
