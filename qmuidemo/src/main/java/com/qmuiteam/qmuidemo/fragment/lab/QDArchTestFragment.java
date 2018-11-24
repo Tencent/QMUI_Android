@@ -13,6 +13,8 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
@@ -104,7 +106,7 @@ public class QDArchTestFragment extends BaseFragment {
         }
     }
 
-    public static void injectEntrance(final QMUITopBarLayout topbar){
+    public static void injectEntrance(final QMUITopBarLayout topbar) {
         topbar.addRightTextButton("new Activity", QMUIViewHelper.generateViewId())
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -120,24 +122,50 @@ public class QDArchTestFragment extends BaseFragment {
                 .addItem("WebView Test")
                 .addItem("SurfaceView Test")
                 .addItem("Directly Activity")
+                .addItem("Directly Activity And Keep Bottom Sheet shown")
+                .addItem("Show a Dialog")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        dialog.dismiss();
-                        if(position == 0){
+                        if(position != 4){
+                            dialog.dismiss();
+                        }
+
+                        if (position == 0) {
                             Intent intent = QDMainActivity.createArchTestIntent(context);
                             context.startActivity(intent);
-                        }else if(position == 1){
+                        } else if (position == 1) {
                             Intent intent = QDMainActivity.createWebExplorerIntent(context,
                                     "https://github.com/QMUI/QMUI_Android",
                                     context.getResources().getString(R.string.about_item_github));
                             context.startActivity(intent);
-                        } else if(position == 2){
+                        } else if (position == 2) {
                             Intent intent = QDMainActivity.createSurfaceTestIntent(context);
                             context.startActivity(intent);
-                        } else  if(position == 3){
+                        } else if (position == 3) {
                             Intent intent = new Intent(context, ArchTestActivity.class);
                             context.startActivity(intent);
+                        } else if (position == 4) {
+                            Intent intent = new Intent(context, ArchTestActivity.class);
+                            context.startActivity(intent);
+                        } else if (position == 5) {
+                            new QMUIDialog.MessageDialogBuilder(context)
+                                    .setMessage("click ok to go new activity. then swipe back, " +
+                                            "we should also see this dialog")
+                                    .addAction(R.string.cancel, new QMUIDialogAction.ActionListener() {
+                                        @Override
+                                        public void onClick(QMUIDialog dialog, int index) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .addAction(R.string.ok, new QMUIDialogAction.ActionListener() {
+                                        @Override
+                                        public void onClick(QMUIDialog dialog, int index) {
+                                            Intent intent = new Intent(context, ArchTestActivity.class);
+                                            context.startActivity(intent);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 })

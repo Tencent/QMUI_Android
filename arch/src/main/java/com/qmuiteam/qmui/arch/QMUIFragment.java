@@ -268,7 +268,9 @@ public abstract class QMUIFragment extends Fragment {
                         // unbind mSwipeBackgroundView util onDestroy
                         if (getActivity() != null) {
                             getActivity().finish();
-                            getActivity().overridePendingTransition(R.anim.swipe_back_enter, R.anim.swipe_back_exit);
+                            int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
+                                    R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
+                            getActivity().overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
                         }
                     }
                     return;
@@ -442,7 +444,7 @@ public abstract class QMUIFragment extends Fragment {
                             decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                         }
-                        mSwipeBackgroundView.bind(prevActivity, currentActivity);
+                        mSwipeBackgroundView.bind(prevActivity, currentActivity, restoreSubWindowWhenDragBack());
                         SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
                                 Math.abs(backViewInitOffset()));
                     }
@@ -684,6 +686,14 @@ public abstract class QMUIFragment extends Fragment {
     @SuppressWarnings("SameReturnValue")
     public Object onLastFragmentFinish() {
         return null;
+    }
+
+    /**
+     * restore sub window(e.g dialog) when drag back to previous activity
+     * @return
+     */
+    protected boolean restoreSubWindowWhenDragBack(){
+        return true;
     }
 
     /**

@@ -585,7 +585,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         TabAdapter tabAdapter = getAdapter();
         final List<TabItemView> listViews = tabAdapter.getViews();
         // 第一次设置
-        if (mSelectedIndex == Integer.MIN_VALUE) {
+        if (mSelectedIndex == Integer.MIN_VALUE || mSelectedIndex >= tabAdapter.getSize() ) {
             tabAdapter.setup();
             Tab model = tabAdapter.getItem(index);
             reLayoutIndicator(listViews, model);

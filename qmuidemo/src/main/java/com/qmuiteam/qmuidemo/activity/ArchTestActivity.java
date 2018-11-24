@@ -1,6 +1,5 @@
 package com.qmuiteam.qmuidemo.activity;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -38,11 +37,5 @@ public class ArchTestActivity extends BaseActivity {
         });
         mTopBar.setTitle("Arch Test");
         QDArchTestFragment.injectEntrance(mTopBar);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 }

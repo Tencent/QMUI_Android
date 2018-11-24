@@ -32,7 +32,9 @@ public class QMUIActivity extends InnerBaseActivity {
                     } else if (scrollPercent >= 1.0F) {
                         // unBind mSwipeBackgroundView until onDestroy
                         finish();
-                        overridePendingTransition(R.anim.swipe_back_enter, R.anim.swipe_back_exit);
+                        int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
+                                R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
+                        overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
                     }
                 }
             }
@@ -61,7 +63,7 @@ public class QMUIActivity extends InnerBaseActivity {
                     decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 }
-                mSwipeBackgroundView.bind(prevActivity, QMUIActivity.this);
+                mSwipeBackgroundView.bind(prevActivity, QMUIActivity.this, restoreSubWindowWhenDragBack());
                 SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
                         Math.abs(backViewInitOffset()));
             }
@@ -130,7 +132,7 @@ public class QMUIActivity extends InnerBaseActivity {
         if (mListenerRemover != null) {
             mListenerRemover.remove();
         }
-        if(mSwipeBackgroundView != null){
+        if (mSwipeBackgroundView != null) {
             mSwipeBackgroundView.unBind();
             mSwipeBackgroundView = null;
         }
@@ -184,5 +186,13 @@ public class QMUIActivity extends InnerBaseActivity {
      */
     protected boolean translucentFull() {
         return false;
+    }
+
+    /**
+     * restore sub window(e.g dialog) when drag back to previous activity
+     * @return
+     */
+    protected boolean restoreSubWindowWhenDragBack(){
+        return true;
     }
 }

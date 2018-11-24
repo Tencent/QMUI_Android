@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- when previous activity has a child window, backing to previous activity will run the child
+window enter animation, but so far I have no way to reset the enter animation. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+           android:duration="@integer/qmui_anim_duration"
+           android:fromXDelta="0%p"
+           android:fromYDelta="0"
+           android:toXDelta="0%p"
+           android:toYDelta="0"/>
