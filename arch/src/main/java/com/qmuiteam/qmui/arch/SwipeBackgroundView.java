@@ -93,13 +93,18 @@ class SwipeBackgroundView extends View {
                         WindowManager.LayoutParams lp = params.get(i);
                         View view = views.get(i);
                         boolean isMain = view.getWindowToken() == windowToken;
-                        if (isMain || lp.token == activityToken) {
-                            View childContentView = view.findViewById(Window.ID_ANDROID_CONTENT);
-                            if (childContentView != null) {
-                                if (mViewWeakReference == null) {
-                                    mViewWeakReference = new ArrayList<>();
-                                }
-                                mViewWeakReference.add(new ViewInfo(childContentView, lp, isMain));
+                        // Dialog use activityToken in lp
+                        // PopupWindow use windowToken in lp
+                        if (isMain || lp.token == activityToken || lp.token == windowToken) {
+                            View prevContentView = view.findViewById(Window.ID_ANDROID_CONTENT);
+                            if (mViewWeakReference == null) {
+                                mViewWeakReference = new ArrayList<>();
+                            }
+                            if (prevContentView != null) {
+                                mViewWeakReference.add(new ViewInfo(prevContentView, lp, isMain));
+                            }else {
+                                // PopupWindow doest not exist a descendant view with id Window.ID_ANDROID_CONTENT
+                                mViewWeakReference.add(new ViewInfo(view, lp, isMain));
                             }
                         }
                     }
