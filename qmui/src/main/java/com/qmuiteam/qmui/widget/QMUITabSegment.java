@@ -5,6 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -17,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -35,7 +39,6 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -93,6 +96,9 @@ import java.util.List;
  * @date 2016-01-27
  */
 public class QMUITabSegment extends HorizontalScrollView {
+
+    private static final String TAG = "QMUITabSegment";
+
     // mode: 自适应宽度+滚动 / 均分
     public static final int MODE_SCROLLABLE = 0;
     public static final int MODE_FIXED = 1;
@@ -101,18 +107,17 @@ public class QMUITabSegment extends HorizontalScrollView {
     public static final int ICON_POSITION_TOP = 1;
     public static final int ICON_POSITION_RIGHT = 2;
     public static final int ICON_POSITION_BOTTOM = 3;
-    // status: 用于记录tab的改变状态
-    private static final int STATUS_NORMAL = 0;
-    private static final int STATUS_PROGRESS = 1;
-    private static final int STATUS_SELECTED = 2;
+
+    private static final int NO_POSITION = -1;
     /**
      * listener
      */
     private final ArrayList<OnTabSelectedListener> mSelectedListeners = new ArrayList<>();
-    private View mIndicatorView;
-    private int mSelectedIndex = Integer.MIN_VALUE;
-    private int mPendingSelectedIndex = Integer.MIN_VALUE;
     private Container mContentLayout;
+
+    private int mCurrentSelectedIndex = NO_POSITION;
+    private int mPendingSelectedIndex = NO_POSITION;
+
     /**
      * item的默认字体大小
      */
@@ -137,6 +142,17 @@ public class QMUITabSegment extends HorizontalScrollView {
      * indicator宽度跟随内容宽度
      */
     private boolean mIsIndicatorWidthFollowContent = true;
+
+    /**
+     * indicator rect, draw directly
+     */
+    private Rect mIndicatorRect = null;
+
+    /**
+     * indicator paint, draw directly
+     */
+    private Paint mIndicatorPaint = null;
+
     /**
      * item normal color
      */
@@ -167,19 +183,18 @@ public class QMUITabSegment extends HorizontalScrollView {
      */
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
 
-    private boolean mIsAnimating;
+    private Animator mSelectAnimator;
     private OnTabClickListener mOnTabClickListener;
-    private boolean mForceIndicatorNotDoLayoutWhenParentLayout = false;
     protected OnClickListener mTabOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mIsAnimating || mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE) {
+            if (mSelectAnimator != null || mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE) {
                 return;
             }
             int index = (int) v.getTag();
             Tab model = getAdapter().getItem(index);
             if (model != null) {
-                selectTab(index, !mHasIndicator && !model.isDynamicChangeIconColor());
+                selectTab(index, !mHasIndicator && !model.isDynamicChangeIconColor(), true);
             }
             if (mOnTabClickListener != null) {
                 mOnTabClickListener.onTabClick(index);
@@ -194,7 +209,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     private DataSetObserver mPagerAdapterObserver;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private OnTabSelectedListener mViewPagerSelectedListener;
-    //    private AdapterChangeListener mAdapterChangeListener;
+    private AdapterChangeListener mAdapterChangeListener;
     private boolean mIsInSelectTab = false;
 
     public QMUITabSegment(Context context) {
@@ -238,9 +253,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         mContentLayout = new Container(context);
         addView(mContentLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        if (mHasIndicator) {
-            createIndicatorView();
-        }
         createTypefaceProvider(context, typefaceProviderName);
     }
 
@@ -304,19 +316,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         return mContentLayout.getTabAdapter();
     }
 
-    private void createIndicatorView() {
-        if (mIndicatorView == null) {
-            mIndicatorView = new View(getContext());
-            mIndicatorView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, mIndicatorHeight));
-            if (mIndicatorDrawable != null) {
-                QMUIViewHelper.setBackgroundKeepingPadding(mIndicatorView, mIndicatorDrawable);
-            } else {
-                mIndicatorView.setBackgroundColor(mDefaultSelectedColor);
-            }
-            mContentLayout.addView(mIndicatorView);
-        }
-    }
-
     public void setTabTextSize(int tabTextSize) {
         mTabTextSize = tabTextSize;
     }
@@ -327,6 +326,11 @@ public class QMUITabSegment extends HorizontalScrollView {
      */
     public void reset() {
         mContentLayout.getTabAdapter().clear();
+        mCurrentSelectedIndex = NO_POSITION;
+        if(mSelectAnimator != null){
+            mSelectAnimator.cancel();
+            mSelectAnimator = null;
+        }
     }
 
     /**
@@ -335,6 +339,7 @@ public class QMUITabSegment extends HorizontalScrollView {
      */
     public void notifyDataChanged() {
         getAdapter().setup();
+        populateFromPagerAdapter(false);
     }
 
     public void addOnTabSelectedListener(@NonNull OnTabSelectedListener listener) {
@@ -362,7 +367,10 @@ public class QMUITabSegment extends HorizontalScrollView {
      * 设置 indicator的宽度是否随内容宽度变化
      */
     public void setIndicatorWidthAdjustContent(boolean indicatorWidthFollowContent) {
-        mIsIndicatorWidthFollowContent = indicatorWidthFollowContent;
+        if(mIsIndicatorWidthFollowContent != indicatorWidthFollowContent){
+            mIsIndicatorWidthFollowContent = indicatorWidthFollowContent;
+            mContentLayout.requestLayout();
+        }
     }
 
     /**
@@ -371,7 +379,10 @@ public class QMUITabSegment extends HorizontalScrollView {
      * @param isIndicatorTop true 时表示 indicator 位置在 Tab 的上方, false 时表示在下方
      */
     public void setIndicatorPosition(boolean isIndicatorTop) {
-        mIndicatorTop = isIndicatorTop;
+        if(mIndicatorTop != isIndicatorTop){
+            mIndicatorTop = isIndicatorTop;
+            mContentLayout.invalidate();
+        }
     }
 
     /**
@@ -382,12 +393,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     public void setHasIndicator(boolean hasIndicator) {
         if (mHasIndicator != hasIndicator) {
             mHasIndicator = hasIndicator;
-            if (mHasIndicator) {
-                createIndicatorView();
-            } else {
-                mContentLayout.removeView(mIndicatorView);
-                mIndicatorView = null;
-            }
+            invalidate();
         }
 
     }
@@ -431,9 +437,9 @@ public class QMUITabSegment extends HorizontalScrollView {
                 mViewPager.removeOnPageChangeListener(mOnPageChangeListener);
             }
 
-//            if (mAdapterChangeListener != null) {
-//                mViewPager.removeOnAdapterChangeListener(mAdapterChangeListener);
-//            }
+            if (mAdapterChangeListener != null) {
+                mViewPager.removeOnAdapterChangeListener(mAdapterChangeListener);
+            }
         }
 
         if (mViewPagerSelectedListener != null) {
@@ -463,11 +469,11 @@ public class QMUITabSegment extends HorizontalScrollView {
             }
 
             // Add a listener so that we're notified of any adapter changes
-//            if (mAdapterChangeListener == null) {
-//                mAdapterChangeListener = new AdapterChangeListener(useAdapterTitle);
-//            }
-//            mAdapterChangeListener.setAutoRefresh(autoRefresh);
-//            viewPager.addOnAdapterChangeListener(mAdapterChangeListener);
+            if (mAdapterChangeListener == null) {
+                mAdapterChangeListener = new AdapterChangeListener(useAdapterTitle);
+            }
+            mAdapterChangeListener.setAutoRefresh(autoRefresh);
+            viewPager.addOnAdapterChangeListener(mAdapterChangeListener);
         } else {
             // We've been given a null ViewPager so we need to clear out the internal state,
             // listeners and observers
@@ -521,95 +527,88 @@ public class QMUITabSegment extends HorizontalScrollView {
         mDefaultTabIconPosition = defaultTabIconPosition;
     }
 
-    private void preventLayoutToChangeTabColor(TextView textView, int color, Tab model, int status) {
-        mForceIndicatorNotDoLayoutWhenParentLayout = true;
-        changeTabColor(textView, color, model, status);
-        mForceIndicatorNotDoLayoutWhenParentLayout = false;
-    }
 
-    private void changeTabColor(TextView textView, int color, Tab model, int status) {
-        changeTabColor(textView, color, model, status, false);
-    }
-
-    private void changeTabColor(TextView textView, int color, Tab model, int status, boolean preventColorChange) {
-        if (!preventColorChange) {
-            textView.setTextColor(color);
-        }
-
-        if (!model.isDynamicChangeIconColor()) {
-            if (status == STATUS_NORMAL || model.getSelectedIcon() == null) {
-                setDrawable(textView, model.getNormalIcon(), getTabIconPosition(model));
-            } else if (status == STATUS_SELECTED) {
-                setDrawable(textView, model.getSelectedIcon(), getTabIconPosition(model));
+    private void setViewPagerScrollState(int state) {
+        mViewPagerScrollState = state;
+        if (mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
+            if (mPendingSelectedIndex != NO_POSITION && mSelectAnimator == null) {
+                selectTab(mPendingSelectedIndex, true, false);
+                mPendingSelectedIndex = NO_POSITION;
             }
-            return;
         }
-
-        if (!preventColorChange) {
-            Drawable drawable = textView.getCompoundDrawables()[getTabIconPosition(model)];
-            if (drawable == null) {
-                return;
-            }
-            // 这里要拿textView已经set并mutate的drawable
-            QMUIDrawableHelper.setDrawableTintColor(drawable, color);
-            setDrawable(textView, model.getNormalIcon(), getTabIconPosition(model));
-        }
-
     }
 
     public void selectTab(int index) {
-        selectTab(index, false);
+        selectTab(index, false, false);
     }
 
-    public void selectTab(final int index, boolean preventAnim) {
+    public void selectTab(final int index, boolean noAnimation, boolean fromTabClick) {
         if (mIsInSelectTab) {
             return;
         }
         mIsInSelectTab = true;
-        if (mContentLayout.getTabAdapter().getSize() == 0 || mContentLayout.getTabAdapter().getSize() <= index) {
-            mIsInSelectTab = false;
-            return;
+        TabAdapter tabAdapter = getAdapter();
+        List<TabItemView> listViews = tabAdapter.getViews();
+
+        if (listViews.size() != tabAdapter.getSize()) {
+            tabAdapter.setup();
+            listViews = tabAdapter.getViews();
         }
-        if (mSelectedIndex == index) {
-            dispatchTabReselected(index);
+
+        if (listViews.size() == 0 || listViews.size() <= index) {
             mIsInSelectTab = false;
             return;
         }
 
-        if (mIsAnimating) {
+        if (mSelectAnimator != null || mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE) {
             mPendingSelectedIndex = index;
             mIsInSelectTab = false;
             return;
         }
 
-        TabAdapter tabAdapter = getAdapter();
-        final List<TabItemView> listViews = tabAdapter.getViews();
-        // 第一次设置
-        if (mSelectedIndex == Integer.MIN_VALUE || mSelectedIndex >= tabAdapter.getSize() ) {
-            tabAdapter.setup();
+        if (mCurrentSelectedIndex == index) {
+            if (fromTabClick) {
+                // dispatch re select only when click tab
+                dispatchTabReselected(index);
+            }
+            mIsInSelectTab = false;
+            // invalidate mContentLayout to sure indicator is drawn if needed
+            mContentLayout.invalidate();
+            return;
+        }
+
+
+        if (mCurrentSelectedIndex > listViews.size()) {
+            Log.i(TAG, "selectTab: current selected index is bigger than views size.");
+            mCurrentSelectedIndex = NO_POSITION;
+        }
+
+        // first time to select
+        if (mCurrentSelectedIndex == NO_POSITION) {
             Tab model = tabAdapter.getItem(index);
-            reLayoutIndicator(listViews, model);
+            layoutIndicator(model, true);
             TextView selectedTv = listViews.get(index).getTextView();
             setTextViewTypeface(selectedTv, true);
-            changeTabColor(selectedTv, getTabSelectedColor(model), model, STATUS_SELECTED);
+            listViews.get(index).updateDecoration(model, true);
             dispatchTabSelected(index);
-            mSelectedIndex = index;
+            mCurrentSelectedIndex = index;
             mIsInSelectTab = false;
             return;
         }
-        final int prev = mSelectedIndex;
+
+        final int prev = mCurrentSelectedIndex;
         final Tab prevModel = tabAdapter.getItem(prev);
         final TabItemView prevView = listViews.get(prev);
         final Tab nowModel = tabAdapter.getItem(index);
         final TabItemView nowView = listViews.get(index);
 
-        if (preventAnim) {
+        if (noAnimation) {
             dispatchTabUnselected(prev);
             dispatchTabSelected(index);
             setTextViewTypeface(prevView.getTextView(), false);
             setTextViewTypeface(nowView.getTextView(), true);
-            changeTabColor(prevView.getTextView(), getTabNormalColor(prevModel), prevModel, STATUS_NORMAL, mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE);
-            changeTabColor(nowView.getTextView(), getTabSelectedColor(nowModel), nowModel, STATUS_SELECTED, mViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE);
+            prevView.updateDecoration(prevModel, false);
+            nowView.updateDecoration(nowModel, true);
             if (getScrollX() > nowView.getLeft()) {
                 smoothScrollTo(nowView.getLeft(), 0);
             } else {
@@ -618,58 +617,54 @@ public class QMUITabSegment extends HorizontalScrollView {
                     smoothScrollBy(nowView.getRight() - realWidth - getScrollX(), 0);
                 }
             }
-            mSelectedIndex = index;
+            mCurrentSelectedIndex = index;
             mIsInSelectTab = false;
-            reLayoutIndicator(listViews, nowModel);
+            layoutIndicator(nowModel, true);
             return;
         }
 
-        final int leftDistance = nowModel.getContentLeft() - prevModel.getContentLeft();
-        final int widthDistance = nowModel.getContentWidth() - prevModel.getContentWidth();
-        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.setInterpolator(QMUIInterpolatorStaticHolder.LINEAR_INTERPOLATOR);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float animValue = (float) animation.getAnimatedValue();
-                if (mIndicatorView != null && listViews.size() > 1) {
-                    int targetLeft = (int) (prevModel.getContentLeft() + leftDistance * animValue);
-                    int targetWidth = (int) (prevModel.getContentWidth() + widthDistance * animValue);
-                    if (mIndicatorDrawable == null) {
-                        mIndicatorView.setBackgroundColor(QMUIColorHelper.computeColor(getTabSelectedColor(prevModel), getTabSelectedColor(nowModel), animValue));
-                    }
-                    mIndicatorView.layout(targetLeft, mIndicatorView.getTop(), targetLeft + targetWidth, mIndicatorView.getBottom());
-                }
                 int preColor = QMUIColorHelper.computeColor(getTabSelectedColor(prevModel), getTabNormalColor(prevModel), animValue);
                 int nowColor = QMUIColorHelper.computeColor(getTabNormalColor(nowModel), getTabSelectedColor(nowModel), animValue);
-                preventLayoutToChangeTabColor(prevView.getTextView(), preColor, prevModel, STATUS_PROGRESS);
-                preventLayoutToChangeTabColor(nowView.getTextView(), nowColor, nowModel, STATUS_PROGRESS);
+                prevView.setColorInTransition(prevModel, preColor);
+                nowView.setColorInTransition(nowModel, nowColor);
+                layoutIndicatorInTransition(prevModel, nowModel, animValue);
             }
         });
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mIsAnimating = true;
+                mSelectAnimator = animation;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mIsAnimating = false;
-                changeTabColor(nowView.getTextView(), getTabSelectedColor(nowModel), nowModel, STATUS_SELECTED);
+                mSelectAnimator = null;
+                prevView.updateDecoration(prevModel, false);
+                nowView.updateDecoration(nowModel, true);
                 dispatchTabSelected(index);
                 dispatchTabUnselected(prev);
                 setTextViewTypeface(prevView.getTextView(), false);
                 setTextViewTypeface(nowView.getTextView(), true);
-                mSelectedIndex = index;
-                if (mPendingSelectedIndex != Integer.MIN_VALUE && mPendingSelectedIndex != mSelectedIndex) {
-                    selectTab(index, false);
+                mCurrentSelectedIndex = index;
+                if (mPendingSelectedIndex != NO_POSITION && mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
+                    selectTab(mPendingSelectedIndex, true, false);
+                    mPendingSelectedIndex = NO_POSITION;
                 }
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                changeTabColor(nowView.getTextView(), getTabSelectedColor(nowModel), nowModel, STATUS_SELECTED);
-                mIsAnimating = false;
+                mSelectAnimator = null;
+                prevView.updateDecoration(prevModel, true);
+                nowView.updateDecoration(nowModel, false);
+                layoutIndicator(prevModel, true);
+
             }
 
             @Override
@@ -682,20 +677,50 @@ public class QMUITabSegment extends HorizontalScrollView {
         mIsInSelectTab = false;
     }
 
-    private void reLayoutIndicator(List<TabItemView> listViews, Tab model) {
-        if (mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE &&
-                mIndicatorView != null && listViews.size() > 1) {
-            if (mIndicatorDrawable != null) {
-                QMUIViewHelper.setBackgroundKeepingPadding(mIndicatorView, mIndicatorDrawable);
-            } else {
-                mIndicatorView.setBackgroundColor(getTabSelectedColor(model));
-            }
-            if (model.contentWidth > 0) {
-                mIndicatorView.layout(model.contentLeft, mIndicatorView.getTop(),
-                        model.contentLeft + model.contentWidth, mIndicatorView.getBottom());
-            }
+    private void layoutIndicator(Tab model, boolean invalidate) {
+        if(model == null){
+            return;
+        }
+        if (mIndicatorRect == null) {
+            mIndicatorRect = new Rect(model.contentLeft, 0,
+                    model.contentLeft + model.contentWidth, 0);
+        } else {
+            mIndicatorRect.left = model.contentLeft;
+            mIndicatorRect.right = model.contentLeft + model.contentWidth;
+        }
+
+        if (mIndicatorPaint == null) {
+            mIndicatorPaint = new Paint();
+            mIndicatorPaint.setStyle(Paint.Style.FILL);
+        }
+        mIndicatorPaint.setColor(getTabSelectedColor(model));
+        if(invalidate){
+            mContentLayout.invalidate();
         }
     }
+
+    private void layoutIndicatorInTransition(Tab preModel, Tab targetModel, float offsetPercent) {
+        final int leftDistance = targetModel.getContentLeft() - preModel.getContentLeft();
+        final int widthDistance = targetModel.getContentWidth() - preModel.getContentWidth();
+        final int targetLeft = (int) (preModel.getContentLeft() + leftDistance * offsetPercent);
+        final int targetWidth = (int) (preModel.getContentWidth() + widthDistance * offsetPercent);
+        if (mIndicatorRect == null) {
+            mIndicatorRect = new Rect(targetLeft, 0, targetLeft + targetWidth, 0);
+        } else {
+            mIndicatorRect.left = targetLeft;
+            mIndicatorRect.right = targetLeft + targetWidth;
+        }
+
+        if (mIndicatorPaint == null) {
+            mIndicatorPaint = new Paint();
+            mIndicatorPaint.setStyle(Paint.Style.FILL);
+        }
+        int indicatorColor = QMUIColorHelper.computeColor(
+                getTabSelectedColor(preModel), getTabSelectedColor(targetModel), offsetPercent);
+        mIndicatorPaint.setColor(indicatorColor);
+        mContentLayout.invalidate();
+    }
+
 
     private void setTextViewTypeface(TextView tv, boolean selected) {
         if (mTypefaceProvider == null || tv == null) {
@@ -706,7 +731,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     public void updateIndicatorPosition(final int index, float offsetPercent) {
-        if (mIsAnimating || mIsInSelectTab || offsetPercent == 0) {
+        if (mSelectAnimator != null || mIsInSelectTab || offsetPercent == 0) {
             return;
         }
 
@@ -725,23 +750,13 @@ public class QMUITabSegment extends HorizontalScrollView {
         }
         Tab preModel = tabAdapter.getItem(index);
         Tab targetModel = tabAdapter.getItem(targetIndex);
-        TextView preTv = listViews.get(index).getTextView();
-        TextView nowTv = listViews.get(targetIndex).getTextView();
+        TabItemView preView = listViews.get(index);
+        TabItemView targetView = listViews.get(targetIndex);
         int preColor = QMUIColorHelper.computeColor(getTabSelectedColor(preModel), getTabNormalColor(preModel), offsetPercent);
         int targetColor = QMUIColorHelper.computeColor(getTabNormalColor(targetModel), getTabSelectedColor(targetModel), offsetPercent);
-        preventLayoutToChangeTabColor(preTv, preColor, preModel, STATUS_PROGRESS);
-        preventLayoutToChangeTabColor(nowTv, targetColor, targetModel, STATUS_PROGRESS);
-        if (mIndicatorView != null && listViews.size() > 1) {
-            final int leftDistance = targetModel.getContentLeft() - preModel.getContentLeft();
-            final int widthDistance = targetModel.getContentWidth() - preModel.getContentWidth();
-            final int targetLeft = (int) (preModel.getContentLeft() + leftDistance * offsetPercent);
-            final int targetWidth = (int) (preModel.getContentWidth() + widthDistance * offsetPercent);
-            if (mIndicatorDrawable == null) {
-                int indicatorColor = QMUIColorHelper.computeColor(getTabSelectedColor(preModel), getTabSelectedColor(targetModel), offsetPercent);
-                mIndicatorView.setBackgroundColor(indicatorColor);
-            }
-            mIndicatorView.layout(targetLeft, mIndicatorView.getTop(), targetLeft + targetWidth, mIndicatorView.getBottom());
-        }
+        preView.setColorInTransition(preModel, preColor);
+        targetView.setColorInTransition(targetModel, targetColor);
+        layoutIndicatorInTransition(preModel, targetModel, offsetPercent);
     }
 
     /**
@@ -801,6 +816,14 @@ public class QMUITabSegment extends HorizontalScrollView {
         return iconPosition;
     }
 
+    private int getTabTextSize(Tab item) {
+        int textSize = item.getTextSize();
+        if (textSize == Tab.USE_TAB_SEGMENT) {
+            textSize = mTabTextSize;
+        }
+        return textSize;
+    }
+
     private int getTabSelectedColor(Tab item) {
         int color = item.getSelectedColor();
         if (color == Tab.USE_TAB_SEGMENT) {
@@ -827,9 +850,7 @@ public class QMUITabSegment extends HorizontalScrollView {
 
         if (mViewPager != null && adapterCount > 0) {
             final int curItem = mViewPager.getCurrentItem();
-            if (curItem != mSelectedIndex && curItem < adapterCount) {
-                selectTab(curItem, true);
-            }
+            selectTab(curItem, true, false);
         }
     }
 
@@ -871,7 +892,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     public int getSelectedIndex() {
-        return mSelectedIndex;
+        return mCurrentSelectedIndex;
     }
 
     private int getTabCount() {
@@ -982,7 +1003,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         public void onPageScrollStateChanged(final int state) {
             final QMUITabSegment tabSegment = mTabSegmentRef.get();
             if (tabSegment != null) {
-                tabSegment.mViewPagerScrollState = state;
+                tabSegment.setViewPagerScrollState(state);
             }
 
         }
@@ -1001,7 +1022,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             final QMUITabSegment tabSegment = mTabSegmentRef.get();
             if (tabSegment != null && tabSegment.getSelectedIndex() != position
                     && position < tabSegment.getTabCount()) {
-                tabSegment.selectTab(position, true);
+                tabSegment.selectTab(position, true, false);
             }
         }
     }
@@ -1316,92 +1337,41 @@ public class QMUITabSegment extends HorizontalScrollView {
             }
 
             tv.setText(item.getText());
-
-            // icon
-            if (item.getNormalIcon() == null) {
-                tv.setCompoundDrawablePadding(0);
-                tv.setCompoundDrawables(null, null, null, null);
-            } else {
-                Drawable drawable = item.getNormalIcon();
-                if (drawable != null) {
-                    drawable = drawable.mutate();
-                    setDrawable(tv, drawable, getTabIconPosition(item));
-                    tv.setCompoundDrawablePadding(QMUIDisplayHelper.dp2px(getContext(), 4));
-                } else {
-                    tv.setCompoundDrawables(null, null, null, null);
-                }
-            }
-            int textSize = item.getTextSize();
-            if (textSize == Tab.USE_TAB_SEGMENT) {
-                textSize = mTabTextSize;
-            }
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-
-            if (position == mSelectedIndex) {
-                if (mIndicatorView != null && getViews().size() > 1) {
-                    if (mIndicatorDrawable != null) {
-                        QMUIViewHelper.setBackgroundKeepingPadding(mIndicatorView, mIndicatorDrawable);
-                    } else {
-                        mIndicatorView.setBackgroundColor(getTabSelectedColor(item));
-                    }
-                }
-                changeTabColor(view.getTextView(), getTabSelectedColor(item), item, STATUS_SELECTED);
-            } else {
-                changeTabColor(view.getTextView(), getTabNormalColor(item), item, STATUS_NORMAL);
-            }
-
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, getTabTextSize(item));
+            view.updateDecoration(item, mCurrentSelectedIndex == position);
             view.setTag(position);
             view.setOnClickListener(mTabOnClickListener);
         }
     }
 
-    public class InnerTextView extends AppCompatTextView {
+    private class AdapterChangeListener implements ViewPager.OnAdapterChangeListener {
+        private boolean mAutoRefresh;
+        private final boolean mUseAdapterTitle;
 
-        public InnerTextView(Context context) {
-            super(context);
-        }
-
-        public InnerTextView(Context context, AttributeSet attrs) {
-            super(context, attrs);
+        AdapterChangeListener(boolean useAdapterTitle) {
+            mUseAdapterTitle = useAdapterTitle;
         }
 
         @Override
-        public void requestLayout() {
-            if (mForceIndicatorNotDoLayoutWhenParentLayout) {
-                return;
+        public void onAdapterChanged(@NonNull ViewPager viewPager,
+                                     @Nullable PagerAdapter oldAdapter, @Nullable PagerAdapter newAdapter) {
+            if (mViewPager == viewPager) {
+                setPagerAdapter(newAdapter, mUseAdapterTitle, mAutoRefresh);
             }
-            super.requestLayout();
+        }
+
+        void setAutoRefresh(boolean autoRefresh) {
+            mAutoRefresh = autoRefresh;
         }
     }
 
-//    private class AdapterChangeListener implements ViewPager.OnAdapterChangeListener {
-//        private boolean mAutoRefresh;
-//        private final boolean mUseAdapterTitle;
-//
-//        AdapterChangeListener(boolean useAdapterTitle) {
-//            mUseAdapterTitle = useAdapterTitle;
-//        }
-//
-//        @Override
-//        public void onAdapterChanged(@NonNull ViewPager viewPager,
-//                                     @Nullable PagerAdapter oldAdapter, @Nullable PagerAdapter newAdapter) {
-//            if (mViewPager == viewPager) {
-//                setPagerAdapter(newAdapter, mUseAdapterTitle, mAutoRefresh);
-//            }
-//        }
-//
-//        void setAutoRefresh(boolean autoRefresh) {
-//            mAutoRefresh = autoRefresh;
-//        }
-//    }
-
     public class TabItemView extends RelativeLayout {
-        private InnerTextView mTextView;
-        private GestureDetector mGestureDetector = null;
+        private AppCompatTextView mTextView;
+        private GestureDetector mGestureDetector;
 
         public TabItemView(Context context) {
             super(context);
-            mTextView = new InnerTextView(getContext());
+            mTextView = new AppCompatTextView(getContext());
             mTextView.setSingleLine(true);
             mTextView.setGravity(Gravity.CENTER);
             mTextView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
@@ -1414,20 +1384,16 @@ public class QMUITabSegment extends HorizontalScrollView {
             mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    if (mSelectedListeners == null) {
-                        return false;
-                    } else {
-                        if (mIsAnimating) {
-                            return false;
-                        }
-                        int index = (int) TabItemView.this.getTag();
-                        Tab model = getAdapter().getItem(index);
-                        if (model != null) {
-                            dispatchTabDoubleTap(index);
-                            return true;
-                        }
+                    if (mSelectedListeners.isEmpty()) {
                         return false;
                     }
+                    int index = (int) TabItemView.this.getTag();
+                    Tab model = getAdapter().getItem(index);
+                    if (model != null) {
+                        dispatchTabDoubleTap(index);
+                        return true;
+                    }
+                    return false;
                 }
             });
         }
@@ -1440,14 +1406,50 @@ public class QMUITabSegment extends HorizontalScrollView {
         public boolean onTouchEvent(MotionEvent event) {
             return mGestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
         }
+
+        public void setColorInTransition(Tab tab, int color) {
+            mTextView.setTextColor(color);
+            if (tab.isDynamicChangeIconColor()) {
+                Drawable icon = mTextView.getCompoundDrawables()[getTabIconPosition(tab)];
+                if (icon != null) {
+                    QMUIDrawableHelper.setDrawableTintColor(icon, color);
+                    setDrawable(mTextView, icon, getTabIconPosition(tab));
+                }
+            }
+        }
+
+        public void updateDecoration(Tab tab, boolean isSelected) {
+
+
+            int color = isSelected ? getTabSelectedColor(tab) : getTabNormalColor(tab);
+            mTextView.setTextColor(color);
+
+            Drawable icon = tab.getNormalIcon();
+            if (isSelected) {
+                if (!tab.isDynamicChangeIconColor()) {
+                    icon = tab.getSelectedIcon() != null ? tab.getSelectedIcon() : icon;
+                } else if (icon != null) {
+                    icon = icon.mutate();
+                    QMUIDrawableHelper.setDrawableTintColor(icon, color);
+                }
+            }
+
+            if (icon == null) {
+                mTextView.setCompoundDrawablePadding(0);
+                mTextView.setCompoundDrawables(null, null, null, null);
+            } else {
+                mTextView.setCompoundDrawablePadding(QMUIDisplayHelper.dp2px(getContext(), 4));
+                setDrawable(mTextView, icon, getTabIconPosition(tab));
+            }
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if (mSelectedIndex != Integer.MIN_VALUE && mMode == MODE_SCROLLABLE) {
+        if (mCurrentSelectedIndex != NO_POSITION && mMode == MODE_SCROLLABLE) {
             TabAdapter tabAdapter = getAdapter();
-            final TabItemView view = tabAdapter.getViews().get(mSelectedIndex);
+            final TabItemView view = tabAdapter.getViews().get(mCurrentSelectedIndex);
             if (getScrollX() > view.getLeft()) {
                 scrollTo(view.getLeft(), 0);
             } else {
@@ -1538,12 +1540,6 @@ public class QMUITabSegment extends HorizontalScrollView {
                 resultWidthSize -= mItemSpaceInScrollMode;
             }
 
-            if (mIndicatorView != null) {
-                ViewGroup.LayoutParams bottomLp = mIndicatorView.getLayoutParams();
-                int bottomWidthMeasureSpec = MeasureSpec.makeMeasureSpec(resultWidthSize, MeasureSpec.AT_MOST);
-                int bottomHeightMeasureSpec = MeasureSpec.makeMeasureSpec(bottomLp.height, MeasureSpec.EXACTLY);
-                mIndicatorView.measure(bottomWidthMeasureSpec, bottomHeightMeasureSpec);
-            }
             setMeasuredDimension(resultWidthSize, heightSpecSize);
         }
 
@@ -1592,20 +1588,29 @@ public class QMUITabSegment extends HorizontalScrollView {
                 }
                 usedLeft = usedLeft + childMeasureWidth + (mMode == MODE_SCROLLABLE ? mItemSpaceInScrollMode : 0);
             }
-            int index = mSelectedIndex == Integer.MIN_VALUE ? 0 : mSelectedIndex;
-            Tab model = mTabAdapter.getItem(index);
-            int lineLeft = model.getContentLeft();
-            int lineWidth = model.getContentWidth();
-            if (mIndicatorView != null) {
-                if (visibleChild > 1) {
-                    mIndicatorView.setVisibility(VISIBLE);
-                    if (mIndicatorTop) {
-                        mIndicatorView.layout(lineLeft, 0, lineLeft + lineWidth, mIndicatorHeight);
-                    } else {
-                        mIndicatorView.layout(lineLeft, b - t - mIndicatorHeight, lineLeft + lineWidth, b - t);
-                    }
+
+            if(mCurrentSelectedIndex != NO_POSITION && mSelectAnimator == null
+                    && mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE){
+                layoutIndicator(mTabAdapter.getItem(mCurrentSelectedIndex), false);
+            }
+        }
+
+        @Override
+        protected void dispatchDraw(Canvas canvas) {
+            super.dispatchDraw(canvas);
+            if (mHasIndicator && mIndicatorRect != null) {
+                if (mIndicatorTop) {
+                    mIndicatorRect.top = getPaddingTop();
+                    mIndicatorRect.bottom = mIndicatorRect.top + mIndicatorHeight;
                 } else {
-                    mIndicatorView.setVisibility(GONE);
+                    mIndicatorRect.bottom = getHeight() - getPaddingBottom();
+                    mIndicatorRect.top = mIndicatorRect.bottom - mIndicatorHeight;
+                }
+                if (mIndicatorDrawable != null) {
+                    mIndicatorDrawable.setBounds(mIndicatorRect);
+                    mIndicatorDrawable.draw(canvas);
+                } else {
+                    canvas.drawRect(mIndicatorRect, mIndicatorPaint);
                 }
             }
         }
