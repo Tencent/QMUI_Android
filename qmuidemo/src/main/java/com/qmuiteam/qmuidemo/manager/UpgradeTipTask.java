@@ -49,7 +49,10 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_1_9){
+        if (mNewVersion == QDUpgradeManager.VERSION_1_1_10) {
+            text.append("1. Simplified the use of QMUIWebContainer.\n");
+            text.append("2. Refactored QMUITabSegment to handle operations such as reducing item.\n");
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_9) {
             text.append("1. Fixed an error that fitSystemWindows does not work in QMUIWebContainer.\n");
             text.append("2. Fixed an error that swiping back would blink.\n");
         } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_8) {
