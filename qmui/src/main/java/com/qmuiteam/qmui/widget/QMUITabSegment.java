@@ -743,7 +743,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             return;
         }
         boolean isBold = selected ? mTypefaceProvider.isSelectedTabBold() : mTypefaceProvider.isNormalTabBold();
-        tv.setTypeface(null, isBold ? Typeface.BOLD : Typeface.NORMAL);
+        tv.setTypeface(mTypefaceProvider.getTypeface(), isBold ? Typeface.BOLD : Typeface.NORMAL);
     }
 
     public void updateIndicatorPosition(final int index, float offsetPercent) {
@@ -1006,6 +1006,8 @@ public class QMUITabSegment extends HorizontalScrollView {
         boolean isNormalTabBold();
 
         boolean isSelectedTabBold();
+
+        @Nullable Typeface getTypeface();
     }
 
     public static class TabLayoutOnPageChangeListener implements ViewPager.OnPageChangeListener {
