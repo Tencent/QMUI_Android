@@ -19,9 +19,11 @@ package com.qmuiteam.qmui.link;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.widget.textview.ISpanTouchFix;
 
 /**
@@ -98,17 +100,27 @@ public class QMUILinkTouchDecorHelper {
 
         Layout layout = textView.getLayout();
         int line = layout.getLineForVertical(y);
-        int off = layout.getOffsetForHorizontal(line, x);
-        if (x < layout.getLineLeft(line) || x > layout.getLineRight(line)) {
-            // 实际上没点到任何内容
-            off = -1;
-        }
 
-        ITouchableSpan[] link = spannable.getSpans(off, off, ITouchableSpan.class);
-        ITouchableSpan touchedSpan = null;
-        if (link.length > 0) {
-            touchedSpan = link[0];
+        /*
+         * BugFix: https://issuetracker.google.com/issues/113348914
+         */
+        try {
+            int off = layout.getOffsetForHorizontal(line, x);
+            if (x < layout.getLineLeft(line) || x > layout.getLineRight(line)) {
+                // 实际上没点到任何内容
+                off = -1;
+            }
+            ITouchableSpan[] link = spannable.getSpans(off, off, ITouchableSpan.class);
+            ITouchableSpan touchedSpan = null;
+            if (link.length > 0) {
+                touchedSpan = link[0];
+            }
+            return touchedSpan;
+        } catch (IndexOutOfBoundsException e) {
+            if (BuildConfig.DEBUG) {
+                Log.d(this.toString(), "getPressedSpan", e);
+            }
         }
-        return touchedSpan;
+        return null;
     }
 }
