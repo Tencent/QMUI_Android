@@ -72,6 +72,9 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
     }
 
     private void init() {
+        removeJavascriptInterface("searchBoxJavaBridge_");
+        removeJavascriptInterface("accessibility");
+        removeJavascriptInterface("accessibilityTraversal");
         mWindowInsetHelper = new QMUIWindowInsetHelper(this, this);
     }
 
