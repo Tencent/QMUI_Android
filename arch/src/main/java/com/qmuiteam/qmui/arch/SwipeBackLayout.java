@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
@@ -148,6 +149,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private Callback mCallback;
 
     private boolean mPreventSwipeBackWhenDown = false;
+    private boolean mLayoutFrozen = false;
+    private boolean mLayoutWasDefered;
 
     public SwipeBackLayout(Context context) {
         this(context, null);
@@ -396,8 +399,26 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public void requestLayout() {
-        if (!mInLayout) {
+        Log.i("cgine", "requestLayout mLayoutFrozen =" + mLayoutFrozen);
+        if (!mLayoutFrozen) {
             super.requestLayout();
+        } else {
+            mLayoutWasDefered = true;
+        }
+    }
+
+    private void setLayoutFrozen(boolean frozen) {
+        if (frozen != mLayoutFrozen) {
+            if (!frozen) {
+                mLayoutFrozen = false;
+                if (mLayoutWasDefered) {
+                    requestLayout();
+                }
+
+                mLayoutWasDefered = false;
+            }else{
+                mLayoutFrozen = true;
+            }
         }
     }
 
@@ -588,6 +609,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
                     listener.onScrollStateChange(state, mScrollPercent);
                 }
             }
+            setLayoutFrozen(state != STATE_IDLE);
         }
     }
 
