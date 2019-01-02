@@ -21,12 +21,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.SystemClock;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -399,7 +396,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public void requestLayout() {
-        Log.i("cgine", "requestLayout mLayoutFrozen =" + mLayoutFrozen);
         if (!mLayoutFrozen) {
             super.requestLayout();
         } else {
@@ -416,7 +412,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
                 }
 
                 mLayoutWasDefered = false;
-            }else{
+            } else {
                 mLayoutFrozen = true;
             }
         }
@@ -613,21 +609,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
     }
 
-    @Override
-    public void clearAnimation() {
-        // bugfix: FragmentManagerImpl -> endAnimatingAwayFragments only calls clearAnimation,
-        // but does not call endViewTransition. this may freeze the UI. #399
-        // It's fine in Android P because OneShotPreDrawListener in EndViewTransitionAnimator
-        // has a chance to run, I haven't found the reason why it was called temporarily.
-        super.clearAnimation();
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P && mCallback != null
-                && mCallback.needFixFragmentManagerEndAnimatingAwayError()){
-            if(getParent() != null){
-                ((ViewGroup) getParent()).endViewTransition(SwipeBackLayout.this);
-            }
-        }
-    }
-
     public static SwipeBackLayout wrap(View child, int edgeFlag, Callback callback) {
         SwipeBackLayout wrapper = new SwipeBackLayout(child.getContext());
         wrapper.setEdgeTrackingEnabled(edgeFlag);
@@ -649,7 +630,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         return wrapper;
     }
 
-    static void offsetInEdgeTouch(View view, int edgeFlag, int offset){
+    static void offsetInEdgeTouch(View view, int edgeFlag, int offset) {
         if (edgeFlag == EDGE_BOTTOM) {
             ViewCompat.offsetTopAndBottom(view, offset);
         } else if (edgeFlag == EDGE_RIGHT) {
@@ -659,7 +640,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
     }
 
-    static void offsetInScroll(View view, int edgeFlag, int targetOffset){
+    static void offsetInScroll(View view, int edgeFlag, int targetOffset) {
         if (edgeFlag == EDGE_BOTTOM) {
             ViewCompat.offsetTopAndBottom(view, targetOffset - view.getTop());
         } else if (edgeFlag == EDGE_RIGHT) {
@@ -671,7 +652,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     public interface Callback {
         boolean canSwipeBack();
-        boolean needFixFragmentManagerEndAnimatingAwayError();
     }
 
     public interface ListenerRemover {

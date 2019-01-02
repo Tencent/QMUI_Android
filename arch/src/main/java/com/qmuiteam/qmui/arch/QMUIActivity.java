@@ -95,11 +95,6 @@ public class QMUIActivity extends InnerBaseActivity {
         public boolean canSwipeBack() {
             return QMUISwipeBackActivityManager.getInstance().canSwipeBack() && canDragBack();
         }
-
-        @Override
-        public boolean needFixFragmentManagerEndAnimatingAwayError() {
-            return false;
-        }
     };
 
     @Override
