@@ -65,7 +65,12 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if (mNewVersion == QDUpgradeManager.VERSION_1_1_10) {
+        if(mNewVersion == QDUpgradeManager.VERSION_1_1_11){
+            text.append("1. Updated arch library to 0.3.0. Now developer must update support library to 28 or use androidx.\n");
+            text.append("2. Feature: Added custom typeface support in QMUITabSegment.\n");
+            text.append("3. Fixed a bug that QMUICollapsingTopBarLayout will lose title if swipe back.\n");
+            text.append("4. Fixed a bug that span click event is not triggered in QMUIQQFaceView. #473\n");
+        }else if (mNewVersion == QDUpgradeManager.VERSION_1_1_10) {
             text.append("1. Simplified the use of QMUIWebContainer.\n");
             text.append("2. Refactored QMUITabSegment to handle operations such as reducing item.\n");
         } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_9) {
