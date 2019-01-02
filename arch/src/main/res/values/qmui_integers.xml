@@ -17,5 +17,5 @@
 
 <resources>
     <!-- activity或fragment切换的动画时间 -->
-    <integer name="qmui_anim_duration">300</integer>
+    <integer name="qmui_anim_duration">3000</integer>
 </resources>
