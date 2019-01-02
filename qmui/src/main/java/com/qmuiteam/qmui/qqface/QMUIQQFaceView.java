@@ -1406,7 +1406,7 @@ public class QMUIQQFaceView extends View {
                 top = (mStartLine - 1) * (mFontHeight + mLineSpace) + top;
             }
 
-            int bottom = (mEndLine - 1) * (mFontHeight + mLineSpace) + top + mFontHeight;
+            int bottom = (mEndLine - 1) * (mFontHeight + mLineSpace) + getPaddingTop() + mFontHeight;
 
             if (y < top || y > bottom) {
                 return false;
