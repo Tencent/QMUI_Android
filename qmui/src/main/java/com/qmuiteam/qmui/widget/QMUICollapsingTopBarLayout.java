@@ -365,6 +365,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         return directChild;
     }
 
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         ensureToolbar();
@@ -389,26 +390,19 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             }
         }
 
-        // Update our child view offset helpers. This needs to be done after the title has been
-        // setup, so that any Toolbars are in their original position
-        for (int i = 0, z = getChildCount(); i < z; i++) {
-            getViewOffsetHelper(getChildAt(i)).onViewLayout();
-        }
-
         // Update the collapsed bounds by getting it's transformed bounds
         if (mCollapsingTitleEnabled) {
             // Update the collapsed bounds
             final int maxOffset = getMaxOffsetForPinChild(
-                    mTopBarDirectChild != null ? mTopBarDirectChild : mTopBar);
+                    mTopBarDirectChild != null ? mTopBarDirectChild : mTopBar, true);
             QMUIViewHelper.getDescendantRect(this, mTopBar, mTmpRect);
 //            mTmpRect.top = mTmpRect.top - topBarInsetAdjustTop;
             Rect rect = mTopBar.getTitleContainerRect();
-            int horStart = mTmpRect.top + maxOffset;
             mCollapsingTextHelper.setCollapsedBounds(
                     mTmpRect.left + rect.left,
-                    horStart + rect.top,
+                    mTmpRect.top + maxOffset + rect.top,
                     mTmpRect.left + rect.right,
-                    horStart + rect.bottom);
+                    mTmpRect.top + maxOffset + rect.bottom);
 
             // Update the expanded bounds
             mCollapsingTextHelper.setExpandedBounds(
@@ -418,6 +412,12 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
                     bottom - top - mExpandedMarginBottom);
             // Now recalculate using the new bounds
             mCollapsingTextHelper.recalculate();
+        }
+
+        // Update our child view offset helpers. This needs to be done after the title has been
+        // setup, so that any Toolbars are in their original position
+        for (int i = 0, z = getChildCount(); i < z; i++) {
+            getViewOffsetHelper(getChildAt(i)).onViewLayout();
         }
 
         // Finally, set our minimum height to enable proper AppBarLayout collapsing
@@ -1206,11 +1206,22 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         }
     }
 
-    final int getMaxOffsetForPinChild(View child) {
-        final QMUIViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
+    /**
+     * if in onLayout, the child.getTop is precise， but QMUIViewOffsetHelper.onViewLayout may not called,
+     * so offsetHelper.getLayoutTop() maybe wrong
+     * @param child
+     * @param onLayout
+     * @return
+     */
+    final int getMaxOffsetForPinChild(View child, boolean onLayout) {
+        int layoutTop = child.getTop();
+        if(!onLayout){
+            final QMUIViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
+            layoutTop = offsetHelper.getLayoutTop();
+        }
         final QMUICollapsingTopBarLayout.LayoutParams lp = (QMUICollapsingTopBarLayout.LayoutParams) child.getLayoutParams();
         return getHeight()
-                - offsetHelper.getLayoutTop()
+                - layoutTop
                 - child.getHeight()
                 - lp.bottomMargin;
     }
@@ -1233,7 +1244,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
                 switch (lp.mCollapseMode) {
                     case QMUICollapsingTopBarLayout.LayoutParams.COLLAPSE_MODE_PIN:
                         offsetHelper.setTopAndBottomOffset(
-                                QMUILangHelper.constrain(-verticalOffset, 0, getMaxOffsetForPinChild(child)));
+                                QMUILangHelper.constrain(-verticalOffset, 0, getMaxOffsetForPinChild(child, false)));
                         break;
                     case QMUICollapsingTopBarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX:
                         offsetHelper.setTopAndBottomOffset(
