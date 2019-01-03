@@ -721,7 +721,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         mNestedScrollingParentHelper.onStopNestedScroll(child);
         if (mNestedScrollInProgress) {
             mNestedScrollInProgress = false;
-            finishPull(0);
+            if(!mNestScrollDurationRefreshing){
+                finishPull(0);
+            }
+
         }
     }
 
@@ -731,7 +734,9 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 " ; velocityX = " + velocityX + " ; velocityY = " + velocityY);
         if (mTargetCurrentOffset > mTargetInitOffset) {
             mNestedScrollInProgress = false;
-            finishPull((int) -velocityY);
+            if(!mNestScrollDurationRefreshing){
+                finishPull((int) -velocityY);
+            }
             return true;
         }
         return false;
@@ -913,8 +918,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         } else if (mNestScrollDurationRefreshing) {
             if (action == MotionEvent.ACTION_MOVE) {
                 if (!mIsRefreshing) {
+                    ev.setAction(MotionEvent.ACTION_CANCEL);
+                    super.dispatchTouchEvent(ev);
                     mNestScrollDurationRefreshing = false;
-                    ev.setAction(MotionEvent.ACTION_DOWN);
+                    return true;
+
                 }
             } else {
                 mNestScrollDurationRefreshing = false;
@@ -996,7 +1004,6 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             if (mProgress.isRunning()) {
                 return;
             }
-            Log.i("cgine", "=========");
             float end = TRIM_RATE * offset / total;
             float rotate = TRIM_OFFSET * offset / total;
             if (overPull > 0) {
