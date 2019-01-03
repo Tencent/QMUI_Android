@@ -16,8 +16,11 @@
 
 package com.qmuiteam.qmuidemo.fragment.components;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -29,6 +32,8 @@ import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIFollowRefreshOffsetCalcula
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
+import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
+import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
@@ -52,7 +57,7 @@ public class QDPullRefreshFragment extends BaseFragment {
     @BindView(R.id.pull_to_refresh)
     QMUIPullRefreshLayout mPullRefreshLayout;
     @BindView(R.id.listview)
-    ListView mListView;
+    RecyclerView mListView;
 
     private QDItemDescription mQDItemDescription;
 
@@ -91,7 +96,24 @@ public class QDPullRefreshFragment extends BaseFragment {
     private void initData() {
         List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
                 "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
-        mListView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, data));
+        mListView.setLayoutManager(new LinearLayoutManager(getContext()){
+            @Override
+            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+        });
+        mListView.setAdapter(new BaseRecyclerAdapter<String>(getContext(), data) {
+            @Override
+            public int getItemLayoutId(int viewType) {
+                return android.R.layout.simple_list_item_1;
+            }
+
+            @Override
+            public void bindData(RecyclerViewHolder holder, int position, String item) {
+                holder.setText(android.R.id.text1, item);
+            }
+        });
         mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
             @Override
             public void onMoveTarget(int offset) {
