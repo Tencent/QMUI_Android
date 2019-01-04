@@ -441,11 +441,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                                 offsetLoc = delta;
                             }
                             ev.offsetLocation(0, offsetLoc);
-                            dispatchTouchEvent(ev);
+                            super.dispatchTouchEvent(ev);
                             ev.setAction(action);
                             // 再dispatch一次move事件，消耗掉所有dy
                             ev.offsetLocation(0, -offsetLoc);
-                            dispatchTouchEvent(ev);
+                            super.dispatchTouchEvent(ev);
                         }
                     }
                     mLastMotionY = y;
@@ -682,6 +682,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
         info("onNestedScrollAccepted: axes = " + axes);
+        mScroller.abortAnimation();
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
         mNestedScrollInProgress = true;
     }
@@ -705,7 +706,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         info("onNestedScroll: dxConsumed = " + dxConsumed + " ; dyConsumed = " + dyConsumed +
                 " ; dxUnconsumed = " + dxUnconsumed + " ; dyUnconsumed = " + dyUnconsumed);
-        if (dyUnconsumed < 0 && !canChildScrollUp()) {
+        if (dyUnconsumed < 0 && !canChildScrollUp() && mScroller.isFinished() && mScrollFlag == 0) {
             moveTargetView(-dyUnconsumed, true);
         }
     }
@@ -721,7 +722,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         mNestedScrollingParentHelper.onStopNestedScroll(child);
         if (mNestedScrollInProgress) {
             mNestedScrollInProgress = false;
-            if(!mNestScrollDurationRefreshing){
+            if (!mNestScrollDurationRefreshing) {
                 finishPull(0);
             }
 
@@ -734,7 +735,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 " ; velocityX = " + velocityX + " ; velocityY = " + velocityY);
         if (mTargetCurrentOffset > mTargetInitOffset) {
             mNestedScrollInProgress = false;
-            if(!mNestScrollDurationRefreshing){
+            if (!mNestScrollDurationRefreshing) {
                 finishPull((int) -velocityY);
             }
             return true;
@@ -865,8 +866,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 deliverVelocity();
                 mScroller.forceFinished(true);
             }
+            Log.i("cgine", "2===========");
             invalidate();
         } else if (hasFlag(FLAG_NEED_SCROLL_TO_INIT_POSITION)) {
+            Log.i("cgine", "1===========");
             removeFlag(FLAG_NEED_SCROLL_TO_INIT_POSITION);
             if (mTargetCurrentOffset != mTargetInitOffset) {
                 mScroller.startScroll(0, mTargetCurrentOffset, 0, mTargetInitOffset - mTargetCurrentOffset);
@@ -914,15 +917,19 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
-            mNestScrollDurationRefreshing = mIsRefreshing;
+            mNestScrollDurationRefreshing = mIsRefreshing || (mScrollFlag & FLAG_NEED_DO_REFRESH) != 0;
         } else if (mNestScrollDurationRefreshing) {
             if (action == MotionEvent.ACTION_MOVE) {
-                if (!mIsRefreshing) {
-                    ev.setAction(MotionEvent.ACTION_CANCEL);
+                if (!mIsRefreshing && mScroller.isFinished() && mScrollFlag == 0) {
+                    // 这里必须要 dispatch 一次 down 事件，否则不能触发 NestScroll，具体可参考 RecyclerView
+                    // down 过程中会触发 onStopNestedScroll，mNestScrollDurationRefreshing 必须在之后
+                    // 置为false，否则会触发 finishPull
+                    ev.setAction(MotionEvent.ACTION_DOWN);
                     super.dispatchTouchEvent(ev);
                     mNestScrollDurationRefreshing = false;
-                    return true;
-
+                    ev.setAction(action);
+                    // offset touch slop, 避免触发点击事件
+                    ev.offsetLocation(0, mSystemTouchSlop + 1);
                 }
             } else {
                 mNestScrollDurationRefreshing = false;

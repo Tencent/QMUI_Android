@@ -21,8 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -96,14 +95,15 @@ public class QDPullRefreshFragment extends BaseFragment {
     private void initData() {
         List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
                 "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
-        mListView.setLayoutManager(new LinearLayoutManager(getContext()){
+        mListView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
                 return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
-        mListView.setAdapter(new BaseRecyclerAdapter<String>(getContext(), data) {
+
+        BaseRecyclerAdapter<String> adapter = new BaseRecyclerAdapter<String>(getContext(), data) {
             @Override
             public int getItemLayoutId(int viewType) {
                 return android.R.layout.simple_list_item_1;
@@ -113,7 +113,14 @@ public class QDPullRefreshFragment extends BaseFragment {
             public void bindData(RecyclerViewHolder holder, int position, String item) {
                 holder.setText(android.R.id.text1, item);
             }
+        };
+        adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int pos) {
+                Toast.makeText(getContext(), "click " + pos, Toast.LENGTH_SHORT).show();
+            }
         });
+        mListView.setAdapter(adapter);
         mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
             @Override
             public void onMoveTarget(int offset) {
