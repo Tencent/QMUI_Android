@@ -924,12 +924,13 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                     // 这里必须要 dispatch 一次 down 事件，否则不能触发 NestScroll，具体可参考 RecyclerView
                     // down 过程中会触发 onStopNestedScroll，mNestScrollDurationRefreshing 必须在之后
                     // 置为false，否则会触发 finishPull
+                    ev.offsetLocation(0, -mSystemTouchSlop-1);
                     ev.setAction(MotionEvent.ACTION_DOWN);
                     super.dispatchTouchEvent(ev);
                     mNestScrollDurationRefreshing = false;
                     ev.setAction(action);
                     // offset touch slop, 避免触发点击事件
-                    ev.offsetLocation(0, mSystemTouchSlop + 1);
+                    ev.offsetLocation(0, mSystemTouchSlop+1);
                 }
             } else {
                 mNestScrollDurationRefreshing = false;
