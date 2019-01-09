@@ -98,8 +98,18 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 }
             }
 
+            @SuppressLint("CommitTransaction")
             @Override
             protected Object hydrate(ViewGroup container, int position) {
+                String name = makeFragmentName(container.getId(), position);
+                if (mCurrentTransaction == null) {
+                    mCurrentTransaction = getChildFragmentManager()
+                            .beginTransaction();
+                }
+                Fragment fragment = getChildFragmentManager().findFragmentByTag(name);
+                if(fragment != null){
+                    return fragment;
+                }
                 switch (position) {
                     case 0:
                         return new QDTabSegmentScrollableModeFragment();
@@ -124,6 +134,9 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 Fragment fragment = getChildFragmentManager().findFragmentByTag(name);
                 if (fragment != null) {
                     mCurrentTransaction.attach(fragment);
+                    if(fragment.getView() != null && fragment.getView().getWidth() == 0){
+                        fragment.getView().requestLayout();
+                    }
                 } else {
                     fragment = (Fragment) item;
                     mCurrentTransaction.add(container.getId(), fragment, name);
