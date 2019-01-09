@@ -38,7 +38,8 @@ public class QDUpgradeManager {
     public static final int VERSION_1_1_9 = 119;
     public static final int VERSION_1_1_10 = 1110;
     public static final int VERSION_1_1_11 = 1111;
-    private static final int sCurrentVersion = VERSION_1_1_11;
+    public static final int VERSION_1_1_12 = 1112;
+    private static final int sCurrentVersion = VERSION_1_1_12;
     private static QDUpgradeManager sQDUpgradeManager = null;
     private UpgradeTipTask mUpgradeTipTask;
 
