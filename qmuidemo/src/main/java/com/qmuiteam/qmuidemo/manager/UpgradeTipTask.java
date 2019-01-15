@@ -174,7 +174,7 @@ public class UpgradeTipTask implements UpgradeTask {
     }
 
     private void handleIssues(final Activity activity, SpannableStringBuilder text, String[] issues) {
-        final String issueBaseUrl = "https://github.com/QMUI/QMUI_Android/issues/";
+        final String issueBaseUrl = "https://github.com/Tencent/QMUI_Android/issues/";
         int start, end;
         for (int i = 0; i < issues.length; i++) {
             if (i == issues.length - 1) {

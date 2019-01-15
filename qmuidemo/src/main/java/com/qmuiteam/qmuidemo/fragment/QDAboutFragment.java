@@ -75,7 +75,7 @@ public class QDAboutFragment extends BaseFragment {
                 .addItemView(mAboutGroupListView.createItemView(getResources().getString(R.string.about_item_github)), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String url = "https://github.com/QMUI/QMUI_Android";
+                        String url = "https://github.com/Tencent/QMUI_Android";
                         Bundle bundle = new Bundle();
                         bundle.putString(EXTRA_URL, url);
                         bundle.putString(EXTRA_TITLE, getResources().getString(R.string.about_item_github));

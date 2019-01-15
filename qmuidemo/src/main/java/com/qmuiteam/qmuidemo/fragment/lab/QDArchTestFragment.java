@@ -152,7 +152,7 @@ public class QDArchTestFragment extends BaseFragment {
                             context.startActivity(intent);
                         } else if (position == 1) {
                             Intent intent = QDMainActivity.createWebExplorerIntent(context,
-                                    "https://github.com/QMUI/QMUI_Android",
+                                    "https://github.com/Tencent/QMUI_Android",
                                     context.getResources().getString(R.string.about_item_github));
                             context.startActivity(intent);
                         } else if (position == 2) {
