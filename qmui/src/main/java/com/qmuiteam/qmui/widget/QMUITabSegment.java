@@ -1038,6 +1038,10 @@ public class QMUITabSegment extends HorizontalScrollView {
         @Override
         public void onPageSelected(final int position) {
             final QMUITabSegment tabSegment = mTabSegmentRef.get();
+            if (tabSegment != null && tabSegment.mPendingSelectedIndex != NO_POSITION) {
+                tabSegment.mPendingSelectedIndex = position;
+                return;
+            }
             if (tabSegment != null && tabSegment.getSelectedIndex() != position
                     && position < tabSegment.getTabCount()) {
                 tabSegment.selectTab(position, true, false);
