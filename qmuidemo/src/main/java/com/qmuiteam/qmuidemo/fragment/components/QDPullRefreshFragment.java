@@ -39,6 +39,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -57,6 +58,7 @@ public class QDPullRefreshFragment extends BaseFragment {
     QMUIPullRefreshLayout mPullRefreshLayout;
     @BindView(R.id.listview)
     RecyclerView mListView;
+    private BaseRecyclerAdapter<String> mAdapter;
 
     private QDItemDescription mQDItemDescription;
 
@@ -93,8 +95,6 @@ public class QDPullRefreshFragment extends BaseFragment {
     }
 
     private void initData() {
-        List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
-                "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
         mListView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
@@ -103,7 +103,7 @@ public class QDPullRefreshFragment extends BaseFragment {
             }
         });
 
-        BaseRecyclerAdapter<String> adapter = new BaseRecyclerAdapter<String>(getContext(), data) {
+        mAdapter = new BaseRecyclerAdapter<String>(getContext(), null) {
             @Override
             public int getItemLayoutId(int viewType) {
                 return android.R.layout.simple_list_item_1;
@@ -114,13 +114,14 @@ public class QDPullRefreshFragment extends BaseFragment {
                 holder.setText(android.R.id.text1, item);
             }
         };
-        adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int pos) {
-                Toast.makeText(getContext(), "click " + pos, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "click position=" + pos, Toast.LENGTH_SHORT).show();
             }
         });
-        mListView.setAdapter(adapter);
+        mListView.setAdapter(mAdapter);
+        onDataLoaded();
         mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
             @Override
             public void onMoveTarget(int offset) {
@@ -137,11 +138,19 @@ public class QDPullRefreshFragment extends BaseFragment {
                 mPullRefreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        onDataLoaded();
                         mPullRefreshLayout.finishRefresh();
                     }
                 }, 2000);
             }
         });
+    }
+
+    private void onDataLoaded() {
+        List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
+                "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
+        Collections.shuffle(data);
+        mAdapter.setData(data);
     }
 
     private void showBottomSheetList() {
