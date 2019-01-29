@@ -483,6 +483,10 @@ public class QMUIDialog extends Dialog {
             }, 300);
         }
 
+        /**
+         * 注意该方法只在调用 {@link #create()} 或 {@link #create(int)} 或 {@link #show()} 生成 Dialog 之后
+         * 才能返回对应的 EditText，在此之前将返回 null
+         */
         @Deprecated
         public EditText getEditText() {
             return mEditText;
