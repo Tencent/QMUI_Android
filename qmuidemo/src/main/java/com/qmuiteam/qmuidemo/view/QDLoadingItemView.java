@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -38,9 +39,11 @@ public class QDLoadingItemView extends FrameLayout {
     public QDLoadingItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mLoadingView = new QMUILoadingView(context,
-                QMUIDisplayHelper.dp2px(context, 48), Color.BLACK);
-        addView(mLoadingView, new FrameLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                QMUIDisplayHelper.dp2px(context, 24), Color.LTGRAY);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER;
+        addView(mLoadingView, lp);
     }
 
     @Override

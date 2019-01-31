@@ -361,7 +361,13 @@ public abstract class QMUIStickySectionAdapter<
     public void onBindViewHolder(@NonNull final VH vh, int position) {
         final int stickyPosition = position;
         QMUISection<H, T> section = getSection(position);
-        onBind(vh, position, section, getItemIndex(position));
+        int itemIndex = getItemIndex(position);
+        onBind(vh, position, section, itemIndex);
+        if(itemIndex == ITEM_INDEX_LOAD_AFTER){
+            vh.isLoadBefore = false;
+        }else if(itemIndex == ITEM_INDEX_LOAD_BEFORE){
+            vh.isLoadBefore = true;
+        }
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -16,52 +16,44 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.section;
 
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
-import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
-import com.qmuiteam.qmui.widget.section.QMUISection;
+import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentScrollableModeFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
-import com.qmuiteam.qmuidemo.model.SectionItem;
-import com.qmuiteam.qmuidemo.model.SectionHeader;
-
-import java.util.ArrayList;
+import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Widget(widgetClass = QMUIStickySectionLayout.class, iconRes = R.mipmap.icon_grid_in_progress)
 public class QDSectionLayoutFragment extends BaseFragment {
-
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
-    @BindView(R.id.pull_to_refresh)
-    QMUIPullRefreshLayout mPullRefreshLayout;
-    @BindView(R.id.section_layout)
-    QMUIStickySectionLayout mSectionLayout;
+    @BindView(R.id.groupListView)
+    QMUIGroupListView mGroupListView;
 
-    private RecyclerView.LayoutManager mLayoutManager;
-    private QDSectionAdapter mAdapter;
-
+    private QDDataManager mQDDataManager;
+    private QDItemDescription mQDItemDescription;
 
     @Override
     protected View onCreateView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_section_layout, null);
-        ButterKnife.bind(this, view);
+        View root = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_grouplistview, null);
+        ButterKnife.bind(this, root);
+
+        mQDDataManager = QDDataManager.getInstance();
+        mQDItemDescription = mQDDataManager.getDescription(this.getClass());
         initTopBar();
-        initRefreshLayout();
-        initStickyLayout();
-        initData();
-        return view;
+
+        initGroupListView();
+
+        return root;
     }
 
     private void initTopBar() {
@@ -72,66 +64,29 @@ public class QDSectionLayoutFragment extends BaseFragment {
             }
         });
 
-        mTopBar.setTitle(QDDataManager.getInstance().getDescription(this.getClass()).getName());
+        mTopBar.setTitle(mQDItemDescription.getName());
     }
 
-    private void initRefreshLayout() {
-        mPullRefreshLayout.setChildScrollUpCallback(new QMUIPullRefreshLayout.OnChildScrollUpCallback() {
-            @Override
-            public boolean canChildScrollUp(QMUIPullRefreshLayout parent, @Nullable View child) {
-                return QMUIPullRefreshLayout.defaultCanScrollUp(mSectionLayout.getRecyclerView());
-            }
-        });
-        mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
-            @Override
-            public void onMoveTarget(int offset) {
-
-            }
-
-            @Override
-            public void onMoveRefreshView(int offset) {
-
-            }
-
-            @Override
-            public void onRefresh() {
-                mPullRefreshLayout.postDelayed(new Runnable() {
+    private void initGroupListView() {
+        QMUIGroupListView.newSection(getContext())
+                .addItemView(mGroupListView.createItemView(mQDDataManager.getName(
+                        QDListSectionLayoutFragment.class)), new View.OnClickListener() {
                     @Override
-                    public void run() {
-                        mPullRefreshLayout.finishRefresh();
+                    public void onClick(View v) {
+                        QDListSectionLayoutFragment fragment = new QDListSectionLayoutFragment();
+                        startFragment(fragment);
                     }
-                }, 2000);
-            }
-        });
-    }
+                })
+                .addItemView(mGroupListView.createItemView(mQDDataManager.getName(
+                        QDGridSectionLayoutFragment.class)), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QDGridSectionLayoutFragment fragment = new QDGridSectionLayoutFragment();
+                        startFragment(fragment);
+                    }
+                })
+                .addTo(mGroupListView);
 
-    private void initStickyLayout() {
-        mLayoutManager = new LinearLayoutManager(getContext()) {
-            @Override
-            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return new RecyclerView.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
-        };
-        mSectionLayout.getRecyclerView().setLayoutManager(mLayoutManager);
-    }
 
-    private void initData() {
-        mAdapter = new QDSectionAdapter();
-        mSectionLayout.setAdapterWithStickyDecoration(mAdapter);
-        ArrayList<QMUISection<SectionHeader, SectionItem>> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(createSection("header " + i, i % 2 == 0));
-        }
-        mAdapter.setData(list);
-    }
-
-    private QMUISection<SectionHeader, SectionItem> createSection(String headerText, boolean isFold) {
-        SectionHeader header = new SectionHeader(headerText);
-        ArrayList<SectionItem> contents = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            contents.add(new SectionItem("item " + i));
-        }
-        return new QMUISection<>(header, contents, isFold);
     }
 }

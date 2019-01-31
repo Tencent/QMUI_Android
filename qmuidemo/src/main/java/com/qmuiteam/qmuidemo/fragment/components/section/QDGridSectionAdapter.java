@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -29,14 +30,14 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.section.QMUISection;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionAdapter;
 import com.qmuiteam.qmuidemo.R;
-import com.qmuiteam.qmuidemo.model.SectionItem;
 import com.qmuiteam.qmuidemo.model.SectionHeader;
+import com.qmuiteam.qmuidemo.model.SectionItem;
 import com.qmuiteam.qmuidemo.view.QDLoadingItemView;
 import com.qmuiteam.qmuidemo.view.QDSectionHeaderView;
 
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
 
-public class QDSectionAdapter extends QMUIStickySectionAdapter<SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> {
+public class QDGridSectionAdapter extends QMUIStickySectionAdapter<SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> {
 
 
     @Override
@@ -71,6 +72,7 @@ public class QDSectionAdapter extends QMUIStickySectionAdapter<SectionHeader, Se
             tv.setBackgroundColor(ContextCompat.getColor(context, R.color.qmui_config_color_gray_9));
             tv.setTextColor(Color.DKGRAY);
             tv.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
+            tv.setGravity(Gravity.CENTER);
             view = tv;
         } else if (type == ITEM_TYPE_SECTION_LOADING) {
             view = new QDLoadingItemView(context);
