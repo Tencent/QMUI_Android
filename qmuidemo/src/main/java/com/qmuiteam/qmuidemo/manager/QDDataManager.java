@@ -36,6 +36,7 @@ import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTipDialogFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDVerticalTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceFragment;
+import com.qmuiteam.qmuidemo.fragment.components.section.QDSectionLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDAnimationListViewFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
@@ -107,6 +108,7 @@ public class QDDataManager {
         mComponentsNames.add(QDViewPagerFragment.class);
         mComponentsNames.add(QDLayoutFragment.class);
         mComponentsNames.add(QDPriorityLinearLayoutFragment.class);
+        mComponentsNames.add(QDSectionLayoutFragment.class);
     }
 
     /**

@@ -1,0 +1,174 @@
+/*
+ * Tencent is pleased to support the open source community by making QMUI_Android available.
+ *
+ * Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://opensource.org/licenses/MIT
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.qmuiteam.qmui.widget.section;
+
+import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+
+public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStickySectionAdapter.ViewCallback {
+
+    private RecyclerView mRecyclerView;
+    private QMUIFrameLayout mStickySectionWrapView;
+    private QMUIStickySectionItemDecoration mStickySectionItemDecoration;
+
+    public QMUIStickySectionLayout(Context context) {
+        this(context, null);
+    }
+
+    public QMUIStickySectionLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public QMUIStickySectionLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        mStickySectionWrapView = new QMUIFrameLayout(context);
+        mRecyclerView = new RecyclerView(context);
+        addView(mRecyclerView, new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        addView(mStickySectionWrapView, new LayoutParams
+                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    public void configStickySectionWrapView(StickySectionWrapViewConfig stickySectionWrapViewConfig) {
+        if (stickySectionWrapViewConfig != null) {
+            stickySectionWrapViewConfig.config(mStickySectionWrapView);
+        }
+    }
+
+    public QMUIFrameLayout getStickySectionWrapView() {
+        return mStickySectionWrapView;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    public @Nullable
+    View getStickySectionView() {
+        if (mStickySectionWrapView.getVisibility() != View.VISIBLE
+                || mStickySectionWrapView.getChildCount() == 0) {
+            return null;
+        }
+        return mStickySectionWrapView.getChildAt(0);
+    }
+
+
+    public <H extends QMUISection.Model<H>, T extends QMUISection.Model<T>,
+            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapterWithStickyDecoration(
+            final QMUIStickySectionAdapter<H, T, VH> adapter) {
+        QMUIStickySectionItemDecoration.Callback<VH> callback = new QMUIStickySectionItemDecoration.Callback<VH>() {
+            @Override
+            public int getRelativeStickyItemPosition(int pos) {
+                return adapter.getRelativeStickyPosition(pos);
+            }
+
+            @Override
+            public boolean isHeaderItem(int pos) {
+                return adapter.getItemViewType(pos) == QMUIStickySectionAdapter.ITEM_TYPE_SECTION_HEADER;
+            }
+
+            @Override
+            public VH createViewHolder(ViewGroup parent, int viewType) {
+                return adapter.createViewHolder(parent, viewType);
+            }
+
+            @Override
+            public void bindViewHolder(VH holder, int position) {
+                adapter.bindViewHolder(holder, position);
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                return adapter.getItemViewType(position);
+            }
+
+            @Override
+            public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+                adapter.registerAdapterDataObserver(observer);
+            }
+
+            @Override
+            public void onHeaderVisibilityChanged(boolean visible) {
+
+            }
+        };
+        mStickySectionItemDecoration = new QMUIStickySectionItemDecoration<>(mStickySectionWrapView, callback);
+        mRecyclerView.addItemDecoration(mStickySectionItemDecoration);
+
+        adapter.setViewCallback(this);
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (mStickySectionItemDecoration != null) {
+            mStickySectionWrapView.layout(mStickySectionWrapView.getLeft(),
+                    mStickySectionItemDecoration.getTargetTop(),
+                    mStickySectionWrapView.getRight(),
+                    mStickySectionItemDecoration.getTargetTop() + mStickySectionWrapView.getHeight());
+        }
+    }
+
+    @Override
+    public void scrollToPosition(int position, boolean isSectionHeader, boolean scrollToTop) {
+        RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+
+        if (adapter == null || position < 0 || position >= adapter.getItemCount()) {
+            return;
+        }
+
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
+            int firstVPos = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+            int lastVPos = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+            int offset = 0;
+            if (!isSectionHeader) {
+                offset = linearLayoutManager.getOrientation() == LinearLayoutManager.VERTICAL ?
+                        mStickySectionWrapView.getHeight() : mStickySectionWrapView.getWidth();
+            }
+            if (position < firstVPos || position > lastVPos || scrollToTop) {
+                linearLayoutManager.scrollToPositionWithOffset(position, offset);
+            }
+        } else {
+            mRecyclerView.scrollToPosition(position);
+        }
+    }
+
+    @Nullable
+    @Override
+    public RecyclerView.ViewHolder findViewHolderForAdapterPosition(int position) {
+        return mRecyclerView.findViewHolderForAdapterPosition(position);
+    }
+
+    @Override
+    public void requestChildFocus(View view) {
+        mRecyclerView.requestChildFocus(view, null);
+    }
+
+    public interface StickySectionWrapViewConfig {
+        void config(QMUIFrameLayout stickySectionWrapView);
+    }
+}

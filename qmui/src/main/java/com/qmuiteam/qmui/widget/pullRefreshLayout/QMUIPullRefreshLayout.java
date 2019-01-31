@@ -866,10 +866,8 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 deliverVelocity();
                 mScroller.forceFinished(true);
             }
-            Log.i("cgine", "2===========");
             invalidate();
         } else if (hasFlag(FLAG_NEED_SCROLL_TO_INIT_POSITION)) {
-            Log.i("cgine", "1===========");
             removeFlag(FLAG_NEED_SCROLL_TO_INIT_POSITION);
             if (mTargetCurrentOffset != mTargetInitOffset) {
                 mScroller.startScroll(0, mTargetCurrentOffset, 0, mTargetInitOffset - mTargetCurrentOffset);
