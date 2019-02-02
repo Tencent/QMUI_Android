@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.section;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 import com.qmuiteam.qmui.widget.section.QMUISection;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionAdapter;
@@ -76,6 +78,14 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
         });
 
         mTopBar.setTitle(QDDataManager.getInstance().getDescription(this.getClass()).getName());
+
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showBottomSheet();
+                    }
+                });
     }
 
     private void initRefreshLayout() {
@@ -159,12 +169,72 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
             contents.add(new SectionItem("item " + i));
         }
         QMUISection<SectionHeader, SectionItem> section = new QMUISection<>(header, contents, isFold);
-        section.setExistAfterDataToLoad(true);
-        section.setExistBeforeDataToLoad(true);
+        // if test load more, you can open the code
+//        section.setExistAfterDataToLoad(true);
+//        section.setExistBeforeDataToLoad(true);
         return section;
     }
 
     protected abstract QMUIStickySectionAdapter<
             SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> createAdapter();
     protected abstract RecyclerView.LayoutManager createLayoutManager();
+
+
+    private void showBottomSheet() {
+        new QMUIBottomSheet.BottomListSheetBuilder(getContext())
+                .addItem("test scroll to section header")
+                .addItem("test scroll to section item")
+                .addItem("test find position")
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        switch (position) {
+                            case 0:
+                            {
+                                QMUISection<SectionHeader, SectionItem> section = mAdapter.getSectionDirectly(3);
+                                if(section != null){
+                                    mAdapter.scrollToSectionHeader(section, true);
+                                }
+                                break;
+                            }
+                            case 1:
+                            {
+                                QMUISection<SectionHeader, SectionItem> section = mAdapter.getSectionDirectly(3);
+                                if(section != null){
+                                    SectionItem item = section.getItemAt(10);
+                                    if(item != null){
+                                        mAdapter.scrollToSectionItem(section, item, true);
+                                    }
+                                }
+                                break;
+                            }
+                            case 2:{
+                                int targetPosition = mAdapter.findPosition(new QMUIStickySectionAdapter.PositionFinder<SectionHeader, SectionItem>() {
+                                    @Override
+                                    public boolean find(@NonNull QMUISection<SectionHeader, SectionItem> section, @Nullable SectionItem item) {
+                                        return "header 4".equals(section.getHeader().getText()) && (item != null && "item 13".equals(item.getText()));
+                                    }
+                                }, true);
+                                if(targetPosition != RecyclerView.NO_POSITION){
+                                    Toast.makeText(getContext(), "find position: " + targetPosition, Toast.LENGTH_SHORT).show();
+                                    QMUISection<SectionHeader, SectionItem> section = mAdapter.getSection(targetPosition);
+                                    SectionItem item = mAdapter.getSectionItem(targetPosition);
+                                    if(item != null){
+                                        mAdapter.scrollToSectionItem(section, item, true);
+                                    }else if(section != null){
+                                        mAdapter.scrollToSectionHeader(section, true);
+                                    }else{
+                                        mLayoutManager.scrollToPosition(targetPosition);
+                                    }
+
+                                }else{
+                                    Toast.makeText(getContext(), "failed to find position", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
 }

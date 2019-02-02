@@ -31,6 +31,13 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
     private RecyclerView mRecyclerView;
     private QMUIFrameLayout mStickySectionWrapView;
     private QMUIStickySectionItemDecoration mStickySectionItemDecoration;
+    private int mStickySectionViewHeight = -1;
+    /**
+     * if scrollToPosition happened before mStickySectionWrapView finished layout,
+     * the target item may be covered by mStickySectionWrapView, so we delay to
+     * execute the scroll action
+     */
+    private Runnable mPenddingSrollAction = null;
 
     public QMUIStickySectionLayout(Context context) {
         this(context, null);
@@ -48,6 +55,16 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(mStickySectionWrapView, new LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mStickySectionWrapView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mStickySectionViewHeight = bottom - top;
+                if (mStickySectionViewHeight > 0 && mPenddingSrollAction != null) {
+                    mPenddingSrollAction.run();
+                    mPenddingSrollAction = null;
+                }
+            }
+        });
     }
 
     public void configStickySectionWrapView(StickySectionWrapViewConfig stickySectionWrapViewConfig) {
@@ -132,9 +149,9 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
     }
 
     @Override
-    public void scrollToPosition(int position, boolean isSectionHeader, boolean scrollToTop) {
+    public void scrollToPosition(final int position, boolean isSectionHeader, final boolean scrollToTop) {
+        mPenddingSrollAction = null;
         RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
-
         if (adapter == null || position < 0 || position >= adapter.getItemCount()) {
             return;
         }
@@ -146,10 +163,18 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
             int lastVPos = linearLayoutManager.findLastCompletelyVisibleItemPosition();
             int offset = 0;
             if (!isSectionHeader) {
-                offset = linearLayoutManager.getOrientation() == LinearLayoutManager.VERTICAL ?
-                        mStickySectionWrapView.getHeight() : mStickySectionWrapView.getWidth();
+                if (mStickySectionViewHeight <= 0) {
+                    // delay to re scroll
+                    mPenddingSrollAction = new Runnable() {
+                        @Override
+                        public void run() {
+                            scrollToPosition(position, false, scrollToTop);
+                        }
+                    };
+                }
+                offset = mStickySectionWrapView.getHeight();
             }
-            if (position < firstVPos || position > lastVPos || scrollToTop) {
+            if (position < firstVPos + 1 /* increase one to avoid being covered */ || position > lastVPos || scrollToTop) {
                 linearLayoutManager.scrollToPositionWithOffset(position, offset);
             }
         } else {

@@ -149,14 +149,15 @@ public class QDListWithDecorationSectionAdapter extends QMUIStickySectionAdapter
             List<QMUISection<SectionHeader, SectionItem>> lastData,
             List<QMUISection<SectionHeader, SectionItem>> currentData) {
         return new QMUISectionDiffCallback<SectionHeader, SectionItem>(lastData, currentData) {
+
             @Override
-            protected void onGenerateDecorationIndexBeforeSectionList(QMUISectionDiffCallback.IndexGenerationInfo generationInfo) {
-                generationInfo.appendIndex(QMUISection.SECTION_INDEX_UNKNOWN, ITEM_INDEX_LIST_HEADER);
+            protected void onGenerateDecorationIndexBeforeSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
+                generationInfo.appendWholeListDecorationIndex(ITEM_INDEX_LIST_HEADER);
             }
 
             @Override
-            protected void onGenerateDecorationIndexAfterSectionList(IndexGenerationInfo generationInfo) {
-                generationInfo.appendIndex(QMUISection.SECTION_INDEX_UNKNOWN, ITEM_INDEX_LIST_FOOTER);
+            protected void onGenerateDecorationIndexAfterSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
+                generationInfo.appendWholeListDecorationIndex(ITEM_INDEX_LIST_FOOTER);
             }
 
             @Override

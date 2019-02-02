@@ -22,7 +22,6 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +50,28 @@ public abstract class QMUIStickySectionAdapter<
     private Callback<H, T> mCallback;
     private ViewCallback mViewCallback;
 
+    /**
+     * see {@link #setData(List, boolean)}
+     *
+     * @param data section list
+     */
     public final void setData(@Nullable List<QMUISection<H, T>> data) {
         setData(data, true);
     }
 
+    /**
+     * set the new data to the adapter, this will trigger diff between new data and old data.
+     * you should pay attention to the state of your data in memory. if new data and old data
+     * reference to the same data in memory, the diff will fail. This is why the parameter
+     * onlyMutateState exists:
+     * if onlyMutateState == true, shallow copy is used to backup for next diff. You must sure H, T in memory is
+     * different between old data and new data
+     * if onlyMutateState == false, deep copy is used to backup for next diff. It's safe, but it will consume
+     * unnecessary performance if your new data is different in memory.
+     *
+     * @param data            section list
+     * @param onlyMutateState This is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     */
     public final void setData(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
         mCurrentData.clear();
         if (data != null) {
@@ -64,8 +81,39 @@ public abstract class QMUIStickySectionAdapter<
         diff(true, onlyMutateState);
     }
 
-    protected void beforeDiffInSet(List<QMUISection<H, T>> currentData, List<QMUISection<H, T>> newData) {
+    /**
+     * Subclasses override this method to fill some info to new section list if need.
+     * For example, assume the user expand some section by click event, these action while
+     * modify old section list, but the new section list knows nothing for user action.
+     * so this method is a chance to synchronize some info from old section list.
+     *
+     * @param oldData old section list
+     * @param newData new section list
+     */
+    protected void beforeDiffInSet(List<QMUISection<H, T>> oldData, List<QMUISection<H, T>> newData) {
 
+    }
+
+    /**
+     * same as {@link #setData(List, boolean)}, but do't use {@link DiffUtil},
+     * use {@link #notifyDataSetChanged()} directly.
+     *
+     * @param data            section list
+     * @param onlyMutateState his is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     */
+    public final void setDataWithoutDiff(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
+        mCurrentData.clear();
+        if (data != null) {
+            mCurrentData.addAll(data);
+        }
+        // only used to generate index info
+        QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
+        callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
+        notifyDataSetChanged();
+        mBackupData.clear();
+        for (QMUISection<H, T> section : mCurrentData) {
+            mBackupData.add(onlyMutateState ? section.mutate() : section.cloneForDiff());
+        }
     }
 
     private void diff(boolean newDataSet, boolean onlyMutateState) {
@@ -88,7 +136,7 @@ public abstract class QMUIStickySectionAdapter<
     }
 
     protected QMUISectionDiffCallback<H, T> createDiffCallback(
-            List<QMUISection<H, T>> lastData, List<QMUISection<H, T>> currentData){
+            List<QMUISection<H, T>> lastData, List<QMUISection<H, T>> currentData) {
         return new QMUISectionDiffCallback<>(lastData, currentData);
     }
 
@@ -100,23 +148,24 @@ public abstract class QMUIStickySectionAdapter<
         mViewCallback = viewCallback;
     }
 
+
     public int getItemIndex(int position) {
-        if (position < 0 || position > mItemIndex.size()) {
+        if (position < 0 || position >= mItemIndex.size()) {
             return QMUISection.ITEM_INDEX_UNKNOWN;
         }
         return mItemIndex.get(position);
     }
 
     public int getSectionIndex(int position) {
-        if (position < 0 || position > mSectionIndex.size()) {
-            return QMUISection.ITEM_INDEX_UNKNOWN;
+        if (position < 0 || position >= mSectionIndex.size()) {
+            return QMUISection.SECTION_INDEX_UNKNOWN;
         }
         return mSectionIndex.get(position);
     }
 
     @Nullable
     public QMUISection<H, T> getSection(int position) {
-        if (position < 0 || position > mSectionIndex.size()) {
+        if (position < 0 || position >= mSectionIndex.size()) {
             return null;
         }
         int sectionIndex = mSectionIndex.get(position);
@@ -124,6 +173,14 @@ public abstract class QMUIStickySectionAdapter<
             return null;
         }
         return mCurrentData.get(sectionIndex);
+    }
+
+    @Nullable
+    public QMUISection<H, T> getSectionDirectly(int index) {
+        if (index < 0 || index >= mCurrentData.size()) {
+            return null;
+        }
+        return mCurrentData.get(index);
     }
 
     public boolean isSectionFold(int position) {
@@ -205,10 +262,34 @@ public abstract class QMUIStickySectionAdapter<
     }
 
 
-    public void scrollToSectionHeader(QMUISection<H, T> section, boolean scrollToTop) {
+    /**
+     * scroll to special section header
+     *
+     * @param targetSection
+     * @param scrollToTop   True to scroll to recyclerView Top, false to scroll to visible area.
+     */
+    public void scrollToSectionHeader(@NonNull QMUISection<H, T> targetSection, boolean scrollToTop) {
         if (mViewCallback == null) {
             return;
         }
+        for (int i = 0; i < mCurrentData.size(); i++) {
+            QMUISection<H, T> section = mCurrentData.get(i);
+            if (targetSection.getHeader().isSameItem(section.getHeader())) {
+                if (section.isLocked()) {
+                    lock(section);
+                    diff(false, true);
+                    safeScrollToSection(section, scrollToTop);
+                } else {
+                    safeScrollToSection(section, scrollToTop);
+                }
+                return;
+            }
+        }
+
+    }
+
+
+    private void safeScrollToSection(@NonNull QMUISection<H, T> targetSection, boolean scrollToTop) {
         for (int i = 0; i < mSectionIndex.size(); i++) {
             int position = mSectionIndex.keyAt(i);
             int sectionIndex = mSectionIndex.valueAt(i);
@@ -218,7 +299,7 @@ public abstract class QMUIStickySectionAdapter<
             int itemIndex = mItemIndex.get(position);
             if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
                 QMUISection<H, T> temp = mCurrentData.get(sectionIndex);
-                if (temp.getHeader().isSameItem(section.getHeader())) {
+                if (temp.getHeader().isSameItem(targetSection.getHeader())) {
                     mViewCallback.scrollToPosition(position, true, scrollToTop);
                     return;
                 }
@@ -227,7 +308,15 @@ public abstract class QMUIStickySectionAdapter<
     }
 
 
-    public void scrollToSectionItem(@NonNull T item, boolean scrollToTop) {
+    /**
+     * scroll to special section item
+     *
+     * @param targetSection section info. if your items are not repeated in different section,
+     *                      you can use null for this method.
+     * @param targetItem    item info
+     * @param scrollToTop   True to scroll to recyclerView Top, false to scroll to visible area.
+     */
+    public void scrollToSectionItem(@Nullable QMUISection<H, T> targetSection, @NonNull T targetItem, boolean scrollToTop) {
         if (mViewCallback == null) {
             return;
         }
@@ -235,22 +324,22 @@ public abstract class QMUIStickySectionAdapter<
         // if this happened, we should unfold the section
         for (int i = 0; i < mCurrentData.size(); i++) {
             QMUISection<H, T> section = mCurrentData.get(i);
-            if (section.existItem(item)) {
-                if (section.isFold()) {
+            if ((targetSection == null && section.existItem(targetItem)) || targetSection == section) {
+                if (section.isFold() || section.isLocked()) {
                     // unlock this section
                     section.setFold(false);
                     lock(section);
                     diff(false, true);
-                    safeScrollToSectionItem(item, scrollToTop);
+                    safeScrollToSectionItem(section, targetItem, scrollToTop);
                 } else {
-                    safeScrollToSectionItem(item, scrollToTop);
+                    safeScrollToSectionItem(section, targetItem, scrollToTop);
                 }
                 return;
             }
         }
     }
 
-    private void safeScrollToSectionItem(@NonNull T item,  boolean scrollToTop) {
+    private void safeScrollToSectionItem(@NonNull QMUISection<H, T> targetSection, @NonNull T item, boolean scrollToTop) {
         for (int i = 0; i < mItemIndex.size(); i++) {
             int position = mItemIndex.keyAt(i);
             int itemIndex = mItemIndex.valueAt(i);
@@ -258,7 +347,7 @@ public abstract class QMUIStickySectionAdapter<
                 continue;
             }
             QMUISection<H, T> section = getSection(position);
-            if (section == null) {
+            if (section != targetSection) {
                 continue;
             }
             if (section.getItemAt(itemIndex).isSameItem(item)) {
@@ -371,9 +460,9 @@ public abstract class QMUIStickySectionAdapter<
         QMUISection<H, T> section = getSection(position);
         int itemIndex = getItemIndex(position);
         onBind(vh, position, section, itemIndex);
-        if(itemIndex == ITEM_INDEX_LOAD_AFTER){
+        if (itemIndex == ITEM_INDEX_LOAD_AFTER) {
             vh.isLoadBefore = false;
-        }else if(itemIndex == ITEM_INDEX_LOAD_BEFORE){
+        } else if (itemIndex == ITEM_INDEX_LOAD_BEFORE) {
             vh.isLoadBefore = true;
         }
         vh.itemView.setOnClickListener(new View.OnClickListener() {
@@ -407,7 +496,7 @@ public abstract class QMUIStickySectionAdapter<
             return ITEM_TYPE_SECTION_HEADER;
         } else if (itemIndex == ITEM_INDEX_LOAD_BEFORE || itemIndex == ITEM_INDEX_LOAD_AFTER) {
             return ITEM_TYPE_SECTION_LOADING;
-        } else if(itemIndex >= 0){
+        } else if (itemIndex >= 0) {
             return ITEM_TYPE_SECTION_ITEM;
         } else {
             return getMoreItemViewType(itemIndex, position);
@@ -426,7 +515,7 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
-    protected int getMoreItemViewType(int itemIndex, int position){
+    protected int getMoreItemViewType(int itemIndex, int position) {
         return ITEM_TYPE_UNKNOWN;
     }
 
@@ -444,7 +533,8 @@ public abstract class QMUIStickySectionAdapter<
     public interface ViewCallback {
         void scrollToPosition(int position, boolean isSectionHeader, boolean scrollToTop);
 
-        @Nullable RecyclerView.ViewHolder findViewHolderForAdapterPosition(int position);
+        @Nullable
+        RecyclerView.ViewHolder findViewHolderForAdapterPosition(int position);
 
         void requestChildFocus(View view);
     }
