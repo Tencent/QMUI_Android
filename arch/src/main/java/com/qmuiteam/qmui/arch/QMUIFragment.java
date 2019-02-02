@@ -79,6 +79,7 @@ public abstract class QMUIFragment extends Fragment {
     private int mSourceRequestCode = NO_REQUEST_CODE;
     private Intent mResultData = null;
     private int mResultCode = RESULT_CANCELED;
+    private QMUIFragment mChildTargetFragment;
 
 
     private View mBaseView;
@@ -107,8 +108,8 @@ public abstract class QMUIFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroyView() {
+        super.onDestroyView();
         mBaseView = null;
     }
 
@@ -166,9 +167,32 @@ public abstract class QMUIFragment extends Fragment {
         if (requestCode == NO_REQUEST_CODE) {
             throw new RuntimeException("requestCode can not be " + NO_REQUEST_CODE);
         }
-        fragment.setTargetFragment(this, requestCode);
-        mSourceRequestCode = requestCode;
-        startFragment(fragment);
+        QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
+        if (baseFragmentActivity != null) {
+            FragmentManager targetFragmentManager = baseFragmentActivity.getSupportFragmentManager();
+            Fragment topFragment = this;
+            Fragment parent = this;
+            while (parent != null) {
+                topFragment = parent;
+                if (parent.getFragmentManager() == targetFragmentManager) {
+                    break;
+                }
+                parent = parent.getParentFragment();
+            }
+            mSourceRequestCode = requestCode;
+            if (topFragment == this) {
+                mChildTargetFragment = null;
+                fragment.setTargetFragment(this, requestCode);
+            } else if (topFragment.getFragmentManager() == targetFragmentManager) {
+                QMUIFragment qmuiFragment = (QMUIFragment) topFragment;
+                qmuiFragment.mSourceRequestCode = requestCode;
+                qmuiFragment.mChildTargetFragment = this;
+                fragment.setTargetFragment(qmuiFragment, requestCode);
+            } else {
+                throw new RuntimeException("fragment manager not matched");
+            }
+            startFragment(fragment);
+        }
     }
 
 
@@ -179,12 +203,15 @@ public abstract class QMUIFragment extends Fragment {
             return;
         }
         Fragment fragment = getTargetFragment();
-        if (fragment == null || !(fragment instanceof QMUIFragment)) {
+        if (!(fragment instanceof QMUIFragment)) {
             return;
         }
         QMUIFragment targetFragment = (QMUIFragment) fragment;
 
         if (targetFragment.mSourceRequestCode == targetRequestCode) {
+            if (targetFragment.mChildTargetFragment != null) {
+                targetFragment = targetFragment.mChildTargetFragment;
+            }
             targetFragment.mResultCode = resultCode;
             targetFragment.mResultData = data;
         }
@@ -212,13 +239,18 @@ public abstract class QMUIFragment extends Fragment {
         int requestCode = mSourceRequestCode;
         int resultCode = mResultCode;
         Intent data = mResultData;
+        QMUIFragment childTargetFragment = mChildTargetFragment;
 
         mSourceRequestCode = NO_REQUEST_CODE;
         mResultCode = RESULT_CANCELED;
         mResultData = null;
+        mChildTargetFragment = null;
 
         if (requestCode != NO_REQUEST_CODE) {
-            onFragmentResult(requestCode, resultCode, data);
+            if (childTargetFragment == null) {
+                // only handle the result when there is not child target.
+                onFragmentResult(requestCode, resultCode, data);
+            }
         }
     }
 
@@ -699,9 +731,10 @@ public abstract class QMUIFragment extends Fragment {
 
     /**
      * restore sub window(e.g dialog) when drag back to previous activity
+     *
      * @return
      */
-    protected boolean restoreSubWindowWhenDragBack(){
+    protected boolean restoreSubWindowWhenDragBack() {
         return true;
     }
 
