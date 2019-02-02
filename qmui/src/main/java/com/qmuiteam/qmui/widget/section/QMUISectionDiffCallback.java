@@ -19,12 +19,12 @@ package com.qmuiteam.qmui.widget.section;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
-import android.util.Log;
 import android.util.SparseIntArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_DECORATION_START;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_AFTER;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_BEFORE;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
@@ -71,36 +71,53 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
                                SparseIntArray sectionIndex, SparseIntArray itemIndex) {
         sectionIndex.clear();
         itemIndex.clear();
-        int pos = 0;
+        IndexGenerationInfo generationInfo = new IndexGenerationInfo(sectionIndex, itemIndex);
+        onGenerateDecorationIndexBeforeSectionList(generationInfo);
         for (int i = 0; i < list.size(); i++) {
             QMUISection<H, T> section = list.get(i);
             if (section.isLocked()) {
                 continue;
             }
-            sectionIndex.append(pos, i);
-            itemIndex.append(pos, ITEM_INDEX_SECTION_HEADER);
-            pos++;
+            generationInfo.appendIndex(i, ITEM_INDEX_SECTION_HEADER);
             if (section.isFold() || section.getItemCount() == 0) {
                 continue;
             }
+            onGenerateDecorationIndexBeforeItemList(generationInfo, section, i);
             if (section.isExistBeforeDataToLoad()) {
-                sectionIndex.append(pos, i);
-                itemIndex.append(pos, ITEM_INDEX_LOAD_BEFORE);
-                pos++;
+                generationInfo.appendIndex(i, ITEM_INDEX_LOAD_BEFORE);
             }
 
             for (int j = 0; j < section.getItemCount(); j++) {
-                sectionIndex.append(pos, i);
-                itemIndex.append(pos, j);
-                pos++;
+                generationInfo.appendIndex(i, j);
             }
 
             if (section.isExistAfterDataToLoad()) {
-                sectionIndex.append(pos, i);
-                itemIndex.append(pos, ITEM_INDEX_LOAD_AFTER);
-                pos++;
+                generationInfo.appendIndex(i, ITEM_INDEX_LOAD_AFTER);
             }
+            onGenerateDecorationIndexAfterItemList(generationInfo, section, i);
         }
+        onGenerateDecorationIndexAfterSectionList(generationInfo);
+    }
+
+    protected void onGenerateDecorationIndexBeforeSectionList(IndexGenerationInfo generationInfo) {
+
+    }
+
+    protected void onGenerateDecorationIndexAfterSectionList(IndexGenerationInfo generationInfo) {
+
+    }
+
+    protected void onGenerateDecorationIndexBeforeItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
+
+    }
+
+    protected void onGenerateDecorationIndexAfterItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
+
+    }
+
+    protected boolean areDecorationContentsTheSame(@Nullable QMUISection<H, T> oldSection, int oldItemIndex,
+                                                   @Nullable QMUISection<H, T> newSection, int newItemIndex) {
+        return false;
     }
 
     @Override
@@ -121,12 +138,18 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         int newSectionIndex = mNewSectionIndex.get(newItemPosition);
         int newItemIndex = mNewItemIndex.get(newItemPosition);
 
+        if (oldSectionIndex < 0 || newSectionIndex < 0) {
+            return oldSectionIndex == newSectionIndex && oldItemIndex == newItemIndex;
+        }
+
+
         QMUISection<H, T> oldModel = mOldList.get(oldSectionIndex);
         QMUISection<H, T> newModel = mNewList.get(newSectionIndex);
 
         if (!oldModel.getHeader().isSameItem(newModel.getHeader())) {
             return false;
         }
+
 
         if (oldItemIndex < 0 && oldItemIndex == newItemIndex) {
             return true;
@@ -135,6 +158,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         if (oldItemIndex < 0 || newItemIndex < 0) {
             return false;
         }
+
         T oldItem = oldModel.getItemAt(oldItemIndex);
         T newItem = newModel.getItemAt(newItemIndex);
 
@@ -150,6 +174,10 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         int newSectionIndex = mNewSectionIndex.get(newItemPosition);
         int newItemIndex = mNewItemIndex.get(newItemPosition);
 
+        if (newSectionIndex < 0) {
+            return areDecorationContentsTheSame(null, oldItemIndex, null, newItemIndex);
+        }
+
         QMUISection<H, T> oldModel = mOldList.get(oldSectionIndex);
         QMUISection<H, T> newModel = mNewList.get(newSectionIndex);
 
@@ -164,10 +192,32 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             return false;
         }
 
+        if (oldItemIndex <= ITEM_INDEX_DECORATION_START) {
+            return areDecorationContentsTheSame(oldModel, oldItemIndex, newModel, newItemIndex);
+        }
+
         T oldItem = oldModel.getItemAt(oldItemIndex);
         T newItem = newModel.getItemAt(newItemIndex);
 
         return (oldItem == null && newItem == null) ||
                 (oldItem != null && newItem != null && oldItem.isSameContent(newItem));
+    }
+
+    public static class IndexGenerationInfo {
+        private SparseIntArray sectionIndexArray;
+        private SparseIntArray itemIndexArray;
+        private int currentPosition;
+
+        private IndexGenerationInfo(SparseIntArray sectionIndex, SparseIntArray itemIndex) {
+            sectionIndexArray = sectionIndex;
+            itemIndexArray = itemIndex;
+            currentPosition = 0;
+        }
+
+        public final void appendIndex(int sectionIndex, int itemIndex) {
+            sectionIndexArray.append(currentPosition, sectionIndex);
+            itemIndexArray.append(currentPosition, itemIndex);
+            currentPosition++;
+        }
     }
 }

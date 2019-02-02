@@ -85,6 +85,14 @@ public class QDSectionLayoutFragment extends BaseFragment {
                         startFragment(fragment);
                     }
                 })
+                .addItemView(mGroupListView.createItemView(mQDDataManager.getName(
+                        QDListWithDecorationSectionLayoutFragment.class)), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QDListWithDecorationSectionLayoutFragment fragment = new QDListWithDecorationSectionLayoutFragment();
+                        startFragment(fragment);
+                    }
+                })
                 .addTo(mGroupListView);
 
 

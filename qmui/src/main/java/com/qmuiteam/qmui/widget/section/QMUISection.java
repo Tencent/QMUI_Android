@@ -23,10 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QMUISection<H extends QMUISection.Model<H>, T extends QMUISection.Model<T>> {
-    public static final int ITEM_INDEX_SECTION_HEADER = -1;
-    public static final int ITEM_INDEX_LOAD_BEFORE = -2;
-    public static final int ITEM_INDEX_LOAD_AFTER = -3;
-    public static final int ITEM_INDEX_UNDEFINED = -4;
+    public static final int SECTION_INDEX_UNKNOWN = -1;
+    public static final int ITEM_INDEX_UNKNOWN = -1;
+    public static final int ITEM_INDEX_SECTION_HEADER = -2;
+    public static final int ITEM_INDEX_LOAD_BEFORE = -3;
+    public static final int ITEM_INDEX_LOAD_AFTER = -4;
+    public static final int ITEM_INDEX_DECORATION_START = -5;
+    public static final int ITEM_INDEX_NEXT_DIRECTION = -1;
 
     private H mHeader;
     private ArrayList<T> mItemList;

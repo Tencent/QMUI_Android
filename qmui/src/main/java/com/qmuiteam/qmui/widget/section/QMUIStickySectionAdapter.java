@@ -35,9 +35,12 @@ public abstract class QMUIStickySectionAdapter<
         H extends QMUISection.Model<H>, T extends QMUISection.Model<T>, VH extends QMUIStickySectionAdapter.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     private static final String TAG = "StickySectionAdapter";
+    public static final int ITEM_TYPE_UNKNOWN = -1;
     public static final int ITEM_TYPE_SECTION_HEADER = 0;
     public static final int ITEM_TYPE_SECTION_ITEM = 1;
     public static final int ITEM_TYPE_SECTION_LOADING = 2;
+    public static final int ITEM_TYPE_CUSTOM_START = 3;
+    public static final int ITEM_TYPE_NEXT_DIRECTION = 3;
 
     private List<QMUISection<H, T>> mBackupData = new ArrayList<>();
     private List<QMUISection<H, T>> mCurrentData = new ArrayList<>();
@@ -57,16 +60,16 @@ public abstract class QMUIStickySectionAdapter<
         if (data != null) {
             mCurrentData.addAll(data);
         }
-        onBeforeDataDiff(mBackupData, mCurrentData);
+        beforeDiffInSet(mBackupData, mCurrentData);
         diff(true, onlyMutateState);
     }
 
-    protected void onBeforeDataDiff(List<QMUISection<H, T>> currentData, List<QMUISection<H, T>> newData) {
+    protected void beforeDiffInSet(List<QMUISection<H, T>> currentData, List<QMUISection<H, T>> newData) {
 
     }
 
     private void diff(boolean newDataSet, boolean onlyMutateState) {
-        QMUISectionDiffCallback callback = new QMUISectionDiffCallback<>(mBackupData, mCurrentData);
+        QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
         callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
         diffResult.dispatchUpdatesTo(this);
@@ -84,6 +87,11 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
+    protected QMUISectionDiffCallback<H, T> createDiffCallback(
+            List<QMUISection<H, T>> lastData, List<QMUISection<H, T>> currentData){
+        return new QMUISectionDiffCallback<>(lastData, currentData);
+    }
+
     public void setCallback(Callback<H, T> callback) {
         mCallback = callback;
     }
@@ -94,14 +102,14 @@ public abstract class QMUIStickySectionAdapter<
 
     public int getItemIndex(int position) {
         if (position < 0 || position > mItemIndex.size()) {
-            return QMUISection.ITEM_INDEX_UNDEFINED;
+            return QMUISection.ITEM_INDEX_UNKNOWN;
         }
         return mItemIndex.get(position);
     }
 
     public int getSectionIndex(int position) {
         if (position < 0 || position > mSectionIndex.size()) {
-            return QMUISection.ITEM_INDEX_UNDEFINED;
+            return QMUISection.ITEM_INDEX_UNKNOWN;
         }
         return mSectionIndex.get(position);
     }
@@ -352,13 +360,13 @@ public abstract class QMUIStickySectionAdapter<
     }
 
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         return mItemIndex.size();
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull final VH vh, int position) {
+    public final void onBindViewHolder(@NonNull final VH vh, int position) {
         final int stickyPosition = position;
         QMUISection<H, T> section = getSection(position);
         int itemIndex = getItemIndex(position);
@@ -390,19 +398,20 @@ public abstract class QMUIStickySectionAdapter<
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         int itemIndex = getItemIndex(position);
-        if (itemIndex == QMUISection.ITEM_INDEX_UNDEFINED) {
+        if (itemIndex == QMUISection.ITEM_INDEX_UNKNOWN) {
             throw new RuntimeException("the item index is undefined, something is wrong in your data.");
         }
         if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
             return ITEM_TYPE_SECTION_HEADER;
         } else if (itemIndex == ITEM_INDEX_LOAD_BEFORE || itemIndex == ITEM_INDEX_LOAD_AFTER) {
             return ITEM_TYPE_SECTION_LOADING;
-        } else {
+        } else if(itemIndex >= 0){
             return ITEM_TYPE_SECTION_ITEM;
+        } else {
+            return getMoreItemViewType(itemIndex, position);
         }
-
     }
 
     @Override
@@ -415,6 +424,10 @@ public abstract class QMUIStickySectionAdapter<
                 }
             }
         }
+    }
+
+    protected int getMoreItemViewType(int itemIndex, int position){
+        return ITEM_TYPE_UNKNOWN;
     }
 
     protected abstract void onBind(VH holder, int position, QMUISection<H, T> section, int itemIndex);

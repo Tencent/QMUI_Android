@@ -96,6 +96,11 @@
     <string name="pull_refresh_follow_offset_calculator">Loading 一直跟随下拉</string>
     <string name="pull_refresh_center_gravity_offset_calculator">Loading 保持在下拉区域的中间</string>
 
+    <!-- StickySectionLayout -->
+    <string name="sticky_section_decoration_list_footer">这是整个列表的 footer</string>
+    <string name="sticky_section_decoration_section_top_tip">这是 section 列表头部的提示语</string>
+    <string name="sticky_section_decoration_section_bottom_tip">这是 section 列表底部的提示语</string>
+
 
     <string name="system_behavior_1">\@qmui:点击span区域会同时出发span的点击事件和 TextView 的点击事件 #qmui#</string>
     <string name="system_behavior_2">\@qmui: 系统默认情况下，TextView 不添加点击事件，然后 TextView 的父元素添加点击事件，
