@@ -31,66 +31,31 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.section.QMUISection;
 import com.qmuiteam.qmui.widget.section.QMUISectionDiffCallback;
-import com.qmuiteam.qmui.widget.section.QMUIStickySectionAdapter;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.model.SectionHeader;
 import com.qmuiteam.qmuidemo.model.SectionItem;
-import com.qmuiteam.qmuidemo.view.QDLoadingItemView;
-import com.qmuiteam.qmuidemo.view.QDSectionHeaderView;
 
 import java.util.List;
 
-import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
+public class QDListWithDecorationSectionAdapter extends QDListSectionAdapter {
 
-public class QDListWithDecorationSectionAdapter extends QMUIStickySectionAdapter<SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> {
+    public static final int ITEM_INDEX_LIST_HEADER = -1;
+    public static final int ITEM_INDEX_LIST_FOOTER = -2;
+    public static final int ITEM_INDEX_SECTION_TIP_START = -3;
+    public static final int ITEM_INDEX_SECTION_TIP_END = -4;
 
-    public static final int ITEM_INDEX_LIST_HEADER = QMUISection.ITEM_INDEX_DECORATION_START;
-    public static final int ITEM_INDEX_LIST_FOOTER = ITEM_INDEX_LIST_HEADER + QMUISection.ITEM_INDEX_NEXT_DIRECTION;
-    public static final int ITEM_INDEX_SECTION_TIP_START = ITEM_INDEX_LIST_FOOTER + QMUISection.ITEM_INDEX_NEXT_DIRECTION;
-    public static final int ITEM_INDEX_SECTION_TIP_END = ITEM_INDEX_SECTION_TIP_START + QMUISection.ITEM_INDEX_NEXT_DIRECTION;
+    public static final int ITEM_TYPE_LIST_HEADER = 1;
+    public static final int ITEM_TYPE_LIST_FOOTER = 2;
+    public static final int ITEM_TYPE_SECTION_TIP_START = 3;
+    public static final int ITEM_TYPE_SECTION_TIP_END = 4;
 
-    public static final int ITEM_TYPE_LIST_HEADER = ITEM_TYPE_CUSTOM_START;
-    public static final int ITEM_TYPE_LIST_FOOTER = ITEM_TYPE_LIST_HEADER + ITEM_TYPE_NEXT_DIRECTION;
-    public static final int ITEM_TYPE_SECTION_TIP_START = ITEM_TYPE_LIST_FOOTER + ITEM_TYPE_NEXT_DIRECTION;
-    public static final int ITEM_TYPE_SECTION_TIP_END = ITEM_TYPE_SECTION_TIP_START + ITEM_TYPE_NEXT_DIRECTION;
-
-
-    @Override
-    protected void onBind(final ViewHolder holder, final int position, QMUISection<SectionHeader, SectionItem> section, int itemIndex) {
-        if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
-            QDSectionHeaderView itemView = (QDSectionHeaderView) holder.itemView;
-            itemView.render(section.getHeader(), section.isFold());
-            itemView.getArrowView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = holder.isForStickyHeader ? position : holder.getAdapterPosition();
-                    toggleFold(pos, false);
-                }
-            });
-        } else if (itemIndex >= 0) {
-            ((TextView) holder.itemView).setText(section.getItemAt(itemIndex).getText());
-        }
-    }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
+    protected ViewHolder onCreateCustomItemViewHolder(@NonNull ViewGroup viewGroup, int type) {
         View view;
         Context context = viewGroup.getContext();
-        if (type == ITEM_TYPE_SECTION_HEADER) {
-            view = new QDSectionHeaderView(context);
-        } else if (type == ITEM_TYPE_SECTION_ITEM) {
-            int paddingHor = QMUIDisplayHelper.dp2px(context, 24);
-            int paddingVer = QMUIDisplayHelper.dp2px(context, 16);
-            TextView tv = new TextView(context);
-            tv.setTextSize(14);
-            tv.setBackgroundColor(ContextCompat.getColor(context, R.color.qmui_config_color_gray_9));
-            tv.setTextColor(Color.DKGRAY);
-            tv.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
-            view = tv;
-        } else if (type == ITEM_TYPE_SECTION_LOADING) {
-            view = new QDLoadingItemView(context);
-        } else if (type == ITEM_TYPE_LIST_HEADER) {
+        if (type == ITEM_TYPE_LIST_HEADER) {
             ImageView iv = new ImageView(context);
             iv.setImageResource(R.mipmap.example_image2);
             view = iv;
@@ -131,7 +96,7 @@ public class QDListWithDecorationSectionAdapter extends QMUIStickySectionAdapter
     }
 
     @Override
-    protected int getMoreItemViewType(int itemIndex, int position) {
+    protected int getCustomItemViewType(int itemIndex, int position) {
         if (itemIndex == ITEM_INDEX_LIST_HEADER) {
             return ITEM_TYPE_LIST_HEADER;
         } else if (itemIndex == ITEM_INDEX_LIST_FOOTER) {
@@ -141,7 +106,7 @@ public class QDListWithDecorationSectionAdapter extends QMUIStickySectionAdapter
         } else if (itemIndex == ITEM_INDEX_SECTION_TIP_END) {
             return ITEM_TYPE_SECTION_TIP_END;
         }
-        return super.getMoreItemViewType(itemIndex, position);
+        return super.getCustomItemViewType(itemIndex, position);
     }
 
     @Override
@@ -151,35 +116,35 @@ public class QDListWithDecorationSectionAdapter extends QMUIStickySectionAdapter
         return new QMUISectionDiffCallback<SectionHeader, SectionItem>(lastData, currentData) {
 
             @Override
-            protected void onGenerateDecorationIndexBeforeSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
-                generationInfo.appendWholeListDecorationIndex(ITEM_INDEX_LIST_HEADER);
+            protected void onGenerateCustomIndexBeforeSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
+                generationInfo.appendWholeListCustomIndex(ITEM_INDEX_LIST_HEADER);
             }
 
             @Override
-            protected void onGenerateDecorationIndexAfterSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
-                generationInfo.appendWholeListDecorationIndex(ITEM_INDEX_LIST_FOOTER);
+            protected void onGenerateCustomIndexAfterSectionList(IndexGenerationInfo generationInfo, List<QMUISection<SectionHeader, SectionItem>> list) {
+                generationInfo.appendWholeListCustomIndex(ITEM_INDEX_LIST_FOOTER);
             }
 
             @Override
-            protected void onGenerateDecorationIndexBeforeItemList(IndexGenerationInfo generationInfo,
-                                                                   QMUISection<SectionHeader, SectionItem> section,
-                                                                   int sectionIndex) {
+            protected void onGenerateCustomIndexBeforeItemList(IndexGenerationInfo generationInfo,
+                                                               QMUISection<SectionHeader, SectionItem> section,
+                                                               int sectionIndex) {
                 if (!section.isExistBeforeDataToLoad()) {
-                    generationInfo.appendIndex(sectionIndex, ITEM_INDEX_SECTION_TIP_START);
+                    generationInfo.appendCustomIndex(sectionIndex, ITEM_INDEX_SECTION_TIP_START);
                 }
             }
 
             @Override
-            protected void onGenerateDecorationIndexAfterItemList(IndexGenerationInfo generationInfo,
-                                                                  QMUISection<SectionHeader, SectionItem> section,
-                                                                  int sectionIndex) {
+            protected void onGenerateCustomIndexAfterItemList(IndexGenerationInfo generationInfo,
+                                                              QMUISection<SectionHeader, SectionItem> section,
+                                                              int sectionIndex) {
                 if (!section.isExistAfterDataToLoad()) {
-                    generationInfo.appendIndex(sectionIndex, ITEM_INDEX_SECTION_TIP_END);
+                    generationInfo.appendCustomIndex(sectionIndex, ITEM_INDEX_SECTION_TIP_END);
                 }
             }
 
             @Override
-            protected boolean areDecorationContentsTheSame(@Nullable QMUISection<SectionHeader, SectionItem> oldSection, int oldItemIndex, @Nullable QMUISection<SectionHeader, SectionItem> newSection, int newItemIndex) {
+            protected boolean areCustomContentsTheSame(@Nullable QMUISection<SectionHeader, SectionItem> oldSection, int oldItemIndex, @Nullable QMUISection<SectionHeader, SectionItem> newSection, int newItemIndex) {
                 return true;
             }
         };

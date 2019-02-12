@@ -28,8 +28,14 @@ public class QMUISection<H extends QMUISection.Model<H>, T extends QMUISection.M
     public static final int ITEM_INDEX_SECTION_HEADER = -2;
     public static final int ITEM_INDEX_LOAD_BEFORE = -3;
     public static final int ITEM_INDEX_LOAD_AFTER = -4;
-    public static final int ITEM_INDEX_DECORATION_START = -5;
-    public static final int ITEM_INDEX_NEXT_DIRECTION = -1;
+    /**
+     * if add internal index, we should update this item
+     */
+    public static final int ITEM_INDEX_INTERNAL_END = -4;
+    /**
+     * offset custom index to reduce conflict with internal index
+     */
+    public static final int ITEM_INDEX_CUSTOM_OFFSET = -1000;
 
     private H mHeader;
     private ArrayList<T> mItemList;
@@ -172,6 +178,10 @@ public class QMUISection<H extends QMUISection.Model<H>, T extends QMUISection.M
         section.mIsErrorToLoadBefore = mIsErrorToLoadBefore;
         section.mIsErrorToLoadAfter = mIsErrorToLoadAfter;
         return section;
+    }
+
+    public static final boolean isCustomItemIndex(int index){
+        return index < ITEM_INDEX_INTERNAL_END;
     }
 
     public interface Model<T> {

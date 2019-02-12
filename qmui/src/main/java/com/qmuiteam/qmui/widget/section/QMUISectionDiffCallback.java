@@ -24,7 +24,6 @@ import android.util.SparseIntArray;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_DECORATION_START;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_AFTER;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_BEFORE;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
@@ -73,7 +72,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         itemIndex.clear();
         IndexGenerationInfo generationInfo = new IndexGenerationInfo(sectionIndex, itemIndex);
         if (list.isEmpty() || !list.get(0).isLocked()) {
-            onGenerateDecorationIndexBeforeSectionList(generationInfo, list);
+            onGenerateCustomIndexBeforeSectionList(generationInfo, list);
         }
 
         for (int i = 0; i < list.size(); i++) {
@@ -85,7 +84,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             if (section.isFold() || section.getItemCount() == 0) {
                 continue;
             }
-            onGenerateDecorationIndexBeforeItemList(generationInfo, section, i);
+            onGenerateCustomIndexBeforeItemList(generationInfo, section, i);
             if (section.isExistBeforeDataToLoad()) {
                 generationInfo.appendIndex(i, ITEM_INDEX_LOAD_BEFORE);
             }
@@ -97,73 +96,73 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             if (section.isExistAfterDataToLoad()) {
                 generationInfo.appendIndex(i, ITEM_INDEX_LOAD_AFTER);
             }
-            onGenerateDecorationIndexAfterItemList(generationInfo, section, i);
+            onGenerateCustomIndexAfterItemList(generationInfo, section, i);
         }
         if (list.isEmpty()) {
-            onGenerateDecorationIndexAfterSectionList(generationInfo, list);
+            onGenerateCustomIndexAfterSectionList(generationInfo, list);
         } else {
             QMUISection lastSection = list.get(list.size() - 1);
             if (!lastSection.isLocked() && (lastSection.isFold() || !lastSection.isExistAfterDataToLoad())) {
-                onGenerateDecorationIndexAfterSectionList(generationInfo, list);
+                onGenerateCustomIndexAfterSectionList(generationInfo, list);
             }
         }
     }
 
     /**
-     * Subclasses overrides this method to add decoration view before the beginning of the list, such as list header.
-     * Use {@link IndexGenerationInfo#appendWholeListDecorationIndex(int)} to add index info
+     * Subclasses overrides this method to add custom view before the beginning of the list, such as list header.
+     * Use {@link IndexGenerationInfo#appendWholeListCustomIndex(int)} to add index info
      *
-     * @param generationInfo call generationInfo.appendWholeListDecorationIndex to collect index info
+     * @param generationInfo call generationInfo.appendWholeListCustomIndex to collect index info
      * @param list           the whole list info
      */
-    protected void onGenerateDecorationIndexBeforeSectionList(IndexGenerationInfo generationInfo, List<QMUISection<H, T>> list) {
+    protected void onGenerateCustomIndexBeforeSectionList(IndexGenerationInfo generationInfo, List<QMUISection<H, T>> list) {
 
     }
 
     /**
-     * Subclasses overrides this method to add decoration view after the end of the list, such as list footer.
-     * Use {@link IndexGenerationInfo#appendWholeListDecorationIndex(int)} to add index info
+     * Subclasses overrides this method to add custom view after the end of the list, such as list footer.
+     * Use {@link IndexGenerationInfo#appendWholeListCustomIndex(int)} to add index info
      *
-     * @param generationInfo call generationInfo.appendWholeListDecorationIndex to collect index info
+     * @param generationInfo call generationInfo.appendWholeListCustomIndex to collect index info
      * @param list           the whole list info
      */
-    protected void onGenerateDecorationIndexAfterSectionList(IndexGenerationInfo generationInfo, List<QMUISection<H, T>> list) {
+    protected void onGenerateCustomIndexAfterSectionList(IndexGenerationInfo generationInfo, List<QMUISection<H, T>> list) {
 
     }
 
     /**
-     * Subclasses overrides this method to add decoration view before the beginning of the section content list
-     * Use {@link IndexGenerationInfo#appendIndex(int, int)} to add index info
+     * Subclasses overrides this method to add custom view before the beginning of the section content list
+     * Use {@link IndexGenerationInfo#appendCustomIndex(int, int)} to add index info
      *
      * @param generationInfo call generationInfo.appendIndex to collect index info
      * @param section        section info
      * @param sectionIndex   section index info
      */
-    protected void onGenerateDecorationIndexBeforeItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
+    protected void onGenerateCustomIndexBeforeItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
 
     }
 
     /**
-     * Subclasses overrides this method to add decoration view before the end of the section content list
+     * Subclasses overrides this method to add custom view before the end of the section content list
      * Use {@link IndexGenerationInfo#appendIndex(int, int)} to add index info
      *
-     * @param generationInfo call generationInfo.appendIndex to collect index info
+     * @param generationInfo call generationInfo.appendCustomIndex to collect index info
      * @param section        section info
      * @param sectionIndex   section index info
      */
-    protected void onGenerateDecorationIndexAfterItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
+    protected void onGenerateCustomIndexAfterItemList(IndexGenerationInfo generationInfo, QMUISection<H, T> section, int sectionIndex) {
 
     }
 
     /**
-     * Subclasses overrides this method to check whether two decoration items have the same data
+     * Subclasses overrides this method to check whether two custom items have the same data
      * @param oldSection the old section in the old list
      * @param oldItemIndex the old item index in old section
      * @param newSection the new section in the new list
      * @param newItemIndex the new item index in new section
      * @return True if the contents of the items are the same or false if they are different.
      */
-    protected boolean areDecorationContentsTheSame(@Nullable QMUISection<H, T> oldSection, int oldItemIndex,
+    protected boolean areCustomContentsTheSame(@Nullable QMUISection<H, T> oldSection, int oldItemIndex,
                                                    @Nullable QMUISection<H, T> newSection, int newItemIndex) {
         return false;
     }
@@ -223,7 +222,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         int newItemIndex = mNewItemIndex.get(newItemPosition);
 
         if (newSectionIndex < 0) {
-            return areDecorationContentsTheSame(null, oldItemIndex, null, newItemIndex);
+            return areCustomContentsTheSame(null, oldItemIndex, null, newItemIndex);
         }
 
         QMUISection<H, T> oldModel = mOldList.get(oldSectionIndex);
@@ -240,8 +239,8 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             return false;
         }
 
-        if (oldItemIndex <= ITEM_INDEX_DECORATION_START) {
-            return areDecorationContentsTheSame(oldModel, oldItemIndex, newModel, newItemIndex);
+        if (QMUISection.isCustomItemIndex(oldItemIndex)) {
+            return areCustomContentsTheSame(oldModel, oldItemIndex, newModel, newItemIndex);
         }
 
         T oldItem = oldModel.getItemAt(oldItemIndex);
@@ -262,16 +261,35 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             currentPosition = 0;
         }
 
-        public final void appendIndex(int sectionIndex, int itemIndex) {
+        public final void appendCustomIndex(int sectionIndex, int itemIndex) {
+
+            int offset = QMUISection.ITEM_INDEX_CUSTOM_OFFSET + itemIndex;
+            if(!QMUISection.isCustomItemIndex(offset)){
+                throw new IllegalArgumentException(
+                        "Index conflicts with index used internally, please use negative number for custom item");
+            }
+            appendIndex(sectionIndex, offset);
+        }
+
+        private final void appendIndex(int sectionIndex, int itemIndex) {
             if (sectionIndex < 0) {
-                throw new IllegalArgumentException("use appendWholeListDecorationIndex for whole list decoration");
+                throw new IllegalArgumentException("use appendWholeListCustomIndex for whole list");
             }
             sectionIndexArray.append(currentPosition, sectionIndex);
             itemIndexArray.append(currentPosition, itemIndex);
             currentPosition++;
         }
 
-        public final void appendWholeListDecorationIndex(int itemIndex) {
+        public final void appendWholeListCustomIndex(int itemIndex) {
+            int offset = QMUISection.ITEM_INDEX_CUSTOM_OFFSET + itemIndex;
+            if(!QMUISection.isCustomItemIndex(offset)){
+                throw new IllegalArgumentException(
+                        "Index conflicts with index used internally, please use negative number for custom item");
+            }
+            appendWholeListIndex(offset);
+        }
+
+        private final void appendWholeListIndex(int itemIndex) {
             sectionIndexArray.append(currentPosition, QMUISection.SECTION_INDEX_UNKNOWN);
             itemIndexArray.append(currentPosition, itemIndex);
             currentPosition++;

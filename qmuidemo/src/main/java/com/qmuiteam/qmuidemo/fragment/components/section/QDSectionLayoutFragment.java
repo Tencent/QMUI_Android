@@ -24,7 +24,6 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentScrollableModeFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;

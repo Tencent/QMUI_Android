@@ -18,15 +18,9 @@ package com.qmuiteam.qmuidemo.fragment.components.section;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.mbms.MbmsErrors;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -132,9 +126,9 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
                 mSectionLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(isAttachedToActivity()){
+                        if (isAttachedToActivity()) {
                             ArrayList<SectionItem> list = new ArrayList<>();
-                            for(int i = 0; i < 10; i++){
+                            for (int i = 0; i < 10; i++) {
                                 list.add(new SectionItem("load more item " + i));
                             }
                             mAdapter.finishLoadMore(section, list, loadMoreBefore, false);
@@ -145,12 +139,12 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
 
             @Override
             public void onItemClick(QMUIStickySectionAdapter.ViewHolder holder, int position) {
-                Toast.makeText(getContext(),"click item " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "click item " + position, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public boolean onItemLongClick(QMUIStickySectionAdapter.ViewHolder holder, int position) {
-                Toast.makeText(getContext(),"long click item " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "long click item " + position, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -177,6 +171,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
 
     protected abstract QMUIStickySectionAdapter<
             SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> createAdapter();
+
     protected abstract RecyclerView.LayoutManager createLayoutManager();
 
 
@@ -189,45 +184,43 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
                         switch (position) {
-                            case 0:
-                            {
+                            case 0: {
                                 QMUISection<SectionHeader, SectionItem> section = mAdapter.getSectionDirectly(3);
-                                if(section != null){
+                                if (section != null) {
                                     mAdapter.scrollToSectionHeader(section, true);
                                 }
                                 break;
                             }
-                            case 1:
-                            {
+                            case 1: {
                                 QMUISection<SectionHeader, SectionItem> section = mAdapter.getSectionDirectly(3);
-                                if(section != null){
+                                if (section != null) {
                                     SectionItem item = section.getItemAt(10);
-                                    if(item != null){
+                                    if (item != null) {
                                         mAdapter.scrollToSectionItem(section, item, true);
                                     }
                                 }
                                 break;
                             }
-                            case 2:{
+                            case 2: {
                                 int targetPosition = mAdapter.findPosition(new QMUIStickySectionAdapter.PositionFinder<SectionHeader, SectionItem>() {
                                     @Override
                                     public boolean find(@NonNull QMUISection<SectionHeader, SectionItem> section, @Nullable SectionItem item) {
                                         return "header 4".equals(section.getHeader().getText()) && (item != null && "item 13".equals(item.getText()));
                                     }
                                 }, true);
-                                if(targetPosition != RecyclerView.NO_POSITION){
+                                if (targetPosition != RecyclerView.NO_POSITION) {
                                     Toast.makeText(getContext(), "find position: " + targetPosition, Toast.LENGTH_SHORT).show();
                                     QMUISection<SectionHeader, SectionItem> section = mAdapter.getSection(targetPosition);
                                     SectionItem item = mAdapter.getSectionItem(targetPosition);
-                                    if(item != null){
+                                    if (item != null) {
                                         mAdapter.scrollToSectionItem(section, item, true);
-                                    }else if(section != null){
+                                    } else if (section != null) {
                                         mAdapter.scrollToSectionHeader(section, true);
-                                    }else{
+                                    } else {
                                         mLayoutManager.scrollToPosition(targetPosition);
                                     }
 
-                                }else{
+                                } else {
                                     Toast.makeText(getContext(), "failed to find position", Toast.LENGTH_SHORT).show();
                                 }
                             }

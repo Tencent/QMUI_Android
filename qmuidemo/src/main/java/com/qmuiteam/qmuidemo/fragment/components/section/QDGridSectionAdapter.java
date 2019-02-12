@@ -27,58 +27,58 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.widget.section.QMUIDefaultStickySectionAdapter;
 import com.qmuiteam.qmui.widget.section.QMUISection;
-import com.qmuiteam.qmui.widget.section.QMUIStickySectionAdapter;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.model.SectionHeader;
 import com.qmuiteam.qmuidemo.model.SectionItem;
 import com.qmuiteam.qmuidemo.view.QDLoadingItemView;
 import com.qmuiteam.qmuidemo.view.QDSectionHeaderView;
 
-import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
+public class QDGridSectionAdapter extends QMUIDefaultStickySectionAdapter<SectionHeader, SectionItem> {
 
-public class QDGridSectionAdapter extends QMUIStickySectionAdapter<SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> {
-
-
+    @NonNull
     @Override
-    protected void onBind(final ViewHolder holder, final int position, QMUISection<SectionHeader, SectionItem> section, int itemIndex) {
-        if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
-            QDSectionHeaderView itemView = (QDSectionHeaderView) holder.itemView;
-            itemView.render(section.getHeader(), section.isFold());
-            itemView.getArrowView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = holder.isForStickyHeader ? position : holder.getAdapterPosition();
-                    toggleFold(pos, false);
-                }
-            });
-        } else if (itemIndex >= 0) {
-            ((TextView) holder.itemView).setText(section.getItemAt(itemIndex).getText());
-        }
+    protected ViewHolder onCreateSectionHeaderViewHolder(@NonNull ViewGroup viewGroup) {
+        return new ViewHolder(new QDSectionHeaderView(viewGroup.getContext()));
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
-        View view;
+    protected ViewHolder onCreateSectionItemViewHolder(@NonNull ViewGroup viewGroup) {
         Context context = viewGroup.getContext();
-        if (type == ITEM_TYPE_SECTION_HEADER) {
-            view = new QDSectionHeaderView(context);
-        } else if (type == ITEM_TYPE_SECTION_ITEM) {
-            int paddingHor = QMUIDisplayHelper.dp2px(context, 24);
-            int paddingVer = QMUIDisplayHelper.dp2px(context, 16);
-            TextView tv = new TextView(context);
-            tv.setTextSize(14);
-            tv.setBackgroundColor(ContextCompat.getColor(context, R.color.qmui_config_color_gray_9));
-            tv.setTextColor(Color.DKGRAY);
-            tv.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
-            tv.setGravity(Gravity.CENTER);
-            view = tv;
-        } else if (type == ITEM_TYPE_SECTION_LOADING) {
-            view = new QDLoadingItemView(context);
-        } else {
-            view = new View(viewGroup.getContext());
-        }
-        return new ViewHolder(view);
+        int paddingHor = QMUIDisplayHelper.dp2px(context, 24);
+        int paddingVer = QMUIDisplayHelper.dp2px(context, 16);
+        TextView tv = new TextView(context);
+        tv.setTextSize(14);
+        tv.setBackgroundColor(ContextCompat.getColor(context, R.color.qmui_config_color_gray_9));
+        tv.setTextColor(Color.DKGRAY);
+        tv.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
+        tv.setGravity(Gravity.CENTER);
+        return new ViewHolder(tv);
+    }
+
+    @NonNull
+    @Override
+    protected ViewHolder onCreateSectionLoadingViewHolder(@NonNull ViewGroup viewGroup) {
+        return new ViewHolder(new QDLoadingItemView(viewGroup.getContext()));
+    }
+
+    @Override
+    protected void onBindSectionHeader(final ViewHolder holder, final int position, QMUISection<SectionHeader, SectionItem> section) {
+        QDSectionHeaderView itemView = (QDSectionHeaderView) holder.itemView;
+        itemView.render(section.getHeader(), section.isFold());
+        itemView.getArrowView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = holder.isForStickyHeader ? position : holder.getAdapterPosition();
+                toggleFold(pos, false);
+            }
+        });
+    }
+
+    @Override
+    protected void onBindSectionItem(ViewHolder holder, int position, QMUISection<SectionHeader, SectionItem> section, int itemIndex) {
+        ((TextView) holder.itemView).setText(section.getItemAt(itemIndex).getText());
     }
 }

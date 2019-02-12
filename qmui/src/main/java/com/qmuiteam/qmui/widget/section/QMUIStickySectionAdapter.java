@@ -22,10 +22,12 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_CUSTOM_OFFSET;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_AFTER;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_BEFORE;
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HEADER;
@@ -33,13 +35,11 @@ import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HE
 public abstract class QMUIStickySectionAdapter<
         H extends QMUISection.Model<H>, T extends QMUISection.Model<T>, VH extends QMUIStickySectionAdapter.ViewHolder> extends RecyclerView.Adapter<VH> {
 
-    private static final String TAG = "StickySectionAdapter";
     public static final int ITEM_TYPE_UNKNOWN = -1;
     public static final int ITEM_TYPE_SECTION_HEADER = 0;
     public static final int ITEM_TYPE_SECTION_ITEM = 1;
     public static final int ITEM_TYPE_SECTION_LOADING = 2;
-    public static final int ITEM_TYPE_CUSTOM_START = 3;
-    public static final int ITEM_TYPE_NEXT_DIRECTION = 3;
+    public static final int ITEM_TYPE_CUSTOM_OFFSET = 1000;
 
     private List<QMUISection<H, T>> mBackupData = new ArrayList<>();
     private List<QMUISection<H, T>> mCurrentData = new ArrayList<>();
@@ -453,13 +453,34 @@ public abstract class QMUIStickySectionAdapter<
         return mItemIndex.size();
     }
 
+    @NonNull
+    @Override
+    public final VH onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
+        if (type == ITEM_TYPE_SECTION_HEADER) {
+            return onCreateSectionHeaderViewHolder(viewGroup);
+        } else if (type == ITEM_TYPE_SECTION_ITEM) {
+            return onCreateSectionItemViewHolder(viewGroup);
+        } else if (type == ITEM_TYPE_SECTION_LOADING) {
+            return onCreateSectionLoadingViewHolder(viewGroup);
+        } else {
+            return onCreateCustomItemViewHolder(viewGroup, type - ITEM_TYPE_CUSTOM_OFFSET);
+        }
+    }
 
     @Override
     public final void onBindViewHolder(@NonNull final VH vh, int position) {
         final int stickyPosition = position;
         QMUISection<H, T> section = getSection(position);
         int itemIndex = getItemIndex(position);
-        onBind(vh, position, section, itemIndex);
+        if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
+            onBindSectionHeader(vh, position, section);
+        } else if (itemIndex >= 0) {
+            onBindSectionItem(vh, position, section, itemIndex);
+        } else if (itemIndex == ITEM_INDEX_LOAD_BEFORE || itemIndex == ITEM_INDEX_LOAD_AFTER) {
+            onBindSectionLoadingItem(vh, position, section, itemIndex == ITEM_INDEX_LOAD_BEFORE);
+        } else {
+            onBindCustomItem(vh, position, section, itemIndex - QMUISection.ITEM_INDEX_CUSTOM_OFFSET);
+        }
         if (itemIndex == ITEM_INDEX_LOAD_AFTER) {
             vh.isLoadBefore = false;
         } else if (itemIndex == ITEM_INDEX_LOAD_BEFORE) {
@@ -486,6 +507,36 @@ public abstract class QMUIStickySectionAdapter<
         });
     }
 
+    @NonNull
+    protected abstract VH onCreateSectionHeaderViewHolder(@NonNull ViewGroup viewGroup);
+
+    @NonNull
+    protected abstract VH onCreateSectionItemViewHolder(@NonNull ViewGroup viewGroup);
+
+    @NonNull
+    protected abstract VH onCreateSectionLoadingViewHolder(@NonNull ViewGroup viewGroup);
+
+    @NonNull
+    protected abstract VH onCreateCustomItemViewHolder(@NonNull ViewGroup viewGroup, int type);
+
+
+    protected void onBindSectionHeader(VH holder, int position, QMUISection<H, T> section) {
+
+    }
+
+    protected void onBindSectionItem(VH holder, int position, QMUISection<H, T> section, int itemIndex) {
+
+    }
+
+    protected void onBindSectionLoadingItem(VH holder, int position, QMUISection<H, T> section, boolean loadingBefore) {
+
+    }
+
+    protected void onBindCustomItem(VH holder, int position, @Nullable QMUISection<H, T> section, int itemIndex) {
+
+    }
+
+
     @Override
     public final int getItemViewType(int position) {
         int itemIndex = getItemIndex(position);
@@ -499,7 +550,7 @@ public abstract class QMUIStickySectionAdapter<
         } else if (itemIndex >= 0) {
             return ITEM_TYPE_SECTION_ITEM;
         } else {
-            return getMoreItemViewType(itemIndex, position);
+            return ITEM_TYPE_CUSTOM_OFFSET + getCustomItemViewType(itemIndex - ITEM_INDEX_CUSTOM_OFFSET, position);
         }
     }
 
@@ -515,12 +566,9 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
-    protected int getMoreItemViewType(int itemIndex, int position) {
+    protected int getCustomItemViewType(int itemIndex, int position) {
         return ITEM_TYPE_UNKNOWN;
     }
-
-    protected abstract void onBind(VH holder, int position, QMUISection<H, T> section, int itemIndex);
-
 
     public interface Callback<H extends QMUISection.Model<H>, T extends QMUISection.Model<T>> {
         void loadMore(QMUISection<H, T> section, boolean loadMoreBefore);
