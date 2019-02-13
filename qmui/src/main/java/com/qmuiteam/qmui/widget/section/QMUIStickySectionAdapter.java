@@ -141,6 +141,17 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
+
+    /**
+     * section data is not changed, only custom item index may changed, so we also need to regenerate index
+     */
+    public void refreshCustomData(){
+        QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
+        callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
+        diffResult.dispatchUpdatesTo(this);
+    }
+
     protected QMUISectionDiffCallback<H, T> createDiffCallback(
             List<QMUISection<H, T>> lastData, List<QMUISection<H, T>> currentData) {
         return new QMUISectionDiffCallback<>(lastData, currentData);
