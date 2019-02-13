@@ -46,6 +46,8 @@ public abstract class QMUIStickySectionAdapter<
 
     private SparseIntArray mSectionIndex = new SparseIntArray();
     private SparseIntArray mItemIndex = new SparseIntArray();
+    private ArrayList<QMUISection<H, T>> mLoadingBeforeSections = new ArrayList<>(2);
+    private ArrayList<QMUISection<H, T>> mLoadingAfterSections = new ArrayList<>(2);
 
     private Callback<H, T> mCallback;
     private ViewCallback mViewCallback;
@@ -73,6 +75,8 @@ public abstract class QMUIStickySectionAdapter<
      * @param onlyMutateState This is used to backup for next diff. True to use shallow copy, false tp use deep copy.
      */
     public final void setData(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
+        mLoadingBeforeSections.clear();
+        mLoadingAfterSections.clear();
         mCurrentData.clear();
         if (data != null) {
             mCurrentData.addAll(data);
@@ -102,6 +106,8 @@ public abstract class QMUIStickySectionAdapter<
      * @param onlyMutateState his is used to backup for next diff. True to use shallow copy, false tp use deep copy.
      */
     public final void setDataWithoutDiff(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
+        mLoadingBeforeSections.clear();
+        mLoadingAfterSections.clear();
         mCurrentData.clear();
         if (data != null) {
             mCurrentData.addAll(data);
@@ -207,6 +213,12 @@ public abstract class QMUIStickySectionAdapter<
 
     public void finishLoadMore(QMUISection<H, T> section, List<T> itemList,
                                boolean isLoadBefore, boolean existMoreData) {
+
+        if (isLoadBefore) {
+            mLoadingBeforeSections.remove(section);
+        } else {
+            mLoadingAfterSections.remove(section);
+        }
 
         if (mCurrentData.indexOf(section) < 0) {
             return;
@@ -560,7 +572,20 @@ public abstract class QMUIStickySectionAdapter<
             if (!holder.isLoadError) {
                 QMUISection<H, T> section = getSection(holder.getAdapterPosition());
                 if (section != null) {
-                    mCallback.loadMore(section, holder.isLoadBefore);
+                    if (holder.isLoadBefore) {
+                        if (mLoadingBeforeSections.contains(section)) {
+                            return;
+                        }
+                        mLoadingBeforeSections.add(section);
+                        mCallback.loadMore(section, true);
+                    } else {
+                        if (mLoadingAfterSections.contains(section)) {
+                            return;
+                        }
+                        mLoadingAfterSections.add(section);
+                        mCallback.loadMore(section, false);
+                    }
+
                 }
             }
         }

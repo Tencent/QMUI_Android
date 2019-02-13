@@ -90,6 +90,13 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
         return mStickySectionWrapView.getChildAt(0);
     }
 
+    public <H extends QMUISection.Model<H>, T extends QMUISection.Model<T>,
+            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapterWithoutStickyDecoration(
+            final QMUIStickySectionAdapter<H, T, VH> adapter){
+        adapter.setViewCallback(this);
+        mRecyclerView.setAdapter(adapter);
+    }
+
 
     public <H extends QMUISection.Model<H>, T extends QMUISection.Model<T>,
             VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapterWithStickyDecoration(

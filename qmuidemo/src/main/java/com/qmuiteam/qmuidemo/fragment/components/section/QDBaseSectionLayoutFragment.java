@@ -122,7 +122,6 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
         mAdapter.setCallback(new QMUIStickySectionAdapter.Callback<SectionHeader, SectionItem>() {
             @Override
             public void loadMore(final QMUISection<SectionHeader, SectionItem> section, final boolean loadMoreBefore) {
-                // only for demo, ignore repeat loadMore
                 mSectionLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
