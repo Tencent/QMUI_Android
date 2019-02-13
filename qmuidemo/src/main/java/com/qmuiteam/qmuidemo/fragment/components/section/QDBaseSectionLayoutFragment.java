@@ -179,6 +179,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
                 .addItem("test scroll to section header")
                 .addItem("test scroll to section item")
                 .addItem("test find position")
+                .addItem("test find custom position")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
@@ -221,6 +222,14 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
 
                                 } else {
                                     Toast.makeText(getContext(), "failed to find position", Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                            }
+                            case 3: {
+                                int targetPosition = mAdapter.findCustomPosition(QMUISection.SECTION_INDEX_UNKNOWN, QDListWithDecorationSectionAdapter.ITEM_INDEX_LIST_FOOTER, false);
+                                if (targetPosition != RecyclerView.NO_POSITION) {
+                                    Toast.makeText(getContext(), "find position: " + targetPosition, Toast.LENGTH_SHORT).show();
+                                    mLayoutManager.scrollToPosition(targetPosition);
                                 }
                             }
                         }

@@ -369,6 +369,51 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
+    /**
+     * only for custom item
+     * @param sectionIndex
+     * @param customItemIndex
+     * @param unFoldTargetSection
+     * @return
+     */
+    public int findCustomPosition(int sectionIndex, int customItemIndex, boolean unFoldTargetSection) {
+        int itemIndex = QMUISection.ITEM_INDEX_CUSTOM_OFFSET + customItemIndex;
+        return findPosition(sectionIndex, itemIndex, unFoldTargetSection);
+    }
+
+    /**
+     * find position by sectionIndex and itemIndex
+     * @param sectionIndex
+     * @param itemIndex
+     * @param unFoldTargetSection
+     * @return
+     */
+    public int findPosition(int sectionIndex, int itemIndex, boolean unFoldTargetSection) {
+        if (unFoldTargetSection && sectionIndex >= 0) {
+            QMUISection<H, T> section = mCurrentData.get(sectionIndex);
+            if (section != null && section.isFold()) {
+                section.setFold(false);
+                lock(section);
+                diff(false, true);
+            }
+        }
+        for (int i = 0; i < getItemCount(); i++) {
+            if (mSectionIndex.get(i) != sectionIndex) {
+                continue;
+            }
+            if (mItemIndex.get(i) == itemIndex) {
+                return i;
+            }
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
+    /**
+     * find position by positionFinder
+     * @param positionFinder
+     * @param unFoldTargetSection
+     * @return
+     */
     public int findPosition(PositionFinder<H, T> positionFinder, boolean unFoldTargetSection) {
         if (!unFoldTargetSection) {
             for (int i = 0; i < getItemCount(); i++) {
