@@ -144,12 +144,13 @@ public class WidgetProcessor extends AbstractProcessor {
                 if (name == null || name.length() == 0) {
                     error("please provide widgetClass or name");
                 }
-                constructorBuilder.addStatement("mWidgets.put($T.class, new $T($T.class, $S, $L))",
+                constructorBuilder.addStatement("mWidgets.put($T.class, new $T($T.class, $S, $L, $S))",
                         elementName,
                         mItemDescName,
                         elementName,
                         name,
-                        widget.iconRes());
+                        widget.iconRes(),
+                        widget.docUrl());
             }
 
         }

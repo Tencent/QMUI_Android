@@ -23,6 +23,7 @@ public class QDArchWebViewTestFragment extends QDWebExplorerFragment {
     @Override
     protected void initTopbar() {
         super.initTopbar();
-        QDArchTestFragment.injectEntrance(mTopBarLayout);
+        // for test
+//        QDArchTestFragment.injectEntrance(mTopBarLayout);
     }
 }

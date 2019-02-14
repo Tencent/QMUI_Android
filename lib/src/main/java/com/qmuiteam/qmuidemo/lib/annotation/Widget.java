@@ -32,5 +32,7 @@ public @interface Widget {
 
     String name() default "";
 
+    String docUrl() default "";
+
     int iconRes() default 0;
 }

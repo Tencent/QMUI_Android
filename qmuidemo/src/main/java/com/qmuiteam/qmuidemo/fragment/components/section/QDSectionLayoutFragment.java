@@ -31,7 +31,9 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUIStickySectionLayout.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUIStickySectionLayout.class,
+        iconRes = R.mipmap.icon_grid_in_progress,
+        docUrl = "https://github.com/Tencent/QMUI_Android/wiki/QMUIStickySectionLayout")
 public class QDSectionLayoutFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
@@ -64,6 +66,8 @@ public class QDSectionLayoutFragment extends BaseFragment {
         });
 
         mTopBar.setTitle(mQDItemDescription.getName());
+
+        injectDocToTopBar(mTopBar);
     }
 
     private void initGroupListView() {

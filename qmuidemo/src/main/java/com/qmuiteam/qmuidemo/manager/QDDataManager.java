@@ -147,6 +147,14 @@ public class QDDataManager {
         return itemDescription.getName();
     }
 
+    public String getDocUrl(Class<? extends BaseFragment> cls){
+        QDItemDescription itemDescription = getDescription(cls);
+        if (itemDescription == null) {
+            return null;
+        }
+        return itemDescription.getDocUrl();
+    }
+
     public List<QDItemDescription> getComponentsDescriptions() {
         List<QDItemDescription> list = new ArrayList<>();
         for (int i = 0; i < mComponentsNames.size(); i++) {

@@ -19,7 +19,6 @@ package com.qmuiteam.qmuidemo.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -30,7 +29,9 @@ import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.fragment.components.section.QDSectionLayoutFragment;
 
 public class UpgradeTipTask implements UpgradeTask {
     private final int mOldVersion;
@@ -65,15 +66,21 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_1_12){
+        if (mNewVersion == QDUpgradeManager.VERSION_1_2_0) {
+            text.append("1. ");
+            addNewWidget(activity, text, "QMUIStickySectionLayout",
+                    QDDataManager.getInstance().getDocUrl(QDSectionLayoutFragment.class));
+            text.append("\n");
+            text.append("2. Supported startFragmentForResult in child fragment. #499");
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_12) {
             text.append("1. Fixed drag issues when refreshing.\n");
             text.append("2. Fixed the crash in QMUIPopup under Android 4.4 because of webp.");
-        }else if(mNewVersion == QDUpgradeManager.VERSION_1_1_11){
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_11) {
             text.append("1. Updated arch library to 0.3.0. Now developer must update support library to 28 or use androidx.\n");
             text.append("2. Feature: Added custom typeface support in QMUITabSegment.\n");
             text.append("3. Fixed a bug that QMUICollapsingTopBarLayout will lose title if swipe back.\n");
             text.append("4. Fixed a bug that span click event is not triggered in QMUIQQFaceView. #473\n");
-        }else if (mNewVersion == QDUpgradeManager.VERSION_1_1_10) {
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_10) {
             text.append("1. Simplified the use of QMUIWebContainer.\n");
             text.append("2. Refactored QMUITabSegment to handle operations such as reducing item.\n");
         } else if (mNewVersion == QDUpgradeManager.VERSION_1_1_9) {
@@ -173,6 +180,28 @@ public class UpgradeTipTask implements UpgradeTask {
         return text;
     }
 
+    private void addNewWidget(final Activity activity, SpannableStringBuilder text, final String widgetName, final String docUrl) {
+        text.append("Added a new widget: ");
+        if (docUrl == null || docUrl.length() == 0) {
+            text.append(widgetName);
+        } else {
+            int start = text.length();
+            text.append(widgetName);
+            int end = text.length();
+            int normalColor = ContextCompat.getColor(activity, R.color.app_color_blue);
+            int pressedColor = ContextCompat.getColor(activity, R.color.app_color_blue_pressed);
+            text.setSpan(new QMUITouchableSpan(normalColor, pressedColor, 0, 0) {
+                @Override
+                public void onSpanClick(View widget) {
+                    Intent intent = QDMainActivity.createWebExplorerIntent(activity, docUrl, widgetName);
+                    activity.startActivity(intent);
+                }
+            }, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+
+        text.append(".");
+    }
+
     private void handleIssues(final Activity activity, SpannableStringBuilder text, String[] issues) {
         final String issueBaseUrl = "https://github.com/Tencent/QMUI_Android/issues/";
         int start, end;
@@ -190,8 +219,7 @@ public class UpgradeTipTask implements UpgradeTask {
             text.setSpan(new QMUITouchableSpan(normalColor, pressedColor, 0, 0) {
                 @Override
                 public void onSpanClick(View widget) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(issueBaseUrl + issue));
+                    Intent intent = QDMainActivity.createWebExplorerIntent(activity, issueBaseUrl + issue, null);
                     activity.startActivity(intent);
                 }
             }, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

@@ -26,30 +26,19 @@ import com.qmuiteam.qmuidemo.base.BaseFragment;
 public class QDItemDescription {
     private Class<? extends BaseFragment> mKitDemoClass;
     private String mKitName;
-    private String mKitDetailDescription;
     private int mIconRes;
+    private String mDocUrl;
 
     public QDItemDescription(Class<? extends BaseFragment> kitDemoClass, String kitName){
-        this(kitDemoClass, kitName, 0);
+        this(kitDemoClass, kitName, 0, "");
     }
 
 
-    public QDItemDescription(Class<? extends BaseFragment> kitDemoClass, String kitName, int iconRes) {
+    public QDItemDescription(Class<? extends BaseFragment> kitDemoClass, String kitName, int iconRes, String docUrl) {
         mKitDemoClass = kitDemoClass;
         mKitName = kitName;
         mIconRes = iconRes;
-    }
-
-    public QDItemDescription(Class<? extends BaseFragment> kitDemoClass, String kitName,
-                             String kitDetailDescription, int iconRes) {
-        mKitDemoClass = kitDemoClass;
-        mKitName = kitName;
-        mKitDetailDescription = kitDetailDescription;
-        mIconRes = iconRes;
-    }
-
-    public void setItemDetailDescription(String kitDetailDescription) {
-        mKitDetailDescription = kitDetailDescription;
+        mDocUrl = docUrl;
     }
 
     public Class<? extends BaseFragment> getDemoClass() {
@@ -60,11 +49,11 @@ public class QDItemDescription {
         return mKitName;
     }
 
-    public String getItemDetailDescription() {
-        return mKitDetailDescription;
-    }
-
     public int getIconRes() {
         return mIconRes;
+    }
+
+    public String getDocUrl() {
+        return mDocUrl;
     }
 }
