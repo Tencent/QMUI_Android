@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.widget.section;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +38,7 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
      * the target item may be covered by mStickySectionWrapView, so we delay to
      * execute the scroll action
      */
-    private Runnable mPenddingSrollAction = null;
+    private Runnable mPendingScrollAction = null;
 
     public QMUIStickySectionLayout(Context context) {
         this(context, null);
@@ -59,9 +60,9 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 mStickySectionViewHeight = bottom - top;
-                if (mStickySectionViewHeight > 0 && mPenddingSrollAction != null) {
-                    mPenddingSrollAction.run();
-                    mPenddingSrollAction = null;
+                if (mStickySectionViewHeight > 0 && mPendingScrollAction != null) {
+                    mPendingScrollAction.run();
+                    mPendingScrollAction = null;
                 }
             }
         });
@@ -90,55 +91,86 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
         return mStickySectionWrapView.getChildAt(0);
     }
 
-    public <H extends QMUISection.Model<H>, T extends QMUISection.Model<T>,
-            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapterWithoutStickyDecoration(
-            final QMUIStickySectionAdapter<H, T, VH> adapter){
-        adapter.setViewCallback(this);
-        mRecyclerView.setAdapter(adapter);
+    /**
+     * proxy to {@link RecyclerView#setLayoutManager(RecyclerView.LayoutManager)}
+     *
+     * @param layoutManager LayoutManager to use
+     */
+    public void setLayoutManager(@NonNull RecyclerView.LayoutManager layoutManager) {
+        mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    /**
+     * section header will be sticky when scrolling, see {@link #setAdapter(QMUIStickySectionAdapter, boolean)}
+     *
+     * @param adapter the adapter inherited from QMUIStickySectionAdapter
+     * @param <H>     generic parameter of QMUIStickySectionAdapter, indicating the section header
+     * @param <T>     generic parameter of QMUIStickySectionAdapter, indicating the section item
+     * @param <VH>    generic parameter of QMUIStickySectionAdapter, indicating the view holder
+     */
+    public <H extends QMUISection.Model<H>,
+            T extends QMUISection.Model<T>,
+            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapter(
+            QMUIStickySectionAdapter<H, T, VH> adapter) {
+        setAdapter(adapter, true);
     }
 
 
-    public <H extends QMUISection.Model<H>, T extends QMUISection.Model<T>,
-            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapterWithStickyDecoration(
-            final QMUIStickySectionAdapter<H, T, VH> adapter) {
-        QMUIStickySectionItemDecoration.Callback<VH> callback = new QMUIStickySectionItemDecoration.Callback<VH>() {
-            @Override
-            public int getRelativeStickyItemPosition(int pos) {
-                return adapter.getRelativeStickyPosition(pos);
-            }
+    /**
+     * set the adapter for recyclerView, the parameter sticky indicates whether
+     * the section header is sticky or not when scrolling.
+     *
+     * @param adapter the adapter inherited from QMUIStickySectionAdapter
+     * @param sticky  if true, make the section header sticky when scrolling
+     * @param <H>     generic parameter of QMUIStickySectionAdapter, indicating the section header
+     * @param <T>     generic parameter of QMUIStickySectionAdapter, indicating the section item
+     * @param <VH>    generic parameter of QMUIStickySectionAdapter, indicating the view holder
+     */
+    public <H extends QMUISection.Model<H>,
+            T extends QMUISection.Model<T>,
+            VH extends QMUIStickySectionAdapter.ViewHolder> void setAdapter(
+            final QMUIStickySectionAdapter<H, T, VH> adapter, boolean sticky) {
+        if (sticky) {
+            QMUIStickySectionItemDecoration.Callback<VH> callback = new QMUIStickySectionItemDecoration.Callback<VH>() {
+                @Override
+                public int getRelativeStickyItemPosition(int pos) {
+                    return adapter.getRelativeStickyPosition(pos);
+                }
 
-            @Override
-            public boolean isHeaderItem(int pos) {
-                return adapter.getItemViewType(pos) == QMUIStickySectionAdapter.ITEM_TYPE_SECTION_HEADER;
-            }
+                @Override
+                public boolean isHeaderItem(int pos) {
+                    return adapter.getItemViewType(pos) == QMUIStickySectionAdapter.ITEM_TYPE_SECTION_HEADER;
+                }
 
-            @Override
-            public VH createViewHolder(ViewGroup parent, int viewType) {
-                return adapter.createViewHolder(parent, viewType);
-            }
+                @Override
+                public VH createViewHolder(ViewGroup parent, int viewType) {
+                    return adapter.createViewHolder(parent, viewType);
+                }
 
-            @Override
-            public void bindViewHolder(VH holder, int position) {
-                adapter.bindViewHolder(holder, position);
-            }
+                @Override
+                public void bindViewHolder(VH holder, int position) {
+                    adapter.bindViewHolder(holder, position);
+                }
 
-            @Override
-            public int getItemViewType(int position) {
-                return adapter.getItemViewType(position);
-            }
+                @Override
+                public int getItemViewType(int position) {
+                    return adapter.getItemViewType(position);
+                }
 
-            @Override
-            public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-                adapter.registerAdapterDataObserver(observer);
-            }
+                @Override
+                public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+                    adapter.registerAdapterDataObserver(observer);
+                }
 
-            @Override
-            public void onHeaderVisibilityChanged(boolean visible) {
+                @Override
+                public void onHeaderVisibilityChanged(boolean visible) {
 
-            }
-        };
-        mStickySectionItemDecoration = new QMUIStickySectionItemDecoration<>(mStickySectionWrapView, callback);
-        mRecyclerView.addItemDecoration(mStickySectionItemDecoration);
+                }
+            };
+            mStickySectionItemDecoration = new QMUIStickySectionItemDecoration<>(mStickySectionWrapView, callback);
+            mRecyclerView.addItemDecoration(mStickySectionItemDecoration);
+        }
+
 
         adapter.setViewCallback(this);
         mRecyclerView.setAdapter(adapter);
@@ -157,7 +189,7 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
 
     @Override
     public void scrollToPosition(final int position, boolean isSectionHeader, final boolean scrollToTop) {
-        mPenddingSrollAction = null;
+        mPendingScrollAction = null;
         RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
         if (adapter == null || position < 0 || position >= adapter.getItemCount()) {
             return;
@@ -172,7 +204,7 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
             if (!isSectionHeader) {
                 if (mStickySectionViewHeight <= 0) {
                     // delay to re scroll
-                    mPenddingSrollAction = new Runnable() {
+                    mPendingScrollAction = new Runnable() {
                         @Override
                         public void run() {
                             scrollToPosition(position, false, scrollToTop);

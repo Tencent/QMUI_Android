@@ -114,7 +114,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
 
     protected void initStickyLayout() {
         mLayoutManager = createLayoutManager();
-        mSectionLayout.getRecyclerView().setLayoutManager(mLayoutManager);
+        mSectionLayout.setLayoutManager(mLayoutManager);
     }
 
     private void initData() {
@@ -147,7 +147,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
                 return true;
             }
         });
-        mSectionLayout.setAdapterWithStickyDecoration(mAdapter);
+        mSectionLayout.setAdapter(mAdapter, true);
         ArrayList<QMUISection<SectionHeader, SectionItem>> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             list.add(createSection("header " + i, i % 2 == 0));
