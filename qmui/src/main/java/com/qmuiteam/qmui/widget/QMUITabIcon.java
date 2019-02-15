@@ -21,42 +21,28 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
+import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.qmuiteam.qmui.util.QMUIColorHelper;
-import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 
 public class QMUITabIcon extends Drawable {
 
     private final @NonNull Drawable mNormalIconDrawable;
     private final @Nullable Drawable mSelectedIconDrawable;
-    private final boolean mDynamicChangeIconColor;
-    private final int mNormalIconColor;
-    private final int mSelectedIconColor;
 
-    public QMUITabIcon(@NonNull Drawable normalIconDrawable, @NonNull Drawable selectedIconDrawable) {
+    public QMUITabIcon(@NonNull Drawable normalIconDrawable, @Nullable Drawable selectedIconDrawable) {
         mNormalIconDrawable = normalIconDrawable;
         mSelectedIconDrawable = selectedIconDrawable;
-        mDynamicChangeIconColor = false;
-        mNormalIconColor = 0;
-        mSelectedIconColor = 0;
         mNormalIconDrawable.setAlpha(255);
-        mSelectedIconDrawable.setAlpha(0);
         int nw = mNormalIconDrawable.getIntrinsicWidth();
         int nh = mNormalIconDrawable.getIntrinsicHeight();
         mNormalIconDrawable.setBounds(0, 0, nw, nh);
-        mSelectedIconDrawable.setBounds(0, 0, nw, nh);
-    }
-
-    public QMUITabIcon(@NonNull Drawable normalIconDrawable, int normalIconColor, int selectedIconColor) {
-        mNormalIconDrawable = normalIconDrawable;
-        mSelectedIconDrawable = null;
-        mDynamicChangeIconColor = true;
-        mNormalIconColor = normalIconColor;
-        mSelectedIconColor = selectedIconColor;
-        mNormalIconDrawable.setAlpha(255);
-        QMUIDrawableHelper.setDrawableTintColor(mNormalIconDrawable, normalIconColor);
+        if (mSelectedIconDrawable != null) {
+            mSelectedIconDrawable.setAlpha(0);
+            mSelectedIconDrawable.setBounds(0, 0, nw, nh);
+        }
     }
 
     @Override
@@ -89,17 +75,14 @@ public class QMUITabIcon extends Drawable {
      *
      * @param percent muse be in [0, 1]
      */
-    public void setCurrentSelectPercent(float percent) {
+    public void setCurrentSelectPercent(float percent, int color) {
         percent = Math.min(1f, Math.max(0f, percent));
-        if (mDynamicChangeIconColor) {
-            int targetColor = QMUIColorHelper.computeColor(mNormalIconColor, mSelectedIconColor, percent);
-            QMUIDrawableHelper.setDrawableTintColor(mNormalIconDrawable, targetColor);
+        if (mSelectedIconDrawable == null) {
+            QMUIDrawableHelper.setDrawableTintColor(mNormalIconDrawable, color);
         } else {
             int normalAlpha = (int) (255 * (1 - percent));
             mNormalIconDrawable.setAlpha(normalAlpha);
-            if (mSelectedIconDrawable != null) {
-                mSelectedIconDrawable.setAlpha(255 - normalAlpha);
-            }
+            mSelectedIconDrawable.setAlpha(255 - normalAlpha);
         }
         invalidateSelf();
     }
@@ -107,7 +90,7 @@ public class QMUITabIcon extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         mNormalIconDrawable.draw(canvas);
-        if (!mDynamicChangeIconColor && mSelectedIconDrawable != null) {
+        if (mSelectedIconDrawable != null) {
             mSelectedIconDrawable.draw(canvas);
         }
     }

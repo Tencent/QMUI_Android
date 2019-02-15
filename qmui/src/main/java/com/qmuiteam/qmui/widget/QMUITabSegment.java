@@ -26,14 +26,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -62,6 +54,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 /**
@@ -646,10 +647,10 @@ public class QMUITabSegment extends HorizontalScrollView {
                 float animValue = (float) animation.getAnimatedValue();
                 int preColor = QMUIColorHelper.computeColor(getTabSelectedColor(prevModel), getTabNormalColor(prevModel), animValue);
                 prevView.mTextView.setTextColor(preColor);
-                prevModel.setCurrentSelectPercent(1 - animValue);
+                prevModel.setCurrentSelectPercent(1 - animValue, preColor);
                 int nowColor = QMUIColorHelper.computeColor(getTabNormalColor(nowModel), getTabSelectedColor(nowModel), animValue);
                 nowView.mTextView.setTextColor(nowColor);
-                nowModel.setCurrentSelectPercent(animValue);
+                nowModel.setCurrentSelectPercent(animValue, nowColor);
                 layoutIndicatorInTransition(prevModel, nowModel, animValue);
             }
         });
@@ -772,9 +773,9 @@ public class QMUITabSegment extends HorizontalScrollView {
         int preColor = QMUIColorHelper.computeColor(getTabSelectedColor(preModel), getTabNormalColor(preModel), offsetPercent);
         int targetColor = QMUIColorHelper.computeColor(getTabNormalColor(targetModel), getTabSelectedColor(targetModel), offsetPercent);
         preView.mTextView.setTextColor(preColor);
-        preModel.setCurrentSelectPercent(1 - offsetPercent);
+        preModel.setCurrentSelectPercent(1 - offsetPercent, preColor);
         targetView.mTextView.setTextColor(targetColor);
-        targetModel.setCurrentSelectPercent(offsetPercent);
+        targetModel.setCurrentSelectPercent(offsetPercent, targetColor);
         layoutIndicatorInTransition(preModel, targetModel, offsetPercent);
     }
 
@@ -1102,7 +1103,7 @@ public class QMUITabSegment extends HorizontalScrollView {
 
         public TabBuilder setSelectedDrawable(Drawable selectedDrawable) {
             this.selectedDrawable = selectedDrawable;
-            if(selectedDrawable != null){
+            if (selectedDrawable != null) {
                 this.dynamicChangeIconColor = false;
             }
             return this;
@@ -1148,7 +1149,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             Tab tab = new Tab(this.text);
             if (normalDrawable != null) {
                 if (dynamicChangeIconColor || selectedDrawable == null) {
-                    tab.tabIcon = new QMUITabIcon(normalDrawable, normalColor, selectedColor);
+                    tab.tabIcon = new QMUITabIcon(normalDrawable, null);
                 } else {
                     tab.tabIcon = new QMUITabIcon(normalDrawable, selectedDrawable);
                 }
@@ -1235,9 +1236,9 @@ public class QMUITabSegment extends HorizontalScrollView {
             this.iconPosition = iconPosition;
         }
 
-        public void setCurrentSelectPercent(float percent) {
+        public void setCurrentSelectPercent(float percent, int color) {
             if (tabIcon != null) {
-                tabIcon.setCurrentSelectPercent(percent);
+                tabIcon.setCurrentSelectPercent(percent, color);
             }
         }
 
@@ -1494,7 +1495,7 @@ public class QMUITabSegment extends HorizontalScrollView {
 
             int color = isSelected ? getTabSelectedColor(tab) : getTabNormalColor(tab);
             mTextView.setTextColor(color);
-            tab.setCurrentSelectPercent(isSelected ? 1f : 0f);
+            tab.setCurrentSelectPercent(isSelected ? 1f : 0f, color);
 
             Drawable icon = tab.getTabIcon();
             if (icon == null) {
