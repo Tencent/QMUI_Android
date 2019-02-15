@@ -16,9 +16,9 @@
 
 package com.qmuiteam.qmui.widget.section;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import android.util.SparseIntArray;
 
 import java.util.ArrayList;

@@ -18,7 +18,7 @@ package com.qmuiteam.qmuidemo.fragment.components;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;

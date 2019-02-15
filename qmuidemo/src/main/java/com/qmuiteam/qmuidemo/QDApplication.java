@@ -19,6 +19,7 @@ package com.qmuiteam.qmuidemo;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
@@ -47,5 +48,10 @@ public class QDApplication extends Application {
 
         QDUpgradeManager.getInstance(this).check();
         QMUISwipeBackActivityManager.init(this);
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        return super.getTheme();
     }
 }

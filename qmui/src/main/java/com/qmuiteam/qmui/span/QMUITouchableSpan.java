@@ -16,8 +16,8 @@
 
 package com.qmuiteam.qmui.span;
 
-import android.support.annotation.ColorInt;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.ColorInt;
+import androidx.core.view.ViewCompat;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;

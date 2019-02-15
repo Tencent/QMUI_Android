@@ -17,7 +17,7 @@
 package com.qmuiteam.qmuidemo.fragment.components.qqface.emojicon;
 
 import android.content.Context;
-import android.support.v4.util.ArrayMap;
+import androidx.collection.ArrayMap;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.util.Log;

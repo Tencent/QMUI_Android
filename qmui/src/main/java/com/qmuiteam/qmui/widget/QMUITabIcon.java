@@ -21,9 +21,8 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;

@@ -16,14 +16,13 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.qqface;
 
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.widget.QMUITabSegment;
-import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;

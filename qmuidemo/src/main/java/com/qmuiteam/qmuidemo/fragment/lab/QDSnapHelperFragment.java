@@ -17,10 +17,10 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

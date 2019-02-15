@@ -21,9 +21,9 @@ import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
@@ -55,7 +55,7 @@ public class QMUIWindowInsetHelper {
         } else {
             // some rom crash with WindowInsets...
             ViewCompat.setOnApplyWindowInsetsListener(viewGroup,
-                    new android.support.v4.view.OnApplyWindowInsetsListener() {
+                    new androidx.core.view.OnApplyWindowInsetsListener() {
                         @Override
                         public WindowInsetsCompat onApplyWindowInsets(View v,
                                                                       WindowInsetsCompat insets) {

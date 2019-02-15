@@ -33,7 +33,7 @@ public class BaseActivity extends QMUIActivity {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         QDUpgradeManager.getInstance(getContext()).runUpgradeTipTaskIfExist(this);
 

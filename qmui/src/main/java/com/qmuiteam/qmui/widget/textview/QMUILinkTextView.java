@@ -26,7 +26,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.AttributeSet;

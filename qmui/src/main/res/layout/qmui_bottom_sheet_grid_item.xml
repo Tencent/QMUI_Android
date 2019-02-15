@@ -27,7 +27,7 @@
         android:layout_height="?attr/qmui_bottom_sheet_grid_item_icon_size"
         android:layout_marginTop="?attr/qmui_bottom_sheet_grid_item_icon_marginTop"
         android:layout_marginBottom="?attr/qmui_bottom_sheet_grid_item_icon_marginBottom" >
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/grid_item_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

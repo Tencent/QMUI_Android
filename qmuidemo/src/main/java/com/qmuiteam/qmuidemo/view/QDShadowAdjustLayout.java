@@ -17,7 +17,7 @@
 package com.qmuiteam.qmuidemo.view;
 
 import android.content.Context;
-import android.support.v4.widget.ViewDragHelper;
+import androidx.customview.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

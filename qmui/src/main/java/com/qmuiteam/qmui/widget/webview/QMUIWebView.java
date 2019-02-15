@@ -18,9 +18,9 @@ package com.qmuiteam.qmui.widget.webview;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;

@@ -19,7 +19,7 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.util.LongSparseArray;
+import androidx.collection.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;

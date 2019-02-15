@@ -16,9 +16,9 @@
 
 package com.qmuiteam.qmuidemo.fragment.home;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

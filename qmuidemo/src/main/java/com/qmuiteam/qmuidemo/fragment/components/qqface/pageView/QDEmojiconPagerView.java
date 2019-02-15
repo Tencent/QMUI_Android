@@ -18,7 +18,7 @@ package com.qmuiteam.qmuidemo.fragment.components.qqface.pageView;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 

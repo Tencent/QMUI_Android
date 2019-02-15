@@ -18,8 +18,8 @@ package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

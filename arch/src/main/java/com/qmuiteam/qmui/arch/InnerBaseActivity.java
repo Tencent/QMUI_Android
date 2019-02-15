@@ -19,7 +19,7 @@ package com.qmuiteam.qmui.arch;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 

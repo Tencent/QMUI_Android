@@ -34,9 +34,9 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +65,7 @@ public class QMUIViewHelper {
 
 
     private static final int[] APPCOMPAT_CHECK_ATTRS = {
-            android.support.v7.appcompat.R.attr.colorPrimary
+            androidx.appcompat.R.attr.colorPrimary
     };
 
     public static void checkAppCompatTheme(Context context) {

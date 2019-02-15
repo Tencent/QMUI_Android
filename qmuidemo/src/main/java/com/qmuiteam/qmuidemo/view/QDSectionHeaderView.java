@@ -19,8 +19,8 @@ package com.qmuiteam.qmuidemo.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;

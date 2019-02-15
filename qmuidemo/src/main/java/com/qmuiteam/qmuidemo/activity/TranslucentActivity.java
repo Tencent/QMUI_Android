@@ -17,7 +17,7 @@
 package com.qmuiteam.qmuidemo.activity;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 

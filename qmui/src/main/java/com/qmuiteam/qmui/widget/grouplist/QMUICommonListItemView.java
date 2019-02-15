@@ -19,9 +19,9 @@ package com.qmuiteam.qmui.widget.grouplist;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntDef;
-import android.support.v4.widget.Space;
-import android.text.SpannableString;
+import androidx.annotation.IntDef;
+import androidx.legacy.widget.Space;
+
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
