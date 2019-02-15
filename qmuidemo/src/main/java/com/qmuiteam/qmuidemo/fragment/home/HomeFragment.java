@@ -104,39 +104,30 @@ public class HomeFragment extends BaseFragment {
         mTabSegment.setDefaultSelectedColor(selectColor);
 //        mTabSegment.setDefaultTabIconPosition(QMUITabSegment.ICON_POSITION_BOTTOM);
 
-//        // 如果你的 icon 显示大小和实际大小不吻合:
-//        // 1. 设置icon 的 bounds
-//        // 2. Tab 使用拥有5个参数的构造器
-//        // 3. 最后一个参数（setIntrinsicSize）设置为false
+
+        QMUITabSegment.Tab component = new QMUITabSegment.TabBuilder("Components")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
+
+        // 如果你的 icon 显示大小和实际大小不吻合:
+        // 通过 tab.setTabIconBounds 重新设置 bounds
 //        int iconShowSize = QMUIDisplayHelper.dp2px(getContext(), 20);
-//        Drawable normalDrawable = ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component);
-//        normalDrawable.setBounds(0, 0, iconShowSize, iconShowSize);
-//        Drawable selectDrawable = ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected);
-//
-//        selectDrawable.setBounds(0, 0, iconShowSize, iconShowSize);
-//
-//        QMUITabSegment.Tab component = new QMUITabSegment.Tab(
-//                normalDrawable,
-//                normalDrawable,
-//                "Components", false, false
-//        );
+//        component.setTabIconBounds(0, 0, iconShowSize, iconShowSize);
 
-        QMUITabSegment.Tab component = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected),
-                "Components", false
-        );
+        QMUITabSegment.Tab util = new QMUITabSegment.TabBuilder("Helper")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
 
-        QMUITabSegment.Tab util = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected),
-                "Helper", false
-        );
-        QMUITabSegment.Tab lab = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected),
-                "Lab", false
-        );
+        QMUITabSegment.Tab lab = new QMUITabSegment.TabBuilder("Lab")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
+
         mTabSegment.addTab(component)
                 .addTab(util)
                 .addTab(lab);

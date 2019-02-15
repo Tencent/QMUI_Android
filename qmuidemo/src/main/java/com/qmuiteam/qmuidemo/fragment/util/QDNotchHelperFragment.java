@@ -107,22 +107,23 @@ public class QDNotchHelperFragment extends BaseFragment {
     }
 
     private void initTabs() {
-        QMUITabSegment.Tab component = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected),
-                "Components", false
-        );
+        QMUITabSegment.Tab component = new QMUITabSegment.TabBuilder("Components")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
 
-        QMUITabSegment.Tab util = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected),
-                "Helper", false
-        );
-        QMUITabSegment.Tab lab = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected),
-                "Lab", false
-        );
+        QMUITabSegment.Tab util = new QMUITabSegment.TabBuilder("Helper")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
+
+        QMUITabSegment.Tab lab = new QMUITabSegment.TabBuilder("Lab")
+                .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab))
+                .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected))
+                .setDynamicChangeIconColor(false)
+                .build();
         mTabSegment.addTab(component)
                 .addTab(util)
                 .addTab(lab);
