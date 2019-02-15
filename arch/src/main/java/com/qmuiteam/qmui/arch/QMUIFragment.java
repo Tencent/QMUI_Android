@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.arch;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.arch.core.util.Function;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -40,8 +41,6 @@ import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -298,7 +297,6 @@ public abstract class QMUIFragment extends Fragment {
         public void onScrollStateChange(int state, float scrollPercent) {
             Log.i(TAG, "SwipeListener:onScrollStateChange: state = " + state + " ;scrollPercent = " + scrollPercent);
             ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
-            int childCount = container.getChildCount();
             mIsInSwipeBack = state != SwipeBackLayout.STATE_IDLE;
             if (state == SwipeBackLayout.STATE_IDLE) {
                 if (mSwipeBackgroundView != null) {
@@ -317,43 +315,9 @@ public abstract class QMUIFragment extends Fragment {
                     return;
                 }
                 if (scrollPercent <= 0.0F) {
-                    for (int i = childCount - 1; i >= 0; i--) {
-                        View view = container.getChildAt(i);
-                        Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
-                        if (SWIPE_BACK_VIEW.equals(tag)) {
-                            container.removeView(view);
-                            if (mModifiedFragment != null) {
-                                // give up swipe back, we should reset the revise
-                                try {
-                                    Field viewField = Fragment.class.getDeclaredField("mView");
-                                    viewField.setAccessible(true);
-                                    viewField.set(mModifiedFragment, null);
-                                    FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
-                                    Method dispatchCreatedMethod = childFragmentManager.getClass().getMethod("dispatchCreate");
-                                    dispatchCreatedMethod.setAccessible(true);
-                                    dispatchCreatedMethod.invoke(childFragmentManager);
-                                } catch (NoSuchFieldException e) {
-                                    e.printStackTrace();
-                                } catch (NoSuchMethodException e) {
-                                    e.printStackTrace();
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                                mModifiedFragment = null;
-                            }
-
-                        }
-                    }
+                    handleSwipeBackCancelOrFinished(container);
                 } else if (scrollPercent >= 1.0F) {
-                    for (int i = childCount - 1; i >= 0; i--) {
-                        View view = container.getChildAt(i);
-                        Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
-                        if (SWIPE_BACK_VIEW.equals(tag)) {
-                            container.removeView(view);
-                        }
-                    }
+                    handleSwipeBackCancelOrFinished(container);
                     FragmentManager fragmentManager = getFragmentManager();
                     Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
                         @Override
@@ -442,17 +406,8 @@ public abstract class QMUIFragment extends Fragment {
                                     View baseView = mModifiedFragment.onCreateView(LayoutInflater.from(getContext()), container, null);
                                     mModifiedFragment.isCreateForSwipeBack = false;
                                     if (baseView != null) {
-                                        baseView.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
-                                        container.addView(baseView, 0);
-
-                                        // handle issue #235
-                                        Field viewField = Fragment.class.getDeclaredField("mView");
-                                        viewField.setAccessible(true);
-                                        viewField.set(mModifiedFragment, baseView);
-                                        FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
-                                        Method dispatchCreatedMethod = childFragmentManager.getClass().getMethod("dispatchActivityCreated");
-                                        dispatchCreatedMethod.setAccessible(true);
-                                        dispatchCreatedMethod.invoke(childFragmentManager);
+                                        addViewInSwipeBack(container, baseView, 0);
+                                        handleChildFragmentListWhenSwipeBackStart(baseView);
                                         SwipeBackLayout.offsetInEdgeTouch(baseView, edgeFlag,
                                                 Math.abs(backViewInitOffset()));
                                     }
@@ -466,29 +421,23 @@ public abstract class QMUIFragment extends Fragment {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
                 }
             } else if (getParentFragment() == null) {
                 Activity currentActivity = getActivity();
                 if (currentActivity != null) {
                     ViewGroup decorView = (ViewGroup) currentActivity.getWindow().getDecorView();
-                    if (decorView != null) {
-                        Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
-                                .getPenultimateActivity(currentActivity);
-                        if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
-                            mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
-                        } else {
-                            mSwipeBackgroundView = new SwipeBackgroundView(getContext());
-                            decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                        }
-                        mSwipeBackgroundView.bind(prevActivity, currentActivity, restoreSubWindowWhenDragBack());
-                        SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
-                                Math.abs(backViewInitOffset()));
+                    Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
+                            .getPenultimateActivity(currentActivity);
+                    if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
+                        mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
+                    } else {
+                        mSwipeBackgroundView = new SwipeBackgroundView(getContext());
+                        decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     }
+                    mSwipeBackgroundView.bind(prevActivity, currentActivity, restoreSubWindowWhenDragBack());
+                    SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
+                            Math.abs(backViewInitOffset()));
                 }
             }
         }
@@ -496,6 +445,107 @@ public abstract class QMUIFragment extends Fragment {
         @Override
         public void onScrollOverThreshold() {
             Log.i(TAG, "SwipeListener:onEdgeTouch:onScrollOverThreshold");
+        }
+
+        private void addViewInSwipeBack(ViewGroup parent, View child) {
+            addViewInSwipeBack(parent, child, -1);
+        }
+
+        private void addViewInSwipeBack(ViewGroup parent, View child, int index) {
+            if (parent != null && child != null) {
+                child.setTag(R.id.qmui_arch_swipe_layout_in_back, SWIPE_BACK_VIEW);
+                parent.addView(child, index);
+            }
+        }
+
+        private void removeViewInSwipeBack(ViewGroup parent, Function<View, Void> onRemove) {
+            if (parent != null) {
+                int childCount = parent.getChildCount();
+                for (int i = childCount - 1; i >= 0; i--) {
+                    View view = parent.getChildAt(i);
+                    Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
+                    if (SWIPE_BACK_VIEW.equals(tag)) {
+                        if (onRemove != null) {
+                            onRemove.apply(view);
+                        }
+                        parent.removeView(view);
+                    }
+                }
+            }
+        }
+
+
+        private void handleChildFragmentListWhenSwipeBackStart(View baseView) throws
+                NoSuchFieldException, IllegalAccessException {
+            // handle issue #235
+            if (baseView instanceof ViewGroup) {
+                ViewGroup childMainContainer = (ViewGroup) baseView;
+                FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
+                List<Fragment> childFragmentList = childFragmentManager.getFragments();
+                int childContainerId = 0;
+                ViewGroup childContainer = null;
+                for (Fragment fragment : childFragmentList) {
+                    if (fragment instanceof QMUIFragment) {
+                        QMUIFragment qmuiFragment = (QMUIFragment) fragment;
+                        Field containerIdField = Fragment.class.getDeclaredField("mContainerId");
+                        containerIdField.setAccessible(true);
+                        int containerId = containerIdField.getInt(qmuiFragment);
+                        if (containerId != 0) {
+                            if (childContainerId != containerId) {
+                                childContainerId = containerId;
+                                childContainer = childMainContainer.findViewById(containerId);
+                            }
+                            if (childContainer != null) {
+                                qmuiFragment.isCreateForSwipeBack = true;
+                                View childView = fragment.onCreateView(
+                                        LayoutInflater.from(childContainer.getContext()), childContainer, null);
+                                qmuiFragment.isCreateForSwipeBack = false;
+                                addViewInSwipeBack(childContainer, childView);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private void handleSwipeBackCancelOrFinished(ViewGroup container) {
+            removeViewInSwipeBack(container, new Function<View, Void>() {
+                @Override
+                public Void apply(View input) {
+                    if (mModifiedFragment == null) {
+                        return null;
+                    }
+                    if (input instanceof ViewGroup) {
+                        ViewGroup childMainContainer = (ViewGroup) input;
+                        FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
+                        List<Fragment> childFragmentList = childFragmentManager.getFragments();
+                        int childContainerId = 0;
+                        try {
+                            for (Fragment fragment : childFragmentList) {
+                                if (fragment instanceof QMUIFragment) {
+                                    QMUIFragment qmuiFragment = (QMUIFragment) fragment;
+                                    Field containerIdField = Fragment.class.getDeclaredField("mContainerId");
+                                    containerIdField.setAccessible(true);
+                                    int containerId = containerIdField.getInt(qmuiFragment);
+                                    if (containerId != 0 && childContainerId != containerId) {
+                                        childContainerId = containerId;
+                                        ViewGroup childContainer = childMainContainer.findViewById(containerId);
+                                        removeViewInSwipeBack(childContainer, null);
+                                    }
+                                }
+                            }
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchFieldException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    return null;
+                }
+            });
+            mModifiedFragment = null;
         }
     };
 

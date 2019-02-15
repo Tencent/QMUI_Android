@@ -190,6 +190,12 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
             textView.setText("这是第 " + (page.getPosition() + 1) + " 个 Item 的内容区");
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startFragment(new QDTabSegmentScrollableModeFragment());
+                }
+            });
             view = textView;
             mPageMap.put(page, view);
         }
