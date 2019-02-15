@@ -81,7 +81,7 @@
         <item name="qmui_topbar_image_btn_height">48dp</item>
     </style>
 
-    <style name="QDRadiusButton" parent="@style/Button">
+    <style name="QDRadiusButton" parent="@style/Button.Compat">
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:paddingLeft">?attr/qmui_content_spacing_horizontal</item>

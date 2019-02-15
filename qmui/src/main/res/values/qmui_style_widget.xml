@@ -26,7 +26,7 @@
     </style>
 
     <!--********************* Button *********************-->
-    <style name="QMUI.RoundButton" parent="@style/Button">
+    <style name="QMUI.RoundButton" parent="@style/Button.Compat">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <!--<item name="android:padding">0dp</item>--><!-- 不用 android:padding，而用各个方向分别指定 padding，方便子类覆盖 -->

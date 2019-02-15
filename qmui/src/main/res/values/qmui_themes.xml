@@ -15,11 +15,11 @@
  limitations under the License.
 -->
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <!-- 关于Theme的继承关系：
     由于 Theme 需要在不同 API Level 下有不同的配置，并且继承自不同的系统 Theme，所以多层继承。
-    
+
     继承关系和每个层的分工如下：
 	AppRootTheme（Theme 的最顶层，各个 API Level 自行决定继承自系统的哪个 Theme）
 	  |-values
@@ -35,26 +35,38 @@
 	  |-values-...
 	  |
 	QMUI（QMUI提供的theme控制， 供外界使用）
-	
+
 	So，
 	如果要对某 API Level 配置继承自某个系统的 Theme，在 values-v* 目录下修改 qmui_themes.xml 的 AppRootTheme。
 	如果要对某 API Level 配置定制化的 Theme，在 values-v* 目录下修改 qmui_themes.xml 的 AppConfigTheme。
 	如果在项目中要对特定项目配置业务相关的 Theme，在 values 目录下修改 themes.xml 的 AppTheme。
      -->
-    <style name="AppRootTheme" parent="android:Theme.Holo.Light"/>
+
+    <style name="AppRootTheme" parent="Theme.AppCompat.Light"/>
+
     <style name="AppBaseTheme" parent="AppRootTheme">
         <item name="android:listDivider">@drawable/qmui_divider</item>
-        <item name="android:listViewStyle">@style/ListView</item>
-        <item name="android:gridViewStyle">@style/GridView</item>
-        <item name="android:imageButtonStyle">@style/ImageButton</item>
-        <item name="android:buttonStyle">@style/Button</item>
-        <item name="android:editTextStyle">@style/EditText</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
-        <item name="android:textViewStyle">@style/TextView</item>
+        <item name="android:listViewStyle">@style/ListView.Compat</item>
+        <item name="android:gridViewStyle">@style/GridView.Compat</item>
+        <item name="android:imageButtonStyle">@style/ImageButton.Compat</item>
+        <item name="android:buttonStyle">@style/Button.Compat</item>
+        <item name="android:editTextStyle">@style/EditText.Compat</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView.Compat</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Compat</item>
+        <item name="android:textViewStyle">@style/TextView.Compat</item>
     </style>
 
-    <style name="AppConfigTheme" parent="AppBaseTheme" />
+
+    <style name="AppConfigTheme" parent="AppBaseTheme" >
+        <item name="colorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="colorPrimaryDark">?attr/qmui_config_color_blue</item>
+        <item name="colorAccent">?attr/qmui_config_color_blue</item>
+        <item name="colorControlNormal">@color/qmui_config_color_white</item>
+        <item name="android:textColorPrimary">?attr/qmui_config_color_blue</item>
+        <item name="android:textColorSecondary">?attr/qmui_config_color_blue</item> <!--返回箭头也是用这个颜色-->
+        <item name="android:windowBackground">@color/qmui_config_color_white</item>
+        <item name="android:editTextColor">?attr/qmui_config_color_black</item>
+    </style>
 
     <style name="QMUI" parent="AppConfigTheme">
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal</item> <!-- 已废弃 -->
@@ -116,7 +128,6 @@
         <item name="qmui_tip_dialog_padding_vertical">12dp</item>
         <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
 
-
         <!--**********************************************
         *              qmui common list                  *
         **********************************************-->
@@ -136,24 +147,57 @@
         <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
         <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
 
-        <item name="qmui_list_item_bg_with_border_bottom">@drawable/qmui_list_item_bg_with_border_bottom</item>
-        <item name="qmui_list_item_bg_with_border_bottom_pressed">@drawable/qmui_list_item_bg_with_border_bottom_pressed</item>
-        <item name="qmui_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_list_item_bg_with_border_bottom_inset_left</item>
-        <item name="qmui_list_item_bg_with_border_bottom_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_bottom_inset_left_pressed</item>
-        <item name="qmui_list_item_bg_with_border_top">@drawable/qmui_list_item_bg_with_border_top</item>
-        <item name="qmui_list_item_bg_with_border_top_pressed">@drawable/qmui_list_item_bg_with_border_top_pressed</item>
-        <item name="qmui_list_item_bg_with_border_top_inset_left">@drawable/qmui_list_item_bg_with_border_top_inset_left</item>
-        <item name="qmui_list_item_bg_with_border_top_inset_left_pressed">@drawable/qmui_list_item_bg_with_border_top_inset_left_pressed</item>
-        <item name="qmui_list_item_bg_with_border_double">@drawable/qmui_list_item_bg_with_double_border</item>
-        <item name="qmui_list_item_bg_with_border_double_pressed">@drawable/qmui_list_item_bg_with_double_border_pressed</item>
+        <item name="qmui_list_item_bg_with_border_bottom">
+            @drawable/qmui_list_item_bg_with_border_bottom
+        </item>
+        <item name="qmui_list_item_bg_with_border_bottom_pressed">
+            @drawable/qmui_list_item_bg_with_border_bottom_pressed
+        </item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left">
+            @drawable/qmui_list_item_bg_with_border_bottom_inset_left
+        </item>
+        <item name="qmui_list_item_bg_with_border_bottom_inset_left_pressed">
+            @drawable/qmui_list_item_bg_with_border_bottom_inset_left_pressed
+        </item>
+        <item name="qmui_list_item_bg_with_border_top">@drawable/qmui_list_item_bg_with_border_top
+        </item>
+        <item name="qmui_list_item_bg_with_border_top_pressed">
+            @drawable/qmui_list_item_bg_with_border_top_pressed
+        </item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left">
+            @drawable/qmui_list_item_bg_with_border_top_inset_left
+        </item>
+        <item name="qmui_list_item_bg_with_border_top_inset_left_pressed">
+            @drawable/qmui_list_item_bg_with_border_top_inset_left_pressed
+        </item>
+        <item name="qmui_list_item_bg_with_border_double">
+            @drawable/qmui_list_item_bg_with_double_border
+        </item>
+        <item name="qmui_list_item_bg_with_border_double_pressed">
+            @drawable/qmui_list_item_bg_with_double_border_pressed
+        </item>
 
-        <item name="qmui_s_list_item_bg_with_border_bottom">@drawable/qmui_s_list_item_bg_with_border_bottom</item>
-        <item name="qmui_s_list_item_bg_with_border_bottom_inset">@drawable/qmui_s_list_item_bg_with_border_bottom_inset</item>
-        <item name="qmui_s_list_item_bg_with_border_bottom_inset_left">@drawable/qmui_s_list_item_bg_with_border_bottom_inset_left</item>
-        <item name="qmui_s_list_item_bg_with_border_top">@drawable/qmui_s_list_item_bg_with_border_top</item>
-        <item name="qmui_s_list_item_bg_with_border_top_inset_left">@drawable/qmui_s_list_item_bg_with_border_top_inset_left</item>
-        <item name="qmui_s_list_item_bg_with_border_double">@drawable/qmui_s_list_item_bg_with_border_double</item>
-        <item name="qmui_s_list_item_bg_with_border_none">@drawable/qmui_s_list_item_bg_with_border_none</item>
+        <item name="qmui_s_list_item_bg_with_border_bottom">
+            @drawable/qmui_s_list_item_bg_with_border_bottom
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset">
+            @drawable/qmui_s_list_item_bg_with_border_bottom_inset
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_bottom_inset_left">
+            @drawable/qmui_s_list_item_bg_with_border_bottom_inset_left
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_top">
+            @drawable/qmui_s_list_item_bg_with_border_top
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_top_inset_left">
+            @drawable/qmui_s_list_item_bg_with_border_top_inset_left
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_double">
+            @drawable/qmui_s_list_item_bg_with_border_double
+        </item>
+        <item name="qmui_s_list_item_bg_with_border_none">
+            @drawable/qmui_s_list_item_bg_with_border_none
+        </item>
 
         <!--**********************************************
         *             qmui drawable                      *
@@ -170,7 +214,6 @@
         <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
         <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
 
-
         <!--**********************************************
         *                  qmui topbar                   *
         ***********************************************-->
@@ -183,12 +226,17 @@
         <item name="qmui_bottom_sheet_title_appearance">@style/QMUITextAppearance.Title.Gray</item>
         <item name="qmui_bottom_sheet_title_bg">?attr/qmui_list_item_bg_with_border_bottom</item>
 
-        <item name="qmui_bottom_sheet_list_item_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <item name="qmui_bottom_sheet_list_item_padding_horizontal">
+            ?attr/qmui_content_padding_horizontal
+        </item>
         <item name="qmui_bottom_sheet_list_item_height">56dp</item>
         <item name="qmui_bottom_sheet_list_item_mark_margin_left">12dp</item>
         <item name="qmui_bottom_sheet_list_item_tip_point_margin_left">4dp</item>
-        <item name="qmui_bottom_sheet_list_item_text_appearance">@style/QMUITextAppearance.ListItem</item>
-        <item name="qmui_bottom_sheet_list_item_bg">?attr/qmui_s_list_item_bg_with_border_bottom</item>
+        <item name="qmui_bottom_sheet_list_item_text_appearance">
+            @style/QMUITextAppearance.ListItem
+        </item>
+        <item name="qmui_bottom_sheet_list_item_bg">?attr/qmui_s_list_item_bg_with_border_bottom
+        </item>
         <item name="qmui_bottom_sheet_list_item_icon_size">22dp</item>
         <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>
 
@@ -203,10 +251,10 @@
         <item name="qmui_bottom_sheet_grid_item_icon_marginBottom">9dp</item>
         <item name="qmui_bottom_sheet_grid_item_text_appearance">@style/QMUITextAppearance.GridItem.Small</item>
 
+        <item name="qmui_bottom_sheet_button_background">@drawable/qmui_divider_top_bitmap</item>
         <item name="qmui_bottom_sheet_button_height">56dp</item>
         <item name="qmui_bottom_sheet_button_text_size">15sp</item>
         <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
-        <item name="qmui_bottom_sheet_button_background">@drawable/qmui_divider_top_bitmap</item>
 
         <!--**********************************************
         *                 qmui common list item          *
@@ -229,12 +277,14 @@
         <item name="qmui_popup_arrow_up_margin_top">13dp</item>
         <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
 
-       <!--**********************************************
-       *                  qmui tabSegment               *
-       ***********************************************-->
+        <!--**********************************************
+        *                  qmui tabSegment               *
+        ***********************************************-->
         <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
         <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
-        <item name="qmui_tab_sign_count_view_minSize_with_text">@dimen/qmui_tab_sign_count_view_minSize_with_text</item>
+        <item name="qmui_tab_sign_count_view_minSize_with_text">
+            @dimen/qmui_tab_sign_count_view_minSize_with_text
+        </item>
         <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
         <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
 
@@ -243,7 +293,6 @@
         ***********************************************-->
         <item name="QMUIButtonStyle">@style/QMUI.RoundButton</item>
         <item name="QMUITabSegmentStyle">@style/QMUI.TabSegment</item>
-        <item name="QMUIGroupListViewStyle">@style/QMUI.GroupListView</item>
         <item name="QMUICommonListItemViewStyle">@style/QMUI.CommonListItemView</item>
         <item name="QMUIGroupListSectionViewStyle">@style/QMUI.GroupListSectionView</item>
         <item name="QMUITopBarStyle">@style/QMUI.TopBar</item>
@@ -257,33 +306,35 @@
         <item name="QMUIQQFaceStyle">@style/QMUI.QQFaceView</item>
     </style>
 
-    <style name="QMUI.NoActionBar">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+    <style name="QMUI.Compat" parent="QMUI"/>
+
+    <style name="ListViewBase.Compat" parent="@style/Widget.AppCompat.ListView"/>
+
+    <style name="GridViewBase.Compat" parent="android:Widget.GridView"/>
+
+    <style name="ImageButtonBase.Compat" parent="@style/Widget.AppCompat.ImageButton"/>
+
+    <style name="ButtonBase.Compat" parent="@style/Widget.AppCompat.Button">
+        <!-- 取消 Button 字符默认大写的功能（会导致 Spannable 失效），默认值只影响 5.0 以上版本，但使用Compat包后，4.x 版本也会受到影响 -->
+        <!-- http://stackoverflow.com/questions/29007746/button-settext-with-spannable-dosent-work-for-android-5-0-lollipop -->
+        <item name="android:textAllCaps">false</item>
     </style>
 
-    <style name="ActionBarBase" parent="android:Widget.Holo.Light.ActionBar" />
-    <style name="ActionBarTitleTextBase" parent="android:TextAppearance.Holo.Widget.ActionBar.Title" />
-    <style name="ListViewBase" parent="android:Widget.Holo.Light.ListView" />
-    <style name="GridViewBase" parent="android:Widget.Holo.Light.GridView" />
-    <style name="ImageButtonBase" parent="android:Widget.Holo.Light.ImageButton" />
-    <style name="ButtonBase" parent="android:Widget.Holo.Light.Button"/>
-    <style name="EditTextBase" parent="android:Widget.Holo.Light.EditText" />
-    <style name="AutoCompleteTextViewBase" parent="android:Widget.Holo.Light.AutoCompleteTextView" />
-    <style name="DropDownListViewBase" parent="android:Widget.Holo.Light.ListView.DropDown" />
-    <style name="TextAppearanceBase" parent="android:TextAppearance.Holo"/>
+    <style name="EditTextBase.Compat" parent="@style/Widget.AppCompat.EditText"/>
 
-    <!--<style name="Animation" parent="Animation">-->
-    <!--<item name="android:fragmentOpenEnterAnimation">@animator/fragment_open_enter</item>-->
-    <!--<item name="android:fragmentOpenExitAnimation">@animator/fragment_open_exit</item>-->
-    <!--<item name="android:fragmentCloseEnterAnimation">@animator/fragment_close_enter</item>-->
-    <!--<item name="android:fragmentCloseExitAnimation">@animator/fragment_close_enter</item>-->
-    <!--</style>-->
+    <style name="AutoCompleteTextViewBase.Compat" parent="@style/Widget.AppCompat.AutoCompleteTextView"/>
 
+    <style name="DropDownListViewBase.Compat" parent="@style/Widget.AppCompat.ListView.DropDown"/>
+    <style name="TextAppearanceBase" parent="android:TextAppearance"/>
 
+    <style name="QMUI.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="QMUI.Compat.NoActionBar" parent="QMUI.NoActionBar"/>
 
     <!-- ListView Start -->
-    <style name="ListView" parent="ListViewBase">
+    <style name="ListView.Compat" parent="ListViewBase.Compat">
         <item name="android:background">@color/qmui_config_color_transparent</item>
         <item name="android:listSelector">@color/qmui_config_color_transparent</item>
         <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
@@ -292,32 +343,32 @@
     <!-- ListView End -->
 
     <!-- GridView -->
-    <style name="GridView" parent="GridViewBase">
+    <style name="GridView.Compat" parent="GridViewBase.Compat">
         <item name="android:background">@color/qmui_config_color_transparent</item>
         <item name="android:listSelector">@color/qmui_config_color_transparent</item>
     </style>
 
-    <style name="ImageButton" parent="ImageButtonBase">
+    <style name="ImageButton.Compat" parent="ImageButtonBase.Compat">
         <item name="android:background">@color/qmui_config_color_transparent</item>
     </style>
 
-    <style name="Button" parent="ButtonBase"/>
+    <style name="Button.Compat" parent="ButtonBase.Compat"/>
 
-    <style name="EditText" parent="EditTextBase">
+    <style name="EditText.Compat" parent="EditTextBase.Compat">
         <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
         <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
         <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
-    <style name="TextView" parent="android:Widget.TextView">
+    <style name="TextView.Compat" parent="android:Widget.TextView">
         <item name="android:textAppearance">@style/QMUITextAppearance</item>
         <!-- textColorHighlight 放在appearance中无效，好像TextView总是默认存在一个textColorHighlight
              会覆盖掉它，并不知道原因 -->
         <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
     </style>
 
-    <style name="AutoCompleteTextView" parent="AutoCompleteTextViewBase">
+    <style name="AutoCompleteTextView.Compat" parent="AutoCompleteTextViewBase.Compat">
         <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
         <item name="android:textColorHint">?attr/qmui_config_color_gray_4</item>
         <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
@@ -325,11 +376,10 @@
     </style>
 
     <!-- 下拉列表，例如AutoCompleteTextView的补全列表 -->
-    <style name="DropDownListView" parent="DropDownListViewBase">
+    <style name="DropDownListView.Compat" parent="DropDownListViewBase.Compat">
         <item name="android:divider">@drawable/qmui_divider_bottom_bitmap</item>
         <item name="android:dividerHeight">@dimen/qmui_list_divider_height</item>
         <item name="android:background">@color/qmui_config_color_white</item>
     </style>
-
 
 </resources>
