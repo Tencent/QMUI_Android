@@ -136,22 +136,29 @@ public class Utils {
         }
     }
 
-    static void findAndModifyOpInBackStackRecord(FragmentManager fragmentManager, int backStackIndex, OpHandler handler){
+    static void findAndModifyOpInBackStackRecord(FragmentManager fragmentManager, int backStackIndex, OpHandler handler) {
         if (fragmentManager == null || handler == null) {
             return;
         }
         int backStackCount = fragmentManager.getBackStackEntryCount();
         if (backStackCount > 0) {
-            if(backStackIndex >= backStackCount || backStackIndex < -backStackCount){
+            if (backStackIndex >= backStackCount || backStackIndex < -backStackCount) {
                 QMUILog.d("findAndModifyOpInBackStackRecord", "backStackIndex error: " +
                         "backStackIndex = " + backStackIndex + " ; backStackCount = " + backStackCount);
                 return;
             }
-            if(backStackIndex < 0){
+            if (backStackIndex < 0) {
                 backStackIndex = backStackCount + backStackIndex;
             }
             try {
                 FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backStackIndex);
+
+                if (handler.needReNameTag()) {
+                    Field nameField = backStackEntry.getClass().getDeclaredField("mName");
+                    nameField.setAccessible(true);
+                    nameField.set(backStackEntry, handler.newTagName());
+                }
+
 
                 Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
                 opsField.setAccessible(true);
@@ -159,7 +166,7 @@ public class Utils {
                 if (opsObj instanceof List<?>) {
                     List<?> ops = (List<?>) opsObj;
                     for (Object op : ops) {
-                        if(handler.handle(op)){
+                        if (handler.handle(op)) {
                             return;
                         }
                     }
@@ -174,5 +181,9 @@ public class Utils {
 
     interface OpHandler {
         boolean handle(Object op);
+
+        boolean needReNameTag();
+
+        String newTagName();
     }
 }
