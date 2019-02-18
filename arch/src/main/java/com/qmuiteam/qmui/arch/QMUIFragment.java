@@ -345,6 +345,16 @@ public abstract class QMUIFragment extends Fragment {
 
                             return false;
                         }
+
+                        @Override
+                        public boolean needReNameTag() {
+                            return false;
+                        }
+
+                        @Override
+                        public String newTagName() {
+                            return null;
+                        }
                     });
                     popBackStack();
                 }

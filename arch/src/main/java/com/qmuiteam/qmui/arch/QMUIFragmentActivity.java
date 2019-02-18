@@ -126,6 +126,16 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
                 }
                 return false;
             }
+
+            @Override
+            public boolean needReNameTag() {
+                return true;
+            }
+
+            @Override
+            public String newTagName() {
+                return fragment.getClass().getSimpleName();
+            }
         });
         return index;
     }
