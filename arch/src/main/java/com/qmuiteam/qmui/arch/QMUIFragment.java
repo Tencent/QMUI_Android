@@ -131,6 +131,7 @@ public abstract class QMUIFragment extends Fragment {
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
             if (this.isAttachedToActivity()) {
+                ViewCompat.setTranslationZ(mCacheSwipeBackLayout, --mBackStackIndex);
                 baseFragmentActivity.startFragmentAndDestroyCurrent(fragment, useNewTransitionConfigWhenPop);
             } else {
                 Log.e("QMUIFragment", "fragment not attached:" + this);
@@ -588,6 +589,7 @@ public abstract class QMUIFragment extends Fragment {
         }
 
         ViewCompat.setTranslationZ(swipeBackLayout, mBackStackIndex);
+        Log.i(TAG, getClass().getSimpleName() + " onCreateView: mBackStackIndex = " + mBackStackIndex);
 
         swipeBackLayout.setFitsSystemWindows(false);
 
