@@ -1,12 +1,11 @@
 apply plugin: 'com.android.library'
 
 group = 'com.qmuiteam'
-version = "0.3.1"
+version = "0.3.2"
 
 android {
 
     compileSdkVersion parent.ext.compileSdkVersion
-    buildToolsVersion parent.ext.buildToolsVersion
     lintOptions {
         abortOnError false
     }
