@@ -30,7 +30,9 @@ import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.widget.QMUITabSegment;
+import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
+import com.qmuiteam.qmui.widget.tab.QMUITabIndicator;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -78,7 +80,8 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             ContentPage page = ContentPage.getPage(position);
             View view = getPageView(page);
             view.setTag(page);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             container.addView(view, params);
             return view;
         }
@@ -136,11 +139,13 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
     private void initTabAndPager() {
         mContentViewPager.setAdapter(mPagerAdapter);
         mContentViewPager.setCurrentItem(mDestPage.getPosition(), false);
+        QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
-            mTabSegment.addTab(new QMUITabSegment.Tab("Item " + (i + 1)));
+            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build());
         }
         int space = QMUIDisplayHelper.dp2px(getContext(), 16);
-        mTabSegment.setHasIndicator(true);
+        mTabSegment.setIndicator(new QMUITabIndicator(
+                QMUIDisplayHelper.dp2px(getContext(), 2), false, true));
         mTabSegment.setMode(QMUITabSegment.MODE_SCROLLABLE);
         mTabSegment.setItemSpaceInScrollMode(space);
         mTabSegment.setupWithViewPager(mContentViewPager, false);
@@ -170,14 +175,16 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
 
     private void reduceTabCount() {
         if (mCurrentItemCount <= 1) {
-            Toast.makeText(getContext(), "Only the last one, don't reduce it anymore!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Only the last one, don't reduce it anymore!!!",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         mCurrentItemCount--;
         mPagerAdapter.notifyDataSetChanged();
         mTabSegment.reset();
+        QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
-            mTabSegment.addTab(new QMUITabSegment.Tab("Item " + (i + 1)));
+            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build());
         }
         mTabSegment.notifyDataChanged();
     }

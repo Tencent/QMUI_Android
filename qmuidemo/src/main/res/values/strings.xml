@@ -56,6 +56,8 @@
     <string name="tabSegment_mode_muti_color">不同 item，不同文字(icon)颜色</string>
     <string name="tabSegment_mode_change_content_by_index">根据 index 更新 tab 文案</string>
     <string name="tabSegment_mode_replace_tab_by_index">根据 index 完全替换 tab</string>
+    <string name="tabSegment_mode_scale_selected">放大选中态</string>
+    <string name="tabSegment_mode_change_gravity">修改 Gravity</string>
 
     <!-- ProgressBarFragment 进度条展示界面 -->
     <string name="progress_start_button_text">点击开始</string>

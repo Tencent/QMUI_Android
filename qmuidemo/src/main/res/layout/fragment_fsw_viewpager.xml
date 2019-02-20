@@ -27,12 +27,16 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/home_tab_height"
         android:fitsSystemWindows="true"/>
-    <com.qmuiteam.qmui.widget.QMUITabSegment
+    <com.qmuiteam.qmui.widget.tab.QMUITabSegment
         android:id="@+id/tabs"
         android:layout_gravity="bottom"
         android:background="?attr/qmui_list_item_bg_with_border_top"
         android:textSize="12sp"
         app:qmui_tab_icon_position="top"
+        app:qmui_tab_normal_color="?attr/qmui_config_color_gray_6"
+        app:qmui_tab_selected_color="?attr/qmui_config_color_blue"
+        app:qmui_tab_selected_text_size="16sp"
+        app:qmui_tab_normal_text_size="14sp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/home_tab_height"/>
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

@@ -22,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qmuiteam.qmui.widget.QMUITabSegment;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;

@@ -42,12 +42,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.annotation.RequiresApi;
-import androidx.core.text.TextDirectionHeuristicsCompat;
-import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.appcompat.widget.TintTypedArray;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -55,6 +49,12 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.qmuiteam.qmui.R;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.RequiresApi;
+import androidx.core.text.TextDirectionHeuristicsCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 
 public final class QMUICollapsingTextHelper {
 
@@ -97,6 +97,12 @@ public final class QMUICollapsingTextHelper {
     private float mCollapsedDrawX;
     private float mCurrentDrawX;
     private float mCurrentDrawY;
+    private float mCollapsedTextWidth;
+    private float mExpandedTextWidth;
+    private float mCurrentTextWidth;
+    private float mCollapsedTextHeight;
+    private float mExpandedTextHeight;
+    private float mCurrentTextHeight;
     private Typeface mCollapsedTypeface;
     private Typeface mExpandedTypeface;
     private Typeface mCurrentTypeface;
@@ -129,11 +135,16 @@ public final class QMUICollapsingTextHelper {
     private float mExpandedShadowRadius, mExpandedShadowDx, mExpandedShadowDy;
     private int mExpandedShadowColor;
 
-    public QMUICollapsingTextHelper(View view) {
+    public QMUICollapsingTextHelper(View view){
+        this(view, 0f);
+    }
+
+    public QMUICollapsingTextHelper(View view, float defaultExpanededFraction) {
         mView = view;
 
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
 
+        mExpandedFraction = defaultExpanededFraction;
         mCollapsedBounds = new Rect();
         mExpandedBounds = new Rect();
         mCurrentBounds = new RectF();
@@ -147,6 +158,16 @@ public final class QMUICollapsingTextHelper {
     public void setPositionInterpolator(Interpolator interpolator) {
         mPositionInterpolator = interpolator;
         recalculate();
+    }
+
+    public void setTextSize(float collapsedTextSize, float expandedTextSize, boolean recalculate){
+        if(mExpandedTextSize != expandedTextSize || mCollapsedTextSize != collapsedTextSize){
+            mExpandedTextSize = expandedTextSize;
+            mCollapsedTextSize = collapsedTextSize;
+            if(recalculate){
+                recalculate();
+            }
+        }
     }
 
     public void setExpandedTextSize(float textSize) {
@@ -177,9 +198,20 @@ public final class QMUICollapsingTextHelper {
         }
     }
 
+    public void setTextColor(ColorStateList collapsedTextColor, ColorStateList expandedTextColor,
+                             boolean recalculate){
+        if(mCollapsedTextColor != collapsedTextColor || mExpandedTextColor != expandedTextColor){
+            mCollapsedTextColor = collapsedTextColor;
+            mExpandedTextColor = expandedTextColor;
+            if(recalculate){
+                recalculate();
+            }
+        }
+    }
+
 
     public void setCollapsedTextAppearance(int resId) {
-        TintTypedArray a = TintTypedArray.obtainStyledAttributes(mView.getContext(), resId, R.styleable.QMUITextAppearance);
+        TypedArray a = mView.getContext().obtainStyledAttributes(resId, R.styleable.QMUITextAppearance);
         if (a.hasValue(R.styleable.QMUITextAppearance_android_textColor)) {
             mCollapsedTextColor = a.getColorStateList(R.styleable.QMUITextAppearance_android_textColor);
         }
@@ -201,7 +233,7 @@ public final class QMUICollapsingTextHelper {
     }
 
     public void setExpandedTextAppearance(int resId) {
-        TintTypedArray a = TintTypedArray.obtainStyledAttributes(mView.getContext(), resId, R.styleable.QMUITextAppearance);
+        TypedArray a = mView.getContext().obtainStyledAttributes(resId, R.styleable.QMUITextAppearance);
         if (a.hasValue(R.styleable.QMUITextAppearance_android_textColor)) {
             mExpandedTextColor = a.getColorStateList(R.styleable.QMUITextAppearance_android_textColor);
         }
@@ -269,6 +301,16 @@ public final class QMUICollapsingTextHelper {
         return mCollapsedTextGravity;
     }
 
+    public void setGravity(int collapsedGravity, int expandedGravity, boolean recalculate){
+        if(mCollapsedTextGravity != collapsedGravity || mExpandedTextGravity != expandedGravity){
+            mCollapsedTextGravity = collapsedGravity;
+            mExpandedTextGravity = expandedGravity;
+            if(recalculate){
+                recalculate();
+            }
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private Typeface readFontFamilyTypeface(int resId) {
@@ -283,6 +325,16 @@ public final class QMUICollapsingTextHelper {
             a.recycle();
         }
         return null;
+    }
+
+    public void setTypeface(Typeface collapsedTypeface, Typeface expandedTypeface, boolean recalculate){
+        if(mCollapsedTypeface != collapsedTypeface || mExpandedTypeface != expandedTypeface){
+            mCollapsedTypeface = collapsedTypeface;
+            mExpandedTypeface = expandedTypeface;
+            if(recalculate){
+                recalculate();
+            }
+        }
     }
 
     public void setCollapsedTypeface(Typeface typeface) {
@@ -356,7 +408,7 @@ public final class QMUICollapsingTextHelper {
         return mExpandedTextSize;
     }
 
-    private void calculateCurrentOffsets() {
+    public void calculateCurrentOffsets() {
         calculateOffsets(mExpandedFraction);
     }
 
@@ -366,6 +418,10 @@ public final class QMUICollapsingTextHelper {
                 mPositionInterpolator);
         mCurrentDrawY = lerp(mExpandedDrawY, mCollapsedDrawY, fraction,
                 mPositionInterpolator);
+        mCurrentTextHeight = lerp(mExpandedTextHeight, mCollapsedTextHeight, fraction,
+                mPositionInterpolator);
+        mCurrentTextWidth = lerp(mExpandedTextWidth, mCollapsedTextWidth, fraction,
+                mPositionInterpolator);
 
         setInterpolatedTextSize(lerp(mExpandedTextSize, mCollapsedTextSize,
                 fraction, mTextSizeInterpolator));
@@ -373,7 +429,7 @@ public final class QMUICollapsingTextHelper {
         if (mCollapsedTextColor != mExpandedTextColor) {
             // If the collapsed and expanded text colors are different, blend them based on the
             // fraction
-            mTextPaint.setColor(blendColors(
+            mTextPaint.setColor(QMUIColorHelper.computeColor(
                     getCurrentExpandedTextColor(), getCurrentCollapsedTextColor(), fraction));
         } else {
             mTextPaint.setColor(getCurrentCollapsedTextColor());
@@ -383,13 +439,16 @@ public final class QMUICollapsingTextHelper {
                 lerp(mExpandedShadowRadius, mCollapsedShadowRadius, fraction, null),
                 lerp(mExpandedShadowDx, mCollapsedShadowDx, fraction, null),
                 lerp(mExpandedShadowDy, mCollapsedShadowDy, fraction, null),
-                blendColors(mExpandedShadowColor, mCollapsedShadowColor, fraction));
+                QMUIColorHelper.computeColor(mExpandedShadowColor, mCollapsedShadowColor, fraction));
 
         ViewCompat.postInvalidateOnAnimation(mView);
     }
 
     @ColorInt
     private int getCurrentExpandedTextColor() {
+        if(mExpandedTextColor == null){
+            return 0;
+        }
         if (mState != null) {
             return mExpandedTextColor.getColorForState(mState, 0);
         } else {
@@ -399,6 +458,9 @@ public final class QMUICollapsingTextHelper {
 
     @ColorInt
     private int getCurrentCollapsedTextColor() {
+        if(mCollapsedTextColor == null){
+            return 0;
+        }
         if (mState != null) {
             return mCollapsedTextColor.getColorForState(mState, 0);
         } else {
@@ -406,13 +468,14 @@ public final class QMUICollapsingTextHelper {
         }
     }
 
-    private void calculateBaseOffsets() {
+    public void calculateBaseOffsets() {
         final float currentTextSize = mCurrentTextSize;
 
         // We then calculate the collapsed text size, using the same logic
         calculateUsingTextSize(mCollapsedTextSize);
-        float width = mTextToDraw != null ?
+        mCollapsedTextWidth = mTextToDraw != null ?
                 mTextPaint.measureText(mTextToDraw, 0, mTextToDraw.length()) : 0;
+        mCollapsedTextHeight = mTextPaint.descent() - mTextPaint.ascent();
         final int collapsedAbsGravity = GravityCompat.getAbsoluteGravity(mCollapsedTextGravity,
                 mIsRtl ? ViewCompat.LAYOUT_DIRECTION_RTL : ViewCompat.LAYOUT_DIRECTION_LTR);
         switch (collapsedAbsGravity & Gravity.VERTICAL_GRAVITY_MASK) {
@@ -424,17 +487,16 @@ public final class QMUICollapsingTextHelper {
                 break;
             case Gravity.CENTER_VERTICAL:
             default:
-                float textHeight = mTextPaint.descent() - mTextPaint.ascent();
-                float textOffset = (textHeight / 2) - mTextPaint.descent();
+                float textOffset = (mCollapsedTextHeight / 2) - mTextPaint.descent();
                 mCollapsedDrawY = mCollapsedBounds.centerY() + textOffset;
                 break;
         }
         switch (collapsedAbsGravity & GravityCompat.RELATIVE_HORIZONTAL_GRAVITY_MASK) {
             case Gravity.CENTER_HORIZONTAL:
-                mCollapsedDrawX = mCollapsedBounds.centerX() - (width / 2);
+                mCollapsedDrawX = mCollapsedBounds.centerX() - (mCollapsedTextWidth / 2);
                 break;
             case Gravity.RIGHT:
-                mCollapsedDrawX = mCollapsedBounds.right - width;
+                mCollapsedDrawX = mCollapsedBounds.right - mCollapsedTextWidth;
                 break;
             case Gravity.LEFT:
             default:
@@ -443,8 +505,9 @@ public final class QMUICollapsingTextHelper {
         }
 
         calculateUsingTextSize(mExpandedTextSize);
-        width = mTextToDraw != null
+        mExpandedTextWidth = mTextToDraw != null
                 ? mTextPaint.measureText(mTextToDraw, 0, mTextToDraw.length()) : 0;
+        mExpandedTextHeight = mTextPaint.descent() - mTextPaint.ascent();
         final int expandedAbsGravity = GravityCompat.getAbsoluteGravity(mExpandedTextGravity,
                 mIsRtl ? ViewCompat.LAYOUT_DIRECTION_RTL : ViewCompat.LAYOUT_DIRECTION_LTR);
         switch (expandedAbsGravity & Gravity.VERTICAL_GRAVITY_MASK) {
@@ -456,17 +519,16 @@ public final class QMUICollapsingTextHelper {
                 break;
             case Gravity.CENTER_VERTICAL:
             default:
-                float textHeight = mTextPaint.descent() - mTextPaint.ascent();
-                float textOffset = (textHeight / 2) - mTextPaint.descent();
+                float textOffset = (mExpandedTextHeight / 2) - mTextPaint.descent();
                 mExpandedDrawY = mExpandedBounds.centerY() + textOffset;
                 break;
         }
         switch (expandedAbsGravity & GravityCompat.RELATIVE_HORIZONTAL_GRAVITY_MASK) {
             case Gravity.CENTER_HORIZONTAL:
-                mExpandedDrawX = mExpandedBounds.centerX() - (width / 2);
+                mExpandedDrawX = mExpandedBounds.centerX() - (mExpandedTextWidth / 2);
                 break;
             case Gravity.RIGHT:
-                mExpandedDrawX = mExpandedBounds.right - width;
+                mExpandedDrawX = mExpandedBounds.right - mExpandedTextWidth;
                 break;
             case Gravity.LEFT:
             default:
@@ -691,6 +753,31 @@ public final class QMUICollapsingTextHelper {
         }
     }
 
+    public float getExpandedTextWidth() {
+        return mExpandedTextWidth;
+    }
+
+    public float getCollapsedTextWidth() {
+        return mCollapsedTextWidth;
+    }
+
+    public float getExpandedTextHeight() {
+        return mExpandedTextHeight;
+    }
+
+    public float getCollapsedTextHeight() {
+        return mCollapsedTextHeight;
+    }
+
+    public float getExpandedDrawX() {
+        return mExpandedDrawX;
+    }
+
+    public float getCollapsedDrawX() {
+        return mCollapsedDrawX;
+    }
+
+
     /**
      * Returns true if {@code value} is 'close' to it's closest decimal value. Close is currently
      * defined as it's difference being < 0.001.
@@ -707,22 +794,7 @@ public final class QMUICollapsingTextHelper {
         return mCollapsedTextColor;
     }
 
-    /**
-     * Blend {@code color1} and {@code color2} using the given ratio.
-     *
-     * @param ratio of which to blend. 0.0 will return {@code color1}, 0.5 will give an even blend,
-     *              1.0 will return {@code color2}.
-     */
-    private static int blendColors(int color1, int color2, float ratio) {
-        final float inverseRatio = 1f - ratio;
-        float a = (Color.alpha(color1) * inverseRatio) + (Color.alpha(color2) * ratio);
-        float r = (Color.red(color1) * inverseRatio) + (Color.red(color2) * ratio);
-        float g = (Color.green(color1) * inverseRatio) + (Color.green(color2) * ratio);
-        float b = (Color.blue(color1) * inverseRatio) + (Color.blue(color2) * ratio);
-        return Color.argb((int) a, (int) r, (int) g, (int) b);
-    }
-
-    private static float lerp(float startValue, float endValue, float fraction,
+    public static float lerp(float startValue, float endValue, float fraction,
                               Interpolator interpolator) {
         if (interpolator != null) {
             fraction = interpolator.getInterpolation(fraction);

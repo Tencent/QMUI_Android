@@ -17,17 +17,14 @@
 package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
 import android.annotation.SuppressLint;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
-import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUIViewPager;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
@@ -35,6 +32,8 @@ import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragmen
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentScrollableModeFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -54,16 +53,8 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
     protected View onCreateView() {
         FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_fsw_viewpager, null);
         ButterKnife.bind(this, layout);
-        initTabs();
         initPagers();
         return layout;
-    }
-
-    private void initTabs() {
-        int normalColor = QMUIResHelper.getAttrColor(getActivity(), R.attr.qmui_config_color_gray_6);
-        int selectColor = QMUIResHelper.getAttrColor(getActivity(), R.attr.qmui_config_color_blue);
-        mTabSegment.setDefaultNormalColor(normalColor);
-        mTabSegment.setDefaultSelectedColor(selectColor);
     }
 
     private void initPagers() {
@@ -105,7 +96,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                             .beginTransaction();
                 }
                 Fragment fragment = getChildFragmentManager().findFragmentByTag(name);
-                if(fragment != null){
+                if (fragment != null) {
                     return fragment;
                 }
                 switch (position) {
@@ -132,7 +123,7 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
                 Fragment fragment = getChildFragmentManager().findFragmentByTag(name);
                 if (fragment != null) {
                     mCurrentTransaction.attach(fragment);
-                    if(fragment.getView() != null && fragment.getView().getWidth() == 0){
+                    if (fragment.getView() != null && fragment.getView().getWidth() == 0) {
                         fragment.getView().requestLayout();
                     }
                 } else {

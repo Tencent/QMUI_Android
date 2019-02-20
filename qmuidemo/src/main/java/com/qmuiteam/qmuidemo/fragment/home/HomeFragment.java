@@ -21,8 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.widget.QMUITabSegment;
+import com.qmuiteam.qmui.widget.tab.QMUITab;
+import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 
@@ -98,34 +101,27 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initTabs() {
-        int normalColor = QMUIResHelper.getAttrColor(getActivity(), R.attr.qmui_config_color_gray_6);
-        int selectColor = QMUIResHelper.getAttrColor(getActivity(), R.attr.qmui_config_color_blue);
-        mTabSegment.setDefaultNormalColor(normalColor);
-        mTabSegment.setDefaultSelectedColor(selectColor);
-//        mTabSegment.setDefaultTabIconPosition(QMUITabSegment.ICON_POSITION_BOTTOM);
-
-
-        QMUITabSegment.Tab component = new QMUITabSegment.TabBuilder("Components")
+        int normalColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_6);
+        int selectColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_blue);
+        QMUITabBuilder builder = mTabSegment.tabBuilder();
+        builder.setColor(normalColor, selectColor)
+                .setSelectedIconScale(1.6f)
+                .setTextSize(QMUIDisplayHelper.sp2px(getContext(), 13), QMUIDisplayHelper.sp2px(getContext(), 15))
+                .setDynamicChangeIconColor(false);
+        QMUITab component = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Components")
                 .build();
-
-        // 如果你的 icon 显示大小和实际大小不吻合:
-        // 通过 tab.setTabIconBounds 重新设置 bounds
-//        int iconShowSize = QMUIDisplayHelper.dp2px(getContext(), 20);
-//        component.setTabIconBounds(0, 0, iconShowSize, iconShowSize);
-
-        QMUITabSegment.Tab util = new QMUITabSegment.TabBuilder("Helper")
+        QMUITab util = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Helper")
                 .build();
-
-        QMUITabSegment.Tab lab = new QMUITabSegment.TabBuilder("Lab")
+        QMUITab lab = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Lab")
                 .build();
 
         mTabSegment.addTab(component)

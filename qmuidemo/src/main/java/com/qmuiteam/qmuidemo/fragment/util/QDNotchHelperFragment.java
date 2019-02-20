@@ -19,9 +19,6 @@ package com.qmuiteam.qmuidemo.fragment.util;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,15 +27,21 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.tab.QMUITab;
+import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -107,23 +110,29 @@ public class QDNotchHelperFragment extends BaseFragment {
     }
 
     private void initTabs() {
-        QMUITabSegment.Tab component = new QMUITabSegment.TabBuilder("Components")
+        int normalColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_6);
+        int selectColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_blue);
+        QMUITabBuilder builder = mTabSegment.tabBuilder();
+        builder.setColor(normalColor, selectColor)
+                .setSelectedIconScale(2f)
+                .setTextSize(QMUIDisplayHelper.sp2px(getContext(), 14), QMUIDisplayHelper.sp2px(getContext(), 16))
+                .setDynamicChangeIconColor(false);
+        QMUITab component = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Components")
                 .build();
-
-        QMUITabSegment.Tab util = new QMUITabSegment.TabBuilder("Helper")
+        QMUITab util = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Helper")
                 .build();
-
-        QMUITabSegment.Tab lab = new QMUITabSegment.TabBuilder("Lab")
+        QMUITab lab = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected))
-                .setDynamicChangeIconColor(false)
+                .setText("Lab")
                 .build();
+
         mTabSegment.addTab(component)
                 .addTab(util)
                 .addTab(lab);

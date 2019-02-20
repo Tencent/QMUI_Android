@@ -52,7 +52,7 @@ public class QMUIColorHelper {
      * @return 计算出的color值
      */
     public static int computeColor(@ColorInt int fromColor, @ColorInt int toColor, float fraction) {
-        fraction = Math.max(Math.min(fraction, 1), 0);
+        fraction = QMUILangHelper.constrain(fraction, 0f, 1f);
 
         int minColorA = Color.alpha(fromColor);
         int maxColorA = Color.alpha(toColor);

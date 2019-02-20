@@ -19,7 +19,7 @@ package com.qmuiteam.qmuidemo.fragment.components;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.qmuiteam.qmui.widget.QMUITabSegment;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmuidemo.R;

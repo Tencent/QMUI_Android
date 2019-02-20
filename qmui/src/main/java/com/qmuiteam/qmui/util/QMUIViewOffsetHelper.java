@@ -32,8 +32,9 @@
 
 package com.qmuiteam.qmui.util;
 
-import androidx.core.view.ViewCompat;
 import android.view.View;
+
+import androidx.core.view.ViewCompat;
 
 /**
  * Utility helper for moving a {@link View} around using
@@ -94,6 +95,16 @@ public class QMUIViewOffsetHelper {
     public boolean setLeftAndRightOffset(int offset) {
         if (mOffsetLeft != offset) {
             mOffsetLeft = offset;
+            updateOffsets();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setOffset(int leftOffset, int topOffset) {
+        if (mOffsetLeft != leftOffset || mOffsetTop != topOffset) {
+            mOffsetLeft = leftOffset;
+            mOffsetTop = topOffset;
             updateOffsets();
             return true;
         }

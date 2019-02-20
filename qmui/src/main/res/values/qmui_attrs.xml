@@ -74,8 +74,13 @@
     <declare-styleable name="QMUITabSegment">
         <attr name="qmui_tab_indicator_height" format="dimension"/>
         <attr name="qmui_tab_has_indicator" format="boolean"/>
-        <attr name="android:textSize"/>
         <attr name="qmui_tab_indicator_top" format="boolean"/>
+        <attr name="qmui_tab_indicator_with_follow_content" format="boolean"/>
+        <attr name="android:textSize"/>
+        <attr name="qmui_tab_normal_text_size" format="dimension"/>
+        <attr name="qmui_tab_selected_text_size" format="dimension"/>
+        <attr name="qmui_tab_normal_color" format="color|reference"/>
+        <attr name="qmui_tab_selected_color" format="color|reference"/>
         <attr name="qmui_tab_mode" format="enum">
             <enum name="scrollable" value="0"/>
             <enum name="fixed" value="1"/>
@@ -87,7 +92,6 @@
             <enum name="right" value="2"/>
             <enum name="bottom" value="3"/>
         </attr>
-        <attr name="qmui_tab_typeface_provider" format="string"/>
     </declare-styleable>
     <attr name="QMUITabSegmentStyle" format="reference"/>
 

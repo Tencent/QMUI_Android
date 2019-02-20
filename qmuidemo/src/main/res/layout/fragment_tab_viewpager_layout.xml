@@ -27,7 +27,7 @@
         android:orientation="vertical"
         android:background="@color/qmui_config_color_white">
 
-        <com.qmuiteam.qmui.widget.QMUITabSegment
+        <com.qmuiteam.qmui.widget.tab.QMUITabSegment
             android:id="@+id/tabSegment"
             android:layout_width="match_parent"
             android:layout_height="40dp"

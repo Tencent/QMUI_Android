@@ -20,7 +20,10 @@
     <style name="QMUI.TabSegment">
         <item name="qmui_tab_has_indicator">false</item>
         <item name="qmui_tab_indicator_height">@dimen/qmui_tab_segment_indicator_height</item>
-        <item name="android:textSize">@dimen/qmui_tab_segment_text_size</item>
+        <item name="qmui_tab_normal_text_size">@dimen/qmui_tab_segment_text_size</item>
+        <item name="qmui_tab_selected_text_size">@dimen/qmui_tab_segment_text_size</item>
+        <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_5</item>
+        <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
         <item name="qmui_tab_indicator_top">false</item>
         <item name="qmui_tab_icon_position">left</item>
     </style>

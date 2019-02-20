@@ -45,6 +45,20 @@ public class QMUILangHelper {
         return (int) (Math.log10(number) + 1);
     }
 
+
+    public static String formatNumberToLimitedDigits(int number, int maxDigits) {
+        if (getNumberDigits(number) > maxDigits) {
+            StringBuilder result = new StringBuilder();
+            for (int digit = 1; digit <= maxDigits; digit++) {
+                result.append("9");
+            }
+            result.append("+");
+            return result.toString();
+        } else {
+            return String.valueOf(number);
+        }
+    }
+
     /**
      * 规范化价格字符串显示的工具类
      *

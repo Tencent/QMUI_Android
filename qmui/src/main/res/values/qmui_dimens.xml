@@ -47,8 +47,8 @@
     **********************************************-->
     <dimen name="qmui_tab_segment_indicator_height">2dp</dimen>
     <dimen name="qmui_tab_segment_text_size">16sp</dimen>
-    <dimen name="qmui_tab_sign_count_view_minSize_with_text">16dp</dimen>
-    <dimen name="qmui_tab_sign_count_view_minSize">8dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize_with_text">14dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_minSize">6dp</dimen>
 
 
     <!--**********************************************
@@ -61,8 +61,10 @@
 
 
     <!-- 全局统一的界面左右间距，例如列表分隔线inset -->
-    <dimen name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</dimen> <!-- 已废弃 -->
-    <dimen name="qmui_content_spacing_horizontal">16dp</dimen> <!-- margin 和 padding 等使用的内容通用水平间距 -->
+    <dimen name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal
+    </dimen> <!-- 已废弃 -->
+    <dimen name="qmui_content_spacing_horizontal">16dp
+    </dimen> <!-- margin 和 padding 等使用的内容通用水平间距 -->
     <!-- 提示标点 -->
     <dimen name="qmui_tips_point_size">8dp</dimen>
 </resources>
