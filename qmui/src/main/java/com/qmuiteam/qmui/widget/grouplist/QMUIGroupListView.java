@@ -258,15 +258,7 @@ public class QMUIGroupListView extends LinearLayout {
          * @return Section 本身, 支持链式调用
          */
         public Section addItemView(final QMUICommonListItemView itemView, OnClickListener onClickListener, OnLongClickListener onLongClickListener) {
-            // 如果本身带有开关控件，点击item时要改变开关控件的状态（开关控件本身已经disable掉）
-            if (itemView.getAccessoryType() == QMUICommonListItemView.ACCESSORY_TYPE_SWITCH) {
-                itemView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        itemView.getSwitch().toggle();
-                    }
-                });
-            } else if (onClickListener != null) {
+            if (onClickListener != null) {
                 itemView.setOnClickListener(onClickListener);
             }
 

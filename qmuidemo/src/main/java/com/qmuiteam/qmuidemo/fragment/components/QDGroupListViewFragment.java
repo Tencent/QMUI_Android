@@ -120,6 +120,9 @@ public class QDGroupListViewFragment extends BaseFragment {
                 if (v instanceof QMUICommonListItemView) {
                     CharSequence text = ((QMUICommonListItemView) v).getText();
                     Toast.makeText(getActivity(), text + " is Clicked", Toast.LENGTH_SHORT).show();
+                    if (((QMUICommonListItemView) v).getAccessoryType() == QMUICommonListItemView.ACCESSORY_TYPE_SWITCH) {
+                        ((QMUICommonListItemView) v).getSwitch().toggle();
+                    }
                 }
             }
         };

@@ -19,9 +19,6 @@ package com.qmuiteam.qmui.widget.grouplist;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.IntDef;
-import androidx.legacy.widget.Space;
-
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -30,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -44,6 +40,9 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.legacy.widget.Space;
 
 /**
  * 作为通用列表 {@link QMUIGroupListView} 里的 item 使用，也可以单独使用。
@@ -301,9 +300,6 @@ public class QMUICommonListItemView extends RelativeLayout {
 
     /**
      * 设置右侧 View 的类型。
-     * <p>
-     * 注意如果 type 为 {@link #ACCESSORY_TYPE_SWITCH}, 那么 switch 的切换事件应该 {@link #getSwitch()} 后用 {@link CheckBox#setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener)} 来监听
-     * </p>
      *
      * @param type 见 {@link QMUICommonListItemAccessoryType}
      */
