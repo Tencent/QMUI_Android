@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -28,6 +29,8 @@ import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleObserver;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -58,6 +61,12 @@ public class QDViewPagerFragment extends BaseFragment {
         initGroupListView();
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLazyViewLifecycleOwner().getLifecycle().addObserver(new QDLazyTestObserver("QDViewPager"));
     }
 
     private void initTopBar() {

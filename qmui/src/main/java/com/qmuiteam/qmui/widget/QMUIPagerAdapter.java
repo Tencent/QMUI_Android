@@ -16,9 +16,11 @@
 
 package com.qmuiteam.qmui.widget;
 
-import androidx.viewpager.widget.PagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * @author cginechen
@@ -37,14 +39,16 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
      * that doesn't yet contain any domain data ("real" data),
      * and then populating it with domain data.
      */
-    protected abstract Object hydrate(ViewGroup container, int position);
+    @NonNull
+    protected abstract Object hydrate(@NonNull ViewGroup container, int position);
 
-    protected abstract void populate(ViewGroup container, Object item, int position);
+    protected abstract void populate(@NonNull ViewGroup container, @NonNull Object item, int position);
 
-    protected abstract void destroy(ViewGroup container, int position, Object object);
+    protected abstract void destroy(@NonNull ViewGroup container, int position, @NonNull Object object);
 
     @Override
-    public final Object instantiateItem(ViewGroup container, int position) {
+    @NonNull
+    public final Object instantiateItem(@NonNull ViewGroup container, int position) {
         Object item = mScrapItems.get(position);
         if (item == null) {
             item = hydrate(container, position);
@@ -56,7 +60,7 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public final void destroyItem(ViewGroup container, int position, Object object) {
+    public final void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         destroy(container, position, object);
         mScrapItems.put(position, object);
     }

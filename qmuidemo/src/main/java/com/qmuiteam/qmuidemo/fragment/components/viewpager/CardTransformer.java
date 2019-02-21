@@ -16,8 +16,9 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @author cginechen

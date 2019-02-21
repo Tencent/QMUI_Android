@@ -18,8 +18,6 @@ package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,14 +29,17 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUIViewPager;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -86,7 +87,7 @@ public class QDLoopViewPagerFragment extends BaseFragment {
         QMUIPagerAdapter pagerAdapter = new QMUIPagerAdapter() {
 
             @Override
-            public boolean isViewFromObject(View view, Object object) {
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
                 return view == object;
             }
 
@@ -101,19 +102,20 @@ public class QDLoopViewPagerFragment extends BaseFragment {
             }
 
             @Override
-            protected Object hydrate(ViewGroup container, int position) {
+            @NonNull
+            protected Object hydrate(@NonNull ViewGroup container, int position) {
                 return new ItemView(getContext());
             }
 
             @Override
-            protected void populate(ViewGroup container, Object item, int position) {
+            protected void populate(@NonNull ViewGroup container, @NonNull Object item, int position) {
                 ItemView itemView = (ItemView) item;
                 itemView.setText(mItems.get(position));
                 container.addView(itemView);
             }
 
             @Override
-            protected void destroy(ViewGroup container, int position, Object object) {
+            protected void destroy(@NonNull ViewGroup container, int position, @NonNull Object object) {
                 container.removeView((View) object);
             }
         };

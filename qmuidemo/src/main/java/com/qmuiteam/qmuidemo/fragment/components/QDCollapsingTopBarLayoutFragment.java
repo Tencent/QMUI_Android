@@ -17,14 +17,19 @@
 package com.qmuiteam.qmuidemo.fragment.components;
 
 import android.animation.ValueAnimator;
+
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDLazyTestObserver;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.adaptor.QDRecyclerViewAdapter;
@@ -70,6 +75,13 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLazyViewLifecycleOwner().getLifecycle().addObserver(
+                new QDLazyTestObserver("QDCollapsingTopBar"));
     }
 
     @Override
