@@ -18,13 +18,14 @@ package com.qmuiteam.qmui.arch;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+
+import androidx.annotation.Nullable;
 
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
 
@@ -68,6 +69,7 @@ public class QMUIActivity extends InnerBaseActivity {
         @Override
         public void onEdgeTouch(int edgeFlag) {
             Log.i(TAG, "SwipeListener:onEdgeTouch: edgeFlag = " + edgeFlag);
+            onDragStart();
             ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
             if (decorView != null) {
                 Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
@@ -185,6 +187,13 @@ public class QMUIActivity extends InnerBaseActivity {
         return 0;
     }
 
+    /**
+     * called when drag back started.
+     */
+    protected void onDragStart() {
+
+    }
+
 
     protected int dragBackEdge() {
         return EDGE_LEFT;
@@ -201,9 +210,10 @@ public class QMUIActivity extends InnerBaseActivity {
 
     /**
      * restore sub window(e.g dialog) when drag back to previous activity
+     *
      * @return
      */
-    protected boolean restoreSubWindowWhenDragBack(){
+    protected boolean restoreSubWindowWhenDragBack() {
         return true;
     }
 }
