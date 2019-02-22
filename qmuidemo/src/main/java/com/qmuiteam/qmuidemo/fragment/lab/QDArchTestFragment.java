@@ -35,6 +35,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.activity.ArchTestActivity;
+import com.qmuiteam.qmuidemo.activity.TestArchInViewPagerActivity;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
@@ -140,10 +141,11 @@ public class QDArchTestFragment extends BaseFragment {
                 .addItem("Directly Activity")
                 .addItem("Directly Activity And Keep Bottom Sheet shown")
                 .addItem("Show a Dialog")
+                .addItem("QMUIFragment in QMUIActivity")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        if(position != 4){
+                        if (position != 4) {
                             dialog.dismiss();
                         }
 
@@ -182,6 +184,9 @@ public class QDArchTestFragment extends BaseFragment {
                                         }
                                     })
                                     .show();
+                        } else if (position == 6) {
+                            Intent intent = new Intent(context, TestArchInViewPagerActivity.class);
+                            context.startActivity(intent);
                         }
                     }
                 })

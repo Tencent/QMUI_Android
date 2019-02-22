@@ -14,54 +14,43 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.fragment.components.viewpager;
+package com.qmuiteam.qmuidemo.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentPagerAdapter;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUIViewPager;
 import com.qmuiteam.qmuidemo.R;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
+import com.qmuiteam.qmuidemo.base.BaseActivity;
 import com.qmuiteam.qmuidemo.fragment.components.QDCollapsingTopBarLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentScrollableModeFragment;
-import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDFitSystemWindowViewPagerFragment;
+import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * @author cginechen
- * @date 2017-09-13
- */
-
-@Widget(name = "QDFitSystemWindowViewPagerFragment")
-public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
+public class TestArchInViewPagerActivity extends BaseActivity {
 
     @BindView(R.id.pager) QMUIViewPager mViewPager;
     @BindView(R.id.tabs) QMUITabSegment mTabSegment;
 
     @Override
-    protected View onCreateView() {
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_fsw_viewpager, null);
-        ButterKnife.bind(this, layout);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        View root = LayoutInflater.from(this).inflate(R.layout.fragment_fsw_viewpager, null);
+        ButterKnife.bind(this, root);
+        setContentView(root);
         initPagers();
-        return layout;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLazyViewLifecycleOwner().getLifecycle().addObserver(new QDLazyTestObserver("QDfSWViewPager"));
     }
 
     private void initPagers() {
-        QMUIFragmentPagerAdapter pagerAdapter = new QMUIFragmentPagerAdapter(getChildFragmentManager()) {
+        QMUIFragmentPagerAdapter pagerAdapter = new QMUIFragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public QMUIFragment createFragment(int position) {
                 switch (position) {
@@ -99,10 +88,5 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
         };
         mViewPager.setAdapter(pagerAdapter);
         mTabSegment.setupWithViewPager(mViewPager);
-    }
-
-    @Override
-    protected boolean canDragBack() {
-        return mViewPager.getCurrentItem() == 0;
     }
 }

@@ -28,10 +28,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -289,6 +291,25 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                         if (!canDragBack()) {
                             return false;
                         }
+
+                        if (getParentFragment() != null) {
+                            return false;
+                        }
+
+                        View view = getView();
+                        if (view == null) {
+                            return false;
+                        }
+
+                        // if the Fragment is in ViewPager, then stop drag back
+                        ViewParent parent = view.getParent();
+                        while (parent != null) {
+                            if (parent instanceof ViewPager) {
+                                return false;
+                            }
+                            parent = parent.getParent();
+                        }
+
                         FragmentManager fragmentManager = getFragmentManager();
                         if (fragmentManager == null || fragmentManager.getBackStackEntryCount() <= 1) {
                             return QMUISwipeBackActivityManager.getInstance().canSwipeBack();
