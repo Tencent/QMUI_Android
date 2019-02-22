@@ -16,6 +16,8 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.viewpager;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -58,6 +60,12 @@ public class QDViewPagerFragment extends BaseFragment {
         initGroupListView();
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLazyViewLifecycleOwner().getLifecycle().addObserver(new QDLazyTestObserver("QDViewPager"));
     }
 
     private void initTopBar() {
