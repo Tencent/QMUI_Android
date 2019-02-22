@@ -30,6 +30,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -419,6 +420,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                 return;
             }
             QMUIKeyboardHelper.hideKeyboard(mBaseView);
+            onDragStart();
             int backStackCount = fragmentManager.getBackStackEntryCount();
             if (backStackCount > 1) {
                 try {
@@ -641,11 +643,23 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
         return swipeBackLayout;
     }
 
+    protected void onBackPressed() {
+        popBackStack();
+    }
+
     protected void popBackStack() {
         if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
             return;
         }
         getBaseFragmentActivity().popBackStack();
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return false;
     }
 
     @Override
@@ -736,6 +750,13 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      */
     protected int backViewInitOffset() {
         return 0;
+    }
+
+    /**
+     * called when drag back started.
+     */
+    protected void onDragStart() {
+
     }
 
     protected int dragBackEdge() {

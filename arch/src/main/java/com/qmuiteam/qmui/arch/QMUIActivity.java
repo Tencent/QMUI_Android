@@ -68,6 +68,7 @@ public class QMUIActivity extends InnerBaseActivity {
         @Override
         public void onEdgeTouch(int edgeFlag) {
             Log.i(TAG, "SwipeListener:onEdgeTouch: edgeFlag = " + edgeFlag);
+            onDragStart();
             ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
             if (decorView != null) {
                 Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
@@ -185,6 +186,13 @@ public class QMUIActivity extends InnerBaseActivity {
         return 0;
     }
 
+    /**
+     * called when drag back started.
+     */
+    protected void onDragStart() {
+
+    }
+
 
     protected int dragBackEdge() {
         return EDGE_LEFT;
@@ -201,9 +209,10 @@ public class QMUIActivity extends InnerBaseActivity {
 
     /**
      * restore sub window(e.g dialog) when drag back to previous activity
+     *
      * @return
      */
-    protected boolean restoreSubWindowWhenDragBack(){
+    protected boolean restoreSubWindowWhenDragBack() {
         return true;
     }
 }
