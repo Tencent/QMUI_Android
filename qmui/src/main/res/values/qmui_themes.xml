@@ -54,6 +54,12 @@
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView.Compat</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Compat</item>
         <item name="android:textViewStyle">@style/TextView.Compat</item>
+
+        <item name="imageButtonStyle">@style/ImageButton.Compat</item>
+        <item name="buttonStyle">@style/Button.Compat</item>
+        <item name="editTextStyle">@style/EditText.Compat</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextView.Compat</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Compat</item>
     </style>
 
 
