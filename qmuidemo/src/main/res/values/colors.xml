@@ -25,6 +25,10 @@
     <color name="app_color_blue_2_disabled">#7F31BDF3</color>
     <color name="app_color_blue_2_pressed">#7F31BDF3</color>
 
+    <color name="app_color_blue_3">#EBF9FF</color>
+    <color name="app_color_blue_3_disabled">#7FEBF9FF</color>
+    <color name="app_color_blue_3_pressed">#7FEBF9FF</color>
+
     <color name="app_color_theme_1">#EF5362</color> <!-- Grapefruit -->
     <color name="app_color_theme_2">#FE6D4B</color> <!-- Bittersweet -->
     <color name="app_color_theme_3">#FFCF47</color> <!-- Sunflower -->

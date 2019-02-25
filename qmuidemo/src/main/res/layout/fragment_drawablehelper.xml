@@ -112,9 +112,9 @@
                 style="@style/QDCommonTitle"
                 android:text="@string/drawableHelper_create_from_view_title"/>
 
-            <Button
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                 android:id="@+id/createFromView"
-                style="@style/QDRadiusButton"
+                style="@style/QDRoundButtonStyle"
                 android:text="@string/drawableHelper_create_from_view_button"/>
 
         </LinearLayout>

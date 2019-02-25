@@ -62,21 +62,23 @@
                 android:layout_marginTop="50dp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                     android:id="@+id/startBtn"
-                    style="@style/QDRadiusButton"
+                    style="@style/QDRoundButtonStyle"
+                    android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="@string/progress_start_button_text"/>
+                    android:text="@string/progress_start_button_text" />
 
                 <Space
                     android:layout_width="@dimen/qmui_content_padding_horizontal"
-                    android:layout_height="0dp"/>
+                    android:layout_height="0dp" />
 
-                <Button
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                     android:id="@+id/backBtn"
-                    style="@style/QDRadiusButton"
+                    style="@style/QDRoundButtonStyle"
+                    android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="@string/progress_back_button_text"/>
+                    android:text="@string/progress_back_button_text" />
 
             </LinearLayout>
 

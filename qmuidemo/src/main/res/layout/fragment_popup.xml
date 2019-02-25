@@ -33,9 +33,9 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <Button
-                android:id="@+id/actiontBtn1"
-                style="@style/QDRadiusButton"
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/actionBtn1"
+                style="@style/QDRoundButtonStyle"
                 android:layout_centerInParent="true"
                 android:text="@string/popup_normal_action_button_text_show"/>
 
@@ -51,9 +51,9 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <Button
-                android:id="@+id/actiontBtn2"
-                style="@style/QDRadiusButton"
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/actionBtn2"
+                style="@style/QDRoundButtonStyle"
                 android:layout_centerInParent="true"
                 android:text="@string/popup_list_action_button_text_show"/>
 

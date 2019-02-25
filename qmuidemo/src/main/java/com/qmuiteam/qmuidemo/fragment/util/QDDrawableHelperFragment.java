@@ -20,10 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -31,13 +29,15 @@ import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -50,7 +50,7 @@ import butterknife.ButterKnife;
 public class QDDrawableHelperFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.createFromView) Button mCreateFromViewButton;
+    @BindView(R.id.createFromView) QMUIRoundButton mCreateFromViewButton;
     @BindView(R.id.solidImage) ImageView mSolidImageView;
     @BindView(R.id.circleGradient) ImageView mCircleGradientView;
     @BindView(R.id.tintColor) ImageView mTintColorImageView;

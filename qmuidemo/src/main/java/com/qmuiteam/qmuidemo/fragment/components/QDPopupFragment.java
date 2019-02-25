@@ -26,6 +26,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.alpha.QMUIAlphaButton;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.popup.QMUIListPopup;
@@ -55,25 +56,25 @@ public class QDPopupFragment extends BaseFragment {
 
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
-    @BindView(R.id.actiontBtn1)
-    Button mActionButton1;
-    @BindView(R.id.actiontBtn2)
-    Button mActionButton2;
+    @BindView(R.id.actionBtn1)
+    QMUIAlphaButton mActionButton1;
+    @BindView(R.id.actionBtn2)
+    QMUIAlphaButton mActionButton2;
 
     private QMUIPopup mNormalPopup;
     private QMUIListPopup mListPopup;
 
-    @OnClick({R.id.actiontBtn1, R.id.actiontBtn2})
+    @OnClick({R.id.actionBtn1, R.id.actionBtn2})
     void onClick(View v) {
         switch (v.getId()) {
-            case R.id.actiontBtn1:
+            case R.id.actionBtn1:
                 initNormalPopupIfNeed();
                 mNormalPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
                 mNormalPopup.setPreferredDirection(QMUIPopup.DIRECTION_TOP);
                 mNormalPopup.show(v);
                 mActionButton1.setText(getContext().getResources().getString(R.string.popup_normal_action_button_text_hide));
                 break;
-            case R.id.actiontBtn2:
+            case R.id.actionBtn2:
                 initListPopupIfNeed();
                 mListPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
                 mListPopup.setPreferredDirection(QMUIPopup.DIRECTION_TOP);

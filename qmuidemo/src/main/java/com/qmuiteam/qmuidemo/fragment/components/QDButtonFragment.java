@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -36,6 +37,9 @@ public class QDButtonFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
 
+    @BindView(R.id.alpha_button)
+    QMUIRoundButton alphaButton;
+
     private QDItemDescription mQDItemDescription;
 
     @Override
@@ -43,6 +47,8 @@ public class QDButtonFragment extends BaseFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_button, null);
         ButterKnife.bind(this, view);
         mQDItemDescription = QDDataManager.getInstance().getDescription(this.getClass());
+
+        alphaButton.setChangeAlphaWhenPress(true);
 
         initTopBar();
 
