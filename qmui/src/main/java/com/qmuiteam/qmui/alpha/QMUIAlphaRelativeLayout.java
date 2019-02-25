@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaRelativeLayout extends RelativeLayout {
+public class QMUIAlphaRelativeLayout extends RelativeLayout implements QMUIAlphaWidgetInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 
@@ -63,6 +63,7 @@ public class QMUIAlphaRelativeLayout extends RelativeLayout {
      *
      * @param changeAlphaWhenPress 是否要在 press 时改变透明度
      */
+    @Override
     public void setChangeAlphaWhenPress(boolean changeAlphaWhenPress) {
         getAlphaViewHelper().setChangeAlphaWhenPress(changeAlphaWhenPress);
     }
@@ -72,6 +73,7 @@ public class QMUIAlphaRelativeLayout extends RelativeLayout {
      *
      * @param changeAlphaWhenDisable 是否要在 disabled 时改变透明度
      */
+    @Override
     public void setChangeAlphaWhenDisable(boolean changeAlphaWhenDisable) {
         getAlphaViewHelper().setChangeAlphaWhenDisable(changeAlphaWhenDisable);
     }
