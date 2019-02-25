@@ -23,7 +23,7 @@ import android.widget.FrameLayout;
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaFrameLayout extends FrameLayout implements QMUIAlphaWidgetInf {
+public class QMUIAlphaFrameLayout extends FrameLayout implements QMUIAlphaViewInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 

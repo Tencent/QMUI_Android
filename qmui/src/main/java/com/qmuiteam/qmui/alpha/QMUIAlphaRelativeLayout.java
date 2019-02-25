@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaRelativeLayout extends RelativeLayout implements QMUIAlphaWidgetInf {
+public class QMUIAlphaRelativeLayout extends RelativeLayout implements QMUIAlphaViewInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 

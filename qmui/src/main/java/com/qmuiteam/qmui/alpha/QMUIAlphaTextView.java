@@ -23,7 +23,7 @@ import android.util.AttributeSet;
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaTextView extends AppCompatTextView implements QMUIAlphaWidgetInf {
+public class QMUIAlphaTextView extends AppCompatTextView implements QMUIAlphaViewInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 

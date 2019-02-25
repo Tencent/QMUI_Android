@@ -20,7 +20,7 @@ import android.content.Context;
 import androidx.appcompat.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 
-public class QMUIAlphaImageButton extends AppCompatImageButton implements QMUIAlphaWidgetInf {
+public class QMUIAlphaImageButton extends AppCompatImageButton implements QMUIAlphaViewInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 

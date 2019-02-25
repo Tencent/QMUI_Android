@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaLinearLayout extends LinearLayout implements QMUIAlphaWidgetInf {
+public class QMUIAlphaLinearLayout extends LinearLayout implements QMUIAlphaViewInf {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 
