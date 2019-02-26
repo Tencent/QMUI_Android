@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -56,7 +58,7 @@ import java.util.Set;
  * @author cginechen
  * @date 2017-03-17
  */
-public class QMUILinkTextView extends TextView implements QMUIOnSpanClickListener, ISpanTouchFix {
+public class QMUILinkTextView extends AppCompatTextView implements QMUIOnSpanClickListener, ISpanTouchFix {
     private static final String TAG = "LinkTextView";
     private static final int MSG_CHECK_DOUBLE_TAP_TIMEOUT = 1000;
     public static int AUTO_LINK_MASK_REQUIRED = QMUILinkify.PHONE_NUMBERS | QMUILinkify.EMAIL_ADDRESSES | QMUILinkify.WEB_URLS;

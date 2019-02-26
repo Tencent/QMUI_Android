@@ -24,14 +24,15 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
- * 在 {@link TextView} 的基础上支持文字竖排
+ * 在 {@link android.widget.TextView} 的基础上支持文字竖排
  *
  * <p>默认将文字竖排显示, 可使用 {@link #setVerticalMode(boolean)} 来开启/关闭竖排功能</p>
  */
-public class QMUIVerticalTextView extends TextView {
+public class QMUIVerticalTextView extends AppCompatTextView  {
 
     /**
      * 是否将文字显示成竖排

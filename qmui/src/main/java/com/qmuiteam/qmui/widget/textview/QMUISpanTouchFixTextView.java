@@ -24,8 +24,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
+import com.qmuiteam.qmui.span.QMUITouchableSpan;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * <p>
@@ -51,7 +53,7 @@ import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
  * @see QMUITouchableSpan
  * @see QMUILinkTouchMovementMethod
  */
-public class QMUISpanTouchFixTextView extends TextView implements ISpanTouchFix {
+public class QMUISpanTouchFixTextView extends AppCompatTextView implements ISpanTouchFix {
     /**
      * 记录当前 Touch 事件对应的点是不是点在了 span 上面
      */
