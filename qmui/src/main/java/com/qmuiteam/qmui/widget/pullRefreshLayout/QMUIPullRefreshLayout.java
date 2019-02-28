@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.pullRefreshLayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
@@ -130,6 +131,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private Scroller mScroller;
     private int mScrollFlag = 0;
     private boolean mNestScrollDurationRefreshing = false;
+    private Runnable mPendingRefreshDirectlyAction = null;
 
 
     public QMUIPullRefreshLayout(Context context) {
@@ -505,6 +507,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 }
             }
         }
+        if (mTargetView != null && mPendingRefreshDirectlyAction != null) {
+            Runnable runnable = mPendingRefreshDirectlyAction;
+            mPendingRefreshDirectlyAction = null;
+            runnable.run();
+        }
     }
 
     /**
@@ -611,9 +618,50 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         invalidate();
     }
 
+    public void setToRefreshDirectly() {
+        setToRefreshDirectly(0);
+    }
+
+    public void setToRefreshDirectly(final long delay) {
+        if (mTargetView != null) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setTargetViewToTop(mTargetView);
+                    onRefresh();
+                    mScrollFlag = FLAG_NEED_SCROLL_TO_REFRESH_POSITION;
+                    invalidate();
+                }
+            }, delay);
+
+        } else {
+            mPendingRefreshDirectlyAction = new Runnable() {
+                @Override
+                public void run() {
+                    setToRefreshDirectly(delay);
+                }
+            };
+        }
+    }
+
 
     public void setEnableOverPull(boolean enableOverPull) {
         mEnableOverPull = enableOverPull;
+    }
+
+    protected void setTargetViewToTop(View targetView) {
+        if (targetView instanceof RecyclerView) {
+            ((RecyclerView) targetView).scrollToPosition(0);
+        } else if (targetView instanceof AbsListView) {
+            AbsListView listView = (AbsListView) targetView;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                listView.setSelectionFromTop(0, 0);
+            } else {
+                listView.setSelection(0);
+            }
+        } else {
+            targetView.scrollTo(0, 0);
+        }
     }
 
 
@@ -922,13 +970,13 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                     // 这里必须要 dispatch 一次 down 事件，否则不能触发 NestScroll，具体可参考 RecyclerView
                     // down 过程中会触发 onStopNestedScroll，mNestScrollDurationRefreshing 必须在之后
                     // 置为false，否则会触发 finishPull
-                    ev.offsetLocation(0, -mSystemTouchSlop-1);
+                    ev.offsetLocation(0, -mSystemTouchSlop - 1);
                     ev.setAction(MotionEvent.ACTION_DOWN);
                     super.dispatchTouchEvent(ev);
                     mNestScrollDurationRefreshing = false;
                     ev.setAction(action);
                     // offset touch slop, 避免触发点击事件
-                    ev.offsetLocation(0, mSystemTouchSlop+1);
+                    ev.offsetLocation(0, mSystemTouchSlop + 1);
                 }
             } else {
                 mNestScrollDurationRefreshing = false;
