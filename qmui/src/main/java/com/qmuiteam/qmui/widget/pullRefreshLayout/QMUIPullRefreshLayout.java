@@ -699,6 +699,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         return Math.abs(dy) > Math.abs(dx);
     }
 
+    public boolean isDragging() {
+        return mIsDragging;
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -733,6 +737,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         mScroller.abortAnimation();
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
         mNestedScrollInProgress = true;
+        mIsDragging = true;
     }
 
     @Override
@@ -770,6 +775,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         mNestedScrollingParentHelper.onStopNestedScroll(child);
         if (mNestedScrollInProgress) {
             mNestedScrollInProgress = false;
+            mIsDragging = false;
             if (!mNestScrollDurationRefreshing) {
                 finishPull(0);
             }
@@ -783,6 +789,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 " ; velocityX = " + velocityX + " ; velocityY = " + velocityY);
         if (mTargetCurrentOffset > mTargetInitOffset) {
             mNestedScrollInProgress = false;
+            mIsDragging = false;
             if (!mNestScrollDurationRefreshing) {
                 finishPull((int) -velocityY);
             }
@@ -812,10 +819,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     private int moveTargetViewTo(int target, boolean isDragging, boolean calculateAnyWay) {
-        target = Math.max(target, mTargetInitOffset);
-        if (!mEnableOverPull) {
-            target = Math.min(target, mTargetRefreshOffset);
-        }
+        target = calculateTargetOffset(target, mTargetInitOffset, mTargetRefreshOffset, mEnableOverPull);
         int offset = 0;
         if (target != mTargetCurrentOffset || calculateAnyWay) {
             offset = target - mTargetCurrentOffset;
@@ -846,6 +850,14 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             }
         }
         return offset;
+    }
+
+    protected int calculateTargetOffset(int target, int targetInitOffset, int targetRefreshOffset, boolean enableOverPull) {
+        target = Math.max(target, targetInitOffset);
+        if (!enableOverPull) {
+            target = Math.min(target, targetRefreshOffset);
+        }
+        return target;
     }
 
     private void acquireVelocityTracker(final MotionEvent event) {
