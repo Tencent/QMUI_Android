@@ -115,6 +115,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
      * 刷新时TargetView(ListView或者ScrollView等)的位置
      */
     private int mTargetRefreshOffset;
+    private boolean mDisableNestScrollImpl = false;
     private boolean mEnableOverPull = true;
     private boolean mNestedScrollInProgress;
     private int mActivePointerId = INVALID_POINTER;
@@ -123,7 +124,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private float mInitialDownX;
     @SuppressWarnings("FieldCanBeLocal") private float mInitialMotionY;
     private float mLastMotionY;
-    @SuppressWarnings("FieldCanBeLocal") private float mDragRate = 0.65f;
+    private float mDragRate = 0.65f;
     private RefreshOffsetCalculator mRefreshOffsetCalculator;
     private VelocityTracker mVelocityTracker;
     private float mMaxVelocity;
@@ -205,6 +206,16 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     public void setOnPullListener(OnPullListener listener) {
         mListener = listener;
+    }
+
+    public void setDisableNestScrollImpl(boolean disableNestScrollImpl) {
+        mDisableNestScrollImpl = disableNestScrollImpl;
+    }
+
+    public void setDragRate(float dragRate) {
+        // have no idea to change drag rate for nest scroll
+        mDisableNestScrollImpl = true;
+        mDragRate = dragRate;
     }
 
     public void setChildScrollUpCallback(OnChildScrollUpCallback childScrollUpCallback) {
@@ -728,7 +739,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         info("onStartNestedScroll: nestedScrollAxes = " + nestedScrollAxes);
-        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        return !mDisableNestScrollImpl && isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
