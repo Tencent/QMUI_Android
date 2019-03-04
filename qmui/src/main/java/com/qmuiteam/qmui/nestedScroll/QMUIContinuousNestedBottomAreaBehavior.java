@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.richNest;
+package com.qmuiteam.qmui.nestedScroll;
 
 import android.graphics.Rect;
 import android.util.Log;
@@ -28,7 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
 
-public class QMUIRichNestedBottomAreaBehavior extends QMUIViewOffsetBehavior<View> {
+public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavior<View> {
 
     private final Rect tempRect1 = new Rect();
     private final Rect tempRect2 = new Rect();
@@ -106,7 +106,7 @@ public class QMUIRichNestedBottomAreaBehavior extends QMUIViewOffsetBehavior<Vie
 
     @Override
     public boolean layoutDependsOn(@NonNull CoordinatorLayout parent, @NonNull View child, @NonNull View dependency) {
-        return dependency instanceof IQMUIRichNestedTopView;
+        return dependency instanceof IQMUIContinuousNestedTopView;
     }
 
     @Override

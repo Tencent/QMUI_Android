@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.richNest;
+package com.qmuiteam.qmui.nestedScroll;
 
-public interface IQMUINestedBottomView {
+public interface IQMUIContinuousNestedBottomView {
     /**
      * consume scroll
      * @param dyUnconsumed the delta value to consume

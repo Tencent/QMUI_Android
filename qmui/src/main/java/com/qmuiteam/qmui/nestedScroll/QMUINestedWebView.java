@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.richNest;
+package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
 import android.os.Build;

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.richNest;
+package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -30,7 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 
-public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
+public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
 
     private static final int INVALID_POINTER = -1;
 
@@ -43,12 +44,12 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
     private int touchSlop = -1;
     private VelocityTracker velocityTracker;
 
-    public QMUIRichNestTopAreaBehavior(Context context) {
+    public QMUIContinuesNestTopAreaBehavior(Context context) {
         this(context, null);
     }
 
 
-    public QMUIRichNestTopAreaBehavior(Context context, AttributeSet attrs) {
+    public QMUIContinuesNestTopAreaBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mViewFlinger = new ViewFlinger(context);
     }
@@ -65,6 +66,11 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
             return true;
         }
 
+        if (action == MotionEvent.ACTION_POINTER_DOWN) {
+            Log.i("cgine", "fuck pointer down");
+            return true;
+        }
+
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 mViewFlinger.stop();
@@ -77,6 +83,14 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
                     ensureVelocityTracker();
                 }
                 break;
+            }
+
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                final int actionIndex = ev.getActionIndex();
+                return actionIndex != 0 &&
+                        !parent.isPointInChildBounds(child, (int) ev.getX(), (int) ev.getY())
+                        && parent.isPointInChildBounds(
+                        child, (int) ev.getX(actionIndex), (int) ev.getY(actionIndex));
             }
 
             case MotionEvent.ACTION_MOVE: {
@@ -195,8 +209,8 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
         mScrollConsumed[1] = 0;
         onNestedPreScroll(parent, child, child, 0, dy, mScrollConsumed, ViewCompat.TYPE_TOUCH);
         int unConsumed = dy - mScrollConsumed[1];
-        if (child instanceof IQMUIRichNestedTopView) {
-            unConsumed = ((IQMUIRichNestedTopView) child).consumeScroll(unConsumed);
+        if (child instanceof IQMUIContinuousNestedTopView) {
+            unConsumed = ((IQMUIContinuousNestedTopView) child).consumeScroll(unConsumed);
         }
         onNestedScroll(parent, child, child, 0, dy - unConsumed,
                 0, unConsumed, ViewCompat.TYPE_TOUCH, mScrollConsumed);
@@ -279,10 +293,10 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
                     } else if (bottomView.getBottom() - parent.getHeight() > 0) {
                         int moveDistance = bottomView.getBottom() - parent.getHeight();
                         setTopAndBottomOffset(target.getTop() - moveDistance - getLayoutTop());
-                        int innerUnConsumed = ((IQMUINestedBottomView) bottomView).consumeScroll(dyUnconsumed - moveDistance);
+                        int innerUnConsumed = ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed - moveDistance);
                         consumed[1] += dyUnconsumed - innerUnConsumed;
                     } else {
-                        consumed[1] += dyUnconsumed - ((IQMUINestedBottomView) bottomView).consumeScroll(dyUnconsumed);
+                        consumed[1] += dyUnconsumed - ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed);
                     }
                 }
             }
@@ -295,10 +309,10 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
                 } else if (child.getTop() < 0) {
                     int top = child.getTop();
                     setTopAndBottomOffset(0 - getLayoutTop());
-                    int innerUnConsumed = ((IQMUIRichNestedTopView) child).consumeScroll(dyUnconsumed - top);
+                    int innerUnConsumed = ((IQMUIContinuousNestedTopView) child).consumeScroll(dyUnconsumed - top);
                     consumed[1] += dyUnconsumed - innerUnConsumed;
-                } else if (child instanceof IQMUIRichNestedTopView) {
-                    consumed[1] += dyUnconsumed - ((IQMUIRichNestedTopView) child).consumeScroll(dyUnconsumed);
+                } else if (child instanceof IQMUIContinuousNestedTopView) {
+                    consumed[1] += dyUnconsumed - ((IQMUIContinuousNestedTopView) child).consumeScroll(dyUnconsumed);
                 }
             }
         }
@@ -314,7 +328,7 @@ public class QMUIRichNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
     private View findBottomView(CoordinatorLayout parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
-            if (child instanceof IQMUINestedBottomView) {
+            if (child instanceof IQMUIContinuousNestedBottomView) {
                 return child;
             }
         }
