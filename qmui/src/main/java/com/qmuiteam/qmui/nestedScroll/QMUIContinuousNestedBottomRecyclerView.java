@@ -37,8 +37,7 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView impleme
     }
 
     @Override
-    public int consumeScroll(int yUnconsumed) {
+    public void consumeScroll(int yUnconsumed) {
         scrollBy(0, yUnconsumed);
-        return 0;
     }
 }

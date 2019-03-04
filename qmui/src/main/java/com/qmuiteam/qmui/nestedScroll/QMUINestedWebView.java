@@ -32,6 +32,7 @@ import android.widget.OverScroller;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
 import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
+import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
 public class QMUINestedWebView extends QMUIWebView implements NestedScrollingChild {
     private static final String TAG = "QMUINestedWebView";
@@ -312,18 +313,10 @@ public class QMUINestedWebView extends QMUIWebView implements NestedScrollingChi
         super.scrollTo(x, y);
     }
 
-    static final Interpolator sQuinticInterpolator = new Interpolator() {
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
-
     class ViewFlinger implements Runnable {
         private int mLastFlingY;
         OverScroller mOverScroller;
-        Interpolator mInterpolator = sQuinticInterpolator;
+        Interpolator mInterpolator = QUNITIC_INTERPOLATOR;
 
         // When set to true, postOnAnimation callbacks are delayed until the run method completes
         private boolean mEatRunOnAnimationRequest = false;
@@ -332,7 +325,7 @@ public class QMUINestedWebView extends QMUIWebView implements NestedScrollingChi
         private boolean mReSchedulePostAnimationCallback = false;
 
         ViewFlinger() {
-            mOverScroller = new OverScroller(getContext(), sQuinticInterpolator);
+            mOverScroller = new OverScroller(getContext(), QUNITIC_INTERPOLATOR);
         }
 
         @Override
@@ -398,9 +391,9 @@ public class QMUINestedWebView extends QMUIWebView implements NestedScrollingChi
             // Because you can't define a custom interpolator for flinging, we should make sure we
             // reset ourselves back to the teh default interpolator in case a different call
             // changed our interpolator.
-            if (mInterpolator != sQuinticInterpolator) {
-                mInterpolator = sQuinticInterpolator;
-                mOverScroller = new OverScroller(getContext(), sQuinticInterpolator);
+            if (mInterpolator != QUNITIC_INTERPOLATOR) {
+                mInterpolator = QUNITIC_INTERPOLATOR;
+                mOverScroller = new OverScroller(getContext(), QUNITIC_INTERPOLATOR);
             }
             mOverScroller.fling(0, 0, 0, velocityY,
                     Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -445,12 +438,12 @@ public class QMUINestedWebView extends QMUIWebView implements NestedScrollingChi
         }
 
         public void smoothScrollBy(int dx, int dy, int duration) {
-            smoothScrollBy(dx, dy, duration, sQuinticInterpolator);
+            smoothScrollBy(dx, dy, duration, QUNITIC_INTERPOLATOR);
         }
 
         public void smoothScrollBy(int dx, int dy, Interpolator interpolator) {
             smoothScrollBy(dx, dy, computeScrollDuration(dx, dy, 0, 0),
-                    interpolator == null ? sQuinticInterpolator : interpolator);
+                    interpolator == null ? QUNITIC_INTERPOLATOR : interpolator);
         }
 
         public void smoothScrollBy(int dx, int dy, int duration, Interpolator interpolator) {

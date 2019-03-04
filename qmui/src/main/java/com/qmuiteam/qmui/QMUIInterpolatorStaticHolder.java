@@ -34,4 +34,11 @@ public class QMUIInterpolatorStaticHolder {
     public static final Interpolator FAST_OUT_LINEAR_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
     public static final Interpolator LINEAR_OUT_SLOW_IN_INTERPOLATOR = new LinearOutSlowInInterpolator();
     public static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
+    public static final Interpolator QUNITIC_INTERPOLATOR = new Interpolator() {
+        @Override
+        public float getInterpolation(float t) {
+            t -= 1.0f;
+            return t * t * t * t * t + 1.0f;
+        }
+    };
 }

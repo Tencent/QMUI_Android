@@ -30,7 +30,9 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.OverScroller;
 
-public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
+import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
+
+public class QMUIContinuousNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
 
     private static final int INVALID_POINTER = -1;
 
@@ -43,12 +45,12 @@ public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vie
     private int touchSlop = -1;
     private VelocityTracker velocityTracker;
 
-    public QMUIContinuesNestTopAreaBehavior(Context context) {
+    public QMUIContinuousNestTopAreaBehavior(Context context) {
         this(context, null);
     }
 
 
-    public QMUIContinuesNestTopAreaBehavior(Context context, AttributeSet attrs) {
+    public QMUIContinuousNestTopAreaBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mViewFlinger = new ViewFlinger(context);
     }
@@ -62,11 +64,6 @@ public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vie
         final int action = ev.getAction();
 
         if (action == MotionEvent.ACTION_MOVE && isBeingDragged) {
-            return true;
-        }
-
-        if (action == MotionEvent.ACTION_POINTER_DOWN) {
-            Log.i("cgine", "fuck pointer down");
             return true;
         }
 
@@ -330,18 +327,10 @@ public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vie
     }
 
 
-    static final Interpolator sQuinticInterpolator = new Interpolator() {
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
-
     class ViewFlinger implements Runnable {
         private int mLastFlingY;
         OverScroller mOverScroller;
-        Interpolator mInterpolator = sQuinticInterpolator;
+        Interpolator mInterpolator = QUNITIC_INTERPOLATOR;
 
         // When set to true, postOnAnimation callbacks are delayed until the run method completes
         private boolean mEatRunOnAnimationRequest = false;
@@ -353,7 +342,7 @@ public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vie
         private View mCurrentChild;
 
         ViewFlinger(Context context) {
-            mOverScroller = new OverScroller(context, sQuinticInterpolator);
+            mOverScroller = new OverScroller(context, QUNITIC_INTERPOLATOR);
         }
 
         @Override
@@ -405,9 +394,9 @@ public class QMUIContinuesNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vie
             // Because you can't define a custom interpolator for flinging, we should make sure we
             // reset ourselves back to the teh default interpolator in case a different call
             // changed our interpolator.
-            if (mInterpolator != sQuinticInterpolator) {
-                mInterpolator = sQuinticInterpolator;
-                mOverScroller = new OverScroller(mCurrentParent.getContext(), sQuinticInterpolator);
+            if (mInterpolator != QUNITIC_INTERPOLATOR) {
+                mInterpolator = QUNITIC_INTERPOLATOR;
+                mOverScroller = new OverScroller(mCurrentParent.getContext(), QUNITIC_INTERPOLATOR);
             }
             mOverScroller.fling(0, 0, 0, velocityY,
                     Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
