@@ -1,19 +1,3 @@
-/*
- * Tencent is pleased to support the open source community by making QMUI_Android available.
- *
- * Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
- *
- * Licensed under the MIT License (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- *
- * http://opensource.org/licenses/MIT
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.view.LayoutInflater;
@@ -21,6 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmuidemo.R;
@@ -30,10 +18,6 @@ import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuesNestTopAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestTopWebView;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,9 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(group = Group.Lab, name = "rich nest", iconRes = R.mipmap.icon_grid_in_progress)
-public class QDRichNestFragment extends BaseFragment {
-
+@Widget(group = Group.Other, name = "webview + recyclerview")
+public class QDContinuousNestedScroll1Fragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
 
@@ -77,11 +60,11 @@ public class QDRichNestFragment extends BaseFragment {
     }
 
     private void initCoordinatorLayout() {
-        mNestedWebView = new QMUIContinuousNestTopWebView(getContext());
+        mNestedWebView = new QMUIContinuousNestedTopWebView(getContext());
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
         CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
-        webViewLp.setBehavior(new QMUIContinuesNestTopAreaBehavior(getContext()));
+        webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
         mCoordinatorLayout.addView(mNestedWebView, webViewLp);
 
         mRecyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());

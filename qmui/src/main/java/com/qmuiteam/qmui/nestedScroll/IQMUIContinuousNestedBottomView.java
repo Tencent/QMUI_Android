@@ -20,7 +20,6 @@ public interface IQMUIContinuousNestedBottomView {
     /**
      * consume scroll
      * @param dyUnconsumed the delta value to consume
-     * @return the remain unConsumed value
      */
-    int consumeScroll(int dyUnconsumed);
+    void consumeScroll(int dyUnconsumed);
 }

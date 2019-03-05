@@ -40,7 +40,7 @@ import com.qmuiteam.qmuidemo.fragment.components.section.QDSectionLayoutFragment
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDAnimationListViewFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
-import com.qmuiteam.qmuidemo.fragment.lab.QDRichNestFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScrollFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDSnapHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDWebViewFixFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDColorHelperFragment;
@@ -134,7 +134,7 @@ public class QDDataManager {
         mLabNames.add(QDSnapHelperFragment.class);
         mLabNames.add(QDArchTestFragment.class);
         mLabNames.add(QDWebViewFixFragment.class);
-        mLabNames.add(QDRichNestFragment.class);
+        mLabNames.add(QDContinuousNestedScrollFragment.class);
     }
 
     public QDItemDescription getDescription(Class<? extends BaseFragment> cls) {

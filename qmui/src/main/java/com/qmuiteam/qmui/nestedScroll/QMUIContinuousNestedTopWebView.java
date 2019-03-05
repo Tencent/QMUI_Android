@@ -21,16 +21,16 @@ import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
-public class QMUIContinuousNestTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
-    public QMUIContinuousNestTopWebView(Context context) {
+public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
+    public QMUIContinuousNestedTopWebView(Context context) {
         super(context);
     }
 
-    public QMUIContinuousNestTopWebView(Context context, AttributeSet attrs) {
+    public QMUIContinuousNestedTopWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public QMUIContinuousNestTopWebView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public QMUIContinuousNestedTopWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
