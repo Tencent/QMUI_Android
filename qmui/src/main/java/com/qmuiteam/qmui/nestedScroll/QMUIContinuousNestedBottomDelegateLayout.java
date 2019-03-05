@@ -9,7 +9,6 @@ import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -26,7 +25,7 @@ import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
 
-public abstract class QMUIContinuousNestBottomDelegateLayout extends QMUIFrameLayout implements
+public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrameLayout implements
         NestedScrollingChild2, NestedScrollingParent2, IQMUIContinuousNestedBottomView {
 
     private final NestedScrollingParentHelper mParentHelper;
@@ -49,15 +48,15 @@ public abstract class QMUIContinuousNestBottomDelegateLayout extends QMUIFrameLa
     private int mNestedOffsetY = 0;
 
 
-    public QMUIContinuousNestBottomDelegateLayout(Context context) {
+    public QMUIContinuousNestedBottomDelegateLayout(Context context) {
         this(context, null);
     }
 
-    public QMUIContinuousNestBottomDelegateLayout(Context context, AttributeSet attrs) {
+    public QMUIContinuousNestedBottomDelegateLayout(Context context, AttributeSet attrs) {
         this(context, null, 0);
     }
 
-    public QMUIContinuousNestBottomDelegateLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public QMUIContinuousNestedBottomDelegateLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         mParentHelper = new NestedScrollingParentHelper(this);
@@ -533,7 +532,7 @@ public abstract class QMUIContinuousNestBottomDelegateLayout extends QMUIFrameLa
 
         private void internalPostOnAnimation() {
             removeCallbacks(this);
-            ViewCompat.postOnAnimation(QMUIContinuousNestBottomDelegateLayout.this, this);
+            ViewCompat.postOnAnimation(QMUIContinuousNestedBottomDelegateLayout.this, this);
 
         }
 

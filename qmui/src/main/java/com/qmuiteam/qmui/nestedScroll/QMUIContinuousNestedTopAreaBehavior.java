@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -32,7 +31,7 @@ import android.widget.OverScroller;
 
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
-public class QMUIContinuousNestTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
+public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
 
     private static final int INVALID_POINTER = -1;
 
@@ -45,12 +44,12 @@ public class QMUIContinuousNestTopAreaBehavior extends QMUIViewOffsetBehavior<Vi
     private int touchSlop = -1;
     private VelocityTracker velocityTracker;
 
-    public QMUIContinuousNestTopAreaBehavior(Context context) {
+    public QMUIContinuousNestedTopAreaBehavior(Context context) {
         this(context, null);
     }
 
 
-    public QMUIContinuousNestTopAreaBehavior(Context context, AttributeSet attrs) {
+    public QMUIContinuousNestedTopAreaBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mViewFlinger = new ViewFlinger(context);
     }

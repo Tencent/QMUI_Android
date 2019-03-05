@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestTopAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestTopWebView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -60,11 +60,11 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
     }
 
     private void initCoordinatorLayout() {
-        mNestedWebView = new QMUIContinuousNestTopWebView(getContext());
+        mNestedWebView = new QMUIContinuousNestedTopWebView(getContext());
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
         CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
-        webViewLp.setBehavior(new QMUIContinuousNestTopAreaBehavior(getContext()));
+        webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
         mCoordinatorLayout.addView(mNestedWebView, webViewLp);
 
         mRecyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());
