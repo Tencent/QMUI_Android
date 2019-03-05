@@ -1,7 +1,17 @@
 apply plugin: 'com.android.application'
 
-def cmd = 'git rev-list HEAD --count'
-def gitVersion = cmd.execute().text.trim().toInteger()
+def getVersion() {
+  def gitVersion
+  try {
+	def cmd = 'git rev-list HEAD --count'
+	gitVersion = cmd.execute().text.trim().toInteger()
+  } catch (Exception e) {
+	gitVersion = 1
+  }
+  return gitVersion
+}
+
+def gitVersion = getVersion()
 def javaVersion = JavaVersion.VERSION_1_8
 
 android {
