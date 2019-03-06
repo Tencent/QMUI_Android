@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmui.widget;
 
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
@@ -48,8 +49,7 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
         Object item = mScrapItems.get(position);
         if (item == null) {
             item = hydrate(container, position);
-        } else {
-            mScrapItems.remove(position);
+            mScrapItems.put(position, item);
         }
         populate(container, item, position);
         return item;
@@ -58,6 +58,30 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
     @Override
     public final void destroyItem(ViewGroup container, int position, Object object) {
         destroy(container, position, object);
-        mScrapItems.put(position, object);
+
+    }
+
+    /**
+     * sometimes you may need to perform some operations on all items,
+     * such as perform cleanup when the ViewPager is destroyed
+     * notice: this not
+     *
+     * @param action
+     */
+    public void each(@NonNull Action action) {
+        int size = mScrapItems.size();
+        for (int i = 0; i < size; i++) {
+            Object item = mScrapItems.indexOfValue(i);
+            if (action.call(item)) {
+                break;
+            }
+        }
+    }
+
+    public interface Action {
+        /**
+         * @return true to intercept forEach
+         */
+        boolean call(Object item);
     }
 }
