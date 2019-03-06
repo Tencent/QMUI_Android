@@ -343,7 +343,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     public void reset() {
         mContentLayout.getTabAdapter().clear();
         mCurrentSelectedIndex = NO_POSITION;
-        if(mSelectAnimator != null){
+        if (mSelectAnimator != null) {
             mSelectAnimator.cancel();
             mSelectAnimator = null;
         }
@@ -383,7 +383,7 @@ public class QMUITabSegment extends HorizontalScrollView {
      * 设置 indicator的宽度是否随内容宽度变化
      */
     public void setIndicatorWidthAdjustContent(boolean indicatorWidthFollowContent) {
-        if(mIsIndicatorWidthFollowContent != indicatorWidthFollowContent){
+        if (mIsIndicatorWidthFollowContent != indicatorWidthFollowContent) {
             mIsIndicatorWidthFollowContent = indicatorWidthFollowContent;
             mContentLayout.requestLayout();
         }
@@ -395,7 +395,7 @@ public class QMUITabSegment extends HorizontalScrollView {
      * @param isIndicatorTop true 时表示 indicator 位置在 Tab 的上方, false 时表示在下方
      */
     public void setIndicatorPosition(boolean isIndicatorTop) {
-        if(mIndicatorTop != isIndicatorTop){
+        if (mIndicatorTop != isIndicatorTop) {
             mIndicatorTop = isIndicatorTop;
             mContentLayout.invalidate();
         }
@@ -694,7 +694,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     }
 
     private void layoutIndicator(Tab model, boolean invalidate) {
-        if(model == null){
+        if (model == null) {
             return;
         }
         if (mIndicatorRect == null) {
@@ -710,7 +710,7 @@ public class QMUITabSegment extends HorizontalScrollView {
             mIndicatorPaint.setStyle(Paint.Style.FILL);
         }
         mIndicatorPaint.setColor(getTabSelectedColor(model));
-        if(invalidate){
+        if (invalidate) {
             mContentLayout.invalidate();
         }
     }
@@ -1007,7 +1007,8 @@ public class QMUITabSegment extends HorizontalScrollView {
 
         boolean isSelectedTabBold();
 
-        @Nullable Typeface getTypeface();
+        @Nullable
+        Typeface getTypeface();
     }
 
     public static class TabLayoutOnPageChangeListener implements ViewPager.OnPageChangeListener {
@@ -1097,6 +1098,11 @@ public class QMUITabSegment extends HorizontalScrollView {
          */
         private boolean dynamicChangeIconColor = true;
 
+        private float rightSpaceWeight = 0f;
+        private float leftSpaceWeight = 0f;
+        private int leftAddonMargin = 0;
+        private int rightAddonMargin = 0;
+
         public Tab(CharSequence text) {
             this.text = text;
         }
@@ -1143,6 +1149,11 @@ public class QMUITabSegment extends HorizontalScrollView {
         public void setTextColor(@ColorInt int normalColor, @ColorInt int selectedColor) {
             this.normalColor = normalColor;
             this.selectedColor = selectedColor;
+        }
+
+        public void setSpaceWeight(float leftWeight, float rightWeight) {
+            leftSpaceWeight = leftWeight;
+            rightSpaceWeight = rightWeight;
         }
 
         public int getTextSize() {
@@ -1547,8 +1558,14 @@ public class QMUITabSegment extends HorizontalScrollView {
                     childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(modeFixItemWidth, MeasureSpec.EXACTLY);
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+
+                    // reset
+                    Tab tab = mTabAdapter.getItem(i);
+                    tab.leftAddonMargin = 0;
+                    tab.rightAddonMargin = 0;
                 }
             } else {
+                float totalWeight = 0;
                 for (i = 0; i < size; i++) {
                     final View child = childViews.get(i);
                     if (child.getVisibility() != VISIBLE) {
@@ -1558,8 +1575,27 @@ public class QMUITabSegment extends HorizontalScrollView {
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
                     resultWidthSize += child.getMeasuredWidth() + mItemSpaceInScrollMode;
+                    Tab tab = mTabAdapter.getItem(i);
+                    totalWeight += tab.leftSpaceWeight + tab.rightSpaceWeight;
+
+                    // reset first
+                    tab.leftAddonMargin = 0;
+                    tab.rightAddonMargin = 0;
                 }
                 resultWidthSize -= mItemSpaceInScrollMode;
+                if (totalWeight > 0 && resultWidthSize < widthSpecSize) {
+                    int remain = widthSpecSize - resultWidthSize;
+                    resultWidthSize = widthSpecSize;
+                    for (i = 0; i < size; i++) {
+                        final View child = childViews.get(i);
+                        if (child.getVisibility() != VISIBLE) {
+                            continue;
+                        }
+                        Tab tab = mTabAdapter.getItem(i);
+                        tab.leftAddonMargin = (int) (remain * tab.leftSpaceWeight / totalWeight);
+                        tab.rightAddonMargin = (int) (remain * tab.rightSpaceWeight / totalWeight);
+                    }
+                }
             }
 
             setMeasuredDimension(resultWidthSize, heightSpecSize);
@@ -1588,11 +1624,15 @@ public class QMUITabSegment extends HorizontalScrollView {
                 if (childView.getVisibility() != VISIBLE) {
                     continue;
                 }
-                final int childMeasureWidth = childView.getMeasuredWidth();
-                childView.layout(usedLeft, getPaddingTop(), usedLeft + childMeasureWidth, b - t - getPaddingBottom());
-
-
                 Tab model = mTabAdapter.getItem(i);
+                final int childMeasureWidth = childView.getMeasuredWidth();
+                childView.layout(
+                        usedLeft + model.leftAddonMargin,
+                        getPaddingTop(),
+                        usedLeft + model.leftAddonMargin + childMeasureWidth + model.rightAddonMargin,
+                        b - t - getPaddingBottom());
+
+
                 int oldLeft, oldWidth, newLeft, newWidth;
                 oldLeft = model.getContentLeft();
                 oldWidth = model.getContentWidth();
@@ -1601,18 +1641,20 @@ public class QMUITabSegment extends HorizontalScrollView {
                     newLeft = usedLeft + contentView.getLeft();
                     newWidth = contentView.getWidth();
                 } else {
-                    newLeft = usedLeft;
+                    newLeft = usedLeft + model.leftAddonMargin;
                     newWidth = childMeasureWidth;
                 }
                 if (oldLeft != newLeft || oldWidth != newWidth) {
                     model.setContentLeft(newLeft);
                     model.setContentWidth(newWidth);
                 }
-                usedLeft = usedLeft + childMeasureWidth + (mMode == MODE_SCROLLABLE ? mItemSpaceInScrollMode : 0);
+                usedLeft = usedLeft + childMeasureWidth
+                        + model.leftAddonMargin + model.rightAddonMargin
+                        + (mMode == MODE_SCROLLABLE ? mItemSpaceInScrollMode : 0);
             }
 
-            if(mCurrentSelectedIndex != NO_POSITION && mSelectAnimator == null
-                    && mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE){
+            if (mCurrentSelectedIndex != NO_POSITION && mSelectAnimator == null
+                    && mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
                 layoutIndicator(mTabAdapter.getItem(mCurrentSelectedIndex), false);
             }
         }
