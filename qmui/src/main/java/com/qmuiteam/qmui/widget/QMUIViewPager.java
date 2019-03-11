@@ -55,6 +55,9 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
         mQMUIWindowInsetHelper = new QMUIWindowInsetHelper(this, this);
     }
 
+
+
+
     public void setSwipeable(boolean enable) {
         mIsSwipeable = enable;
     }

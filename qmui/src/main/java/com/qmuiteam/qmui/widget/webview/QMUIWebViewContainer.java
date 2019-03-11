@@ -20,13 +20,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUINotchHelper;
@@ -49,23 +48,14 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
     public void addWebView(@NonNull QMUIWebView webView, boolean needDispatchSafeAreaInset) {
         mWebView = webView;
         mWebView.setNeedDispatchSafeAreaInset(needDispatchSafeAreaInset);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mWebView.setOnScrollChangeListener(new OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (mOnScrollChangeListener != null) {
-                        mOnScrollChangeListener.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
-                    }
+        mWebView.addCustomOnScrollChangeListener(new QMUIWebView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(WebView webView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (mOnScrollChangeListener != null) {
+                    mOnScrollChangeListener.onScrollChange(webView, scrollX, scrollY, oldScrollX, oldScrollY);
                 }
-            });
-        } else {
-            mWebView.setCustomOnScrollChangeListener(new QMUIWebView.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                }
-            });
-        }
+            }
+        });
         addView(mWebView, getWebViewLayoutParams());
     }
 

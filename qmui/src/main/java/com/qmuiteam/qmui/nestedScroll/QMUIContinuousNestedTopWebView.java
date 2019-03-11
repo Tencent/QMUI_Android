@@ -22,6 +22,9 @@ import android.util.AttributeSet;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
 public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
+
+    private OnScrollNotifier mScrollNotifier;
+
     public QMUIContinuousNestedTopWebView(Context context) {
         super(context);
     }
@@ -38,9 +41,7 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     public int consumeScroll(int yUnconsumed) {
         // compute the consumed value
         int scrollY = getScrollY();
-        int range = computeVerticalScrollRange();
-        int viewHeight = getHeight();
-        int maxScrollY = range - viewHeight;
+        int maxScrollY = getScrollRange();
         // the scrollY may be negative or larger than scrolling range
         scrollY = Math.max(0, Math.min(scrollY, maxScrollY));
         int dy = 0;
@@ -51,5 +52,30 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
         }
         scrollBy(0, dy);
         return yUnconsumed - dy;
+    }
+
+    @Override
+    public int getCurrentScroll() {
+        int scrollY = getScrollY();
+        int scrollRange = getScrollRange();
+        return Math.max(0, Math.min(scrollY, scrollRange));
+    }
+
+    @Override
+    public int getScrollRange() {
+        return computeVerticalScrollRange() - getHeight();
+    }
+
+    @Override
+    public void injectScrollNotifier(OnScrollNotifier notifier) {
+        mScrollNotifier = notifier;
+    }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (mScrollNotifier != null) {
+            mScrollNotifier.notify(getCurrentScroll(), getScrollRange());
+        }
     }
 }

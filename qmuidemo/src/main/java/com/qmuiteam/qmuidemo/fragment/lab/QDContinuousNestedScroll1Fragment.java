@@ -8,11 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -33,7 +36,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Other, name = "webview + recyclerview")
 public class QDContinuousNestedScroll1Fragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
-    @BindView(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
     private QMUIWebView mNestedWebView;
     private RecyclerView mRecyclerView;
@@ -57,6 +60,13 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
         });
 
         mTopBarLayout.setTitle(QDDataManager.getInstance().getName(this.getClass()));
+        mTopBarLayout.addRightTextButton("scroll", QMUIViewHelper.generateViewId())
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showBottomSheet();
+                    }
+                });
     }
 
     private void initCoordinatorLayout() {
@@ -65,13 +75,13 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
         CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
-        mCoordinatorLayout.addView(mNestedWebView, webViewLp);
+        mCoordinatorLayout.setTopAreaView(mNestedWebView, webViewLp);
 
         mRecyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());
         CoordinatorLayout.LayoutParams recyclerViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         recyclerViewLp.setBehavior(new QMUIContinuousNestedBottomAreaBehavior());
-        mCoordinatorLayout.addView(mRecyclerView, recyclerViewLp);
+        mCoordinatorLayout.setBottomAreaView(mRecyclerView, recyclerViewLp);
 
         mNestedWebView.loadUrl("https://mp.weixin.qq.com/s/zgfLOMD2JfZJKfHx-5BsBg");
 
@@ -119,5 +129,30 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
             mNestedWebView.destroy();
             mNestedWebView = null;
         }
+    }
+
+    private void showBottomSheet() {
+        new QMUIBottomSheet.BottomListSheetBuilder(getContext())
+                .addItem("scrollToBottom")
+                .addItem("scrollToTop")
+                .addItem("scrollBottomViewToTop")
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        switch (position) {
+                            case 0:
+                                mCoordinatorLayout.scrollToBottom();
+                                break;
+                            case 1:
+                                mCoordinatorLayout.scrollToTop();
+                                break;
+                            case 2:
+                                mCoordinatorLayout.scrollBottomViewToTop();
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 }

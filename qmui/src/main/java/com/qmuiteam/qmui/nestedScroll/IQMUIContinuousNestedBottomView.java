@@ -17,9 +17,18 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 public interface IQMUIContinuousNestedBottomView {
+    int HEIGHT_IS_ENOUGH_TO_SCROLL = -1;
     /**
      * consume scroll
      * @param dyUnconsumed the delta value to consume
      */
     void consumeScroll(int dyUnconsumed);
+
+    /**
+     * sometimes the content of BottomView is not enough to scroll,
+     * so BottomView should tell the this info to  {@link QMUIContinuousNestedScrollLayout}
+     * @return  {@link #HEIGHT_IS_ENOUGH_TO_SCROLL} if can scroll, or content height.
+     */
+    int getContentHeight();
+
 }

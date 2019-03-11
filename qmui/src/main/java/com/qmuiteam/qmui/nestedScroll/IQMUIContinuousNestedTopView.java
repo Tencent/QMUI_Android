@@ -19,8 +19,19 @@ package com.qmuiteam.qmui.nestedScroll;
 public interface IQMUIContinuousNestedTopView {
     /**
      * consume scroll
+     *
      * @param dyUnconsumed the delta value to consume
      * @return the remain unconsumed value
      */
     int consumeScroll(int dyUnconsumed);
+
+    int getCurrentScroll();
+
+    int getScrollRange();
+
+    void injectScrollNotifier(OnScrollNotifier notifier);
+
+    interface OnScrollNotifier {
+        void notify(int innerOffset, int innerRange);
+    }
 }
