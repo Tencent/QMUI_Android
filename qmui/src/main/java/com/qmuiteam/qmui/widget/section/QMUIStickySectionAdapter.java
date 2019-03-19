@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_SECTION_HE
 
 public abstract class QMUIStickySectionAdapter<
         H extends QMUISection.Model<H>, T extends QMUISection.Model<T>, VH extends QMUIStickySectionAdapter.ViewHolder> extends RecyclerView.Adapter<VH> {
-
+    private static final String TAG = "StickySectionAdapter";
     public static final int ITEM_TYPE_UNKNOWN = -1;
     public static final int ITEM_TYPE_SECTION_HEADER = 0;
     public static final int ITEM_TYPE_SECTION_ITEM = 1;
@@ -609,7 +610,10 @@ public abstract class QMUIStickySectionAdapter<
     public final int getItemViewType(int position) {
         int itemIndex = getItemIndex(position);
         if (itemIndex == QMUISection.ITEM_INDEX_UNKNOWN) {
-            throw new RuntimeException("the item index is undefined, something is wrong in your data.");
+            // QMUIStickySectionItemDecoration uses findFirstVisibleItemPosition to get the layout position
+            // it may be exceed the adapter position range if layout is not updated in time
+            Log.e(TAG, "the item index is undefined, you may need to check your data if not called by QMUIStickySectionItemDecoration.");
+            return ITEM_TYPE_UNKNOWN;
         }
         if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
             return ITEM_TYPE_SECTION_HEADER;
