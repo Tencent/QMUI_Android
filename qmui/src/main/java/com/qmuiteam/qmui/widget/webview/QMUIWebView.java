@@ -79,6 +79,10 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         mWindowInsetHelper = new QMUIWindowInsetHelper(this, this);
     }
 
+    @Override
+    public void addJavascriptInterface(Object object, String name) {
+
+    }
 
     @Deprecated
     public void setCustomOnScrollChangeListener(OnScrollChangeListener onScrollChangeListener) {
