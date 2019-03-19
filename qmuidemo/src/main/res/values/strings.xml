@@ -66,6 +66,8 @@
     <string name="circularImageView_item_xml_circle_title">剪裁为圆形+边框+点击效果</string>
     <string name="circularImageView_item_xml_oval_title">剪裁为椭圆形+边框+点击效果</string>
     <string name="circularImageView_item_xml_round_rect_title">剪裁为圆角矩形+边框+点击效果</string>
+    <string name="circularImageView_item_xml_scale_type_desc">下面两张图片，大小固定，第一张图片比 View 小，
+        第二张图片比 View大，可以观察 QMUIRadiusImageView 与 QMUIRadiusImageView2 的不同，便于观察，图片设置了黑色背景，</string>
 
     <string name="circularImageView_modify_tip">可以通过右上角的按钮动态修改下图的效果</string>
     <string name="circularImageView_modify_1">改变边框颜色与宽度</string>

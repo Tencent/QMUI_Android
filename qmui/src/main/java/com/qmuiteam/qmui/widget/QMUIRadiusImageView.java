@@ -33,15 +33,19 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import androidx.annotation.ColorInt;
-import androidx.appcompat.widget.AppCompatImageView;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.qmuiteam.qmui.R;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * 提供为图片添加圆角、边框、剪裁到圆形或其他形状等功能。
+ * shown radius image in view, is different to {@link QMUIRadiusImageView2}
  *
  * @author cginechen
  * @date 2015-07-09
@@ -74,12 +78,14 @@ public class QMUIRadiusImageView extends AppCompatImageView {
     private boolean mNeedResetShader = false;
 
     private RectF mRectF = new RectF();
+    private RectF mDrawRectF = new RectF();
 
     private Bitmap mBitmap;
 
     private Matrix mMatrix;
     private int mWidth;
     private int mHeight;
+    private ScaleType mLastCalculateScaleType;
 
     public QMUIRadiusImageView(Context context) {
         this(context, null, R.attr.QMUIRadiusImageViewStyle);
@@ -99,35 +105,32 @@ public class QMUIRadiusImageView extends AppCompatImageView {
 
         setScaleType(ScaleType.CENTER_CROP);
 
-        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.QMUIRadiusImageView, defStyleAttr, 0);
+        TypedArray array = context.obtainStyledAttributes(
+                attrs, R.styleable.QMUIRadiusImageView, defStyleAttr, 0);
 
         mBorderWidth = array.getDimensionPixelSize(R.styleable.QMUIRadiusImageView_qmui_border_width, 0);
         mBorderColor = array.getColor(R.styleable.QMUIRadiusImageView_qmui_border_color, DEFAULT_BORDER_COLOR);
         mSelectedBorderWidth = array.getDimensionPixelSize(
                 R.styleable.QMUIRadiusImageView_qmui_selected_border_width, mBorderWidth);
-        mSelectedBorderColor = array.getColor(R.styleable.QMUIRadiusImageView_qmui_selected_border_color, mBorderColor);
-        mSelectedMaskColor = array.getColor(R.styleable.QMUIRadiusImageView_qmui_selected_mask_color, Color.TRANSPARENT);
+        mSelectedBorderColor = array.getColor(
+                R.styleable.QMUIRadiusImageView_qmui_selected_border_color, mBorderColor);
+        mSelectedMaskColor = array.getColor(
+                R.styleable.QMUIRadiusImageView_qmui_selected_mask_color, Color.TRANSPARENT);
         if (mSelectedMaskColor != Color.TRANSPARENT) {
             mSelectedColorFilter = new PorterDuffColorFilter(mSelectedMaskColor, PorterDuff.Mode.DARKEN);
         }
 
-        mIsTouchSelectModeEnabled = array.getBoolean(R.styleable.QMUIRadiusImageView_qmui_is_touch_select_mode_enabled, true);
+        mIsTouchSelectModeEnabled = array.getBoolean(
+                R.styleable.QMUIRadiusImageView_qmui_is_touch_select_mode_enabled, true);
         mIsCircle = array.getBoolean(R.styleable.QMUIRadiusImageView_qmui_is_circle, false);
         if (!mIsCircle) {
             mIsOval = array.getBoolean(R.styleable.QMUIRadiusImageView_qmui_is_oval, false);
         }
         if (!mIsOval) {
-            mCornerRadius = array.getDimensionPixelSize(R.styleable.QMUIRadiusImageView_qmui_corner_radius, 0);
+            mCornerRadius = array.getDimensionPixelSize(
+                    R.styleable.QMUIRadiusImageView_qmui_corner_radius, 0);
         }
         array.recycle();
-    }
-
-    @Override
-    public void setScaleType(ScaleType scaleType) {
-        if (scaleType != ScaleType.CENTER_CROP) {
-            throw new IllegalArgumentException(String.format("不支持ScaleType %s", scaleType));
-        }
-        super.setScaleType(scaleType);
     }
 
     @Override
@@ -295,50 +298,33 @@ public class QMUIRadiusImageView extends AppCompatImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMeasuredWidth();
-        int height = getMeasuredHeight();
-        if (mIsCircle) {
-            int size = Math.min(width, height);
-            setMeasuredDimension(size, size);
-        } else {
-            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-            if (mBitmap == null) {
-                return;
-            }
-            boolean widthWrapContent = widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED;
-            boolean heightWrapContent = heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED;
-            float bmWidth = mBitmap.getWidth(), bmHeight = mBitmap.getHeight();
-            float scaleX = width / bmWidth, scaleY = height / bmHeight;
-            if (widthWrapContent && heightWrapContent) {
-                // 保证长宽比
-                if (scaleX >= 1 && scaleY >= 1) {
-                    setMeasuredDimension((int) bmWidth, (int) bmHeight);
-                    return;
-                }
-
-                if (scaleX >= 1) {
-                    setMeasuredDimension((int) (bmHeight * scaleY), height);
-                    return;
-                }
-
-                if (scaleY >= 1) {
-                    setMeasuredDimension(width, (int) (bmHeight * scaleX));
-                    return;
-                }
-
-                if (scaleX < scaleY) {
-                    setMeasuredDimension(width, (int) (bmHeight * scaleX));
-                } else {
-                    setMeasuredDimension((int) (bmWidth * scaleY), height);
-                }
-            } else if (widthWrapContent) {
-                setMeasuredDimension((int) (bmWidth * scaleY), height);
-            } else if (heightWrapContent) {
-                setMeasuredDimension(width, (int) (bmHeight * scaleX));
-            }
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {
+            setMeasuredDimension(widthSize, heightSize);
+            return;
         }
+        if (mIsCircle) {
+            if (widthMode == MeasureSpec.EXACTLY) {
+                setMeasuredDimension(widthSize, widthSize);
+            } else if (heightMode == MeasureSpec.EXACTLY) {
+                setMeasuredDimension(heightSize, heightSize);
+            } else {
+                if (mBitmap == null) {
+                    setMeasuredDimension(0, 0);
+                } else {
+                    int w = Math.min(mBitmap.getWidth(), widthSize);
+                    int h = Math.min(mBitmap.getHeight(), heightSize);
+                    int size = Math.min(w, h);
+                    setMeasuredDimension(size, size);
+                }
+            }
+            return;
+        }
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
 
@@ -369,17 +355,20 @@ public class QMUIRadiusImageView extends AppCompatImageView {
             if (bmWidth == 0 || bmHeight == 0) {
                 return null;
             }
-            // ensure minWidth and minHeight
-            float minScaleX = getMinimumWidth() / bmWidth, minScaleY = getMinimumHeight() / bmHeight;
-            if (minScaleX > 1 || minScaleY > 1) {
-                float scale = Math.max(minScaleX, minScaleY);
-                Matrix matrix = new Matrix();
-                matrix.postScale(scale, scale);
 
-                return Bitmap.createBitmap(bitmap, 0, 0, (int) bmWidth, (int) bmHeight, matrix, false);
-            } else {
-                return bitmap;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                // ensure minWidth and minHeight
+                float minScaleX = getMinimumWidth() / bmWidth, minScaleY = getMinimumHeight() / bmHeight;
+                if (minScaleX > 1 || minScaleY > 1) {
+                    float scale = Math.max(minScaleX, minScaleY);
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scale, scale);
+
+                    return Bitmap.createBitmap(
+                            bitmap, 0, 0, (int) bmWidth, (int) bmHeight, matrix, false);
+                }
             }
+            return bitmap;
         }
 
         try {
@@ -388,7 +377,8 @@ public class QMUIRadiusImageView extends AppCompatImageView {
             if (drawable instanceof ColorDrawable) {
                 bitmap = Bitmap.createBitmap(COLOR_DRAWABLE_DIMEN, COLOR_DRAWABLE_DIMEN, BITMAP_CONFIG);
             } else {
-                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
+                bitmap = Bitmap.createBitmap(
+                        drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
             }
 
             Canvas canvas = new Canvas(bitmap);
@@ -430,15 +420,75 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         if (mBitmapShader == null || mBitmap == null) {
             return;
         }
-        final float bmWidth = mBitmap.getWidth();
-        final float bmHeight = mBitmap.getHeight();
-        final float scaleX = mWidth / bmWidth;
-        final float scaleY = mHeight / bmHeight;
-        final float scale = Math.max(scaleX, scaleY);
-        mMatrix.setScale(scale, scale);
-        mMatrix.postTranslate(-(scale * bmWidth - mWidth) / 2, -(scale * bmHeight - mHeight) / 2);
+        updateMatrix(mMatrix, mBitmap, mRectF);
         mBitmapShader.setLocalMatrix(mMatrix);
         mBitmapPaint.setShader(mBitmapShader);
+    }
+
+    private void updateMatrix(@NonNull Matrix matrix, @NonNull Bitmap bitmap, RectF drawRect) {
+        final float bmWidth = bitmap.getWidth();
+        final float bmHeight = bitmap.getHeight();
+        final ScaleType scaleType = getScaleType();
+        if (scaleType == ScaleType.MATRIX) {
+            updateScaleTypeMatrix(matrix, bitmap, drawRect);
+        } else if (scaleType == ScaleType.CENTER) {
+            float left = (mWidth - bmWidth) / 2;
+            float top = (mHeight - bmHeight) / 2;
+            matrix.postTranslate(left, top);
+            drawRect.set(
+                    Math.max(0, left),
+                    Math.max(0, top),
+                    Math.min(left + bmWidth, mWidth),
+                    Math.min(top + bmHeight, mHeight));
+        } else if (scaleType == ScaleType.CENTER_CROP) {
+            float scaleX = mWidth / bmWidth, scaleY = mHeight / bmHeight;
+            final float scale = Math.max(scaleX, scaleY);
+            matrix.setScale(scale, scale);
+            matrix.postTranslate(-(scale * bmWidth - mWidth) / 2, -(scale * bmHeight - mHeight) / 2);
+            drawRect.set(0, 0, mWidth, mHeight);
+        } else if (scaleType == ScaleType.CENTER_INSIDE) {
+            float scaleX = mWidth / bmWidth, scaleY = mHeight / bmHeight;
+            if (scaleX >= 1 && scaleY >= 1) {
+                float left = (mWidth - bmWidth) / 2;
+                float top = (mHeight - bmHeight) / 2;
+                matrix.postTranslate(left, top);
+                drawRect.set(left, top, left + bmWidth, top + bmHeight);
+            } else {
+                float scale = Math.min(scaleX, scaleY);
+                matrix.setScale(scale, scale);
+                float bw = bmWidth * scale, bh = bmHeight * scale;
+                float left = (mWidth - bw) / 2;
+                float top = (mHeight - bh) / 2;
+                matrix.postTranslate(left, top);
+                drawRect.set(left, top, left + bw, top + bh);
+            }
+        } else if (scaleType == ScaleType.FIT_XY) {
+            float scaleX = mWidth / bmWidth, scaleY = mHeight / bmHeight;
+            matrix.setScale(scaleX, scaleY);
+            drawRect.set(0, 0, mWidth, mHeight);
+        } else {
+            float scaleX = mWidth / bmWidth, scaleY = mHeight / bmHeight;
+            float scale = Math.min(scaleX, scaleY);
+            matrix.setScale(scale, scale);
+            float bw = bmWidth * scale, bh = bmHeight * scale;
+            if (scaleType == ScaleType.FIT_START) {
+                drawRect.set(0, 0, bw, bh);
+            } else if (scaleType == ScaleType.FIT_CENTER) {
+                float left = (mWidth - bw) / 2;
+                float top = (mHeight - bh) / 2;
+                matrix.postTranslate(left, top);
+                drawRect.set(left, top, left + bw, top + bh);
+            } else {
+                matrix.postTranslate(mWidth - bw, mHeight - bh);
+                drawRect.set(mWidth - bw, mHeight - bh, mWidth, mHeight);
+            }
+        }
+
+    }
+
+    protected void updateScaleTypeMatrix(@NonNull Matrix matrix, @NonNull Bitmap bitmap, RectF drawRect) {
+        matrix.set(getImageMatrix());
+        drawRect.set(0, 0, mWidth, mHeight);
     }
 
     private void drawBitmap(Canvas canvas, int borderWidth) {
@@ -446,18 +496,17 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         mBitmapPaint.setColorFilter(mIsSelected ? mSelectedColorFilter : mColorFilter);
 
         if (mIsCircle) {
-            int center = getWidth() / 2;
-            canvas.drawCircle(center, center, center - halfBorderWidth, mBitmapPaint);
+            canvas.drawCircle(mRectF.centerX(), mRectF.centerY(), (Math.min(mRectF.width() / 2, mRectF.height() / 2)) - halfBorderWidth, mBitmapPaint);
         } else {
-            mRectF.left = halfBorderWidth;
+            mDrawRectF.left = mRectF.left + halfBorderWidth;
             //noinspection SuspiciousNameCombination
-            mRectF.top = halfBorderWidth;
-            mRectF.right = getWidth() - halfBorderWidth;
-            mRectF.bottom = getHeight() - halfBorderWidth;
+            mDrawRectF.top = mRectF.top + halfBorderWidth;
+            mDrawRectF.right = mRectF.right - halfBorderWidth;
+            mDrawRectF.bottom = mRectF.bottom - halfBorderWidth;
             if (mIsOval) {
-                canvas.drawOval(mRectF, mBitmapPaint);
+                canvas.drawOval(mDrawRectF, mBitmapPaint);
             } else {
-                canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBitmapPaint);
+                canvas.drawRoundRect(mDrawRectF, mCornerRadius, mCornerRadius, mBitmapPaint);
             }
         }
     }
@@ -470,18 +519,18 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         mBorderPaint.setColor(mIsSelected ? mSelectedBorderColor : mBorderColor);
         mBorderPaint.setStrokeWidth(borderWidth);
         if (mIsCircle) {
-            int radius = getWidth() / 2;
-            canvas.drawCircle(radius, radius, radius - halfBorderWidth, mBorderPaint);
+            canvas.drawCircle(mRectF.centerX(), mRectF.centerY(),
+                    Math.min(mRectF.width(), mRectF.height()) - halfBorderWidth, mBorderPaint);
         } else {
-            mRectF.left = halfBorderWidth;
+            mDrawRectF.left = mRectF.left + halfBorderWidth;
             //noinspection SuspiciousNameCombination
-            mRectF.top = halfBorderWidth;
-            mRectF.right = getWidth() - halfBorderWidth;
-            mRectF.bottom = getHeight() - halfBorderWidth;
+            mDrawRectF.top = mRectF.top + halfBorderWidth;
+            mDrawRectF.right = mRectF.right - halfBorderWidth;
+            mDrawRectF.bottom = mRectF.bottom - halfBorderWidth;
             if (mIsOval) {
-                canvas.drawOval(mRectF, mBorderPaint);
+                canvas.drawOval(mDrawRectF, mBorderPaint);
             } else {
-                canvas.drawRoundRect(mRectF, mCornerRadius, mCornerRadius, mBorderPaint);
+                canvas.drawRoundRect(mDrawRectF, mCornerRadius, mCornerRadius, mBorderPaint);
             }
         }
     }
@@ -500,9 +549,11 @@ public class QMUIRadiusImageView extends AppCompatImageView {
             return;
         }
 
-        if (mWidth != width || mHeight != height || mNeedResetShader) {
+        if (mWidth != width || mHeight != height
+                || mLastCalculateScaleType != getScaleType() || mNeedResetShader) {
             mWidth = width;
             mHeight = height;
+            mLastCalculateScaleType = getScaleType();
             updateBitmapShader();
         }
         drawBitmap(canvas, borderWidth);
