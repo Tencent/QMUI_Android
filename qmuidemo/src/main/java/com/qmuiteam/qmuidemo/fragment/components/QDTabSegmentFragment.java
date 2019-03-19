@@ -90,6 +90,14 @@ public class QDTabSegmentFragment extends BaseFragment {
                         startFragment(fragment);
                     }
                 })
+                .addItemView(mGroupListView.createItemView(mQDDataManager.getName(
+                        QDTabSegmentSpaceWeightFragment.class)), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QDTabSegmentSpaceWeightFragment fragment = new QDTabSegmentSpaceWeightFragment();
+                        startFragment(fragment);
+                    }
+                })
                 .addTo(mGroupListView);
 
 

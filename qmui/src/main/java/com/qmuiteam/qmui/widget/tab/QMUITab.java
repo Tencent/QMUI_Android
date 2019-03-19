@@ -66,6 +66,11 @@ public class QMUITab {
     int signCountBottomMarginWithIconOrText = 0;
     int signCount = NO_SIGN_COUNT_AND_RED_POINT;
 
+    float rightSpaceWeight = 0f;
+    float leftSpaceWeight = 0f;
+    int leftAddonMargin = 0;
+    int rightAddonMargin = 0;
+
 
     QMUITab(CharSequence text) {
         this.text = text;
@@ -87,6 +92,12 @@ public class QMUITab {
     public void setIconPosition(@IconPosition int iconPosition) {
         this.iconPosition = iconPosition;
     }
+
+    public void setSpaceWeight(float leftWeight, float rightWeight) {
+        leftSpaceWeight = leftWeight;
+        rightSpaceWeight = rightWeight;
+    }
+
 
     public int getGravity() {
         return gravity;

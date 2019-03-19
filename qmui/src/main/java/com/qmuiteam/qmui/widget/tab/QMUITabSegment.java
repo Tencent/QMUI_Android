@@ -965,8 +965,14 @@ public class QMUITabSegment extends HorizontalScrollView {
                     childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(modeFixItemWidth, MeasureSpec.EXACTLY);
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+
+                    // reset
+                    QMUITab tab = mTabAdapter.getItem(i);
+                    tab.leftAddonMargin = 0;
+                    tab.rightAddonMargin = 0;
                 }
             } else {
+                float totalWeight = 0;
                 for (i = 0; i < size; i++) {
                     final View child = childViews.get(i);
                     if (child.getVisibility() != VISIBLE) {
@@ -976,8 +982,30 @@ public class QMUITabSegment extends HorizontalScrollView {
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
                     resultWidthSize += child.getMeasuredWidth() + mItemSpaceInScrollMode;
+
+                    QMUITab tab = mTabAdapter.getItem(i);
+                    totalWeight += tab.leftSpaceWeight + tab.rightSpaceWeight;
+
+                    // reset first
+                    tab.leftAddonMargin = 0;
+                    tab.rightAddonMargin = 0;
                 }
+
                 resultWidthSize -= mItemSpaceInScrollMode;
+
+                if (totalWeight > 0 && resultWidthSize < widthSpecSize) {
+                    int remain = widthSpecSize - resultWidthSize;
+                    resultWidthSize = widthSpecSize;
+                    for (i = 0; i < size; i++) {
+                        final View child = childViews.get(i);
+                        if (child.getVisibility() != VISIBLE) {
+                            continue;
+                        }
+                        QMUITab tab = mTabAdapter.getItem(i);
+                        tab.leftAddonMargin = (int) (remain * tab.leftSpaceWeight / totalWeight);
+                        tab.rightAddonMargin = (int) (remain * tab.rightSpaceWeight / totalWeight);
+                    }
+                }
             }
 
             setMeasuredDimension(resultWidthSize, heightSpecSize);
@@ -1007,10 +1035,12 @@ public class QMUITabSegment extends HorizontalScrollView {
                     continue;
                 }
                 final int childMeasureWidth = childView.getMeasuredWidth();
-                childView.layout(usedLeft, getPaddingTop(), usedLeft + childMeasureWidth, b - t - getPaddingBottom());
-
-
                 QMUITab model = mTabAdapter.getItem(i);
+                usedLeft += model.leftAddonMargin;
+                childView.layout(usedLeft, getPaddingTop(),
+                        usedLeft + childMeasureWidth, b - t - getPaddingBottom());
+
+
                 int oldLeft, oldWidth, newLeft, newWidth;
                 oldLeft = model.contentLeft;
                 oldWidth = model.contentWidth;
@@ -1025,7 +1055,8 @@ public class QMUITabSegment extends HorizontalScrollView {
                     model.contentLeft = newLeft;
                     model.contentWidth = newWidth;
                 }
-                usedLeft = usedLeft + childMeasureWidth + (mMode == MODE_SCROLLABLE ? mItemSpaceInScrollMode : 0);
+                usedLeft = usedLeft + childMeasureWidth + model.rightAddonMargin +
+                        (mMode == MODE_SCROLLABLE ? mItemSpaceInScrollMode : 0);
             }
 
             if (mCurrentSelectedIndex != NO_POSITION && mSelectAnimator == null
