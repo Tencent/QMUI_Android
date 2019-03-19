@@ -124,7 +124,7 @@ public class QDWebExplorerFragment extends BaseFragment {
         mWebViewContainer.addWebView(mWebView, needDispatchSafeAreaInset);
         mWebViewContainer.setCustomOnScrollChangeListener(new QMUIWebView.OnScrollChangeListener() {
             @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            public void onScrollChange(WebView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 onScrollWebContent(scrollX, scrollY, oldScrollX, oldScrollY);
             }
         });

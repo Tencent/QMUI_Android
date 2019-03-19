@@ -24,7 +24,6 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,6 +35,8 @@ import com.qmuiteam.qmui.widget.IWindowInsetLayout;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QMUIWebView extends WebView implements IWindowInsetLayout {
 
@@ -52,7 +53,7 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
      */
     private boolean mNeedDispatchSafeAreaInset = false;
     private Callback mCallback;
-    private OnScrollChangeListener mOnScrollChangeListener;
+    private List<OnScrollChangeListener> mOnScrollChangeListeners = new ArrayList<>();
     private QMUIWindowInsetHelper mWindowInsetHelper;
 
 
@@ -79,15 +80,26 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
     }
 
 
+    @Deprecated
     public void setCustomOnScrollChangeListener(OnScrollChangeListener onScrollChangeListener) {
-        mOnScrollChangeListener = onScrollChangeListener;
+        addCustomOnScrollChangeListener(onScrollChangeListener);
+    }
+
+    public void addCustomOnScrollChangeListener(OnScrollChangeListener listener) {
+        if (!mOnScrollChangeListeners.contains(listener)) {
+            mOnScrollChangeListeners.add(listener);
+        }
+    }
+
+    public void removeOnScrollChangeListener(OnScrollChangeListener listener) {
+        mOnScrollChangeListeners.remove(listener);
     }
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if (mOnScrollChangeListener != null) {
-            mOnScrollChangeListener.onScrollChange(this, l, t, oldl, oldt);
+        for (OnScrollChangeListener onScrollListener : mOnScrollChangeListeners) {
+            onScrollListener.onScrollChange(this, l, t, oldl, oldt);
         }
     }
 
@@ -336,12 +348,12 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         /**
          * Called when the scroll position of a view changes.
          *
-         * @param v          The view whose scroll position has changed.
+         * @param webView    The view whose scroll position has changed.
          * @param scrollX    Current horizontal scroll origin.
          * @param scrollY    Current vertical scroll origin.
          * @param oldScrollX Previous horizontal scroll origin.
          * @param oldScrollY Previous vertical scroll origin.
          */
-        void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY);
+        void onScrollChange(WebView webView, int scrollX, int scrollY, int oldScrollX, int oldScrollY);
     }
 }

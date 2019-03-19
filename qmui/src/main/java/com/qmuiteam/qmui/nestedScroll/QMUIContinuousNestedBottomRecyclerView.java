@@ -40,4 +40,22 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView impleme
     public void consumeScroll(int yUnconsumed) {
         scrollBy(0, yUnconsumed);
     }
+
+    @Override
+    public int getContentHeight() {
+        Adapter adapter = getAdapter();
+        if(adapter == null){
+            return 0;
+        }
+        LayoutManager layoutManager = getLayoutManager();
+        if(layoutManager == null){
+            return 0;
+        }
+        final int scrollRange = computeVerticalScrollRange();
+        final int offsetRange = scrollRange - computeVerticalScrollExtent();
+        if(offsetRange > 0){
+            return HEIGHT_IS_ENOUGH_TO_SCROLL;
+        }
+        return scrollRange;
+    }
 }

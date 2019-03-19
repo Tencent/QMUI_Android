@@ -3,19 +3,21 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.nestedScroll.IQMUIContinuousNestedBottomView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomDelegateLayout;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -43,8 +45,9 @@ import butterknife.ButterKnife;
 
 @Widget(group = Group.Other, name = "webview + header + viewpager")
 public class QDContinuousNestedScroll2Fragment extends BaseFragment {
+    private static final String TAG = "ContinuousNestedScroll";
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
-    @BindView(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
     private QMUIWebView mNestedWebView;
     private BottomView mBottomView;
@@ -76,15 +79,23 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
         CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
-        mCoordinatorLayout.addView(mNestedWebView, webViewLp);
+        mCoordinatorLayout.setTopAreaView(mNestedWebView, webViewLp);
 
         mBottomView = new BottomView(getContext());
         CoordinatorLayout.LayoutParams recyclerViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         recyclerViewLp.setBehavior(new QMUIContinuousNestedBottomAreaBehavior());
-        mCoordinatorLayout.addView(mBottomView, recyclerViewLp);
+        mCoordinatorLayout.setBottomAreaView(mBottomView, recyclerViewLp);
 
         mNestedWebView.loadUrl("https://mp.weixin.qq.com/s/zgfLOMD2JfZJKfHx-5BsBg");
+
+        mCoordinatorLayout.addOnScrollListener(new QMUIContinuousNestedScrollLayout.OnScrollListener() {
+            @Override
+            public void onTopScroll(int offset, int range, int innerOffset, int innerRange) {
+                Log.i(TAG, "offset = " + offset + " ; range = " + range +
+                        "; innerOffset = " + innerOffset + " ;innerRange = " + innerRange);
+            }
+        });
     }
 
     private void onDataLoaded(BaseRecyclerAdapter<String> adapter) {
@@ -105,6 +116,9 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
     }
 
     class BottomView extends QMUIContinuousNestedBottomDelegateLayout {
+
+        private MyViewPager mViewPager;
+        private QMUIContinuousNestedBottomRecyclerView mCurrentItemView;
 
         public BottomView(Context context) {
             super(context);
@@ -131,16 +145,21 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
         }
 
         @Override
-        protected LayoutParams getHeaderLayoutParam() {
-            return new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, QMUIDisplayHelper.dp2px(getContext(), 100));
+        protected int getHeaderHeightLayoutParam() {
+            return QMUIDisplayHelper.dp2px(getContext(), 200);
         }
+
+        @Override
+        protected int getHeaderStickyHeight() {
+            return QMUIDisplayHelper.dp2px(getContext(), 50);
+        }
+
 
         @NonNull
         @Override
         protected View onCreateContentView() {
-            QMUIViewPager viewPager = new QMUIViewPager(getContext());
-            viewPager.setAdapter(new QMUIPagerAdapter() {
+            mViewPager = new MyViewPager(getContext());
+            mViewPager.setAdapter(new QMUIPagerAdapter() {
                 @Override
                 protected Object hydrate(ViewGroup container, int position) {
                     QMUIContinuousNestedBottomRecyclerView recyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());
@@ -149,7 +168,7 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
                         @Override
                         public RecyclerView.LayoutParams generateDefaultLayoutParams() {
                             return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    ViewGroup.LayoutParams.MATCH_PARENT);
                         }
                     });
 
@@ -194,8 +213,37 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
                 public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
                     return view == o;
                 }
+
+                @Override
+                public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                    super.setPrimaryItem(container, position, object);
+                    mCurrentItemView = (QMUIContinuousNestedBottomRecyclerView) object;
+                }
             });
-            return viewPager;
+            return mViewPager;
+        }
+
+        class MyViewPager extends QMUIViewPager implements IQMUIContinuousNestedBottomView {
+
+            public MyViewPager(Context context) {
+                super(context);
+            }
+
+            @Override
+            public void consumeScroll(int dyUnconsumed) {
+                if (mCurrentItemView != null) {
+                    mCurrentItemView.consumeScroll(dyUnconsumed);
+                }
+
+            }
+
+            @Override
+            public int getContentHeight() {
+                if (mCurrentItemView != null) {
+                    return mCurrentItemView.getContentHeight();
+                }
+                return 0;
+            }
         }
     }
 }

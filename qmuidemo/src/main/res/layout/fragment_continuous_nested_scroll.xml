@@ -25,7 +25,7 @@
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:fitsSystemWindows="true">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout
             android:id="@+id/coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

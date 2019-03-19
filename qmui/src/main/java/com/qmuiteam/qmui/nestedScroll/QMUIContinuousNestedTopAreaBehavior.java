@@ -43,6 +43,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     private int lastMotionY;
     private int touchSlop = -1;
     private VelocityTracker velocityTracker;
+    private Callback mCallback;
 
     public QMUIContinuousNestedTopAreaBehavior(Context context) {
         this(context, null);
@@ -52,6 +53,10 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     public QMUIContinuousNestedTopAreaBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mViewFlinger = new ViewFlinger(context);
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     @Override
@@ -260,13 +265,21 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         } else {
             if (dy > 0) {
                 // child is topView, target is bottomView
-                if (target.getTop() >= dy) {
-                    setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
-                    consumed[1] += dy;
-                } else if (target.getTop() > 0) {
-                    int distance = target.getTop();
-                    setTopAndBottomOffset(child.getTop() - distance - getLayoutTop());
-                    consumed[1] += distance;
+                if (target instanceof IQMUIContinuousNestedBottomView) {
+                    int contentHeight = ((IQMUIContinuousNestedBottomView) target).getContentHeight();
+                    int minOffset = -child.getHeight();
+                    if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
+                        minOffset = parent.getHeight() - contentHeight - child.getHeight();
+                    }
+                    if (child.getTop() - dy >= minOffset)
+                        if (child.getTop() - dy >= minOffset) {
+                            setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
+                            consumed[1] += dy;
+                        } else if (child.getTop() > minOffset) {
+                            int distance = child.getTop() - minOffset;
+                            setTopAndBottomOffset(minOffset);
+                            consumed[1] += distance;
+                        }
                 }
             }
         }
@@ -282,13 +295,22 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             if (dyUnconsumed > 0) {
                 View bottomView = findBottomView(parent);
                 if (bottomView != null) {
-                    if (bottomView.getBottom() - parent.getHeight() > dyUnconsumed) {
+                    int contentHeight = ((IQMUIContinuousNestedBottomView) bottomView).getContentHeight();
+                    int minBottom = parent.getHeight();
+                    boolean canContentScroll = true;
+                    if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
+                        minBottom = parent.getHeight() + parent.getHeight() - contentHeight;
+                        canContentScroll = false;
+                    }
+                    if (bottomView.getBottom() - minBottom > dyUnconsumed) {
                         setTopAndBottomOffset(target.getTop() - dyUnconsumed - getLayoutTop());
-                    } else if (bottomView.getBottom() - parent.getHeight() > 0) {
-                        int moveDistance = bottomView.getBottom() - parent.getHeight();
+                    } else if (bottomView.getBottom() - minBottom > 0) {
+                        int moveDistance = bottomView.getBottom() - minBottom;
                         setTopAndBottomOffset(target.getTop() - moveDistance - getLayoutTop());
-                        ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed - moveDistance);
-                    } else {
+                        if (canContentScroll) {
+                            ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed - moveDistance);
+                        }
+                    } else if (canContentScroll) {
                         ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed);
                     }
                 }
@@ -414,6 +436,18 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             mCurrentChild = null;
             mCurrentParent = null;
         }
+    }
 
+    @Override
+    public boolean setTopAndBottomOffset(int offset) {
+        boolean ret = super.setTopAndBottomOffset(offset);
+        if (mCallback != null) {
+            mCallback.onTopAreaOffset(offset);
+        }
+        return ret;
+    }
+
+    public interface Callback {
+        void onTopAreaOffset(int offset);
     }
 }
