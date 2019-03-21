@@ -99,6 +99,10 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         mOnScrollChangeListeners.remove(listener);
     }
 
+    public void removeAllOnScrollChangeListener(){
+        mOnScrollChangeListeners.clear();
+    }
+
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
