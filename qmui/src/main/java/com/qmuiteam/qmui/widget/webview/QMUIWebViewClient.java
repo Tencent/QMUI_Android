@@ -51,7 +51,7 @@ public class QMUIWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+    public void onPageStarted(WebView view, String url, @Nullable Bitmap favicon) {
         mIsPageFinished = false;
         super.onPageStarted(view, url, favicon);
     }
