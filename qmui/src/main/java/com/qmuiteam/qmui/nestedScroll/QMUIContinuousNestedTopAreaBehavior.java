@@ -247,6 +247,9 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     public void onNestedPreScroll(@NonNull CoordinatorLayout parent, @NonNull View child,
                                   @NonNull View target, int dx, int dy,
                                   @NonNull int[] consumed, int type) {
+        if (target.getParent() != parent) {
+            return;
+        }
         if (target == child) {
             // both target view and child view is top view
             if (dy < 0) {
@@ -271,15 +274,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                     if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
                         minOffset = parent.getHeight() - contentHeight - child.getHeight();
                     }
-                    if (child.getTop() - dy >= minOffset)
-                        if (child.getTop() - dy >= minOffset) {
-                            setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
-                            consumed[1] += dy;
-                        } else if (child.getTop() > minOffset) {
-                            int distance = child.getTop() - minOffset;
-                            setTopAndBottomOffset(minOffset);
-                            consumed[1] += distance;
-                        }
+                    if (child.getTop() - dy >= minOffset) {
+                        setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
+                        consumed[1] += dy;
+                    } else if (child.getTop() > minOffset) {
+                        int distance = child.getTop() - minOffset;
+                        setTopAndBottomOffset(minOffset);
+                        consumed[1] += distance;
+                    }
                 }
             }
         }
@@ -290,6 +292,9 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                                @NonNull View target, int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed,
                                int type, @NonNull int[] consumed) {
+        if (target.getParent() != parent) {
+            return;
+        }
         if (target == child) {
             // both target view and child view is top view
             if (dyUnconsumed > 0) {
@@ -304,13 +309,13 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                     }
                     if (bottomView.getBottom() - minBottom > dyUnconsumed) {
                         setTopAndBottomOffset(target.getTop() - dyUnconsumed - getLayoutTop());
+                        return;
                     } else if (bottomView.getBottom() - minBottom > 0) {
                         int moveDistance = bottomView.getBottom() - minBottom;
                         setTopAndBottomOffset(target.getTop() - moveDistance - getLayoutTop());
-                        if (canContentScroll) {
-                            ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed - moveDistance);
-                        }
-                    } else if (canContentScroll) {
+                        dyUnconsumed = dyUnconsumed == Integer.MAX_VALUE ? dyUnconsumed : (dyUnconsumed - moveDistance);
+                    }
+                    if (canContentScroll) {
                         ((IQMUIContinuousNestedBottomView) bottomView).consumeScroll(dyUnconsumed);
                     }
                 }
@@ -320,14 +325,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             if (dyUnconsumed < 0) {
                 if (child.getTop() <= dyUnconsumed) {
                     setTopAndBottomOffset(child.getTop() - dyUnconsumed - getLayoutTop());
-                    consumed[1] += dyUnconsumed;
+                    return;
                 } else if (child.getTop() < 0) {
                     int top = child.getTop();
                     setTopAndBottomOffset(0 - getLayoutTop());
-                    int innerUnConsumed = ((IQMUIContinuousNestedTopView) child).consumeScroll(dyUnconsumed - top);
-                    consumed[1] += dyUnconsumed - innerUnConsumed;
-                } else if (child instanceof IQMUIContinuousNestedTopView) {
-                    consumed[1] += dyUnconsumed - ((IQMUIContinuousNestedTopView) child).consumeScroll(dyUnconsumed);
+                    dyUnconsumed = dyUnconsumed == Integer.MIN_VALUE ? dyConsumed : (dyUnconsumed - top);
+                }
+                if (child instanceof IQMUIContinuousNestedTopView) {
+                    ((IQMUIContinuousNestedTopView) child).consumeScroll(dyUnconsumed);
                 }
             }
         }
