@@ -19,8 +19,6 @@ package com.qmuiteam.qmui.nestedScroll;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
@@ -40,22 +38,31 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView impleme
 
     @Override
     public void consumeScroll(int yUnconsumed) {
-        scrollBy(0, yUnconsumed);
+        if (yUnconsumed == Integer.MIN_VALUE) {
+            scrollToPosition(0);
+        } else if (yUnconsumed == Integer.MAX_VALUE) {
+            Adapter adapter = getAdapter();
+            if (adapter != null) {
+                scrollToPosition(adapter.getItemCount() - 1);
+            }
+        } else {
+            scrollBy(0, yUnconsumed);
+        }
     }
 
     @Override
     public int getContentHeight() {
         Adapter adapter = getAdapter();
-        if(adapter == null){
+        if (adapter == null) {
             return 0;
         }
         LayoutManager layoutManager = getLayoutManager();
-        if(layoutManager == null){
+        if (layoutManager == null) {
             return 0;
         }
         final int scrollRange = computeVerticalScrollRange();
         final int offsetRange = scrollRange - computeVerticalScrollExtent();
-        if(offsetRange > 0){
+        if (offsetRange > 0) {
             return HEIGHT_IS_ENOUGH_TO_SCROLL;
         }
         return scrollRange;

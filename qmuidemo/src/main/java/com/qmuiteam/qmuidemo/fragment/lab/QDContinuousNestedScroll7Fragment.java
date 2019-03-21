@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -37,12 +38,12 @@ import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomDelegateLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopDelegateLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIViewPager;
-import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
@@ -59,13 +60,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(group = Group.Other, name = "webview + part sticky header + viewpager")
-public class QDContinuousNestedScroll2Fragment extends BaseFragment {
+@Widget(group = Group.Other, name = "(header + webview + bottom) + (part sticky header + viewpager)")
+public class QDContinuousNestedScroll7Fragment extends BaseFragment {
     private static final String TAG = "ContinuousNestedScroll";
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
-    private QMUIWebView mNestedWebView;
+    private QMUIContinuousNestedTopDelegateLayout mTopDelegateLayout;
+    private QMUIContinuousNestedTopWebView mNestedWebView;
     private BottomView mBottomView;
 
 
@@ -90,12 +92,47 @@ public class QDContinuousNestedScroll2Fragment extends BaseFragment {
     }
 
     private void initCoordinatorLayout() {
+        mTopDelegateLayout = new QMUIContinuousNestedTopDelegateLayout(getContext());
+        mTopDelegateLayout.setBackgroundColor(Color.LTGRAY);
         mNestedWebView = new QMUIContinuousNestedTopWebView(getContext());
+
+        AppCompatTextView headerView = new AppCompatTextView(getContext()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
+                        QMUIDisplayHelper.dp2px(getContext(), 100), MeasureSpec.EXACTLY
+                ));
+            }
+        };
+        headerView.setTextSize(17);
+        headerView.setBackgroundColor(Color.GRAY);
+        headerView.setTextColor(Color.WHITE);
+        headerView.setText("This is Top Header");
+        headerView.setGravity(Gravity.CENTER);
+        mTopDelegateLayout.setHeaderView(headerView);
+
+        AppCompatTextView footerView = new AppCompatTextView(getContext()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
+                        QMUIDisplayHelper.dp2px(getContext(), 100), MeasureSpec.EXACTLY
+                ));
+            }
+        };
+        footerView.setTextSize(17);
+        footerView.setBackgroundColor(Color.GRAY);
+        footerView.setTextColor(Color.WHITE);
+        footerView.setGravity(Gravity.CENTER);
+        footerView.setText("This is Top Footer");
+        mTopDelegateLayout.setFooterView(footerView);
+
+        mTopDelegateLayout.setDelegateView(mNestedWebView);
+
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
-        CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
+        CoordinatorLayout.LayoutParams topLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
-        webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
-        mCoordinatorLayout.setTopAreaView(mNestedWebView, webViewLp);
+        topLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
+        mCoordinatorLayout.setTopAreaView(mTopDelegateLayout, topLp);
 
         mBottomView = new BottomView(getContext());
         CoordinatorLayout.LayoutParams recyclerViewLp = new CoordinatorLayout.LayoutParams(

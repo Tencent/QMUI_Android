@@ -16,23 +16,27 @@
 
 package com.qmuiteam.qmuidemo.fragment.lab;
 
+import android.graphics.Color;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopLinearLayout;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
@@ -49,12 +53,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(group = Group.Other, name = "webview + recyclerview")
-public class QDContinuousNestedScroll1Fragment extends BaseFragment {
+@Widget(group = Group.Other, name = "linearLayout + recyclerview")
+public class QDContinuousNestedScroll6Fragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
-    private QMUIWebView mNestedWebView;
+    private QMUIContinuousNestedTopLinearLayout mTopLinearLayout;
     private RecyclerView mRecyclerView;
     private BaseRecyclerAdapter<String> mAdapter;
 
@@ -86,20 +90,53 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
     }
 
     private void initCoordinatorLayout() {
-        mNestedWebView = new QMUIContinuousNestedTopWebView(getContext());
+        mTopLinearLayout = new QMUIContinuousNestedTopLinearLayout(getContext());
+        mTopLinearLayout.setBackgroundColor(Color.LTGRAY);
+        mTopLinearLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+        AppCompatTextView firstView = new AppCompatTextView(getContext()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
+                        QMUIDisplayHelper.dp2px(getContext(), 200), MeasureSpec.EXACTLY
+                ));
+            }
+        };
+        firstView.setTextSize(17);
+        firstView.setBackgroundColor(Color.DKGRAY);
+        firstView.setTextColor(Color.WHITE);
+        firstView.setText("This is Top firstView");
+        firstView.setGravity(Gravity.CENTER);
+        mTopLinearLayout.addView(firstView);
+
+        AppCompatTextView secondView = new AppCompatTextView(getContext()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
+                        QMUIDisplayHelper.dp2px(getContext(), 200), MeasureSpec.EXACTLY
+                ));
+            }
+        };
+        secondView.setTextSize(17);
+        secondView.setBackgroundColor(Color.GRAY);
+        secondView.setTextColor(Color.WHITE);
+        secondView.setGravity(Gravity.CENTER);
+        secondView.setText("This is secondView");
+        mTopLinearLayout.addView(secondView);
+
+
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
-        CoordinatorLayout.LayoutParams webViewLp = new CoordinatorLayout.LayoutParams(
+        CoordinatorLayout.LayoutParams topLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
-        webViewLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
-        mCoordinatorLayout.setTopAreaView(mNestedWebView, webViewLp);
+        topLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
+        mCoordinatorLayout.setTopAreaView(mTopLinearLayout, topLp);
 
         mRecyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());
         CoordinatorLayout.LayoutParams recyclerViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         recyclerViewLp.setBehavior(new QMUIContinuousNestedBottomAreaBehavior());
         mCoordinatorLayout.setBottomAreaView(mRecyclerView, recyclerViewLp);
-
-        mNestedWebView.loadUrl("https://mp.weixin.qq.com/s/zgfLOMD2JfZJKfHx-5BsBg");
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
@@ -131,21 +168,14 @@ public class QDContinuousNestedScroll1Fragment extends BaseFragment {
     }
 
     private void onDataLoaded() {
-        List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
-                "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
+        List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver",
+                "Health", "Function", "Supports", "Healthy", "Fat", "Metabolism", "Nuturally",
+                "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet",
+                "Bolster", "Pillow", "Cushion"));
         Collections.shuffle(data);
         mAdapter.setData(data);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mNestedWebView != null) {
-            mCoordinatorLayout.removeView(mNestedWebView);
-            mNestedWebView.destroy();
-            mNestedWebView = null;
-        }
-    }
 
     private void showBottomSheet() {
         new QMUIBottomSheet.BottomListSheetBuilder(getContext())
