@@ -48,7 +48,7 @@ public class QMUIContinuousNestedTopLinearLayout extends QMUILinearLayout implem
     }
 
     @Override
-    public int getScrollRange() {
+    public int getScrollOffsetRange() {
         return 0;
     }
 

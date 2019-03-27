@@ -19,12 +19,14 @@ package com.qmuiteam.qmui.nestedScroll;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements IQMUIContinuousNestedTopView {
 
     private OnScrollNotifier mScrollNotifier;
+    private final int[] mScrollConsumed = new int[2];
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context) {
         super(context);
@@ -50,9 +52,24 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
             }
             return Integer.MAX_VALUE;
         }
-        int oldScroll = getCurrentScroll();
+
+        boolean reStartNestedScroll = false;
+        if (!hasNestedScrollingParent(ViewCompat.TYPE_TOUCH)) {
+            // the scrollBy use ViewCompat.TYPE_TOUCH to handle nested scroll...
+            reStartNestedScroll = true;
+            startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH);
+
+            // and scrollBy only call dispatchNestedScroll, not call dispatchNestedPreScroll
+            mScrollConsumed[0] = 0;
+            mScrollConsumed[1] = 0;
+            dispatchNestedPreScroll(0, dyUnconsumed, mScrollConsumed, null, ViewCompat.TYPE_TOUCH);
+            dyUnconsumed -= mScrollConsumed[1];
+        }
         scrollBy(0, dyUnconsumed);
-        return dyUnconsumed - (getCurrentScroll() - oldScroll);
+        if (reStartNestedScroll) {
+            stopNestedScroll(ViewCompat.TYPE_TOUCH);
+        }
+        return 0;
     }
 
     @Override
@@ -61,7 +78,7 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     }
 
     @Override
-    public int getScrollRange() {
+    public int getScrollOffsetRange() {
         return Math.max(0, computeVerticalScrollRange() - getHeight());
     }
 
@@ -73,6 +90,6 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
-        mScrollNotifier.notify(getCurrentScroll(), getScrollRange());
+        mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
     }
 }

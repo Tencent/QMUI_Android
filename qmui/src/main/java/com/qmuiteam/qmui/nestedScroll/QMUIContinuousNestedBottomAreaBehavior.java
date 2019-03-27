@@ -61,7 +61,6 @@ public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavi
 
     @Override
     protected void layoutChild(CoordinatorLayout parent, View child, int layoutDirection) {
-        Log.i("cgine", "layout child bottom");
         List<View> dependencies = parent.getDependencies(child);
         if (!dependencies.isEmpty()) {
             View topView = dependencies.get(0);

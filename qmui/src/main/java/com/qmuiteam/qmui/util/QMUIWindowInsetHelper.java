@@ -21,16 +21,19 @@ import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.WindowInsetsCompat;
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.widget.INotchInsetConsumer;
 import com.qmuiteam.qmui.widget.IWindowInsetLayout;
 
@@ -42,6 +45,7 @@ import java.lang.ref.WeakReference;
  */
 
 public class QMUIWindowInsetHelper {
+    private static final Object KEYBOARD_CONSUMER = new Object();
     private final int KEYBOARD_HEIGHT_BOUNDARY;
     private final WeakReference<IWindowInsetLayout> mWindowInsetLayoutWR;
     private int sApplySystemWindowInsetsCount = 0;
@@ -55,7 +59,7 @@ public class QMUIWindowInsetHelper {
         } else {
             // some rom crash with WindowInsets...
             ViewCompat.setOnApplyWindowInsetsListener(viewGroup,
-                    new androidx.core.view.OnApplyWindowInsetsListener() {
+                    new android.support.v4.view.OnApplyWindowInsetsListener() {
                         @Override
                         public WindowInsetsCompat onApplyWindowInsets(View v,
                                                                       WindowInsetsCompat insets) {
@@ -96,8 +100,10 @@ public class QMUIWindowInsetHelper {
         boolean consumed = false;
         if (insets.bottom >= KEYBOARD_HEIGHT_BOUNDARY) {
             QMUIViewHelper.setPaddingBottom(viewGroup, insets.bottom);
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, KEYBOARD_CONSUMER);
             insets.bottom = 0;
         } else {
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
             QMUIViewHelper.setPaddingBottom(viewGroup, 0);
         }
 
@@ -145,8 +151,10 @@ public class QMUIWindowInsetHelper {
         if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY) {
             showKeyboard = true;
             QMUIViewHelper.setPaddingBottom(viewGroup, insets.getSystemWindowInsetBottom());
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, KEYBOARD_CONSUMER);
         } else {
             QMUIViewHelper.setPaddingBottom(viewGroup, 0);
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
         }
 
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
@@ -156,10 +164,10 @@ public class QMUIWindowInsetHelper {
                 continue;
             }
 
-            int insetLeft =  insets.getSystemWindowInsetLeft();
+            int insetLeft = insets.getSystemWindowInsetLeft();
             int insetRight = insets.getSystemWindowInsetRight();
-            if(QMUINotchHelper.needFixLandscapeNotchAreaFitSystemWindow(viewGroup) &&
-                    viewGroup.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (QMUINotchHelper.needFixLandscapeNotchAreaFitSystemWindow(viewGroup) &&
+                    viewGroup.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 insetLeft = Math.max(insetLeft, QMUINotchHelper.getSafeInsetLeft(viewGroup));
                 insetRight = Math.max(insetRight, QMUINotchHelper.getSafeInsetRight(viewGroup));
             }
@@ -196,8 +204,10 @@ public class QMUIWindowInsetHelper {
             if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY) {
                 showKeyboard = true;
                 QMUIViewHelper.setPaddingBottom(viewGroup, insets.getSystemWindowInsetBottom());
+                viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, KEYBOARD_CONSUMER);
             } else {
                 QMUIViewHelper.setPaddingBottom(viewGroup, 0);
+                viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
             }
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 View child = viewGroup.getChildAt(i);
@@ -288,5 +298,21 @@ public class QMUIWindowInsetHelper {
                     break;
             }
         }
+    }
+
+    public static View findKeyboardAreaConsumer(@NonNull View view) {
+        while (view != null) {
+            Object tag = view.getTag(R.id.qmui_window_inset_keyboard_area_consumer);
+            if (KEYBOARD_CONSUMER == tag) {
+                return view;
+            }
+            ViewParent viewParent = view.getParent();
+            if (viewParent instanceof View) {
+                view = (View) viewParent;
+            } else {
+                view = null;
+            }
+        }
+        return null;
     }
 }

@@ -67,6 +67,12 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         }
     }
 
+    private void dispatchBottomScroll(int offset, int range, int innerOffset, int innerRange) {
+        for (OnScrollListener onScrollListener : mOnScrollListeners) {
+            onScrollListener.onBottomScroll(offset, range, innerOffset, innerRange);
+        }
+    }
+
 
     public void setTopAreaView(View topView, @Nullable LayoutParams layoutParams) {
         if (!(topView instanceof IQMUIContinuousNestedTopView)) {
@@ -100,6 +106,13 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             removeView(((View) mBottomView));
         }
         mBottomView = (IQMUIContinuousNestedBottomView) bottomView;
+        mBottomView.injectScrollNotifier(new IQMUIContinuousNestedBottomView.OnScrollNotifier() {
+            @Override
+            public void notify(int innerOffset, int innerRange) {
+                dispatchBottomScroll(-mBottomAreaBehavior.getTopAndBottomOffset(), ((View) mBottomView).getHeight(),
+                        innerOffset, innerRange);
+            }
+        });
         if (layoutParams == null) {
             layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
@@ -133,6 +146,18 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
                     return;
                 }
                 mTopAreaBehavior.setTopAndBottomOffset(-((View) mTopView).getHeight());
+            }
+        }
+    }
+
+    public void scrollBy(int dy){
+        if(dy > 0){
+            if(mTopAreaBehavior != null){
+                mTopAreaBehavior.scroll(this, ((View)mTopView), dy);
+            }
+        }else if(dy < 0){
+            if(mBottomView != null){
+                mBottomView.consumeScroll(dy);
             }
         }
     }
@@ -176,10 +201,13 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     @Override
     public void onTopAreaOffset(int offset) {
         dispatchTopScroll(-offset, ((View) mTopView).getHeight(),
-                mTopView.getCurrentScroll(), mTopView.getScrollRange());
+                mTopView.getCurrentScroll(), mTopView.getScrollOffsetRange());
+        dispatchBottomScroll(-offset, ((View)mBottomView).getHeight(),
+                mBottomView.getCurrentScroll(), mBottomView.getScrollOffsetRange());
     }
 
     public interface OnScrollListener {
         void onTopScroll(int offset, int range, int innerOffset, int innerRange);
+        void onBottomScroll(int offset, int range, int innerOffset, int innerRange);
     }
 }
