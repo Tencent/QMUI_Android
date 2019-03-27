@@ -41,7 +41,7 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     public int consumeScroll(int yUnconsumed) {
         // compute the consumed value
         int scrollY = getScrollY();
-        int maxScrollY = getScrollRange();
+        int maxScrollY = getScrollOffsetRange();
         // the scrollY may be negative or larger than scrolling range
         scrollY = Math.max(0, Math.min(scrollY, maxScrollY));
         int dy = 0;
@@ -57,12 +57,12 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     @Override
     public int getCurrentScroll() {
         int scrollY = getScrollY();
-        int scrollRange = getScrollRange();
+        int scrollRange = getScrollOffsetRange();
         return Math.max(0, Math.min(scrollY, scrollRange));
     }
 
     @Override
-    public int getScrollRange() {
+    public int getScrollOffsetRange() {
         return computeVerticalScrollRange() - getHeight();
     }
 
@@ -75,7 +75,7 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         if (mScrollNotifier != null) {
-            mScrollNotifier.notify(getCurrentScroll(), getScrollRange());
+            mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
         }
     }
 }

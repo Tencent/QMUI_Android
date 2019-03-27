@@ -126,6 +126,14 @@ public class QDContinuousNestedScrollFragment extends BaseFragment {
                         startFragment(fragment);
                     }
                 })
+                .addItemView(mGroupListView.createItemView(mQDDataManager.getName(
+                        QDContinuousNestedScroll8Fragment.class)), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QDContinuousNestedScroll8Fragment fragment = new QDContinuousNestedScroll8Fragment();
+                        startFragment(fragment);
+                    }
+                })
                 .addTo(mGroupListView);
     }
 }

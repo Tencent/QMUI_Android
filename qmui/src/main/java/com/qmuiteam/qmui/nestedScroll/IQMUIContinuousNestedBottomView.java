@@ -31,4 +31,14 @@ public interface IQMUIContinuousNestedBottomView {
      */
     int getContentHeight();
 
+    int getCurrentScroll();
+
+    int getScrollOffsetRange();
+
+    void injectScrollNotifier(OnScrollNotifier notifier);
+
+    interface OnScrollNotifier {
+        void notify(int innerOffset, int innerRange);
+    }
+
 }

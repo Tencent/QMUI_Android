@@ -21,16 +21,17 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopDelegateLayout;
-import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopRecyclerView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
 import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
@@ -42,19 +43,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Widget(group = Group.Other, name = "(header + webview + bottom) + recyclerview")
-public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollBaseFragment {
+@Widget(group = Group.Other, name = "(header + recyclerView + bottom) + (part sticky header + viewpager)")
+public class QDContinuousNestedScroll8Fragment extends QDContinuousNestedScrollBaseFragment {
+    private static final String TAG = "ContinuousNestedScroll";
 
     private QMUIContinuousNestedTopDelegateLayout mTopDelegateLayout;
-    private QMUIContinuousNestedTopWebView mTopWebView;
-    private RecyclerView mRecyclerView;
+    private QMUIContinuousNestedTopRecyclerView mTopRecyclerView;
+    private QDContinuousBottomView mBottomView;
     private BaseRecyclerAdapter<String> mAdapter;
 
     @Override
     protected void initCoordinatorLayout() {
         mTopDelegateLayout = new QMUIContinuousNestedTopDelegateLayout(getContext());
         mTopDelegateLayout.setBackgroundColor(Color.LTGRAY);
-        mTopWebView = new QMUIContinuousNestedTopWebView(getContext());
+        new QMUIContinuousNestedTopRecyclerView(getContext());
 
         AppCompatTextView headerView = new AppCompatTextView(getContext()) {
             @Override
@@ -86,8 +88,15 @@ public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollB
         footerView.setText("This is Top Footer");
         mTopDelegateLayout.setFooterView(footerView);
 
-        mTopDelegateLayout.setDelegateView(mTopWebView);
-
+        mTopRecyclerView = new QMUIContinuousNestedTopRecyclerView(getContext());
+        mTopRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
+            @Override
+            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+        });
+        mTopDelegateLayout.setDelegateView(mTopRecyclerView);
 
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
         CoordinatorLayout.LayoutParams topLp = new CoordinatorLayout.LayoutParams(
@@ -95,18 +104,23 @@ public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollB
         topLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
         mCoordinatorLayout.setTopAreaView(mTopDelegateLayout, topLp);
 
-        mRecyclerView = new QMUIContinuousNestedBottomRecyclerView(getContext());
+        mBottomView = new QDContinuousBottomView(getContext());
         CoordinatorLayout.LayoutParams recyclerViewLp = new CoordinatorLayout.LayoutParams(
                 matchParent, matchParent);
         recyclerViewLp.setBehavior(new QMUIContinuousNestedBottomAreaBehavior());
-        mCoordinatorLayout.setBottomAreaView(mRecyclerView, recyclerViewLp);
+        mCoordinatorLayout.setBottomAreaView(mBottomView, recyclerViewLp);
 
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
+        mCoordinatorLayout.addOnScrollListener(new QMUIContinuousNestedScrollLayout.OnScrollListener() {
             @Override
-            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            public void onTopScroll(int offset, int range, int innerOffset, int innerRange) {
+                Log.i(TAG, "onTopScroll: offset = " + offset + " ; range = " + range +
+                        "; innerOffset = " + innerOffset + " ;innerRange = " + innerRange);
+            }
+
+            @Override
+            public void onBottomScroll(int offset, int range, int innerOffset, int innerRange) {
+                Log.i(TAG, "onBottomScroll: offset = " + offset + " ; range = " + range +
+                        "; innerOffset = " + innerOffset + " ;innerRange = " + innerRange);
             }
         });
 
@@ -127,8 +141,7 @@ public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollB
                 Toast.makeText(getContext(), "click position=" + pos, Toast.LENGTH_SHORT).show();
             }
         });
-        mTopWebView.loadUrl("https://mp.weixin.qq.com/s/zgfLOMD2JfZJKfHx-5BsBg");
-        mRecyclerView.setAdapter(mAdapter);
+        mTopRecyclerView.setAdapter(mAdapter);
         onDataLoaded();
     }
 
@@ -139,15 +152,5 @@ public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollB
                 "Bolster", "Pillow", "Cushion"));
         Collections.shuffle(data);
         mAdapter.setData(data);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mTopWebView != null) {
-            mCoordinatorLayout.removeView(mTopWebView);
-            mTopWebView.destroy();
-            mTopWebView = null;
-        }
     }
 }

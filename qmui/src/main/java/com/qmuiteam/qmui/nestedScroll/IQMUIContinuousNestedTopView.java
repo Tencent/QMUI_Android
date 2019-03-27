@@ -27,7 +27,7 @@ public interface IQMUIContinuousNestedTopView {
 
     int getCurrentScroll();
 
-    int getScrollRange();
+    int getScrollOffsetRange();
 
     void injectScrollNotifier(OnScrollNotifier notifier);
 

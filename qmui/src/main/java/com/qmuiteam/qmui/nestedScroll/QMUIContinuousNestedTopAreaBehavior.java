@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -204,7 +205,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         return true;
     }
 
-    private void scroll(@NonNull CoordinatorLayout parent, @NonNull View child, int dy) {
+     void scroll(@NonNull CoordinatorLayout parent, @NonNull View child, int dy) {
         mScrollConsumed[0] = 0;
         mScrollConsumed[1] = 0;
         onNestedPreScroll(parent, child, child, 0, dy, mScrollConsumed, ViewCompat.TYPE_TOUCH);
@@ -322,6 +323,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         } else {
             // child is topView, target is bottomView
             if (dyUnconsumed < 0) {
+                Log.i("cgine", "onNestedScroll: dyUnconsumed = " + dyUnconsumed);
                 if (child.getTop() <= dyUnconsumed) {
                     setTopAndBottomOffset(child.getTop() - dyUnconsumed - getLayoutTop());
                     return;

@@ -19,21 +19,48 @@ package com.qmuiteam.qmui.nestedScroll;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 
-public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView implements IQMUIContinuousNestedBottomView {
+public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
+        implements IQMUIContinuousNestedBottomView {
+
+    private IQMUIContinuousNestedBottomView.OnScrollNotifier mOnScrollNotifier;
+    private final int[] mScrollConsumed = new int[2];
+
     public QMUIContinuousNestedBottomRecyclerView(@NonNull Context context) {
         super(context);
+        init();
     }
 
     public QMUIContinuousNestedBottomRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public QMUIContinuousNestedBottomRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
+        addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (mOnScrollNotifier != null) {
+                    mOnScrollNotifier.notify(
+                            recyclerView.computeVerticalScrollOffset(),
+                            Math.max(0, recyclerView.computeVerticalScrollRange() - recyclerView.getHeight()));
+                }
+            }
+        });
     }
 
     @Override
@@ -46,7 +73,22 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView impleme
                 scrollToPosition(adapter.getItemCount() - 1);
             }
         } else {
+            boolean reStartNestedScroll = false;
+            if (!hasNestedScrollingParent(ViewCompat.TYPE_TOUCH)) {
+                // the scrollBy use ViewCompat.TYPE_TOUCH to handle nested scroll...
+                reStartNestedScroll = true;
+                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH);
+
+                // and scrollBy only call dispatchNestedScroll, not call dispatchNestedPreScroll
+                mScrollConsumed[0] = 0;
+                mScrollConsumed[1] = 0;
+                dispatchNestedPreScroll(0, yUnconsumed, mScrollConsumed, null, ViewCompat.TYPE_TOUCH);
+                yUnconsumed -= mScrollConsumed[1];
+            }
             scrollBy(0, yUnconsumed);
+            if (reStartNestedScroll) {
+                stopNestedScroll(ViewCompat.TYPE_TOUCH);
+            }
         }
     }
 
@@ -60,11 +102,25 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView impleme
         if (layoutManager == null) {
             return 0;
         }
-        final int scrollRange = computeVerticalScrollRange();
-        final int offsetRange = scrollRange - computeVerticalScrollExtent();
-        if (offsetRange > 0) {
+        final int scrollRange = this.computeVerticalScrollRange();
+        if (scrollRange > getHeight()) {
             return HEIGHT_IS_ENOUGH_TO_SCROLL;
         }
         return scrollRange;
+    }
+
+    @Override
+    public void injectScrollNotifier(OnScrollNotifier notifier) {
+        mOnScrollNotifier = notifier;
+    }
+
+    @Override
+    public int getCurrentScroll() {
+        return computeVerticalScrollOffset();
+    }
+
+    @Override
+    public int getScrollOffsetRange() {
+        return Math.max(0, computeVerticalScrollRange() - getHeight());
     }
 }
