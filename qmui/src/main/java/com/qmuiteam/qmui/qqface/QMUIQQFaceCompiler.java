@@ -60,7 +60,7 @@ public class QMUIQQFaceCompiler {
         mQQFaceManager = manager;
     }
 
-    public int getSpecialBoundsMaxHeight(){
+    public int getSpecialBoundsMaxHeight() {
         return mQQFaceManager.getSpecialDrawableMaxHeight();
     }
 
@@ -363,8 +363,11 @@ public class QMUIQQFaceCompiler {
             } else if (element.getType() == ElementType.NEXTLINE) {
                 mNewLineCount++;
             } else if (element.getType() == ElementType.SPAN) {
-                mQQFaceCount += element.getChildList().getQQFaceCount();
-                mNewLineCount += element.getChildList().getNewLineCount();
+                ElementList childList = element.getChildList();
+                if (childList != null) {
+                    mQQFaceCount += element.getChildList().getQQFaceCount();
+                    mNewLineCount += element.getChildList().getNewLineCount();
+                }
             }
             mElements.add(element);
         }
