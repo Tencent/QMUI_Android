@@ -1347,7 +1347,7 @@ public class QMUITabSegment extends HorizontalScrollView {
         @Override
         protected void bind(Tab item, TabItemView view, int position) {
             TextView tv = view.getTextView();
-            setTextViewTypeface(tv, false);
+            setTextViewTypeface(tv, mCurrentSelectedIndex == position);
             // custom view
             List<View> mCustomViews = item.getCustomViews();
             if (mCustomViews != null && mCustomViews.size() > 0) {
