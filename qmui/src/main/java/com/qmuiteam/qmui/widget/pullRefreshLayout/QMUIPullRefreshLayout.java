@@ -133,6 +133,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     private int mScrollFlag = 0;
     private boolean mNestScrollDurationRefreshing = false;
     private Runnable mPendingRefreshDirectlyAction = null;
+    private boolean mSafeDisallowInterceptTouchEvent = false;
 
 
     public QMUIPullRefreshLayout(Context context) {
@@ -276,8 +277,23 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         return i;
     }
 
+    /**
+     * child view call, to ensure disallowInterceptTouchEvent make sense
+     *
+     * how to optimize this...
+     */
+    public void openSafeDisallowInterceptTouchEvent(){
+        mSafeDisallowInterceptTouchEvent = true;
+    }
+
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
+
+        if(mSafeDisallowInterceptTouchEvent){
+            super.requestDisallowInterceptTouchEvent(b);
+            mSafeDisallowInterceptTouchEvent = false;
+        }
+
         // if this is a List < L or another view that doesn't support nested
         // scrolling, ignore this request so that the vertical scroll event
         // isn't stolen
@@ -289,6 +305,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             super.requestDisallowInterceptTouchEvent(b);
         }
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
