@@ -696,6 +696,7 @@ public class QMUILayoutHelper implements IQMUILayout {
 
         if (mRadius == 0 || (!useFeature() && mOuterNormalColor == 0)) {
             mClipPaint.setStyle(Paint.Style.STROKE);
+            mClipPaint.setColor(mBorderColor);
             canvas.drawRect(mBorderRect, mClipPaint);
             return;
         }
