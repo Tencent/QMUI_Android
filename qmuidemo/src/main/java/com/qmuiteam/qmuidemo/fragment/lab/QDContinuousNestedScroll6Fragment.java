@@ -60,7 +60,7 @@ public class QDContinuousNestedScroll6Fragment extends QDContinuousNestedScrollB
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
-                        QMUIDisplayHelper.dp2px(getContext(), 200), MeasureSpec.EXACTLY
+                        QMUIDisplayHelper.dp2px(getContext(), 1000), MeasureSpec.EXACTLY
                 ));
             }
         };
@@ -75,7 +75,7 @@ public class QDContinuousNestedScroll6Fragment extends QDContinuousNestedScrollB
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
-                        QMUIDisplayHelper.dp2px(getContext(), 200), MeasureSpec.EXACTLY
+                        QMUIDisplayHelper.dp2px(getContext(), 1000), MeasureSpec.EXACTLY
                 ));
             }
         };
@@ -89,7 +89,7 @@ public class QDContinuousNestedScroll6Fragment extends QDContinuousNestedScrollB
 
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
         CoordinatorLayout.LayoutParams topLp = new CoordinatorLayout.LayoutParams(
-                matchParent, matchParent);
+                matchParent, ViewGroup.LayoutParams.WRAP_CONTENT);
         topLp.setBehavior(new QMUIContinuousNestedTopAreaBehavior(getContext()));
         mCoordinatorLayout.setTopAreaView(mTopLinearLayout, topLp);
 
