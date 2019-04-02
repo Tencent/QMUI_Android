@@ -225,10 +225,12 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     }
 
     @Override
-    public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
+    public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child,
+                                  int parentWidthMeasureSpec, int widthUsed,
+                                  int parentHeightMeasureSpec, int heightUsed) {
         final int childLpHeight = child.getLayoutParams().height;
+        int availableHeight = View.MeasureSpec.getSize(parentHeightMeasureSpec);
         if (childLpHeight == ViewGroup.LayoutParams.MATCH_PARENT) {
-            int availableHeight = View.MeasureSpec.getSize(parentHeightMeasureSpec);
             if (availableHeight == 0) {
                 // If the measure spec doesn't specify a size, use the current height
                 availableHeight = parent.getHeight();
@@ -239,9 +241,12 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             parent.onMeasureChild(
                     child, parentWidthMeasureSpec, widthUsed, heightMeasureSpec, heightUsed);
 
-            return true;
+
+        }else{
+            parent.onMeasureChild(child, parentWidthMeasureSpec, widthUsed,
+                    View.MeasureSpec.makeMeasureSpec(availableHeight, View.MeasureSpec.UNSPECIFIED), heightUsed);
         }
-        return false;
+        return true;
     }
 
     @Override
