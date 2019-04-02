@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -205,7 +204,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         return true;
     }
 
-     void scroll(@NonNull CoordinatorLayout parent, @NonNull View child, int dy) {
+    void scroll(@NonNull CoordinatorLayout parent, @NonNull View child, int dy) {
         mScrollConsumed[0] = 0;
         mScrollConsumed[1] = 0;
         onNestedPreScroll(parent, child, child, 0, dy, mScrollConsumed, ViewCompat.TYPE_TOUCH);
@@ -242,7 +241,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                     child, parentWidthMeasureSpec, widthUsed, heightMeasureSpec, heightUsed);
 
 
-        }else{
+        } else {
             parent.onMeasureChild(child, parentWidthMeasureSpec, widthUsed,
                     View.MeasureSpec.makeMeasureSpec(availableHeight, View.MeasureSpec.UNSPECIFIED), heightUsed);
         }
@@ -259,16 +258,13 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         if (target == child) {
             // both target view and child view is top view
             if (dy < 0) {
-                View bottomView = findBottomView(parent);
-                if (bottomView != null) {
-                    if (child.getTop() <= dy) {
-                        setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
-                        consumed[1] += dy;
-                    } else if (child.getTop() < 0) {
-                        int top = child.getTop();
-                        setTopAndBottomOffset(0 - getLayoutTop());
-                        consumed[1] += top;
-                    }
+                if (child.getTop() <= dy) {
+                    setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
+                    consumed[1] += dy;
+                } else if (child.getTop() < 0) {
+                    int top = child.getTop();
+                    setTopAndBottomOffset(0 - getLayoutTop());
+                    consumed[1] += top;
                 }
             }
         } else {
@@ -304,7 +300,15 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             // both target view and child view is top view
             if (dyUnconsumed > 0) {
                 View bottomView = findBottomView(parent);
-                if (bottomView != null) {
+                if (bottomView == null || bottomView.getVisibility() == View.GONE) {
+                    int parentBottom = parent.getHeight();
+                    if (target.getBottom() - parentBottom >= dyUnconsumed) {
+                        setTopAndBottomOffset(target.getTop() - dyUnconsumed - getLayoutTop());
+                    } else if (target.getBottom() - parentBottom > 0) {
+                        int moveDistance = target.getBottom() - parentBottom;
+                        setTopAndBottomOffset(target.getTop() - moveDistance - getLayoutTop());
+                    }
+                } else {
                     int contentHeight = ((IQMUIContinuousNestedBottomView) bottomView).getContentHeight();
                     int minBottom = parent.getHeight();
                     boolean canContentScroll = true;
@@ -328,7 +332,6 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         } else {
             // child is topView, target is bottomView
             if (dyUnconsumed < 0) {
-                Log.i("cgine", "onNestedScroll: dyUnconsumed = " + dyUnconsumed);
                 if (child.getTop() <= dyUnconsumed) {
                     setTopAndBottomOffset(child.getTop() - dyUnconsumed - getLayoutTop());
                     return;
