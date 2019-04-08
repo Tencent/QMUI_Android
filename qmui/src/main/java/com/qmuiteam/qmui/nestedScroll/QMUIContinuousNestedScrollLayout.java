@@ -98,6 +98,14 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         addView(topView, layoutParams);
     }
 
+    public IQMUIContinuousNestedTopView getTopView() {
+        return mTopView;
+    }
+
+    public IQMUIContinuousNestedBottomView getBottomView() {
+        return mBottomView;
+    }
+
     public void setBottomAreaView(View bottomView, @Nullable LayoutParams layoutParams) {
         if (!(bottomView instanceof IQMUIContinuousNestedBottomView)) {
             throw new IllegalStateException("bottomView must implement from IQMUIContinuousNestedBottomView");
