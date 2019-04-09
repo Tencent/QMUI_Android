@@ -20,7 +20,6 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.GravityCompat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,12 @@ public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavi
     private final Rect tempRect1 = new Rect();
     private final Rect tempRect2 = new Rect();
 
+    private int mTopInset = 0;
+
+    public void setTopInset(int topInset) {
+        mTopInset = topInset;
+    }
+
     @Override
     public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
         final int childLpHeight = child.getLayoutParams().height;
@@ -42,6 +47,8 @@ public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavi
             if (availableHeight == 0) {
                 availableHeight = parent.getHeight();
             }
+
+            availableHeight -= mTopInset;
 
             final int heightMeasureSpec =
                     View.MeasureSpec.makeMeasureSpec(

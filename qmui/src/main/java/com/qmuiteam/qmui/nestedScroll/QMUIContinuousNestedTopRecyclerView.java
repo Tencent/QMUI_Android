@@ -20,8 +20,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.View;
 
 public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements IQMUIContinuousNestedTopView {
 
@@ -91,5 +93,43 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
         mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
+    }
+
+    @Override
+    public Object saveScrollInfo() {
+        LayoutManager layoutManager = getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            LinearLayoutManager lm = (LinearLayoutManager) layoutManager;
+            if (lm.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                return null;
+            }
+            int pos = lm.findFirstVisibleItemPosition();
+            View firstView = lm.findViewByPosition(pos);
+            int offset = firstView == null ? 0 : firstView.getTop();
+            return new ScrollInfo(pos, offset);
+        }
+        return null;
+    }
+
+    @Override
+    public void restoreScrollInfo(Object scrollInfo) {
+        if (!(scrollInfo instanceof ScrollInfo)) {
+            return;
+        }
+        ScrollInfo sc = (ScrollInfo) scrollInfo;
+        LayoutManager layoutManager = getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(sc.scrollPosition, sc.scrollOffset);
+        }
+    }
+
+    public static class ScrollInfo {
+        int scrollPosition;
+        int scrollOffset;
+
+        public ScrollInfo(int scrollPosition, int scrollOffset) {
+            this.scrollPosition = scrollPosition;
+            this.scrollOffset = scrollOffset;
+        }
     }
 }

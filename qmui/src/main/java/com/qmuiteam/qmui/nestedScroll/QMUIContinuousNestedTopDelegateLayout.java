@@ -62,6 +62,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
         mChildHelper = new NestedScrollingChildHelper(this);
 
         ViewCompat.setNestedScrollingEnabled(this, true);
+        setClipToPadding(false);
     }
 
     public void setHeaderView(@NonNull View headerView) {
@@ -92,30 +93,36 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int w = MeasureSpec.getSize(widthMeasureSpec);
         int h = MeasureSpec.getSize(heightMeasureSpec);
-        int anchorHeight = 0;
+        int anchorHeight = getPaddingTop();
         if (mHeaderView != null) {
+            mHeaderView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
             anchorHeight += mHeaderView.getMeasuredHeight();
         }
         if (mDelegateView != null) {
             View delegateView = (View) mDelegateView;
+            delegateView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
             anchorHeight += delegateView.getMeasuredHeight();
         }
 
         if (mFooterView != null) {
+            mFooterView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
             anchorHeight += mFooterView.getMeasuredHeight();
         }
+
+        anchorHeight += getPaddingBottom();
         if (anchorHeight < h) {
             setMeasuredDimension(w, anchorHeight);
+        } else {
+            setMeasuredDimension(w, h);
         }
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int w = right - left, h = bottom - top;
-        int anchorTop = 0;
+        int anchorTop = getPaddingTop();
         int viewHeight;
         if (mHeaderView != null) {
             viewHeight = mHeaderView.getMeasuredHeight();
@@ -135,6 +142,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             mFooterView.layout(0, anchorTop, w, anchorTop + viewHeight);
             anchorTop += viewHeight;
         }
+        anchorTop += getPaddingBottom();
 
         mOffsetRange = Math.max(0, anchorTop - h);
 
@@ -195,7 +203,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 }
                 return dyUnconsumed;
             } else {
-                int beforeRange = mHeaderView == null ? 0 : mHeaderView.getHeight();
+                int beforeRange = getPaddingTop() + (mHeaderView == null ? 0 : mHeaderView.getHeight());
                 if (dyUnconsumed == Integer.MAX_VALUE) {
                     offsetTo(beforeRange);
                 } else if (mOffsetCurrent + dyUnconsumed <= beforeRange) {
@@ -233,7 +241,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 }
                 return dyUnconsumed;
             }
-            int afterRange = mOffsetRange - (mFooterView == null ? 0 : mFooterView.getHeight());
+            int afterRange = mOffsetRange - getPaddingBottom() - (mFooterView == null ? 0 : mFooterView.getHeight());
             if (dyUnconsumed == Integer.MIN_VALUE) {
                 offsetTo(afterRange);
             } else if (mOffsetCurrent + dyUnconsumed > afterRange) {
@@ -288,6 +296,41 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                     notifier.notify(getCurrentScroll(), getScrollOffsetRange());
                 }
             });
+        }
+    }
+
+    @Override
+    public Object saveScrollInfo() {
+        return new ScrollInfo(-mOffsetCurrent, mDelegateView == null ? null : mDelegateView.saveScrollInfo());
+    }
+
+    @Override
+    public void restoreScrollInfo(Object scrollInfo) {
+        if (scrollInfo instanceof ScrollInfo) {
+            ScrollInfo si = (ScrollInfo) scrollInfo;
+            if (mHeaderViewOffsetHelper != null) {
+                mHeaderViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            }
+            if (mDelegateViewOffsetHelper != null) {
+                mDelegateViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            }
+            if (mFooterViewOffsetHelper != null) {
+                mFooterViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            }
+
+            if (mDelegateView != null) {
+                mDelegateView.restoreScrollInfo(((ScrollInfo) scrollInfo).delegateScrollInfo);
+            }
+        }
+    }
+
+    public static class ScrollInfo {
+        int topBottomOffset;
+        Object delegateScrollInfo;
+
+        public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
+            this.topBottomOffset = topBottomOffset;
+            this.delegateScrollInfo = delegateScrollInfo;
         }
     }
 
@@ -395,7 +438,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
                                int dyUnconsumed, int type) {
         int consumed = 0;
-        if (dyUnconsumed > 0 && mFooterView != null) {
+        if (dyUnconsumed > 0) {
             if (mOffsetCurrent + dyUnconsumed <= mOffsetRange) {
                 consumed = dyUnconsumed;
                 offsetTo(mOffsetCurrent + dyUnconsumed);
@@ -403,7 +446,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 consumed = mOffsetRange - mOffsetCurrent;
                 offsetTo(mOffsetRange);
             }
-        } else if (dyUnconsumed < 0 && mHeaderView != null) {
+        } else if (dyUnconsumed < 0) {
             if (mOffsetCurrent + dyUnconsumed >= 0) {
                 consumed = dyUnconsumed;
                 offsetTo(mOffsetCurrent + dyUnconsumed);
@@ -421,16 +464,17 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                                   int type) {
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
         int unconsumed = dy - consumed[1];
-        if (unconsumed > 0 && mHeaderView != null) {
-            if (mOffsetCurrent + unconsumed <= mHeaderView.getHeight()) {
+        if (unconsumed > 0) {
+            int topMargin = getPaddingTop() + (mHeaderView == null ? 0 : mHeaderView.getHeight());
+            if (mOffsetCurrent + unconsumed <= topMargin) {
                 offsetTo(mOffsetCurrent + unconsumed);
                 consumed[1] += unconsumed;
-            } else if (mOffsetCurrent < mHeaderView.getHeight()) {
-                consumed[1] += mHeaderView.getHeight() - mOffsetCurrent;
-                offsetTo(mHeaderView.getHeight());
+            } else if (mOffsetCurrent < topMargin) {
+                consumed[1] += topMargin - mOffsetCurrent;
+                offsetTo(topMargin);
             }
-        } else if (unconsumed < 0 && mFooterView != null) {
-            int b = mOffsetRange - mFooterView.getHeight();
+        } else if (unconsumed < 0) {
+            int b = mOffsetRange - getPaddingBottom() - (mFooterView != null ? mFooterView.getHeight() : 0);
             if (mOffsetCurrent + unconsumed >= b) {
                 offsetTo(mOffsetCurrent + unconsumed);
                 consumed[1] += unconsumed;

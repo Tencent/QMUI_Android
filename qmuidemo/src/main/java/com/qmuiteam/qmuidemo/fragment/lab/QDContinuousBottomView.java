@@ -46,6 +46,7 @@ public class QDContinuousBottomView extends QMUIContinuousNestedBottomDelegateLa
 
     private MyViewPager mViewPager;
     private QMUIContinuousNestedBottomRecyclerView mCurrentItemView;
+    private int mCurrentPosition = -1;
     private IQMUIContinuousNestedBottomView.OnScrollNotifier mOnScrollNotifier;
 
     public QDContinuousBottomView(Context context) {
@@ -146,6 +147,7 @@ public class QDContinuousBottomView extends QMUIContinuousNestedBottomDelegateLa
             public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
                 super.setPrimaryItem(container, position, object);
                 mCurrentItemView = (QMUIContinuousNestedBottomRecyclerView) object;
+                mCurrentPosition = position;
                 if (mOnScrollNotifier != null) {
                     mCurrentItemView.injectScrollNotifier(mOnScrollNotifier);
                 }
@@ -206,6 +208,34 @@ public class QDContinuousBottomView extends QMUIContinuousNestedBottomDelegateLa
             mOnScrollNotifier = notifier;
             if (mCurrentItemView != null) {
                 mCurrentItemView.injectScrollNotifier(notifier);
+            }
+        }
+
+        @Override
+        public Object saveScrollInfo() {
+            if (mCurrentItemView != null) {
+                return new ScrollInfo(mCurrentPosition, mCurrentItemView.saveScrollInfo());
+            }
+            return null;
+        }
+
+        @Override
+        public void restoreScrollInfo(Object scrollInfo) {
+            if (mCurrentItemView != null && (scrollInfo instanceof ScrollInfo)) {
+                ScrollInfo si = (ScrollInfo) scrollInfo;
+                if (si.currentPosition == mCurrentPosition) {
+                    mCurrentItemView.restoreScrollInfo(si.currentScrollInfo);
+                }
+            }
+        }
+
+        class ScrollInfo {
+            int currentPosition;
+            Object currentScrollInfo;
+
+            public ScrollInfo(int currentPosition, Object currentScrollInfo) {
+                this.currentPosition = currentPosition;
+                this.currentScrollInfo = currentScrollInfo;
             }
         }
     }
