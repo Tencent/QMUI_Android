@@ -16,7 +16,7 @@
 
 package com.qmuiteam.qmui.nestedScroll;
 
-public interface IQMUIContinuousNestedBottomView {
+public interface IQMUIContinuousNestedBottomView extends IQMUIContinuousNestedScrollCommon {
     int HEIGHT_IS_ENOUGH_TO_SCROLL = -1;
     /**
      * consume scroll
@@ -34,11 +34,4 @@ public interface IQMUIContinuousNestedBottomView {
     int getCurrentScroll();
 
     int getScrollOffsetRange();
-
-    void injectScrollNotifier(OnScrollNotifier notifier);
-
-    interface OnScrollNotifier {
-        void notify(int innerOffset, int innerRange);
-    }
-
 }

@@ -78,4 +78,16 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
             mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
         }
     }
+
+    @Override
+    public Object saveScrollInfo() {
+        return getScrollY();
+    }
+
+    @Override
+    public void restoreScrollInfo(Object scrollInfo) {
+        if (scrollInfo instanceof Integer) {
+            scrollTo(0, (Integer) scrollInfo);
+        }
+    }
 }

@@ -225,6 +225,32 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
         }
     }
 
+    @Override
+    public void restoreScrollInfo(Object scrollInfo) {
+        if (scrollInfo instanceof ScrollInfo) {
+            ScrollInfo si = (ScrollInfo) scrollInfo;
+            mHeaderViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            mContentViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            ((IQMUIContinuousNestedBottomView) mContentView).restoreScrollInfo(si.delegateScrollInfo);
+        }
+    }
+
+    @Override
+    public Object saveScrollInfo() {
+        return new ScrollInfo(mHeaderViewOffsetHelper.getTopAndBottomOffset(),
+                ((IQMUIContinuousNestedBottomView) mContentView).saveScrollInfo());
+    }
+
+    public static class ScrollInfo {
+        int topBottomOffset;
+        Object delegateScrollInfo;
+
+        public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
+            this.topBottomOffset = topBottomOffset;
+            this.delegateScrollInfo = delegateScrollInfo;
+        }
+    }
+
     // NestedScrollingChild2
 
     @Override
@@ -641,6 +667,5 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
             removeCallbacks(this);
             mOverScroller.abortAnimation();
         }
-
     }
 }

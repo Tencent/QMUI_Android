@@ -16,16 +16,18 @@
 
 package com.qmuiteam.qmui.nestedScroll;
 
-public interface IQMUIContinuousNestedTopView extends IQMUIContinuousNestedScrollCommon {
-    /**
-     * consume scroll
-     *
-     * @param dyUnconsumed the delta value to consume
-     * @return the remain unconsumed value
-     */
-    int consumeScroll(int dyUnconsumed);
+import android.support.annotation.Nullable;
 
-    int getCurrentScroll();
+public interface IQMUIContinuousNestedScrollCommon {
 
-    int getScrollOffsetRange();
+    @Nullable
+    Object saveScrollInfo();
+
+    void restoreScrollInfo(@Nullable Object scrollInfo);
+
+    void injectScrollNotifier(OnScrollNotifier notifier);
+
+    interface OnScrollNotifier {
+        void notify(int innerOffset, int innerRange);
+    }
 }

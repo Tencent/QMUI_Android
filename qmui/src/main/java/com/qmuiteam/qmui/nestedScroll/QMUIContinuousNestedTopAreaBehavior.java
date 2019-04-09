@@ -272,9 +272,11 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 // child is topView, target is bottomView
                 if (target instanceof IQMUIContinuousNestedBottomView) {
                     int contentHeight = ((IQMUIContinuousNestedBottomView) target).getContentHeight();
-                    int minOffset = -child.getHeight();
+                    int minOffset;
                     if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
                         minOffset = parent.getHeight() - contentHeight - child.getHeight();
+                    }else{
+                        minOffset = parent.getHeight() - child.getHeight() - target.getHeight();
                     }
                     if (child.getTop() - dy >= minOffset) {
                         setTopAndBottomOffset(child.getTop() - dy - getLayoutTop());
@@ -314,7 +316,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                     int minBottom = parent.getHeight();
                     boolean canContentScroll = true;
                     if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
-                        minBottom = parent.getHeight() + parent.getHeight() - contentHeight;
+                        minBottom = parent.getHeight() + bottomView.getHeight() - contentHeight;
                         canContentScroll = false;
                     }
                     if (bottomView.getBottom() - minBottom > dyUnconsumed) {

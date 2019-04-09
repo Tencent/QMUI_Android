@@ -17,21 +17,25 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.graphics.Rect;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.GravityCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.GravityCompat;
-
 public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavior<View> {
 
     private final Rect tempRect1 = new Rect();
     private final Rect tempRect2 = new Rect();
+
+    private int mTopInset = 0;
+
+    public void setTopInset(int topInset) {
+        mTopInset = topInset;
+    }
 
     @Override
     public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
@@ -43,6 +47,8 @@ public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavi
             if (availableHeight == 0) {
                 availableHeight = parent.getHeight();
             }
+
+            availableHeight -= mTopInset;
 
             final int heightMeasureSpec =
                     View.MeasureSpec.makeMeasureSpec(

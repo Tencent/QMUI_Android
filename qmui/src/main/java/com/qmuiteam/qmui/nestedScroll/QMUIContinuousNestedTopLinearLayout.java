@@ -56,4 +56,14 @@ public class QMUIContinuousNestedTopLinearLayout extends QMUILinearLayout implem
     public void injectScrollNotifier(OnScrollNotifier notifier) {
 
     }
+
+    @Override
+    public void restoreScrollInfo(Object scrollInfo) {
+
+    }
+
+    @Override
+    public Object saveScrollInfo() {
+        return null;
+    }
 }
