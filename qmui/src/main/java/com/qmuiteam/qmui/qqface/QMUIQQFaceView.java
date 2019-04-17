@@ -542,7 +542,7 @@ public class QMUIQQFaceView extends View {
                     mFirstBaseLine = -top;
                 } else {
                     mFontHeight = drawableSize;
-                    mFirstBaseLine = -top + (mFontHeight - drawableSize) / 2;
+                    mFirstBaseLine = -top + (drawableSize - fontHeight) / 2;
                 }
             }
         }
@@ -1333,9 +1333,16 @@ public class QMUIQQFaceView extends View {
             drawableTop = (mFontHeight - mQQFaceSize) / 2;
             drawable.setBounds(0, drawableTop, mQQFaceSize, drawableTop + mQQFaceSize);
         } else {
-            drawableTop = (mFontHeight - drawable.getIntrinsicHeight()) / 2;
             int left = isLast ? mSpecialDrawablePadding : 0;
-            drawable.setBounds(left, drawableTop, left + drawable.getIntrinsicWidth(), drawableTop + drawable.getIntrinsicHeight());
+            int drawableWidth = drawable.getIntrinsicWidth();
+            int drawableHeight = drawable.getIntrinsicHeight();
+            if(drawableHeight > mFontHeight){
+                float scale = ((float)mFontHeight) / drawableHeight;
+                drawableHeight = mFontHeight;
+                drawableWidth = (int) (drawableWidth * scale);
+            }
+            drawableTop = (mFontHeight - drawableHeight) / 2;
+            drawable.setBounds(left, drawableTop, left + drawableWidth, drawableTop + drawableHeight);
         }
         int top = getPaddingTop();
         if (line > 1) {
