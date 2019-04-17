@@ -112,15 +112,12 @@ public class QDContinuousNestedScroll8Fragment extends QDContinuousNestedScrollB
 
         mCoordinatorLayout.addOnScrollListener(new QMUIContinuousNestedScrollLayout.OnScrollListener() {
             @Override
-            public void onTopScroll(int offset, int range, int innerOffset, int innerRange) {
-                Log.i(TAG, "onTopScroll: offset = " + offset + " ; range = " + range +
-                        "; innerOffset = " + innerOffset + " ;innerRange = " + innerRange);
-            }
-
-            @Override
-            public void onBottomScroll(int offset, int range, int innerOffset, int innerRange) {
-                Log.i(TAG, "onBottomScroll: offset = " + offset + " ; range = " + range +
-                        "; innerOffset = " + innerOffset + " ;innerRange = " + innerRange);
+            public void onScroll(int topCurrent, int topRange, int offsetCurrent,
+                                 int offsetRange, int bottomCurrent, int bottomRange) {
+                Log.i(TAG, String.format("topCurrent = %d; topRange = %d; " +
+                                "offsetCurrent = %d; offsetRange = %d; " +
+                                "bottomCurrent = %d, bottomRange = %d",
+                        topCurrent, topRange, offsetCurrent, offsetRange, bottomCurrent, bottomRange));
             }
         });
 

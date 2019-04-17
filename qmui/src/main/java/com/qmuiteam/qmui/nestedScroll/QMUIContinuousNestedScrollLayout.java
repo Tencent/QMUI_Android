@@ -60,19 +60,6 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         mOnScrollListeners.remove(onScrollListener);
     }
 
-    private void dispatchTopScroll(int offset, int range, int innerOffset, int innerRange) {
-        for (OnScrollListener onScrollListener : mOnScrollListeners) {
-            onScrollListener.onTopScroll(offset, range, innerOffset, innerRange);
-        }
-    }
-
-    private void dispatchBottomScroll(int offset, int range, int innerOffset, int innerRange) {
-        for (OnScrollListener onScrollListener : mOnScrollListeners) {
-            onScrollListener.onBottomScroll(offset, range, innerOffset, innerRange);
-        }
-    }
-
-
     public void setTopAreaView(View topView, @Nullable LayoutParams layoutParams) {
         if (!(topView instanceof IQMUIContinuousNestedTopView)) {
             throw new IllegalStateException("topView must implement from IQMUIContinuousNestedTopView");
@@ -124,8 +111,10 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         mBottomView.injectScrollNotifier(new IQMUIContinuousNestedBottomView.OnScrollNotifier() {
             @Override
             public void notify(int innerOffset, int innerRange) {
-                dispatchBottomScroll(-mBottomAreaBehavior.getTopAndBottomOffset(), getOffsetRange(),
-                        innerOffset, innerRange);
+                int topCurrent = mTopView == null ? 0 : mTopView.getCurrentScroll();
+                int topRange = mTopView == null ? 0 : mTopView.getScrollOffsetRange();
+                int offsetCurrent = mTopAreaBehavior == null ? 0 : -mTopAreaBehavior.getTopAndBottomOffset();
+                dispatchScroll(topCurrent, topRange, offsetCurrent, getOffsetRange(), innerOffset, innerRange);
             }
         });
         if (layoutParams == null) {
@@ -143,27 +132,30 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public void scrollBottomViewToTop() {
+        if (mTopView != null) {
+            mTopView.consumeScroll(Integer.MAX_VALUE);
+        }
+
         if (mBottomView != null) {
-            int top = ((View) mBottomView).getTop();
-            if (top <= 0) {
-                mBottomView.consumeScroll(Integer.MIN_VALUE);
-                return;
+            mBottomView.consumeScroll(Integer.MIN_VALUE);
+
+            int contentHeight = mBottomView.getContentHeight();
+            if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
+                mTopAreaBehavior.setTopAndBottomOffset(
+                        getHeight() - contentHeight - ((View) mTopView).getHeight());
+            } else {
+                mTopAreaBehavior.setTopAndBottomOffset(
+                        getHeight() - ((View) mBottomView).getHeight() - ((View) mTopView).getHeight());
             }
         }
-        if (mTopView != null) {
-            // consume the max value
-            mTopView.consumeScroll(Integer.MAX_VALUE);
-            if (mBottomView != null) {
-                int contentHeight = mBottomView.getContentHeight();
-                if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
-                    // bottomView can not scroll
-                    mTopAreaBehavior.setTopAndBottomOffset(
-                            getHeight() - contentHeight - ((View) mTopView).getHeight());
-                    return;
-                }
-                mTopAreaBehavior.setTopAndBottomOffset(
-                        -((View) mTopView).getHeight() + getHeight() - ((View) mBottomView).getHeight());
-            }
+    }
+
+    private void dispatchScroll(int topCurrent, int topRange,
+                                int offsetCurrent, int offsetRange,
+                                int bottomCurrent, int bottomRange) {
+        for (OnScrollListener onScrollListener : mOnScrollListeners) {
+            onScrollListener.onScroll(topCurrent, topRange, offsetCurrent, offsetRange,
+                    bottomCurrent, bottomRange);
         }
     }
 
@@ -205,10 +197,10 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
                         mTopAreaBehavior.setTopAndBottomOffset(
                                 getHeight() - contentHeight - ((View) mTopView).getHeight());
                     }
-                    return;
+                }else{
+                    mTopAreaBehavior.setTopAndBottomOffset(
+                            getHeight() - ((View) mBottomView).getHeight() - ((View) mTopView).getHeight());
                 }
-                mTopAreaBehavior.setTopAndBottomOffset(
-                        -((View) mTopView).getHeight() + getHeight() - ((View) mBottomView).getHeight());
             }
         }
         if (mBottomView != null) {
@@ -229,16 +221,19 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
     @Override
     public void notify(int innerOffset, int innerRange) {
-        dispatchTopScroll(-mTopAreaBehavior.getTopAndBottomOffset(), getOffsetRange(),
-                innerOffset, innerRange);
+        int offsetCurrent = mTopAreaBehavior == null ? 0 : -mTopAreaBehavior.getTopAndBottomOffset();
+        int bottomCurrent = mBottomView == null ? 0 : mBottomView.getCurrentScroll();
+        int bottomRange = mBottomView == null ? 0 : mBottomView.getScrollOffsetRange();
+        dispatchScroll(innerOffset, innerRange, offsetCurrent, getOffsetRange(), bottomCurrent, bottomRange);
     }
 
     @Override
     public void onTopAreaOffset(int offset) {
-        dispatchTopScroll(-offset, getOffsetRange(),
-                mTopView.getCurrentScroll(), mTopView.getScrollOffsetRange());
-        dispatchBottomScroll(-offset, getOffsetRange(),
-                mBottomView.getCurrentScroll(), mBottomView.getScrollOffsetRange());
+        int topCurrent = mTopView == null ? 0 : mTopView.getCurrentScroll();
+        int topRange = mTopView == null ? 0 : mTopView.getScrollOffsetRange();
+        int bottomCurrent = mBottomView == null ? 0 : mBottomView.getCurrentScroll();
+        int bottomRange = mBottomView == null ? 0 : mBottomView.getScrollOffsetRange();
+        dispatchScroll(topCurrent, topRange, -offset, getOffsetRange(), bottomCurrent, bottomRange);
     }
 
     public ScrollInfo saveScrollInfo() {
@@ -264,9 +259,10 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public interface OnScrollListener {
-        void onTopScroll(int offset, int range, int innerOffset, int innerRange);
 
-        void onBottomScroll(int offset, int range, int innerOffset, int innerRange);
+        void onScroll(int topCurrent, int topRange,
+                      int offsetCurrent, int offsetRange,
+                      int bottomCurrent, int bottomRange);
     }
 
     public static class ScrollInfo {
