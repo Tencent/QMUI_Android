@@ -19,6 +19,7 @@ package com.qmuiteam.qmui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 
@@ -64,7 +65,7 @@ public class QMUIFontFitTextView extends AppCompatTextView {
     private void refitText(String text, int textWidth) {
         if (textWidth <= 0)
             return;
-        int targetWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
+        int targetWidth = textWidth - this.getCompoundPaddingLeft() - this.getCompoundPaddingRight() - getDrawableWidth();
         float hi = maxSize;
         float lo = minSize;
         float size;
@@ -91,6 +92,24 @@ public class QMUIFontFitTextView extends AppCompatTextView {
 
         // Use lo so that we undershoot rather than overshoot
         this.setTextSize(TypedValue.COMPLEX_UNIT_PX, lo);
+    }
+
+    /**
+     * Return the drawable's width
+     * @return The width of the drawable (drawables for the left and right).
+     */
+    private int getDrawableWidth() {
+        int drawableWidth = 0;
+        Drawable[] drawables = getCompoundDrawables();
+        Drawable drawableLeft = drawables[0];
+        Drawable drawableRight = drawables[2];
+        if (drawableLeft != null) {
+            drawableWidth += drawableLeft.getBounds().width();
+        }
+        if (drawableRight != null) {
+            drawableWidth += drawableRight.getBounds().width();
+        }
+        return drawableWidth;
     }
 
     @Override
