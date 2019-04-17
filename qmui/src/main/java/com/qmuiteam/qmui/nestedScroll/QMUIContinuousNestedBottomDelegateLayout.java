@@ -207,6 +207,9 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
 
     @Override
     public int getScrollOffsetRange() {
+        if(getContentHeight() != HEIGHT_IS_ENOUGH_TO_SCROLL){
+            return 0;
+        }
         return mHeaderView.getHeight() +
                 ((IQMUIContinuousNestedBottomView) mContentView).getScrollOffsetRange();
     }
