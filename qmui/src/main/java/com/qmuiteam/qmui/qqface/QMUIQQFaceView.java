@@ -534,6 +534,9 @@ public class QMUIQQFaceView extends View {
                 int top = getFontHeightCalTop(fontMetricsInt, mIncludePad);
                 int bottom = getFontHeightCalBottom(fontMetricsInt, mIncludePad);
                 int fontHeight = bottom - top;
+                if(mIncludePad){
+                    fontHeight += fontMetricsInt.leading;
+                }
                 mQQFaceSize = fontHeight + mQQFaceSizeAddon;
                 int specialMaxDrawableHeight = mCompiler.getSpecialBoundsMaxHeight();
                 int drawableSize = Math.max(mQQFaceSize, specialMaxDrawableHeight);
@@ -543,6 +546,9 @@ public class QMUIQQFaceView extends View {
                 } else {
                     mFontHeight = drawableSize;
                     mFirstBaseLine = -top + (drawableSize - fontHeight) / 2;
+                }
+                if(mIncludePad){
+                    mFirstBaseLine += fontMetricsInt.leading;
                 }
             }
         }
