@@ -339,7 +339,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                     } else if (scrollPercent >= 1.0F) {
                         // unbind mSwipeBackgroundView util onDestroy
                         if (getActivity() != null) {
-                            getActivity().finish();
+                            popBackStack();
                             int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
                                     R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
                             getActivity().overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
