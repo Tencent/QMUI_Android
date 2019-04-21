@@ -82,6 +82,7 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent,
                            @NonNull RecyclerView.State state) {
 
+
         ViewGroup sectionContainer = mWeakSectionContainer.get();
         if (sectionContainer == null || parent.getChildCount() == 0) {
             return;
@@ -126,7 +127,7 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
 
         setHeaderVisibility(true);
 
-        int contactPoint = sectionContainer.getHeight();
+        int contactPoint = sectionContainer.getHeight() - 1;
         final View childInContact = parent.findChildViewUnder(parent.getWidth() / 2, contactPoint);
         if (childInContact == null) {
             mTargetTop = parent.getTop();
