@@ -180,6 +180,10 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
         }
     }
 
+    public IQMUIContinuousNestedTopView getDelegateView() {
+        return mDelegateView;
+    }
+
     @Override
     public int consumeScroll(int dyUnconsumed) {
         if (mOffsetRange <= 0) {
@@ -294,6 +298,11 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 @Override
                 public void notify(int innerOffset, int innerRange) {
                     notifier.notify(getCurrentScroll(), getScrollOffsetRange());
+                }
+
+                @Override
+                public void onScrollStateChange(View view, int newScrollState) {
+
                 }
             });
         }

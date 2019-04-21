@@ -31,11 +31,11 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     private final int[] mScrollConsumed = new int[2];
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context) {
-        super(context);
+        this(context, null);
     }
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
