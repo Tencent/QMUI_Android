@@ -51,7 +51,18 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
         addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-
+                if (mOnScrollNotifier != null) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mOnScrollNotifier.onScrollStateChange(recyclerView,
+                                IQMUIContinuousNestedScrollCommon.SCROLL_STATE_IDLE);
+                    } else if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        mOnScrollNotifier.onScrollStateChange(recyclerView,
+                                IQMUIContinuousNestedScrollCommon.SCROLL_STATE_SETTLING);
+                    } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        mOnScrollNotifier.onScrollStateChange(recyclerView,
+                                IQMUIContinuousNestedScrollCommon.SCROLL_STATE_DRAGGING);
+                    }
+                }
             }
 
             @Override

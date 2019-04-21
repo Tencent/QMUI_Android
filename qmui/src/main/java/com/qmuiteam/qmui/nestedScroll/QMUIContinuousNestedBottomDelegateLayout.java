@@ -223,6 +223,11 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                     notifier.notify(innerOffset - mHeaderView.getTop(),
                             innerRange + mHeaderView.getHeight());
                 }
+
+                @Override
+                public void onScrollStateChange(View view, int newScrollState) {
+                    notifier.onScrollStateChange(view, newScrollState);
+                }
             });
         }
     }

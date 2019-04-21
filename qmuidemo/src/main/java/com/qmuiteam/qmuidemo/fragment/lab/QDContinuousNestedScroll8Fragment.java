@@ -119,6 +119,11 @@ public class QDContinuousNestedScroll8Fragment extends QDContinuousNestedScrollB
                                 "bottomCurrent = %d, bottomRange = %d",
                         topCurrent, topRange, offsetCurrent, offsetRange, bottomCurrent, bottomRange));
             }
+
+            @Override
+            public void onScrollStateChange(int newScrollState, boolean fromTopBehavior) {
+
+            }
         });
 
         mAdapter = new BaseRecyclerAdapter<String>(getContext(), null) {

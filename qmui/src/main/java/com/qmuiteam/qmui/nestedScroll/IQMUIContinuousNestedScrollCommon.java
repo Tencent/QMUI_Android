@@ -17,8 +17,14 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 public interface IQMUIContinuousNestedScrollCommon {
+
+    int SCROLL_STATE_IDLE = RecyclerView.SCROLL_STATE_IDLE;
+    int SCROLL_STATE_DRAGGING = RecyclerView.SCROLL_STATE_DRAGGING;
+    int SCROLL_STATE_SETTLING = RecyclerView.SCROLL_STATE_SETTLING;
 
     @Nullable
     Object saveScrollInfo();
@@ -29,5 +35,7 @@ public interface IQMUIContinuousNestedScrollCommon {
 
     interface OnScrollNotifier {
         void notify(int innerOffset, int innerRange);
+
+        void onScrollStateChange(View view, int newScrollState);
     }
 }

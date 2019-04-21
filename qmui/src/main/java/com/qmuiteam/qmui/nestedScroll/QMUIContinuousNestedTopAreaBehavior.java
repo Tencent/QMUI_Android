@@ -44,6 +44,8 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     private int touchSlop = -1;
     private VelocityTracker velocityTracker;
     private Callback mCallback;
+    private boolean isInTouch = false;
+    private boolean isInFling = false;
 
     public QMUIContinuousNestedTopAreaBehavior(Context context) {
         this(context, null);
@@ -140,6 +142,10 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 mViewFlinger.stop();
+                isInTouch = true;
+                if (mCallback != null) {
+                    mCallback.onTopBehaviorTouchBegin();
+                }
                 final int x = (int) ev.getX();
                 final int y = (int) ev.getY();
 
@@ -179,6 +185,10 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             }
 
             case MotionEvent.ACTION_UP:
+                isInTouch = false;
+                if (mCallback != null) {
+                    mCallback.onTopBehaviorTouchEnd();
+                }
                 if (velocityTracker != null) {
                     velocityTracker.addMovement(ev);
                     velocityTracker.computeCurrentVelocity(1000);
@@ -187,6 +197,12 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 }
                 // $FALLTHROUGH
             case MotionEvent.ACTION_CANCEL: {
+                if (isInTouch) {
+                    isInTouch = false;
+                    if (mCallback != null) {
+                        mCallback.onTopBehaviorTouchEnd();
+                    }
+                }
                 isBeingDragged = false;
                 activePointerId = INVALID_POINTER;
                 if (velocityTracker != null) {
@@ -275,7 +291,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                     int minOffset;
                     if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
                         minOffset = parent.getHeight() - contentHeight - child.getHeight();
-                    }else{
+                    } else {
                         minOffset = parent.getHeight() - child.getHeight() - target.getHeight();
                     }
                     if (child.getTop() - dy >= minOffset) {
@@ -408,6 +424,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 internalPostOnAnimation();
             } else {
                 mCurrentChild = null;
+                onFlingEnd();
             }
         }
 
@@ -428,6 +445,10 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         }
 
         public void fling(CoordinatorLayout parent, View child, int velocityY) {
+            isInFling = true;
+            if (mCallback != null) {
+                mCallback.onTopBehaviorFlingStart();
+            }
             mCurrentParent = parent;
             mCurrentChild = child;
             mLastFlingY = 0;
@@ -451,6 +472,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             mOverScroller.abortAnimation();
             mCurrentChild = null;
             mCurrentParent = null;
+            onFlingEnd();
+        }
+
+        private void onFlingEnd() {
+            if (mCallback != null && isInFling) {
+                mCallback.onTopBehaviorFlingEnd();
+            }
+            isInFling = false;
         }
     }
 
@@ -465,5 +494,13 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
 
     public interface Callback {
         void onTopAreaOffset(int offset);
+
+        void onTopBehaviorTouchBegin();
+
+        void onTopBehaviorTouchEnd();
+
+        void onTopBehaviorFlingStart();
+
+        void onTopBehaviorFlingEnd();
     }
 }
