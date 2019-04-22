@@ -668,6 +668,7 @@ public class QMUITabSegment extends HorizontalScrollView {
                 setTextViewTypeface(prevView.getTextView(), false);
                 setTextViewTypeface(nowView.getTextView(), true);
                 mCurrentSelectedIndex = index;
+                mIsInSelectTab = false;
                 if (mPendingSelectedIndex != NO_POSITION && mViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
                     selectTab(mPendingSelectedIndex, true, false);
                     mPendingSelectedIndex = NO_POSITION;
@@ -680,7 +681,7 @@ public class QMUITabSegment extends HorizontalScrollView {
                 prevView.updateDecoration(prevModel, true);
                 nowView.updateDecoration(nowModel, false);
                 layoutIndicator(prevModel, true);
-
+                mIsInSelectTab = false;
             }
 
             @Override
@@ -690,7 +691,6 @@ public class QMUITabSegment extends HorizontalScrollView {
         });
         animator.setDuration(200);
         animator.start();
-        mIsInSelectTab = false;
     }
 
     private void layoutIndicator(Tab model, boolean invalidate) {
