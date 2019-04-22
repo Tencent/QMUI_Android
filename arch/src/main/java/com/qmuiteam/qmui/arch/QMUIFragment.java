@@ -129,6 +129,9 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      * @param useNewTransitionConfigWhenPop
      */
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment, boolean useNewTransitionConfigWhenPop) {
+        if(!checkStateLoss("startFragmentAndDestroyCurrent")){
+            return;
+        }
         if (getTargetFragment() != null) {
             // transfer target fragment
             fragment.setTargetFragment(getTargetFragment(), getTargetRequestCode());
@@ -148,6 +151,9 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     }
 
     protected void startFragment(QMUIFragment fragment) {
+        if(!checkStateLoss("startFragmentAndDestroyCurrent")){
+            return;
+        }
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
         if (baseFragmentActivity != null) {
             if (this.isAttachedToActivity()) {
@@ -652,8 +658,26 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
         if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
             return;
         }
-        getBaseFragmentActivity().popBackStack();
+
+        if(checkStateLoss("popBackStack")){
+            getBaseFragmentActivity().popBackStack();
+        }
     }
+
+
+    private boolean checkStateLoss(String logName){
+        FragmentManager fragmentManager = getFragmentManager();
+        if(fragmentManager == null){
+            QMUILog.d(TAG, logName + " can not be invoked because fragmentManager == null");
+            return false;
+        }
+        if(fragmentManager.isStateSaved()){
+            QMUILog.d(TAG, logName + " can not be invoked after onSaveInstanceState");
+            return false;
+        }
+        return true;
+    }
+
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
