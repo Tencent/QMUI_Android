@@ -125,7 +125,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     /**
      * see {@link QMUIFragmentActivity#startFragmentAndDestroyCurrent(QMUIFragment, boolean)}
      *
-     * @param fragment
+     * @param fragment new fragment to start
      * @param useNewTransitionConfigWhenPop
      */
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment, boolean useNewTransitionConfigWhenPop) {
@@ -151,7 +151,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     }
 
     protected void startFragment(QMUIFragment fragment) {
-        if(!checkStateLoss("startFragmentAndDestroyCurrent")){
+        if(!checkStateLoss("startFragment")){
             return;
         }
         QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
@@ -176,6 +176,9 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      * @param requestCode request code
      */
     public void startFragmentForResult(QMUIFragment fragment, int requestCode) {
+        if(!checkStateLoss("startFragmentForResult")){
+            return;
+        }
         if (requestCode == NO_REQUEST_CODE) {
             throw new RuntimeException("requestCode can not be " + NO_REQUEST_CODE);
         }
@@ -762,16 +765,15 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     /**
      * disable or enable drag back
      *
-     * @return
+     * @return if true open dragBack, otherwise close dragBack
      */
     protected boolean canDragBack() {
         return true;
     }
 
     /**
-     * if enable drag back,
      *
-     * @return
+     * @return the init offset for backView for Parallax scrolling
      */
     protected int backViewInitOffset() {
         return 0;
