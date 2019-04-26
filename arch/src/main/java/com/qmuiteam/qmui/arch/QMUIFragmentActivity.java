@@ -191,9 +191,9 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
                     startFragment(mFragment);
                 } else if (toExec instanceof Intent) {
                     Intent intent = (Intent) toExec;
-                    finish();
                     startActivity(intent);
                     overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    finish();
                 } else {
                     throw new Error("can not handle the result in onLastFragmentFinish");
                 }
