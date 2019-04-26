@@ -138,6 +138,12 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
     }
 
     @Override
+    public void smoothScrollYBy(int dy, int duration) {
+        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH);
+        smoothScrollBy(0, dy, null);
+    }
+
+    @Override
     public Object saveScrollInfo() {
         LayoutManager layoutManager = getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {

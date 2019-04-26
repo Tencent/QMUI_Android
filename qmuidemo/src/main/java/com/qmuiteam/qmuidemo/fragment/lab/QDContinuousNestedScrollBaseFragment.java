@@ -72,6 +72,8 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
                 .addItem("scrollBottomViewToTop")
                 .addItem("scrollBy 40dp")
                 .addItem("scrollBy -40dp")
+                .addItem("smoothScrollBy 100dp/1s")
+                .addItem("smoothScrollBy -100dp/1s")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
@@ -90,6 +92,12 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
                                 break;
                             case 4:
                                 mCoordinatorLayout.scrollBy(QMUIDisplayHelper.dp2px(getContext(), -40));
+                                break;
+                            case 5:
+                                mCoordinatorLayout.smoothScrollBy(QMUIDisplayHelper.dp2px(getContext(), 100), 1000);
+                                break;
+                            case 6:
+                                mCoordinatorLayout.smoothScrollBy(QMUIDisplayHelper.dp2px(getContext(), -100), 1000);
                                 break;
                         }
                         dialog.dismiss();

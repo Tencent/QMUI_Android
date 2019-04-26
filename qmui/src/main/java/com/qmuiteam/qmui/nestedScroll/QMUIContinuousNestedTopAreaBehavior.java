@@ -45,7 +45,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     private VelocityTracker velocityTracker;
     private Callback mCallback;
     private boolean isInTouch = false;
-    private boolean isInFling = false;
+    private boolean isInFlingOrScroll = false;
 
     public QMUIContinuousNestedTopAreaBehavior(Context context) {
         this(context, null);
@@ -231,6 +231,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         onNestedScroll(parent, child, child, 0, dy - unConsumed,
                 0, unConsumed, ViewCompat.TYPE_TOUCH, mScrollConsumed);
 
+    }
+
+    void smoothScrollBy(@NonNull CoordinatorLayout parent, @NonNull View child, int dy, int duration) {
+        mViewFlinger.startScroll(parent, child, dy, duration);
+    }
+
+    void stopFlingOrScroll() {
+        mViewFlinger.stop();
     }
 
     private void ensureVelocityTracker() {
@@ -425,7 +433,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 internalPostOnAnimation();
             } else {
                 mCurrentChild = null;
-                onFlingEnd();
+                onFlingOrScrollEnd();
             }
         }
 
@@ -446,9 +454,22 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         }
 
         public void fling(CoordinatorLayout parent, View child, int velocityY) {
-            isInFling = true;
+            onFlingOrScrollStart(parent, child);
+            mOverScroller.fling(0, 0, 0, velocityY,
+                    Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            postOnAnimation();
+        }
+
+        public void startScroll(CoordinatorLayout parent, View child, int dy, int duration) {
+            onFlingOrScrollStart(parent, child);
+            mOverScroller.startScroll(0, 0, 0, dy, duration);
+            postOnAnimation();
+        }
+
+        private void onFlingOrScrollStart(CoordinatorLayout parent, View child) {
+            isInFlingOrScroll = true;
             if (mCallback != null) {
-                mCallback.onTopBehaviorFlingStart();
+                mCallback.onTopBehaviorFlingOrScrollStart();
             }
             mCurrentParent = parent;
             mCurrentChild = child;
@@ -460,9 +481,6 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 mInterpolator = QUNITIC_INTERPOLATOR;
                 mOverScroller = new OverScroller(mCurrentParent.getContext(), QUNITIC_INTERPOLATOR);
             }
-            mOverScroller.fling(0, 0, 0, velocityY,
-                    Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            postOnAnimation();
         }
 
 
@@ -473,14 +491,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             mOverScroller.abortAnimation();
             mCurrentChild = null;
             mCurrentParent = null;
-            onFlingEnd();
+            onFlingOrScrollEnd();
         }
 
-        private void onFlingEnd() {
-            if (mCallback != null && isInFling) {
-                mCallback.onTopBehaviorFlingEnd();
+        private void onFlingOrScrollEnd() {
+            if (mCallback != null && isInFlingOrScroll) {
+                mCallback.onTopBehaviorFlingOrScrollEnd();
             }
-            isInFling = false;
+            isInFlingOrScroll = false;
         }
     }
 
@@ -500,8 +518,8 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
 
         void onTopBehaviorTouchEnd();
 
-        void onTopBehaviorFlingStart();
+        void onTopBehaviorFlingOrScrollStart();
 
-        void onTopBehaviorFlingEnd();
+        void onTopBehaviorFlingOrScrollEnd();
     }
 }

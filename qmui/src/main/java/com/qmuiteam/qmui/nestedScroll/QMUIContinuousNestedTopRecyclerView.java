@@ -92,7 +92,9 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
-        mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
+        if(mScrollNotifier != null){
+            mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
+        }
     }
 
     @Override
@@ -120,6 +122,9 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
         LayoutManager layoutManager = getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
             ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(sc.scrollPosition, sc.scrollOffset);
+        }
+        if(mScrollNotifier != null){
+            mScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
         }
     }
 
