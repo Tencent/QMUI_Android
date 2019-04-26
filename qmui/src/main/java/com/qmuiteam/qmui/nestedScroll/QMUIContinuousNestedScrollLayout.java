@@ -183,14 +183,30 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public void scrollBy(int dy) {
-        if (dy > 0) {
-            if (mTopAreaBehavior != null) {
-                mTopAreaBehavior.scroll(this, ((View) mTopView), dy);
-            }
-        } else if (dy < 0) {
-            if (mBottomView != null) {
-                mBottomView.consumeScroll(dy);
-            }
+        if (dy > 0 && mTopAreaBehavior != null) {
+            mTopAreaBehavior.scroll(this, ((View) mTopView), dy);
+        } else if (dy != 0 && mBottomView != null) {
+            mBottomView.consumeScroll(dy);
+        }
+    }
+
+    public void smoothScrollBy(int dy, int duration) {
+        if (dy == 0) {
+            return;
+        }
+        if (dy > 0 && mTopAreaBehavior != null) {
+            mTopAreaBehavior.smoothScrollBy(this, ((View) mTopView), dy, duration);
+        } else if (mBottomView != null) {
+            mBottomView.smoothScrollYBy(dy, duration);
+        }
+    }
+
+    public void stopScroll() {
+        if (mBottomView != null) {
+            mBottomView.stopScroll();
+        }
+        if (mTopAreaBehavior != null) {
+            mTopAreaBehavior.stopFlingOrScroll();
         }
     }
 
@@ -264,13 +280,13 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     @Override
-    public void onTopBehaviorFlingStart() {
+    public void onTopBehaviorFlingOrScrollStart() {
         dispatchScrollStateChange(
                 IQMUIContinuousNestedScrollCommon.SCROLL_STATE_SETTLING, true);
     }
 
     @Override
-    public void onTopBehaviorFlingEnd() {
+    public void onTopBehaviorFlingOrScrollEnd() {
         dispatchScrollStateChange(
                 IQMUIContinuousNestedScrollCommon.SCROLL_STATE_IDLE, true);
     }

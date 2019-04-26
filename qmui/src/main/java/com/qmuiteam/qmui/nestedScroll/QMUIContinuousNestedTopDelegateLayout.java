@@ -97,7 +97,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
         int h = MeasureSpec.getSize(heightMeasureSpec);
         int anchorHeight = getPaddingTop();
         if (mHeaderView != null) {
-            mHeaderView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
+            mHeaderView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.UNSPECIFIED));
             anchorHeight += mHeaderView.getMeasuredHeight();
         }
         if (mDelegateView != null) {
@@ -107,7 +107,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
         }
 
         if (mFooterView != null) {
-            mFooterView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
+            mFooterView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.UNSPECIFIED));
             anchorHeight += mFooterView.getMeasuredHeight();
         }
 
@@ -182,6 +182,30 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
 
     public IQMUIContinuousNestedTopView getDelegateView() {
         return mDelegateView;
+    }
+
+    public View getHeaderView() {
+        return mHeaderView;
+    }
+
+    public View getFooterView() {
+        return mFooterView;
+    }
+
+    public int getContainerOffsetCurrent() {
+        return mOffsetCurrent;
+    }
+
+    public int getContainerOffsetRange() {
+        return mOffsetRange;
+    }
+
+    public int getContainerHeaderOffsetRange() {
+        if (mOffsetRange == 0 || mHeaderView == null) {
+            return 0;
+        }
+        int maxHeight = getPaddingTop() + mHeaderView.getHeight();
+        return Math.min(maxHeight, mOffsetRange);
     }
 
     @Override
@@ -317,16 +341,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     public void restoreScrollInfo(Object scrollInfo) {
         if (scrollInfo instanceof ScrollInfo) {
             ScrollInfo si = (ScrollInfo) scrollInfo;
-            if (mHeaderViewOffsetHelper != null) {
-                mHeaderViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
-            }
-            if (mDelegateViewOffsetHelper != null) {
-                mDelegateViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
-            }
-            if (mFooterViewOffsetHelper != null) {
-                mFooterViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
-            }
-
+            offsetTo(-si.topBottomOffset);
             if (mDelegateView != null) {
                 mDelegateView.restoreScrollInfo(((ScrollInfo) scrollInfo).delegateScrollInfo);
             }
