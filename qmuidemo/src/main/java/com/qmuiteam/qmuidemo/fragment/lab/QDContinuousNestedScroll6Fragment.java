@@ -17,10 +17,6 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.graphics.Color;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +38,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 @Widget(group = Group.Other, name = "linearLayout + recyclerview")
 public class QDContinuousNestedScroll6Fragment extends QDContinuousNestedScrollBaseFragment {
 
@@ -59,8 +60,8 @@ public class QDContinuousNestedScroll6Fragment extends QDContinuousNestedScrollB
         AppCompatTextView firstView = new AppCompatTextView(getContext()) {
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
-                        QMUIDisplayHelper.dp2px(getContext(), 1000), MeasureSpec.EXACTLY
+                super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(
+                        QMUIDisplayHelper.dp2px(getContext(), 1000), View.MeasureSpec.EXACTLY
                 ));
             }
         };

@@ -229,7 +229,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             unConsumed = ((IQMUIContinuousNestedTopView) child).consumeScroll(unConsumed);
         }
         onNestedScroll(parent, child, child, 0, dy - unConsumed,
-                0, unConsumed, ViewCompat.TYPE_TOUCH, mScrollConsumed);
+                0, unConsumed, ViewCompat.TYPE_TOUCH);
 
     }
 
@@ -318,8 +318,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     @Override
     public void onNestedScroll(@NonNull CoordinatorLayout parent, @NonNull View child,
                                @NonNull View target, int dxConsumed, int dyConsumed,
-                               int dxUnconsumed, int dyUnconsumed,
-                               int type, @NonNull int[] consumed) {
+                               int dxUnconsumed, int dyUnconsumed, int type) {
         if (target.getParent() != parent) {
             return;
         }

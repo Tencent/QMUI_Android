@@ -17,19 +17,20 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingChild2;
-import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.NestedScrollingParent2;
-import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.NestedScrollingChild2;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.NestedScrollingParent2;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.ViewCompat;
 
 public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implements
         NestedScrollingChild2, NestedScrollingParent2, IQMUIContinuousNestedTopView {

@@ -17,8 +17,6 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.graphics.Color;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -31,6 +29,9 @@ import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 @Widget(group = Group.Other, name = "(header + webview + bottom) + (part sticky header + viewpager)")
 public class QDContinuousNestedScroll7Fragment extends QDContinuousNestedScrollBaseFragment {

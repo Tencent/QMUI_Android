@@ -18,13 +18,6 @@ package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingChild2;
-import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.NestedScrollingParent2;
-import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -38,6 +31,13 @@ import android.widget.OverScroller;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.NestedScrollingChild2;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.NestedScrollingParent2;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.ViewCompat;
 
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
@@ -398,7 +398,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                                   int type) {
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
         int unconsumed = dy - consumed[1];
-        if (unconsumed != 0 && unconsumed > 0) {
+        if (unconsumed > 0) {
             consumed[1] += unconsumed - offsetBy(unconsumed);
         }
     }

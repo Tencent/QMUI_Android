@@ -16,7 +16,6 @@
 
 package com.qmuiteam.qmuidemo.fragment.lab;
 
-import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -27,6 +26,8 @@ import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopWebView;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 @Widget(group = Group.Other, name = "webview + part sticky header + viewpager")
 public class QDContinuousNestedScroll2Fragment extends QDContinuousNestedScrollBaseFragment {
