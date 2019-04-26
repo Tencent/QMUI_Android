@@ -73,6 +73,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.annotation:annotation:$annotationVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"

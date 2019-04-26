@@ -24,8 +24,9 @@ allprojects {
         minSdkVersion = 14
         targetSdkVersion = 28
         compileSdkVersion = 28
-        appcompatVersion= '1.1.0-alpha02'
-        materialVersion='1.1.0-alpha03'
+        appcompatVersion= '1.1.0-alpha04'
+        materialVersion='1.1.0-alpha05'
+        annotationVersion='1.1.0-beta01'
         butterknifeVersion = '10.1.0'
     }
 }
