@@ -265,7 +265,9 @@ public class QMUIProgressBar extends View {
         mArcOval.right = mCenterPoint.x + mCircleRadius;
         mArcOval.top = mCenterPoint.y - mCircleRadius;
         mArcOval.bottom = mCenterPoint.y + mCircleRadius;
-        canvas.drawArc(mArcOval, 270, 360 * mValue / mMaxValue, false, mPaint);
+        if(mValue > 0){
+            canvas.drawArc(mArcOval, 270, 360f * mValue / mMaxValue, false, mPaint);
+        }
         if (mText != null && mText.length() > 0) {
             Paint.FontMetricsInt fontMetrics = mTextPaint.getFontMetricsInt();
             float baseline = mArcOval.top + (mArcOval.height() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
