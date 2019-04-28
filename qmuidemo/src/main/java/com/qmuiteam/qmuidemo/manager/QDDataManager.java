@@ -110,6 +110,7 @@ public class QDDataManager {
         mComponentsNames.add(QDLayoutFragment.class);
         mComponentsNames.add(QDPriorityLinearLayoutFragment.class);
         mComponentsNames.add(QDSectionLayoutFragment.class);
+        mComponentsNames.add(QDContinuousNestedScrollFragment.class);
     }
 
     /**
@@ -134,7 +135,6 @@ public class QDDataManager {
         mLabNames.add(QDSnapHelperFragment.class);
         mLabNames.add(QDArchTestFragment.class);
         mLabNames.add(QDWebViewFixFragment.class);
-        mLabNames.add(QDContinuousNestedScrollFragment.class);
     }
 
     public QDItemDescription getDescription(Class<? extends BaseFragment> cls) {
