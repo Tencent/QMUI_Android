@@ -313,14 +313,14 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         }
     }
 
-    public interface OnScrollListener {
+public interface OnScrollListener {
 
-        void onScroll(int topCurrent, int topRange,
-                      int offsetCurrent, int offsetRange,
-                      int bottomCurrent, int bottomRange);
+    void onScroll(int topCurrent, int topRange,
+                  int offsetCurrent, int offsetRange,
+                  int bottomCurrent, int bottomRange);
 
-        void onScrollStateChange(int newScrollState, boolean fromTopBehavior);
-    }
+    void onScrollStateChange(int newScrollState, boolean fromTopBehavior);
+}
 
     public static class ScrollInfo {
         private Object topInfo;
