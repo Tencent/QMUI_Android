@@ -64,6 +64,12 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     private final int[] mScrollOffset = new int[2];
     private Rect mTempRect = new Rect();
     private int mNestedOffsetY = 0;
+    private Runnable mCheckLayoutAction = new Runnable() {
+        @Override
+        public void run() {
+            checkLayout();
+        }
+    };
 
     public QMUIContinuousNestedBottomDelegateLayout(Context context) {
         this(context, null);
@@ -178,7 +184,12 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
 
         mHeaderViewOffsetHelper.onViewLayout();
         mContentViewOffsetHelper.onViewLayout();
-        checkLayout();
+        postCheckLayout();
+    }
+
+    public void postCheckLayout() {
+        removeCallbacks(mCheckLayoutAction);
+        post(mCheckLayoutAction);
     }
 
     public void checkLayout() {

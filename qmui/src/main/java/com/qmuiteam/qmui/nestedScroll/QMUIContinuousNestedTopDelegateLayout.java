@@ -46,6 +46,12 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     private int mOffsetRange = 0;
     private final NestedScrollingParentHelper mParentHelper;
     private final NestedScrollingChildHelper mChildHelper;
+    private Runnable mCheckLayoutAction = new Runnable() {
+        @Override
+        public void run() {
+            checkLayout();
+        }
+    };
 
     public QMUIContinuousNestedTopDelegateLayout(@NonNull Context context) {
         this(context, null);
@@ -161,7 +167,12 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             mFooterViewOffsetHelper.onViewLayout();
             mOffsetCurrent = -mFooterViewOffsetHelper.getTopAndBottomOffset();
         }
-        checkLayout();
+        postCheckLayout();
+    }
+
+    public void postCheckLayout() {
+        removeCallbacks(mCheckLayoutAction);
+        post(mCheckLayoutAction);
     }
 
     public void checkLayout() {
@@ -175,7 +186,15 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
         int delegateCurrentScroll = mDelegateView.getCurrentScroll();
         int delegateScrollRange = mDelegateView.getScrollOffsetRange();
         if (delegateCurrentScroll > 0 && mHeaderView != null && mOffsetCurrent < headerOffsetRange) {
-            mDelegateView.consumeScroll(Integer.MIN_VALUE);
+            int over = headerOffsetRange - mOffsetCurrent;
+            if (over >= delegateCurrentScroll) {
+                mDelegateView.consumeScroll(Integer.MIN_VALUE);
+                offsetTo(mOffsetCurrent + delegateCurrentScroll);
+            } else {
+                mDelegateView.consumeScroll(-over);
+                offsetTo(headerOffsetRange);
+            }
+
         }
 
         if (mOffsetCurrent > headerOffsetRange && delegateCurrentScroll < delegateScrollRange
@@ -183,11 +202,11 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             int over = mOffsetCurrent - headerOffsetRange;
             int delegateRemain = delegateScrollRange - delegateCurrentScroll;
             if (over >= delegateRemain) {
-                offsetTo(headerOffsetRange + over - delegateRemain);
                 mDelegateView.consumeScroll(Integer.MAX_VALUE);
+                offsetTo(headerOffsetRange + over - delegateRemain);
             } else {
-                offsetTo(headerOffsetRange);
                 mDelegateView.consumeScroll(over);
+                offsetTo(headerOffsetRange);
             }
         }
 

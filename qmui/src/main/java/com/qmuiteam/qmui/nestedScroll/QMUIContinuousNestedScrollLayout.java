@@ -38,6 +38,12 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     private QMUIContinuousNestedTopAreaBehavior mTopAreaBehavior;
     private QMUIContinuousNestedBottomAreaBehavior mBottomAreaBehavior;
     private List<OnScrollListener> mOnScrollListeners = new ArrayList<>();
+    private Runnable mCheckLayoutAction = new Runnable() {
+        @Override
+        public void run() {
+            checkLayout();
+        }
+    };
 
     public QMUIContinuousNestedScrollLayout(@NonNull Context context) {
         super(context);
@@ -153,11 +159,16 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        checkLayout();
+        postCheckLayout();
     }
 
-    private void checkLayout(){
-        if(mTopView == null || mBottomView == null){
+    public void postCheckLayout() {
+        removeCallbacks(mCheckLayoutAction);
+        post(mCheckLayoutAction);
+    }
+
+    public void checkLayout() {
+        if (mTopView == null || mBottomView == null) {
             return;
         }
         int topCurrent = mTopView.getCurrentScroll();
@@ -165,23 +176,23 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         int offsetCurrent = -mTopAreaBehavior.getTopAndBottomOffset();
         int offsetRange = getOffsetRange();
         int bottomCurrent = mBottomView.getCurrentScroll();
-        if(topCurrent < topRange && offsetCurrent > 0){
+        if (topCurrent < topRange && offsetCurrent > 0) {
             int remain = topRange - topCurrent;
-            if(offsetCurrent >= remain){
+            if (offsetCurrent >= remain) {
                 mTopView.consumeScroll(Integer.MAX_VALUE);
                 mTopAreaBehavior.setTopAndBottomOffset(remain - offsetCurrent);
-            }else{
+            } else {
                 mTopView.consumeScroll(offsetCurrent);
                 mTopAreaBehavior.setTopAndBottomOffset(0);
             }
         }
 
-        if(bottomCurrent > 0 && offsetCurrent < offsetRange){
+        if (bottomCurrent > 0 && offsetCurrent < offsetRange) {
             int over = offsetRange - offsetCurrent;
-            if(over >= bottomCurrent){
+            if (over >= bottomCurrent) {
                 mBottomView.consumeScroll(Integer.MIN_VALUE);
                 mTopAreaBehavior.setTopAndBottomOffset(-bottomCurrent - offsetCurrent);
-            }else{
+            } else {
                 mBottomView.consumeScroll(-over);
                 mTopAreaBehavior.setTopAndBottomOffset(-offsetRange);
             }
@@ -333,7 +344,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction() == MotionEvent.ACTION_DOWN){
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             stopScroll();
         }
         return super.dispatchTouchEvent(ev);
