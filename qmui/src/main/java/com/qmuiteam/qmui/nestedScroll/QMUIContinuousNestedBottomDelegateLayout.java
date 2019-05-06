@@ -19,7 +19,6 @@ package com.qmuiteam.qmui.nestedScroll;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingChild2;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent2;
@@ -178,6 +177,16 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
 
         mHeaderViewOffsetHelper.onViewLayout();
         mContentViewOffsetHelper.onViewLayout();
+        checkLayout();
+    }
+
+    public void checkLayout() {
+        int offsetCurrent = getOffsetCurrent();
+        int offsetRange = getOffsetRange();
+        IQMUIContinuousNestedBottomView bottomView = (IQMUIContinuousNestedBottomView) mContentView;
+        if (offsetCurrent < offsetRange && bottomView.getCurrentScroll() > 0) {
+            bottomView.consumeScroll(Integer.MIN_VALUE);
+        }
     }
 
     private int offsetBy(int dyUnConsumed) {
