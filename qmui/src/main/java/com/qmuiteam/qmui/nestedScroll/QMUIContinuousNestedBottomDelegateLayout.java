@@ -178,6 +178,16 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
 
         mHeaderViewOffsetHelper.onViewLayout();
         mContentViewOffsetHelper.onViewLayout();
+        checkLayout();
+    }
+
+    public void checkLayout() {
+        int offsetCurrent = getOffsetCurrent();
+        int offsetRange = getOffsetRange();
+        IQMUIContinuousNestedBottomView bottomView = (IQMUIContinuousNestedBottomView) mContentView;
+        if (offsetCurrent < offsetRange && bottomView.getCurrentScroll() > 0) {
+            bottomView.consumeScroll(Integer.MIN_VALUE);
+        }
     }
 
     private int offsetBy(int dyUnConsumed) {
@@ -398,7 +408,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                                   int type) {
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
         int unconsumed = dy - consumed[1];
-        if (unconsumed > 0) {
+        if (unconsumed != 0 && unconsumed > 0) {
             consumed[1] += unconsumed - offsetBy(unconsumed);
         }
     }

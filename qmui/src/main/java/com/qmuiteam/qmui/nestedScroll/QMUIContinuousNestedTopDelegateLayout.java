@@ -161,6 +161,36 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             mFooterViewOffsetHelper.onViewLayout();
             mOffsetCurrent = -mFooterViewOffsetHelper.getTopAndBottomOffset();
         }
+        checkLayout();
+    }
+
+    public void checkLayout() {
+        if (mHeaderView == null && mFooterView == null) {
+            return;
+        }
+        if (mDelegateView == null) {
+            return;
+        }
+        int headerOffsetRange = getContainerHeaderOffsetRange();
+        int delegateCurrentScroll = mDelegateView.getCurrentScroll();
+        int delegateScrollRange = mDelegateView.getScrollOffsetRange();
+        if (delegateCurrentScroll > 0 && mHeaderView != null && mOffsetCurrent < headerOffsetRange) {
+            mDelegateView.consumeScroll(Integer.MIN_VALUE);
+        }
+
+        if (mOffsetCurrent > headerOffsetRange && delegateCurrentScroll < delegateScrollRange
+                && mFooterView != null) {
+            int over = mOffsetCurrent - headerOffsetRange;
+            int delegateRemain = delegateScrollRange - delegateCurrentScroll;
+            if (over >= delegateRemain) {
+                offsetTo(headerOffsetRange + over - delegateRemain);
+                mDelegateView.consumeScroll(Integer.MAX_VALUE);
+            } else {
+                offsetTo(headerOffsetRange);
+                mDelegateView.consumeScroll(over);
+            }
+        }
+
     }
 
     private void offsetTo(int targetOffsetCurrent) {

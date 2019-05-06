@@ -72,19 +72,19 @@ public class QDContinuousNestedScroll5Fragment extends QDContinuousNestedScrollB
         headerView.setGravity(Gravity.CENTER);
         mTopDelegateLayout.setHeaderView(headerView);
 
-        AppCompatTextView footerView = new AppCompatTextView(getContext()) {
-            @Override
-            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
-                        QMUIDisplayHelper.dp2px(getContext(), 100), MeasureSpec.EXACTLY
-                ));
-            }
-        };
+        final AppCompatTextView footerView = new AppCompatTextView(getContext());
         footerView.setTextSize(17);
         footerView.setBackgroundColor(Color.GRAY);
         footerView.setTextColor(Color.WHITE);
         footerView.setGravity(Gravity.CENTER);
-        footerView.setText("This is Top Footer");
+        footerView.setText("点击展开更多\nThis is Top Footer\nThis is Top Footer\nThis is Top Footer\n");
+        footerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CharSequence text = footerView.getText();
+                footerView.setText("" + text + text);
+            }
+        });
         mTopDelegateLayout.setFooterView(footerView);
 
         mTopDelegateLayout.setDelegateView(mTopWebView);
