@@ -43,6 +43,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             checkLayout();
         }
     };
+    private boolean mKeepBottomAreaStableWhenCheckLayout = false;
 
     public QMUIContinuousNestedScrollLayout(@NonNull Context context) {
         super(context);
@@ -64,6 +65,14 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
     public void removeOnScrollListener(OnScrollListener onScrollListener) {
         mOnScrollListeners.remove(onScrollListener);
+    }
+
+    public void setKeepBottomAreaStableWhenCheckLayout(boolean keepBottomAreaStableWhenCheckLayout) {
+        mKeepBottomAreaStableWhenCheckLayout = keepBottomAreaStableWhenCheckLayout;
+    }
+
+    public boolean isKeepBottomAreaStableWhenCheckLayout() {
+        return mKeepBottomAreaStableWhenCheckLayout;
     }
 
     public void setTopAreaView(View topView, @Nullable LayoutParams layoutParams) {
@@ -174,7 +183,15 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         int topRange = mTopView.getScrollOffsetRange();
         int offsetCurrent = -mTopAreaBehavior.getTopAndBottomOffset();
         int offsetRange = getOffsetRange();
-        int bottomCurrent = mBottomView.getCurrentScroll();
+        if (offsetCurrent >= offsetRange || (offsetCurrent > 0 && mKeepBottomAreaStableWhenCheckLayout)) {
+            mTopView.consumeScroll(Integer.MAX_VALUE);
+            return;
+        }
+
+        if (mBottomView.getCurrentScroll() > 0) {
+            mBottomView.consumeScroll(Integer.MIN_VALUE);
+        }
+
         if (topCurrent < topRange && offsetCurrent > 0) {
             int remain = topRange - topCurrent;
             if (offsetCurrent >= remain) {
@@ -183,17 +200,6 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             } else {
                 mTopView.consumeScroll(offsetCurrent);
                 mTopAreaBehavior.setTopAndBottomOffset(0);
-            }
-        }
-
-        if (bottomCurrent > 0 && offsetCurrent < offsetRange) {
-            int over = offsetRange - offsetCurrent;
-            if (over >= bottomCurrent) {
-                mBottomView.consumeScroll(Integer.MIN_VALUE);
-                mTopAreaBehavior.setTopAndBottomOffset(-bottomCurrent - offsetCurrent);
-            } else {
-                mBottomView.consumeScroll(-over);
-                mTopAreaBehavior.setTopAndBottomOffset(-offsetRange);
             }
         }
     }
@@ -297,7 +303,11 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         }
     }
 
-    private int getOffsetRange() {
+    public int getOffsetCurrent() {
+        return mTopAreaBehavior == null ? 0 : -mTopAreaBehavior.getTopAndBottomOffset();
+    }
+
+    public int getOffsetRange() {
         if (mTopView == null || mBottomView == null) {
             return 0;
         }
@@ -352,7 +362,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     public ScrollInfo saveScrollInfo() {
         Object topInfo = mTopView != null ? mTopView.saveScrollInfo() : null;
         Object bottomInfo = mBottomView != null ? mBottomView.saveScrollInfo() : null;
-        return new ScrollInfo(topInfo, bottomInfo, mTopAreaBehavior.getTopAndBottomOffset());
+        return new ScrollInfo(topInfo, bottomInfo, getOffsetCurrent());
     }
 
     public void restoreScrollInfo(@Nullable ScrollInfo scrollInfo) {
@@ -360,7 +370,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             return;
         }
         if (mTopAreaBehavior != null) {
-            mTopAreaBehavior.setTopAndBottomOffset(scrollInfo.getTopBottomOffset());
+            mTopAreaBehavior.setTopAndBottomOffset(-scrollInfo.topBottomOffset);
         }
         if (mTopView != null) {
             mTopView.restoreScrollInfo(scrollInfo.topInfo);
@@ -381,26 +391,14 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public static class ScrollInfo {
-        private Object topInfo;
-        private Object bottomInfo;
-        private int topBottomOffset;
+        public Object topInfo;
+        public Object bottomInfo;
+        public int topBottomOffset;
 
         public ScrollInfo(Object topInfo, Object bottomInfo, int topBottomOffset) {
             this.topInfo = topInfo;
             this.bottomInfo = bottomInfo;
             this.topBottomOffset = topBottomOffset;
-        }
-
-        public int getTopBottomOffset() {
-            return topBottomOffset;
-        }
-
-        public Object getTopInfo() {
-            return topInfo;
-        }
-
-        public Object getBottomInfo() {
-            return bottomInfo;
         }
     }
 }

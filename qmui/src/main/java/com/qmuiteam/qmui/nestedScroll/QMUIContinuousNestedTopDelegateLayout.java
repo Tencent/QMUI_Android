@@ -400,8 +400,8 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     }
 
     public static class ScrollInfo implements Serializable {
-        int topBottomOffset;
-        Object delegateScrollInfo;
+        public int topBottomOffset;
+        public Object delegateScrollInfo;
 
         public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
             this.topBottomOffset = topBottomOffset;

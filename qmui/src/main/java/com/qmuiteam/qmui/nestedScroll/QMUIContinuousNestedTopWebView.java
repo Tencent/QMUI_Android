@@ -17,8 +17,10 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
 public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
@@ -87,7 +89,17 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     @Override
     public void restoreScrollInfo(Object scrollInfo) {
         if (scrollInfo instanceof Integer) {
-            scrollTo(0, (Integer) scrollInfo);
+            // scrollTo does not always work, even if after onPageLoaded
+            int value = QMUIDisplayHelper.px2dp(getContext(), (Integer) scrollInfo);
+            exec("javascript:scrollTo(0, " + value + ")");
+        }
+    }
+
+    private void exec(final String jsCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript(jsCode, null);
+        } else {
+            loadUrl(jsCode);
         }
     }
 }
