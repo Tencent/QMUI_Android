@@ -297,8 +297,8 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     }
 
     public static class ScrollInfo {
-        int topBottomOffset;
-        Object delegateScrollInfo;
+        public int topBottomOffset;
+        public Object delegateScrollInfo;
 
         public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
             this.topBottomOffset = topBottomOffset;

@@ -173,8 +173,8 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
     }
 
     public static class ScrollInfo {
-        int scrollPosition;
-        int scrollOffset;
+        public int scrollPosition;
+        public int scrollOffset;
 
         public ScrollInfo(int scrollPosition, int scrollOffset) {
             this.scrollPosition = scrollPosition;
