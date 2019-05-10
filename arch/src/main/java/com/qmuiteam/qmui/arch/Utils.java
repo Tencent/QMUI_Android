@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * Created by Chaojun Wang on 6/9/14.
@@ -155,13 +156,15 @@ public class Utils {
                 FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(backStackIndex);
 
                 if (handler.needReNameTag()) {
-                    Field nameField = backStackEntry.getClass().getDeclaredField("mName");
-                    nameField.setAccessible(true);
-                    nameField.set(backStackEntry, handler.newTagName());
+                    Field nameField = Utils.getNameField(backStackEntry);
+                    if (nameField != null) {
+                        nameField.setAccessible(true);
+                        nameField.set(backStackEntry, handler.newTagName());
+                    }
                 }
 
 
-                Field opsField = backStackEntry.getClass().getDeclaredField("mOps");
+                Field opsField = Utils.getOpsField(backStackEntry);
                 opsField.setAccessible(true);
                 Object opsObj = opsField.get(backStackEntry);
                 if (opsObj instanceof List<?>) {
@@ -172,13 +175,79 @@ public class Utils {
                         }
                     }
                 }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private static boolean sOldBackStackEntryImpl = false;
+
+    static Field getBackStackEntryField(FragmentManager.BackStackEntry backStackEntry, String name) {
+        Field opsField = null;
+        if (!sOldBackStackEntryImpl) {
+            try {
+                opsField = FragmentTransaction.class.getDeclaredField(name);
+            } catch (NoSuchFieldException ignore) {
+            }
+        }
+
+        if (opsField == null) {
+            sOldBackStackEntryImpl = true;
+            try {
+                opsField = backStackEntry.getClass().getDeclaredField(name);
+            } catch (NoSuchFieldException ignore) {
+            }
+        }
+        return opsField;
+    }
+
+    static Field getOpsField(FragmentManager.BackStackEntry backStackEntry) {
+        return getBackStackEntryField(backStackEntry, "mOps");
+    }
+
+    static Field getNameField(FragmentManager.BackStackEntry backStackEntry) {
+        return getBackStackEntryField(backStackEntry, "mName");
+    }
+
+    private static boolean sOldOpImpl = false;
+
+    private static Field getOpField(Object op, String fieldNameNew, String fieldNameOld) {
+        Field field = null;
+        if (!sOldOpImpl) {
+            try {
+                field = op.getClass().getDeclaredField(fieldNameNew);
+            } catch (NoSuchFieldException ignore) {
+
+            }
+        }
+
+        if (field == null) {
+            sOldOpImpl = true;
+            try {
+                field = op.getClass().getDeclaredField(fieldNameOld);
+            } catch (NoSuchFieldException ignore) {
+            }
+        }
+        return field;
+    }
+
+    static Field getOpCmdField(Object op) {
+        return getOpField(op, "mCmd", "cmd");
+    }
+
+    static Field getOpFragmentField(Object op) {
+        return getOpField(op, "mFragment", "fragment");
+    }
+
+    static Field getOpPopEnterAnimField(Object op) {
+        return getOpField(op, "mPopEnterAnim", "popEnterAnim");
+    }
+
+    static Field getOpPopExitAnimField(Object op) {
+        return getOpField(op, "mPopExitAnim", "popExitAnim");
+    }
+
 
     interface OpHandler {
         boolean handle(Object op);
