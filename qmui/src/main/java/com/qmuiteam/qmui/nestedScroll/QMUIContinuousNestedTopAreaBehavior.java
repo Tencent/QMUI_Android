@@ -76,6 +76,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 mViewFlinger.stop();
+                isInTouch = true;
                 isBeingDragged = false;
                 final int x = (int) ev.getX();
                 final int y = (int) ev.getY();
@@ -111,12 +112,16 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 if (yDiff > touchSlop) {
                     isBeingDragged = true;
                     lastMotionY = y;
+                    if (mCallback != null) {
+                        mCallback.onTopBehaviorTouchBegin();
+                    }
                 }
                 break;
             }
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP: {
+                isInTouch = false;
                 isBeingDragged = false;
                 this.activePointerId = INVALID_POINTER;
                 if (velocityTracker != null) {
@@ -143,9 +148,6 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             case MotionEvent.ACTION_DOWN: {
                 mViewFlinger.stop();
                 isInTouch = true;
-                if (mCallback != null) {
-                    mCallback.onTopBehaviorTouchBegin();
-                }
                 final int x = (int) ev.getX();
                 final int y = (int) ev.getY();
 
@@ -170,6 +172,9 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
 
                 if (!isBeingDragged && Math.abs(dy) > touchSlop) {
                     isBeingDragged = true;
+                    if (mCallback != null) {
+                        mCallback.onTopBehaviorTouchBegin();
+                    }
                     if (dy > 0) {
                         dy -= touchSlop;
                     } else {

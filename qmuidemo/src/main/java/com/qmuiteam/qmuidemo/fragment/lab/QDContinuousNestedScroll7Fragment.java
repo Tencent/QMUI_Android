@@ -105,7 +105,8 @@ public class QDContinuousNestedScroll7Fragment extends QDContinuousNestedScrollB
 
             @Override
             public void onScrollStateChange(int newScrollState, boolean fromTopBehavior) {
-
+                Log.i(TAG, String.format("newScrollState = %d; fromTopBehavior = %b",
+                        newScrollState, fromTopBehavior));
             }
         });
     }
