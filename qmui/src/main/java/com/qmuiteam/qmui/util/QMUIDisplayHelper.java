@@ -61,8 +61,8 @@ public class QMUIDisplayHelper {
      */
     private static Boolean sHasCamera = null;
 
-    private static int[] sPortraitRealSizeCache = null;
-    private static int[] sLandscapeRealSizeCache = null;
+//    private static int[] sPortraitRealSizeCache = null;
+//    private static int[] sLandscapeRealSizeCache = null;
 
     /**
      * 获取 DisplayMetrics
@@ -131,33 +131,35 @@ public class QMUIDisplayHelper {
      */
 
     public static int[] getRealScreenSize(Context context) {
-        if (QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Essential Phone 8.0版本后，Display size 会根据挖孔屏的设置而得到不同的结果，不能信任 cache
-            return doGetRealScreenSize(context);
-        }
-        int orientation = context.getResources().getConfiguration().orientation;
-        int[] result;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            result = sLandscapeRealSizeCache;
-            if (result == null) {
-                result = doGetRealScreenSize(context);
-                if(result[0] > result[1]){
-                    // the result may be wrong sometimes, do not cache !!!!
-                    sLandscapeRealSizeCache = result;
-                }
-            }
-            return result;
-        } else {
-            result = sPortraitRealSizeCache;
-            if (result == null) {
-                result = doGetRealScreenSize(context);
-                if(result[0] < result[1]){
-                    // the result may be wrong sometimes, do not cache !!!!
-                    sPortraitRealSizeCache = result;
-                }
-            }
-            return result;
-        }
+        // 切换屏幕导致宽高变化时不能用 cache，先去掉 cache
+        return doGetRealScreenSize(context);
+//        if (QMUIDeviceHelper.isEssentialPhone() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            // Essential Phone 8.0版本后，Display size 会根据挖孔屏的设置而得到不同的结果，不能信任 cache
+//            return doGetRealScreenSize(context);
+//        }
+//        int orientation = context.getResources().getConfiguration().orientation;
+//        int[] result;
+//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            result = sLandscapeRealSizeCache;
+//            if (result == null) {
+//                result = doGetRealScreenSize(context);
+//                if(result[0] > result[1]){
+//                    // the result may be wrong sometimes, do not cache !!!!
+//                    sLandscapeRealSizeCache = result;
+//                }
+//            }
+//            return result;
+//        } else {
+//            result = sPortraitRealSizeCache;
+//            if (result == null) {
+//                result = doGetRealScreenSize(context);
+//                if(result[0] < result[1]){
+//                    // the result may be wrong sometimes, do not cache !!!!
+//                    sPortraitRealSizeCache = result;
+//                }
+//            }
+//            return result;
+//        }
     }
 
     private static int[] doGetRealScreenSize(Context context) {
