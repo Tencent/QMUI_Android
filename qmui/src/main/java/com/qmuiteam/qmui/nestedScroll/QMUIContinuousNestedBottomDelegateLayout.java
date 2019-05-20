@@ -485,7 +485,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     }
 
     @Override
-    public boolean onInterceptHoverEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (touchSlop < 0) {
             touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         }
@@ -504,6 +504,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                 if (isPointInHeaderBounds(x, y)) {
                     lastMotionY = y;
                     this.activePointerId = ev.getPointerId(0);
+                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH);
                 }
                 break;
             }
@@ -539,6 +540,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
             case MotionEvent.ACTION_UP: {
                 isBeingDragged = false;
                 this.activePointerId = INVALID_POINTER;
+                stopNestedScroll(ViewCompat.TYPE_TOUCH);
                 break;
             }
         }
