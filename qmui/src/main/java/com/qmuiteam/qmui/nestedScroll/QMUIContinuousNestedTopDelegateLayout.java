@@ -282,7 +282,8 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 }
                 return dyUnconsumed;
             } else {
-                int beforeRange = getPaddingTop() + (mHeaderView == null ? 0 : mHeaderView.getHeight());
+                int beforeRange = Math.min(mOffsetRange,
+                        getPaddingTop() + (mHeaderView == null ? 0 : mHeaderView.getHeight()));
                 if (dyUnconsumed == Integer.MAX_VALUE) {
                     offsetTo(beforeRange);
                 } else if (mOffsetCurrent + dyUnconsumed <= beforeRange) {
@@ -320,7 +321,8 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
                 }
                 return dyUnconsumed;
             }
-            int afterRange = mOffsetRange - getPaddingBottom() - (mFooterView == null ? 0 : mFooterView.getHeight());
+            int afterRange = Math.max(0,
+                    mOffsetRange - getPaddingBottom() - (mFooterView == null ? 0 : mFooterView.getHeight()));
             if (dyUnconsumed == Integer.MIN_VALUE) {
                 offsetTo(afterRange);
             } else if (mOffsetCurrent + dyUnconsumed > afterRange) {
