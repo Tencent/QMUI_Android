@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
@@ -284,8 +285,9 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     public void restoreScrollInfo(Object scrollInfo) {
         if (scrollInfo instanceof ScrollInfo) {
             ScrollInfo si = (ScrollInfo) scrollInfo;
-            mHeaderViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
-            mContentViewOffsetHelper.setTopAndBottomOffset(si.topBottomOffset);
+            int offset = QMUILangHelper.constrain(si.topBottomOffset, getMiniOffset(), 0);
+            mHeaderViewOffsetHelper.setTopAndBottomOffset(offset);
+            mContentViewOffsetHelper.setTopAndBottomOffset(offset);
             ((IQMUIContinuousNestedBottomView) mContentView).restoreScrollInfo(si.delegateScrollInfo);
         }
     }

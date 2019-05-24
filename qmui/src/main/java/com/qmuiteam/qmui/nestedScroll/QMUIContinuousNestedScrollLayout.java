@@ -22,6 +22,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qmuiteam.qmui.util.QMUILangHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -371,7 +373,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             return;
         }
         if (mTopAreaBehavior != null) {
-            mTopAreaBehavior.setTopAndBottomOffset(-scrollInfo.topBottomOffset);
+            mTopAreaBehavior.setTopAndBottomOffset(QMUILangHelper.constrain(-scrollInfo.topBottomOffset, -getOffsetRange(), 0));
         }
         if (mTopView != null) {
             mTopView.restoreScrollInfo(scrollInfo.topInfo);

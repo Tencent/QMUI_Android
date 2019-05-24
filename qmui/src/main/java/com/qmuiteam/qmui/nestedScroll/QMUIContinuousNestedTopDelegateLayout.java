@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
 import androidx.annotation.NonNull;
@@ -393,7 +394,7 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     public void restoreScrollInfo(Object scrollInfo) {
         if (scrollInfo instanceof ScrollInfo) {
             ScrollInfo si = (ScrollInfo) scrollInfo;
-            offsetTo(-si.topBottomOffset);
+            offsetTo(QMUILangHelper.constrain(-si.topBottomOffset, 0, getContainerOffsetRange()));
             if (mDelegateView != null) {
                 mDelegateView.restoreScrollInfo(((ScrollInfo) scrollInfo).delegateScrollInfo);
             }
