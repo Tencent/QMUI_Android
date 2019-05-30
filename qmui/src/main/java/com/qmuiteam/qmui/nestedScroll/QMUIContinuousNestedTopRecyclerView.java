@@ -32,14 +32,21 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context) {
         this(context, null);
+        init();
     }
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
+        init();
     }
 
     public QMUIContinuousNestedTopRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init(){
+        setVerticalScrollBarEnabled(false);
     }
 
     @Override
