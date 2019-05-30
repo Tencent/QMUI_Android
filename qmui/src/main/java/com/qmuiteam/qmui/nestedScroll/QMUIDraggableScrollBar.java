@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 public class QMUIDraggableScrollBar extends View {
@@ -31,6 +32,8 @@ public class QMUIDraggableScrollBar extends View {
     };
     private boolean mIsInDragging = false;
     private Callback mCallback;
+    private int mDrawableDrawTop = 0;
+    private int mMoveMaxDistanceOnceIfNotDrag = QMUIDisplayHelper.dp2px(getContext(), 4);
 
     public QMUIDraggableScrollBar(Context context) {
         this(context, (AttributeSet) null);
@@ -89,9 +92,8 @@ public class QMUIDraggableScrollBar extends View {
         final float y = event.getY();
         if (action == MotionEvent.ACTION_DOWN) {
             mIsInDragging = false;
-            float drawableY = mPercent * (getHeight() - drawable.getIntrinsicHeight());
             if (mCurrentAlpha > 0 && x > getWidth() - drawable.getIntrinsicWidth()
-                    && y >= drawableY && y <= drawableY + drawable.getIntrinsicHeight()) {
+                    && y >= mDrawableDrawTop && y <= mDrawableDrawTop + drawable.getIntrinsicHeight()) {
                 getParent().requestDisallowInterceptTouchEvent(true);
                 mIsInDragging = true;
             }
@@ -165,20 +167,40 @@ public class QMUIDraggableScrollBar extends View {
             return;
         }
         drawable.setAlpha((int) (mCurrentAlpha * 255));
-        int totalHeight = getHeight(), totalWidth = getWidth();
-        int top = (int) ((totalHeight - drawableHeight) * mPercent);
+        int totalHeight = getHeight() - getScrollBarTopMargin() - getScrollBarBottomMargin();
+        int totalWidth = getWidth();
+        int top = getScrollBarTopMargin() + (int) ((totalHeight - drawableHeight) * mPercent);
         int left = totalWidth - drawableWidth;
+        if(!mIsInDragging){
+            int moveDistance = top - mDrawableDrawTop;
+            if(moveDistance > mMoveMaxDistanceOnceIfNotDrag){
+                top = mDrawableDrawTop + mMoveMaxDistanceOnceIfNotDrag;
+                needInvalidate = 0;
+            }else if(moveDistance < -mMoveMaxDistanceOnceIfNotDrag){
+                top = mDrawableDrawTop - mMoveMaxDistanceOnceIfNotDrag;
+                needInvalidate = 0;
+            }
+        }
         drawable.setBounds(0, 0, drawableWidth, drawableHeight);
         canvas.save();
         canvas.translate(left, top);
         drawable.draw(canvas);
         canvas.restore();
+        mDrawableDrawTop = top;
 
         if (needInvalidate == 0) {
             invalidate();
         } else if (needInvalidate > 0) {
             ViewCompat.postOnAnimationDelayed(this, mDelayInvalidateRunnable, needInvalidate);
         }
+    }
+
+    protected int getScrollBarTopMargin(){
+        return 0;
+    }
+
+    protected int getScrollBarBottomMargin(){
+        return 0;
     }
 
     interface Callback {

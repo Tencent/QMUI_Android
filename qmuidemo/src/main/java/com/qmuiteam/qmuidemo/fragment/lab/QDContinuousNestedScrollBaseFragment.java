@@ -42,6 +42,7 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
         ButterKnife.bind(this, view);
         initTopBar();
         initCoordinatorLayout();
+        mCoordinatorLayout.setDraggableScrollBarEnabled(true);
         return view;
     }
 
