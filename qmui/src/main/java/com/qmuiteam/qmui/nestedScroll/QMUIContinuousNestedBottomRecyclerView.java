@@ -49,6 +49,7 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
     }
 
     private void init() {
+        setVerticalScrollBarEnabled(false);
         addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

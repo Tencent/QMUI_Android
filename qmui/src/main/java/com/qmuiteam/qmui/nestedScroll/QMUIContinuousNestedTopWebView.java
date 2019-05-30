@@ -29,14 +29,21 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
 
     public QMUIContinuousNestedTopWebView(Context context) {
         super(context);
+        init();
     }
 
     public QMUIContinuousNestedTopWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public QMUIContinuousNestedTopWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init(){
+        setVerticalScrollBarEnabled(false);
     }
 
     @Override
