@@ -32,8 +32,9 @@ public class QMUIDraggableScrollBar extends View {
     };
     private boolean mIsInDragging = false;
     private Callback mCallback;
-    private int mDrawableDrawTop = 0;
-    private int mMoveMaxDistanceOnceIfNotDrag = QMUIDisplayHelper.dp2px(getContext(), 4);
+    private int mDrawableDrawTop = -1;
+    private int mAdjustDistanceProtection = QMUIDisplayHelper.dp2px(getContext(), 20);
+    private int mAdjustMaxDistanceOnce = QMUIDisplayHelper.dp2px(getContext(), 4);
 
     public QMUIDraggableScrollBar(Context context) {
         this(context, (AttributeSet) null);
@@ -112,7 +113,7 @@ public class QMUIDraggableScrollBar extends View {
     }
 
     private void onDragging(Drawable drawable, float currentY) {
-        float percent = currentY / (getHeight() - drawable.getIntrinsicHeight());
+        float percent = (currentY - getScrollBarTopMargin()) / (getHeight() - getScrollBarBottomMargin() - getScrollBarTopMargin() - drawable.getIntrinsicHeight());
         percent = QMUILangHelper.constrain(percent, 0f, 1f);
         if (mCallback != null) {
             mCallback.onDragToPercent(percent);
@@ -144,7 +145,6 @@ public class QMUIDraggableScrollBar extends View {
             return;
         }
         long timeAfterStartShow = System.currentTimeMillis() - mStartTransitionTime;
-        Log.i("cgine", "timeAfterStartShow = " + timeAfterStartShow);
         long timeAfterEndShow;
         int needInvalidate = -1;
         if (timeAfterStartShow < mTransitionDuration) {
@@ -171,13 +171,13 @@ public class QMUIDraggableScrollBar extends View {
         int totalWidth = getWidth();
         int top = getScrollBarTopMargin() + (int) ((totalHeight - drawableHeight) * mPercent);
         int left = totalWidth - drawableWidth;
-        if(!mIsInDragging){
+        if(!mIsInDragging && mDrawableDrawTop > 0){
             int moveDistance = top - mDrawableDrawTop;
-            if(moveDistance > mMoveMaxDistanceOnceIfNotDrag){
-                top = mDrawableDrawTop + mMoveMaxDistanceOnceIfNotDrag;
+            if(moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection){
+                top = mDrawableDrawTop + mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
-            }else if(moveDistance < -mMoveMaxDistanceOnceIfNotDrag){
-                top = mDrawableDrawTop - mMoveMaxDistanceOnceIfNotDrag;
+            }else if(moveDistance < -mAdjustMaxDistanceOnce && moveDistance > -mAdjustDistanceProtection){
+                top = mDrawableDrawTop - mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
             }
         }
