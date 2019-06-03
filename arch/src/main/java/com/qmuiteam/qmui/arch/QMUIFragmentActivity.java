@@ -113,21 +113,21 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             public boolean handle(Object op) {
                 Field cmdField = null;
                 try {
-                    cmdField = op.getClass().getDeclaredField("cmd");
+                    cmdField = Utils.getOpCmdField(op);
                     cmdField.setAccessible(true);
                     int cmd = (int) cmdField.get(op);
                     if (cmd == 1) {
                         if (useNewTransitionConfigWhenPop) {
-                            Field popEnterAnimField = op.getClass().getDeclaredField("popEnterAnim");
+                            Field popEnterAnimField = Utils.getOpPopEnterAnimField(op);
                             popEnterAnimField.setAccessible(true);
                             popEnterAnimField.set(op, transitionConfig.popenter);
 
-                            Field popExitAnimField = op.getClass().getDeclaredField("popExitAnim");
+                            Field popExitAnimField = Utils.getOpPopExitAnimField(op);
                             popExitAnimField.setAccessible(true);
                             popExitAnimField.set(op, transitionConfig.popout);
                         }
 
-                        Field oldFragmentField = op.getClass().getDeclaredField("fragment");
+                        Field oldFragmentField = Utils.getOpFragmentField(op);
                         oldFragmentField.setAccessible(true);
                         Object fragmentObj = oldFragmentField.get(op);
                         oldFragmentField.set(op, fragment);
