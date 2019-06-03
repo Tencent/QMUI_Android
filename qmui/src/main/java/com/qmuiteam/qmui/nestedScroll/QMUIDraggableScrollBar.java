@@ -1,3 +1,35 @@
+/*
+ * Tencent is pleased to support the open source community by making QMUI_Android available.
+ *
+ * Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://opensource.org/licenses/MIT
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
@@ -8,7 +40,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -171,12 +202,12 @@ public class QMUIDraggableScrollBar extends View {
         int totalWidth = getWidth();
         int top = getScrollBarTopMargin() + (int) ((totalHeight - drawableHeight) * mPercent);
         int left = totalWidth - drawableWidth;
-        if(!mIsInDragging && mDrawableDrawTop > 0){
+        if (!mIsInDragging && mDrawableDrawTop > 0) {
             int moveDistance = top - mDrawableDrawTop;
-            if(moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection){
+            if (moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection) {
                 top = mDrawableDrawTop + mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
-            }else if(moveDistance < -mAdjustMaxDistanceOnce && moveDistance > -mAdjustDistanceProtection){
+            } else if (moveDistance < -mAdjustMaxDistanceOnce && moveDistance > -mAdjustDistanceProtection) {
                 top = mDrawableDrawTop - mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
             }
@@ -195,11 +226,11 @@ public class QMUIDraggableScrollBar extends View {
         }
     }
 
-    protected int getScrollBarTopMargin(){
+    protected int getScrollBarTopMargin() {
         return 0;
     }
 
-    protected int getScrollBarBottomMargin(){
+    protected int getScrollBarBottomMargin() {
         return 0;
     }
 
