@@ -23,6 +23,7 @@ import android.app.ActivityOptions;
 import android.os.Build;
 import android.os.Looper;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.qmuiteam.qmui.QMUILog;
 
