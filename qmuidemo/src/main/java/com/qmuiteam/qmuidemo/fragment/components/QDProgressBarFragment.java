@@ -90,10 +90,10 @@ public class QDProgressBarFragment extends BaseFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (int i = 0; i <= 20; i++) {
+                        for (int i = 0; i <= 100; i++) {
                             try {
-                                count = (i + 1) * 5;
-                                if (i == 20) {
+                                count = i + 1;
+                                if (i == 5) {
                                     Message msg = new Message();
                                     msg.what = STOP;
                                     myHandler.sendMessage(msg);
