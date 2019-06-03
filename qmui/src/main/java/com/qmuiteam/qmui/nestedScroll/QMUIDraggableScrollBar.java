@@ -3,18 +3,18 @@ package com.qmuiteam.qmui.nestedScroll;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 public class QMUIDraggableScrollBar extends View {
 
@@ -171,12 +171,12 @@ public class QMUIDraggableScrollBar extends View {
         int totalWidth = getWidth();
         int top = getScrollBarTopMargin() + (int) ((totalHeight - drawableHeight) * mPercent);
         int left = totalWidth - drawableWidth;
-        if(!mIsInDragging && mDrawableDrawTop > 0){
+        if (!mIsInDragging && mDrawableDrawTop > 0) {
             int moveDistance = top - mDrawableDrawTop;
-            if(moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection){
+            if (moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection) {
                 top = mDrawableDrawTop + mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
-            }else if(moveDistance < -mAdjustMaxDistanceOnce && moveDistance > -mAdjustDistanceProtection){
+            } else if (moveDistance < -mAdjustMaxDistanceOnce && moveDistance > -mAdjustDistanceProtection) {
                 top = mDrawableDrawTop - mAdjustMaxDistanceOnce;
                 needInvalidate = 0;
             }
@@ -195,11 +195,11 @@ public class QMUIDraggableScrollBar extends View {
         }
     }
 
-    protected int getScrollBarTopMargin(){
+    protected int getScrollBarTopMargin() {
         return 0;
     }
 
-    protected int getScrollBarBottomMargin(){
+    protected int getScrollBarBottomMargin() {
         return 0;
     }
 
