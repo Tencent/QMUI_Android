@@ -82,6 +82,11 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     @Override
+    public void onDragStarted() {
+        stopScroll();
+    }
+
+    @Override
     public void onDragToPercent(float percent) {
         int targetScroll = (int) (getScrollRange() * percent);
         scrollBy(targetScroll - getCurrentScroll());
@@ -294,6 +299,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
             ensureScrollBar();
             mDraggableScrollBar.setPercent(getCurrentScrollPercent());
             mDraggableScrollBar.awakenScrollBar();
+
         }
         for (OnScrollListener onScrollListener : mOnScrollListeners) {
             onScrollListener.onScroll(topCurrent, topRange, offsetCurrent, offsetRange,

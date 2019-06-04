@@ -64,6 +64,7 @@ public class QMUIDraggableScrollBar extends View {
     private boolean mIsInDragging = false;
     private Callback mCallback;
     private int mDrawableDrawTop = -1;
+    private float mDragInnerTop = 0;
     private int mAdjustDistanceProtection = QMUIDisplayHelper.dp2px(getContext(), 20);
     private int mAdjustMaxDistanceOnce = QMUIDisplayHelper.dp2px(getContext(), 4);
 
@@ -98,6 +99,12 @@ public class QMUIDraggableScrollBar extends View {
     }
 
     public void setPercent(float percent) {
+        if(!mIsInDragging){
+            setPercentInternal(percent);
+        }
+    }
+
+    private void setPercentInternal(float percent){
         mPercent = percent;
         invalidate();
     }
@@ -126,8 +133,12 @@ public class QMUIDraggableScrollBar extends View {
             mIsInDragging = false;
             if (mCurrentAlpha > 0 && x > getWidth() - drawable.getIntrinsicWidth()
                     && y >= mDrawableDrawTop && y <= mDrawableDrawTop + drawable.getIntrinsicHeight()) {
+                mDragInnerTop = y - mDrawableDrawTop;
                 getParent().requestDisallowInterceptTouchEvent(true);
                 mIsInDragging = true;
+                if(mCallback != null){
+                    mCallback.onDragStarted();
+                }
             }
         } else if (action == MotionEvent.ACTION_MOVE) {
             if (mIsInDragging) {
@@ -144,12 +155,12 @@ public class QMUIDraggableScrollBar extends View {
     }
 
     private void onDragging(Drawable drawable, float currentY) {
-        float percent = (currentY - getScrollBarTopMargin()) / (getHeight() - getScrollBarBottomMargin() - getScrollBarTopMargin() - drawable.getIntrinsicHeight());
+        float percent = (currentY - getScrollBarTopMargin() - mDragInnerTop) / (getHeight() - getScrollBarBottomMargin() - getScrollBarTopMargin() - drawable.getIntrinsicHeight());
         percent = QMUILangHelper.constrain(percent, 0f, 1f);
         if (mCallback != null) {
             mCallback.onDragToPercent(percent);
         }
-        setPercent(percent);
+        setPercentInternal(percent);
     }
 
     public void awakenScrollBar() {
@@ -235,6 +246,7 @@ public class QMUIDraggableScrollBar extends View {
     }
 
     interface Callback {
+        void onDragStarted();
         void onDragToPercent(float percent);
     }
 }
