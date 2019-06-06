@@ -253,6 +253,11 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         int topRange = mTopView.getScrollOffsetRange();
         int offsetCurrent = -mTopAreaBehavior.getTopAndBottomOffset();
         int offsetRange = getOffsetRange();
+
+        if(offsetRange <= 0){
+            return;
+        }
+
         if (offsetCurrent >= offsetRange || (offsetCurrent > 0 && mKeepBottomAreaStableWhenCheckLayout)) {
             mTopView.consumeScroll(Integer.MAX_VALUE);
             return;
@@ -389,9 +394,9 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         }
         int contentHeight = mBottomView.getContentHeight();
         if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
-            return ((View) mTopView).getHeight() - (getHeight() - contentHeight);
+            return Math.max(0, ((View) mTopView).getHeight() + contentHeight - getHeight());
         }
-        return ((View) mTopView).getHeight() - (getHeight() - ((View) mBottomView).getHeight());
+        return Math.max(0, ((View) mTopView).getHeight() + ((View) mBottomView).getHeight() - getHeight());
     }
 
     @Override
