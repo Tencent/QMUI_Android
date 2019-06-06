@@ -18,6 +18,7 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -168,6 +169,7 @@ public class QDContinuousBottomView extends QMUIContinuousNestedBottomDelegateLa
     }
 
     class MyViewPager extends QMUIViewPager implements IQMUIContinuousNestedBottomView {
+        static final String KEY_CURRENT_POSITION = "demo_bottom_current_position";
 
         public MyViewPager(Context context) {
             super(context);
@@ -228,30 +230,20 @@ public class QDContinuousBottomView extends QMUIContinuousNestedBottomDelegateLa
         }
 
         @Override
-        public Object saveScrollInfo() {
-            if (mCurrentItemView != null) {
-                return new ScrollInfo(mCurrentPosition, mCurrentItemView.saveScrollInfo());
+        public void saveScrollInfo(@NonNull Bundle bundle) {
+            bundle.putInt(KEY_CURRENT_POSITION, mCurrentPosition);
+            if(mCurrentItemView != null){
+                mCurrentItemView.saveScrollInfo(bundle);
             }
-            return null;
         }
 
         @Override
-        public void restoreScrollInfo(Object scrollInfo) {
-            if (mCurrentItemView != null && (scrollInfo instanceof ScrollInfo)) {
-                ScrollInfo si = (ScrollInfo) scrollInfo;
-                if (si.currentPosition == mCurrentPosition) {
-                    mCurrentItemView.restoreScrollInfo(si.currentScrollInfo);
+        public void restoreScrollInfo(@NonNull Bundle bundle) {
+            if(mCurrentItemView != null){
+                int currentPos = bundle.getInt(KEY_CURRENT_POSITION, -1);
+                if(currentPos == mCurrentPosition){
+                    mCurrentItemView.restoreScrollInfo(bundle);
                 }
-            }
-        }
-
-        class ScrollInfo {
-            int currentPosition;
-            Object currentScrollInfo;
-
-            public ScrollInfo(int currentPosition, Object currentScrollInfo) {
-                this.currentPosition = currentPosition;
-                this.currentScrollInfo = currentScrollInfo;
             }
         }
     }

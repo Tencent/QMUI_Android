@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.NestedScrollingChild2;
 import android.support.v4.view.NestedScrollingChildHelper;
@@ -44,6 +45,7 @@ import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATO
 
 public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrameLayout implements
         NestedScrollingChild2, NestedScrollingParent2, IQMUIContinuousNestedBottomView {
+    public static final String KEY_SCROLL_INFO_OFFSET = "@qmui_scroll_info_bottom_dl_offset";
 
     private final NestedScrollingParentHelper mParentHelper;
     private final NestedScrollingChildHelper mChildHelper;
@@ -281,29 +283,21 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     }
 
     @Override
-    public void restoreScrollInfo(Object scrollInfo) {
-        if (scrollInfo instanceof ScrollInfo) {
-            ScrollInfo si = (ScrollInfo) scrollInfo;
-            int offset = QMUILangHelper.constrain(si.topBottomOffset, getMiniOffset(), 0);
-            mHeaderViewOffsetHelper.setTopAndBottomOffset(offset);
-            mContentViewOffsetHelper.setTopAndBottomOffset(offset);
-            ((IQMUIContinuousNestedBottomView) mContentView).restoreScrollInfo(si.delegateScrollInfo);
+    public void saveScrollInfo(@NonNull Bundle bundle) {
+        bundle.putInt(KEY_SCROLL_INFO_OFFSET, mHeaderViewOffsetHelper.getTopAndBottomOffset());
+        if (mContentView != null) {
+            ((IQMUIContinuousNestedBottomView) mContentView).saveScrollInfo(bundle);
         }
     }
 
     @Override
-    public Object saveScrollInfo() {
-        return new ScrollInfo(mHeaderViewOffsetHelper.getTopAndBottomOffset(),
-                ((IQMUIContinuousNestedBottomView) mContentView).saveScrollInfo());
-    }
-
-    public static class ScrollInfo {
-        public int topBottomOffset;
-        public Object delegateScrollInfo;
-
-        public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
-            this.topBottomOffset = topBottomOffset;
-            this.delegateScrollInfo = delegateScrollInfo;
+    public void restoreScrollInfo(@NonNull Bundle bundle) {
+        int offset = bundle.getInt(KEY_SCROLL_INFO_OFFSET, 0);
+        offset = QMUILangHelper.constrain(offset, getMiniOffset(), 0);
+        mHeaderViewOffsetHelper.setTopAndBottomOffset(offset);
+        mContentViewOffsetHelper.setTopAndBottomOffset(offset);
+        if (mContentView != null) {
+            ((IQMUIContinuousNestedBottomView) mContentView).restoreScrollInfo(bundle);
         }
     }
 
@@ -420,7 +414,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                                   int type) {
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
         int unconsumed = dy - consumed[1];
-        if (unconsumed != 0 && unconsumed > 0) {
+        if (unconsumed > 0) {
             consumed[1] += unconsumed - offsetBy(unconsumed);
         }
     }

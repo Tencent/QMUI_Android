@@ -18,12 +18,16 @@ package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
 public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
+
+    public static final String KEY_SCROLL_INFO = "@qmui_scroll_info_top_webview";
 
     private OnScrollNotifier mScrollNotifier;
 
@@ -89,17 +93,15 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     }
 
     @Override
-    public Object saveScrollInfo() {
-        return getScrollY();
+    public void saveScrollInfo(@NonNull Bundle bundle) {
+        bundle.putInt(KEY_SCROLL_INFO, getScrollY());
     }
 
     @Override
-    public void restoreScrollInfo(Object scrollInfo) {
-        if (scrollInfo instanceof Integer) {
-            // scrollTo does not always work, even if after onPageLoaded
-            int value = QMUIDisplayHelper.px2dp(getContext(), (Integer) scrollInfo);
-            exec("javascript:scrollTo(0, " + value + ")");
-        }
+    public void restoreScrollInfo(@NonNull Bundle bundle) {
+        int scrollY = QMUIDisplayHelper.px2dp(getContext(),
+                bundle.getInt(KEY_SCROLL_INFO, 0));
+        exec("javascript:scrollTo(0, " + scrollY + ")");
     }
 
     private void exec(final String jsCode) {
