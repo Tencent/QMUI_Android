@@ -17,6 +17,10 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -28,12 +32,9 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implements
         QMUIContinuousNestedTopAreaBehavior.Callback, QMUIDraggableScrollBar.Callback {
+    public static final String KEY_SCROLL_INFO_OFFSET = "@qmui_nested_scroll_layout_offset";
 
     private IQMUIContinuousNestedTopView mTopView;
     private IQMUIContinuousNestedBottomView mBottomView;
@@ -63,8 +64,8 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         super(context, attrs, defStyleAttr);
     }
 
-    private void ensureScrollBar(){
-        if(mDraggableScrollBar == null){
+    private void ensureScrollBar() {
+        if (mDraggableScrollBar == null) {
             mDraggableScrollBar = createScrollBar(getContext());
             mDraggableScrollBar.setCallback(this);
             CoordinatorLayout.LayoutParams lp = new CoordinatorLayout.LayoutParams(
@@ -78,7 +79,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         mIsDraggableScrollBarEnabled = draggableScrollBarEnabled;
     }
 
-    protected QMUIDraggableScrollBar createScrollBar(Context context){
+    protected QMUIDraggableScrollBar createScrollBar(Context context) {
         return new QMUIDraggableScrollBar(context);
     }
 
@@ -254,7 +255,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         int offsetCurrent = -mTopAreaBehavior.getTopAndBottomOffset();
         int offsetRange = getOffsetRange();
 
-        if(offsetRange <= 0){
+        if (offsetRange <= 0) {
             return;
         }
 
@@ -301,7 +302,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     private void dispatchScroll(int topCurrent, int topRange,
                                 int offsetCurrent, int offsetRange,
                                 int bottomCurrent, int bottomRange) {
-        if(mIsDraggableScrollBarEnabled){
+        if (mIsDraggableScrollBarEnabled) {
             ensureScrollBar();
             mDraggableScrollBar.setPercent(getCurrentScrollPercent());
             mDraggableScrollBar.awakenScrollBar();
@@ -440,25 +441,41 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         return super.dispatchTouchEvent(ev);
     }
 
-    public ScrollInfo saveScrollInfo() {
-        Object topInfo = mTopView != null ? mTopView.saveScrollInfo() : null;
-        Object bottomInfo = mBottomView != null ? mBottomView.saveScrollInfo() : null;
-        return new ScrollInfo(topInfo, bottomInfo, getOffsetCurrent());
+    /**
+     * save current scroll info to bundle
+     *
+     * @param bundle
+     */
+    public void saveScrollInfo(@NonNull Bundle bundle) {
+        if (mTopView != null) {
+            mTopView.saveScrollInfo(bundle);
+        }
+        if (mBottomView != null) {
+            mBottomView.saveScrollInfo(bundle);
+        }
+        bundle.putInt(KEY_SCROLL_INFO_OFFSET, getOffsetCurrent());
     }
 
-    public void restoreScrollInfo(@Nullable ScrollInfo scrollInfo) {
-        if (scrollInfo == null) {
+
+    /**
+     * restore current scroll info from bundle
+     *
+     * @param bundle
+     */
+    public void restoreScrollInfo(@Nullable Bundle bundle) {
+        if (bundle == null) {
             return;
         }
         if (mTopAreaBehavior != null) {
-            mTopAreaBehavior.setTopAndBottomOffset(QMUILangHelper.constrain(-scrollInfo.topBottomOffset, -getOffsetRange(), 0));
+            int offset = bundle.getInt(KEY_SCROLL_INFO_OFFSET, 0);
+            mTopAreaBehavior.setTopAndBottomOffset(QMUILangHelper.constrain(-offset, -getOffsetRange(), 0));
         }
         if (mTopView != null) {
-            mTopView.restoreScrollInfo(scrollInfo.topInfo);
+            mTopView.restoreScrollInfo(bundle);
         }
 
         if (mBottomView != null) {
-            mBottomView.restoreScrollInfo(scrollInfo.bottomInfo);
+            mBottomView.restoreScrollInfo(bundle);
         }
     }
 
@@ -469,17 +486,5 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
                       int bottomCurrent, int bottomRange);
 
         void onScrollStateChange(int newScrollState, boolean fromTopBehavior);
-    }
-
-    public static class ScrollInfo {
-        public Object topInfo;
-        public Object bottomInfo;
-        public int topBottomOffset;
-
-        public ScrollInfo(Object topInfo, Object bottomInfo, int topBottomOffset) {
-            this.topInfo = topInfo;
-            this.bottomInfo = bottomInfo;
-            this.topBottomOffset = topBottomOffset;
-        }
     }
 }

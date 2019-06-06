@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmuidemo.fragment.lab;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -35,6 +36,7 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
+    private Bundle mSavedScrollInfo = new Bundle();
 
     @Override
     protected View onCreateView() {
@@ -75,6 +77,8 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
                 .addItem("scrollBy -40dp")
                 .addItem("smoothScrollBy 100dp/1s")
                 .addItem("smoothScrollBy -100dp/1s")
+                .addItem("save current scroll info")
+                .addItem("restore scroll info")
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
@@ -100,6 +104,11 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
                             case 6:
                                 mCoordinatorLayout.smoothScrollBy(QMUIDisplayHelper.dp2px(getContext(), -100), 1000);
                                 break;
+                            case 7:
+                                mCoordinatorLayout.saveScrollInfo(mSavedScrollInfo);
+                                break;
+                            case 8:
+                                mCoordinatorLayout.restoreScrollInfo(mSavedScrollInfo);
                         }
                         dialog.dismiss();
                     }

@@ -17,6 +17,14 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.view.NestedScrollingChild2;
+import android.support.v4.view.NestedScrollingChildHelper;
+import android.support.v4.view.NestedScrollingParent2;
+import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +33,10 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.NestedScrollingChild2;
-import androidx.core.view.NestedScrollingChildHelper;
-import androidx.core.view.NestedScrollingParent2;
-import androidx.core.view.NestedScrollingParentHelper;
-import androidx.core.view.ViewCompat;
-
 public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implements
         NestedScrollingChild2, NestedScrollingParent2, IQMUIContinuousNestedTopView {
+
+    public static final String KEY_SCROLL_INFO_OFFSET = "@qmui_scroll_info_top_dl_offset";
 
     private OnScrollNotifier mScrollNotifier;
     private View mHeaderView;
@@ -386,28 +388,19 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
     }
 
     @Override
-    public Object saveScrollInfo() {
-        return new ScrollInfo(-mOffsetCurrent, mDelegateView == null ? null : mDelegateView.saveScrollInfo());
-    }
-
-    @Override
-    public void restoreScrollInfo(Object scrollInfo) {
-        if (scrollInfo instanceof ScrollInfo) {
-            ScrollInfo si = (ScrollInfo) scrollInfo;
-            offsetTo(QMUILangHelper.constrain(-si.topBottomOffset, 0, getContainerOffsetRange()));
-            if (mDelegateView != null) {
-                mDelegateView.restoreScrollInfo(((ScrollInfo) scrollInfo).delegateScrollInfo);
-            }
+    public void saveScrollInfo(@NonNull Bundle bundle) {
+        bundle.putInt(KEY_SCROLL_INFO_OFFSET, -mOffsetCurrent);
+        if (mDelegateView != null) {
+            mDelegateView.saveScrollInfo(bundle);
         }
     }
 
-    public static class ScrollInfo {
-        int topBottomOffset;
-        Object delegateScrollInfo;
-
-        public ScrollInfo(int topBottomOffset, Object delegateScrollInfo) {
-            this.topBottomOffset = topBottomOffset;
-            this.delegateScrollInfo = delegateScrollInfo;
+    @Override
+    public void restoreScrollInfo(@NonNull Bundle bundle) {
+        int offset = bundle.getInt(KEY_SCROLL_INFO_OFFSET, 0);
+        offsetTo(QMUILangHelper.constrain(-offset, 0, getContainerOffsetRange()));
+        if (mDelegateView != null) {
+            mDelegateView.restoreScrollInfo(bundle);
         }
     }
 

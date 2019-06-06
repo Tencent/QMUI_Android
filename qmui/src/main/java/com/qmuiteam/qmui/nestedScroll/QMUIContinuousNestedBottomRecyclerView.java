@@ -17,18 +17,21 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
         implements IQMUIContinuousNestedBottomView {
+
+    public static final String KEY_SCROLL_INFO_POSITION = "@qmui_scroll_info_bottom_rv_pos";
+    public static final String KEY_SCROLL_INFO_OFFSET = "@qmui_scroll_info_bottom_rv_offset";
 
     private IQMUIContinuousNestedBottomView.OnScrollNotifier mOnScrollNotifier;
     private final int[] mScrollConsumed = new int[2];
@@ -146,40 +149,28 @@ public class QMUIContinuousNestedBottomRecyclerView extends RecyclerView
     }
 
     @Override
-    public Object saveScrollInfo() {
+    public void saveScrollInfo(@NonNull Bundle bundle) {
         LayoutManager layoutManager = getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
             LinearLayoutManager lm = (LinearLayoutManager) layoutManager;
-            if (lm.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                return null;
-            }
             int pos = lm.findFirstVisibleItemPosition();
             View firstView = lm.findViewByPosition(pos);
             int offset = firstView == null ? 0 : firstView.getTop();
-            return new ScrollInfo(pos, offset);
+            bundle.putInt(KEY_SCROLL_INFO_POSITION, pos);
+            bundle.putInt(KEY_SCROLL_INFO_OFFSET, offset);
         }
-        return null;
     }
 
     @Override
-    public void restoreScrollInfo(Object scrollInfo) {
-        if (!(scrollInfo instanceof ScrollInfo)) {
-            return;
-        }
-        ScrollInfo sc = (ScrollInfo) scrollInfo;
+    public void restoreScrollInfo(@NonNull Bundle bundle) {
         LayoutManager layoutManager = getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
-            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(sc.scrollPosition, sc.scrollOffset);
-        }
-    }
-
-    public static class ScrollInfo {
-        public int scrollPosition;
-        public int scrollOffset;
-
-        public ScrollInfo(int scrollPosition, int scrollOffset) {
-            this.scrollPosition = scrollPosition;
-            this.scrollOffset = scrollOffset;
+            int pos = bundle.getInt(KEY_SCROLL_INFO_POSITION, 0);
+            int offset = bundle.getInt(KEY_SCROLL_INFO_OFFSET, 0);
+            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(pos, offset);
+            if(mOnScrollNotifier != null){
+                mOnScrollNotifier.notify(getCurrentScroll(), getScrollOffsetRange());
+            }
         }
     }
 }
