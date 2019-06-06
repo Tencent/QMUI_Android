@@ -32,6 +32,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.fragment.components.section.QDSectionLayoutFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScrollFragment;
 
 public class UpgradeTipTask implements UpgradeTask {
     private final int mOldVersion;
@@ -66,7 +67,25 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if (mNewVersion == QDUpgradeManager.VERSION_1_2_0) {
+        if(mNewVersion == QDUpgradeManager.VERSION_1_3_1){
+            text.append("1. ");
+            addNewWidget(activity, text, "QMUIContinuousNestedScrollLayout",
+                    QDDataManager.getInstance().getDocUrl(QDContinuousNestedScrollFragment.class));
+            text.append("\n");
+            text.append("2. ");
+            addNewWidget(activity, text, "QMUIRadiusImageView2",
+                    QDDataManager.getInstance().getDocUrl(QDContinuousNestedScrollFragment.class));
+            text.append("Implemented with QMUILayout.\n");
+            text.append("3. Updated arch library to 0.5.0. Fixed issues on new androidx version.\n");
+            text.append("4. Features: QMUIQQFaceView supports paragraph space when ellipsize at the end.\n");
+            text.append("5. Features: QMUITabSegment supports space weight.\n");
+            text.append("6. Features: QMUIPullRefreshLayout added method setRefreshDirectly().\n");
+            text.append("7. Fixed issues: ");
+            final String[] issues = new String[]{
+                    "562", "563", "563"
+            };
+            handleIssues(activity, text, issues);
+        } else if (mNewVersion == QDUpgradeManager.VERSION_1_2_0) {
             text.append("1. ");
             addNewWidget(activity, text, "QMUIStickySectionLayout",
                     QDDataManager.getInstance().getDocUrl(QDSectionLayoutFragment.class));
