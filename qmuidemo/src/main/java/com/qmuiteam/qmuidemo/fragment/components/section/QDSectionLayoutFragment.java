@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Widget(widgetClass = QMUIStickySectionLayout.class,
-        iconRes = R.mipmap.icon_grid_in_progress,
+        iconRes = R.mipmap.icon_grid_sticky_section,
         docUrl = "https://github.com/Tencent/QMUI_Android/wiki/QMUIStickySectionLayout")
 public class QDSectionLayoutFragment extends BaseFragment {
     @BindView(R.id.topbar)

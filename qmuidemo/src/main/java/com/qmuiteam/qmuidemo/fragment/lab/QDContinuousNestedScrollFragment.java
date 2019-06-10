@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 
 @Widget(group = Group.Lab,
         widgetClass = QMUIContinuousNestedScrollLayout.class,
-        iconRes = R.mipmap.icon_grid_in_progress,
+        iconRes = R.mipmap.icon_grid_continuous_nest_scroll,
         docUrl ="https://github.com/Tencent/QMUI_Android/wiki/QMUIContinuousNestedScrollLayout")
 public class QDContinuousNestedScrollFragment extends BaseFragment {
 
