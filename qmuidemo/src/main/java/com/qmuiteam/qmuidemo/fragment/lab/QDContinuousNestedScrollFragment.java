@@ -17,6 +17,7 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -29,13 +30,13 @@ import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Widget(group = Group.Lab,
         widgetClass = QMUIContinuousNestedScrollLayout.class,
-        iconRes = R.mipmap.icon_grid_in_progress)
+        iconRes = R.mipmap.icon_grid_continuous_nest_scroll,
+        docUrl ="https://github.com/Tencent/QMUI_Android/wiki/QMUIContinuousNestedScrollLayout")
 public class QDContinuousNestedScrollFragment extends BaseFragment {
 
     @BindView(R.id.topbar)
