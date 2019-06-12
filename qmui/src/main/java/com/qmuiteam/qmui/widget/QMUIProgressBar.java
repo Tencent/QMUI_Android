@@ -23,13 +23,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+
+import androidx.core.view.ViewCompat;
 
 /**
  * 一个进度条控件，通过颜色变化显示进度，支持环形和矩形两种形式，主要特性如下：
