@@ -26,6 +26,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.arch.annotation.MaybeFirstIn;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -33,6 +34,7 @@ import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.tab.QMUITab;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -46,6 +48,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@MaybeFirstIn(container = {QDMainActivity.class})
 @Widget(group = Group.Helper, name = "QMUINotchHelper", iconRes = R.mipmap.icon_grid_status_bar_helper)
 public class QDNotchHelperFragment extends BaseFragment {
     private static final String TAG = "QDNotchHelperFragment";

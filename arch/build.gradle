@@ -27,7 +27,8 @@ android {
 
 dependencies {
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.fragment:fragment:1.1.0-alpha07"
+    implementation "androidx.fragment:fragment:1.1.0-beta01"
+    api project(':arch-annotation')
     compileOnly project(':qmui')
 }
 
