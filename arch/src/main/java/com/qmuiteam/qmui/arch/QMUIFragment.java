@@ -97,7 +97,22 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
 
     private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     private boolean mCalled = true;
-    private ArrayList<Runnable> mDelayRenderRunnableList = new ArrayList<>();
+    private ArrayList<Runnable> mDelayRenderRunnableList;
+    private ArrayList<Runnable> mPostResumeRunnableList;
+    private Runnable mCheckPostResumeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isResumed() && mPostResumeRunnableList != null) {
+                ArrayList<Runnable> list = mPostResumeRunnableList;
+                if (!list.isEmpty()) {
+                    for (Runnable runnable : list) {
+                        runnable.run();
+                    }
+                }
+                mPostResumeRunnableList = null;
+            }
+        }
+    };
     private QMUIFragmentLazyLifecycleOwner mLazyViewLifecycleOwner;
 
     public QMUIFragment() {
@@ -116,6 +131,15 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     public void onDestroyView() {
         super.onDestroyView();
         mBaseView = null;
+        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBaseView != null && mPostResumeRunnableList != null && !mPostResumeRunnableList.isEmpty()) {
+            mBaseView.post(mCheckPostResumeRunnable);
+        }
     }
 
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment) {
@@ -675,12 +699,34 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     }
 
     protected void popBackStack() {
-        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
+        if (!isResumed() || mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
             return;
         }
 
         if (checkStateLoss("popBackStack")) {
             getBaseFragmentActivity().popBackStack();
+        }
+    }
+
+    protected void popBackStackAfterResume() {
+        if (isResumed() && mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
+            popBackStack();
+        } else {
+            runAfterAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    if(isResumed()){
+                        popBackStack();
+                    }else{
+                        runAfterResumed(new Runnable() {
+                            @Override
+                            public void run() {
+                                popBackStack();
+                            }
+                        });
+                    }
+                }
+            }, true);
         }
     }
 
@@ -832,7 +878,29 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
         if (ok) {
             runnable.run();
         } else {
+            if (mDelayRenderRunnableList == null) {
+                mDelayRenderRunnableList = new ArrayList<>(4);
+            }
             mDelayRenderRunnableList.add(runnable);
+        }
+    }
+
+    /**
+     * some action, such as {@link #popBackStack()}, can not't invoked duration fragment-lifecycle,
+     * then we can call this method to ensure these actions is invoked after resumed.
+     * one use case is to call {@link #popBackStackAfterResume()} in {@link #onFragmentResult(int, int, Intent)}
+     *
+     * @param runnable
+     */
+    public void runAfterResumed(Runnable runnable) {
+        Utils.assertInMainThread();
+        if (isResumed()) {
+            runnable.run();
+        } else {
+            if (mPostResumeRunnableList == null) {
+                mPostResumeRunnableList = new ArrayList<>(4);
+            }
+            mPostResumeRunnableList.add(runnable);
         }
     }
 
@@ -845,13 +913,16 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
             throw new IllegalAccessError("don't call #onEnterAnimationEnd() directly");
         }
         mCalled = true;
-        if (mDelayRenderRunnableList.size() > 0) {
-            for (int i = 0; i < mDelayRenderRunnableList.size(); i++) {
-                mDelayRenderRunnableList.get(i).run();
-            }
-            mDelayRenderRunnableList.clear();
-        }
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
+        if (mDelayRenderRunnableList != null) {
+            ArrayList<Runnable> list = mDelayRenderRunnableList;
+            mDelayRenderRunnableList = null;
+            if (!list.isEmpty()) {
+                for(Runnable runnable: list){
+                    runnable.run();
+                }
+            }
+        }
     }
 
     @Override
