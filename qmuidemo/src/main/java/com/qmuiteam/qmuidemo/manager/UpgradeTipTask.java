@@ -79,7 +79,7 @@ public class UpgradeTipTask implements UpgradeTask {
             text.append("3. Updated arch library to 0.5.0. Fixed issues on new androidx version.\n");
             text.append("4. Features: QMUIQQFaceView supports paragraph space when ellipsize at the end.\n");
             text.append("5. Features: QMUITabSegment supports space weight.\n");
-            text.append("6. Features: QMUIPullRefreshLayout added method setRefreshDirectly().\n");
+            text.append("6. Features: QMUIPullRefreshLayout added method setToRefreshDirectly().\n");
             text.append("7. Fixed issues: ");
             final String[] issues = new String[]{
                     "562", "563", "563"
