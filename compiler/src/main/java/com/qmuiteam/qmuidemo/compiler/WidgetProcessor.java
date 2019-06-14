@@ -134,7 +134,6 @@ public class WidgetProcessor extends AbstractProcessor {
                     TypeMirror nameMirror = mte.getTypeMirror();
                     if (nameMirror.getKind() == TypeKind.DECLARED) {
                         name = ((DeclaredType) nameMirror).asElement().getSimpleName().toString();
-                        info("nameMirror: kind = " + nameMirror.getKind().name() + " ; name = " + name);
                     }
                 }
                 if (name == null && widget.name().length() > 0) {

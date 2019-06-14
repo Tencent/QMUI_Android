@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
+import com.qmuiteam.qmui.arch.annotation.MaybeFirstIn;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -43,6 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
+@MaybeFirstIn(container = {QDMainActivity.class})
 @Widget(name = "QMUIFragment", iconRes = R.mipmap.icon_grid_layout)
 public class QDArchTestFragment extends BaseFragment {
     private static final String TAG = "QDArchTestFragment";
@@ -91,7 +94,7 @@ public class QDArchTestFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 popBackStack();
-                Intent intent = QDMainActivity.createArchTestIntent(getContext());
+                Intent intent = QDMainActivity.of(getContext(), QDArchTestFragment.class);
                 startActivity(intent);
             }
         });
@@ -150,7 +153,7 @@ public class QDArchTestFragment extends BaseFragment {
                         }
 
                         if (position == 0) {
-                            Intent intent = QDMainActivity.createArchTestIntent(context);
+                            Intent intent = QDMainActivity.of(context, QDArchTestFragment.class);
                             context.startActivity(intent);
                         } else if (position == 1) {
                             Intent intent = QDMainActivity.createWebExplorerIntent(context,
@@ -158,7 +161,7 @@ public class QDArchTestFragment extends BaseFragment {
                                     context.getResources().getString(R.string.about_item_github));
                             context.startActivity(intent);
                         } else if (position == 2) {
-                            Intent intent = QDMainActivity.createSurfaceTestIntent(context);
+                            Intent intent = QDMainActivity.of(context, QDArchSurfaceTestFragment.class);
                             context.startActivity(intent);
                         } else if (position == 3) {
                             Intent intent = new Intent(context, ArchTestActivity.class);

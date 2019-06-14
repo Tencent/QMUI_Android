@@ -25,7 +25,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -101,14 +100,14 @@ public abstract class HomeController extends QMUIWindowInsetLayout {
                 QDItemDescription item = mItemAdapter.getItem(pos);
                 try {
                     BaseFragment fragment = item.getDemoClass().newInstance();
-                    if(fragment instanceof QDNotchHelperFragment){
+                    if (fragment instanceof QDNotchHelperFragment) {
                         Context context = getContext();
-                        Intent intent = QDMainActivity.createNotchHelperIntent(context);
+                        Intent intent = QDMainActivity.of(context, QDNotchHelperFragment.class);
                         context.startActivity(intent);
-                        if(context instanceof Activity){
-                            ((Activity)context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        if (context instanceof Activity) {
+                            ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
-                    }else{
+                    } else {
                         startFragment(fragment);
                     }
 
