@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ import android.widget.TextView;
  *
  * <p>默认将文字竖排显示, 可使用 {@link #setVerticalMode(boolean)} 来开启/关闭竖排功能</p>
  */
-public class QMUIVerticalTextView extends TextView {
+public class QMUIVerticalTextView extends AppCompatTextView {
 
     /**
      * 是否将文字显示成竖排
