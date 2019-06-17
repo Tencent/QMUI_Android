@@ -89,19 +89,20 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
             mLineWidths = new float[chars.length + 1]; // 加1是为了处理高度不够放下一个字的情况,needBreakLine会一直为true直到最后一个字
             mLineBreakIndex = new int[chars.length + 1];
             // 从右向左,从上向下布局
-            for (int i = 0; i < chars.length; i++) {
-                final char c = chars[i];
+            int step = 1;
+            for (int i = 0; i < chars.length; i += step) {
+                int codePoint = Character.codePointAt(chars, i);
+                step = Character.charCount(codePoint);
                 // rotate
-//            boolean needRotate = !Caches.isCJK(c);
-                boolean needRotate = !isCJKCharacter(c);
+                boolean needRotate = !isCJKCharacter(codePoint);
                 // char height
                 float charHeight;
                 float charWidth;
                 if (needRotate) {
                     charWidth = fontMetricsInt.descent - fontMetricsInt.ascent;
-                    charHeight = paint.measureText(chars, i, 1);
+                    charHeight = paint.measureText(chars, i, step);
                 } else {
-                    charWidth = paint.measureText(chars, i, 1);
+                    charWidth = paint.measureText(chars, i, step);
                     charHeight = fontMetricsInt.descent - fontMetricsInt.ascent;
                 }
 
@@ -113,11 +114,11 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
                     if (lineMaxHeight < currentLineHeight) {
                         lineMaxHeight = currentLineHeight;
                     }
-                    mLineBreakIndex[lineIndex] = i - 1;
+                    mLineBreakIndex[lineIndex] = i - step;
                     width += mLineWidths[lineIndex];
                     lineIndex++;
                     // reset
-                    currentLineHeight = charHeight;
+                    currentLineHeight = getPaddingTop() + charHeight;
                 } else {
                     currentLineHeight += charHeight;
                     if (lineMaxHeight < currentLineHeight) {
@@ -129,14 +130,14 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
                     mLineWidths[lineIndex] = charWidth;
                 }
                 // last column width
-                if (i == chars.length - 1) {
+                if (i + step >= chars.length) {
                     width += mLineWidths[lineIndex];
                     height = lineMaxHeight + getPaddingBottom();
                 }
             }
             if (chars.length > 0) {
                 mLineCount = lineIndex + 1;
-                mLineBreakIndex[lineIndex] = chars.length - 1;
+                mLineBreakIndex[lineIndex] = chars.length - step;
             }
 
             // 计算 lineSpacing
@@ -184,10 +185,11 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
             float curLineX = getWidth() - getPaddingRight() - mLineWidths[curLine];
             float curX = curLineX;
             float curY = getPaddingTop();
-            for (int i = 0; i < chars.length; i++) {
-                final char c = chars[i];
-//            boolean needRotate = !Caches.isCJK(c);
-                boolean needRotate = !isCJKCharacter(c);
+            int step;
+            for (int i = 0; i < chars.length; i+=step) {
+                int codePoint = Character.codePointAt(chars, i);
+                step = Character.charCount(codePoint);
+                boolean needRotate = !isCJKCharacter(codePoint);
                 final int saveCount = canvas.save();
                 if (needRotate) {
                     canvas.rotate(90, curX, curY);
@@ -197,11 +199,11 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
                 float textBaseline = needRotate ?
                         curY - (mLineWidths[curLine] - (fontMetricsInt.bottom - fontMetricsInt.top)) / 2 - fontMetricsInt.descent :
                         curY - fontMetricsInt.ascent;
-                canvas.drawText(chars, i, 1, textX, textBaseline, paint);
+                canvas.drawText(chars, i, step, textX, textBaseline, paint);
                 canvas.restoreToCount(saveCount);
 
                 // if break line
-                boolean hasNextChar = i + 1 < chars.length;
+                boolean hasNextChar = i + step < chars.length;
                 if (hasNextChar) {
 //                boolean breakLine = needBreakLine(i, mLineCharsCount, curLine);
                     boolean nextCharBreakLine = i + 1 > mLineBreakIndex[curLine];
@@ -214,7 +216,7 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
                     } else {
                         // move to next char
                         if (needRotate) {
-                            curY += paint.measureText(chars, i, 1);
+                            curY += paint.measureText(chars, i, step);
                         } else {
                             curY += fontMetricsInt.descent - fontMetricsInt.ascent;
                         }
@@ -227,7 +229,7 @@ public class QMUIVerticalTextView extends AppCompatTextView  {
     }
 
     // This method is copied from moai.ik.helper.CharacterHelper.isCJKCharacter(char input)
-    private static boolean isCJKCharacter(char input) {
+    private static boolean isCJKCharacter(int input) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(input);
         //noinspection RedundantIfStatement
         if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
