@@ -935,6 +935,13 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
             mSwipeBackgroundView.unBind();
             mSwipeBackgroundView = null;
         }
+
+        // help gc, sometimes user may hold fragment instance in somewhere,
+        // then these objects can not be released in time.
+        mCacheSwipeBackLayout = null;
+        mCacheRootView = null;
+        mDelayRenderRunnableList = null;
+        mCheckPostResumeRunnable = null;
     }
 
     @Override
