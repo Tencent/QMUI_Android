@@ -24,11 +24,15 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:fitsSystemWindows="true">
-
-        <com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout
-            android:id="@+id/coordinator"
+        <com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout
+            android:id="@+id/pull_to_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+            <com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout
+                android:id="@+id/coordinator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout>
     </FrameLayout>
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout

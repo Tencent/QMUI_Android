@@ -17,6 +17,7 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -25,6 +26,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
@@ -34,6 +36,7 @@ import butterknife.ButterKnife;
 
 public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBarLayout;
+    @BindView(R.id.pull_to_refresh) QMUIPullRefreshLayout mPullRefreshLayout;
     @BindView(R.id.coordinator) QMUIContinuousNestedScrollLayout mCoordinatorLayout;
 
     private Bundle mSavedScrollInfo = new Bundle();
@@ -43,9 +46,34 @@ public abstract class QDContinuousNestedScrollBaseFragment extends BaseFragment 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_continuous_nested_scroll, null);
         ButterKnife.bind(this, view);
         initTopBar();
+        initPullRefreshLayout();
         initCoordinatorLayout();
         mCoordinatorLayout.setDraggableScrollBarEnabled(true);
         return view;
+    }
+
+    private void initPullRefreshLayout(){
+        mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
+            @Override
+            public void onMoveTarget(int offset) {
+
+            }
+
+            @Override
+            public void onMoveRefreshView(int offset) {
+
+            }
+
+            @Override
+            public void onRefresh() {
+                mPullRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPullRefreshLayout.finishRefresh();
+                    }
+                }, 3000);
+            }
+        });
     }
 
     private void initTopBar() {

@@ -43,8 +43,10 @@ import android.widget.Scroller;
 
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
 
 /**
  * 下拉刷新控件, 作为容器，下拉时会将子 View 下移, 并拉出 RefreshView（表示正在刷新的 View）
@@ -191,6 +193,16 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         if (view == null) {
             return false;
         }
+        if(view instanceof QMUIContinuousNestedScrollLayout) {
+            QMUIContinuousNestedScrollLayout layout = (QMUIContinuousNestedScrollLayout) view;
+            return layout.getCurrentScroll() > 0;
+        }
+
+        if(view instanceof QMUIStickySectionLayout){
+            QMUIStickySectionLayout layout = (QMUIStickySectionLayout) view;
+            return defaultCanScrollUp(layout.getRecyclerView());
+        }
+
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (view instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) view;
