@@ -154,6 +154,24 @@ public class QMUIBottomSheet extends Dialog {
         if (mContentView == null) {
             return;
         }
+        final Runnable dismissTask = new Runnable() {
+            @Override
+            public void run() {
+                // java.lang.IllegalArgumentException: View=com.android.internal.policy.PhoneWindow$DecorView{22dbf5b V.E...... R......D 0,0-1080,1083} not attached to window manager
+                // 在dismiss的时候可能已经detach了，简单try-catch一下
+                try {
+                    QMUIBottomSheet.super.dismiss();
+                } catch (Exception e) {
+                    QMUILog.w(TAG, "dismiss error\n" + Log.getStackTraceString(e));
+                }
+            }
+        };
+        if (mContentView.getHeight() == 0) {
+            // TranslateAnimation will not call onAnimationEnd if its height is 0.
+            // At this case, we run dismiss task immediately.
+            dismissTask.run();
+            return;
+        }
         TranslateAnimation translate = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f
@@ -177,18 +195,7 @@ public class QMUIBottomSheet extends Dialog {
                 /**
                  * Bugfix： Attempting to destroy the window while drawing!
                  */
-                mContentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // java.lang.IllegalArgumentException: View=com.android.internal.policy.PhoneWindow$DecorView{22dbf5b V.E...... R......D 0,0-1080,1083} not attached to window manager
-                        // 在dismiss的时候可能已经detach了，简单try-catch一下
-                        try {
-                            QMUIBottomSheet.super.dismiss();
-                        } catch (Exception e) {
-                            QMUILog.w(TAG, "dismiss error\n" + Log.getStackTraceString(e));
-                        }
-                    }
-                });
+                mContentView.post(dismissTask);
             }
 
             @Override
