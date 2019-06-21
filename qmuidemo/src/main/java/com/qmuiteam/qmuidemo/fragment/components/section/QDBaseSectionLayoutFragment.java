@@ -83,12 +83,6 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
     }
 
     private void initRefreshLayout() {
-        mPullRefreshLayout.setChildScrollUpCallback(new QMUIPullRefreshLayout.OnChildScrollUpCallback() {
-            @Override
-            public boolean canChildScrollUp(QMUIPullRefreshLayout parent, @Nullable View child) {
-                return QMUIPullRefreshLayout.defaultCanScrollUp(mSectionLayout.getRecyclerView());
-            }
-        });
         mPullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
             @Override
             public void onMoveTarget(int offset) {
