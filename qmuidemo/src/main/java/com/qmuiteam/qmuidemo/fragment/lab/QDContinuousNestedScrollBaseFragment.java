@@ -17,7 +17,6 @@
 package com.qmuiteam.qmuidemo.fragment.lab;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 
