@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import java.util.ArrayList;
@@ -630,23 +631,33 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         return wrapper;
     }
 
-    static void offsetInEdgeTouch(View view, int edgeFlag, int offset) {
-        if (edgeFlag == EDGE_BOTTOM) {
-            ViewCompat.offsetTopAndBottom(view, offset);
-        } else if (edgeFlag == EDGE_RIGHT) {
-            ViewCompat.offsetLeftAndRight(view, offset);
+    public static void offsetInSwipeBack(View view, int edgeFlag, int targetOffset) {
+        Object offsetHelperObj = view.getTag(R.id.qmui_arch_swipe_offset_helper);
+        QMUIViewOffsetHelper offsetHelper;
+        if (!(offsetHelperObj instanceof QMUIViewOffsetHelper)) {
+            offsetHelper = new QMUIViewOffsetHelper(view);
+            view.setTag(R.id.qmui_arch_swipe_offset_helper, offsetHelper);
         } else {
-            ViewCompat.offsetLeftAndRight(view, -1 * offset);
+            offsetHelper = (QMUIViewOffsetHelper) offsetHelperObj;
+        }
+        if (edgeFlag == EDGE_BOTTOM) {
+            offsetHelper.setTopAndBottomOffset(targetOffset);
+            offsetHelper.setLeftAndRightOffset(0);
+        } else if (edgeFlag == EDGE_RIGHT) {
+            offsetHelper.setTopAndBottomOffset(0);
+            offsetHelper.setLeftAndRightOffset(targetOffset);
+        } else {
+            offsetHelper.setTopAndBottomOffset(0);
+            offsetHelper.setLeftAndRightOffset(-targetOffset);
         }
     }
 
-    static void offsetInScroll(View view, int edgeFlag, int targetOffset) {
-        if (edgeFlag == EDGE_BOTTOM) {
-            ViewCompat.offsetTopAndBottom(view, targetOffset - view.getTop());
-        } else if (edgeFlag == EDGE_RIGHT) {
-            ViewCompat.offsetLeftAndRight(view, targetOffset - view.getLeft());
-        } else {
-            ViewCompat.offsetLeftAndRight(view, -targetOffset - view.getLeft());
+    public static void updateLayoutInSwipeBack(View view){
+        if (view.getTag(R.id.qmui_arch_swipe_layout_in_back) == QMUIFragment.SWIPE_BACK_VIEW) {
+            Object offsetHelperObj = view.getTag(R.id.qmui_arch_swipe_offset_helper);
+            if (offsetHelperObj instanceof QMUIViewOffsetHelper) {
+                ((QMUIViewOffsetHelper) offsetHelperObj).onViewLayout();
+            }
         }
     }
 

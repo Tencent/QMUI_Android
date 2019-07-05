@@ -17,4 +17,5 @@
 
 <resources>
     <item name="qmui_arch_swipe_layout_in_back" type="id"/>
+    <item name="qmui_arch_swipe_offset_helper" type="id"/>
 </resources>

@@ -46,7 +46,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     public static final String QMUI_INTENT_DST_FRAGMENT = "qmui_intent_dst_fragment";
     public static final String QMUI_INTENT_FRAGMENT_ARG = "qmui_intent_fragment_arg";
     private static final String TAG = "QMUIFragmentActivity";
-    private QMUIWindowInsetLayout mFragmentContainer;
+    private RootView mFragmentContainer;
     private boolean mIsFirstFragmentAddedByAnnotation = false;
 
     @SuppressWarnings("SameReturnValue")
@@ -56,7 +56,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QMUIStatusBarHelper.translucent(this);
-        mFragmentContainer = new QMUIWindowInsetLayout(this);
+        mFragmentContainer = new RootView(this);
         mFragmentContainer.setId(getContextViewId());
         setContentView(mFragmentContainer);
         mIsFirstFragmentAddedByAnnotation = false;
@@ -344,5 +344,22 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             intent.putExtra(QMUI_INTENT_FRAGMENT_ARG, fragmentArgs);
         }
         return intent;
+    }
+
+
+    private static class RootView extends QMUIWindowInsetLayout {
+
+        public RootView(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            super.onLayout(changed, left, top, right, bottom);
+            for (int i = 0; i < getChildCount(); i++) {
+                SwipeBackLayout.updateLayoutInSwipeBack(getChildAt(i));
+
+            }
+        }
     }
 }
