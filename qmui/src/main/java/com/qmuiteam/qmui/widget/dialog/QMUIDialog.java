@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
 import android.text.method.TransformationMethod;
 import android.view.Gravity;
@@ -405,7 +406,7 @@ public class QMUIDialog extends Dialog {
 
         @Override
         protected void onCreateContent(QMUIDialog dialog, ViewGroup parent, Context context) {
-            mEditText = new EditText(context);
+            mEditText = new AppCompatEditText(context);
             MessageDialogBuilder.assignMessageTvWithAttr(mEditText, hasTitle(), R.attr.qmui_dialog_edit_content_style);
             mEditText.setFocusable(true);
             mEditText.setFocusableInTouchMode(true);
