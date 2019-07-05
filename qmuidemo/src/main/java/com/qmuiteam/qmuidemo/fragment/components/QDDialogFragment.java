@@ -19,6 +19,7 @@ package com.qmuiteam.qmuidemo.fragment.components;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -396,7 +397,7 @@ public class QDDialogFragment extends BaseFragment {
             layout.setLayoutParams(new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             int padding = QMUIDisplayHelper.dp2px(mContext, 20);
             layout.setPadding(padding, padding, padding, padding);
-            mEditText = new EditText(mContext);
+            mEditText = new AppCompatEditText(mContext);
             QMUIViewHelper.setBackgroundKeepingPadding(mEditText, QMUIResHelper.getAttrDrawable(mContext, R.attr.qmui_list_item_bg_with_border_bottom));
             mEditText.setHint("输入框");
             LinearLayout.LayoutParams editTextLP = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, QMUIDisplayHelper.dpToPx(50));
