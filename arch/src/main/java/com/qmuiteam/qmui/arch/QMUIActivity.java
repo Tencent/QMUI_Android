@@ -61,7 +61,7 @@ public class QMUIActivity extends InnerBaseActivity {
             if (mSwipeBackgroundView != null) {
                 scrollPercent = Math.max(0f, Math.min(1f, scrollPercent));
                 int targetOffset = (int) (Math.abs(backViewInitOffset()) * (1 - scrollPercent));
-                SwipeBackLayout.offsetInScroll(mSwipeBackgroundView, edgeFlag, targetOffset);
+                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, edgeFlag, targetOffset);
             }
         }
 
@@ -81,7 +81,7 @@ public class QMUIActivity extends InnerBaseActivity {
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 }
                 mSwipeBackgroundView.bind(prevActivity, QMUIActivity.this, restoreSubWindowWhenDragBack());
-                SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
+                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, edgeFlag,
                         Math.abs(backViewInitOffset()));
             }
         }

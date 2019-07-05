@@ -57,7 +57,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyLifecycleOwner.Callback {
-    private static final String SWIPE_BACK_VIEW = "swipe_back_view";
+    static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
     protected static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
@@ -439,11 +439,11 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                 View view = container.getChildAt(i);
                 Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
                 if (SWIPE_BACK_VIEW.equals(tag)) {
-                    SwipeBackLayout.offsetInScroll(view, edgeFlag, targetOffset);
+                    SwipeBackLayout.offsetInSwipeBack(view, edgeFlag, targetOffset);
                 }
             }
             if (mSwipeBackgroundView != null) {
-                SwipeBackLayout.offsetInScroll(mSwipeBackgroundView, edgeFlag, targetOffset);
+                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, edgeFlag, targetOffset);
             }
         }
 
@@ -490,7 +490,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                                         if (baseView != null) {
                                             addViewInSwipeBack(container, baseView, 0);
                                             handleChildFragmentListWhenSwipeBackStart(baseView);
-                                            SwipeBackLayout.offsetInEdgeTouch(baseView, edgeFlag,
+                                            SwipeBackLayout.offsetInSwipeBack(baseView, edgeFlag,
                                                     Math.abs(backViewInitOffset()));
                                         }
                                     }
@@ -526,7 +526,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     }
                     mSwipeBackgroundView.bind(prevActivity, currentActivity, restoreSubWindowWhenDragBack());
-                    SwipeBackLayout.offsetInEdgeTouch(mSwipeBackgroundView, edgeFlag,
+                    SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, edgeFlag,
                             Math.abs(backViewInitOffset()));
                 }
             }
