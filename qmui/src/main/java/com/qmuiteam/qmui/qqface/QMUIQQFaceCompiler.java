@@ -23,7 +23,10 @@ import android.util.LruCache;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -95,16 +98,30 @@ public class QMUIQQFaceCompiler {
         QMUITouchableSpan[] spans = null;
         int[] spanInfo = null;
         if (!inSpan && (text instanceof Spannable)) {
+            final Spannable spannable = (Spannable) text;
             spans = ((Spannable) text).getSpans(
                     0,
                     text.length() - 1,
                     QMUITouchableSpan.class);
+            Arrays.sort(spans, new Comparator<QMUITouchableSpan>() {
+                @Override
+                public int compare(QMUITouchableSpan o1, QMUITouchableSpan o2) {
+                    int start1 = spannable.getSpanStart(o1);
+                    int start2 = spannable.getSpanStart(o2);
+                    if(start1 > start2){
+                        return 1;
+                    }else if(start1 == start2){
+                        return 0;
+                    }
+                    return -1;
+                }
+            });
             hasClickableSpans = spans.length > 0;
             if (hasClickableSpans) {
                 spanInfo = new int[spans.length * SPAN_COLUMN];
                 for (int i = 0; i < spans.length; i++) {
-                    spanInfo[i * SPAN_COLUMN] = ((Spannable) text).getSpanStart(spans[i]);
-                    spanInfo[i * SPAN_COLUMN + 1] = ((Spannable) text).getSpanEnd(spans[i]);
+                    spanInfo[i * SPAN_COLUMN] = spannable.getSpanStart(spans[i]);
+                    spanInfo[i * SPAN_COLUMN + 1] = spannable.getSpanEnd(spans[i]);
                 }
             }
         }
