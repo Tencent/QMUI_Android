@@ -698,14 +698,40 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
         popBackStack();
     }
 
+    /**
+     * pop back
+     */
     protected void popBackStack() {
-        if (!isResumed() || mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
-            return;
-        }
-
-        if (checkStateLoss("popBackStack")) {
+        if(checkPopBack()){
             getBaseFragmentActivity().popBackStack();
         }
+    }
+
+    /**
+     * pop back to a class type fragment
+     * @param cls the target fragment class type
+     */
+    protected void popBackStack(Class<QMUIFragment> cls){
+        if(checkPopBack()){
+            getBaseFragmentActivity().popBackStack(cls);
+        }
+    }
+
+    /**
+     * pop back to a non-class type Fragment
+     * @param cls the target fragment class type
+     */
+    protected void popBackStackInclusive(Class<QMUIFragment> cls){
+        if(checkPopBack()){
+            getBaseFragmentActivity().popBackStackInclusive(cls);
+        }
+    }
+
+    private boolean checkPopBack(){
+        if (!isResumed() || mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
+            return false;
+        }
+        return checkStateLoss("popBackStack");
     }
 
     protected void popBackStackAfterResume() {
