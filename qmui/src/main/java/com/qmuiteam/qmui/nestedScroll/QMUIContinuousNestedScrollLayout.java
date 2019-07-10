@@ -94,6 +94,11 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         scrollBy(targetScroll - getCurrentScroll());
     }
 
+    @Override
+    public void onDragEnd() {
+
+    }
+
     public int getCurrentScroll() {
         int currentScroll = 0;
         if (mTopView != null) {

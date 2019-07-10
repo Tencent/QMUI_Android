@@ -149,6 +149,9 @@ public class QMUIDraggableScrollBar extends View {
             if (mIsInDragging) {
                 mIsInDragging = false;
                 onDragging(drawable, y);
+                if(mCallback != null){
+                    mCallback.onDragEnd();
+                }
             }
         }
         return mIsInDragging;
@@ -248,5 +251,6 @@ public class QMUIDraggableScrollBar extends View {
     interface Callback {
         void onDragStarted();
         void onDragToPercent(float percent);
+        void onDragEnd();
     }
 }
