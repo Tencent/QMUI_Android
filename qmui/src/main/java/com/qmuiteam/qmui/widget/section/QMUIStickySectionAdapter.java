@@ -146,7 +146,7 @@ public abstract class QMUIStickySectionAdapter<
     /**
      * section data is not changed, only custom item index may changed, so we also need to regenerate index
      */
-    public void refreshCustomData(){
+    public void refreshCustomData() {
         QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
         callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
@@ -272,16 +272,39 @@ public abstract class QMUIStickySectionAdapter<
                 && !section.isErrorToLoadAfter();
 
         int index = mCurrentData.indexOf(section);
-        if (index < 0) {
+        if (index < 0 || index >= mCurrentData.size()) {
             return;
         }
         section.setLocked(false);
-        for (int i = 0; i < mCurrentData.size(); i++) {
-            if (i < index) {
-                mCurrentData.get(i).setLocked(lockPrevious);
-            } else if (i > index) {
-                mCurrentData.get(i).setLocked(lockAfter);
+        lockBefore(index - 1, lockPrevious);
+        lockAfter(index + 1, lockAfter);
+    }
+
+    private void lockBefore(int current, boolean needLock) {
+        while (current >= 0) {
+            QMUISection<H, T> section = mCurrentData.get(current);
+            if (needLock) {
+                section.setLocked(true);
+            } else {
+                section.setLocked(false);
+                needLock = !section.isFold() && section.isExistBeforeDataToLoad()
+                        && !section.isErrorToLoadBefore();
             }
+            current--;
+        }
+    }
+
+    private void lockAfter(int current, boolean needLock) {
+        while (current < mCurrentData.size()) {
+            QMUISection<H, T> section = mCurrentData.get(current);
+            if (needLock) {
+                section.setLocked(true);
+            } else {
+                section.setLocked(false);
+                needLock = !section.isFold() && section.isExistAfterDataToLoad()
+                        && !section.isErrorToLoadAfter();
+            }
+            current++;
         }
     }
 
@@ -383,6 +406,7 @@ public abstract class QMUIStickySectionAdapter<
 
     /**
      * only for custom item
+     *
      * @param sectionIndex
      * @param customItemIndex
      * @param unFoldTargetSection
@@ -395,6 +419,7 @@ public abstract class QMUIStickySectionAdapter<
 
     /**
      * find position by sectionIndex and itemIndex
+     *
      * @param sectionIndex
      * @param itemIndex
      * @param unFoldTargetSection
@@ -422,6 +447,7 @@ public abstract class QMUIStickySectionAdapter<
 
     /**
      * find position by positionFinder
+     *
      * @param positionFinder
      * @param unFoldTargetSection
      * @return
