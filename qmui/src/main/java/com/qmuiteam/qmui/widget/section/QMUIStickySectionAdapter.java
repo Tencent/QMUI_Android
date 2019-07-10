@@ -54,12 +54,22 @@ public abstract class QMUIStickySectionAdapter<
     private ViewCallback mViewCallback;
 
     /**
-     * see {@link #setData(List, boolean)}
+     * see {@link #setData(List, boolean, boolean)}
      *
      * @param data section list
      */
     public final void setData(@Nullable List<QMUISection<H, T>> data) {
         setData(data, true);
+    }
+
+    /**
+     * see {@link #setData(List, boolean, boolean)}
+     *
+     * @param data section list
+     * @param onlyMutateState This is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     */
+    public final void setData(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState){
+        setData(data, onlyMutateState, true);
     }
 
     /**
@@ -74,8 +84,9 @@ public abstract class QMUIStickySectionAdapter<
      *
      * @param data            section list
      * @param onlyMutateState This is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     * @param checkLock       check section lock
      */
-    public final void setData(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
+    public final void setData(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState, boolean checkLock) {
         mLoadingBeforeSections.clear();
         mLoadingAfterSections.clear();
         mCurrentData.clear();
@@ -83,6 +94,9 @@ public abstract class QMUIStickySectionAdapter<
             mCurrentData.addAll(data);
         }
         beforeDiffInSet(mBackupData, mCurrentData);
+        if(!mCurrentData.isEmpty() && checkLock){
+            lock(mCurrentData.get(0));
+        }
         diff(true, onlyMutateState);
     }
 
@@ -100,18 +114,31 @@ public abstract class QMUIStickySectionAdapter<
     }
 
     /**
+     *
+     * @param data              section list
+     * @param onlyMutateState   this is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     */
+    public final void setDataWithoutDiff(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState){
+        setDataWithoutDiff(data, onlyMutateState, true);
+    }
+
+    /**
      * same as {@link #setData(List, boolean)}, but do't use {@link DiffUtil},
      * use {@link #notifyDataSetChanged()} directly.
      *
      * @param data            section list
-     * @param onlyMutateState his is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     * @param onlyMutateState this is used to backup for next diff. True to use shallow copy, false tp use deep copy.
+     * @param checkLock       check section lock
      */
-    public final void setDataWithoutDiff(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState) {
+    public final void setDataWithoutDiff(@Nullable List<QMUISection<H, T>> data, boolean onlyMutateState, boolean checkLock) {
         mLoadingBeforeSections.clear();
         mLoadingAfterSections.clear();
         mCurrentData.clear();
         if (data != null) {
             mCurrentData.addAll(data);
+        }
+        if(checkLock && !mCurrentData.isEmpty()){
+            lock(mCurrentData.get(0));
         }
         // only used to generate index info
         QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
