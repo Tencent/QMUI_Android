@@ -17,7 +17,7 @@
 
 <resources>
 
-    <style name="AppRootTheme.Compat" parent="Theme.AppCompat.Light"/>
+    <style name="AppRootTheme.Compat" parent="Theme.AppCompat.DayNight"/>
 
     <style name="AppBaseTheme.Compat" parent="AppRootTheme.Compat">
         <item name="android:listDivider">@drawable/qmui_divider</item>
