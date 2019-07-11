@@ -22,6 +22,8 @@ import com.android.tools.lint.detector.api.Issue;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.android.tools.lint.detector.api.ApiKt.CURRENT_API;
+
 @SuppressWarnings("unused")
 public final class QMUIIssueRegistry extends IssueRegistry {
     @Override public List<Issue> getIssues() {
@@ -32,5 +34,10 @@ public final class QMUIIssueRegistry extends IssueRegistry {
                 QMUIImageSizeDetector.ISSUE_IMAGE_SIZE,
                 QMUIImageScaleDetector.ISSUE_IMAGE_SCALE
         );
+    }
+
+    @Override
+    public int getApi() {
+        return CURRENT_API;
     }
 }

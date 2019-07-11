@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 
-group = 'com.qmuiteam'
-version = "1.0.1" // QMUI Lint 发布到 bintray 的版本号
+version = QMUI_LINT_VERSION
 
 android {
     compileSdkVersion project.ext.compileSdkVersion
@@ -10,36 +9,15 @@ android {
     defaultConfig {
         minSdkVersion 14
     }
-
-    lintOptions {
-        textReport true
-        textOutput 'stdout'
-    }
 }
 
-configurations {
-    lintChecks
-}
 
 dependencies {
-    lintChecks project(path: ':qmuilintrule', configuration: 'lintChecks')
-}
-
-task copyLintJar(type: Copy) {
-    from(configurations.lintChecks) {
-        rename { 'lint.jar' }
-    }
-    into 'build/intermediates/lint/'
-}
-
-project.afterEvaluate {
-    def compileLintTask = project.tasks.find { it.name == 'compileLint' }
-    compileLintTask.dependsOn(copyLintJar)
+    lintChecks project(':qmuilintrule')
 }
 
 // deploy
-File deployConfig = project.file('deploy.properties')
-if (deployConfig.exists()) {
-    apply from: "deployMaven.gradle"
-    apply from: "deployBintray.gradle"
-}
+//File deployConfig = rootProject.file('gradle/deploy.properties')
+//if (deployConfig.exists()) {
+//    apply from: rootProject.file('gradle/deploy.gradle')
+//}

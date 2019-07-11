@@ -16,7 +16,6 @@
 
 package com.qmuiteam.qmui.lint;
 
-import com.android.annotations.NonNull;
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
@@ -25,6 +24,14 @@ import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Project;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiExpressionList;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,17 +40,12 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.StrictListAccessor;
-
 /**
  * 检测是否在 getDrawable 方法中传入了 Vector Drawable，在 4.0 及以下版本的系统中会导致 Crash
  * Created by Kayo on 2017/8/24.
  */
 
-public class QMUIJavaVectorDrawableDetector extends Detector implements Detector.JavaScanner {
+public class QMUIJavaVectorDrawableDetector extends Detector implements Detector.UastScanner {
 
     public static final Issue ISSUE_JAVA_VECTOR_DRAWABLE =
             Issue.create("QMUIGetVectorDrawableWithWrongFunction",
@@ -58,9 +60,12 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, AstVisitor visitor, @NonNull MethodInvocation node) {
-
-        StrictListAccessor<Expression, MethodInvocation> args = node.astArguments();
+    public void visitMethod(@NotNull JavaContext context,
+                            @Nullable JavaElementVisitor visitor,
+                            @NotNull PsiMethodCallExpression call,
+                            @NotNull PsiMethod method) {
+        super.visitMethod(context, visitor, call, method);
+        PsiExpressionList args = call.getArgumentList();
         if (args.isEmpty()) {
             return;
         }
@@ -72,7 +77,7 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
         }
 
         String resourcePath = resourceFolder.get(0).getAbsolutePath();
-        for (Expression expression : args) {
+        for (PsiExpression expression : args.getExpressions()) {
             String input = expression.toString();
             if (input != null && input.contains("R.drawable")) {
                 // 找出 drawable 相关的参数
@@ -86,7 +91,7 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
                     String line = reader.readLine();
                     if (line.contains("vector")) {
                         // 若文件存在，并且包含首行包含 vector，则为 Vector Drawable，抛出警告
-                        context.report(ISSUE_JAVA_VECTOR_DRAWABLE, node, context.getLocation(node), expression.toString() + " 为 Vector Drawable，请使用 getVectorDrawable 方法获取，避免 4.0 及以下版本的系统产生 Crash");
+                        context.report(ISSUE_JAVA_VECTOR_DRAWABLE, method, context.getLocation(method), expression.toString() + " 为 Vector Drawable，请使用 getVectorDrawable 方法获取，避免 4.0 及以下版本的系统产生 Crash");
                     }
                     fileInputStream.close();
                 } catch (Exception ignored) {

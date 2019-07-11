@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 
-group = 'com.qmuiteam'
-version = "1.3.4" // QMUI 发布到 bintray 的版本号
+version = QMUI_VERSION
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -46,14 +45,16 @@ android {
 //}
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.annotation:annotation:$annotationVersion"
-    implementation "com.google.android.material:material:$materialVersion"
+    api "androidx.appcompat:appcompat:$appcompatVersion"
+    api "androidx.annotation:annotation:$annotationVersion"
+    api "com.google.android.material:material:$materialVersion"
+
+    //test
+    testImplementation 'junit:junit:4.12'
 }
 
 // deploy
-File deployConfig = project.file('deploy.properties')
+File deployConfig = rootProject.file('gradle/deploy.properties')
 if (deployConfig.exists()) {
-    apply from: "deployMaven.gradle"
-    apply from: "deployBintray.gradle"
+    apply from: rootProject.file('gradle/deploy.gradle')
 }

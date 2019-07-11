@@ -1,11 +1,20 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
+
+version = QMUI_ARCH_VERSION
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':arch-annotation')
-    compile 'com.squareup:javapoet:1.10.0'
-    compile 'com.google.auto.service:auto-service:1.0-rc2'
+    implementation project(':arch-annotation')
+    implementation 'com.squareup:javapoet:1.10.0'
+    implementation 'com.google.auto.service:auto-service:1.0-rc2'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc2'
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+// deploy
+File deployConfig = rootProject.file('gradle/deploy.properties')
+if (deployConfig.exists()) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+}

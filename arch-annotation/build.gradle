@@ -1,8 +1,16 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
+
+version = QMUI_ARCH_VERSION
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+// deploy
+File deployConfig = rootProject.file('gradle/deploy.properties')
+if (deployConfig.exists()) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+}

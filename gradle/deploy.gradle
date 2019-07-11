@@ -1,0 +1,148 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+Properties properties = new Properties()
+File projectPropertiesFile = rootProject.file("gradle/deploy.properties")
+if (projectPropertiesFile.exists()) {
+    properties.load(projectPropertiesFile.newDataInputStream())
+} else {
+    throw new Error("Cannot find deploy.properties file in gradle folder")
+}
+
+def isAndroidLib = project.getPlugins().hasPlugin('com.android.application') ||
+        project.getPlugins().hasPlugin('com.android.library')
+
+if(isAndroidLib){
+    task androidSourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+    task androidJavadoc(type: Javadoc) {
+        failOnError false
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+
+    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+        classifier = 'javadoc'
+        from androidJavadoc.destinationDir
+    }
+}else{
+    task sourcesJar(type: Jar, dependsOn:classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn:javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name properties.getProperty("license.name")
+            url properties.getProperty("license.url")
+        }
+    }
+    developers {
+        developer {
+            id properties.getProperty("developer.id")
+            name properties.getProperty("developer.name")
+            email properties.getProperty("developer.email")
+        }
+    }
+    scm {
+        connection POM_GIT_URL
+        developerConnection POM_GIT_URL
+        url POM_SITE_URL
+    }
+}
+
+publishing {
+    publications {
+        mavenjava(MavenPublication) {
+            groupId project.group
+            version project.version
+            if(isAndroidLib){
+                artifact file("$buildDir/outputs/aar/${project.name}-release.aar")
+                artifact androidSourcesJar
+                artifact androidJavadocJar
+                pom.withXml {
+                    def root = asNode()
+                    final dependenciesNode = root.appendNode('dependencies')
+
+                    ext.addDependency = { dep, String scope ->
+                        if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+                            return // ignore invalid dependencies
+
+                        final dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dep.group)
+                        dependencyNode.appendNode('artifactId', dep.name)
+                        dependencyNode.appendNode('version', dep.version)
+                        dependencyNode.appendNode('scope', scope)
+
+                        if (!dep.transitive) {
+                            // If this dependency is not transitive, we should force exclude all its dependencies from the POM
+                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                            exclusionNode.appendNode('groupId', '*')
+                            exclusionNode.appendNode('artifactId', '*')
+                        } else if (!dep.properties.excludeRules.empty) {
+                            // Otherwise add specified exclude rules
+                            final exclusionsNode = dependencyNode.appendNode('exclusions')
+                            dep.properties.excludeRules.each { rule ->
+                                final exclusionNode = exclusionsNode.appendNode('exclusion')
+                                exclusionNode.appendNode('groupId', rule.group ?: '*')
+                                exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                            }
+                        }
+                    }
+
+                    // List all "compile" dependencies (for old Gradle)
+                    configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
+                    // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies
+                    configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+                    // List all "api" dependencies (for new Gradle) as "compile" dependencies
+                    configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
+
+                    root.children().last() + pomConfig
+                }
+            }else{
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom.withXml {
+                    def root = asNode()
+                    root.children().last() + pomConfig
+                }
+            }
+
+        }
+    }
+    repositories {
+        maven {
+            url properties.getProperty("maven.url")
+            credentials {
+                username properties.getProperty("maven.username")
+                password properties.getProperty("maven.password")
+            }
+        }
+    }
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    publications = ['mavenjava']
+    pkg {
+        repo = 'qmuirepo'
+        name = project.name
+        websiteUrl =POM_SITE_URL
+        vcsUrl = POM_GIT_URL
+        licenses = ["MIT"]
+        publish = true
+    }
+}
+
