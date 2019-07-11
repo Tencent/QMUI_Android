@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 
-group = 'com.qmuiteam'
-version = "0.5.0"
+version = QMUI_ARCH_VERSION
 
 android {
 
@@ -29,11 +28,11 @@ dependencies {
     compileOnly "com.android.support:design:$supportVersion"
     api project(':arch-annotation')
     compileOnly project(':qmui')
+    testImplementation 'junit:junit:4.12'
 }
 
 // deploy
-File deployConfig = project.file('deploy.properties')
+File deployConfig = rootProject.file('gradle/deploy.properties')
 if (deployConfig.exists()) {
-    apply from: "deployMaven.gradle"
-    apply from: "deployBintray.gradle"
+    apply from: rootProject.file('gradle/deploy.gradle')
 }

@@ -65,9 +65,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    //    implementation 'com.qmuiteam:qmuilint:1.0.1'
-    //    implementation 'com.qmuiteam:arch:0.1.1'
-    //    implementation 'com.qmuiteam:qmui:1.1.3'
     implementation project(':lib')
     implementation project(':qmuilint')
     implementation project(':qmui')
@@ -79,7 +76,7 @@ dependencies {
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     //test
-    //    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
     //    androidTestImplementation 'com.android.support.test:rules:1.0.2' // Set this dependency to use JUnit 4 rules
     //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2' // Set this dependency to build and run Espresso tests

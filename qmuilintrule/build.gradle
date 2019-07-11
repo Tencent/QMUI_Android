@@ -1,18 +1,15 @@
-apply plugin: 'java'
-
-configurations {
-    lintChecks
-}
+apply plugin: 'java-library'
 
 dependencies {
-    compile "com.android.tools.lint:lint-api:25.1.2"
-    compile "com.android.tools.lint:lint-checks:25.1.2"
-
-    lintChecks files(jar)
+    compileOnly "com.android.tools.lint:lint-api:26.4.2"
+    compileOnly "com.android.tools.lint:lint-checks:26.4.2"
 }
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
 
 jar {
     manifest {
-        attributes('Lint-Registry': 'com.qmuiteam.qmui.lint.QMUIIssueRegistry')
+        attributes("Lint-Registry-v2": 'com.qmuiteam.qmui.lint.QMUIIssueRegistry')
     }
 }
