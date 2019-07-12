@@ -29,6 +29,7 @@ dependencies {
     api project(':arch-annotation')
     compileOnly project(':qmui')
     testImplementation 'junit:junit:4.12'
+    lintChecks project(':qmuilintrule')
 }
 
 // deploy

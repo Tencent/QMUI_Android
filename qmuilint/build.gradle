@@ -11,13 +11,6 @@ android {
     }
 }
 
-
 dependencies {
-    lintChecks project(':qmuilintrule')
+    lintPublish project(':qmuilintrule')
 }
-
-// deploy
-//File deployConfig = rootProject.file('gradle/deploy.properties')
-//if (deployConfig.exists()) {
-//    apply from: rootProject.file('gradle/deploy.gradle')
-//}

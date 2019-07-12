@@ -1,8 +1,9 @@
 apply plugin: 'java-library'
 
 dependencies {
-    compileOnly "com.android.tools.lint:lint-api:26.4.2"
-    compileOnly "com.android.tools.lint:lint-checks:26.4.2"
+    def lintVersion = '26.4.2'
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
 }
 
 sourceCompatibility = "1.7"
