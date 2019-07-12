@@ -89,7 +89,7 @@ dependencies {
 //    implementation 'com.qmuiteam:arch:0.3.1'
 //    implementation 'com.qmuiteam:qmui:1.2.0'
     implementation project(':lib')
-    implementation project(':qmuilint')
+    api project(':qmuilint')
     implementation project(':qmui')
     implementation project(':arch')
     annotationProcessor project(':compiler')

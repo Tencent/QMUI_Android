@@ -66,7 +66,7 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
                             @NotNull PsiMethod method) {
         super.visitMethod(context, visitor, call, method);
         PsiExpressionList args = call.getArgumentList();
-        if (args.isEmpty()) {
+        if (args.getExpressions().length == 0) {
             return;
         }
 

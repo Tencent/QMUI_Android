@@ -48,13 +48,14 @@ dependencies {
     api "androidx.appcompat:appcompat:$appcompatVersion"
     api "androidx.annotation:annotation:$annotationVersion"
     api "com.google.android.material:material:$materialVersion"
+    lintChecks project(':qmuilintrule')
 
     //test
     testImplementation 'junit:junit:4.12'
 }
 
 // deploy
-File deployConfig = rootProject.file('gradle/deploy.properties')
-if (deployConfig.exists()) {
-    apply from: rootProject.file('gradle/deploy.gradle')
-}
+//File deployConfig = rootProject.file('gradle/deploy.properties')
+//if (deployConfig.exists()) {
+//    apply from: rootProject.file('gradle/deploy.gradle')
+//}
