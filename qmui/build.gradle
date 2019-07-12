@@ -50,13 +50,13 @@ dependencies {
     api "com.android.support:appcompat-v7:$supportVersion"
     api "com.android.support:design:$supportVersion"
     api "com.android.support:support-vector-drawable:$supportVersion" // need Gradle Plugin v1.5.0 or above
-    lintChecks project(':qmuilintrule')
+    lintChecks project(':lintrule')
     //test
     testImplementation 'junit:junit:4.12'
 }
 
 // deploy
-//File deployConfig = rootProject.file('gradle/deploy.properties')
-//if (deployConfig.exists()) {
-//    apply from: rootProject.file('gradle/deploy.gradle')
-//}
+File deployConfig = rootProject.file('gradle/deploy.properties')
+if (deployConfig.exists()) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+}
