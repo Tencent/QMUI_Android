@@ -42,7 +42,7 @@
 	如果在项目中要对特定项目配置业务相关的 Theme，在 values 目录下修改 themes.xml 的 AppTheme。
      -->
 
-    <style name="AppRootTheme" parent="Theme.AppCompat.Light"/>
+    <style name="AppRootTheme" parent="Theme.AppCompat.DayNight"/>
 
     <style name="AppBaseTheme" parent="AppRootTheme">
         <item name="android:listDivider">@drawable/qmui_divider</item>
