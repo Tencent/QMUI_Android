@@ -67,15 +67,6 @@ android {
 //    parentTheme "AppRootTheme"
 //}
 
-configurations.all {
-    resolutionStrategy {
-        force "com.android.support:recyclerview-v7:$supportVersion"
-        force "com.android.support:appcompat-v7:$supportVersion"
-        force "com.android.support:design:$supportVersion"
-        force "com.android.support:support-vector-drawable:$supportVersion"
-    }
-}
-
 // 加@aar与不加@aar的区别：
 // http://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar
 dependencies {
