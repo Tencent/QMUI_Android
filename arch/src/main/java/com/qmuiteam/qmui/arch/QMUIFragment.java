@@ -489,7 +489,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                                         mModifiedFragment.isCreateForSwipeBack = false;
                                         if (baseView != null) {
                                             addViewInSwipeBack(container, baseView, 0);
-                                            handleChildFragmentListWhenSwipeBackStart(baseView);
+                                            handleChildFragmentListWhenSwipeBackStart(mModifiedFragment, baseView);
                                             SwipeBackLayout.offsetInSwipeBack(baseView, edgeFlag,
                                                     Math.abs(backViewInitOffset()));
                                         }
@@ -565,11 +565,11 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
         }
 
 
-        private void handleChildFragmentListWhenSwipeBackStart(View baseView) throws IllegalAccessException {
+        private void handleChildFragmentListWhenSwipeBackStart(Fragment parentFragment, View baseView) throws IllegalAccessException {
             // handle issue #235
             if (baseView instanceof ViewGroup) {
                 ViewGroup childMainContainer = (ViewGroup) baseView;
-                FragmentManager childFragmentManager = mModifiedFragment.getChildFragmentManager();
+                FragmentManager childFragmentManager = parentFragment.getChildFragmentManager();
                 List<Fragment> childFragmentList = childFragmentManager.getFragments();
                 int childContainerId = 0;
                 ViewGroup childContainer = null;
@@ -595,6 +595,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                                         LayoutInflater.from(childContainer.getContext()), childContainer, null);
                                 qmuiFragment.isCreateForSwipeBack = false;
                                 addViewInSwipeBack(childContainer, childView);
+                                handleChildFragmentListWhenSwipeBackStart(fragment, childView);
                             }
                         }
                     }
@@ -780,14 +781,23 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        if (!enter && getParentFragment() != null && getParentFragment().isRemoving()) {
+        if (!enter) {
             // This is a workaround for the bug where child fragments disappear when
             // the parent is removed (as all children are first removed from the parent)
             // See https://code.google.com/p/android/issues/detail?id=55228
-            Animation doNothingAnim = new AlphaAnimation(1, 1);
-            int duration = getResources().getInteger(R.integer.qmui_anim_duration);
-            doNothingAnim.setDuration(duration);
-            return doNothingAnim;
+            Fragment rootParentFragment = null;
+            Fragment parentFragment = getParentFragment();
+            while (parentFragment != null){
+                rootParentFragment = parentFragment;
+                parentFragment = parentFragment.getParentFragment();
+            }
+            if(rootParentFragment != null && rootParentFragment.isRemoving()){
+                Animation doNothingAnim = new AlphaAnimation(1, 1);
+                int duration = getResources().getInteger(R.integer.qmui_anim_duration);
+                doNothingAnim.setDuration(duration);
+                return doNothingAnim;
+            }
+
         }
         Animation animation = null;
         if (enter) {
