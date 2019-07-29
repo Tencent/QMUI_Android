@@ -211,7 +211,7 @@ public class ArchProcessor extends AbstractProcessor {
                 return (ExecutableElement) ele;
             }
         }
-        throw new RuntimeException("method createHRouterRule of interface HRouterRuleCreator not found");
+        throw new RuntimeException(String.format("method %s of interface FirstFragmentFinder not found", methodName));
     }
 
     private void error(Element element, String message, Object... args) {
