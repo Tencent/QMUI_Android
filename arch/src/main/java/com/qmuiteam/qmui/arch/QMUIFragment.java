@@ -43,6 +43,7 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUITopBar;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -274,6 +275,9 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(mBaseView.getTag(R.id.qmui_arch_reused_layout) == null){
+            onViewCreated(mBaseView);
+        }
         mLazyViewLifecycleOwner = new QMUIFragmentLazyLifecycleOwner(this);
         mLazyViewLifecycleOwner.setViewVisible(getUserVisibleHint());
         getViewLifecycleOwner().getLifecycle().addObserver(mLazyViewLifecycleOwner);
@@ -309,6 +313,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
             if (rootView.getParent() != null) {
                 ((ViewGroup) rootView.getParent()).removeView(rootView);
             }
+            rootView.setTag(R.id.qmui_arch_reused_layout, true);
         }
         if (translucentFull()) {
             rootView.setFitsSystemWindows(false);
@@ -673,6 +678,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
                 mCacheSwipeBackLayout = swipeBackLayout;
             } else {
                 swipeBackLayout = mCacheSwipeBackLayout;
+                mCacheRootView.setTag(R.id.qmui_arch_reused_layout, true);
             }
         }
 
@@ -848,6 +854,19 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      * onCreateView
      */
     protected abstract View onCreateView();
+
+
+    /**
+     * Corresponding to {@link #onCreateView()}, it called only when new UI (not cached UI)
+     * is created by {@link #onCreateView()}.
+     * It may be used to bind views to fragment and dynamically create child views such as
+     * {@link QMUITopBar#addLeftBackImageButton()}
+     *
+     * @param rootView the view created by {@link #onCreateView()}
+     */
+    protected void onViewCreated(@NonNull View rootView){
+
+    }
 
     /**
      * Will be performed in onStart
