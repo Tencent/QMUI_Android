@@ -34,12 +34,14 @@ import com.qmuiteam.qmui.widget.INotchInsetConsumer;
 import com.qmuiteam.qmui.widget.IWindowInsetLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
  * @author cginechen
@@ -48,6 +50,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class QMUIWindowInsetHelper {
     private static final Object KEYBOARD_CONSUMER = new Object();
+    private static ArrayList<Class<? extends ViewGroup>> sCustomHandlerContainerList = new ArrayList<>();
     private final int KEYBOARD_HEIGHT_BOUNDARY;
     private final WeakReference<IWindowInsetLayout> mWindowInsetLayoutWR;
     private int sApplySystemWindowInsetsCount = 0;
@@ -256,8 +259,22 @@ public class QMUIWindowInsetHelper {
     }
 
     public static boolean isHandleContainer(View child) {
-        return child instanceof IWindowInsetLayout ||
-                child instanceof CoordinatorLayout;
+        boolean ret = child instanceof IWindowInsetLayout ||
+                child instanceof CoordinatorLayout ||
+                child instanceof DrawerLayout;
+        if (ret) {
+            return true;
+        }
+        for (Class<? extends View> clz : sCustomHandlerContainerList) {
+            if (clz.isInstance(child)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void addHandleContainer(Class<? extends ViewGroup> clazz) {
+        sCustomHandlerContainerList.add(clazz);
     }
 
     @SuppressLint("RtlHardcoded")

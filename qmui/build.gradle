@@ -48,6 +48,7 @@ dependencies {
     api "androidx.appcompat:appcompat:$appcompatVersion"
     api "androidx.annotation:annotation:$annotationVersion"
     api "com.google.android.material:material:$materialVersion"
+    api "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     lintChecks project(':lintrule')
 
     //test

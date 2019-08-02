@@ -31,5 +31,9 @@ allprojects {
         materialVersion='1.1.0-alpha07'
         annotationVersion='1.1.0-beta01'
         butterknifeVersion = '10.1.0'
+        constraintLayoutVersion = "1.1.3"
+
+        qmuiArchVersion = "0.6.0"
+        qmuiGroup = "com.qmuiteam"
     }
 }
