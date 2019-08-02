@@ -28,6 +28,7 @@ allprojects {
         targetSdkVersion = 28
         compileSdkVersion = 28
         supportVersion = "28.0.0"
+        constraintLayoutVersion = "1.1.3"
 
         qmuiArchVersion = "0.6.0"
         qmuiGroup = "com.qmuiteam"

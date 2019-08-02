@@ -49,7 +49,8 @@ dependencies {
     api "com.android.support:recyclerview-v7:$supportVersion"
     api "com.android.support:appcompat-v7:$supportVersion"
     api "com.android.support:design:$supportVersion"
-    api "com.android.support:support-vector-drawable:$supportVersion" // need Gradle Plugin v1.5.0 or above
+    api "com.android.support:support-vector-drawable:$supportVersion"
+    api "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
     lintChecks project(':lintrule')
     //test
     testImplementation 'junit:junit:4.12'
