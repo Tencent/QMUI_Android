@@ -32,7 +32,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ZoomButtonsController;
 
-import com.qmuiteam.qmui.arch.annotation.MaybeFirstIn;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -41,7 +40,6 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 import com.qmuiteam.qmui.widget.webview.QMUIWebViewClient;
 import com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer;
-import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.view.QDWebView;
@@ -57,7 +55,6 @@ import butterknife.ButterKnife;
  * Created by cgspine on 2017/12/4.
  */
 
-@MaybeFirstIn(container = {QDMainActivity.class})
 public class QDWebExplorerFragment extends BaseFragment {
     public static final String EXTRA_URL = "EXTRA_URL";
     public static final String EXTRA_TITLE = "EXTRA_TITLE";

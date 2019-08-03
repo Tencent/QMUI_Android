@@ -19,6 +19,7 @@ package com.qmuiteam.qmuidemo.base;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -27,6 +28,7 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.QDMainActivity;
+import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
@@ -50,6 +52,12 @@ public abstract class BaseFragment extends QMUIFragment {
     public void onResume() {
         super.onResume();
         QDUpgradeManager.getInstance(getContext()).runUpgradeTipTaskIfExist(getActivity());
+
+    }
+
+    @Override
+    public Object onLastFragmentFinish() {
+        return new HomeFragment();
 
     }
 

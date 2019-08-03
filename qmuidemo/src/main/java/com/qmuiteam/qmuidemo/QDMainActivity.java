@@ -25,14 +25,30 @@ import android.support.annotation.Nullable;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
+import com.qmuiteam.qmui.arch.annotation.FirstFragments;
+import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScroll1Fragment;
+import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
 
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 
-@DefaultFirstFragment(value = HomeFragment.class)
+@FirstFragments(
+        value = {
+                HomeFragment.class,
+                QDArchTestFragment.class,
+                QDArchSurfaceTestFragment.class,
+                QDNotchHelperFragment.class,
+                QDWebExplorerFragment.class,
+                QDContinuousNestedScroll1Fragment.class
+        })
+@DefaultFirstFragment(HomeFragment.class)
+@LatestVisitRecord
 public class QDMainActivity extends BaseFragmentActivity {
 
     @Override

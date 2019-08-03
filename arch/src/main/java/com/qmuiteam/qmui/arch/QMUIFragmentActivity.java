@@ -256,7 +256,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         Log.i(TAG, "popBackStack: getSupportFragmentManager().getBackStackEntryCount() = " + getSupportFragmentManager().getBackStackEntryCount());
         if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             QMUIFragment fragment = getCurrentFragment();
-            if (fragment == null) {
+            if (fragment == null || QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
                 finish();
                 return;
             }
@@ -335,7 +335,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         if (dstId == FirstFragmentFinder.NO_ID) {
             String fragmentName = firstFragment.getName();
             throw new RuntimeException("Can not find ID for " + fragmentName +
-                    "; You must add annotation MaybeFirstIn which include " + targetActivity.getName() +
+                    "; You must add annotation MayFirstFragment which include " + targetActivity.getName() +
                     " in " + fragmentName + " .");
         }
         intent.putExtra(QMUI_INTENT_DST_FRAGMENT, dstId);

@@ -21,9 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.qmuiteam.qmui.arch.annotation.MaybeFirstIn;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
-import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 
@@ -37,7 +35,6 @@ import static android.opengl.GLES10.glClearColor;
 import static android.opengl.GLES20.glViewport;
 
 //TODO xiaomi 8 surfaceView can not move when swipe back. It's ok in pixel
-@MaybeFirstIn(container = {QDMainActivity.class})
 public class QDArchSurfaceTestFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
