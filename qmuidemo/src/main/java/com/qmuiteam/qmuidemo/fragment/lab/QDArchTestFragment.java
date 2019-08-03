@@ -23,10 +23,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
-import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
-import com.qmuiteam.qmui.arch.annotation.MaybeFirstIn;
+import com.qmuiteam.qmui.arch.annotation.FloatArgument;
+import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
+import com.qmuiteam.qmui.arch.annotation.LongArgument;
+import com.qmuiteam.qmui.arch.annotation.StringArgument;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -45,8 +48,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-@MaybeFirstIn(container = {QDMainActivity.class})
 @Widget(name = "QMUIFragment", iconRes = R.mipmap.icon_grid_layout)
+@LatestVisitRecord
+@LongArgument(name = "test_long", defaultValue = 0L)
+@FloatArgument(name = "test_float", defaultValue = 0)
+@StringArgument(name = "test_string", defaultValue = "")
 public class QDArchTestFragment extends BaseFragment {
     private static final String TAG = "QDArchTestFragment";
     private static final String ARG_INDEX = "arg_index";
@@ -108,6 +114,24 @@ public class QDArchTestFragment extends BaseFragment {
         Intent intent = new Intent();
         intent.putExtra(DATA_TEST, "test");
         setFragmentResult(RESULT_OK, intent);
+        Bundle arguments = getArguments();
+        if(arguments != null && arguments.getLong("test_long") == 100
+                && arguments.getFloat("test_float") == 100.13
+                && "你好".equals(arguments.getString("test_string"))){
+            Toast.makeText(getContext(), "恢复到最近阅读(Muti)", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public Object getArgumentValueForLatestVisit(String argumentName) {
+        if("test_long".equals(argumentName)){
+            return 100L;
+        }else if("test_float".equals(argumentName)){
+            return 100.13;
+        }else if("test_string".equals(argumentName)){
+            return "你好";
+        }
+        return null;
     }
 
     public static QDArchTestFragment newInstance(int index) {

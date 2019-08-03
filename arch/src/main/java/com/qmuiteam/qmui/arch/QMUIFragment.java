@@ -33,6 +33,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.QMUILog;
+import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
+import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
+import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
+import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
+import com.qmuiteam.qmui.arch.record.LatestVisitArgumentSaver;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -58,7 +63,8 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
  * <p>
  * Created by cgspine on 15/9/14.
  */
-public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyLifecycleOwner.Callback {
+public abstract class QMUIFragment extends Fragment implements
+        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentSaver {
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -137,10 +143,43 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
 
     @Override
     public void onResume() {
+        checkLatestVisitRecord();
         super.onResume();
         if (mBaseView != null && mPostResumeRunnableList != null && !mPostResumeRunnableList.isEmpty()) {
             mBaseView.post(mCheckPostResumeRunnable);
         }
+    }
+
+    private void checkLatestVisitRecord() {
+        Class<? extends QMUIFragment> cls = getClass();
+        Activity activity = getActivity();
+        if (!cls.isAnnotationPresent(LatestVisitRecord.class)
+                || getParentFragment() != null
+                || !(activity instanceof QMUIFragmentActivity)) {
+            return;
+        }
+        if (!activity.getClass().isAnnotationPresent(LatestVisitRecord.class)) {
+            throw new RuntimeException(String.format("Can not perform LatestVisitRecord, " +
+                    "%s must be annotated by LatestVisitRecord", activity.getClass().getSimpleName()));
+        }
+        if (activity.getClass().getAnnotation(DefaultFirstFragment.class) != null) {
+            QMUILatestVisit.getInstance(getContext()).performLatestVisitRecord(this);
+        } else {
+            QMUIFragmentActivity qActivity = (QMUIFragmentActivity) activity;
+            int id = FirstFragmentFinders.getInstance().get(qActivity.getClass()).getIdByFragmentClass(cls);
+            if (id == FirstFragmentFinder.NO_ID) {
+                throw new RuntimeException(String.format("Can not perform LatestVisitRecord, " +
+                                "%s must be annotated by FirstFragments which contains %s",
+                        activity.getClass().getSimpleName(), cls.getSimpleName()));
+            }
+            QMUILatestVisit.getInstance(getContext()).performLatestVisitRecord(this);
+        }
+    }
+
+
+    @Override
+    public Object getArgumentValueForLatestVisit(String argumentName) {
+        return null;
     }
 
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment) {
@@ -276,7 +315,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(mBaseView.getTag(R.id.qmui_arch_reused_layout) == null){
+        if (mBaseView.getTag(R.id.qmui_arch_reused_layout) == null) {
             onViewCreated(mBaseView);
         }
         mLazyViewLifecycleOwner = new QMUIFragmentLazyLifecycleOwner(this);
@@ -709,32 +748,34 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      * pop back
      */
     protected void popBackStack() {
-        if(checkPopBack()){
+        if (checkPopBack()) {
             getBaseFragmentActivity().popBackStack();
         }
     }
 
     /**
      * pop back to a class type fragment
+     *
      * @param cls the target fragment class type
      */
-    protected void popBackStack(Class<QMUIFragment> cls){
-        if(checkPopBack()){
+    protected void popBackStack(Class<QMUIFragment> cls) {
+        if (checkPopBack()) {
             getBaseFragmentActivity().popBackStack(cls);
         }
     }
 
     /**
      * pop back to a non-class type Fragment
+     *
      * @param cls the target fragment class type
      */
-    protected void popBackStackInclusive(Class<QMUIFragment> cls){
-        if(checkPopBack()){
+    protected void popBackStackInclusive(Class<QMUIFragment> cls) {
+        if (checkPopBack()) {
             getBaseFragmentActivity().popBackStackInclusive(cls);
         }
     }
 
-    private boolean checkPopBack(){
+    private boolean checkPopBack() {
         if (!isResumed() || mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
             return false;
         }
@@ -748,9 +789,9 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
             runAfterAnimation(new Runnable() {
                 @Override
                 public void run() {
-                    if(isResumed()){
+                    if (isResumed()) {
                         popBackStack();
-                    }else{
+                    } else {
                         runAfterResumed(new Runnable() {
                             @Override
                             public void run() {
@@ -789,16 +830,16 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if (!enter) {
-            // This is a workaround for the bug where child fragments disappear when
+            // This is a workaround for the bug where child value disappear when
             // the parent is removed (as all children are first removed from the parent)
             // See https://code.google.com/p/android/issues/detail?id=55228
             Fragment rootParentFragment = null;
             Fragment parentFragment = getParentFragment();
-            while (parentFragment != null){
+            while (parentFragment != null) {
                 rootParentFragment = parentFragment;
                 parentFragment = parentFragment.getParentFragment();
             }
-            if(rootParentFragment != null && rootParentFragment.isRemoving()){
+            if (rootParentFragment != null && rootParentFragment.isRemoving()) {
                 Animation doNothingAnim = new AlphaAnimation(1, 1);
                 int duration = getResources().getInteger(R.integer.qmui_anim_duration);
                 doNothingAnim.setDuration(duration);
@@ -865,7 +906,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
      *
      * @param rootView the view created by {@link #onCreateView()}
      */
-    protected void onViewCreated(@NonNull View rootView){
+    protected void onViewCreated(@NonNull View rootView) {
 
     }
 
@@ -973,7 +1014,7 @@ public abstract class QMUIFragment extends Fragment implements QMUIFragmentLazyL
             ArrayList<Runnable> list = mDelayRenderRunnableList;
             mDelayRenderRunnableList = null;
             if (!list.isEmpty()) {
-                for(Runnable runnable: list){
+                for (Runnable runnable : list) {
                     runnable.run();
                 }
             }

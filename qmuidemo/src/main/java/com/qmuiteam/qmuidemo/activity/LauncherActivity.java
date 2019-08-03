@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.qmuiteam.qmui.arch.QMUILatestVisit;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 
 /**
@@ -36,7 +37,10 @@ public class LauncherActivity extends Activity {
             finish();
             return;
         }
-        Intent intent = new Intent(this, QDMainActivity.class);
+        Intent intent = QMUILatestVisit.intentOfLatestVisit(this);
+        if (intent == null) {
+            intent = new Intent(this, QDMainActivity.class);
+        }
         startActivity(intent);
         finish();
     }
