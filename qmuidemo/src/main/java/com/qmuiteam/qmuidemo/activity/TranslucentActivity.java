@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
  */
 
 @LatestVisitRecord
-@BoolArgument(name = "test_activity", defaultValue = false)
+@BoolArgument(names = {"test_activity"})
 public class TranslucentActivity extends BaseActivity {
 
     @BindView(R.id.topbar) QMUITopBar mTopBar;

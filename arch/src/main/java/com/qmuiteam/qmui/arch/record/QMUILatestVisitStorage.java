@@ -11,15 +11,15 @@ public interface QMUILatestVisitStorage {
 
     int getFragmentRecordId();
 
-    String getFragmentStringArgument(String key, String defValue);
+    String getFragmentStringArgument(String key);
 
-    int getFragmentIntArgument(String key, int defValue);
+    Integer getFragmentIntArgument(String key);
 
-    long getFragmentLongArgument(String key, long defValue);
+    Long getFragmentLongArgument(String key);
 
-    float getFragmentFloatArgument(String key, float defValue);
+    Float getFragmentFloatArgument(String key);
 
-    boolean getFragmentBoolArgument(String key, boolean defValue);
+    Boolean getFragmentBoolArgument(String key);
 
 
     // Activity Stuff
@@ -27,13 +27,13 @@ public interface QMUILatestVisitStorage {
 
     int getActivityRecordId();
 
-    String getActivityStringArgument(String key, String defValue);
+    String getActivityStringArgument(String key);
 
-    int getActivityIntArgument(String key, int defValue);
+    Integer getActivityIntArgument(String key);
 
-    long getActivityLongArgument(String key, long defValue);
+    Long getActivityLongArgument(String key);
 
-    float getActivityFloatArgument(String key, float defValue);
+    Float getActivityFloatArgument(String key);
 
-    boolean getActivityBoolArgument(String key, boolean defValue);
+    Boolean getActivityBoolArgument(String key);
 }
