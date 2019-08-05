@@ -45,7 +45,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 @Widget(group = Group.Other, name = "webview + recyclerview")
 @LatestVisitRecord
-@IntArgument(name = "fragment_test", defaultValue = 0)
+@IntArgument(names = "fragment_test")
 public class QDContinuousNestedScroll1Fragment extends QDContinuousNestedScrollBaseFragment {
 
     private QMUIWebView mNestedWebView;
@@ -56,7 +56,7 @@ public class QDContinuousNestedScroll1Fragment extends QDContinuousNestedScrollB
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
-        if(arguments != null && arguments.getInt("fragment_test") == 20){
+        if (arguments != null && arguments.getInt("fragment_test") == 20) {
             Toast.makeText(getContext(), "恢复到最近阅读(Int)", Toast.LENGTH_SHORT).show();
         }
     }
@@ -118,7 +118,7 @@ public class QDContinuousNestedScroll1Fragment extends QDContinuousNestedScrollB
 
     @Override
     public Object getArgumentValueForLatestVisit(String argumentName) {
-        if("fragment_test".equals(argumentName)){
+        if ("fragment_test".equals(argumentName)) {
             return 20;
         }
         return null;

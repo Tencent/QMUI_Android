@@ -26,28 +26,44 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
-    public String getFragmentStringArgument(String key, String defValue) {
-        return sp.getString(SP_FRAGMENT_ARG_PREFIX + key, defValue);
+    public String getFragmentStringArgument(String key) {
+        return sp.getString(SP_FRAGMENT_ARG_PREFIX + key, null);
     }
 
     @Override
-    public int getFragmentIntArgument(String key, int defValue) {
-        return sp.getInt(SP_FRAGMENT_ARG_PREFIX + key, defValue);
+    public Integer getFragmentIntArgument(String key) {
+        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getInt(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public long getFragmentLongArgument(String key, long defValue) {
-        return sp.getLong(SP_FRAGMENT_ARG_PREFIX + key, defValue);
+    public Long getFragmentLongArgument(String key) {
+        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getLong(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public float getFragmentFloatArgument(String key, float defValue) {
-        return sp.getFloat(SP_FRAGMENT_ARG_PREFIX + key, defValue);
+    public Float getFragmentFloatArgument(String key) {
+        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getFloat(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public boolean getFragmentBoolArgument(String key, boolean defValue) {
-        return sp.getBoolean(SP_FRAGMENT_ARG_PREFIX + key, defValue);
+    public Boolean getFragmentBoolArgument(String key) {
+        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getBoolean(realKey, false);
+        }
+        return null;
     }
 
 
@@ -57,28 +73,44 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
-    public String getActivityStringArgument(String key, String defValue) {
-        return sp.getString(SP_ACTIVITY_ARG_PREFIX + key, defValue);
+    public String getActivityStringArgument(String key) {
+        return sp.getString(SP_ACTIVITY_ARG_PREFIX + key, null);
     }
 
     @Override
-    public int getActivityIntArgument(String key, int defValue) {
-        return sp.getInt(SP_ACTIVITY_ARG_PREFIX + key, defValue);
+    public Integer getActivityIntArgument(String key) {
+        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getInt(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public long getActivityLongArgument(String key, long defValue) {
-        return sp.getLong(SP_ACTIVITY_ARG_PREFIX + key, defValue);
+    public Long getActivityLongArgument(String key) {
+        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getLong(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public float getActivityFloatArgument(String key, float defValue) {
-        return sp.getFloat(SP_ACTIVITY_ARG_PREFIX + key, defValue);
+    public Float getActivityFloatArgument(String key) {
+        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getFloat(realKey, 0);
+        }
+        return null;
     }
 
     @Override
-    public boolean getActivityBoolArgument(String key, boolean defValue) {
-        return sp.getBoolean(SP_ACTIVITY_ARG_PREFIX + key, defValue);
+    public Boolean getActivityBoolArgument(String key) {
+        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
+        if (sp.contains(realKey)) {
+            return sp.getBoolean(realKey, false);
+        }
+        return null;
     }
 
     @Override

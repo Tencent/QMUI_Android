@@ -3,6 +3,8 @@ package com.qmuiteam.qmui.arch.record;
 
 import androidx.annotation.Nullable;
 
+import java.util.Arrays;
+
 public class RecordInfo {
     private int mId;
     private Class<?> mClazz;
@@ -32,7 +34,8 @@ public class RecordInfo {
             return false;
         }
         RecordInfo other = (RecordInfo) obj;
-        return other.mId == mId && other.mClazz == mClazz;
+        return other.mId == mId && other.mClazz == mClazz &&
+                Arrays.equals(mArguments, other.mArguments);
     }
 
     public static class Argument {

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.MainThread;
 
 import com.qmuiteam.qmui.arch.record.DefaultLatestVisitStorage;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentSaver;
@@ -13,7 +13,8 @@ import com.qmuiteam.qmui.arch.record.RecordInfo;
 import com.qmuiteam.qmui.arch.record.RecordMeta;
 import com.qmuiteam.qmui.arch.record.RecordMetaMap;
 
-import androidx.annotation.MainThread;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QMUILatestVisit {
     private static QMUILatestVisit sInstance;
@@ -61,26 +62,19 @@ public class QMUILatestVisit {
         return mStorage;
     }
 
-    public RecordMeta getRecordMetaById(int id) {
-        return mRecordMap.getRecordMetaById(id);
-    }
-
     @SuppressWarnings("unchecked")
     private Intent getLatestVisitIntent(Context context) {
         int activityId = getStorage().getActivityRecordId();
         if (activityId == QMUILatestVisitStorage.NOT_EXIST) {
-            Log.i("cgine", "1");
             return null;
         }
         RecordMeta activityMeta = mRecordMap.getRecordMetaById(activityId);
         if (activityMeta == null) {
-            Log.i("cgine", "2");
             return null;
         }
         Class<?> activityCls = activityMeta.getClazz();
         Intent intent;
         if (QMUIFragmentActivity.class.isAssignableFrom(activityCls)) {
-            Log.i("cgine", "3");
             int fragmentId = getStorage().getFragmentRecordId();
             if (fragmentId == QMUILatestVisitStorage.NOT_EXIST) {
                 return null;
@@ -109,17 +103,31 @@ public class QMUILatestVisit {
         for (RecordMeta.ArgumentType argumentMeta : argumentTypes) {
             String name = argumentMeta.getName();
             Class<?> type = argumentMeta.getType();
-            Object defaultValue = argumentMeta.getDefaultValue();
             if (type == Integer.TYPE || type == Integer.class) {
-                intent.putExtra(name, storage.getActivityIntArgument(name, (Integer) defaultValue));
+                Integer value = storage.getActivityIntArgument(name);
+                if (value != null) {
+                    intent.putExtra(name, value);
+                }
             } else if (type == Boolean.TYPE || type == Boolean.class) {
-                intent.putExtra(name, storage.getActivityBoolArgument(name, (Boolean) defaultValue));
+                Boolean value = storage.getActivityBoolArgument(name);
+                if (value != null) {
+                    intent.putExtra(name, value);
+                }
             } else if (type == Long.TYPE || type == Long.class) {
-                intent.putExtra(name, storage.getActivityLongArgument(name, (Long) defaultValue));
+                Long value = storage.getActivityLongArgument(name);
+                if (value != null) {
+                    intent.putExtra(name, value);
+                }
             } else if (type == Float.TYPE || type == Float.class) {
-                intent.putExtra(name, storage.getActivityFloatArgument(name, (Float) defaultValue));
+                Float value = storage.getActivityFloatArgument(name);
+                if (value != null) {
+                    intent.putExtra(name, value);
+                }
             } else if (type == String.class) {
-                intent.putExtra(name, storage.getActivityStringArgument(name, (String) defaultValue));
+                String value = storage.getActivityStringArgument(name);
+                if (value != null) {
+                    intent.putExtra(name, value);
+                }
             }
         }
     }
@@ -133,17 +141,32 @@ public class QMUILatestVisit {
         for (RecordMeta.ArgumentType argumentMeta : argumentTypes) {
             String name = argumentMeta.getName();
             Class<?> type = argumentMeta.getType();
-            Object defaultValue = argumentMeta.getDefaultValue();
             if (type == Integer.TYPE || type == Integer.class) {
-                bundle.putInt(name, storage.getFragmentIntArgument(name, (Integer) defaultValue));
+                Integer value = storage.getFragmentIntArgument(name);
+                if (value != null) {
+                    bundle.putInt(name, value);
+                }
+
             } else if (type == Boolean.TYPE || type == Boolean.class) {
-                bundle.putBoolean(name, storage.getFragmentBoolArgument(name, (Boolean) defaultValue));
+                Boolean value = storage.getFragmentBoolArgument(name);
+                if (value != null) {
+                    bundle.putBoolean(name, value);
+                }
             } else if (type == Long.TYPE || type == Long.class) {
-                bundle.putLong(name, storage.getFragmentLongArgument(name, (Long) defaultValue));
+                Long value = storage.getFragmentLongArgument(name);
+                if (value != null) {
+                    bundle.putLong(name, value);
+                }
             } else if (type == Float.TYPE || type == Float.class) {
-                bundle.putFloat(name, storage.getFragmentFloatArgument(name, (Float) defaultValue));
+                Float value = storage.getFragmentFloatArgument(name);
+                if (value != null) {
+                    bundle.putFloat(name, value);
+                }
             } else if (type == String.class) {
-                bundle.putString(name, storage.getFragmentStringArgument(name, (String) defaultValue));
+                String value = storage.getFragmentStringArgument(name);
+                if (value != null) {
+                    bundle.putString(name, value);
+                }
             }
         }
         return bundle;
@@ -168,26 +191,38 @@ public class QMUILatestVisit {
         if (argumentTypes == null || argumentTypes.length == 0) {
             recordInfo = new RecordInfo(meta.getId(), cls, null);
         } else {
-            RecordInfo.Argument[] arguments = new RecordInfo.Argument[argumentTypes.length];
-            for (int i = 0; i < arguments.length; i++) {
-                RecordMeta.ArgumentType argMeta = argumentTypes[i];
+            List<RecordInfo.Argument> arguments = new ArrayList<>();
+            for (RecordMeta.ArgumentType argMeta : argumentTypes) {
                 String argName = argMeta.getName();
                 Class<?> argMetaType = argMeta.getType();
                 Object argValue = argumentSaver.getArgumentValueForLatestVisit(argName);
-                if(argValue instanceof Double){
-                    argValue = ((Double) argValue).floatValue();
-                }
                 if (argValue == null) {
-                    argValue = argMeta.getDefaultValue();
-                } else if (argValue.getClass() != argMetaType) {
+                    continue;
+                }
+
+                // compatibility type conversion
+                if (argMetaType == Long.TYPE || argMeta.getType() == Long.class) {
+                    if (argValue instanceof Integer) {
+                        argValue = ((Integer) argValue).longValue();
+                    }
+                } else if (argMetaType == Float.TYPE || argMeta.getType() == Float.class) {
+                    if (argValue instanceof Double) {
+                        argValue = ((Double) argValue).floatValue();
+                    } else if (argValue instanceof Integer) {
+                        argValue = ((Integer) argValue).floatValue();
+                    }
+                }
+
+                if (argValue.getClass() != argMetaType) {
                     throw new RuntimeException(String.format("The argument value type(%s) for %s " +
                                     "not match the type provided by annotation(%s).",
                             argValue.getClass().getSimpleName(), argName, argMetaType.getSimpleName()));
                 }
                 RecordInfo.Argument argument = new RecordInfo.Argument(argName, argMetaType, argValue);
-                arguments[i] = argument;
+                arguments.add(argument);
             }
-            recordInfo = new RecordInfo(meta.getId(), cls, arguments);
+            recordInfo = new RecordInfo(meta.getId(), cls,
+                    arguments.toArray(new RecordInfo.Argument[0]));
         }
         return recordInfo;
     }

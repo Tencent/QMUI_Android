@@ -27,12 +27,10 @@ public class RecordMeta {
     public static class ArgumentType {
         private String mName;
         private Class<?> mType;
-        private Object mDefaultValue;
 
-        public ArgumentType(String name,  Class<?> type, Object defaultValue){
+        public ArgumentType(String name,  Class<?> type){
             mName = name;
             mType = type;
-            mDefaultValue = defaultValue;
         }
 
         public String getName() {
@@ -41,10 +39,6 @@ public class RecordMeta {
 
         public Class<?> getType() {
             return mType;
-        }
-
-        public Object getDefaultValue() {
-            return mDefaultValue;
         }
     }
 }

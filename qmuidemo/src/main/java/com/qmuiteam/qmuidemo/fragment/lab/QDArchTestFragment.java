@@ -50,9 +50,9 @@ import butterknife.ButterKnife;
 
 @Widget(name = "QMUIFragment", iconRes = R.mipmap.icon_grid_layout)
 @LatestVisitRecord
-@LongArgument(name = "test_long", defaultValue = 0L)
-@FloatArgument(name = "test_float", defaultValue = 0)
-@StringArgument(name = "test_string", defaultValue = "")
+@LongArgument(names = {"test_long", "test_long1", "test_long2", "test_long3"})
+@FloatArgument(names = "test_float")
+@StringArgument(names = "test_string")
 public class QDArchTestFragment extends BaseFragment {
     private static final String TAG = "QDArchTestFragment";
     private static final String ARG_INDEX = "arg_index";
@@ -116,7 +116,10 @@ public class QDArchTestFragment extends BaseFragment {
         setFragmentResult(RESULT_OK, intent);
         Bundle arguments = getArguments();
         if(arguments != null && arguments.getLong("test_long") == 100
-                && arguments.getFloat("test_float") == 100.13
+                && arguments.getLong("test_long1") == 1000
+                && arguments.getLong("test_long2") == 400
+                && arguments.getLong("test_long3", 200) == 200
+                && arguments.getFloat("test_float") == 100.13f
                 && "你好".equals(arguments.getString("test_string"))){
             Toast.makeText(getContext(), "恢复到最近阅读(Muti)", Toast.LENGTH_SHORT).show();
         }
@@ -130,6 +133,10 @@ public class QDArchTestFragment extends BaseFragment {
             return 100.13;
         }else if("test_string".equals(argumentName)){
             return "你好";
+        }else if("test_long1".equals(argumentName)){
+            return 1000;
+        }else if("test_long2".equals(argumentName)){
+            return 400;
         }
         return null;
     }

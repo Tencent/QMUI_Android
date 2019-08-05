@@ -8,6 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface IntArgument {
-    String name();
-    int defaultValue();
+    String[] names();
 }

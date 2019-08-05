@@ -8,7 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface BoolArgument {
-    String name();
-
-    boolean defaultValue();
+    String[] names();
 }
