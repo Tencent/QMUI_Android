@@ -21,6 +21,8 @@ public interface QMUILatestVisitStorage {
 
     Boolean getFragmentBoolArgument(String key);
 
+    void clearFragmentStorage();
+
 
     // Activity Stuff
     void saveActivityRecordInfo(@NonNull RecordInfo recordInfo);
@@ -36,4 +38,6 @@ public interface QMUILatestVisitStorage {
     Float getActivityFloatArgument(String key);
 
     Boolean getActivityBoolArgument(String key);
+
+    void clearActivityStorage();
 }

@@ -152,9 +152,11 @@ public abstract class QMUIFragment extends Fragment implements
     private void checkLatestVisitRecord() {
         Class<? extends QMUIFragment> cls = getClass();
         Activity activity = getActivity();
-        if (!cls.isAnnotationPresent(LatestVisitRecord.class)
-                || getParentFragment() != null
-                || !(activity instanceof QMUIFragmentActivity)) {
+        if(getParentFragment() != null || !(activity instanceof QMUIFragmentActivity)){
+            return;
+        }
+        if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
+            QMUILatestVisit.getInstance(getContext()).clearFragmentLatestVisitRecord();
             return;
         }
         if (!activity.getClass().isAnnotationPresent(LatestVisitRecord.class)) {

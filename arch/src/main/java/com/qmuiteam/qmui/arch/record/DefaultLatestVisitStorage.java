@@ -113,6 +113,24 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
+    public void clearFragmentStorage() {
+        mLastFragmentRecord = null;
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(SP_FRAGMENT_RECORD_ID);
+        clearArgument(editor, SP_FRAGMENT_ARG_PREFIX);
+        editor.apply();
+    }
+
+    @Override
+    public void clearActivityStorage() {
+        mLastActivityRecord = null;
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(SP_ACTIVITY_RECORD_ID);
+        clearArgument(editor, SP_ACTIVITY_ARG_PREFIX);
+        editor.apply();
+    }
+
+    @Override
     public void saveFragmentRecordInfo(@NonNull RecordInfo recordInfo) {
         if (mLastFragmentRecord != null && mLastFragmentRecord.equals(recordInfo)) {
             return;
@@ -138,14 +156,18 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
         editor.apply();
     }
 
-    private void putArguments(SharedPreferences.Editor editor,
-                              String prefix, RecordInfo.Argument[] arguments) {
-        // clear first
+    private void clearArgument(SharedPreferences.Editor editor, String prefix) {
         for (String key : sp.getAll().keySet()) {
             if (key.startsWith(prefix)) {
                 editor.remove(key);
             }
         }
+    }
+
+    private void putArguments(SharedPreferences.Editor editor,
+                              String prefix, RecordInfo.Argument[] arguments) {
+        // clear first
+        clearArgument(editor, prefix);
 
         if (arguments != null && arguments.length > 0) {
             for (RecordInfo.Argument argument : arguments) {
