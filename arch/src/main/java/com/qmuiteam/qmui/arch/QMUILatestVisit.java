@@ -172,6 +172,14 @@ public class QMUILatestVisit {
         return bundle;
     }
 
+    void clearFragmentLatestVisitRecord(){
+        getStorage().clearFragmentStorage();
+    }
+
+    void clearActivityLatestVisitRecord(){
+        getStorage().clearActivityStorage();
+    }
+
     void performLatestVisitRecord(QMUIFragment fragment) {
         getStorage().saveFragmentRecordInfo(getRecordInfo(fragment.getClass(), fragment));
     }
