@@ -306,8 +306,6 @@ public class QMUIProgressBar extends View {
             return;
         }
 
-        Log.i("cgine", "setProgress = " + progress + "; current = " + mValue);
-
         if((mPendingValue == PENDING_VALUE_NOT_SET && mValue == progress) ||
                 (mPendingValue != PENDING_VALUE_NOT_SET && mPendingValue == progress)){
             return;

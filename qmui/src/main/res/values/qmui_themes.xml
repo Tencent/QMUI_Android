@@ -192,6 +192,7 @@
         <item name="qmui_bottom_sheet_list_item_icon_size">22dp</item>
         <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>
 
+        <item name="qmui_bottom_sheet_grid_bg">@color/qmui_config_color_white</item>
         <item name="qmui_bottom_sheet_grid_padding_vertical">12dp</item>
         <item name="qmui_bottom_sheet_grid_line_padding_horizontal">12dp</item>
         <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
