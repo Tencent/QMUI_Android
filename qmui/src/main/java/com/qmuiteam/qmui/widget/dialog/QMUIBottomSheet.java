@@ -81,6 +81,10 @@ public class QMUIBottomSheet extends Dialog {
         super(context, R.style.QMUI_BottomSheet);
     }
 
+    public QMUIBottomSheet(Context context, int style) {
+        super(context, style);
+    }
+
     public void setOnBottomSheetShowListener(OnBottomSheetShowListener onBottomSheetShowListener) {
         mOnBottomSheetShowListener = onBottomSheetShowListener;
     }
@@ -360,7 +364,11 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         public QMUIBottomSheet build() {
-            mDialog = new QMUIBottomSheet(mContext);
+            return build(R.style.QMUI_BottomSheet);
+        }
+
+        public QMUIBottomSheet build(int style) {
+            mDialog = new QMUIBottomSheet(mContext, style);
             View contentView = buildViews();
             mDialog.setContentView(contentView,
                     new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -578,6 +586,48 @@ public class QMUIBottomSheet extends Dialog {
      * 生成宫格类型的 {@link QMUIBottomSheet} 对话框。
      */
     public static class BottomGridSheetBuilder implements View.OnClickListener {
+        public interface ItemViewFactory {
+            View create(QMUIBottomSheet bottomSheet, int layoutRes, int style, View.OnClickListener onClickListener);
+        }
+
+        public static class DefaultItemViewFactory implements ItemViewFactory {
+            private Drawable mDrawable;
+            private CharSequence mText;
+            private Object mTag;
+            private int mSubscriptRes;
+            private Typeface mTypeface;
+
+            public DefaultItemViewFactory(Drawable drawable, CharSequence text, Object tag, int subscriptRes, Typeface typeface) {
+                mDrawable = drawable;
+                mText = text;
+                mTag = tag;
+                mSubscriptRes = subscriptRes;
+                mTypeface = typeface;
+            }
+
+            @Override
+            public View create(QMUIBottomSheet bottomSheet, int layoutRes, int style, View.OnClickListener onClickListener) {
+                LayoutInflater inflater = LayoutInflater.from(bottomSheet.getContext());
+                QMUIBottomSheetItemView itemView = (QMUIBottomSheetItemView) inflater.inflate(layoutRes, null, false);
+                TextView titleTV = itemView.findViewById(R.id.grid_item_title);
+                if (mTypeface != null) {
+                    titleTV.setTypeface(mTypeface);
+                }
+                titleTV.setText(mText);
+
+                itemView.setTag(mTag);
+                itemView.setOnClickListener(onClickListener);
+                AppCompatImageView imageView = itemView.findViewById(R.id.grid_item_image);
+                imageView.setImageDrawable(mDrawable);
+
+                if (mSubscriptRes != 0) {
+                    ViewStub stub = itemView.findViewById(R.id.grid_item_subscript);
+                    View inflated = stub.inflate();
+                    ((ImageView) inflated).setImageResource(mSubscriptRes);
+                }
+                return itemView;
+            }
+        }
 
         /**
          * item 出现在第一行
@@ -589,11 +639,10 @@ public class QMUIBottomSheet extends Dialog {
         public static final int SECOND_LINE = 1;
         private Context mContext;
         private QMUIBottomSheet mDialog;
-        private SparseArray<View> mFirstLineViews;
-        private SparseArray<View> mSecondLineViews;
+        private SparseArray<ItemViewFactory> mFirstLineViews;
+        private SparseArray<ItemViewFactory> mSecondLineViews;
         private int mMiniItemWidth = -1;
         private OnSheetItemClickListener mOnSheetItemClickListener;
-        private Typeface mItemTextTypeFace = null;
         private ViewGroup mBottomButtonContainer;
         private TextView mBottomButton;
         private Typeface mBottomButtonTypeFace = null;
@@ -630,72 +679,66 @@ public class QMUIBottomSheet extends Dialog {
             return this;
         }
 
-        public BottomGridSheetBuilder setItemTextTypeFace(Typeface itemTextTypeFace) {
-            mItemTextTypeFace = itemTextTypeFace;
-            return this;
-        }
-
         public BottomGridSheetBuilder setBottomButtonTypeFace(Typeface bottomButtonTypeFace) {
             mBottomButtonTypeFace = bottomButtonTypeFace;
             return this;
         }
 
-        public BottomGridSheetBuilder addItem(int imageRes, CharSequence text, Object tag, @Style int style, int subscriptRes) {
-            QMUIBottomSheetItemView itemView = createItemView(AppCompatResources.getDrawable(mContext, imageRes), text, tag, subscriptRes);
+        public BottomGridSheetBuilder addItem(int imageRes, CharSequence text, Object tag,
+                                              @Style int style, int subscriptRes) {
+            return addItem(imageRes, text, tag, style, subscriptRes, null);
+        }
+
+        public BottomGridSheetBuilder addItem(int imageRes, CharSequence text, Object tag,
+                                              @Style int style, int subscriptRes, Typeface typeface) {
+            ItemViewFactory itemView = createItemViewFactory(
+                    AppCompatResources.getDrawable(mContext, imageRes), text, tag, subscriptRes, typeface);
             return addItem(itemView, style);
         }
 
-        public BottomGridSheetBuilder addItem(View view, @Style int style) {
+        public BottomGridSheetBuilder addItem(ItemViewFactory itemViewFactory, @Style int style) {
             switch (style) {
                 case FIRST_LINE:
-                    mFirstLineViews.append(mFirstLineViews.size(), view);
+                    mFirstLineViews.append(mFirstLineViews.size(), itemViewFactory);
                     break;
                 case SECOND_LINE:
-                    mSecondLineViews.append(mSecondLineViews.size(), view);
+                    mSecondLineViews.append(mSecondLineViews.size(), itemViewFactory);
                     break;
             }
             return this;
         }
 
-        public QMUIBottomSheetItemView createItemView(Drawable drawable, CharSequence text, Object tag, int subscriptRes) {
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            QMUIBottomSheetItemView itemView = (QMUIBottomSheetItemView) inflater.inflate(getItemViewLayoutId(), null, false);
-            TextView titleTV = (TextView) itemView.findViewById(R.id.grid_item_title);
-            if (mItemTextTypeFace != null) {
-                titleTV.setTypeface(mItemTextTypeFace);
+        @Deprecated
+        public BottomGridSheetBuilder addItem(final View view, @Style int style) {
+            switch (style) {
+                case FIRST_LINE:
+                    mFirstLineViews.append(mFirstLineViews.size(), new ItemViewFactory() {
+                        @Override
+                        public View create(QMUIBottomSheet bottomSheet, int layoutRes, int style, View.OnClickListener onClickListener) {
+                            return view;
+                        }
+                    });
+                    break;
+                case SECOND_LINE:
+                    mSecondLineViews.append(mSecondLineViews.size(), new ItemViewFactory() {
+                        @Override
+                        public View create(QMUIBottomSheet bottomSheet, int layoutRes, int style, View.OnClickListener onClickListener) {
+                            return view;
+                        }
+                    });
+                    break;
             }
-            titleTV.setText(text);
-
-            itemView.setTag(tag);
-            itemView.setOnClickListener(this);
-            AppCompatImageView imageView = (AppCompatImageView) itemView.findViewById(R.id.grid_item_image);
-            imageView.setImageDrawable(drawable);
-
-            if (subscriptRes != 0) {
-                ViewStub stub = (ViewStub) itemView.findViewById(R.id.grid_item_subscript);
-                View inflated = stub.inflate();
-                ((ImageView) inflated).setImageResource(subscriptRes);
-            }
-            return itemView;
+            return this;
         }
 
-        public void setItemVisibility(Object tag, int visibility) {
-            View foundView = null;
-            for (int i = 0; i < mFirstLineViews.size(); i++) {
-                View view = mFirstLineViews.get(i);
-                if (view != null && view.getTag().equals(tag)) {
-                    foundView = view;
-                }
-            }
-            for (int i = 0; i < mSecondLineViews.size(); i++) {
-                View view = mSecondLineViews.get(i);
-                if (view != null && view.getTag().equals(tag)) {
-                    foundView = view;
-                }
-            }
-            if (foundView != null) {
-                foundView.setVisibility(visibility);
-            }
+        public ItemViewFactory createItemViewFactory(Drawable drawable, CharSequence text, Object tag,
+                                                     int subscriptRes) {
+            return createItemViewFactory(drawable, text, tag, subscriptRes, null);
+        }
+
+        public ItemViewFactory createItemViewFactory(Drawable drawable, CharSequence text, Object tag,
+                                                     int subscriptRes, Typeface typeface) {
+            return new DefaultItemViewFactory(drawable, text, tag, subscriptRes, typeface);
         }
 
         public BottomGridSheetBuilder setOnSheetItemClickListener(OnSheetItemClickListener onSheetItemClickListener) {
@@ -711,29 +754,41 @@ public class QMUIBottomSheet extends Dialog {
         }
 
         public QMUIBottomSheet build() {
-            mDialog = new QMUIBottomSheet(mContext);
-            View contentView = buildViews();
+            return build(R.style.QMUI_BottomSheet);
+        }
+
+        public QMUIBottomSheet build(int style) {
+            mDialog = new QMUIBottomSheet(mContext, style);
+            View contentView = buildViews(mDialog);
             mDialog.setContentView(contentView,
                     new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             return mDialog;
         }
 
-        private View buildViews() {
+        public int getFirstLineContainerId() {
+            return R.id.bottom_sheet_first_linear_layout;
+        }
+
+        public int getSecondLineContainerId() {
+            return R.id.bottom_sheet_second_linear_layout;
+        }
+
+        private View buildViews(QMUIBottomSheet bottomSheet) {
             LinearLayout baseLinearLayout;
-            baseLinearLayout = (LinearLayout) View.inflate(mContext, getContentViewLayoutId(), null);
-            LinearLayout firstLine = (LinearLayout) baseLinearLayout.findViewById(R.id.bottom_sheet_first_linear_layout);
-            LinearLayout secondLine = (LinearLayout) baseLinearLayout.findViewById(R.id.bottom_sheet_second_linear_layout);
-            mBottomButtonContainer = (ViewGroup) baseLinearLayout.findViewById(R.id.bottom_sheet_button_container);
-            mBottomButton = (TextView) baseLinearLayout.findViewById(R.id.bottom_sheet_close_button);
+            baseLinearLayout = (LinearLayout) View.inflate(bottomSheet.getContext(), getContentViewLayoutId(), null);
+            LinearLayout firstLine = baseLinearLayout.findViewById(getFirstLineContainerId());
+            LinearLayout secondLine = baseLinearLayout.findViewById(getSecondLineContainerId());
+            mBottomButtonContainer = baseLinearLayout.findViewById(R.id.bottom_sheet_button_container);
+            mBottomButton = baseLinearLayout.findViewById(R.id.bottom_sheet_close_button);
 
             int maxItemCountEachLine = Math.max(mFirstLineViews.size(), mSecondLineViews.size());
-            int screenWidth = QMUIDisplayHelper.getScreenWidth(mContext);
-            int screenHeight = QMUIDisplayHelper.getScreenHeight(mContext);
+            int screenWidth = QMUIDisplayHelper.getScreenWidth(bottomSheet.getContext());
+            int screenHeight = QMUIDisplayHelper.getScreenHeight(bottomSheet.getContext());
             int width = screenWidth < screenHeight ? screenWidth : screenHeight;
             int itemWidth = calculateItemWidth(width, maxItemCountEachLine, firstLine.getPaddingLeft(), firstLine.getPaddingRight());
 
-            addViewsInSection(mFirstLineViews, firstLine, itemWidth);
-            addViewsInSection(mSecondLineViews, secondLine, itemWidth);
+            addViewsInSection(bottomSheet, mFirstLineViews, firstLine, itemWidth, FIRST_LINE);
+            addViewsInSection(bottomSheet, mSecondLineViews, secondLine, itemWidth, SECOND_LINE);
 
             boolean hasFirstLine = mFirstLineViews.size() > 0;
             boolean hasSecondLine = mSecondLineViews.size() > 0;
@@ -820,10 +875,11 @@ public class QMUIBottomSheet extends Dialog {
             return itemWidth;
         }
 
-        private void addViewsInSection(SparseArray<View> items, LinearLayout parent, int itemWidth) {
+        private void addViewsInSection(QMUIBottomSheet bottomSheet, SparseArray<ItemViewFactory> items,
+                                       LinearLayout parent, int itemWidth, int style) {
 
             for (int i = 0; i < items.size(); i++) {
-                View itemView = items.get(i);
+                View itemView = items.get(i).create(bottomSheet, getItemViewLayoutId(), style, this);
                 setItemWidth(itemView, itemWidth);
                 parent.addView(itemView);
             }

@@ -105,6 +105,7 @@
     <attr name="qmui_bottom_sheet_list_item_icon_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_list_item_icon_margin_right" format="dimension"/>
 
+    <attr name="qmui_bottom_sheet_grid_bg" format="color|reference"/>
     <attr name="qmui_bottom_sheet_grid_padding_vertical" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_line_padding_horizontal" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_line_vertical_space" format="dimension"/>
@@ -119,8 +120,8 @@
 
     <attr name="qmui_bottom_sheet_button_height" format="dimension"/>
     <attr name="qmui_bottom_sheet_button_text_size" format="dimension"/>
-    <attr name="qmui_bottom_sheet_button_text_color" format="reference"/>
-    <attr name="qmui_bottom_sheet_button_background" format="reference"/>
+    <attr name="qmui_bottom_sheet_button_text_color" format="color|reference"/>
+    <attr name="qmui_bottom_sheet_button_background" format="color|reference"/>
 
 
     <!--**********************************************

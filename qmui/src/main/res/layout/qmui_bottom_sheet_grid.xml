@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/qmui_config_color_white"
+    android:background="?attr/qmui_bottom_sheet_grid_bg"
     android:orientation="vertical"
     android:paddingTop="?attr/qmui_bottom_sheet_grid_padding_vertical"
     android:paddingBottom="?attr/qmui_bottom_sheet_grid_padding_vertical"
