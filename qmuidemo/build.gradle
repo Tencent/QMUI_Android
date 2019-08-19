@@ -1,7 +1,16 @@
 apply plugin: 'com.android.application'
 
-def cmd = 'git rev-list HEAD --count'
-def gitVersion = cmd.execute().text.trim().toInteger()
+static def getVersion() {
+    def ver
+    try {
+        def cmd = 'git rev-list HEAD --count'
+        ver = cmd.execute().text.trim().toInteger()
+    } catch (Exception e) {
+        ver = 1
+    }
+    return ver
+}
+def gitVersion = getVersion()
 
 android {
     signingConfigs {
