@@ -145,7 +145,7 @@ public class QMUITopBar extends RelativeLayout {
     }
 
     void getCommonFieldFormTypedArray(Context context, TypedArray array) {
-        mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.id.qmui_topbar_item_left_back);
+        mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.drawable.qmui_icon_topbar_back);
         mTitleGravity = array.getInt(R.styleable.QMUITopBar_qmui_topbar_title_gravity, Gravity.CENTER);
         mTitleTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 17));
         mTitleTextSizeWithSubTitle = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 16));
