@@ -81,7 +81,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
                 continue;
             }
             generationInfo.appendIndex(i, ITEM_INDEX_SECTION_HEADER);
-            if (section.isFold() || section.getItemCount() == 0) {
+            if (section.isFold()) {
                 continue;
             }
             onGenerateCustomIndexBeforeItemList(generationInfo, section, i);
