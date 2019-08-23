@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
@@ -52,6 +53,10 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     private boolean mKeepBottomAreaStableWhenCheckLayout = false;
     private QMUIDraggableScrollBar mDraggableScrollBar;
     private boolean mIsDraggableScrollBarEnabled = false;
+    private int mCurrentScrollState = IQMUIContinuousNestedScrollCommon.SCROLL_STATE_IDLE;
+    private boolean mIsDismissDownEvent = false;
+    private float mDismissDownY = 0;
+    private int mTouchSlap = -1;
 
     public QMUIContinuousNestedScrollLayout(@NonNull Context context) {
         this(context, null);
@@ -324,6 +329,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         for (OnScrollListener onScrollListener : mOnScrollListeners) {
             onScrollListener.onScrollStateChange(newScrollState, fromTopBehavior);
         }
+        mCurrentScrollState = newScrollState;
     }
 
     public void scrollBy(int dy) {
@@ -442,8 +448,29 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            stopScroll();
+            if(mCurrentScrollState != IQMUIContinuousNestedScrollCommon.SCROLL_STATE_IDLE){
+                // must stop scroll and not use the current down event.
+                // this is worked when topView scroll to bottomView or bottomView scroll to topView.
+                stopScroll();
+                mIsDismissDownEvent = true;
+                mDismissDownY = ev.getY();
+                if(mTouchSlap < 0){
+                    mTouchSlap = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                }
+                return true;
+            }
+        } else if(ev.getAction() == MotionEvent.ACTION_MOVE && mIsDismissDownEvent){
+            if(Math.abs(ev.getY() - mDismissDownY) > mTouchSlap){
+                MotionEvent down = MotionEvent.obtain(ev);
+                down.setAction(MotionEvent.ACTION_DOWN);
+                down.offsetLocation(0, mDismissDownY - ev.getY());
+                super.dispatchTouchEvent(down);
+                down.recycle();
+            }else{
+                return true;
+            }
         }
+        mIsDismissDownEvent = false;
         return super.dispatchTouchEvent(ev);
     }
 
