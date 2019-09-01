@@ -24,7 +24,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
@@ -232,6 +231,11 @@ public class QMUIProgressBar extends View {
         if (mQMUIProgressBarTextGenerator != null) {
             mText = mQMUIProgressBarTextGenerator.generateText(this, mValue, mMaxValue);
         }
+        if(((mType == TYPE_RECT || mType == TYPE_ROUND_RECT) && mBgRect == null) ||
+                (mType == TYPE_CIRCLE && mCenterPoint == null)){
+            // npe protect, sometimes measure may not be called by parent.
+            configShape();
+        }
         if (mType == TYPE_RECT) {
             drawRect(canvas);
         } else if (mType == TYPE_ROUND_RECT) {
@@ -307,8 +311,8 @@ public class QMUIProgressBar extends View {
             return;
         }
 
-        if((mPendingValue == PENDING_VALUE_NOT_SET && mValue == progress) ||
-                (mPendingValue != PENDING_VALUE_NOT_SET && mPendingValue == progress)){
+        if ((mPendingValue == PENDING_VALUE_NOT_SET && mValue == progress) ||
+                (mPendingValue != PENDING_VALUE_NOT_SET && mPendingValue == progress)) {
             return;
         }
 
