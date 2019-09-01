@@ -135,8 +135,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     private int mScrimColor = DEFAULT_SCRIM_COLOR;
 
-    private boolean mInLayout;
-
     private Rect mTmpRect = new Rect();
 
     /**
@@ -147,8 +145,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private Callback mCallback;
 
     private boolean mPreventSwipeBackWhenDown = false;
-    private boolean mLayoutFrozen = false;
-    private boolean mLayoutWasDefered;
 
     public SwipeBackLayout(Context context) {
         this(context, null);
@@ -387,36 +383,10 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mInLayout = true;
         if (mContentView != null)
             mContentView.layout(mContentLeft, mContentTop,
                     mContentLeft + mContentView.getMeasuredWidth(),
                     mContentTop + mContentView.getMeasuredHeight());
-        mInLayout = false;
-    }
-
-    @Override
-    public void requestLayout() {
-        if (!mLayoutFrozen) {
-            super.requestLayout();
-        } else {
-            mLayoutWasDefered = true;
-        }
-    }
-
-    private void setLayoutFrozen(boolean frozen) {
-        if (frozen != mLayoutFrozen) {
-            if (!frozen) {
-                mLayoutFrozen = false;
-                if (mLayoutWasDefered) {
-                    requestLayout();
-                }
-
-                mLayoutWasDefered = false;
-            } else {
-                mLayoutFrozen = true;
-            }
-        }
     }
 
     @Override
@@ -618,7 +588,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
                     listener.onScrollStateChange(state, mScrollPercent);
                 }
             }
-            setLayoutFrozen(state != STATE_IDLE);
         }
     }
 
