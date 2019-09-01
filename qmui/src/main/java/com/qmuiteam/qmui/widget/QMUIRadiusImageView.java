@@ -519,7 +519,7 @@ public class QMUIRadiusImageView extends AppCompatImageView {
         mBorderPaint.setStrokeWidth(borderWidth);
         if (mIsCircle) {
             canvas.drawCircle(mRectF.centerX(), mRectF.centerY(),
-                    Math.min(mRectF.width(), mRectF.height()) - halfBorderWidth, mBorderPaint);
+                    Math.min(mRectF.width(), mRectF.height()) / 2 - halfBorderWidth, mBorderPaint);
         } else {
             mDrawRectF.left = mRectF.left + halfBorderWidth;
             //noinspection SuspiciousNameCombination
