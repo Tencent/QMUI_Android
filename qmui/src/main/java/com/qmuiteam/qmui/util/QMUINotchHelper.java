@@ -471,12 +471,12 @@ public class QMUINotchHelper {
     }
 
     /**
-     * fitSystemWindows 对小米挖孔屏横屏挖孔区域无效
+     * fitSystemWindows 对小米、vivo挖孔屏横屏挖孔区域无效
      * @param view
      * @return
      */
     public static boolean needFixLandscapeNotchAreaFitSystemWindow(View view){
-       return QMUIDeviceHelper.isXiaomi() && QMUINotchHelper.hasNotch(view);
+       return (QMUIDeviceHelper.isXiaomi() || QMUIDeviceHelper.isVivo()) && QMUINotchHelper.hasNotch(view);
     }
 
 }
