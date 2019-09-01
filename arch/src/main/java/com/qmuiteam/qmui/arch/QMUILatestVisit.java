@@ -28,8 +28,17 @@ public class QMUILatestVisit {
             Class<?> cls = Class.forName(RecordMetaMap.class.getCanonicalName() + "Impl");
             mRecordMap = (RecordMetaMap) cls.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Not find the Class RecordMetaMapImpl. " +
-                    "Did you add dependency of arch-compiler?");
+            mRecordMap = new RecordMetaMap() {
+                @Override
+                public RecordMeta getRecordMetaById(int id) {
+                    return null;
+                }
+
+                @Override
+                public RecordMeta getRecordMetaByClass(Class<?> clazz) {
+                    return null;
+                }
+            };
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Can not access the Class RecordMetaMapImpl. " +
                     "Please file a issue to report this.");
