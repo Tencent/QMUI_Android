@@ -21,8 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.arch.annotation.IntArgument;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomAreaBehavior;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedBottomRecyclerView;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedTopAreaBehavior;
@@ -45,7 +45,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 @Widget(group = Group.Other, name = "webview + recyclerview")
 @LatestVisitRecord
-@IntArgument(names = "fragment_test")
 public class QDContinuousNestedScroll1Fragment extends QDContinuousNestedScrollBaseFragment {
 
     private QMUIWebView mNestedWebView;
@@ -117,11 +116,8 @@ public class QDContinuousNestedScroll1Fragment extends QDContinuousNestedScrollB
     }
 
     @Override
-    public Object getArgumentValueForLatestVisit(String argumentName) {
-        if ("fragment_test".equals(argumentName)) {
-            return 20;
-        }
-        return null;
+    public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
+        editor.putInt("fragment_test", 20);
     }
 
     @Override

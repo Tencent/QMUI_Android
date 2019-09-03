@@ -7,36 +7,34 @@ import android.os.Bundle;
 import android.support.annotation.MainThread;
 
 import com.qmuiteam.qmui.arch.record.DefaultLatestVisitStorage;
-import com.qmuiteam.qmui.arch.record.LatestVisitArgumentSaver;
 import com.qmuiteam.qmui.arch.record.QMUILatestVisitStorage;
-import com.qmuiteam.qmui.arch.record.RecordInfo;
-import com.qmuiteam.qmui.arch.record.RecordMeta;
-import com.qmuiteam.qmui.arch.record.RecordMetaMap;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditorImpl;
+import com.qmuiteam.qmui.arch.record.RecordIdClassMap;
 
 public class QMUILatestVisit {
     private static QMUILatestVisit sInstance;
     private QMUILatestVisitStorage mStorage;
     private Context mContext;
-    private RecordMetaMap mRecordMap;
+    private RecordIdClassMap mRecordMap;
+    private RecordArgumentEditor mRecordArgumentEditor;
 
     private QMUILatestVisit(Context context) {
         mContext = context.getApplicationContext();
+        mRecordArgumentEditor = new RecordArgumentEditorImpl();
         try {
-            Class<?> cls = Class.forName(RecordMetaMap.class.getCanonicalName() + "Impl");
-            mRecordMap = (RecordMetaMap) cls.newInstance();
+            Class<?> cls = Class.forName(RecordIdClassMap.class.getCanonicalName() + "Impl");
+            mRecordMap = (RecordIdClassMap) cls.newInstance();
         } catch (ClassNotFoundException e) {
-            mRecordMap = new RecordMetaMap() {
+            mRecordMap = new RecordIdClassMap() {
                 @Override
-                public RecordMeta getRecordMetaById(int id) {
+                public Class<?> getRecordClassById(int id) {
                     return null;
                 }
 
                 @Override
-                public RecordMeta getRecordMetaByClass(Class<?> clazz) {
-                    return null;
+                public int getIdByRecordClass(Class<?> clazz) {
+                    return QMUILatestVisitStorage.NOT_EXIST;
                 }
             };
         } catch (IllegalAccessException e) {
@@ -77,11 +75,10 @@ public class QMUILatestVisit {
         if (activityId == QMUILatestVisitStorage.NOT_EXIST) {
             return null;
         }
-        RecordMeta activityMeta = mRecordMap.getRecordMetaById(activityId);
-        if (activityMeta == null) {
+        Class<?> activityCls = mRecordMap.getRecordClassById(activityId);
+        if (activityCls == null) {
             return null;
         }
-        Class<?> activityCls = activityMeta.getClazz();
         Intent intent;
         if (QMUIFragmentActivity.class.isAssignableFrom(activityCls)) {
             int fragmentId = getStorage().getFragmentRecordId();
@@ -89,158 +86,50 @@ public class QMUILatestVisit {
                 return null;
             }
 
-            RecordMeta fragmentMeta = mRecordMap.getRecordMetaById(fragmentId);
-            if (fragmentMeta == null) {
+            Class<?> fragmentCls = mRecordMap.getRecordClassById(fragmentId);
+            if (fragmentCls == null) {
                 return null;
             }
             Class<? extends QMUIFragmentActivity> activity = (Class<? extends QMUIFragmentActivity>) activityCls;
-            Class<? extends QMUIFragment> fragment = (Class<? extends QMUIFragment>) fragmentMeta.getClazz();
-            Bundle bundle = populateFragmentArgument(fragmentMeta.getArgumentTypes());
+            Class<? extends QMUIFragment> fragment = (Class<? extends QMUIFragment>) fragmentCls;
+            Bundle bundle = new Bundle();
+            getStorage().getAndWriteFragmentArgumentsToBundle(bundle);
             intent = QMUIFragmentActivity.intentOf(context, activity, fragment, bundle);
         } else {
-            intent = new Intent(context, activityMeta.getClazz());
+            intent = new Intent(context, activityCls);
         }
-        populateActivityArgument(intent, activityMeta.getArgumentTypes());
+        getStorage().getAndWriteActivityArgumentsToIntent(intent);
         return intent;
     }
 
-    private void populateActivityArgument(Intent intent, RecordMeta.ArgumentType[] argumentTypes) {
-        if (argumentTypes == null || argumentTypes.length == 0) {
-            return;
-        }
-        QMUILatestVisitStorage storage = getStorage();
-        for (RecordMeta.ArgumentType argumentMeta : argumentTypes) {
-            String name = argumentMeta.getName();
-            Class<?> type = argumentMeta.getType();
-            if (type == Integer.TYPE || type == Integer.class) {
-                Integer value = storage.getActivityIntArgument(name);
-                if (value != null) {
-                    intent.putExtra(name, value);
-                }
-            } else if (type == Boolean.TYPE || type == Boolean.class) {
-                Boolean value = storage.getActivityBoolArgument(name);
-                if (value != null) {
-                    intent.putExtra(name, value);
-                }
-            } else if (type == Long.TYPE || type == Long.class) {
-                Long value = storage.getActivityLongArgument(name);
-                if (value != null) {
-                    intent.putExtra(name, value);
-                }
-            } else if (type == Float.TYPE || type == Float.class) {
-                Float value = storage.getActivityFloatArgument(name);
-                if (value != null) {
-                    intent.putExtra(name, value);
-                }
-            } else if (type == String.class) {
-                String value = storage.getActivityStringArgument(name);
-                if (value != null) {
-                    intent.putExtra(name, value);
-                }
-            }
-        }
-    }
 
-    private Bundle populateFragmentArgument(RecordMeta.ArgumentType[] argumentTypes) {
-        if (argumentTypes == null || argumentTypes.length == 0) {
-            return null;
-        }
-        Bundle bundle = new Bundle();
-        QMUILatestVisitStorage storage = getStorage();
-        for (RecordMeta.ArgumentType argumentMeta : argumentTypes) {
-            String name = argumentMeta.getName();
-            Class<?> type = argumentMeta.getType();
-            if (type == Integer.TYPE || type == Integer.class) {
-                Integer value = storage.getFragmentIntArgument(name);
-                if (value != null) {
-                    bundle.putInt(name, value);
-                }
-
-            } else if (type == Boolean.TYPE || type == Boolean.class) {
-                Boolean value = storage.getFragmentBoolArgument(name);
-                if (value != null) {
-                    bundle.putBoolean(name, value);
-                }
-            } else if (type == Long.TYPE || type == Long.class) {
-                Long value = storage.getFragmentLongArgument(name);
-                if (value != null) {
-                    bundle.putLong(name, value);
-                }
-            } else if (type == Float.TYPE || type == Float.class) {
-                Float value = storage.getFragmentFloatArgument(name);
-                if (value != null) {
-                    bundle.putFloat(name, value);
-                }
-            } else if (type == String.class) {
-                String value = storage.getFragmentStringArgument(name);
-                if (value != null) {
-                    bundle.putString(name, value);
-                }
-            }
-        }
-        return bundle;
-    }
-
-    void clearFragmentLatestVisitRecord(){
+    void clearFragmentLatestVisitRecord() {
         getStorage().clearFragmentStorage();
     }
 
-    void clearActivityLatestVisitRecord(){
+    void clearActivityLatestVisitRecord() {
         getStorage().clearActivityStorage();
     }
 
     void performLatestVisitRecord(QMUIFragment fragment) {
-        getStorage().saveFragmentRecordInfo(getRecordInfo(fragment.getClass(), fragment));
+        int id = mRecordMap.getIdByRecordClass(fragment.getClass());
+        if (id == QMUILatestVisitStorage.NOT_EXIST) {
+            return;
+        }
+        mRecordArgumentEditor.clear();
+        fragment.onCollectLatestVisitArgument(mRecordArgumentEditor);
+        getStorage().saveFragmentRecordInfo(id, mRecordArgumentEditor.getAll());
+        mRecordArgumentEditor.clear();
     }
 
     void performLatestVisitRecord(InnerBaseActivity activity) {
-        getStorage().saveActivityRecordInfo(getRecordInfo(activity.getClass(), activity));
-    }
-
-    private RecordInfo getRecordInfo(Class<?> cls, LatestVisitArgumentSaver argumentSaver) {
-        RecordMeta meta = mRecordMap.getRecordMetaByClass(cls);
-        if (meta == null) {
-            throw new RuntimeException(String.format(
-                    "arch-compiler generate code for %s failed", cls.getSimpleName()));
+        int id = mRecordMap.getIdByRecordClass(activity.getClass());
+        if (id == QMUILatestVisitStorage.NOT_EXIST) {
+            return;
         }
-        RecordMeta.ArgumentType[] argumentTypes = meta.getArgumentTypes();
-        RecordInfo recordInfo;
-        if (argumentTypes == null || argumentTypes.length == 0) {
-            recordInfo = new RecordInfo(meta.getId(), cls, null);
-        } else {
-            List<RecordInfo.Argument> arguments = new ArrayList<>();
-            for (RecordMeta.ArgumentType argMeta : argumentTypes) {
-                String argName = argMeta.getName();
-                Class<?> argMetaType = argMeta.getType();
-                Object argValue = argumentSaver.getArgumentValueForLatestVisit(argName);
-                if (argValue == null) {
-                    continue;
-                }
-
-                // compatibility type conversion
-                if (argMetaType == Long.TYPE || argMeta.getType() == Long.class) {
-                    if (argValue instanceof Integer) {
-                        argValue = ((Integer) argValue).longValue();
-                    }
-                } else if (argMetaType == Float.TYPE || argMeta.getType() == Float.class) {
-                    if (argValue instanceof Double) {
-                        argValue = ((Double) argValue).floatValue();
-                    } else if (argValue instanceof Integer) {
-                        argValue = ((Integer) argValue).floatValue();
-                    }
-                }
-
-                if (argValue.getClass() != argMetaType) {
-                    throw new RuntimeException(String.format("The argument value type(%s) for %s " +
-                                    "not match the type provided by annotation(%s).",
-                            argValue.getClass().getSimpleName(), argName, argMetaType.getSimpleName()));
-                }
-                RecordInfo.Argument argument = new RecordInfo.Argument(argName, argMetaType, argValue);
-                arguments.add(argument);
-            }
-            recordInfo = new RecordInfo(meta.getId(), cls,
-                    arguments.toArray(new RecordInfo.Argument[0]));
-        }
-        return recordInfo;
+        mRecordArgumentEditor.clear();
+        activity.onCollectLatestVisitArgument(mRecordArgumentEditor);
+        getStorage().saveActivityRecordInfo(id, mRecordArgumentEditor.getAll());
+        mRecordArgumentEditor.clear();
     }
 }
