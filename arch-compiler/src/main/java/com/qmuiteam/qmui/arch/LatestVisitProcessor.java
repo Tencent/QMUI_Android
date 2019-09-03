@@ -30,8 +30,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-import javafx.util.Pair;
-
 @AutoService(Processor.class)
 public class LatestVisitProcessor extends BaseProcessor {
 
@@ -79,35 +77,35 @@ public class LatestVisitProcessor extends BaseProcessor {
                         || isSubtypeOfType(elementType, QMUI_FRAGMENT_TYPE)
                         || isSubtypeOfType(elementType, QMUI_ACTIVITY_TYPE)) {
                     ClassName elementName = ClassName.get(classElement);
-                    List<Pair<String, String>> nameAndTypeList = new ArrayList<>();
+                    List<NameAndType> nameAndTypeList = new ArrayList<>();
                     BoolArgument boolAnnotation = element.getAnnotation(BoolArgument.class);
                     if (boolAnnotation != null) {
                         for (String name : boolAnnotation.names()) {
-                            nameAndTypeList.add(new Pair<>(name, "Boolean"));
+                            nameAndTypeList.add(new NameAndType(name, "Boolean"));
                         }
                     }
                     FloatArgument floatArguments = element.getAnnotation(FloatArgument.class);
                     if (floatArguments != null) {
                         for (String name : floatArguments.names()) {
-                            nameAndTypeList.add(new Pair<>(name, "Float"));
+                            nameAndTypeList.add(new NameAndType(name, "Float"));
                         }
                     }
                     LongArgument longArguments = element.getAnnotation(LongArgument.class);
                     if (longArguments != null) {
                         for (String name : longArguments.names()) {
-                            nameAndTypeList.add(new Pair<>(name, "Long"));
+                            nameAndTypeList.add(new NameAndType(name, "Long"));
                         }
                     }
                     IntArgument intArguments = element.getAnnotation(IntArgument.class);
                     if (intArguments != null) {
                         for (String name : intArguments.names()) {
-                            nameAndTypeList.add(new Pair<>(name, "Integer"));
+                            nameAndTypeList.add(new NameAndType(name, "Integer"));
                         }
                     }
                     StringArgument stringArguments = element.getAnnotation(StringArgument.class);
                     if (stringArguments != null) {
                         for (String name : stringArguments.names()) {
-                            nameAndTypeList.add(new Pair<>(name, "String"));
+                            nameAndTypeList.add(new NameAndType(name, "String"));
                         }
                     }
 
@@ -124,8 +122,8 @@ public class LatestVisitProcessor extends BaseProcessor {
                         String name;
                         String type;
                         for (int i = 0; i < nameAndTypeList.size(); i++) {
-                            name = nameAndTypeList.get(i).getKey();
-                            type = nameAndTypeList.get(i).getValue();
+                            name = nameAndTypeList.get(i).name;
+                            type = nameAndTypeList.get(i).type;
                             builder.add("new $T($S, $L.class)", RecordMetaArgumentName, name, type);
                             if (i < nameAndTypeList.size() - 1) {
                                 builder.add(",\n");
@@ -179,5 +177,15 @@ public class LatestVisitProcessor extends BaseProcessor {
         Set<String> types = new LinkedHashSet<>();
         types.add(LatestVisitRecord.class.getCanonicalName());
         return types;
+    }
+
+    class NameAndType {
+        public String name;
+        public String type;
+
+        public NameAndType(String name, String type){
+            this.name = name;
+            this.type = type;
+        }
     }
 }
