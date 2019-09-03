@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.textview;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Spannable;
 import android.text.method.MovementMethod;
 import android.util.AttributeSet;
@@ -51,7 +52,7 @@ import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
  * @see QMUITouchableSpan
  * @see QMUILinkTouchMovementMethod
  */
-public class QMUISpanTouchFixTextView extends TextView implements ISpanTouchFix {
+public class QMUISpanTouchFixTextView extends AppCompatTextView implements ISpanTouchFix {
     /**
      * 记录当前 Touch 事件对应的点是不是点在了 span 上面
      */

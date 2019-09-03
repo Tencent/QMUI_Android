@@ -17,13 +17,14 @@
 package com.qmuiteam.qmui.alpha;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 /**
  * 在 pressed 和 disabled 时改变 View 的透明度
  */
-public class QMUIAlphaTextView extends AppCompatTextView {
+public class QMUIAlphaTextView extends QMUISpanTouchFixTextView {
 
     private QMUIAlphaViewHelper mAlphaViewHelper;
 
@@ -47,8 +48,8 @@ public class QMUIAlphaTextView extends AppCompatTextView {
     }
 
     @Override
-    public void setPressed(boolean pressed) {
-        super.setPressed(pressed);
+    protected void onSetPressed(boolean pressed) {
+        super.onSetPressed(pressed);
         getAlphaViewHelper().onPressedChanged(this, pressed);
     }
 
