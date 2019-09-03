@@ -23,11 +23,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
-import com.qmuiteam.qmui.arch.record.LatestVisitArgumentSaver;
+import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 
 
 //Fix the bug: Only fullscreen activities can request orientation in Android version 26, 27
-class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgumentSaver {
+class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgumentCollector {
     private static int NO_REQUESTED_ORIENTATION_SET = -100;
     private boolean mConvertToTranslucentCauseOrientationChanged = false;
     private int mPendingRequestedOrientation = NO_REQUESTED_ORIENTATION_SET;
@@ -79,7 +80,7 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     }
 
     @Override
-    public Object getArgumentValueForLatestVisit(String argumentName) {
-        return null;
+    public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
+
     }
 }

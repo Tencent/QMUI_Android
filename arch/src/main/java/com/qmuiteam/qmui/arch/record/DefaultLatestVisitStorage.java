@@ -1,19 +1,27 @@
 package com.qmuiteam.qmui.arch.record;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.util.Map;
 
 public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
 
     private static final String SP_NAME = "qmui_latest_visit";
     private static final String SP_FRAGMENT_RECORD_ID = "id_qmui_f_r";
     private static final String SP_ACTIVITY_RECORD_ID = "id_qmui_a_r";
-    private static final String SP_ACTIVITY_ARG_PREFIX = "a_qmui_a_";
-    private static final String SP_FRAGMENT_ARG_PREFIX = "a_qmui_f_";
+    private static final String SP_ACTIVITY_ARG_PREFIX = "a_a_";
+    private static final String SP_FRAGMENT_ARG_PREFIX = "a_f_";
+    private static final char SP_INT_ARG_TAG = 'i';
+    private static final char SP_LONG_ARG_TAG = 'l';
+    private static final char SP_FLOAT_ARG_TAG = 'f';
+    private static final char SP_BOOLEAN_ARG_TAG = 'b';
+    private static final char SP_STRING_ARG_TAG = 's';
     private SharedPreferences sp;
-    private RecordInfo mLastFragmentRecord;
-    private RecordInfo mLastActivityRecord;
 
     public DefaultLatestVisitStorage(Context context) {
         sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
@@ -25,44 +33,27 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
-    public String getFragmentStringArgument(String key) {
-        return sp.getString(SP_FRAGMENT_ARG_PREFIX + key, null);
-    }
-
-    @Override
-    public Integer getFragmentIntArgument(String key) {
-        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getInt(realKey, 0);
+    public void getAndWriteFragmentArgumentsToBundle(@NonNull Bundle bundle) {
+        for (Map.Entry<String, ?> entity : sp.getAll().entrySet()) {
+            String key = entity.getKey();
+            Object value = entity.getValue();
+            String prefix = SP_FRAGMENT_ARG_PREFIX;
+            if (key.startsWith(prefix)) {
+                char tag = key.charAt(prefix.length());
+                String realKey = key.substring(prefix.length() + 1);
+                if (tag == SP_INT_ARG_TAG) {
+                    bundle.putInt(realKey, (Integer) value);
+                } else if (tag == SP_BOOLEAN_ARG_TAG) {
+                    bundle.putBoolean(realKey, (Boolean) value);
+                } else if (tag == SP_LONG_ARG_TAG) {
+                    bundle.putLong(realKey, (Long) value);
+                } else if (tag == SP_FLOAT_ARG_TAG) {
+                    bundle.putFloat(realKey, (Float) value);
+                } else if (tag == SP_STRING_ARG_TAG) {
+                    bundle.putString(realKey, (String) value);
+                }
+            }
         }
-        return null;
-    }
-
-    @Override
-    public Long getFragmentLongArgument(String key) {
-        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getLong(realKey, 0);
-        }
-        return null;
-    }
-
-    @Override
-    public Float getFragmentFloatArgument(String key) {
-        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getFloat(realKey, 0);
-        }
-        return null;
-    }
-
-    @Override
-    public Boolean getFragmentBoolArgument(String key) {
-        String realKey = SP_FRAGMENT_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getBoolean(realKey, false);
-        }
-        return null;
     }
 
 
@@ -72,49 +63,31 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
-    public String getActivityStringArgument(String key) {
-        return sp.getString(SP_ACTIVITY_ARG_PREFIX + key, null);
-    }
-
-    @Override
-    public Integer getActivityIntArgument(String key) {
-        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getInt(realKey, 0);
+    public void getAndWriteActivityArgumentsToIntent(@NonNull Intent intent) {
+        for (Map.Entry<String, ?> entity : sp.getAll().entrySet()) {
+            String key = entity.getKey();
+            Object value = entity.getValue();
+            String prefix = SP_ACTIVITY_ARG_PREFIX;
+            if (key.startsWith(prefix)) {
+                char tag = key.charAt(prefix.length());
+                String realKey = key.substring(prefix.length() + 1);
+                if (tag == SP_INT_ARG_TAG) {
+                    intent.putExtra(realKey, (Integer) value);
+                } else if (tag == SP_BOOLEAN_ARG_TAG) {
+                    intent.putExtra(realKey, (Boolean) value);
+                } else if (tag == SP_LONG_ARG_TAG) {
+                    intent.putExtra(realKey, (Long) value);
+                } else if (tag == SP_FLOAT_ARG_TAG) {
+                    intent.putExtra(realKey, (Float) value);
+                } else if (tag == SP_STRING_ARG_TAG) {
+                    intent.putExtra(realKey, (String) value);
+                }
+            }
         }
-        return null;
-    }
-
-    @Override
-    public Long getActivityLongArgument(String key) {
-        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getLong(realKey, 0);
-        }
-        return null;
-    }
-
-    @Override
-    public Float getActivityFloatArgument(String key) {
-        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getFloat(realKey, 0);
-        }
-        return null;
-    }
-
-    @Override
-    public Boolean getActivityBoolArgument(String key) {
-        String realKey = SP_ACTIVITY_ARG_PREFIX + key;
-        if (sp.contains(realKey)) {
-            return sp.getBoolean(realKey, false);
-        }
-        return null;
     }
 
     @Override
     public void clearFragmentStorage() {
-        mLastFragmentRecord = null;
         SharedPreferences.Editor editor = sp.edit();
         editor.remove(SP_FRAGMENT_RECORD_ID);
         clearArgument(editor, SP_FRAGMENT_ARG_PREFIX);
@@ -123,7 +96,6 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
 
     @Override
     public void clearActivityStorage() {
-        mLastActivityRecord = null;
         SharedPreferences.Editor editor = sp.edit();
         editor.remove(SP_ACTIVITY_RECORD_ID);
         clearArgument(editor, SP_ACTIVITY_ARG_PREFIX);
@@ -131,27 +103,17 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     @Override
-    public void saveFragmentRecordInfo(@NonNull RecordInfo recordInfo) {
-        if (mLastFragmentRecord != null && mLastFragmentRecord.equals(recordInfo)) {
-            return;
-        }
-        mLastFragmentRecord = recordInfo;
+    public void saveFragmentRecordInfo(int id, Map<String, RecordArgumentEditor.Argument> arguments) {
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(SP_FRAGMENT_RECORD_ID, recordInfo.getId());
-        RecordInfo.Argument[] arguments = recordInfo.getArguments();
+        editor.putInt(SP_FRAGMENT_RECORD_ID, id);
         putArguments(editor, SP_FRAGMENT_ARG_PREFIX, arguments);
         editor.apply();
     }
 
     @Override
-    public void saveActivityRecordInfo(@NonNull RecordInfo recordInfo) {
-        if (mLastActivityRecord != null && mLastActivityRecord.equals(recordInfo)) {
-            return;
-        }
-        mLastActivityRecord = recordInfo;
+    public void saveActivityRecordInfo(int id, @Nullable Map<String, RecordArgumentEditor.Argument> arguments) {
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(SP_ACTIVITY_RECORD_ID, recordInfo.getId());
-        RecordInfo.Argument[] arguments = recordInfo.getArguments();
+        editor.putInt(SP_ACTIVITY_RECORD_ID, id);
         putArguments(editor, SP_ACTIVITY_ARG_PREFIX, arguments);
         editor.apply();
     }
@@ -165,28 +127,30 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
     }
 
     private void putArguments(SharedPreferences.Editor editor,
-                              String prefix, RecordInfo.Argument[] arguments) {
+                              String prefix, Map<String, RecordArgumentEditor.Argument> arguments) {
         // clear first
         clearArgument(editor, prefix);
 
-        if (arguments != null && arguments.length > 0) {
-            for (RecordInfo.Argument argument : arguments) {
-                String name = prefix + argument.getName();
-                Class<?> type = argument.getType();
-                Object value = argument.getValue();
-                if (type == Integer.TYPE || type == Integer.class) {
-                    editor.putInt(name, (Integer) value);
-                } else if (type == Boolean.TYPE || type == Boolean.class) {
-                    editor.putBoolean(name, (Boolean) value);
-                } else if (type == Float.TYPE || type == Float.class) {
-                    editor.putFloat(name, (Float) value);
-                } else if (type == Long.TYPE || type == Long.class) {
-                    editor.putLong(name, (Long) value);
-                } else if (type == String.class) {
-                    editor.putString(name, (String) value);
-                } else {
-                    throw new RuntimeException(String.format(
-                            "Not support the type: %s", type.getSimpleName()));
+        if (arguments != null && arguments.size() > 0) {
+            for (String name : arguments.keySet()) {
+                RecordArgumentEditor.Argument argument = arguments.get(name);
+                if (argument != null) {
+                    Class<?> type = argument.getType();
+                    Object value = argument.getValue();
+                    if (type == Integer.TYPE || type == Integer.class) {
+                        editor.putInt(prefix + SP_INT_ARG_TAG + name, (Integer) value);
+                    } else if (type == Boolean.TYPE || type == Boolean.class) {
+                        editor.putBoolean(prefix + SP_BOOLEAN_ARG_TAG + name, (Boolean) value);
+                    } else if (type == Float.TYPE || type == Float.class) {
+                        editor.putFloat(prefix + SP_FLOAT_ARG_TAG + name, (Float) value);
+                    } else if (type == Long.TYPE || type == Long.class) {
+                        editor.putLong(prefix + SP_LONG_ARG_TAG + name, (Long) value);
+                    } else if (type == String.class) {
+                        editor.putString(prefix + SP_STRING_ARG_TAG + name, (String) value);
+                    } else {
+                        throw new RuntimeException(String.format(
+                                "Not support the type: %s", type.getSimpleName()));
+                    }
                 }
             }
         }

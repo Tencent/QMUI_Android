@@ -45,7 +45,8 @@ import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
-import com.qmuiteam.qmui.arch.record.LatestVisitArgumentSaver;
+import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -63,7 +64,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment implements
-        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentSaver {
+        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentCollector {
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -152,7 +153,7 @@ public abstract class QMUIFragment extends Fragment implements
     private void checkLatestVisitRecord() {
         Class<? extends QMUIFragment> cls = getClass();
         Activity activity = getActivity();
-        if(getParentFragment() != null || !(activity instanceof QMUIFragmentActivity)){
+        if (getParentFragment() != null || !(activity instanceof QMUIFragmentActivity)) {
             return;
         }
         if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
@@ -163,7 +164,8 @@ public abstract class QMUIFragment extends Fragment implements
             throw new RuntimeException(String.format("Can not perform LatestVisitRecord, " +
                     "%s must be annotated by LatestVisitRecord", activity.getClass().getSimpleName()));
         }
-        if (activity.getClass().getAnnotation(DefaultFirstFragment.class) != null) {
+        DefaultFirstFragment defaultFirstFragment = activity.getClass().getAnnotation(DefaultFirstFragment.class);
+        if (defaultFirstFragment != null && defaultFirstFragment.value() == getClass()) {
             QMUILatestVisit.getInstance(getContext()).performLatestVisitRecord(this);
         } else {
             QMUIFragmentActivity qActivity = (QMUIFragmentActivity) activity;
@@ -179,8 +181,8 @@ public abstract class QMUIFragment extends Fragment implements
 
 
     @Override
-    public Object getArgumentValueForLatestVisit(String argumentName) {
-        return null;
+    public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
+
     }
 
     protected void startFragmentAndDestroyCurrent(QMUIFragment fragment) {

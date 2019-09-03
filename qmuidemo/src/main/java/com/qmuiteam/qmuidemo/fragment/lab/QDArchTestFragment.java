@@ -27,10 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
-import com.qmuiteam.qmui.arch.annotation.FloatArgument;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
-import com.qmuiteam.qmui.arch.annotation.LongArgument;
-import com.qmuiteam.qmui.arch.annotation.StringArgument;
+import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -50,9 +48,6 @@ import butterknife.ButterKnife;
 
 @Widget(name = "QMUIFragment", iconRes = R.mipmap.icon_grid_layout)
 @LatestVisitRecord
-@LongArgument(names = {"test_long", "test_long1", "test_long2", "test_long3"})
-@FloatArgument(names = "test_float")
-@StringArgument(names = "test_string")
 public class QDArchTestFragment extends BaseFragment {
     private static final String TAG = "QDArchTestFragment";
     private static final String ARG_INDEX = "arg_index";
@@ -115,30 +110,23 @@ public class QDArchTestFragment extends BaseFragment {
         intent.putExtra(DATA_TEST, "test");
         setFragmentResult(RESULT_OK, intent);
         Bundle arguments = getArguments();
-        if(arguments != null && arguments.getLong("test_long") == 100
+        if (arguments != null && arguments.getLong("test_long") == 100
                 && arguments.getLong("test_long1") == 1000
                 && arguments.getLong("test_long2") == 400
                 && arguments.getLong("test_long3", 200) == 200
                 && arguments.getFloat("test_float") == 100.13f
-                && "你好".equals(arguments.getString("test_string"))){
+                && "你好".equals(arguments.getString("test_string"))) {
             Toast.makeText(getContext(), "恢复到最近阅读(Muti)", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public Object getArgumentValueForLatestVisit(String argumentName) {
-        if("test_long".equals(argumentName)){
-            return 100L;
-        }else if("test_float".equals(argumentName)){
-            return 100.13;
-        }else if("test_string".equals(argumentName)){
-            return "你好";
-        }else if("test_long1".equals(argumentName)){
-            return 1000;
-        }else if("test_long2".equals(argumentName)){
-            return 400;
-        }
-        return null;
+    public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
+        editor.putLong("test_long", 100L);
+        editor.putLong("test_long1", 1000);
+        editor.putLong("test_long2", 400);
+        editor.putString("test_string", "你好");
+        editor.putFloat("test_float", 100.13f);
     }
 
     public static QDArchTestFragment newInstance(int index) {
