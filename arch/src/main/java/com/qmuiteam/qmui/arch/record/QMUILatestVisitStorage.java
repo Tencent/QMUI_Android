@@ -2,10 +2,11 @@ package com.qmuiteam.qmui.arch.record;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public interface QMUILatestVisitStorage {
 

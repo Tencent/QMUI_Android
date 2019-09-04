@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 
 import com.qmuiteam.qmui.arch.record.DefaultLatestVisitStorage;
 import com.qmuiteam.qmui.arch.record.QMUILatestVisitStorage;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditorImpl;
 import com.qmuiteam.qmui.arch.record.RecordIdClassMap;
+
+import androidx.annotation.MainThread;
 
 public class QMUILatestVisit {
     private static QMUILatestVisit sInstance;

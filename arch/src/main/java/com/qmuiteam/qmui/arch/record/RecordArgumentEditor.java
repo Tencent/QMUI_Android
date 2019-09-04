@@ -1,8 +1,8 @@
 package com.qmuiteam.qmui.arch.record;
 
-import android.support.annotation.Nullable;
-
 import java.util.Map;
+
+import androidx.annotation.Nullable;
 
 public interface RecordArgumentEditor {
 
