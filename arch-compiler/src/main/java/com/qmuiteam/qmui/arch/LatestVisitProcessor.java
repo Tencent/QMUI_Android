@@ -11,6 +11,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -56,22 +57,23 @@ public class LatestVisitProcessor extends BaseProcessor {
                 .addStatement("mClassToIdMap = new $T<>()", HashMapName)
                 .addStatement("mIdToClassMap = new $T<>()", HashMapName);
 
-        int currentId = 1000;
+
         for (Element element : elements) {
             if (element instanceof TypeElement) {
                 TypeElement classElement = (TypeElement) element;
                 TypeMirror elementType = classElement.asType();
-                if (isSubtypeOfType(elementType, QMUI_FRAGMENT_ACTIVITY_TYPE)
-                        || isSubtypeOfType(elementType, QMUI_FRAGMENT_TYPE)
-                        || isSubtypeOfType(elementType, QMUI_ACTIVITY_TYPE)) {
+                boolean isFragmentActivity = isSubtypeOfType(elementType, QMUI_FRAGMENT_ACTIVITY_TYPE);
+                boolean isFragment = isSubtypeOfType(elementType, QMUI_FRAGMENT_TYPE);
+                boolean isActivity = isSubtypeOfType(elementType, QMUI_ACTIVITY_TYPE);
+                if (isFragmentActivity || isFragment || isActivity) {
                     ClassName elementName = ClassName.get(classElement);
+                    int hashCode = elementName.simpleName().hashCode();
                     constructorBuilder.addStatement("mClassToIdMap.put($T.class, $L)",
                             elementName,
-                            currentId);
+                            hashCode);
                     constructorBuilder.addStatement("mIdToClassMap.put($L, $T.class)",
-                            currentId,
+                            hashCode,
                             elementName);
-                    currentId++;
                 } else {
                     error(element, "Must annotated on subclasses of QMUIFragmentActivity");
                 }
