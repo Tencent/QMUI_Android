@@ -16,187 +16,400 @@
 
 package com.qmuiteam.qmui.widget.popup;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Point;
-import androidx.annotation.IntDef;
-import androidx.annotation.LayoutRes;
-import android.view.LayoutInflater;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * 提供一个浮层，支持自定义浮层的内容，支持在指定 {@link View} 的任一方向旁边展示该浮层，支持自定义浮层出现/消失的动画。
- * <p>
- * Created by cgspine on 15/11/24.
- */
-public class QMUIPopup extends QMUIBasePopup {
+import androidx.annotation.AnimRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+
+
+public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
+    public static final int ANIM_AUTO = 0;
     public static final int ANIM_GROW_FROM_LEFT = 1;
     public static final int ANIM_GROW_FROM_RIGHT = 2;
     public static final int ANIM_GROW_FROM_CENTER = 3;
-    public static final int ANIM_AUTO = 4;
+    public static final int ANIM_SPEC = 4;
+
+    @IntDef(value = {ANIM_AUTO, ANIM_GROW_FROM_LEFT, ANIM_GROW_FROM_RIGHT, ANIM_GROW_FROM_CENTER, ANIM_SPEC})
+    @interface AnimStyle {
+    }
 
     public static final int DIRECTION_TOP = 0;
     public static final int DIRECTION_BOTTOM = 1;
-    public static final int DIRECTION_NONE = 2;
-    protected ImageView mArrowUp;
-    protected ImageView mArrowDown;
-    protected int mAnimStyle;
-    protected int mDirection;
-    protected int mX = -1;
-    protected int mY = -1;
-    protected int mArrowCenter;
-    // 该PopupWindow的View距离屏幕左右的最小距离
-    private int mPopupLeftRightMinMargin = 0;
-    // 该PopupWindow的View距离屏幕上下的最小距离
-    private int mPopupTopBottomMinMargin = 0;
-    private int mPreferredDirection;
-    // 计算位置后的偏移x值
+    public static final int DIRECTION_CENTER_IN_SCREEN = 2;
+
+    @IntDef({DIRECTION_CENTER_IN_SCREEN, DIRECTION_TOP, DIRECTION_BOTTOM})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Direction {
+    }
+
+    protected @AnimStyle int mAnimStyle;
+    protected int mSpecAnimStyle;
+    private int mEdgeProtectionTop;
+    private int mEdgeProtectionLeft;
+    private int mEdgeProtectionRight;
+    private int mEdgeProtectionBottom;
+    private boolean mShowArrow = true;
+    private boolean mAddShadow = false;
+    private int mRadius = NOT_SET;
+    private int mBorderColor = NOT_SET;
+    private int mBorderWidth = NOT_SET;
+    private int mShadowElevation = NOT_SET;
+    private float mShadowAlpha = 0f;
+    private int mShadowInset = NOT_SET;
+    private int mBgColor = NOT_SET;
     private int mOffsetX = 0;
-    // 计算位置后的偏移y值，当浮层在View的上方时使用
-    private int mOffsetYWhenTop = 0;
-    // 计算位置后的偏移y值，当浮层在View的下方时使用
-    private int mOffsetYWhenBottom = 0;
+    private int mOffsetYIfTop = 0;
+    private int mOffsetYIfBottom = 0;
+    private @Direction int mPreferredDirection = DIRECTION_BOTTOM;
+    private int mInitWidth;
+    private int mInitHeight;
+    private int[] mAnchorLocation = new int[2];
+    private int mArrowWidth = NOT_SET;
+    private int mArrowHeight = NOT_SET;
+    private boolean mRemoveBorderWhenShadow = false;
 
-    public QMUIPopup(Context context) {
-        this(context, DIRECTION_NONE);
-    }
-
-    public QMUIPopup(Context context, @Direction int preferredDirection) {
+    public QMUIPopup(Context context, int width, int height) {
         super(context);
-        mAnimStyle = ANIM_AUTO;
-        mPreferredDirection = preferredDirection;
-        mDirection = mPreferredDirection;
+        mInitWidth = width;
+        mInitHeight = height;
     }
 
-    public void setPopupLeftRightMinMargin(int popupLeftRightMinMargin) {
-        mPopupLeftRightMinMargin = popupLeftRightMinMargin;
+    public QMUIPopup arrow(boolean showArrow) {
+        mShowArrow = showArrow;
+        return this;
     }
 
-    public void setPopupTopBottomMinMargin(int popupTopBottomMinMargin) {
-        mPopupTopBottomMinMargin = popupTopBottomMinMargin;
+    public QMUIPopup arrowSize(int width, int height) {
+        mArrowWidth = width;
+        mArrowHeight = height;
+        return this;
     }
 
-    /**
-     * 设置根据计算得到的位置后的偏移值
-     */
-    public void setPositionOffsetX(int offsetX) {
+    public QMUIPopup shadow(boolean addShadow) {
+        mAddShadow = addShadow;
+        return this;
+    }
+
+    public QMUIPopup border(@ColorInt int borderColor, int borderWidth) {
+        mBorderColor = borderColor;
+        mBorderWidth = borderWidth;
+        return this;
+    }
+
+    public QMUIPopup removeBorderWhenShadow(boolean removeBorderWhenShadow) {
+        mRemoveBorderWhenShadow = removeBorderWhenShadow;
+        return this;
+    }
+
+    public QMUIPopup animStyle(@AnimStyle int animStyle) {
+        mAnimStyle = animStyle;
+        return this;
+    }
+
+    public QMUIPopup customAnimStyle(@AnimRes int animStyle) {
+        mAnimStyle = ANIM_SPEC;
+        mSpecAnimStyle = animStyle;
+        return this;
+    }
+
+    public QMUIPopup radius(int radius) {
+        mRadius = radius;
+        return this;
+    }
+
+    public QMUIPopup shadowElevation(int shadowElevation, float shadowAlpha) {
+        mShadowAlpha = shadowAlpha;
+        mShadowElevation = shadowElevation;
+        return this;
+    }
+
+    public QMUIPopup shadowInset(int shadowInset) {
+        mShadowInset = shadowInset;
+        return this;
+    }
+
+    public QMUIPopup edgeProtection(int distance) {
+        mEdgeProtectionLeft = distance;
+        mEdgeProtectionRight = distance;
+        mEdgeProtectionTop = distance;
+        mEdgeProtectionBottom = distance;
+        return this;
+    }
+
+    public QMUIPopup edgeProtection(int left, int top, int right, int bottom) {
+        mEdgeProtectionLeft = left;
+        mEdgeProtectionRight = top;
+        mEdgeProtectionTop = right;
+        mEdgeProtectionBottom = bottom;
+        return this;
+    }
+
+    public QMUIPopup offsetX(int offsetX) {
         mOffsetX = offsetX;
+        return this;
     }
 
-    /**
-     * 设置根据计算得到的位置后的偏移值
-     *
-     * @param offsetYWhenTop mDirection!=DIRECTION_BOTTOM 时的 offsetY
-     */
-    public void setPositionOffsetYWhenTop(int offsetYWhenTop) {
-        mOffsetYWhenTop = offsetYWhenTop;
+    public QMUIPopup offsetYIfTop(int y) {
+        mOffsetYIfTop = y;
+        return this;
     }
 
-    /**
-     * 设置根据计算得到的位置后的偏移值
-     *
-     * @param offsetYWhenBottom mDirection==DIRECTION_BOTTOM 时的 offsetY
-     */
-    public void setPositionOffsetYWhenBottom(int offsetYWhenBottom) {
-        mOffsetYWhenBottom = offsetYWhenBottom;
+    public QMUIPopup offsetYIfBottom(int y) {
+        mOffsetYIfBottom = y;
+        return this;
     }
 
-    public void setPreferredDirection(int preferredDirection) {
+    public QMUIPopup preferredDirection(@Direction int preferredDirection) {
         mPreferredDirection = preferredDirection;
+        return this;
     }
 
-    @Override
-    protected Point onShowBegin(View parent, View attachedView) {
-        calculatePosition(attachedView);
+    class ShowInfo {
+        int screenWidth = QMUIDisplayHelper.getScreenWidth(mContext);
+        int screenHeight = QMUIDisplayHelper.getScreenHeight(mContext);
+        int width;
+        int height;
+        int x;
+        int y;
+        View anchor;
+        int anchorCenter;
+        int direction = mPreferredDirection;
+        int contentWidthMeasureSpec;
+        int contentHeightMeasureSpec;
+        int decorationLeft = 0;
+        int decorationRight = 0;
+        int decorationTop = 0;
+        int decorationBottom = 0;
 
-        showArrow();
-
-        setAnimationStyle(mScreenSize.x, mArrowCenter);
-
-        int offsetY = 0;
-        if (mDirection == DIRECTION_TOP) {
-            offsetY = mOffsetYWhenTop;
-        } else if (mDirection == DIRECTION_BOTTOM) {
-            offsetY = mOffsetYWhenBottom;
+        float anchorProportion() {
+            return (anchorCenter - x) / (float) width;
         }
-        return new Point(mX + mOffsetX, mY + offsetY);
+
+        int windowWidth() {
+            return decorationLeft + width + decorationRight;
+        }
+
+        int windowHeight() {
+            return decorationTop + height + decorationBottom;
+        }
     }
 
-    @Override
-    protected void onWindowSizeChange() {
-
+    private boolean shouldShowShadow() {
+        return mAddShadow && QMUILayoutHelper.useFeature();
     }
 
-    private void calculatePosition(View attachedView) {
-        if (attachedView != null) {
-            int[] attachedViewLocation = new int[2];
-            attachedView.getLocationOnScreen(attachedViewLocation);
-            mArrowCenter = attachedViewLocation[0] + attachedView.getWidth() / 2;
-            if (mArrowCenter < mScreenSize.x / 2) {//描点在左侧
-                if (mArrowCenter - mWindowWidth / 2 > mPopupLeftRightMinMargin) {
-                    mX = mArrowCenter - mWindowWidth / 2;
-                } else {
-                    mX = mPopupLeftRightMinMargin;
-                }
-            } else {//描点在右侧
-                if (mArrowCenter + mWindowWidth / 2 < mScreenSize.x - mPopupLeftRightMinMargin) {
-                    mX = mArrowCenter - mWindowWidth / 2;
-                } else {
-                    mX = mScreenSize.x - mPopupLeftRightMinMargin - mWindowWidth;
-                }
-            }
-            //实际的方向和期望的方向可能不一致，每次都需要重新
-            mDirection = mPreferredDirection;
-            switch (mPreferredDirection) {
-                case DIRECTION_TOP:
-                    mY = attachedViewLocation[1] - mWindowHeight;
-                    if (mY < mPopupTopBottomMinMargin) {
-                        mY = attachedViewLocation[1] + attachedView.getHeight();
-                        mDirection = DIRECTION_BOTTOM;
-                    }
-                    break;
-                case DIRECTION_BOTTOM:
-                    mY = attachedViewLocation[1] + attachedView.getHeight();
-                    if (mY > mScreenSize.y - mPopupTopBottomMinMargin - mWindowHeight) {
-                        mY = attachedViewLocation[1] - mWindowHeight;
-                        mDirection = DIRECTION_TOP;
-                    }
-                    break;
-                case DIRECTION_NONE:
-                    // 默认Y值与attachedView的Y值相同
-                    mY = attachedViewLocation[1];
-                    break;
-            }
+    public QMUIPopup show(@NonNull View anchor) {
+        if (mContentView == null) {
+            throw new RuntimeException("you should call view() to set your content view");
+        }
+        ShowInfo showInfo = new ShowInfo();
+        calculateWindowSize(showInfo);
+        getInfoFromAnchor(showInfo, anchor);
+        calculateXY(showInfo);
+        adjustShowInfo(showInfo);
+        decorateContentView(showInfo);
+        setAnimationStyle(showInfo.anchorProportion(), showInfo.direction);
+        mWindow.setWidth(showInfo.windowWidth());
+        mWindow.setHeight(showInfo.windowHeight());
+        showAtLocation(anchor, showInfo.x, showInfo.y);
+        return this;
+    }
+
+    private void getInfoFromAnchor(ShowInfo showInfo, @NonNull View anchor) {
+        showInfo.anchor = anchor;
+        showInfo.anchorCenter = mAnchorLocation[0] + anchor.getWidth() / 2;
+        anchor.getLocationOnScreen(mAnchorLocation);
+    }
+
+    private void decorateContentView(ShowInfo showInfo) {
+        ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
+        if (mBorderColor == NOT_SET) {
+            mBorderColor = QMUIResHelper.getAttrColor(mContext, R.attr.qmui_popup_border_color);
+            mBorderWidth = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_border_width);
+        }
+
+        if (mBgColor == NOT_SET) {
+            mBgColor = QMUIResHelper.getAttrColor(mContext, R.attr.qmui_popup_bg_color);
+        }
+        contentView.setBackgroundColor(mBgColor);
+        contentView.setBorderColor(mBorderColor);
+        contentView.setBorderWidth(mBorderWidth);
+        contentView.setShowBorderOnlyBeforeL(mRemoveBorderWhenShadow);
+        if (mRadius == NOT_SET) {
+            mRadius = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_radius);
+        }
+
+        if (shouldShowShadow()) {
+            contentView.setRadiusAndShadow(mRadius, mShadowElevation, mShadowAlpha);
         } else {
-            mX = (mScreenSize.x - mWindowWidth) / 2;
-            mY = (mScreenSize.y - mWindowHeight) / 2;
-            mDirection = DIRECTION_NONE;
+            contentView.setRadius(mRadius);
+        }
+
+        DecorRootView decorRootView = new DecorRootView(mContext, showInfo);
+        decorRootView.setContentView(contentView);
+        mWindow.setContentView(decorRootView);
+    }
+
+    private void adjustShowInfo(ShowInfo showInfo) {
+        if (shouldShowShadow()) {
+            if (mShadowElevation == NOT_SET) {
+                mShadowElevation = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_shadow_elevation);
+                mShadowAlpha = QMUIResHelper.getAttrFloatValue(mContext, R.attr.qmui_popup_shadow_alpha);
+            }
+            if (mShadowInset == NOT_SET) {
+                mShadowInset = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_shadow_inset);
+            }
+
+            int originX = showInfo.x, originY = showInfo.y;
+            if (originX - mShadowInset > 0) {
+                showInfo.x -= mShadowInset;
+                showInfo.decorationLeft = mShadowInset;
+            } else {
+                showInfo.decorationLeft = originX;
+                showInfo.x = 0;
+            }
+            if (originX + showInfo.width + mShadowInset < showInfo.screenWidth) {
+                showInfo.decorationRight = mShadowInset;
+            } else {
+                showInfo.decorationRight = showInfo.screenWidth - originX - showInfo.width;
+            }
+            if (originY - mShadowInset > 0) {
+                showInfo.y -= mShadowInset;
+                showInfo.decorationTop = mShadowInset;
+            } else {
+                showInfo.decorationTop = originY;
+                showInfo.y = 0;
+            }
+            if (originY + showInfo.height + mShadowInset < showInfo.screenHeight) {
+                showInfo.decorationBottom = mShadowInset;
+            } else {
+                showInfo.decorationBottom = showInfo.screenHeight - originY - showInfo.height;
+            }
+        }
+
+        if (mShowArrow && showInfo.direction != DIRECTION_CENTER_IN_SCREEN) {
+            if (mArrowWidth == NOT_SET) {
+                mArrowWidth = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_arrow_width);
+            }
+            if (mArrowHeight == NOT_SET) {
+                mArrowHeight = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_arrow_height);
+            }
+            if (showInfo.direction == DIRECTION_BOTTOM) {
+                if (shouldShowShadow()) {
+                    showInfo.y += mArrowHeight;
+                }
+                showInfo.decorationTop = Math.max(showInfo.decorationTop, mArrowHeight);
+            } else if (showInfo.direction == DIRECTION_TOP) {
+                showInfo.decorationBottom = Math.max(showInfo.decorationBottom, mArrowHeight);
+                showInfo.y -= mArrowHeight;
+            }
         }
     }
 
-    /**
-     * Set animation style
-     *
-     * @param screenWidth screen width
-     * @param requestedX  distance from left edge
-     */
-    private void setAnimationStyle(int screenWidth, int requestedX) {
-        int arrowPos = requestedX;
-        if (mArrowUp != null) {
-            arrowPos -= mArrowUp.getMeasuredWidth() / 2;
+    private void calculateXY(ShowInfo showInfo) {
+        if (showInfo.anchorCenter < showInfo.screenWidth / 2) { // anchor point on the left
+            showInfo.x = Math.max(mEdgeProtectionLeft, showInfo.anchorCenter - showInfo.width / 2 + mOffsetX);
+        } else { // anchor point on the left
+            showInfo.x = Math.min(showInfo.screenWidth - mEdgeProtectionRight - showInfo.width,
+                    showInfo.anchorCenter - showInfo.width / 2 + mOffsetX);
         }
-        boolean onTop = mDirection == DIRECTION_TOP;
+        int nextDirection = DIRECTION_CENTER_IN_SCREEN;
+        if (mPreferredDirection == DIRECTION_BOTTOM) {
+            nextDirection = DIRECTION_TOP;
+        } else if (mPreferredDirection == DIRECTION_TOP) {
+            nextDirection = DIRECTION_BOTTOM;
+        }
+        handleDirection(showInfo, mPreferredDirection, nextDirection);
+    }
+
+    private void handleDirection(ShowInfo showInfo, int currentDirection, int nextDirection) {
+        if (currentDirection == DIRECTION_CENTER_IN_SCREEN) {
+            showInfo.x = (showInfo.screenWidth - showInfo.width) / 2;
+            showInfo.y = (showInfo.screenHeight - showInfo.height) / 2;
+            showInfo.direction = DIRECTION_CENTER_IN_SCREEN;
+        } else if (currentDirection == DIRECTION_TOP) {
+            showInfo.y = mAnchorLocation[1] - showInfo.height - mOffsetYIfTop;
+            if (showInfo.y < mEdgeProtectionTop) {
+                handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
+            } else {
+                showInfo.direction = DIRECTION_TOP;
+            }
+        } else if (currentDirection == DIRECTION_BOTTOM) {
+            showInfo.y = mAnchorLocation[1] + showInfo.anchor.getHeight() + mOffsetYIfBottom;
+            if (showInfo.y > showInfo.screenHeight - mEdgeProtectionBottom - showInfo.height) {
+                handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
+            } else {
+                showInfo.direction = DIRECTION_BOTTOM;
+            }
+        }
+    }
+
+    private void calculateWindowSize(ShowInfo showInfo) {
+        boolean needMeasureForWidth = false, needMeasureForHeight = false;
+        if (mInitWidth > 0) {
+            showInfo.width = mInitWidth;
+            showInfo.contentWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                    mInitWidth, View.MeasureSpec.EXACTLY);
+        } else {
+            int maxWidth = showInfo.screenWidth - mEdgeProtectionLeft - mEdgeProtectionRight;
+            if (mInitWidth == ViewGroup.LayoutParams.MATCH_PARENT) {
+                showInfo.width = maxWidth;
+                showInfo.contentWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                        maxWidth, View.MeasureSpec.EXACTLY);
+            } else {
+                needMeasureForWidth = true;
+                showInfo.contentWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                        maxWidth, View.MeasureSpec.AT_MOST);
+            }
+        }
+        if (mInitHeight > 0) {
+            showInfo.height = mInitHeight;
+            showInfo.contentHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                    mInitHeight, View.MeasureSpec.EXACTLY);
+        } else {
+            int maxHeight = showInfo.screenHeight - mEdgeProtectionTop - mEdgeProtectionBottom;
+            if (mInitHeight == ViewGroup.LayoutParams.MATCH_PARENT) {
+                showInfo.height = maxHeight;
+                showInfo.contentHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                        maxHeight, View.MeasureSpec.EXACTLY);
+            } else {
+                needMeasureForHeight = true;
+                showInfo.contentHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                        maxHeight, View.MeasureSpec.AT_MOST);
+            }
+        }
+
+        if (needMeasureForWidth || needMeasureForHeight) {
+            mContentView.measure(
+                    showInfo.contentWidthMeasureSpec, showInfo.contentHeightMeasureSpec);
+            if (needMeasureForWidth) {
+                showInfo.width = mContentView.getMeasuredWidth();
+            }
+            if (needMeasureForHeight) {
+                showInfo.height = mContentView.getMeasuredHeight();
+            }
+        }
+    }
+
+    private void setAnimationStyle(float anchorProportion, @Direction int direction) {
+        boolean onTop = direction == DIRECTION_TOP;
         switch (mAnimStyle) {
             case ANIM_GROW_FROM_LEFT:
                 mWindow.setAnimationStyle(onTop ? R.style.QMUI_Animation_PopUpMenu_Left : R.style.QMUI_Animation_PopDownMenu_Left);
@@ -210,106 +423,157 @@ public class QMUIPopup extends QMUIBasePopup {
                 mWindow.setAnimationStyle(onTop ? R.style.QMUI_Animation_PopUpMenu_Center : R.style.QMUI_Animation_PopDownMenu_Center);
                 break;
             case ANIM_AUTO:
-                if (arrowPos <= screenWidth / 4) {
+                if (anchorProportion <= 0.25f) {
                     mWindow.setAnimationStyle(onTop ? R.style.QMUI_Animation_PopUpMenu_Left : R.style.QMUI_Animation_PopDownMenu_Left);
-                } else if (arrowPos > screenWidth / 4 && arrowPos < 3 * (screenWidth / 4)) {
+                } else if (anchorProportion > 0.25f && anchorProportion < 0.75f) {
                     mWindow.setAnimationStyle(onTop ? R.style.QMUI_Animation_PopUpMenu_Center : R.style.QMUI_Animation_PopDownMenu_Center);
                 } else {
                     mWindow.setAnimationStyle(onTop ? R.style.QMUI_Animation_PopUpMenu_Right : R.style.QMUI_Animation_PopDownMenu_Right);
                 }
-
+                break;
+            case ANIM_SPEC:
+                mWindow.setAnimationStyle(mSpecAnimStyle);
                 break;
         }
     }
 
-    /**
-     * 显示箭头（上/下）
-     */
-    private void showArrow() {
-        View showArrow = null;
-        switch (mDirection) {
-            case DIRECTION_BOTTOM:
-                setViewVisibility(mArrowUp, true);
-                setViewVisibility(mArrowDown, false);
-                showArrow = mArrowUp;
-                break;
-            case DIRECTION_TOP:
-                setViewVisibility(mArrowDown, true);
-                setViewVisibility(mArrowUp, false);
-                showArrow = mArrowDown;
-                break;
-            case DIRECTION_NONE:
-                setViewVisibility(mArrowDown, false);
-                setViewVisibility(mArrowUp, false);
-                break;
+    static class ContentView extends QMUIFrameLayout {
+        private ContentView(Context context) {
+            super(context);
         }
 
-        if (showArrow != null) {
-            final int arrowWidth = mArrowUp.getMeasuredWidth();
-            ViewGroup.MarginLayoutParams param = (ViewGroup.MarginLayoutParams) showArrow.getLayoutParams();
-            param.leftMargin = mArrowCenter - mX - arrowWidth / 2;
-        }
-    }
-
-    /**
-     * 菜单弹出动画
-     *
-     * @param mAnimStyle 默认是 ANIM_AUTO
-     */
-    public void setAnimStyle(int mAnimStyle) {
-        this.mAnimStyle = mAnimStyle;
-    }
-
-    @Override
-    public void setContentView(View root) {
-        if (root.getBackground() != null) {
-            if (root instanceof IQMUILayout) {
-                ((IQMUILayout) root).setRadius(getRootLayoutRadius(mContext));
-            } else {
-                QMUIFrameLayout clipLayout = new QMUIFrameLayout(mContext);
-                clipLayout.setRadius(getRootLayoutRadius(mContext));
-                clipLayout.addView(root);
-                root = clipLayout;
+        static ContentView wrap(View businessView, int width, int height) {
+            ContentView contentView = new ContentView(businessView.getContext());
+            if (businessView.getParent() != null) {
+                ((ViewGroup) businessView.getParent()).removeView(businessView);
             }
-
-        }
-        @SuppressLint("InflateParams") FrameLayout layout = (FrameLayout) LayoutInflater.from(mContext)
-                .inflate(getRootLayout(), null, false);
-        mArrowDown = (ImageView) layout.findViewById(R.id.arrow_down);
-        mArrowUp = (ImageView) layout.findViewById(R.id.arrow_up);
-        FrameLayout box = (FrameLayout) layout.findViewById(R.id.box);
-        box.addView(root);
-
-        super.setContentView(layout);
-    }
-
-    /**
-     * the root layout: must provide ids: arrow_down(ImageView), arrow_up(ImageView), box(FrameLayout)
-     *
-     * @return
-     */
-    @LayoutRes
-    protected int getRootLayout() {
-        return R.layout.qmui_popup_layout;
-    }
-
-    protected int getRootLayoutRadius(Context context) {
-        return QMUIDisplayHelper.dp2px(context, 5);
-    }
-
-    private void setViewVisibility(View view, boolean visible) {
-        if (view != null) {
-            view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+            contentView.addView(businessView, new FrameLayout.LayoutParams(width, height));
+            return contentView;
         }
     }
 
-    public ViewGroup.LayoutParams generateLayoutParam(int width, int height) {
-        return new FrameLayout.LayoutParams(width, height);
-    }
+    class DecorRootView extends FrameLayout {
+        private ShowInfo mShowInfo;
+        private View mContentView;
+        private Paint mArrowPaint;
+        private Path mArrowPath;
 
-    @IntDef({DIRECTION_NONE, DIRECTION_TOP, DIRECTION_BOTTOM})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Direction {
-    }
+        private int mPendingWidth;
+        private int mPendingHeight;
+        private Runnable mUpdateWindowAction = new Runnable() {
+            @Override
+            public void run() {
+                mShowInfo.width = mPendingWidth;
+                mShowInfo.height = mPendingHeight;
+                calculateXY(mShowInfo);
+                adjustShowInfo(mShowInfo);
+                mWindow.update(mShowInfo.x, mShowInfo.y, mShowInfo.windowWidth(), mShowInfo.windowHeight());
+            }
+        };
 
+        private DecorRootView(Context context, ShowInfo showInfo) {
+            super(context);
+            mShowInfo = showInfo;
+            mArrowPaint = new Paint();
+            mArrowPaint.setAntiAlias(true);
+            mArrowPath = new Path();
+        }
+
+
+        public void setContentView(View contentView) {
+            if (mContentView != null) {
+                removeView(mContentView);
+            }
+            if (contentView.getParent() != null) {
+                ((ViewGroup) contentView.getParent()).removeView(contentView);
+            }
+            mContentView = contentView;
+            addView(contentView);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            removeCallbacks(mUpdateWindowAction);
+            if (mContentView != null) {
+                mContentView.measure(mShowInfo.contentWidthMeasureSpec, mShowInfo.contentHeightMeasureSpec);
+                int measuredWidth = mContentView.getMeasuredWidth();
+                int measuredHeight = mContentView.getMeasuredHeight();
+                if (mShowInfo.width != measuredWidth || mShowInfo.height != measuredHeight) {
+                    mPendingWidth = measuredWidth;
+                    mPendingHeight = measuredHeight;
+                    post(mUpdateWindowAction);
+                }
+            }
+            setMeasuredDimension(mShowInfo.windowWidth(), mShowInfo.windowHeight());
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            if (mContentView != null) {
+                mContentView.layout(mShowInfo.decorationLeft, mShowInfo.decorationTop,
+                        mShowInfo.width + mShowInfo.decorationLeft,
+                        mShowInfo.height + mShowInfo.decorationTop);
+            }
+        }
+
+        @Override
+        protected void onAttachedToWindow() {
+            super.onAttachedToWindow();
+            removeCallbacks(mUpdateWindowAction);
+        }
+
+        @Override
+        protected void dispatchDraw(Canvas canvas) {
+            super.dispatchDraw(canvas);
+            if (mShowArrow) {
+                if (mShowInfo.direction == DIRECTION_TOP) {
+                    canvas.save();
+                    mArrowPaint.setStyle(Paint.Style.FILL);
+                    mArrowPaint.setColor(mBgColor);
+                    int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
+                    l = Math.min(Math.max(l, mShowInfo.decorationLeft),
+                            getWidth() - mShowInfo.decorationRight - mArrowWidth);
+                    int t = mShowInfo.decorationTop + mShowInfo.height - mBorderWidth - 1;
+                    canvas.translate(l, t);
+                    mArrowPath.reset();
+                    mArrowPath.setLastPoint(0, 0);
+                    mArrowPath.lineTo(mArrowWidth / 2, mArrowHeight);
+                    mArrowPath.lineTo(mArrowWidth, 0);
+                    mArrowPath.close();
+                    canvas.drawPath(mArrowPath, mArrowPaint);
+                    if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
+                        mArrowPaint.setStrokeWidth(mBorderWidth);
+                        mArrowPaint.setColor(mBorderColor);
+                        mArrowPaint.setStyle(Paint.Style.STROKE);
+                        canvas.drawLine(0, 0, mArrowWidth / 2, mArrowHeight, mArrowPaint);
+                        canvas.drawLine(mArrowWidth / 2, mArrowHeight, mArrowWidth, 0, mArrowPaint);
+                    }
+                    canvas.restore();
+                } else if (mShowInfo.direction == DIRECTION_BOTTOM) {
+                    canvas.save();
+                    mArrowPaint.setStyle(Paint.Style.FILL);
+                    mArrowPaint.setColor(mBgColor);
+                    int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
+                    l = Math.min(Math.max(l, mShowInfo.decorationLeft),
+                            getWidth() - mShowInfo.decorationRight - mArrowWidth);
+                    int t = mShowInfo.decorationTop + mBorderWidth + 1;
+                    canvas.translate(l, t);
+                    mArrowPath.reset();
+                    mArrowPath.setLastPoint(0, 0);
+                    mArrowPath.lineTo(mArrowWidth / 2, -mArrowHeight);
+                    mArrowPath.lineTo(mArrowWidth, 0);
+                    mArrowPath.close();
+                    canvas.drawPath(mArrowPath, mArrowPaint);
+                    if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
+                        mArrowPaint.setStrokeWidth(mBorderWidth);
+                        mArrowPaint.setStyle(Paint.Style.STROKE);
+                        mArrowPaint.setColor(mBorderColor);
+                        canvas.drawLine(0, 0, mArrowWidth / 2, -mArrowHeight, mArrowPaint);
+                        canvas.drawLine(mArrowWidth / 2, -mArrowHeight, mArrowWidth, 0, mArrowPaint);
+                    }
+                    canvas.restore();
+                }
+            }
+        }
+    }
 }

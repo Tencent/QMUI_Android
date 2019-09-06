@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -15,55 +14,59 @@
  limitations under the License.
 -->
 
-<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/qmui_topbar_height"
-        android:background="@color/qmui_config_color_white"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:fitsSystemWindows="true">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-                android:id="@+id/actionBtn1"
-                style="@style/QDRoundButtonStyle"
-                android:layout_centerInParent="true"
-                android:text="@string/popup_normal_action_button_text_show"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@drawable/qmui_divider_top_bitmap"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-                android:id="@+id/actionBtn2"
-                style="@style/QDRoundButtonStyle"
-                android:layout_centerInParent="true"
-                android:text="@string/popup_list_action_button_text_show"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout2 xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/qmui_config_color_white">
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout
         android:id="@+id/topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"/>
-</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
+        android:fitsSystemWindows="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.qmuiteam.qmui.widget.QMUIFloatLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topbar"
+        app:qmui_childHorizontalSpacing="20dp"
+        app:qmui_childVerticalSpacing="20dp"
+        android:padding="20dp">
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn1"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/popup_normal_action_button_text_show" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn2"
+            style="@style/QDRoundButtonStyle"
+            android:layout_centerInParent="true"
+            android:text="@string/popup_list_action_button_text_show" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn3"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/popup_dim_amount_action_button_text_show" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn4"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/popup_dynamic_update_content" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn5"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/fullscreen_popup_with_close_btn" />
+    </com.qmuiteam.qmui.widget.QMUIFloatLayout>
+
+
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout2>
+

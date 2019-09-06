@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -281,9 +280,14 @@
         <item name="qmui_special_drawable_padding">5dp</item>
     </style>
 
-    <style name="QMUI.Animation" parent="@android:style/Animation"/>
+    <style name="QMUI.Animation" parent="@android:style/Animation" />
 
-    <style name="QMUI.Animation.PopUpMenu"/>
+    <style name="QMUI.Animation.Scale">
+        <item name="android:windowEnterAnimation">@anim/scale_in_center</item>
+        <item name="android:windowExitAnimation">@anim/scale_out_center</item>
+    </style>
+
+    <style name="QMUI.Animation.PopUpMenu" />
 
     <style name="QMUI.Animation.PopUpMenu.Center">
         <item name="android:windowEnterAnimation">@anim/grow_from_bottom</item>
@@ -300,7 +304,7 @@
         <item name="android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
     </style>
 
-    <style name="QMUI.Animation.PopDownMenu"/>
+    <style name="QMUI.Animation.PopDownMenu" />
 
     <style name="QMUI.Animation.PopDownMenu.Center">
         <item name="android:windowEnterAnimation">@anim/grow_from_top</item>
