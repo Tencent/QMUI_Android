@@ -19,17 +19,6 @@ package com.qmuiteam.qmui.widget.pullRefreshLayout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.NestedScrollingParent;
-import androidx.core.view.NestedScrollingParentHelper;
-import androidx.core.view.ViewCompat;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -47,6 +36,17 @@ import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.NestedScrollingParent;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 /**
  * 下拉刷新控件, 作为容器，下拉时会将子 View 下移, 并拉出 RefreshView（表示正在刷新的 View）
@@ -193,12 +193,12 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         if (view == null) {
             return false;
         }
-        if(view instanceof QMUIContinuousNestedScrollLayout) {
+        if (view instanceof QMUIContinuousNestedScrollLayout) {
             QMUIContinuousNestedScrollLayout layout = (QMUIContinuousNestedScrollLayout) view;
             return layout.getCurrentScroll() > 0;
         }
 
-        if(view instanceof QMUIStickySectionLayout){
+        if (view instanceof QMUIStickySectionLayout) {
             QMUIStickySectionLayout layout = (QMUIStickySectionLayout) view;
             return defaultCanScrollUp(layout.getRecyclerView());
         }
@@ -291,17 +291,17 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
     /**
      * child view call, to ensure disallowInterceptTouchEvent make sense
-     *
+     * <p>
      * how to optimize this...
      */
-    public void openSafeDisallowInterceptTouchEvent(){
+    public void openSafeDisallowInterceptTouchEvent() {
         mSafeDisallowInterceptTouchEvent = true;
     }
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
 
-        if(mSafeDisallowInterceptTouchEvent){
+        if (mSafeDisallowInterceptTouchEvent) {
             super.requestDisallowInterceptTouchEvent(b);
             mSafeDisallowInterceptTouchEvent = false;
         }
@@ -420,7 +420,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 startDragging(x, y);
                 break;
 
-            case MotionEventCompat.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 break;
 
@@ -495,7 +495,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 break;
             }
             case MotionEvent.ACTION_POINTER_DOWN: {
-                pointerIndex = MotionEventCompat.getActionIndex(ev);
+                pointerIndex = ev.getActionIndex();
                 if (pointerIndex < 0) {
                     Log.e(TAG, "Got ACTION_POINTER_DOWN event but have an invalid action index.");
                     return false;
@@ -706,7 +706,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
 
     private void onSecondaryPointerUp(MotionEvent ev) {
-        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
+        final int pointerIndex = ev.getActionIndex();
         final int pointerId = ev.getPointerId(pointerIndex);
         if (pointerId == mActivePointerId) {
             // This was our active pointer going up. Choose a new
