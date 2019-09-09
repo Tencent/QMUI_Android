@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
@@ -117,7 +118,7 @@ public class QMUIWindowInsetHelper {
             }
 
             Rect childInsets = new Rect(insets);
-            computeInsetsWithGravity(child, childInsets);
+            computeInsets(child, childInsets);
 
             if (!isHandleContainer(child)) {
                 child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
@@ -181,7 +182,7 @@ public class QMUIWindowInsetHelper {
                     insetRight,
                     showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
 
-            computeInsetsWithGravity(child, childInsets);
+            computeInsets(child, childInsets);
             WindowInsetsCompat windowInsetsCompat = ViewCompat.dispatchApplyWindowInsets(child, insets.replaceSystemWindowInsets(childInsets));
             consumed = consumed || (windowInsetsCompat != null && windowInsetsCompat.isConsumed());
         }
@@ -224,7 +225,7 @@ public class QMUIWindowInsetHelper {
                         insets.getSystemWindowInsetTop(),
                         insets.getSystemWindowInsetRight(),
                         showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
-                computeInsetsWithGravity(child, childInsets);
+                computeInsets(child, childInsets);
                 WindowInsets childWindowInsets = insets.replaceSystemWindowInsets(childInsets);
                 WindowInsets windowInsets = child.dispatchApplyWindowInsets(childWindowInsets);
                 consumed = consumed || windowInsets.isConsumed();
@@ -275,9 +276,17 @@ public class QMUIWindowInsetHelper {
         sCustomHandlerContainerList.add(clazz);
     }
 
-    @SuppressLint("RtlHardcoded")
-    public void computeInsetsWithGravity(View view, Rect insets) {
+    public void computeInsets(View view, Rect insets) {
         ViewGroup.LayoutParams lp = view.getLayoutParams();
+        if(lp instanceof ConstraintLayout.LayoutParams){
+            computeInsetsWithConstraint(view, insets, (ConstraintLayout.LayoutParams) lp);
+        }else{
+            computeInsetsWithGravity(view, insets, lp);
+        }
+    }
+
+    @SuppressLint("RtlHardcoded")
+    public void computeInsetsWithGravity(View view, Rect insets, ViewGroup.LayoutParams lp) {
         int gravity = -1;
         if (lp instanceof FrameLayout.LayoutParams) {
             gravity = ((FrameLayout.LayoutParams) lp).gravity;
@@ -292,7 +301,7 @@ public class QMUIWindowInsetHelper {
             gravity = Gravity.TOP | Gravity.LEFT;
         }
 
-        if (lp.width != FrameLayout.LayoutParams.MATCH_PARENT) {
+        if (lp.width != ViewGroup.LayoutParams.MATCH_PARENT) {
             int horizontalGravity = gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
             switch (horizontalGravity) {
                 case Gravity.LEFT:
@@ -304,7 +313,7 @@ public class QMUIWindowInsetHelper {
             }
         }
 
-        if (lp.height != FrameLayout.LayoutParams.MATCH_PARENT) {
+        if (lp.height != ViewGroup.LayoutParams.MATCH_PARENT) {
             int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
             switch (verticalGravity) {
                 case Gravity.TOP:
@@ -313,6 +322,24 @@ public class QMUIWindowInsetHelper {
                 case Gravity.BOTTOM:
                     insets.top = 0;
                     break;
+            }
+        }
+    }
+
+    public void computeInsetsWithConstraint(View view, Rect insets, ConstraintLayout.LayoutParams lp){
+        if (lp.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            if(lp.leftToLeft == ConstraintLayout.LayoutParams.PARENT_ID){
+                insets.right = 0;
+            }else if(lp.rightToRight == ConstraintLayout.LayoutParams.PARENT_ID){
+                insets.left = 0;
+            }
+        }
+
+        if (lp.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            if(lp.topToTop == ConstraintLayout.LayoutParams.PARENT_ID){
+                insets.bottom = 0;
+            }else if(lp.bottomToBottom == ConstraintLayout.LayoutParams.PARENT_ID){
+                insets.top = 0;
             }
         }
     }

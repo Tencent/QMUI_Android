@@ -89,7 +89,7 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
     public boolean applySystemWindowInsets19(Rect insets) {
         if (getFitsSystemWindows()) {
             Rect childInsets = new Rect(insets);
-            mQMUIWindowInsetHelper.computeInsetsWithGravity(this, childInsets);
+            mQMUIWindowInsetHelper.computeInsets(this, childInsets);
             setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
             return true;
         }
@@ -122,7 +122,7 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
             }
 
             Rect childInsets = new Rect(insetLeft, insetTop, insetRight, insetBottom);
-            mQMUIWindowInsetHelper.computeInsetsWithGravity(this, childInsets);
+            mQMUIWindowInsetHelper.computeInsets(this, childInsets);
             setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
             return true;
         }
