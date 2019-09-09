@@ -265,7 +265,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             if (toExec != null) {
                 if (toExec instanceof QMUIFragment) {
                     QMUIFragment mFragment = (QMUIFragment) toExec;
-                    startFragment(mFragment);
+                    startFragmentAndDestroyCurrent(mFragment, false);
                 } else if (toExec instanceof Intent) {
                     Intent intent = (Intent) toExec;
                     startActivity(intent);
