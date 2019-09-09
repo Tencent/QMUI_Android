@@ -76,6 +76,10 @@ public abstract class BaseProcessor extends AbstractProcessor {
         printMessage(Diagnostic.Kind.ERROR, element, message, args);
     }
 
+    public void waring(Element element, String message, Object... args) {
+        printMessage(Diagnostic.Kind.WARNING, element, message, args);
+    }
+
     public void note(Element element, String message, Object... args) {
         printMessage(Diagnostic.Kind.NOTE, element, message, args);
     }
