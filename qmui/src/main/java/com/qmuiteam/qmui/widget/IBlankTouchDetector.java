@@ -13,10 +13,10 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.qmuiteam.qmui.widget.popup;
+package com.qmuiteam.qmui.widget;
 
 import android.view.MotionEvent;
 
-public interface IPopupTouchInterceptor {
+public interface IBlankTouchDetector {
     boolean isTouchInBlank(MotionEvent event);
 }

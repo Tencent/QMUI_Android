@@ -65,6 +65,11 @@
             android:id="@+id/actionBtn5"
             style="@style/QDRoundButtonStyle"
             android:text="@string/fullscreen_popup_with_close_btn" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn6"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/fullscreen_popup_with_input" />
     </com.qmuiteam.qmui.widget.QMUIFloatLayout>
 
 

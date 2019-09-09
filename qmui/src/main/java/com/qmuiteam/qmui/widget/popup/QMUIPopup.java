@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -36,6 +37,7 @@ import java.lang.annotation.RetentionPolicy;
 import androidx.annotation.AnimRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 
@@ -84,6 +86,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     private int mArrowWidth = NOT_SET;
     private int mArrowHeight = NOT_SET;
     private boolean mRemoveBorderWhenShadow = false;
+    private View mContentView;
 
     public QMUIPopup(Context context, int width, int height) {
         super(context);
@@ -179,6 +182,15 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     public QMUIPopup preferredDirection(@Direction int preferredDirection) {
         mPreferredDirection = preferredDirection;
         return this;
+    }
+
+    public QMUIPopup view(View contentView) {
+        mContentView = contentView;
+        return this;
+    }
+
+    public QMUIPopup view(@LayoutRes int contentViewResId) {
+        return view(LayoutInflater.from(mContext).inflate(contentViewResId, null));
     }
 
     class ShowInfo {
@@ -521,6 +533,8 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
             super.onAttachedToWindow();
             removeCallbacks(mUpdateWindowAction);
         }
+
+
 
         @Override
         protected void dispatchDraw(Canvas canvas) {

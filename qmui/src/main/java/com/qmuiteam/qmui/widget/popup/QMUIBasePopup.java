@@ -21,7 +21,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,7 +28,6 @@ import android.widget.PopupWindow;
 
 import java.lang.ref.WeakReference;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
@@ -41,7 +39,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     protected WindowManager mWindowManager;
     protected Context mContext;
     protected WeakReference<View> mAttachedViewRf;
-    protected View mContentView;
     private float mDimAmount = DEFAULT_DIM_AMOUNT;
     private PopupWindow.OnDismissListener mDismissListener;
     private boolean mDismissIfOutsideTouch = true;
@@ -95,15 +92,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     public T dimAmount(float dimAmount) {
         mDimAmount = dimAmount;
         return (T) this;
-    }
-
-    public T view(View contentView) {
-        mContentView = contentView;
-        return (T) this;
-    }
-
-    public T view(@LayoutRes int contentViewResId) {
-        return view(LayoutInflater.from(mContext).inflate(contentViewResId, null));
     }
 
 
@@ -175,7 +163,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         }
     }
 
-    protected void modifyWindowLayoutParams(WindowManager.LayoutParams lp){
+    protected void modifyWindowLayoutParams(WindowManager.LayoutParams lp) {
 
     }
 

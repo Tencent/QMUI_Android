@@ -16,12 +16,15 @@
 
 package com.qmuiteam.qmuidemo.fragment.components;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -34,6 +37,7 @@ import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.popup.QMUIFullScreenPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopups;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
@@ -78,6 +82,7 @@ public class QDPopupFragment extends BaseFragment {
                 .offsetX(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .offsetYIfBottom(QMUIDisplayHelper.dp2px(getContext(), 5))
                 .shadow(true)
+                .arrow(true)
                 .animStyle(QMUIPopup.ANIM_GROW_FROM_CENTER)
                 .onDismiss(new PopupWindow.OnDismissListener() {
                     @Override
@@ -208,11 +213,72 @@ public class QDPopupFragment extends BaseFragment {
         frameLayout.addView(textView, lp);
 
         QMUIPopups.fullScreenPopup(getContext())
-                .view(frameLayout)
+                .addView(frameLayout)
                 .closeBtn(true)
                 .onBlankClick(new QMUIFullScreenPopup.OnBlankClickListener() {
                     @Override
-                    public void onBlankClick() {
+                    public void onBlankClick(QMUIFullScreenPopup popup) {
+                        Toast.makeText(getContext(), "点击到空白区域", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onDismiss(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        Toast.makeText(getContext(), "onDismiss", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show(v);
+    }
+
+    @OnClick(R.id.actionBtn6)
+    void onClickBtn6(View v) {
+        QMUIFrameLayout frameLayout = new QMUIFrameLayout(getContext());
+        frameLayout.setBackgroundColor(Color.WHITE);
+        frameLayout.setRadius(QMUIDisplayHelper.dp2px(getContext(), 12));
+        int padding = QMUIDisplayHelper.dp2px(getContext(), 20);
+        frameLayout.setPadding(padding, padding, padding, padding);
+
+        TextView textView = new TextView(getContext());
+        textView.setLineSpacing(QMUIDisplayHelper.dp2px(getContext(), 4), 1.0f);
+        textView.setPadding(padding, padding, padding, padding);
+        textView.setText("这是自定义显示的内容");
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
+        textView.setGravity(Gravity.CENTER);
+        int size = QMUIDisplayHelper.dp2px(getContext(), 200);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
+        frameLayout.addView(textView, lp);
+
+        QMUIFrameLayout editParent = new QMUIFrameLayout(getContext());
+        editParent.setFitsSystemWindows(true);
+        EditText editText = new EditText(getContext());
+        editText.setHint("请输入...");
+        QMUIRoundButtonDrawable editBg = new QMUIRoundButtonDrawable();
+        editBg.setIsRadiusAdjustBounds(true);
+        editBg.setBgData(ColorStateList.valueOf(Color.WHITE));
+        editText.setBackground(editBg);
+        int paddingHor = QMUIDisplayHelper.dp2px(getContext(), 20);
+        int paddingVer = QMUIDisplayHelper.dp2px(getContext(), 10);
+        editText.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
+        editParent.addView(editText, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+        ConstraintLayout.LayoutParams eLp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int mar = QMUIDisplayHelper.dp2px(getContext(), 20);
+        eLp.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
+        eLp.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
+        eLp.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        eLp.leftMargin = mar;
+        eLp.rightMargin = mar;
+        eLp.bottomMargin = mar;
+
+        QMUIPopups.fullScreenPopup(getContext())
+                .addView(frameLayout, QMUIFullScreenPopup.getOffsetHalfKeyboardHeightListener())
+                .addView(editParent, eLp, QMUIFullScreenPopup.getOffsetKeyboardHeightListener())
+                .onBlankClick(new QMUIFullScreenPopup.OnBlankClickListener() {
+                    @Override
+                    public void onBlankClick(QMUIFullScreenPopup popup) {
+                        popup.dismiss();
                         Toast.makeText(getContext(), "点击到空白区域", Toast.LENGTH_SHORT).show();
                     }
                 })

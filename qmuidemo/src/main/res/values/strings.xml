@@ -86,6 +86,7 @@
     <string name="popup_dim_amount_action_button_text_show">显示带遮罩的普通浮层</string>
     <string name="popup_dynamic_update_content">显示浮层，并且动态更新内容</string>
     <string name="fullscreen_popup_with_close_btn">全屏浮层，带关闭按钮</string>
+    <string name="fullscreen_popup_with_input">全屏浮层，带输入</string>
 
     <!-- LinkTextView 展示界面 -->
     <string name="linkTextView_auto_identify">URL/Mail/Tel自动识别</string>
