@@ -177,4 +177,9 @@ public class HomeFragment extends BaseFragment {
     protected boolean canDragBack() {
         return false;
     }
+
+    @Override
+    public Object onLastFragmentFinish() {
+        return null;
+    }
 }
