@@ -118,6 +118,13 @@ public class DefaultLatestVisitStorage implements QMUILatestVisitStorage {
         editor.apply();
     }
 
+    @Override
+    public void clearAll() {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.apply();
+    }
+
     private void clearArgument(SharedPreferences.Editor editor, String prefix) {
         for (String key : sp.getAll().keySet()) {
             if (key.startsWith(prefix)) {
