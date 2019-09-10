@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.record.DefaultLatestVisitStorage;
 import com.qmuiteam.qmui.arch.record.QMUILatestVisitStorage;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
@@ -14,6 +15,7 @@ import com.qmuiteam.qmui.arch.record.RecordIdClassMap;
 import androidx.annotation.MainThread;
 
 public class QMUILatestVisit {
+    private static final String TAG = "QMUILatestVisit";
     private static QMUILatestVisit sInstance;
     private QMUILatestVisitStorage mStorage;
     private Context mContext;
@@ -81,26 +83,32 @@ public class QMUILatestVisit {
             return null;
         }
         Intent intent;
-        if (QMUIFragmentActivity.class.isAssignableFrom(activityCls)) {
-            int fragmentId = getStorage().getFragmentRecordId();
-            if (fragmentId == QMUILatestVisitStorage.NOT_EXIST) {
-                return null;
-            }
+        try {
+            if (QMUIFragmentActivity.class.isAssignableFrom(activityCls)) {
+                int fragmentId = getStorage().getFragmentRecordId();
+                if (fragmentId == QMUILatestVisitStorage.NOT_EXIST) {
+                    return null;
+                }
 
-            Class<?> fragmentCls = mRecordMap.getRecordClassById(fragmentId);
-            if (fragmentCls == null) {
-                return null;
+                Class<?> fragmentCls = mRecordMap.getRecordClassById(fragmentId);
+                if (fragmentCls == null) {
+                    return null;
+                }
+                Class<? extends QMUIFragmentActivity> activity = (Class<? extends QMUIFragmentActivity>) activityCls;
+                Class<? extends QMUIFragment> fragment = (Class<? extends QMUIFragment>) fragmentCls;
+                Bundle bundle = new Bundle();
+                getStorage().getAndWriteFragmentArgumentsToBundle(bundle);
+                intent = QMUIFragmentActivity.intentOf(context, activity, fragment, bundle);
+            } else {
+                intent = new Intent(context, activityCls);
             }
-            Class<? extends QMUIFragmentActivity> activity = (Class<? extends QMUIFragmentActivity>) activityCls;
-            Class<? extends QMUIFragment> fragment = (Class<? extends QMUIFragment>) fragmentCls;
-            Bundle bundle = new Bundle();
-            getStorage().getAndWriteFragmentArgumentsToBundle(bundle);
-            intent = QMUIFragmentActivity.intentOf(context, activity, fragment, bundle);
-        } else {
-            intent = new Intent(context, activityCls);
+            getStorage().getAndWriteActivityArgumentsToIntent(intent);
+            return intent;
+        }catch (Throwable throwable){
+            QMUILog.e(TAG, "getLatestVisitIntent failed.", throwable);
+            getStorage().clearAll();
         }
-        getStorage().getAndWriteActivityArgumentsToIntent(intent);
-        return intent;
+        return null;
     }
 
 

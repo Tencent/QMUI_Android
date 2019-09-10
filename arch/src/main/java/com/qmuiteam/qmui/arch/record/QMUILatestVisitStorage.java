@@ -30,4 +30,6 @@ public interface QMUILatestVisitStorage {
     void getAndWriteActivityArgumentsToIntent(@NonNull Intent intent);
 
     void clearActivityStorage();
+
+    void clearAll();
 }

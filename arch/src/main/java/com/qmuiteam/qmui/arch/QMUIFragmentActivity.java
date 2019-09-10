@@ -358,7 +358,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             super.onLayout(changed, left, top, right, bottom);
             for (int i = 0; i < getChildCount(); i++) {
                 SwipeBackLayout.updateLayoutInSwipeBack(getChildAt(i));
-
             }
         }
     }
