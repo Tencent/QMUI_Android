@@ -16,18 +16,27 @@
 
 package com.qmuiteam.qmui.util;
 
+import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.view.View;
 import android.view.WindowManager;
 
+import com.qmuiteam.qmui.BuildConfig;
+
+import java.lang.reflect.Field;
+import java.util.List;
+
 /**
- *
  * @author cginechen
  * @date 2016-08-05
  */
 public class QMUIWindowHelper {
     /**
      * 设置WindowManager.LayoutParams的type
-     *
+     * <p>
      * 1.使用 type 值为 TYPE_PHONE 和TYPE_SYSTEM_ALERT 需要申请 SYSTEM_ALERT_WINDOW 权限
      * 2.type 值为 TYPE_TOAST 显示的 System overlay view 不需要权限，即可在任何平台显示。
      * 3.type 值为 TYPE_TOAST在API level 19 以下因无法接收无法接收触摸（点击)和按键事件
@@ -36,11 +45,35 @@ public class QMUIWindowHelper {
      * 5. 不直接返回type而是传layoutParams是不想调用者增加 @SuppressWarnings({"ResourceType"}) 跳过编译器的检查
      */
 
-    public static void setWindowType(WindowManager.LayoutParams layoutParams){
+    public static void setWindowType(WindowManager.LayoutParams layoutParams) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
         } else {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
+    }
+
+
+    @Nullable
+    @SuppressWarnings({"JavaReflectionMemberAccess"})
+    public static Rect unSafeGetWindowVisibleInsets(View view) {
+        try {
+            // Android P forbid the reflection for @hide filed,
+            // fortunately now it is in light greylist, just be warned.
+            Field field = View.class.getDeclaredField("mAttachInfo");
+            field.setAccessible(true);
+            Object attachInfo = field.get(view);
+            Field visibleInsetsField = attachInfo.getClass().getDeclaredField("mVisibleInsets");
+            visibleInsetsField.setAccessible(true);
+            Object visibleInsets = visibleInsetsField.get(attachInfo);
+            if (visibleInsets instanceof Rect) {
+                return (Rect) visibleInsets;
+            }
+        } catch (Throwable e) {
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

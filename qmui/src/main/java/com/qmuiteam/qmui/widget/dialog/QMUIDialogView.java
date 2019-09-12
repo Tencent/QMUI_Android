@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.qmuiteam.qmui.R;
@@ -69,6 +70,12 @@ public class QMUIDialogView extends QMUILinearLayout {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
         }
+    }
+
+    @Override
+    protected void measureChildWithMargins(View child, int parentWidthMeasureSpec,
+                                           int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
+        super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
     }
 
     @Override

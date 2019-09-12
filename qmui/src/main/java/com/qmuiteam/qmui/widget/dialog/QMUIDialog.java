@@ -27,14 +27,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
 import android.text.method.TransformationMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +51,7 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIWindowHelper;
 import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
@@ -803,7 +805,7 @@ public class QMUIDialog extends Dialog {
 
         @Override
         public MultiCheckableDialogBuilder addItem(QMUIDialogMenuItemView itemView, OnClickListener listener) {
-            if(mMenuItemViewsFactoryList.size() >= 32){
+            if (mMenuItemViewsFactoryList.size() >= 32) {
                 throw new RuntimeException("there are more than 32 items, please use LiseView to improve performance!!");
             }
             return super.addItem(itemView, listener);
@@ -811,7 +813,7 @@ public class QMUIDialog extends Dialog {
 
         @Override
         public MultiCheckableDialogBuilder addItem(ItemViewFactory itemViewFactory, OnClickListener listener) {
-            if(mMenuItemViewsFactoryList.size() >= 32){
+            if (mMenuItemViewsFactoryList.size() >= 32) {
                 throw new RuntimeException("there are more than 32 items, please use LiseView to improve performance!!");
             }
             return super.addItem(itemViewFactory, listener);
@@ -907,9 +909,11 @@ public class QMUIDialog extends Dialog {
 
         private ScrollView mScrollerView;
 
+        private boolean mAnchorHeightFirstSet = false;
         private int mAnchorHeight = 0;
-        private int mScreenHeight = 0;
         private int mScrollHeight = 0;
+        private Rect mVisibleInsetRect = null;
+        private Rect mVisibleDisplayFrame = new Rect();
 
         public AutoResizeDialogBuilder(Context context) {
             super(context);
@@ -926,8 +930,9 @@ public class QMUIDialog extends Dialog {
         @Override
         protected void onAfter(QMUIDialog dialog, LinearLayout parent, Context context) {
             super.onAfter(dialog, parent, context);
-            bindEvent(context);
+            bindEvent(context, parent);
         }
+
 
         public abstract View onBuildContent(QMUIDialog dialog, ScrollView parent);
 
@@ -935,7 +940,22 @@ public class QMUIDialog extends Dialog {
             return ScrollView.LayoutParams.WRAP_CONTENT;
         }
 
-        private void bindEvent(final Context context) {
+        private void bindEvent(final Context context, View rootView) {
+            if (ViewCompat.isAttachedToWindow(rootView)) {
+                mVisibleInsetRect = QMUIWindowHelper.unSafeGetWindowVisibleInsets(rootView);
+            } else {
+                rootView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        mVisibleInsetRect = QMUIWindowHelper.unSafeGetWindowVisibleInsets(v);
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+                        mVisibleInsetRect = null;
+                    }
+                });
+            }
             mAnchorTopView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -948,15 +968,21 @@ public class QMUIDialog extends Dialog {
                     mDialog.dismiss();
                 }
             });
-            mRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                public void onGlobalLayout() {
-                    //noinspection ConstantConditions
-                    View mDecor = mDialog.getWindow().getDecorView();
-                    Rect r = new Rect();
-                    mDecor.getWindowVisibleDisplayFrame(r);
-                    mScreenHeight = QMUIDisplayHelper.getScreenHeight(context);
-                    int anchorShouldHeight = mScreenHeight - r.bottom;
+            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    v.getWindowVisibleDisplayFrame(mVisibleDisplayFrame);
+                    int fullHeight, anchorShouldHeight;
+                    if (mVisibleInsetRect != null) {
+                        Log.i("cginetest", "" + mVisibleInsetRect.bottom + "; " + mVisibleInsetRect.top);
+                        fullHeight = mVisibleDisplayFrame.height() + mVisibleInsetRect.top + mVisibleInsetRect.bottom;
+                        anchorShouldHeight = mVisibleInsetRect.bottom;
+                    } else {
+                        fullHeight = QMUIDisplayHelper.getScreenHeight(context);
+                        anchorShouldHeight = Math.max(0, fullHeight - mVisibleDisplayFrame.bottom);
+                    }
                     if (anchorShouldHeight != mAnchorHeight) {
+                        mAnchorHeightFirstSet = true;
                         mAnchorHeight = anchorShouldHeight;
                         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mAnchorBottomView.getLayoutParams();
                         lp.height = mAnchorHeight;
@@ -975,18 +1001,32 @@ public class QMUIDialog extends Dialog {
                         }
                         mScrollerView.setLayoutParams(slp);
                     } else {
-                        //如果内容过高,anchorShouldHeight=0,但实际下半部分会被截断,因此需要保护
-                        //由于高度超过后,actionContainer并不会去测量和布局,所以这里拿不到action的高度,因此用比例估算一个值
-                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDialogView.getLayoutParams();
-                        int dialogLayoutMaxHeight = mScreenHeight - lp.bottomMargin - lp.topMargin - r.top;
-                        int scrollLayoutHeight = mScrollerView.getMeasuredHeight();
-                        if (scrollLayoutHeight > dialogLayoutMaxHeight * 0.8) {
-                            mScrollHeight = (int) (dialogLayoutMaxHeight * 0.8);
-                            LinearLayout.LayoutParams slp = (LinearLayout.LayoutParams) mScrollerView.getLayoutParams();
-                            slp.height = mScrollHeight;
-                            mScrollerView.setLayoutParams(slp);
+                        if (!mAnchorHeightFirstSet) {
+                            mAnchorHeightFirstSet = true;
+                            if (onGetScrollHeight() == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDialogView.getLayoutParams();
+                                int scrollMaxHeight = fullHeight - lp.bottomMargin - lp.topMargin;
+                                if (hasTitle()) {
+                                    scrollMaxHeight -= mTitleView.getMeasuredHeight();
+                                }
+                                if (mActionContainer != null) {
+                                    scrollMaxHeight -= QMUIDisplayHelper.dp2px(context, 150);
+                                }
+                                int scrollContentMeasureHeight = getScrollContentMeasureHeight();
+                                mScrollHeight = Math.min(scrollMaxHeight, scrollContentMeasureHeight);
+                                LinearLayout.LayoutParams slp = (LinearLayout.LayoutParams) mScrollerView.getLayoutParams();
+                                slp.height = mScrollHeight;
+                                mScrollerView.setLayoutParams(slp);
+                            }
                         }
                     }
+                }
+
+                private int getScrollContentMeasureHeight() {
+                    if (mScrollerView.getChildCount() <= 0) {
+                        return 0;
+                    }
+                    return mScrollerView.getChildAt(0).getMeasuredHeight();
                 }
             });
         }

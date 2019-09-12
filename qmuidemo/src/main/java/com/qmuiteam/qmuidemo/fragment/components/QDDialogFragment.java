@@ -409,7 +409,7 @@ public class QDDialogFragment extends BaseFragment {
             textView.setText("观察聚焦输入框后，键盘升起降下时 dialog 的高度自适应变化。\n\n" +
                     "QMUI Android 的设计目的是用于辅助快速搭建一个具备基本设计还原效果的 Android 项目，" +
                     "同时利用自身提供的丰富控件及兼容处理，让开发者能专注于业务需求而无需耗费精力在基础代码的设计上。" +
-                    "不管是新项目的创建，或是已有项目的维护，均可使开发效率和项目质量得到大幅度提升。");
+                    "不管是新项目的创建，或是已有项目的维护，均可使开发效率和项目质量得到大幅度提升。\n\n QMUI Android 的设计目的是用于辅助快速搭建一个具备基本设计还原效果的 Android 项目。");
             textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
             textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(textView);
