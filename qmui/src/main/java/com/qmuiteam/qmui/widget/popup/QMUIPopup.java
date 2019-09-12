@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,6 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     private @Direction int mPreferredDirection = DIRECTION_BOTTOM;
     private int mInitWidth;
     private int mInitHeight;
-    private int[] mAnchorLocation = new int[2];
     private int mArrowWidth = NOT_SET;
     private int mArrowHeight = NOT_SET;
     private boolean mRemoveBorderWhenShadow = false;
@@ -194,8 +194,9 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     }
 
     class ShowInfo {
-        int screenWidth = QMUIDisplayHelper.getScreenWidth(mContext);
-        int screenHeight = QMUIDisplayHelper.getScreenHeight(mContext);
+        private int[] anchorRootLocation = new int[2];
+        private int[] anchorLocation = new int[2];
+        Rect visibleWindowFrame = new Rect();
         int width;
         int height;
         int x;
@@ -210,6 +211,16 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
         int decorationTop = 0;
         int decorationBottom = 0;
 
+        ShowInfo(View anchor){
+            this.anchor = anchor;
+            // for muti window
+            anchor.getRootView().getLocationOnScreen(anchorRootLocation);
+            anchor.getLocationOnScreen(anchorLocation);
+            anchorCenter = anchorLocation[0] + anchor.getWidth() / 2;
+            anchor.getWindowVisibleDisplayFrame(visibleWindowFrame);
+        }
+
+
         float anchorProportion() {
             return (anchorCenter - x) / (float) width;
         }
@@ -221,6 +232,22 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
         int windowHeight() {
             return decorationTop + height + decorationBottom;
         }
+
+        int getVisibleWidth(){
+            return visibleWindowFrame.width();
+        }
+
+        int getVisibleHeight(){
+            return visibleWindowFrame.height();
+        }
+
+        int getWindowX(){
+            return x - anchorRootLocation[0];
+        }
+
+        int getWindowY(){
+            return y - anchorRootLocation[1];
+        }
     }
 
     private boolean shouldShowShadow() {
@@ -231,24 +258,18 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
         if (mContentView == null) {
             throw new RuntimeException("you should call view() to set your content view");
         }
-        ShowInfo showInfo = new ShowInfo();
+        ShowInfo showInfo = new ShowInfo(anchor);
         calculateWindowSize(showInfo);
-        getInfoFromAnchor(showInfo, anchor);
         calculateXY(showInfo);
         adjustShowInfo(showInfo);
         decorateContentView(showInfo);
         setAnimationStyle(showInfo.anchorProportion(), showInfo.direction);
         mWindow.setWidth(showInfo.windowWidth());
         mWindow.setHeight(showInfo.windowHeight());
-        showAtLocation(anchor, showInfo.x, showInfo.y);
+        showAtLocation(anchor, showInfo.getWindowX(), showInfo.getWindowY());
         return this;
     }
 
-    private void getInfoFromAnchor(ShowInfo showInfo, @NonNull View anchor) {
-        showInfo.anchor = anchor;
-        showInfo.anchorCenter = mAnchorLocation[0] + anchor.getWidth() / 2;
-        anchor.getLocationOnScreen(mAnchorLocation);
-    }
 
     private void decorateContentView(ShowInfo showInfo) {
         ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
@@ -290,29 +311,29 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
             }
 
             int originX = showInfo.x, originY = showInfo.y;
-            if (originX - mShadowInset > 0) {
+            if (originX - mShadowInset > showInfo.visibleWindowFrame.left) {
                 showInfo.x -= mShadowInset;
                 showInfo.decorationLeft = mShadowInset;
             } else {
-                showInfo.decorationLeft = originX;
-                showInfo.x = 0;
+                showInfo.decorationLeft = originX - showInfo.visibleWindowFrame.left;
+                showInfo.x = showInfo.visibleWindowFrame.left;
             }
-            if (originX + showInfo.width + mShadowInset < showInfo.screenWidth) {
+            if (originX + showInfo.width + mShadowInset < showInfo.visibleWindowFrame.right) {
                 showInfo.decorationRight = mShadowInset;
             } else {
-                showInfo.decorationRight = showInfo.screenWidth - originX - showInfo.width;
+                showInfo.decorationRight = showInfo.visibleWindowFrame.right - originX - showInfo.width;
             }
-            if (originY - mShadowInset > 0) {
+            if (originY - mShadowInset > showInfo.visibleWindowFrame.top) {
                 showInfo.y -= mShadowInset;
                 showInfo.decorationTop = mShadowInset;
             } else {
-                showInfo.decorationTop = originY;
-                showInfo.y = 0;
+                showInfo.decorationTop = originY - showInfo.visibleWindowFrame.top;
+                showInfo.y = showInfo.visibleWindowFrame.top;
             }
-            if (originY + showInfo.height + mShadowInset < showInfo.screenHeight) {
+            if (originY + showInfo.height + mShadowInset < showInfo.visibleWindowFrame.bottom) {
                 showInfo.decorationBottom = mShadowInset;
             } else {
-                showInfo.decorationBottom = showInfo.screenHeight - originY - showInfo.height;
+                showInfo.decorationBottom = showInfo.visibleWindowFrame.bottom - originY - showInfo.height;
             }
         }
 
@@ -336,10 +357,11 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     }
 
     private void calculateXY(ShowInfo showInfo) {
-        if (showInfo.anchorCenter < showInfo.screenWidth / 2) { // anchor point on the left
-            showInfo.x = Math.max(mEdgeProtectionLeft, showInfo.anchorCenter - showInfo.width / 2 + mOffsetX);
+        if (showInfo.anchorCenter < showInfo.visibleWindowFrame.left + showInfo.getVisibleWidth() / 2) { // anchor point on the left
+            showInfo.x = Math.max(mEdgeProtectionLeft + showInfo.visibleWindowFrame.left, showInfo.anchorCenter - showInfo.width / 2 + mOffsetX);
         } else { // anchor point on the left
-            showInfo.x = Math.min(showInfo.screenWidth - mEdgeProtectionRight - showInfo.width,
+            showInfo.x = Math.min(
+                    showInfo.visibleWindowFrame.right - mEdgeProtectionRight - showInfo.width,
                     showInfo.anchorCenter - showInfo.width / 2 + mOffsetX);
         }
         int nextDirection = DIRECTION_CENTER_IN_SCREEN;
@@ -353,19 +375,19 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
 
     private void handleDirection(ShowInfo showInfo, int currentDirection, int nextDirection) {
         if (currentDirection == DIRECTION_CENTER_IN_SCREEN) {
-            showInfo.x = (showInfo.screenWidth - showInfo.width) / 2;
-            showInfo.y = (showInfo.screenHeight - showInfo.height) / 2;
+            showInfo.x = showInfo.visibleWindowFrame.left + (showInfo.getVisibleWidth() - showInfo.width) / 2;
+            showInfo.y = showInfo.visibleWindowFrame.top + (showInfo.getVisibleHeight() - showInfo.height) / 2;
             showInfo.direction = DIRECTION_CENTER_IN_SCREEN;
         } else if (currentDirection == DIRECTION_TOP) {
-            showInfo.y = mAnchorLocation[1] - showInfo.height - mOffsetYIfTop;
-            if (showInfo.y < mEdgeProtectionTop) {
+            showInfo.y = showInfo.anchorLocation[1] - showInfo.height - mOffsetYIfTop;
+            if (showInfo.y < mEdgeProtectionTop + showInfo.visibleWindowFrame.top) {
                 handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
             } else {
                 showInfo.direction = DIRECTION_TOP;
             }
         } else if (currentDirection == DIRECTION_BOTTOM) {
-            showInfo.y = mAnchorLocation[1] + showInfo.anchor.getHeight() + mOffsetYIfBottom;
-            if (showInfo.y > showInfo.screenHeight - mEdgeProtectionBottom - showInfo.height) {
+            showInfo.y = showInfo.anchorLocation[1] + showInfo.anchor.getHeight() + mOffsetYIfBottom;
+            if (showInfo.y > showInfo.visibleWindowFrame.bottom - mEdgeProtectionBottom - showInfo.height) {
                 handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
             } else {
                 showInfo.direction = DIRECTION_BOTTOM;
@@ -380,7 +402,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
             showInfo.contentWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
                     mInitWidth, View.MeasureSpec.EXACTLY);
         } else {
-            int maxWidth = showInfo.screenWidth - mEdgeProtectionLeft - mEdgeProtectionRight;
+            int maxWidth = showInfo.getVisibleWidth() - mEdgeProtectionLeft - mEdgeProtectionRight;
             if (mInitWidth == ViewGroup.LayoutParams.MATCH_PARENT) {
                 showInfo.width = maxWidth;
                 showInfo.contentWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
@@ -396,7 +418,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
             showInfo.contentHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
                     mInitHeight, View.MeasureSpec.EXACTLY);
         } else {
-            int maxHeight = showInfo.screenHeight - mEdgeProtectionTop - mEdgeProtectionBottom;
+            int maxHeight = showInfo.getVisibleHeight() - mEdgeProtectionTop - mEdgeProtectionBottom;
             if (mInitHeight == ViewGroup.LayoutParams.MATCH_PARENT) {
                 showInfo.height = maxHeight;
                 showInfo.contentHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
@@ -479,7 +501,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
                 mShowInfo.height = mPendingHeight;
                 calculateXY(mShowInfo);
                 adjustShowInfo(mShowInfo);
-                mWindow.update(mShowInfo.x, mShowInfo.y, mShowInfo.windowWidth(), mShowInfo.windowHeight());
+                mWindow.update(mShowInfo.getWindowX(), mShowInfo.getWindowY(), mShowInfo.windowWidth(), mShowInfo.windowHeight());
             }
         };
 
