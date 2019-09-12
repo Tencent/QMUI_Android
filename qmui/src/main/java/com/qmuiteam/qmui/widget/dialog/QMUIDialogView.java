@@ -18,12 +18,13 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by cgspine on 2018/2/28.
@@ -73,7 +74,7 @@ public class QMUIDialogView extends QMUILinearLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(mOnDecorationListener != null){
+        if (mOnDecorationListener != null) {
             mOnDecorationListener.onDraw(canvas, this);
         }
     }
@@ -81,7 +82,7 @@ public class QMUIDialogView extends QMUILinearLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if(mOnDecorationListener != null){
+        if (mOnDecorationListener != null) {
             mOnDecorationListener.onDrawOver(canvas, this);
         }
     }
@@ -94,8 +95,9 @@ public class QMUIDialogView extends QMUILinearLayout {
         mMaxWidth = maxWidth;
     }
 
-    public interface OnDecorationListener{
+    public interface OnDecorationListener {
         void onDraw(Canvas canvas, QMUIDialogView view);
+
         void onDrawOver(Canvas canvas, QMUIDialogView view);
     }
 }
