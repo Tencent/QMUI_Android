@@ -672,7 +672,7 @@ public class QMUIQQFaceView extends View {
                     mSpanInfos.add(spanInfo);
                 }
             } else if (element.getType() == QMUIQQFaceCompiler.ElementType.NEXTLINE) {
-                gotoCalNextLine(widthStart);
+                gotoCalNextLine(widthStart, true);
             } else if (element.getType() == QMUIQQFaceCompiler.ElementType.SPECIAL_BOUNDS_DRAWABLE) {
                 Drawable drawable = element.getSpecialBoundsDrawable();
                 int width = drawable.getIntrinsicWidth();
@@ -707,15 +707,21 @@ public class QMUIQQFaceView extends View {
         mContentCalMaxWidth = Math.max(width, mContentCalMaxWidth);
     }
 
-    private void gotoCalNextLine(int widthStart) {
+    private void gotoCalNextLine(int widthStart){
+        gotoCalNextLine(widthStart, false);
+    }
+
+    private void gotoCalNextLine(int widthStart, boolean nextParagraph) {
         mCurrentCalLine++;
         setContentCalMaxWidth(mCurrentCalWidth);
         mCurrentCalWidth = widthStart;
-        if (mEllipsize == null) {
-            mParagraphShowCount++;
-        } else if (mEllipsize == TextUtils.TruncateAt.END) {
-            if (mCurrentCalLine <= mMaxLine) {
+        if(nextParagraph){
+            if (mEllipsize == null) {
                 mParagraphShowCount++;
+            } else if (mEllipsize == TextUtils.TruncateAt.END) {
+                if (mCurrentCalLine <= mMaxLine) {
+                    mParagraphShowCount++;
+                }
             }
         }
     }
