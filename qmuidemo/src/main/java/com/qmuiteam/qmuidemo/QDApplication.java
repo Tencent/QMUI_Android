@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -48,6 +50,7 @@ public class QDApplication extends Application {
 
         QDUpgradeManager.getInstance(this).check();
         QMUISwipeBackActivityManager.init(this);
+        QDSkinManager.install(this);
     }
 
     @Override

@@ -264,6 +264,26 @@ public class QMUIButton extends QMUIAlphaButton implements IQMUILayout {
     }
 
     @Override
+    public void updateBottomSeparatorColor(int color) {
+        mLayoutHelper.updateBottomSeparatorColor(color);
+    }
+
+    @Override
+    public void updateLeftSeparatorColor(int color) {
+        mLayoutHelper.updateLeftSeparatorColor(color);
+    }
+
+    @Override
+    public void updateRightSeparatorColor(int color) {
+        mLayoutHelper.updateRightSeparatorColor(color);
+    }
+
+    @Override
+    public void updateTopSeparatorColor(int color) {
+        mLayoutHelper.updateTopSeparatorColor(color);
+    }
+
+    @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());

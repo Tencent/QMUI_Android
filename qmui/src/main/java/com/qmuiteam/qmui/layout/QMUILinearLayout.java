@@ -230,6 +230,26 @@ public class QMUILinearLayout extends QMUIAlphaLinearLayout implements IQMUILayo
     }
 
     @Override
+    public void updateBottomSeparatorColor(int color) {
+        mLayoutHelper.updateBottomSeparatorColor(color);
+    }
+
+    @Override
+    public void updateLeftSeparatorColor(int color) {
+        mLayoutHelper.updateLeftSeparatorColor(color);
+    }
+
+    @Override
+    public void updateRightSeparatorColor(int color) {
+        mLayoutHelper.updateRightSeparatorColor(color);
+    }
+
+    @Override
+    public void updateTopSeparatorColor(int color) {
+        mLayoutHelper.updateTopSeparatorColor(color);
+    }
+
+    @Override
     public void setShadowElevation(int elevation) {
         mLayoutHelper.setShadowElevation(elevation);
     }

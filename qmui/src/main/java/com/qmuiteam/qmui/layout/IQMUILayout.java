@@ -16,12 +16,13 @@
 
 package com.qmuiteam.qmui.layout;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntDef;
 import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
 
 /**
  * Created by cgspine on 2018/3/23.
@@ -101,26 +102,26 @@ public interface IQMUILayout {
     float getShadowAlpha();
 
     /**
-     *
      * @param shadowColor opaque color
      * @return
      */
     void setShadowColor(int shadowColor);
 
     /**
-     *
      * @return opaque color
      */
     int getShadowColor();
 
     /**
      * set the layout radius
+     *
      * @param radius
      */
     void setRadius(int radius);
 
     /**
      * set the layout radius with one or none side been hidden
+     *
      * @param radius
      * @param hideRadiusSide
      */
@@ -128,6 +129,7 @@ public interface IQMUILayout {
 
     /**
      * get the layout radius
+     *
      * @return
      */
     int getRadius();
@@ -188,7 +190,7 @@ public interface IQMUILayout {
 
 
     /**
-     *  this method will determine the radius and shadow (support shadowColor if after android 9)with one or none side be hidden
+     * this method will determine the radius and shadow (support shadowColor if after android 9)with one or none side be hidden
      *
      * @param radius
      * @param hideRadiusSide
@@ -317,8 +319,37 @@ public interface IQMUILayout {
 
     /**
      * only available before android L
+     *
      * @param color
      */
     void setOuterNormalColor(int color);
+
+    /**
+     * update left separator color
+     *
+     * @param color
+     */
+    void updateLeftSeparatorColor(int color);
+
+    /**
+     * update right separator color
+     *
+     * @param color
+     */
+    void updateRightSeparatorColor(int color);
+
+    /**
+     * update top separator color
+     *
+     * @param color
+     */
+    void updateTopSeparatorColor(int color);
+
+    /**
+     * update bottom separator color
+     *
+     * @param color
+     */
+    void updateBottomSeparatorColor(int color);
 
 }

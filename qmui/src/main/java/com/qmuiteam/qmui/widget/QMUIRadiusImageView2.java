@@ -266,6 +266,26 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
     }
 
     @Override
+    public void updateBottomSeparatorColor(int color) {
+        mLayoutHelper.updateBottomSeparatorColor(color);
+    }
+
+    @Override
+    public void updateLeftSeparatorColor(int color) {
+        mLayoutHelper.updateLeftSeparatorColor(color);
+    }
+
+    @Override
+    public void updateRightSeparatorColor(int color) {
+        mLayoutHelper.updateRightSeparatorColor(color);
+    }
+
+    @Override
+    public void updateTopSeparatorColor(int color) {
+        mLayoutHelper.updateTopSeparatorColor(color);
+    }
+
+    @Override
     public void setTopDividerAlpha(int dividerAlpha) {
         mLayoutHelper.setTopDividerAlpha(dividerAlpha);
         invalidate();

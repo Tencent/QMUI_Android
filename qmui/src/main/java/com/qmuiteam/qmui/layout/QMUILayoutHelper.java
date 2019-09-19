@@ -28,8 +28,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -38,6 +36,9 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 
 /**
  * @author cginechen
@@ -240,6 +241,38 @@ public class QMUILayoutHelper implements IQMUILayout {
     }
 
     @Override
+    public void updateLeftSeparatorColor(int color) {
+        if (mLeftDividerColor != color) {
+            mLeftDividerColor = color;
+            invalidate();
+        }
+    }
+
+    @Override
+    public void updateBottomSeparatorColor(int color) {
+        if (mBottomDividerColor != color) {
+            mBottomDividerColor = color;
+            invalidate();
+        }
+    }
+
+    @Override
+    public void updateTopSeparatorColor(int color) {
+        if (mTopDividerColor != color) {
+            mTopDividerColor = color;
+            invalidate();
+        }
+    }
+
+    @Override
+    public void updateRightSeparatorColor(int color) {
+        if (mRightDividerColor != color) {
+            mRightDividerColor = color;
+            invalidate();
+        }
+    }
+
+    @Override
     public int getShadowElevation() {
         return mShadowElevation;
     }
@@ -282,7 +315,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             return;
         }
         mShadowElevation = elevation;
-        invalidate();
+        invalidateOutline();
     }
 
     @Override
@@ -291,7 +324,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             return;
         }
         mShadowAlpha = shadowAlpha;
-        invalidate();
+        invalidateOutline();
     }
 
     @Override
@@ -314,7 +347,7 @@ public class QMUILayoutHelper implements IQMUILayout {
         }
     }
 
-    private void invalidate() {
+    private void invalidateOutline() {
         if (useFeature()) {
             View owner = mOwner.get();
             if (owner == null) {
@@ -327,6 +360,14 @@ public class QMUILayoutHelper implements IQMUILayout {
             }
             owner.invalidateOutline();
         }
+    }
+
+    private void invalidate() {
+        View owner = mOwner.get();
+        if (owner == null) {
+            return;
+        }
+        owner.invalidate();
     }
 
     @Override

@@ -25,6 +25,9 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
+import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
@@ -33,9 +36,11 @@ import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScroll1Fragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
+import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.LayoutInflaterCompat;
 
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
@@ -53,6 +58,19 @@ import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 @DefaultFirstFragment(HomeFragment.class)
 @LatestVisitRecord
 public class QDMainActivity extends BaseFragmentActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory());
+        super.onCreate(savedInstanceState);
+        QDSkinManager.register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        QDSkinManager.unRegister(this);
+    }
 
     @Override
     protected int getContextViewId() {

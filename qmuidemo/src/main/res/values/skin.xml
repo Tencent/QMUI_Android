@@ -14,26 +14,13 @@
  either express or implied. See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
 <resources>
-    <!-- dialog -->
-    <item name="qmui_dialog_edit_input" type="id"/>
-    <item name="qmui_dialog_edit_right_icon" type="id"/>
-    
-    <item name="qmui_tab_segment_item_id" type="id"/>
 
-    <item name="qmui_view_can_not_cache_tag" type="id"/>
+    <style name="app_skin_normal">
+        <item name="app_skin_common_background">#ffffff</item>
+    </style>
 
-    <item name="qmui_topbar_item_left_back" type="id"/>
-
-    <item name="qmui_view_offset_helper" type="id"/>
-
-    <item name="qmui_window_inset_keyboard_area_consumer" type="id"/>
-
-    <item name="qmui_do_not_intercept_keyboard_inset" type="id"/>
-
-    <item name="qmui_popup_close_btn_id" type="id"/>
-
-    <item name="qmui_skin_current_index" type="id"/>
-    <item name="qmui_skin_value" type="id" />
+    <style name="app_skin_dark" parent="app_skin_normal">
+        <item name="app_skin_common_background">#000000</item>
+    </style>
 </resources>
