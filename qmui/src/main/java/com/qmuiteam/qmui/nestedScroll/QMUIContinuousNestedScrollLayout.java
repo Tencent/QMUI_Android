@@ -271,6 +271,9 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
         if (offsetCurrent >= offsetRange || (offsetCurrent > 0 && mKeepBottomAreaStableWhenCheckLayout)) {
             mTopView.consumeScroll(Integer.MAX_VALUE);
+            if(mBottomView.getCurrentScroll() > 0){
+                mTopAreaBehavior.setTopAndBottomOffset(-offsetRange);
+            }
             return;
         }
 
