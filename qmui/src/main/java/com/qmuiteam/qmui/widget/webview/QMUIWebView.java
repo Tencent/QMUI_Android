@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.webview;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
@@ -218,7 +219,7 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
     }
 
     private void setStyleDisplayCutoutSafeArea(@NonNull Rect rect) {
-        if (sIsReflectionOccurError) {
+        if (sIsReflectionOccurError || Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
             return;
         }
 
