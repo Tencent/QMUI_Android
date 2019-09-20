@@ -16,6 +16,7 @@
 package com.qmuiteam.qmui.skin;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -34,6 +35,11 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             "android.view."
     };
     private QMUISkinValueBuilder mBuilder;
+    private Resources.Theme mEmptyTheme;
+
+    public QMUISkinLayoutInflaterFactory(Context context) {
+        mEmptyTheme = context.getApplicationContext().getResources().newTheme();
+    }
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
@@ -67,7 +73,7 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 mBuilder.clear();
             }
             getSkinValueFromAttributeSet(view, attrs, mBuilder);
-            if(!mBuilder.isEmpty()){
+            if (!mBuilder.isEmpty()) {
                 QMUISkinManager.setSkinValue(view, mBuilder);
             }
             mBuilder.clear();
@@ -82,20 +88,47 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     }
 
     protected void getSkinValueFromAttributeSet(View view, AttributeSet attrs, QMUISkinValueBuilder builder) {
-        TypedArray a = view.getContext().obtainStyledAttributes(attrs, R.styleable.QMUISkinDef, 0, 0);
+        // use a empty theme, so we can get the attr's own value, not it's ref value
+        TypedArray a = mEmptyTheme.obtainStyledAttributes(attrs, R.styleable.QMUISkinDef, 0, 0);
         int count = a.getIndexCount();
         for (int i = 0; i < count; i++) {
             int attr = a.getIndex(i);
+            String name = a.getString(attr);
+            if (QMUILangHelper.isNullOrEmpty(name)) {
+                continue;
+            }
+            if (name.startsWith("?")) {
+                name = name.substring(1);
+            }
+            int id = view.getContext().getResources().getIdentifier(
+                    name, "attr", view.getContext().getPackageName());
+            if (id == 0) {
+                continue;
+            }
             if (attr == R.styleable.QMUISkinDef_qmui_skin_background) {
-                String name = a.getString(attr);
-                if (!QMUILangHelper.isNullOrEmpty(name)) {
-                    if(name.startsWith("?")){
-                        name = name.substring(1);
-                    }
-                    int id = view.getContext().getResources().getIdentifier(
-                            name, "attr", view.getContext().getPackageName());
-                    builder.background(id);
-                }
+                builder.background(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_alpha) {
+                builder.alpha(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_border) {
+                builder.border(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_text_color) {
+                builder.textColor(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_second_text_color) {
+                builder.secondTextColor(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_btn_text_color) {
+                builder.btnTextColor(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_src) {
+                builder.src(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_tint_color) {
+                builder.tintColor(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_separator_top) {
+                builder.topSeparator(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_separator_right) {
+                builder.rightSeparator(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_separator_bottom) {
+                builder.bottomSeparator(id);
+            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_separator_left) {
+                builder.leftSeparator(id);
             }
         }
         a.recycle();

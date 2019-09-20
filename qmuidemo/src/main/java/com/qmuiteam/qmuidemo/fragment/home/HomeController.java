@@ -97,7 +97,7 @@ public abstract class HomeController extends QMUIWindowInsetLayout {
         mTopBar.addRightTextButton("换肤", QMUIViewHelper.generateViewId()).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = new String[]{"蓝色（默认）", "黑色"};
+                final String[] items = new String[]{"蓝色（默认）", "黑色", "白色"};
                 new QMUIDialog.MenuDialogBuilder(getContext())
                         .addItems(items, new DialogInterface.OnClickListener() {
                             @Override

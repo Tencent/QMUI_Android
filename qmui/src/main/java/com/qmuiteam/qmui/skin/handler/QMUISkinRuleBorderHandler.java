@@ -23,7 +23,7 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorHandler {
 
     @Override
-    void handle(View view, int color, String extra) {
+    void handle(View view, String name, int color) {
         if (view instanceof IQMUILayout) {
             ((IQMUILayout) view).setBorderColor(color);
         } else if (view instanceof QMUIRadiusImageView) {

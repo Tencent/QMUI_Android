@@ -343,7 +343,6 @@ public class QMUIQQFaceView extends View {
         }
     }
 
-
     public void setSpecialDrawablePadding(int specialDrawablePadding) {
         if (mSpecialDrawablePadding != specialDrawablePadding) {
             mSpecialDrawablePadding = specialDrawablePadding;

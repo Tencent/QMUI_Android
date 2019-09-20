@@ -15,19 +15,17 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.ImageView;
 
-import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
-public abstract class QMUISkinRuleDrawableHandler implements IQMUISkinRuleHandler {
+public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorHandler {
+
     @Override
-    public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
-                             String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+    void handle(View view, String name, int color) {
+        if (view instanceof ImageView) {
+            QMUIViewHelper.setImageViewTintColor((ImageView) view, color);
+        }
     }
-
-    abstract void handle(View view, String name, Drawable drawable);
 }

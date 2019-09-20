@@ -55,8 +55,8 @@
                 android:layout_height="?attr/qmui_topbar_height"
                 android:fitsSystemWindows="true"
                 app:qmui_layout_collapseMode="pin"
-                app:qmui_topbar_bg_color="@color/qmui_config_color_transparent"
-                app:qmui_topbar_need_separator="false"/>
+                android:background="@color/qmui_config_color_transparent"
+                app:qmui_bottomDividerHeight="0px"/>
         </com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout>
     </com.qmuiteam.qmui.widget.QMUIAppBarLayout>
 

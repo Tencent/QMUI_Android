@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -16,29 +15,34 @@
 -->
 
 <com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
+        android:background="@color/qmui_config_color_white"
         android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        android:background="@color/qmui_config_color_white">
-
-        <com.qmuiteam.qmui.widget.tab.QMUITabSegment
-            android:id="@+id/tabSegment"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/tab_panel_bg"/>
+        android:orientation="vertical">
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/contentViewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:fitsSystemWindows="true"/>
+            android:fitsSystemWindows="true" />
+
+        <com.qmuiteam.qmui.widget.tab.QMUITabSegment
+            android:id="@+id/tabSegment"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/qmui_config_color_white"
+            app:qmui_topDividerHeight="10px"
+            app:qmui_topDividerColor="?attr/qmui_config_color_separator"
+            app:qmui_skin_background="?attr/app_skin_tab_bar_bg_color"
+            app:qmui_skin_separator_top="?attr/qmui_config_color_separator" />
     </LinearLayout>
 
 
@@ -46,6 +50,6 @@
         android:id="@+id/topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"/>
+        android:fitsSystemWindows="true" />
 
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

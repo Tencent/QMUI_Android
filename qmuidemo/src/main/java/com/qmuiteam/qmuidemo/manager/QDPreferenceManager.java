@@ -52,13 +52,13 @@ public class QDPreferenceManager {
         return sPreferences.getInt(APP_VERSION_CODE, QDUpgradeManager.INVALIDATE_VERSION_CODE);
     }
 
-    public void setSkinIndex(int index){
+    public void setSkinIndex(int index) {
         SharedPreferences.Editor editor = sPreferences.edit();
         editor.putInt(APP_SKIN_INDEX, index);
         editor.apply();
     }
 
-    public int getSkinIndex(){
-        return sPreferences.getInt(APP_SKIN_INDEX, QDSkinManager.SKIN_NORMAL);
+    public int getSkinIndex() {
+        return sPreferences.getInt(APP_SKIN_INDEX, QDSkinManager.SKIN_BLUE);
     }
 }

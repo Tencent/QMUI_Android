@@ -36,4 +36,6 @@
 
     <item name="qmui_skin_current_index" type="id"/>
     <item name="qmui_skin_value" type="id" />
+    <item name="qmui_skin_default_attr_provider" type="id" />
+    <item name="qmui_skin_dispatch_interceptor" type="id" />
 </resources>

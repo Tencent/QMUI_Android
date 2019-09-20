@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmuidemo.QDApplication;
 import com.qmuiteam.qmuidemo.R;
@@ -27,16 +28,18 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class QDSkinManager {
-    public static final int SKIN_NORMAL = 1;
+    public static final int SKIN_BLUE = 1;
     public static final int SKIN_DARK = 2;
+    public static final int SKIN_WHITE = 3;
     public static int sCurrentTheme = Integer.MIN_VALUE;
 
     private static final ArrayList<WeakReference<Activity>> mListenActivityList = new ArrayList<>();
 
     public static void install(Context context) {
         QMUISkinManager skinManager = QMUISkinManager.getInstance(context);
-        skinManager.addTheme(SKIN_NORMAL, R.style.app_skin_normal);
+        skinManager.addTheme(SKIN_BLUE, R.style.app_skin_blue);
         skinManager.addTheme(SKIN_DARK, R.style.app_skin_dark);
+        skinManager.addTheme(SKIN_WHITE, R.style.app_skin_white);
     }
 
     public static void changeSkin(int index) {
@@ -54,6 +57,12 @@ public class QDSkinManager {
 
     public static void dispatch(Activity activity, int skin) {
         QMUISkinManager.getInstance(activity).dispatch(QMUIViewHelper.getActivityRoot(activity), skin);
+        if(skin == SKIN_WHITE){
+            QMUIStatusBarHelper.setStatusBarLightMode(activity);
+        }else{
+            QMUIStatusBarHelper.setStatusBarDarkMode(activity);
+        }
+
     }
 
     public static void register(Activity activity) {

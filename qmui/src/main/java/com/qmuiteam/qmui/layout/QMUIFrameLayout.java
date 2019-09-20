@@ -47,7 +47,7 @@ public class QMUIFrameLayout extends QMUIAlphaFrameLayout implements IQMUILayout
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        mLayoutHelper = new QMUILayoutHelper(context, attrs, 0, this);
+        mLayoutHelper = new QMUILayoutHelper(context, attrs, defStyleAttr, this);
         setChangeAlphaWhenDisable(false);
         setChangeAlphaWhenPress(false);
     }

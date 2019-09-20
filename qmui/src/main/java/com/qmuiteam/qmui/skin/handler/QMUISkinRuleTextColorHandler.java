@@ -24,7 +24,7 @@ import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 public class QMUISkinRuleTextColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, ColorStateList colorStateList, String extra) {
+    void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof TextView) {
             ((TextView) view).setTextColor(colorStateList);
         } else if (view instanceof QMUIQQFaceView) {

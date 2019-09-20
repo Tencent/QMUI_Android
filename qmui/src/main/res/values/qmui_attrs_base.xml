@@ -171,6 +171,12 @@
     *                  qmui topbar                   *
     ***********************************************-->
     <attr name="qmui_topbar_height" format="dimension" />
+    <attr name="qmui_topbar_separator_color" format="color"/>
+    <attr name="qmui_topbar_bg_color" format="color"/>
+    <attr name="qmui_topbar_title_color" format="color"/>
+    <attr name="qmui_topbar_subtitle_color" format="color"/>
+    <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
+    <attr name="qmui_topbar_image_tint_color" format="color"/>
 
     <!--**********************************************
     *               qmui loading view                *

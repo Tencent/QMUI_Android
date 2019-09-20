@@ -15,19 +15,12 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.util.QMUIResHelper;
+public class QMUISkinRuleAlphaHandler extends QMUISkinRuleFloatHandler {
 
-public abstract class QMUISkinRuleDrawableHandler implements IQMUISkinRuleHandler {
     @Override
-    public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
-                             String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+    void handle(View view, String name, float value) {
+        view.setAlpha(value);
     }
-
-    abstract void handle(View view, String name, Drawable drawable);
 }

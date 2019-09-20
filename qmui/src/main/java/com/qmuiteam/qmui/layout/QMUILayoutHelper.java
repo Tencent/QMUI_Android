@@ -151,7 +151,7 @@ public class QMUILayoutHelper implements IQMUILayout {
                 } else if (index == R.styleable.QMUILayout_qmui_leftDividerColor) {
                     mLeftDividerColor = ta.getColor(index, mLeftDividerColor);
                 } else if (index == R.styleable.QMUILayout_qmui_leftDividerWidth) {
-                    mLeftDividerWidth = ta.getDimensionPixelSize(index, mBottomDividerHeight);
+                    mLeftDividerWidth = ta.getDimensionPixelSize(index, mLeftDividerWidth);
                 } else if (index == R.styleable.QMUILayout_qmui_leftDividerInsetTop) {
                     mLeftDividerInsetTop = ta.getDimensionPixelSize(index, mLeftDividerInsetTop);
                 } else if (index == R.styleable.QMUILayout_qmui_leftDividerInsetBottom) {

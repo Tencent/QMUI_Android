@@ -61,7 +61,7 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory());
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory(getApplicationContext()));
         super.onCreate(savedInstanceState);
         QDSkinManager.register(this);
     }

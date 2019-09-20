@@ -31,6 +31,8 @@ import android.widget.HorizontalScrollView;
 
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -41,6 +43,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -97,7 +100,7 @@ import androidx.viewpager.widget.ViewPager;
  * @author cginechen
  * @date 2016-01-27
  */
-public class QMUITabSegment extends HorizontalScrollView {
+public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout {
 
     private static final String TAG = "QMUITabSegment";
 
@@ -143,6 +146,7 @@ public class QMUITabSegment extends HorizontalScrollView {
     private OnTabSelectedListener mViewPagerSelectedListener;
     private AdapterChangeListener mAdapterChangeListener;
     private boolean mIsInSelectTab = false;
+    private QMUILayoutHelper mLayoutHelper;
 
     public QMUITabSegment(Context context) {
         this(context, null);
@@ -154,6 +158,8 @@ public class QMUITabSegment extends HorizontalScrollView {
 
     public QMUITabSegment(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setWillNotDraw(false);
+        mLayoutHelper = new QMUILayoutHelper(context, attrs, defStyleAttr, this);
         init(context, attrs, defStyleAttr);
         setHorizontalScrollBarEnabled(false);
         setClipToPadding(false);
@@ -1072,5 +1078,233 @@ public class QMUITabSegment extends HorizontalScrollView {
                 mIndicator.draw(canvas, getPaddingTop(), getHeight() - getPaddingBottom());
             }
         }
+    }
+
+    @Override
+    public void updateTopDivider(int topInsetLeft, int topInsetRight, int topDividerHeight, int topDividerColor) {
+        mLayoutHelper.updateTopDivider(topInsetLeft, topInsetRight, topDividerHeight, topDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void updateBottomDivider(int bottomInsetLeft, int bottomInsetRight, int bottomDividerHeight, int bottomDividerColor) {
+        mLayoutHelper.updateBottomDivider(bottomInsetLeft, bottomInsetRight, bottomDividerHeight, bottomDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void updateLeftDivider(int leftInsetTop, int leftInsetBottom, int leftDividerWidth, int leftDividerColor) {
+        mLayoutHelper.updateLeftDivider(leftInsetTop, leftInsetBottom, leftDividerWidth, leftDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void updateRightDivider(int rightInsetTop, int rightInsetBottom, int rightDividerWidth, int rightDividerColor) {
+        mLayoutHelper.updateRightDivider(rightInsetTop, rightInsetBottom, rightDividerWidth, rightDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void onlyShowTopDivider(int topInsetLeft, int topInsetRight,
+                                   int topDividerHeight, int topDividerColor) {
+        mLayoutHelper.onlyShowTopDivider(topInsetLeft, topInsetRight, topDividerHeight, topDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void onlyShowBottomDivider(int bottomInsetLeft, int bottomInsetRight,
+                                      int bottomDividerHeight, int bottomDividerColor) {
+        mLayoutHelper.onlyShowBottomDivider(bottomInsetLeft, bottomInsetRight, bottomDividerHeight, bottomDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void onlyShowLeftDivider(int leftInsetTop, int leftInsetBottom, int leftDividerWidth, int leftDividerColor) {
+        mLayoutHelper.onlyShowLeftDivider(leftInsetTop, leftInsetBottom, leftDividerWidth, leftDividerColor);
+        invalidate();
+    }
+
+    @Override
+    public void onlyShowRightDivider(int rightInsetTop, int rightInsetBottom, int rightDividerWidth, int rightDividerColor) {
+        mLayoutHelper.onlyShowRightDivider(rightInsetTop, rightInsetBottom, rightDividerWidth, rightDividerColor);
+        invalidate();
+    }
+
+
+    @Override
+    public void setTopDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setTopDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setBottomDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setBottomDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setLeftDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setLeftDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setRightDividerAlpha(int dividerAlpha) {
+        mLayoutHelper.setRightDividerAlpha(dividerAlpha);
+        invalidate();
+    }
+
+    @Override
+    public void setRadiusAndShadow(int radius, int shadowElevation, final float shadowAlpha) {
+        mLayoutHelper.setRadiusAndShadow(radius, shadowElevation, shadowAlpha);
+    }
+
+    @Override
+    public void setRadiusAndShadow(int radius, @QMUILayoutHelper.HideRadiusSide int hideRadiusSide, int shadowElevation, final float shadowAlpha) {
+        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, shadowElevation, shadowAlpha);
+    }
+
+    @Override
+    public void setRadiusAndShadow(int radius, int hideRadiusSide, int shadowElevation, int shadowColor, float shadowAlpha) {
+        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, shadowElevation,  shadowColor, shadowAlpha);
+    }
+
+    @Override
+    public void setRadius(int radius) {
+        mLayoutHelper.setRadius(radius);
+    }
+
+    @Override
+    public void setRadius(int radius, @QMUILayoutHelper.HideRadiusSide int hideRadiusSide) {
+        mLayoutHelper.setRadius(radius, hideRadiusSide);
+    }
+
+    @Override
+    public int getRadius() {
+        return mLayoutHelper.getRadius();
+    }
+
+    @Override
+    public void setOutlineInset(int left, int top, int right, int bottom) {
+        mLayoutHelper.setOutlineInset(left, top, right, bottom);
+    }
+
+    @Override
+    public void setHideRadiusSide(int hideRadiusSide) {
+        mLayoutHelper.setHideRadiusSide(hideRadiusSide);
+    }
+
+    @Override
+    public int getHideRadiusSide() {
+        return mLayoutHelper.getHideRadiusSide();
+    }
+
+    @Override
+    public void setBorderColor(@ColorInt int borderColor) {
+        mLayoutHelper.setBorderColor(borderColor);
+        invalidate();
+    }
+
+    @Override
+    public void setBorderWidth(int borderWidth) {
+        mLayoutHelper.setBorderWidth(borderWidth);
+        invalidate();
+    }
+
+    @Override
+    public void setShowBorderOnlyBeforeL(boolean showBorderOnlyBeforeL) {
+        mLayoutHelper.setShowBorderOnlyBeforeL(showBorderOnlyBeforeL);
+        invalidate();
+    }
+
+    @Override
+    public boolean setWidthLimit(int widthLimit) {
+        if (mLayoutHelper.setWidthLimit(widthLimit)) {
+            requestLayout();
+            invalidate();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean setHeightLimit(int heightLimit) {
+        if (mLayoutHelper.setHeightLimit(heightLimit)) {
+            requestLayout();
+            invalidate();
+        }
+        return true;
+    }
+
+    @Override
+    public void setUseThemeGeneralShadowElevation() {
+        mLayoutHelper.setUseThemeGeneralShadowElevation();
+    }
+
+    @Override
+    public void setOutlineExcludePadding(boolean outlineExcludePadding) {
+        mLayoutHelper.setOutlineExcludePadding(outlineExcludePadding);
+    }
+
+    @Override
+    public void setShadowElevation(int elevation) {
+        mLayoutHelper.setShadowElevation(elevation);
+    }
+
+    @Override
+    public int getShadowElevation() {
+        return mLayoutHelper.getShadowElevation();
+    }
+
+    @Override
+    public void setShadowAlpha(float shadowAlpha) {
+        mLayoutHelper.setShadowAlpha(shadowAlpha);
+    }
+
+    @Override
+    public float getShadowAlpha() {
+        return mLayoutHelper.getShadowAlpha();
+    }
+
+    @Override
+    public void setShadowColor(int shadowColor) {
+        mLayoutHelper.setShadowColor(shadowColor);
+    }
+
+    @Override
+    public int getShadowColor() {
+        return mLayoutHelper.getShadowColor();
+    }
+
+    @Override
+    public void setOuterNormalColor(int color) {
+        mLayoutHelper.setOuterNormalColor(color);
+    }
+
+    @Override
+    public void updateBottomSeparatorColor(int color) {
+        mLayoutHelper.updateBottomSeparatorColor(color);
+    }
+
+    @Override
+    public void updateLeftSeparatorColor(int color) {
+        mLayoutHelper.updateLeftSeparatorColor(color);
+    }
+
+    @Override
+    public void updateRightSeparatorColor(int color) {
+        mLayoutHelper.updateRightSeparatorColor(color);
+    }
+
+    @Override
+    public void updateTopSeparatorColor(int color) {
+        mLayoutHelper.updateTopSeparatorColor(color);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());
+        mLayoutHelper.dispatchRoundBorderDraw(canvas);
+        super.onDraw(canvas);
     }
 }

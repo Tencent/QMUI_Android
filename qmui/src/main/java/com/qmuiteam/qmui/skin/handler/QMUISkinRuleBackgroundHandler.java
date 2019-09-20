@@ -23,7 +23,7 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 public class QMUISkinRuleBackgroundHandler extends QMUISkinRuleDrawableHandler {
 
     @Override
-    void handle(View view, Drawable drawable, String extra) {
+    void handle(View view, String name, Drawable drawable) {
         QMUIViewHelper.setBackgroundKeepingPadding(view, drawable);
     }
 }

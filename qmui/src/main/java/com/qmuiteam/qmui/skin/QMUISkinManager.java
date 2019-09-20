@@ -16,42 +16,41 @@
 package com.qmuiteam.qmui.skin;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Trace;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.handler.IQMUISkinRuleHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleAlphaHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBackgroundHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBorderHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSeparatorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSrcHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextColorHandler;
-import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTintColorHandler;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 public final class QMUISkinManager {
     private static final String TAG = "QMUISkinManager";
     public static final int DEFAULT_SKIN = -1;
+    private static final String[] EMPTY_ITEMS = new String[]{};
     private static QMUISkinManager sInstance;
 
     @MainThread
@@ -84,7 +83,6 @@ public final class QMUISkinManager {
     private Resources mResources;
     private String mPackageName;
     private SparseArray<SkinItem> mThemes = new SparseArray<>();
-    private TypedValue mTmpValue;
     private HashMap<String, IQMUISkinRuleHandler> mRuleHandlers = new HashMap<>();
 
     // Actually, ViewGroup.OnHierarchyChangeListener is a better choice, but it only has a setter.
@@ -117,7 +115,7 @@ public final class QMUISkinManager {
         @Override
         public void onChildViewAdded(View parent, View child) {
             Integer currentTheme = (Integer) parent.getTag(R.id.qmui_skin_current_index);
-            if(currentTheme != null){
+            if (currentTheme != null) {
                 Integer childTheme = (Integer) child.getTag(R.id.qmui_skin_current_index);
                 if (!currentTheme.equals(childTheme)) {
                     dispatch(child, currentTheme);
@@ -135,10 +133,18 @@ public final class QMUISkinManager {
         mResources = resources;
         mPackageName = packageName;
         mRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, new QMUISkinRuleTextColorHandler());
+        IQMUISkinRuleHandler textColorHandler = new QMUISkinRuleTextColorHandler();
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, textColorHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.SECOND_TEXT_COLOR, textColorHandler);
         mRuleHandlers.put(QMUISkinValueBuilder.SRC, new QMUISkinRuleSrcHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.BORDER, new QMUISkinRuleBorderHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.SEPARATOR, new QMUISkinRuleSeparatorHandler());
+        IQMUISkinRuleHandler separatorHandler = new QMUISkinRuleSeparatorHandler();
+        mRuleHandlers.put(QMUISkinValueBuilder.TOP_SEPARATOR, separatorHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.RIGHT_SEPARATOR, separatorHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, separatorHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
     }
 
     @Nullable
@@ -148,48 +154,6 @@ public final class QMUISkinManager {
             return skinItem.getTheme();
         }
         return null;
-    }
-
-    public int getColor(Resources.Theme theme, int attr) {
-        if (mTmpValue == null) {
-            mTmpValue = new TypedValue();
-        }
-        theme.resolveAttribute(attr, mTmpValue, true);
-        if (mTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
-            return getColor(theme, mTmpValue.data);
-        }
-        return mTmpValue.data;
-    }
-
-    @Nullable
-    public Drawable getDrawable(Context context, Resources.Theme theme, int attr) {
-        if (mTmpValue == null) {
-            mTmpValue = new TypedValue();
-        }
-        theme.resolveAttribute(attr, mTmpValue, true);
-        if (mTmpValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
-                && mTmpValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
-            return new ColorDrawable(mTmpValue.data);
-        }
-        if (mTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
-            return getDrawable(context, theme, mTmpValue.data);
-        }
-
-        if (mTmpValue.resourceId != 0) {
-            return QMUIDrawableHelper.getVectorDrawable(context, mTmpValue.resourceId);
-        }
-        return null;
-    }
-
-    public ColorStateList getColorStateList(Context context, Resources.Theme theme, int attr) {
-        if (mTmpValue == null) {
-            mTmpValue = new TypedValue();
-        }
-        theme.resolveAttribute(attr, mTmpValue, true);
-        if (mTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
-            return getColorStateList(context, theme, mTmpValue.data);
-        }
-        return ContextCompat.getColorStateList(context, mTmpValue.resourceId);
     }
 
 
@@ -232,8 +196,8 @@ public final class QMUISkinManager {
 
 
     private void runDispatch(@NonNull View view, int skinIndex, Resources.Theme theme) {
-        if (view instanceof IQMUISkinDispatchInterceptorView) {
-            if (((IQMUISkinDispatchInterceptorView) view).intercept(skinIndex, theme)) {
+        if (view instanceof IQMUISkinDispatchInterceptor) {
+            if (((IQMUISkinDispatchInterceptor) view).intercept(skinIndex, theme)) {
                 return;
             }
         }
@@ -246,9 +210,9 @@ public final class QMUISkinManager {
         applyTheme(view, skinIndex, theme);
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
-            if(useHierarchyChangeListener(viewGroup)){
+            if (useHierarchyChangeListener(viewGroup)) {
                 viewGroup.setOnHierarchyChangeListener(mOnHierarchyChangeListener);
-            }else{
+            } else {
                 viewGroup.addOnLayoutChangeListener(mOnLayoutChangeListener);
             }
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
@@ -257,7 +221,7 @@ public final class QMUISkinManager {
         }
     }
 
-    private boolean useHierarchyChangeListener(ViewGroup viewGroup){
+    private boolean useHierarchyChangeListener(ViewGroup viewGroup) {
         return viewGroup instanceof RecyclerView ||
                 viewGroup instanceof ViewPager ||
                 viewGroup instanceof AdapterView ||
@@ -265,36 +229,71 @@ public final class QMUISkinManager {
     }
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {
+        Map<String, Integer> attrs = getSkinAttrs(view);
         if (view instanceof IQMUISkinHandlerView) {
-            ((IQMUISkinHandlerView) view).handle(skinIndex, theme);
-        } else {
-            String skinValue = (String) view.getTag(R.id.qmui_skin_value);
-            if (skinValue == null || skinValue.isEmpty()) {
-                return;
-            }
-            String[] items = skinValue.split("[|]");
-            for (String item : items) {
-                String[] kv = item.split(":");
-                if (kv.length < 2 || kv.length > 3) {
+            ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
+        } else if (attrs != null) {
+            for (String key : attrs.keySet()) {
+                Integer attr = attrs.get(key);
+                if (attr == null) {
                     continue;
                 }
-                String key = kv[0].trim();
-                int attr = mResources.getIdentifier(kv[1].trim(), "attr", mPackageName);
-                if (attr == 0) {
-                    QMUILog.w(TAG, "Failed to get attr id from name: " + kv[1]);
-                }
-                IQMUISkinRuleHandler handler = mRuleHandlers.get(key);
-                if (handler == null) {
-                    QMUILog.w(TAG, "Do not find handler for skin attr name: " + key);
-                    continue;
-                }
-                String extra = null;
-                if (kv.length == 3) {
-                    extra = kv[2].trim();
-                }
-                handler.handle(this, view, theme, attr, extra);
+                defaultHandleSkinAttr(view, theme, key, attr);
             }
         }
+    }
+
+    public void defaultHandleSkinAttr(View view, Resources.Theme theme, String name, int attr) {
+        if (attr == 0) {
+            return;
+        }
+        IQMUISkinRuleHandler handler = mRuleHandlers.get(name);
+        if (handler == null) {
+            QMUILog.w(TAG, "Do not find handler for skin attr name: " + name);
+            return;
+        }
+        handler.handle(this, view, theme, name, attr);
+    }
+
+    @Nullable
+    private Map<String, Integer> getSkinAttrs(View view) {
+        String skinValue = (String) view.getTag(R.id.qmui_skin_value);
+        String[] items;
+        if (skinValue == null || skinValue.isEmpty()) {
+            items = EMPTY_ITEMS;
+        } else {
+            items = skinValue.split("[|]");
+        }
+
+        Map<String, Integer> attrs;
+        if (view instanceof IQMUISkinDefaultAttrProvider) {
+            attrs = new HashMap<>(((IQMUISkinDefaultAttrProvider) view).getDefaultSkinAttrs());
+        } else {
+            IQMUISkinDefaultAttrProvider provider = (IQMUISkinDefaultAttrProvider) view.getTag(R.id.qmui_skin_default_attr_provider);
+            if(provider != null){
+                attrs = new HashMap<>(provider.getDefaultSkinAttrs());
+            }else{
+                attrs = new HashMap<>(items.length);
+            }
+        }
+
+        for (String item : items) {
+            String[] kv = item.split(":");
+            if (kv.length != 2) {
+                continue;
+            }
+            String key = kv[0].trim();
+            if (QMUILangHelper.isNullOrEmpty(key)) {
+                continue;
+            }
+            int attr = mResources.getIdentifier(kv[1].trim(), "attr", mPackageName);
+            if (attr == 0) {
+                QMUILog.w(TAG, "Failed to get attr id from name: " + kv[1]);
+                continue;
+            }
+            attrs.put(key, attr);
+        }
+        return attrs;
     }
 
     class SkinItem {

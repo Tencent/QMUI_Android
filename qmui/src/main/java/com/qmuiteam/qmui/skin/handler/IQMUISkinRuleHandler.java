@@ -23,9 +23,5 @@ import com.qmuiteam.qmui.skin.QMUISkinManager;
 import androidx.annotation.Nullable;
 
 public interface IQMUISkinRuleHandler {
-    void handle(QMUISkinManager skinManager,
-                View view,
-                Resources.Theme theme,
-                int attr,
-                @Nullable String extra);
+    void handle(QMUISkinManager skinManager, View view, Resources.Theme theme, String name, int attr);
 }

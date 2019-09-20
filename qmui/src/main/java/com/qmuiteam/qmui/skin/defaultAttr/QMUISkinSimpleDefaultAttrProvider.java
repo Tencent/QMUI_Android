@@ -13,21 +13,21 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.qmuiteam.qmui.skin.handler;
+package com.qmuiteam.qmui.skin.defaultAttr;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.view.View;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.util.QMUIResHelper;
+public class QMUISkinSimpleDefaultAttrProvider implements IQMUISkinDefaultAttrProvider {
 
-public abstract class QMUISkinRuleDrawableHandler implements IQMUISkinRuleHandler {
-    @Override
-    public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
-                             String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+    private HashMap<String, Integer> mSkinAttrs = new HashMap<>();
+
+    public void setDefaultSkinAttr(String name, int attr) {
+        mSkinAttrs.put(name, attr);
     }
 
-    abstract void handle(View view, String name, Drawable drawable);
+    @Override
+    public Map<String, Integer> getDefaultSkinAttrs() {
+        return mSkinAttrs;
+    }
 }

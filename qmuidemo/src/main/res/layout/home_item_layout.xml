@@ -38,5 +38,6 @@
         android:gravity="center_horizontal|top"
         android:lines="2"
         android:textColor="?attr/qmui_config_color_gray_6"
-        android:textSize="11sp" />
+        android:textSize="11sp"
+        app:qmui_skin_text_color="?attr/app_skin_home_text_color"/>
 </LinearLayout>

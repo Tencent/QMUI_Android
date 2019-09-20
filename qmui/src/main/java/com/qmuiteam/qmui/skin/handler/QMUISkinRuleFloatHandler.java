@@ -16,18 +16,17 @@
 package com.qmuiteam.qmui.skin.handler;
 
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
-public abstract class QMUISkinRuleDrawableHandler implements IQMUISkinRuleHandler {
+public abstract class QMUISkinRuleFloatHandler implements IQMUISkinRuleHandler {
     @Override
     public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
                              String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+        handle(view, name, QMUIResHelper.getAttrFloatValue(theme, attr));
     }
 
-    abstract void handle(View view, String name, Drawable drawable);
+    abstract void handle(View view, String name, float value);
 }

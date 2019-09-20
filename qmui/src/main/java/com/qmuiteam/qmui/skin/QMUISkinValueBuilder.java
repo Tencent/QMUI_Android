@@ -15,90 +15,95 @@
  */
 package com.qmuiteam.qmui.skin;
 
-import android.util.Pair;
-
 import java.util.HashMap;
-
-import androidx.annotation.Nullable;
 
 public class QMUISkinValueBuilder {
     public static final String BACKGROUND = "background";
     public static final String TEXT_COLOR = "textColor";
+    public static final String SECOND_TEXT_COLOR = "secondTextColor";
+    public static final String BTN_TEXT_COLOR = "btnTextColor";
     public static final String SRC = "src";
     public static final String BORDER = "border";
-    public static final String SEPARATOR = "separator";
+    public static final String TOP_SEPARATOR = "topSeparator";
+    public static final String BOTTOM_SEPARATOR = "bottomSeparator";
+    public static final String RIGHT_SEPARATOR = "rightSeparator";
+    public static final String LEFT_SEPARATOR = "LeftSeparator";
+    public static final String ALPHA = "alpha";
+    public static final String TINT_COLOR = "tintColor";
 
-    private HashMap<String, Pair<Integer, String>> mValues = new HashMap<>();
-
+    private HashMap<String, Integer> mValues = new HashMap<>();
 
     public QMUISkinValueBuilder background(int attr) {
-        return background(attr, null);
-    }
-
-    public QMUISkinValueBuilder background(int attr, @Nullable String extra) {
-        mValues.put(BACKGROUND, Pair.create(attr, extra));
+        mValues.put(BACKGROUND, attr);
         return this;
     }
 
     public QMUISkinValueBuilder textColor(int attr) {
-        return textColor(attr, null);
+        mValues.put(TEXT_COLOR, attr);
+        return this;
     }
 
-    public QMUISkinValueBuilder textColor(int attr, @Nullable String extra) {
-        mValues.put(TEXT_COLOR, Pair.create(attr, extra));
+    public QMUISkinValueBuilder btnTextColor(int attr) {
+        mValues.put(BTN_TEXT_COLOR, attr);
         return this;
     }
 
     public QMUISkinValueBuilder src(int attr) {
-        return src(attr, null);
-    }
-
-    public QMUISkinValueBuilder src(int attr, @Nullable String extra) {
-        mValues.put(SRC, Pair.create(attr, extra));
+        mValues.put(SRC, attr);
         return this;
     }
 
     public QMUISkinValueBuilder border(int attr) {
-        return border(attr, null);
-    }
-
-    public QMUISkinValueBuilder border(int attr, @Nullable String extra) {
-        mValues.put(BORDER, Pair.create(attr, extra));
+        mValues.put(BORDER, attr);
         return this;
     }
 
     public QMUISkinValueBuilder topSeparator(int attr) {
-        return separator(attr, "top");
+        mValues.put(TOP_SEPARATOR, attr);
+        return this;
     }
 
     public QMUISkinValueBuilder rightSeparator(int attr) {
-        return separator(attr, "right");
+        mValues.put(RIGHT_SEPARATOR, attr);
+        return this;
     }
 
     public QMUISkinValueBuilder bottomSeparator(int attr) {
-        return separator(attr, "bottom");
+        mValues.put(BOTTOM_SEPARATOR, attr);
+        return this;
     }
 
     public QMUISkinValueBuilder leftSeparator(int attr) {
-        return separator(attr, "left");
-    }
-
-    public QMUISkinValueBuilder separator(int attr, @Nullable String extra) {
-        mValues.put(SEPARATOR, Pair.create(attr, extra));
+        mValues.put(LEFT_SEPARATOR, attr);
         return this;
     }
 
-    public QMUISkinValueBuilder custom(String name, int attr, @Nullable String extra) {
-        mValues.put(name, Pair.create(attr, extra));
+    public QMUISkinValueBuilder alpha(int attr) {
+        mValues.put(ALPHA, attr);
         return this;
     }
 
-    public QMUISkinValueBuilder clear(){
+    public QMUISkinValueBuilder tintColor(int attr) {
+        mValues.put(TINT_COLOR, attr);
+        return this;
+    }
+
+    public QMUISkinValueBuilder secondTextColor(int attr) {
+        mValues.put(SECOND_TEXT_COLOR, attr);
+        return this;
+    }
+
+    public QMUISkinValueBuilder custom(String name, int attr) {
+        mValues.put(name, attr);
+        return this;
+    }
+
+    public QMUISkinValueBuilder clear() {
         mValues.clear();
         return this;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return mValues.isEmpty();
     }
 
@@ -106,7 +111,7 @@ public class QMUISkinValueBuilder {
         StringBuilder builder = new StringBuilder();
         boolean isFirstItem = true;
         for (String name : mValues.keySet()) {
-            Pair<Integer, String> itemValue = mValues.get(name);
+            Integer itemValue = mValues.get(name);
             if (itemValue == null) {
                 continue;
             }
@@ -115,11 +120,7 @@ public class QMUISkinValueBuilder {
             }
             builder.append(name);
             builder.append(":");
-            builder.append(itemValue.first);
-            if (itemValue.second != null) {
-                builder.append(":");
-                builder.append(itemValue.second);
-            }
+            builder.append(itemValue);
             isFirstItem = false;
         }
         return builder.toString();

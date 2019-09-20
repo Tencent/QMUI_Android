@@ -23,7 +23,6 @@ import android.content.res.Resources;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;

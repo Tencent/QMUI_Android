@@ -18,19 +18,20 @@ package com.qmuiteam.qmui.skin.handler;
 import android.view.View;
 
 import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 
 public class QMUISkinRuleSeparatorHandler extends QMUISkinRuleColorHandler {
 
     @Override
-    void handle(View view, int color, String extra) {
+    void handle(View view, String name, int color) {
         if (view instanceof IQMUILayout) {
-            if ("top".equals(extra)) {
+            if (QMUISkinValueBuilder.TOP_SEPARATOR.equals(name)) {
                 ((IQMUILayout) view).updateTopSeparatorColor(color);
-            } else if ("bottom".equals(extra)) {
+            } else if (QMUISkinValueBuilder.BOTTOM_SEPARATOR.equals(name)) {
                 ((IQMUILayout) view).updateBottomSeparatorColor(color);
-            } else if ("left".equals(extra)) {
+            } else if (QMUISkinValueBuilder.LEFT_SEPARATOR.equals(name)) {
                 ((IQMUILayout) view).updateLeftSeparatorColor(color);
-            } else if ("right".equals(extra)) {
+            } else if (QMUISkinValueBuilder.RIGHT_SEPARATOR.equals(name)) {
                 ((IQMUILayout) view).updateRightSeparatorColor(color);
             }
         }

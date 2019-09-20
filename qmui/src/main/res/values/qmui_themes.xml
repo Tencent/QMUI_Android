@@ -228,6 +228,14 @@
         *                  qmui topbar                   *
         ***********************************************-->
         <item name="qmui_topbar_height">56dp</item>
+        <!-- skin support-->
+        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_topbar_bg_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_subtitle_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_gray_1</item>
+        <!-- skin support-->
 
         <!--**********************************************
         *                 qmui bottom sheet              *
@@ -293,7 +301,8 @@
         <item name="qmui_popup_shadow_inset">30dp</item>
         <item name="qmui_popup_arrow_width">18dp</item>
         <item name="qmui_popup_arrow_height">10dp</item>
-        <item name="qmui_popup_fullscreen_close_icon">@drawable/qmui_icon_popup_fullscreen_close</item>
+        <item name="qmui_popup_fullscreen_close_icon">@drawable/qmui_icon_popup_fullscreen_close
+        </item>
 
 
         <item name="qmui_popup_bg">@drawable/qmui_popup_bg</item>

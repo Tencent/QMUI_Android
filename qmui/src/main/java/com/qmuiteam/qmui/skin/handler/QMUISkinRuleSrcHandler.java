@@ -22,7 +22,7 @@ import android.widget.ImageView;
 public class QMUISkinRuleSrcHandler extends QMUISkinRuleDrawableHandler {
 
     @Override
-    void handle(View view, Drawable drawable, String extra) {
+    void handle(View view, String name, Drawable drawable) {
 
         if (view instanceof ImageView) {
             ((ImageView) view).setImageDrawable(drawable);
