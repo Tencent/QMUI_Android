@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -89,16 +90,12 @@ public class QMUITopBarLayout extends FrameLayout {
         mTopBar.setCenterView(view);
     }
 
-    public TextView setTitle(int resId) {
+    public QMUIQQFaceView setTitle(int resId) {
         return mTopBar.setTitle(resId);
     }
 
-    public TextView setTitle(String title) {
+    public QMUIQQFaceView setTitle(String title) {
         return mTopBar.setTitle(title);
-    }
-
-    public TextView setEmojiTitle(String title) {
-        return mTopBar.setEmojiTitle(title);
     }
 
     public void showTitlteView(boolean toShow) {

@@ -37,6 +37,8 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
+import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
@@ -47,14 +49,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 通用的顶部 Bar。提供了以下功能：
+ * A standard toolbar for use within application content.
  * <p>
  * <ul>
- * <li>在左侧/右侧添加图片按钮/文字按钮/自定义 {@link View}。</li>
- * <li>设置标题/副标题，且支持设置标题/副标题的水平对齐方式。</li>
+ * <li>add icon/text/custom-view in left or right.</li>
+ * <li>set title and subtitle with gravity support.</li>
  * </ul>
  */
-public class QMUITopBar extends RelativeLayout {
+public class QMUITopBar extends QMUIRelativeLayout {
 
     private static final int DEFAULT_VIEW_ID = -1;
     private int mLeftLastViewId; // 左侧最右 view 的 id
@@ -62,8 +64,8 @@ public class QMUITopBar extends RelativeLayout {
 
     private View mCenterView; // 中间的 View
     private LinearLayout mTitleContainerView; // 包裹 title 和 subTitle 的容器
-    private TextView mTitleView; // 显示 title 文字的 TextView
-    private TextView mSubTitleView; // 显示 subTitle 文字的 TextView
+    private QMUIQQFaceView mTitleView; // 显示 title 文字的 TextView
+    private QMUIQQFaceView mSubTitleView; // 显示 subTitle 文字的 TextView
 
     private List<View> mLeftViewList;
     private List<View> mRightViewList;
@@ -88,7 +90,7 @@ public class QMUITopBar extends RelativeLayout {
     private int mTopBarTextBtnPaddingHor;
     private ColorStateList mTopBarTextBtnTextColor;
     private int mTopBarTextBtnTextSize;
-    private int mTopbarHeight = -1;
+    private int mTopBarHeight = -1;
     private Rect mTitleContainerRect;
 
     public QMUITopBar(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -102,23 +104,19 @@ public class QMUITopBar extends RelativeLayout {
     }
 
 
-    // ========================= centerView 相关的方法
-
     public QMUITopBar(Context context) {
         this(context, null);
     }
 
-    // ========================= title 相关的方法
 
-    // 这个构造器只用于QMUI内部，不开放给外面用，目前用于QMUITopBarLayout
+    // This construstor is only used for QMUITopBarLayout
     QMUITopBar(Context context, boolean inTopBarLayout) {
         super(context);
         initVar();
         if (inTopBarLayout) {
-            int transparentColor = ContextCompat.getColor(context, R.color.qmui_config_color_transparent);
-            mTopBarSeparatorColor = transparentColor;
+            mTopBarSeparatorColor = Color.TRANSPARENT;
             mTopBarSeparatorHeight = 0;
-            mTopBarBgColor = transparentColor;
+            mTopBarBgColor = Color.TRANSPARENT;
         } else {
             init(context, null, R.attr.QMUITopBarStyle);
         }
@@ -159,14 +157,13 @@ public class QMUITopBar extends RelativeLayout {
         mTopBarTextBtnPaddingHor = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_text_btn_padding_horizontal, QMUIDisplayHelper.dp2px(context, 12));
         mTopBarTextBtnTextColor = array.getColorStateList(R.styleable.QMUITopBar_qmui_topbar_text_btn_color_state_list);
         mTopBarTextBtnTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_text_btn_text_size, QMUIDisplayHelper.sp2px(context, 16));
-
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ViewParent parent = getParent();
-        while (parent != null && (parent instanceof View)) {
+        while (parent instanceof View) {
             if (parent instanceof QMUICollapsingTopBarLayout) {
                 makeSureTitleContainerView();
                 return;
@@ -190,7 +187,8 @@ public class QMUITopBar extends RelativeLayout {
         mCenterView = view;
         LayoutParams params = (LayoutParams) mCenterView.getLayoutParams();
         if (params == null) {
-            params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params = new LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         addView(view, params);
@@ -201,7 +199,7 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param resId TopBar 的标题 resId
      */
-    public TextView setTitle(int resId) {
+    public QMUIQQFaceView setTitle(int resId) {
         return setTitle(getContext().getString(resId));
     }
 
@@ -210,8 +208,8 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param title TopBar 的标题
      */
-    public TextView setTitle(String title) {
-        TextView titleView = getTitleView(false);
+    public QMUIQQFaceView setTitle(String title) {
+        QMUIQQFaceView titleView = getTitleView();
         titleView.setText(title);
         if (QMUILangHelper.isNullOrEmpty(title)) {
             titleView.setVisibility(GONE);
@@ -228,27 +226,15 @@ public class QMUITopBar extends RelativeLayout {
         return mTitleView.getText();
     }
 
-    public TextView setEmojiTitle(String title) {
-        TextView titleView = getTitleView(true);
-        titleView.setText(title);
-        if (QMUILangHelper.isNullOrEmpty(title)) {
-            titleView.setVisibility(GONE);
-        } else {
-            titleView.setVisibility(VISIBLE);
-        }
-        return titleView;
-    }
-
     public void showTitleView(boolean toShow) {
         if (mTitleView != null) {
             mTitleView.setVisibility(toShow ? VISIBLE : GONE);
         }
     }
 
-    private TextView getTitleView(boolean isEmoji) {
+    private QMUIQQFaceView getTitleView() {
         if (mTitleView == null) {
-//            mTitleView = isEmoji ? new EmojiconTextView(getContext()) : new TextView(getContext());
-            mTitleView = new TextView(getContext());
+            mTitleView = new QMUIQQFaceView(getContext());
             mTitleView.setGravity(Gravity.CENTER);
             mTitleView.setSingleLine(true);
             mTitleView.setEllipsize(TruncateAt.MIDDLE);
@@ -267,9 +253,9 @@ public class QMUITopBar extends RelativeLayout {
     private void updateTitleViewStyle() {
         if (mTitleView != null) {
             if (mSubTitleView == null || QMUILangHelper.isNullOrEmpty(mSubTitleView.getText())) {
-                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTitleTextSize);
+                mTitleView.setTextSize(mTitleTextSize);
             } else {
-                mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTitleTextSizeWithSubTitle);
+                mTitleView.setTextSize(mTitleTextSizeWithSubTitle);
             }
         }
     }
@@ -279,16 +265,17 @@ public class QMUITopBar extends RelativeLayout {
      *
      * @param subTitle TopBar 的副标题
      */
-    public void setSubTitle(String subTitle) {
-        TextView titleView = getSubTitleView();
-        titleView.setText(subTitle);
+    public QMUIQQFaceView setSubTitle(String subTitle) {
+        QMUIQQFaceView subTitleView = getSubTitleView();
+        subTitleView.setText(subTitle);
         if (QMUILangHelper.isNullOrEmpty(subTitle)) {
-            titleView.setVisibility(GONE);
+            subTitleView.setVisibility(GONE);
         } else {
-            titleView.setVisibility(VISIBLE);
+            subTitleView.setVisibility(VISIBLE);
         }
         // 更新 titleView 的样式（因为有没有 subTitle 会影响 titleView 的样式）
         updateTitleViewStyle();
+        return subTitleView;
     }
 
     /**
@@ -300,13 +287,13 @@ public class QMUITopBar extends RelativeLayout {
         setSubTitle(getResources().getString(resId));
     }
 
-    private TextView getSubTitleView() {
+    private QMUIQQFaceView getSubTitleView() {
         if (mSubTitleView == null) {
-            mSubTitleView = new TextView(getContext());
+            mSubTitleView = new QMUIQQFaceView(getContext());
             mSubTitleView.setGravity(Gravity.CENTER);
             mSubTitleView.setSingleLine(true);
             mSubTitleView.setEllipsize(TruncateAt.MIDDLE);
-            mSubTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubTitleTextSize);
+            mSubTitleView.setTextSize(mSubTitleTextSize);
             mSubTitleView.setTextColor(mSubTitleTextColor);
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
             titleLp.topMargin = QMUIDisplayHelper.dp2px(getContext(), 1);
@@ -632,10 +619,10 @@ public class QMUITopBar extends RelativeLayout {
     }
 
     private int getTopBarHeight() {
-        if (mTopbarHeight == -1) {
-            mTopbarHeight = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_height);
+        if (mTopBarHeight == -1) {
+            mTopBarHeight = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_topbar_height);
         }
-        return mTopbarHeight;
+        return mTopBarHeight;
     }
 
     // ======================== TopBar自身相关的方法
