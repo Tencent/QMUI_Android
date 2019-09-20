@@ -19,6 +19,7 @@ package com.qmuiteam.qmuidemo.fragment.components.qqface;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -37,19 +38,19 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Other, name = "QQ表情使用展示")
 public class QDQQFaceUsageFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBar mTopBar;
-    @BindView(R.id.qqface1) QDQQFaceView mQQFace1;
-    @BindView(R.id.qqface2) QDQQFaceView mQQFace2;
-    @BindView(R.id.qqface3) QDQQFaceView mQQFace3;
-    @BindView(R.id.qqface4) QDQQFaceView mQQFace4;
-    @BindView(R.id.qqface5) QDQQFaceView mQQFace5;
-    @BindView(R.id.qqface6) QDQQFaceView mQQFace6;
-    @BindView(R.id.qqface7) QDQQFaceView mQQFace7;
-    @BindView(R.id.qqface8) QDQQFaceView mQQFace8;
-    @BindView(R.id.qqface9) QDQQFaceView mQQFace9;
-    @BindView(R.id.qqface10) QDQQFaceView mQQFace10;
-    @BindView(R.id.qqface11) QDQQFaceView mQQFace11;
-    @BindView(R.id.qqface12) QDQQFaceView mQQFace12;
-    @BindView(R.id.qqface13) QDQQFaceView mQQFace13;
+    @BindView(R.id.qqface1) QMUIQQFaceView mQQFace1;
+    @BindView(R.id.qqface2) QMUIQQFaceView mQQFace2;
+    @BindView(R.id.qqface3) QMUIQQFaceView mQQFace3;
+    @BindView(R.id.qqface4) QMUIQQFaceView mQQFace4;
+    @BindView(R.id.qqface5) QMUIQQFaceView mQQFace5;
+    @BindView(R.id.qqface6) QMUIQQFaceView mQQFace6;
+    @BindView(R.id.qqface7) QMUIQQFaceView mQQFace7;
+    @BindView(R.id.qqface8) QMUIQQFaceView mQQFace8;
+    @BindView(R.id.qqface9) QMUIQQFaceView mQQFace9;
+    @BindView(R.id.qqface10) QMUIQQFaceView mQQFace10;
+    @BindView(R.id.qqface11) QMUIQQFaceView mQQFace11;
+    @BindView(R.id.qqface12) QMUIQQFaceView mQQFace12;
+    @BindView(R.id.qqface13) QMUIQQFaceView mQQFace13;
 
     @Override
     protected View onCreateView() {

@@ -98,7 +98,6 @@ public class QMUIQQFaceView extends View {
     private int mMaxWidth = Integer.MAX_VALUE;
     private PressCancelAction mPendingPressCancelAction = null;
     private boolean mJumpHandleMeasureAndDraw = false;
-    private Runnable mDelayTextSetter = null;
     private boolean mIncludePad = true;
     private Typeface mTypeface = null;
     private int mParagraphSpace = 0; // 段间距
@@ -145,12 +144,7 @@ public class QMUIQQFaceView extends View {
         mSpecialDrawablePadding = array.getDimensionPixelSize(R.styleable.QMUIQQFaceView_qmui_special_drawable_padding, 0);
         final String text = array.getString(R.styleable.QMUIQQFaceView_android_text);
         if (!QMUILangHelper.isNullOrEmpty(text)) {
-            mDelayTextSetter = new Runnable() {
-                @Override
-                public void run() {
-                    setText(text);
-                }
-            };
+            mOriginText = text;
         }
         mMoreActionText = array.getString(R.styleable.QMUIQQFaceView_qmui_more_action_text);
         mMoreActionColor = array.getColor(R.styleable.QMUIQQFaceView_qmui_more_action_color, mTextColor);
@@ -165,6 +159,7 @@ public class QMUIQQFaceView extends View {
         mSpanBgPaint = new Paint();
         mSpanBgPaint.setAntiAlias(true);
         mSpanBgPaint.setStyle(Paint.Style.FILL);
+        setCompiler(QMUIQQFaceCompiler.getDefaultInstance());
     }
 
     public void setOpenQQFace(boolean openQQFace) {
@@ -276,9 +271,9 @@ public class QMUIQQFaceView extends View {
     }
 
     public void setCompiler(QMUIQQFaceCompiler compiler) {
-        mCompiler = compiler;
-        if (mDelayTextSetter != null) {
-            mDelayTextSetter.run();
+        if(mCompiler != compiler){
+            mCompiler = compiler;
+            setText(mOriginText, false);
         }
     }
 
@@ -357,10 +352,10 @@ public class QMUIQQFaceView extends View {
         }
     }
 
-    public void setIncludeFontPadding(boolean includepad) {
-        if (mIncludePad != includepad) {
+    public void setIncludeFontPadding(boolean includePad) {
+        if (mIncludePad != includePad) {
             needReCalculateFontHeight = true;
-            mIncludePad = includepad;
+            mIncludePad = includePad;
             requestLayout();
             invalidate();
         }
@@ -462,11 +457,14 @@ public class QMUIQQFaceView extends View {
     }
 
     public void setText(CharSequence charSequence) {
-        mDelayTextSetter = null;
-        CharSequence oldText = mOriginText;
-        if (mOriginText != null && mOriginText.equals(charSequence)) {
+        setText(charSequence, true);
+    }
+
+    private void setText(CharSequence charSequence, boolean compareOldText) {
+        if(compareOldText && QMUILangHelper.objectEquals(charSequence, mOriginText)){
             return;
         }
+
         mOriginText = charSequence;
         setContentDescription(charSequence);
         if (mOpenQQFace && mCompiler == null) {
@@ -474,11 +472,9 @@ public class QMUIQQFaceView extends View {
         }
 
         if (QMUILangHelper.isNullOrEmpty(mOriginText)) {
-            if (!QMUILangHelper.isNullOrEmpty(oldText)) {
-                mElementList = null;
-                requestLayout();
-                invalidate();
-            }
+            mElementList = null;
+            requestLayout();
+            invalidate();
             return;
         }
 

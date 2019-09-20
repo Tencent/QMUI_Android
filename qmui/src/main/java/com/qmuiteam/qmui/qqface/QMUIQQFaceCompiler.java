@@ -23,11 +23,15 @@ import android.util.LruCache;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 
 /**
  * {@link QMUIQQFaceView} 的内容解析器，将文本内容解析成 {@link QMUIQQFaceView} 想要的数据格式。
@@ -38,24 +42,31 @@ import java.util.List;
 
 public class QMUIQQFaceCompiler {
     private static final int SPAN_COLUMN = 2;
+    private static final Map<IQMUIQQFaceManager, QMUIQQFaceCompiler> sInstanceMap = new HashMap<>(4);
+    private static IQMUIQQFaceManager sDefaultQQFaceManager = new QMUINoQQFaceManager();
 
-    private volatile static QMUIQQFaceCompiler sInstance;
+    public static void setDefaultQQFaceManager(@NonNull IQMUIQQFaceManager defaultQQFaceManager) {
+        sDefaultQQFaceManager = defaultQQFaceManager;
+    }
 
-    // cache
     private LruCache<CharSequence, ElementList> mCache;
-
     private IQMUIQQFaceManager mQQFaceManager;
 
-    // 有多线程保护，如果内容非常多，可以扔到后台去（虽然暂时没有这个必要，但不避免有人想这么做）
+
+    @MainThread
+    public static QMUIQQFaceCompiler getDefaultInstance(){
+        return getInstance(sDefaultQQFaceManager);
+    }
+
+    @MainThread
     public static QMUIQQFaceCompiler getInstance(IQMUIQQFaceManager manager) {
-        if (sInstance == null) {
-            synchronized (QMUIQQFaceCompiler.class) {
-                if (sInstance == null) {
-                    sInstance = new QMUIQQFaceCompiler(manager);
-                }
-            }
+        QMUIQQFaceCompiler instance = sInstanceMap.get(manager);
+        if (instance != null) {
+            return instance;
         }
-        return sInstance;
+        instance = new QMUIQQFaceCompiler(manager);
+        sInstanceMap.put(manager, instance);
+        return instance;
     }
 
     private QMUIQQFaceCompiler(IQMUIQQFaceManager manager) {
@@ -108,9 +119,9 @@ public class QMUIQQFaceCompiler {
                 public int compare(QMUITouchableSpan o1, QMUITouchableSpan o2) {
                     int start1 = spannable.getSpanStart(o1);
                     int start2 = spannable.getSpanStart(o2);
-                    if(start1 > start2){
+                    if (start1 > start2) {
                         return 1;
-                    }else if(start1 == start2){
+                    } else if (start1 == start2) {
                         return 0;
                     }
                     return -1;

@@ -44,8 +44,6 @@ public class QDQQFacePagerView extends QDQQFaceBasePagerView {
         QMUIQQFaceView qmuiqqFaceView;
         if (convertView == null || !(convertView instanceof QMUIQQFaceView)) {
             qmuiqqFaceView = new QMUIQQFaceView(getContext());
-            qmuiqqFaceView.setCompiler(QMUIQQFaceCompiler.getInstance(
-                    QDQQFaceManager.getInstance()));
             int padding = QMUIDisplayHelper.dp2px(getContext(), 16);
             ViewCompat.setBackground(qmuiqqFaceView, QMUIResHelper.getAttrDrawable(
                     getContext(), R.attr.qmui_s_list_item_bg_with_border_bottom));

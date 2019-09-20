@@ -41,7 +41,7 @@
             <TextView
                 style="@style/QDCommonTitle"
                 android:text="单行表情，末尾省略"/>
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 style="@style/QDCommonTitle"
                 android:layout_marginTop="20dp"
                 android:text="最多显示3行，末尾省略"/>
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 style="@style/QDCommonTitle"
                 android:layout_marginTop="20dp"
                 android:text="单行，开端省略"/>
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:layout_marginTop="20dp"
                 android:text="最多显示3行，开端省略"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                 style="@style/QDCommonTitle"
                 android:layout_marginTop="20dp"
                 android:text="单行，中间省略"/>
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 android:layout_marginTop="20dp"
                 android:text="最多显示3行，中间省略"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
                 android:layout_marginTop="20dp"
                 android:text="全是表情也能优雅的省略"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                 android:singleLine="true"
                 android:ellipsize="start"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
                 android:layout_marginTop="10dp"
                 android:ellipsize="middle"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                 android:maxLines="3"
                 android:ellipsize="start"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
                 android:layout_marginTop="10dp"
                 android:ellipsize="middle"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -169,7 +169,7 @@
                 android:layout_marginTop="10dp"
                 android:ellipsize="end"/>
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

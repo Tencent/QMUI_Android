@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
@@ -50,6 +51,7 @@ public class QDApplication extends Application {
 
         QDUpgradeManager.getInstance(this).check();
         QMUISwipeBackActivityManager.init(this);
+        QMUIQQFaceCompiler.setDefaultQQFaceManager(QDQQFaceManager.getInstance());
         QDSkinManager.install(this);
     }
 

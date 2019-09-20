@@ -44,7 +44,7 @@ import butterknife.ButterKnife;
  * @date 2017-06-08
  */
 
-@Widget(group = Group.Other, name = "性能观测")
+@Widget(group = Group.Other, name = "性能观测[微笑]")
 public class QDQQFacePerformanceTestFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
