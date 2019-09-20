@@ -26,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/home_tab_height"
-        android:background="?attr/app_content_bg_color"/>
+        android:background="?attr/app_content_bg_color"
+        app:qmui_skin_background="?attr/app_skin_common_background"/>
 
     <com.qmuiteam.qmui.widget.tab.QMUITabSegment
         android:id="@+id/tabs"

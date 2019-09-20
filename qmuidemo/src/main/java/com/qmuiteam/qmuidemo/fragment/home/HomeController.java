@@ -18,6 +18,7 @@ package com.qmuiteam.qmuidemo.fragment.home;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -27,6 +28,7 @@ import android.view.View;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -35,6 +37,7 @@ import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
 import com.qmuiteam.qmuidemo.decorator.GridDividerItemDecoration;
 import com.qmuiteam.qmuidemo.fragment.QDAboutFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
+import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.List;
@@ -88,6 +91,23 @@ public abstract class HomeController extends QMUIWindowInsetLayout {
             public void onClick(View view) {
                 QDAboutFragment fragment = new QDAboutFragment();
                 startFragment(fragment);
+            }
+        });
+
+        mTopBar.addRightTextButton("换肤", QMUIViewHelper.generateViewId()).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] items = new String[]{"蓝色（默认）", "黑色"};
+                new QMUIDialog.MenuDialogBuilder(getContext())
+                        .addItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                QDSkinManager.changeSkin(which + 1);
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
             }
         });
     }

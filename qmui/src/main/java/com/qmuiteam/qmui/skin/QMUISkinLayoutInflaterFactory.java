@@ -89,6 +89,9 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             if (attr == R.styleable.QMUISkinDef_qmui_skin_background) {
                 String name = a.getString(attr);
                 if (!QMUILangHelper.isNullOrEmpty(name)) {
+                    if(name.startsWith("?")){
+                        name = name.substring(1);
+                    }
                     int id = view.getContext().getResources().getIdentifier(
                             name, "attr", view.getContext().getPackageName());
                     builder.background(id);

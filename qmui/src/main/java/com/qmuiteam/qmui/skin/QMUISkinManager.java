@@ -26,6 +26,8 @@ import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.QMUILog;
@@ -44,6 +46,8 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 public final class QMUISkinManager {
     private static final String TAG = "QMUISkinManager";
@@ -109,6 +113,24 @@ public final class QMUISkinManager {
         }
     };
 
+    private ViewGroup.OnHierarchyChangeListener mOnHierarchyChangeListener = new ViewGroup.OnHierarchyChangeListener() {
+        @Override
+        public void onChildViewAdded(View parent, View child) {
+            Integer currentTheme = (Integer) parent.getTag(R.id.qmui_skin_current_index);
+            if(currentTheme != null){
+                Integer childTheme = (Integer) child.getTag(R.id.qmui_skin_current_index);
+                if (!currentTheme.equals(childTheme)) {
+                    dispatch(child, currentTheme);
+                }
+            }
+        }
+
+        @Override
+        public void onChildViewRemoved(View parent, View child) {
+
+        }
+    };
+
     private QMUISkinManager(Resources resources, String packageName) {
         mResources = resources;
         mPackageName = packageName;
@@ -152,6 +174,7 @@ public final class QMUISkinManager {
         if (mTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
             return getDrawable(context, theme, mTmpValue.data);
         }
+
         if (mTmpValue.resourceId != 0) {
             return QMUIDrawableHelper.getVectorDrawable(context, mTmpValue.resourceId);
         }
@@ -223,11 +246,22 @@ public final class QMUISkinManager {
         applyTheme(view, skinIndex, theme);
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
-            viewGroup.addOnLayoutChangeListener(mOnLayoutChangeListener);
+            if(useHierarchyChangeListener(viewGroup)){
+                viewGroup.setOnHierarchyChangeListener(mOnHierarchyChangeListener);
+            }else{
+                viewGroup.addOnLayoutChangeListener(mOnLayoutChangeListener);
+            }
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
             }
         }
+    }
+
+    private boolean useHierarchyChangeListener(ViewGroup viewGroup){
+        return viewGroup instanceof RecyclerView ||
+                viewGroup instanceof ViewPager ||
+                viewGroup instanceof AdapterView ||
+                viewGroup.getClass().isAnnotationPresent(QMUISkinListenWithHierarchyChange.class);
     }
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {

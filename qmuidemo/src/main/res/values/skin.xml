@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -16,11 +15,20 @@
 -->
 <resources>
 
-    <style name="app_skin_normal">
-        <item name="app_skin_common_background">#ffffff</item>
+    <!-- skin attr define-->
+    <attr name="app_skin_topbar_bg" format="color|reference" />
+    <attr name="app_skin_common_background" format="color|reference" />
+    <attr name="app_skin_s_list_item_bg" format="color|reference" />
+
+    <style name="app_skin_normal" parent="AppTheme">
+        <item name="app_skin_common_background">@color/qmui_config_color_white</item>
+        <item name="app_skin_topbar_bg">?attr/qmui_config_color_blue</item>
+        <item name="app_skin_s_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
     </style>
 
     <style name="app_skin_dark" parent="app_skin_normal">
-        <item name="app_skin_common_background">#000000</item>
+        <item name="app_skin_common_background">@color/qmui_config_color_gray_1</item>
+        <item name="app_skin_topbar_bg">@color/qmui_config_color_pure_black</item>
+        <item name="app_skin_s_list_item_bg">@drawable/list_item_bg_with_border_none_dark</item>
     </style>
 </resources>
