@@ -125,9 +125,8 @@ public class FirstFragmentProcessor extends BaseProcessor {
         ExecutableElement iGetIdByFragmentClass = getOverrideMethod(
                 FirstFragmentFinderName, "getIdByFragmentClass");
         MethodSpec.Builder getIdByFragmentClass = MethodSpec.overriding(iGetIdByFragmentClass)
-                .addStatement("return mClassToIdMap.getOrDefault($L, $T.NO_ID)",
-                        iGetIdByFragmentClass.getParameters().get(0).getSimpleName().toString(),
-                        FirstFragmentFinderName);
+                .addStatement("Integer id = mClassToIdMap.get($L)", iGetIdByFragmentClass.getParameters().get(0).getSimpleName().toString())
+                .addStatement("return id != null ? id :$T.NO_ID", FirstFragmentFinderName);
 
         try {
             finderClassBuilder
