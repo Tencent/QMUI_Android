@@ -33,7 +33,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaTextView;
@@ -57,7 +56,7 @@ import java.util.Set;
  * @author cginechen
  * @date 2017-03-17
  */
-public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanClickListener, ISpanTouchFix {
+public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanClickListener {
     private static final String TAG = "LinkTextView";
     private static final int MSG_CHECK_DOUBLE_TAP_TIMEOUT = 1000;
     public static int AUTO_LINK_MASK_REQUIRED = QMUILinkify.PHONE_NUMBERS | QMUILinkify.EMAIL_ADDRESSES | QMUILinkify.WEB_URLS;
@@ -83,12 +82,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
     private int mAutoLinkMaskCompat;
     private OnLinkClickListener mOnLinkClickListener;
     private OnLinkLongClickListener mOnLinkLongClickListener;
-    private boolean mNeedForceEventToParent = false;
-
-    /**
-     * 记录当前 Touch 事件对应的点是不是点在了 span 上面
-     */
-    private boolean mTouchSpanHit;
 
     private long mDownMillis = 0;
     private static final long TAP_TIMEOUT = 200; // ViewConfiguration.getTapTimeout();
@@ -110,7 +103,7 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
         super(context, attrs);
         mAutoLinkMaskCompat = getAutoLinkMask() | AUTO_LINK_MASK_REQUIRED;
         setAutoLinkMask(0);
-        setMovementMethod(QMUILinkTouchMovementMethod.getInstance());
+        setMovementMethodCompat(QMUILinkTouchMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.QMUILinkTextView);
         mLinkBgColor = array.getColorStateList(R.styleable.QMUILinkTextView_qmui_linkBackgroundColor);
@@ -146,19 +139,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
         mAutoLinkMaskCompat &= ~mask;
     }
 
-    /**
-     * 是否强制把TextView的事件强制传递给父元素。TextView在有ClickSpan的情况下默认会消耗掉事件
-     *
-     * @param needForceEventToParent true 为强制把TextView的事件强制传递给父元素，false 则不传递
-     */
-    public void setNeedForceEventToParent(boolean needForceEventToParent) {
-        if (mNeedForceEventToParent != needForceEventToParent) {
-            mNeedForceEventToParent = needForceEventToParent;
-            if (mOriginText != null) {
-                setText(mOriginText);
-            }
-        }
-    }
 
     public void setLinkColor(ColorStateList linkTextColor) {
         mLinkTextColor = linkTextColor;
@@ -173,11 +153,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
             text = builder;
         }
         super.setText(text, type);
-        if (mNeedForceEventToParent && getLinksClickable()) {
-            setFocusable(false);
-            setClickable(false);
-            setLongClickable(false);
-        }
     }
 
     @Override
@@ -230,11 +205,7 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
                 }
                 break;
         }
-        boolean ret = super.onTouchEvent(event);
-        if (mNeedForceEventToParent) {
-            return mTouchSpanHit;
-        }
-        return ret;
+        return super.onTouchEvent(event);
     }
 
     private void disallowOnSpanClickInterrupt() {
@@ -250,13 +221,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
         return false;
     }
 
-    @Override
-    public boolean performClick() {
-        if (!mTouchSpanHit && !mNeedForceEventToParent) {
-            return super.performClick();
-        }
-        return false;
-    }
 
     @Override
     public boolean performLongClick() {
@@ -297,13 +261,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
         }
 
     };
-
-    @Override
-    public void setTouchSpanHit(boolean hit) {
-        if (mTouchSpanHit != hit) {
-            mTouchSpanHit = hit;
-        }
-    }
 
     public interface OnLinkClickListener {
 
