@@ -151,7 +151,7 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
         @Override
         public int getCount() {
             int count = mAdapter.getCount();
-            if (mEnableLoop && count >= 3) {
+            if (mEnableLoop && count > 3) {
                 count *= mInfiniteRatio;
             }
             return count;
