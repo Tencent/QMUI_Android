@@ -56,7 +56,7 @@ public class QMUISpanTouchFixTextView extends AppCompatTextView implements ISpan
     /**
      * 记录当前 Touch 事件对应的点是不是点在了 span 上面
      */
-    private boolean mTouchSpanHit;
+    protected boolean mTouchSpanHit;
 
     /**
      * 记录每次真正传入的press，每次更改mTouchSpanHint，需要再调用一次setPressed，确保press状态正确

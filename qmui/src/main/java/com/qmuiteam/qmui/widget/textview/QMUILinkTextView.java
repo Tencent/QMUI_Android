@@ -33,7 +33,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaTextView;
@@ -85,10 +84,6 @@ public class QMUILinkTextView extends QMUIAlphaTextView implements QMUIOnSpanCli
     private OnLinkLongClickListener mOnLinkLongClickListener;
     private boolean mNeedForceEventToParent = false;
 
-    /**
-     * 记录当前 Touch 事件对应的点是不是点在了 span 上面
-     */
-    private boolean mTouchSpanHit;
 
     private long mDownMillis = 0;
     private static final long TAP_TIMEOUT = 200; // ViewConfiguration.getTapTimeout();
