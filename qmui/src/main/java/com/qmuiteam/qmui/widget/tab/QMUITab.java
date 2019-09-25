@@ -50,8 +50,8 @@ public class QMUITab {
     int selectedTextSize;
     Typeface normalTypeface;
     Typeface selectedTypeface;
-    int normalColor;
-    int selectedColor;
+    int normalColorAttr;
+    int selectedColorAttr;
     int normalTabIconWidth = QMUITabIcon.TAB_ICON_INTRINSIC;
     int normalTabIconHeight = QMUITabIcon.TAB_ICON_INTRINSIC;
     float selectedTabIconScale = 1f;
@@ -128,12 +128,12 @@ public class QMUITab {
     }
 
 
-    public int getNormalColor() {
-        return normalColor;
+    public int getNormalColorAttr() {
+        return normalColorAttr;
     }
 
-    public int getSelectedColor() {
-        return selectedColor;
+    public int getSelectedColorAttr() {
+        return selectedColorAttr;
     }
 
     public int getNormalTextSize() {

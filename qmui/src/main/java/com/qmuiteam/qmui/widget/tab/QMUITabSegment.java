@@ -19,6 +19,7 @@ package com.qmuiteam.qmui.widget.tab;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
@@ -33,6 +34,11 @@ import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -41,7 +47,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
@@ -100,7 +108,7 @@ import androidx.viewpager.widget.ViewPager;
  * @author cginechen
  * @date 2016-01-27
  */
-public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout {
+public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout, IQMUISkinHandlerView, IQMUISkinDefaultAttrProvider {
 
     private static final String TAG = "QMUITabSegment";
 
@@ -147,6 +155,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
     private AdapterChangeListener mAdapterChangeListener;
     private boolean mIsInSelectTab = false;
     private QMUILayoutHelper mLayoutHelper;
+    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
 
     public QMUITabSegment(Context context) {
         this(context, null);
@@ -183,10 +192,6 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
                 indicatorTop, indicatorWidthFollowContent);
 
         // tabBuilder
-        int normalTextColor = array.getColor(R.styleable.QMUITabSegment_qmui_tab_normal_color,
-                ContextCompat.getColor(context, R.color.qmui_config_color_gray_5));
-        int selectedTextColor = array.getColor(R.styleable.QMUITabSegment_qmui_tab_selected_color,
-                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_blue));
         int normalTextSize = array.getDimensionPixelSize(
                 R.styleable.QMUITabSegment_android_textSize,
                 getResources().getDimensionPixelSize(R.dimen.qmui_tab_segment_text_size));
@@ -196,7 +201,6 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
         selectedTextSize = array.getDimensionPixelSize(
                 R.styleable.QMUITabSegment_qmui_tab_selected_text_size, selectedTextSize);
         mTabBuilder = new QMUITabBuilder(context)
-                .setColor(normalTextColor, selectedTextColor)
                 .setTextSize(normalTextSize, selectedTextSize)
                 .setIconPosition(array.getInt(R.styleable.QMUITabSegment_qmui_tab_icon_position,
                         QMUITab.ICON_POSITION_LEFT));
@@ -210,6 +214,10 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
         addView(mContentLayout, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mTabAdapter = createTabAdapter(mContentLayout);
+
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_tab_separator_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.TOP_SEPARATOR, R.attr.qmui_tab_separator_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_tab_bg);
     }
 
     protected QMUITabAdapter createTabAdapter(ViewGroup tabParentView) {
@@ -564,7 +572,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
         if (model == null || mIndicator == null) {
             return;
         }
-        mIndicator.updateInfo(model.contentLeft, model.contentWidth, model.selectedColor);
+        mIndicator.updateInfo(model.contentLeft, model.contentWidth, QMUISkinHelper.getSkinColor(this, model.selectedColorAttr));
         if (invalidate) {
             mContentLayout.invalidate();
         }
@@ -579,7 +587,9 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
         final int targetLeft = (int) (preModel.contentLeft + leftDistance * offsetPercent);
         final int targetWidth = (int) (preModel.contentWidth + widthDistance * offsetPercent);
         int indicatorColor = QMUIColorHelper.computeColor(
-                preModel.selectedColor, targetModel.selectedColor, offsetPercent);
+                QMUISkinHelper.getSkinColor(this, preModel.selectedColorAttr),
+                QMUISkinHelper.getSkinColor(this, targetModel.selectedColorAttr),
+                offsetPercent);
         mIndicator.updateInfo(targetLeft, targetWidth, indicatorColor);
         mContentLayout.invalidate();
     }
@@ -1306,5 +1316,16 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout 
         mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());
         mLayoutHelper.dispatchRoundBorderDraw(canvas);
         super.onDraw(canvas);
+    }
+
+    @Override
+    public Map<String, Integer> getDefaultSkinAttrs() {
+        return mDefaultSkinAttrs;
+    }
+
+    @Override
+    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
+        layoutIndicator(mTabAdapter.getItem(mCurrentSelectedIndex), true);
+        manager.defaultHandleSkinAttrs(this, theme, attrs);
     }
 }

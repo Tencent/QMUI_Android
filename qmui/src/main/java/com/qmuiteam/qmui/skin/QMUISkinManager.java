@@ -82,7 +82,7 @@ public final class QMUISkinManager {
 
     private Resources mResources;
     private String mPackageName;
-    private SparseArray<SkinItem> mThemes = new SparseArray<>();
+    private SparseArray<SkinItem> mSkins = new SparseArray<>();
     private HashMap<String, IQMUISkinRuleHandler> mRuleHandlers = new HashMap<>();
 
     // Actually, ViewGroup.OnHierarchyChangeListener is a better choice, but it only has a setter.
@@ -149,7 +149,7 @@ public final class QMUISkinManager {
 
     @Nullable
     public Resources.Theme getTheme(int skinIndex) {
-        SkinItem skinItem = mThemes.get(skinIndex);
+        SkinItem skinItem = mSkins.get(skinIndex);
         if (skinItem != null) {
             return skinItem.getTheme();
         }
@@ -158,8 +158,11 @@ public final class QMUISkinManager {
 
 
     @MainThread
-    public void addTheme(int index, int styleRes) {
-        SkinItem skinItem = mThemes.get(index);
+    public void addSkin(int index, int styleRes) {
+        if(index <= 0){
+            throw new IllegalArgumentException("index must greater than 0");
+        }
+        SkinItem skinItem = mSkins.get(index);
         if (skinItem != null) {
             if (skinItem.getStyleRes() == styleRes) {
                 return;
@@ -167,7 +170,7 @@ public final class QMUISkinManager {
             throw new RuntimeException("already exist the theme item for " + index);
         }
         skinItem = new SkinItem(styleRes);
-        mThemes.append(index, skinItem);
+        mSkins.append(index, skinItem);
     }
 
 
@@ -178,7 +181,7 @@ public final class QMUISkinManager {
         if (view == null) {
             return;
         }
-        SkinItem skinItem = mThemes.get(skinIndex);
+        SkinItem skinItem = mSkins.get(skinIndex);
         Resources.Theme theme;
         if (skinItem == null) {
             if (skinIndex != DEFAULT_SKIN) {
@@ -232,7 +235,13 @@ public final class QMUISkinManager {
         Map<String, Integer> attrs = getSkinAttrs(view);
         if (view instanceof IQMUISkinHandlerView) {
             ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
-        } else if (attrs != null) {
+        } else{
+            defaultHandleSkinAttrs(view, theme, attrs);
+        }
+    }
+
+    public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, Map<String, Integer> attrs){
+        if(attrs != null){
             for (String key : attrs.keySet()) {
                 Integer attr = attrs.get(key);
                 if (attr == null) {
@@ -242,7 +251,6 @@ public final class QMUISkinManager {
             }
         }
     }
-
     public void defaultHandleSkinAttr(View view, Resources.Theme theme, String name, int attr) {
         if (attr == 0) {
             return;
@@ -317,4 +325,5 @@ public final class QMUISkinManager {
             return theme;
         }
     }
+
 }

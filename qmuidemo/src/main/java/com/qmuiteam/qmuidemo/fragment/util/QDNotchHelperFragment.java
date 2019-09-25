@@ -110,10 +110,8 @@ public class QDNotchHelperFragment extends BaseFragment {
     }
 
     private void initTabs() {
-        int normalColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_6);
-        int selectColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_blue);
         QMUITabBuilder builder = mTabSegment.tabBuilder();
-        builder.setColor(normalColor, selectColor)
+        builder.setColorAttr(R.attr.qmui_config_color_gray_6, R.attr.qmui_config_color_blue)
                 .setSelectedIconScale(2f)
                 .setTextSize(QMUIDisplayHelper.sp2px(getContext(), 14), QMUIDisplayHelper.sp2px(getContext(), 16))
                 .setDynamicChangeIconColor(false);

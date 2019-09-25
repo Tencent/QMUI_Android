@@ -20,6 +20,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 
+import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import androidx.annotation.Nullable;
@@ -53,11 +54,11 @@ public class QMUITabBuilder {
     /**
      * text color(icon color in if dynamicChangeIconColor == true) in  normal state
      */
-    private int normalColor;
+    private int normalColorAttr = R.attr.qmui_tab_normal_color;
     /**
      * text color(icon color in if dynamicChangeIconColor == true) in  selected state
      */
-    private int selectedColor;
+    private int selectedColorAttr = R.attr.qmui_tab_selected_color;
     /**
      * icon position(left/top/right/bottom)
      */
@@ -137,8 +138,8 @@ public class QMUITabBuilder {
         this.dynamicChangeIconColor = other.dynamicChangeIconColor;
         this.normalTextSize = other.normalTextSize;
         this.selectTextSize = other.selectTextSize;
-        this.normalColor = other.normalColor;
-        this.selectedColor = other.selectedColor;
+        this.normalColorAttr = other.normalColorAttr;
+        this.selectedColorAttr = other.selectedColorAttr;
         this.iconPosition = other.iconPosition;
         this.gravity = other.gravity;
         this.text = other.text;
@@ -211,9 +212,9 @@ public class QMUITabBuilder {
         return this;
     }
 
-    public QMUITabBuilder setColor(int normalColor, int selectedColor) {
-        this.normalColor = normalColor;
-        this.selectedColor = selectedColor;
+    public QMUITabBuilder setColorAttr(int normalColorAttr, int selectedColorAttr) {
+        this.normalColorAttr = normalColorAttr;
+        this.selectedColorAttr = selectedColorAttr;
         return this;
     }
 
@@ -256,8 +257,8 @@ public class QMUITabBuilder {
         tab.selectedTextSize = this.selectTextSize;
         tab.normalTypeface = this.normalTypeface;
         tab.selectedTypeface = this.selectedTypeface;
-        tab.normalColor = this.normalColor;
-        tab.selectedColor = this.selectedColor;
+        tab.normalColorAttr = this.normalColorAttr;
+        tab.selectedColorAttr = this.selectedColorAttr;
         tab.signCount = this.signCount;
         tab.signCountDigits = this.signCountDigits;
         tab.signCountLeftMarginWithIconOrText = this.signCountLeftMarginWithIconOrText;

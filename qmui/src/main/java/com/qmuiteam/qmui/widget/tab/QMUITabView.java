@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.tab;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.view.GestureDetector;
@@ -30,10 +31,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -41,7 +47,7 @@ import androidx.core.view.ViewCompat;
 
 // todo custom view
 // todo gravity
-public class QMUITabView extends FrameLayout {
+public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
 
     private QMUITab mTab;
     private QMUICollapsingTextHelper mCollapsingTextHelper;
@@ -122,8 +128,10 @@ public class QMUITabView extends FrameLayout {
 
     public void bind(QMUITab tab) {
         mCollapsingTextHelper.setTextSize(tab.normalTextSize, tab.selectedTextSize, false);
-        mCollapsingTextHelper.setTextColor(ColorStateList.valueOf(tab.normalColor),
-                ColorStateList.valueOf(tab.selectedColor), false);
+        mCollapsingTextHelper.setTextColor(
+                ColorStateList.valueOf(QMUISkinHelper.getSkinColor(this, tab.normalColorAttr)),
+                ColorStateList.valueOf(QMUISkinHelper.getSkinColor(this, tab.selectedColorAttr)),
+                false);
         mCollapsingTextHelper.setTypeface(tab.normalTypeface, tab.selectedTypeface, false);
         int gravity = Gravity.LEFT | Gravity.TOP;
         mCollapsingTextHelper.setGravity(gravity, gravity, false);
@@ -165,7 +173,9 @@ public class QMUITabView extends FrameLayout {
         QMUITabIcon tabIcon = mTab.getTabIcon();
         if (tabIcon != null) {
             tabIcon.setSelectFraction(fraction,
-                    QMUIColorHelper.computeColor(mTab.normalColor, mTab.selectedColor, fraction));
+                    QMUIColorHelper.computeColor(
+                            QMUISkinHelper.getSkinColor(this, mTab.normalColorAttr),
+                            QMUISkinHelper.getSkinColor(this, mTab.selectedColorAttr), fraction));
         }
         updateCurrentInfo(fraction);
         mCollapsingTextHelper.setExpansionFraction(1 - fraction);
@@ -646,6 +656,17 @@ public class QMUITabView extends FrameLayout {
         canvas.translate(mCurrentTextLeft, mCurrentTextTop);
         mCollapsingTextHelper.draw(canvas);
         canvas.restore();
+    }
+
+    @Override
+    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
+        if(mTab != null){
+            mCollapsingTextHelper.setTextColor(
+                    ColorStateList.valueOf(QMUISkinHelper.getSkinColor(this, mTab.normalColorAttr)),
+                    ColorStateList.valueOf(QMUISkinHelper.getSkinColor(this, mTab.selectedColorAttr)),
+                    true);
+            invalidate();
+        }
     }
 
     public interface Callback {

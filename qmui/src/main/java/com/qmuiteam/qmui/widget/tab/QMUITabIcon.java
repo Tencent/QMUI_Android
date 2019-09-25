@@ -35,7 +35,10 @@ public class QMUITabIcon extends Drawable {
     private final @Nullable Drawable mSelectedIconDrawable;
 
     public QMUITabIcon(@NonNull Drawable normalIconDrawable, @Nullable Drawable selectedIconDrawable) {
-        mNormalIconDrawable = normalIconDrawable;
+        mNormalIconDrawable = normalIconDrawable.mutate();
+        if(selectedIconDrawable != null){
+            selectedIconDrawable = selectedIconDrawable.mutate();
+        }
         mSelectedIconDrawable = selectedIconDrawable;
         mNormalIconDrawable.setAlpha(255);
         int nw = mNormalIconDrawable.getIntrinsicWidth();

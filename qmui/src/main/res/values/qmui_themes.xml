@@ -75,6 +75,43 @@
     </style>
 
     <style name="QMUI" parent="AppConfigTheme">
+        <!--***************************** qmui topbar  ***************************** -->
+        <item name="qmui_topbar_height">56dp</item>
+        <!-- skin support-->
+        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_topbar_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_subtitle_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_gray_1</item>
+        <!-- skin support-->
+
+        <!--*************************** qmui tabSegment  *************************** -->
+
+        <!-- skin support-->
+        <item name="qmui_tab_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_tab_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_6</item>
+        <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
+        <!-- skin support-->
+
+
+        <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
+        <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
+        <item name="qmui_tab_sign_count_view_minSize_with_text">
+            @dimen/qmui_tab_sign_count_view_minSize_with_text
+        </item>
+        <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
+        <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
+
+
+
+
+
+
+
+
+
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
         </item> <!-- 已废弃 -->
         <item name="qmui_content_spacing_horizontal">@dimen/qmui_content_spacing_horizontal</item>
@@ -224,18 +261,7 @@
         <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
         <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
 
-        <!--**********************************************
-        *                  qmui topbar                   *
-        ***********************************************-->
-        <item name="qmui_topbar_height">56dp</item>
-        <!-- skin support-->
-        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
-        <item name="qmui_topbar_bg_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_subtitle_color">?attr/qmui_config_color_gray_3</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_gray_1</item>
-        <!-- skin support-->
+
 
         <!--**********************************************
         *                 qmui bottom sheet              *
@@ -311,16 +337,7 @@
         <item name="qmui_popup_arrow_up_margin_top">13dp</item>
         <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
 
-        <!--**********************************************
-        *                  qmui tabSegment               *
-        ***********************************************-->
-        <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
-        <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
-        <item name="qmui_tab_sign_count_view_minSize_with_text">
-            @dimen/qmui_tab_sign_count_view_minSize_with_text
-        </item>
-        <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
-        <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
+
 
         <!--**********************************************
         *               qmui 提供的控件样式                *

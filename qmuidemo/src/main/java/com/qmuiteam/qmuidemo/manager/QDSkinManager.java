@@ -37,9 +37,9 @@ public class QDSkinManager {
 
     public static void install(Context context) {
         QMUISkinManager skinManager = QMUISkinManager.getInstance(context);
-        skinManager.addTheme(SKIN_BLUE, R.style.app_skin_blue);
-        skinManager.addTheme(SKIN_DARK, R.style.app_skin_dark);
-        skinManager.addTheme(SKIN_WHITE, R.style.app_skin_white);
+        skinManager.addSkin(SKIN_BLUE, R.style.app_skin_blue);
+        skinManager.addSkin(SKIN_DARK, R.style.app_skin_dark);
+        skinManager.addSkin(SKIN_WHITE, R.style.app_skin_white);
     }
 
     public static void changeSkin(int index) {

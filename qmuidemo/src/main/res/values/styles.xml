@@ -15,36 +15,6 @@
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
-        <!-- 配置Android提供的theme -->
-        <item name="android:textAppearanceListItemSmall">@style/QDTextAppearanceListItemSmall</item>
-        <item name="android:textAppearanceListItem">@style/QDtextAppearanceListItem</item>
-        <item name="android:listPreferredItemHeight">?attr/qmui_list_item_height_higher</item>
-        <item name="android:listPreferredItemHeightSmall">?attr/qmui_list_item_height</item>
-
-        <!-- 配置qmui提供的theme -->
-        <item name="qmui_config_color_blue">@color/app_color_blue</item>
-        <item name="qmui_round_btn_bg_color">@color/s_btn_blue_bg</item>
-        <item name="qmui_round_btn_border_color">@color/s_btn_blue_border</item>
-        <item name="qmui_round_btn_text_color">@color/s_btn_blue_text</item>
-        <item name="qmui_content_spacing_horizontal">20dp</item>
-        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</item>
-
-        <item name="qmui_topbar_bg_color">?attr/app_primary_color</item>
-        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
-        <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_white</item>
-        <item name="QMUITopBarStyle">@style/QDTopBar</item>
-
-        <!-- 配置app自己的theme -->
-        <item name="app_primary_color">?attr/qmui_config_color_blue</item>
-        <item name="app_content_bg_color">@color/qmui_config_color_white</item>
-
-    </style>
-
     <style name="QDtextAppearanceListItem">
         <item name="android:textColor">?attr/qmui_config_color_black</item>
         <item name="android:textSize">18sp</item>

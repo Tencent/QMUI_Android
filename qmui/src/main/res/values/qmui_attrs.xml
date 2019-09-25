@@ -79,8 +79,6 @@
         <attr name="android:textSize"/>
         <attr name="qmui_tab_normal_text_size" format="dimension"/>
         <attr name="qmui_tab_selected_text_size" format="dimension"/>
-        <attr name="qmui_tab_normal_color" format="color|reference"/>
-        <attr name="qmui_tab_selected_color" format="color|reference"/>
         <attr name="qmui_tab_mode" format="enum">
             <enum name="scrollable" value="0"/>
             <enum name="fixed" value="1"/>

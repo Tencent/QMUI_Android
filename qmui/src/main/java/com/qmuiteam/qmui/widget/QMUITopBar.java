@@ -90,7 +90,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     private int mTopBarHeight = -1;
     private Rect mTitleContainerRect;
 
-    private HashMap<String, Integer> mDefaultSkinAttrs = new HashMap<>();
+    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
 
     public QMUITopBar(Context context) {
         this(context, null);
@@ -112,7 +112,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         mLeftViewList = new ArrayList<>();
         mRightViewList = new ArrayList<>();
         mDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_topbar_separator_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg);
         mDefaultSkinAttrs.put(QMUISkinValueBuilder.BTN_TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
         mDefaultSkinAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
 

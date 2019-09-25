@@ -61,7 +61,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
     public QMUITopBarLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_topbar_separator_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg);
         mTopBar = new QMUITopBar(context, attrs, defStyleAttr);
         mTopBar.setBackground(null);
         mTopBar.updateBottomDivider(0, 0, 0, 0);

@@ -226,15 +226,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_1),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_blue))
+                                        .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_blue)
                                         .build();
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_1),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_red))
+                                        .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
                                         .build();
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
@@ -264,15 +262,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_blue),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_red))
+                                        .setColorAttr(R.attr.qmui_config_color_blue, R.attr.qmui_config_color_red)
                                         .build();
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_1),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_red))
+                                        .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
                                         .build();
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
@@ -292,15 +288,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_blue),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_red))
+                                        .setColorAttr(R.attr.qmui_config_color_blue, R.attr.qmui_config_color_red)
                                         .build();
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
-                                        .setColor(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_gray_1),
-                                                QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_red))
+                                        .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
                                         .build();
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);

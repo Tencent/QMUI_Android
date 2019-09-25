@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.tab.QMUITab;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
@@ -101,11 +100,9 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initTabs() {
-        int normalColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_gray_6);
-        int selectColor = QMUIResHelper.getAttrColor(getContext(), R.attr.qmui_config_color_blue);
+
         QMUITabBuilder builder = mTabSegment.tabBuilder();
-        builder.setColor(normalColor, selectColor)
-                .setSelectedIconScale(1.6f)
+        builder.setSelectedIconScale(1.2f)
                 .setTextSize(QMUIDisplayHelper.sp2px(getContext(), 13), QMUIDisplayHelper.sp2px(getContext(), 15))
                 .setDynamicChangeIconColor(false);
         QMUITab component = builder
