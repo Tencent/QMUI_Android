@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.OverScroller;
 
+import static android.view.View.MEASURED_SIZE_MASK;
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
 public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<View> {
@@ -272,7 +273,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
 
         } else {
             parent.onMeasureChild(child, parentWidthMeasureSpec, widthUsed,
-                    View.MeasureSpec.makeMeasureSpec(availableHeight, View.MeasureSpec.UNSPECIFIED), heightUsed);
+                    View.MeasureSpec.makeMeasureSpec(MEASURED_SIZE_MASK, View.MeasureSpec.AT_MOST), heightUsed);
         }
         return true;
     }
