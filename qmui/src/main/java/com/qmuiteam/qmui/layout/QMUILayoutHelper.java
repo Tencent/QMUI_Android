@@ -690,10 +690,13 @@ public class QMUILayoutHelper implements IQMUILayout {
 
         // react
         if (mIsOutlineExcludePadding) {
-            mBorderRect.set(owner.getPaddingLeft(), owner.getPaddingTop(),
-                    width - owner.getPaddingRight(), height - owner.getPaddingBottom());
+            mBorderRect.set(
+                    owner.getPaddingLeft(),
+                    owner.getPaddingTop(),
+                    width - owner.getPaddingRight(),
+                    height - owner.getPaddingBottom());
         } else {
-            mBorderRect.set(0, 0, width, height);
+            mBorderRect.set( 0, 0, width, height);
         }
 
 
@@ -714,7 +717,7 @@ public class QMUILayoutHelper implements IQMUILayout {
 
         if (needDrawBorder) {
             mClipPaint.setColor(mBorderColor);
-            mClipPaint.setStrokeWidth(mBorderWidth + 0.5f);
+            mClipPaint.setStrokeWidth(mBorderWidth);
             mClipPaint.setStyle(Paint.Style.STROKE);
             if (mRadiusArray != null) {
                 drawRoundRect(canvas, mBorderRect, mRadiusArray, mClipPaint);
