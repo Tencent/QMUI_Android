@@ -22,8 +22,10 @@ import android.view.Gravity;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 
 /**
@@ -33,15 +35,24 @@ public class QMUITabBuilder {
     /**
      * icon in normal state
      */
+    private int normalDrawableAttr = 0;
     private @Nullable Drawable normalDrawable;
     /**
      * icon in selected state
      */
+    private int selectedDrawableAttr = 0;
     private @Nullable Drawable selectedDrawable;
     /**
      * change icon by tint color, if true, selectedDrawable will not work
      */
     private boolean dynamicChangeIconColor = false;
+
+    /**
+     * for skin change. if true, then normalDrawableAttr and selectedDrawableAttr will not work.
+     * otherwise, icon will be replaced by normalDrawableAttr and selectedDrawable
+     */
+    private boolean skinChangeWithTintColor = true;
+
     /**
      * text size in normal state
      */
@@ -59,6 +70,7 @@ public class QMUITabBuilder {
      * text color(icon color in if dynamicChangeIconColor == true) in  selected state
      */
     private int selectedColorAttr = R.attr.qmui_tab_selected_color;
+
     /**
      * icon position(left/top/right/bottom)
      */
@@ -133,6 +145,8 @@ public class QMUITabBuilder {
     }
 
     QMUITabBuilder(QMUITabBuilder other) {
+        this.normalDrawableAttr = other.normalDrawableAttr;
+        this.selectedDrawableAttr = other.selectedDrawableAttr;
         this.normalDrawable = other.normalDrawable;
         this.selectedDrawable = other.selectedDrawable;
         this.dynamicChangeIconColor = other.dynamicChangeIconColor;
@@ -166,10 +180,26 @@ public class QMUITabBuilder {
         return this;
     }
 
+    public QMUITabBuilder setNormalDrawableAttr(int normalDrawableAttr) {
+        this.normalDrawableAttr = normalDrawableAttr;
+        return this;
+    }
+
     public QMUITabBuilder setSelectedDrawable(Drawable selectedDrawable) {
         this.selectedDrawable = selectedDrawable;
         return this;
     }
+
+    public QMUITabBuilder setSelectedDrawableAttr(int selectedDrawableAttr) {
+        this.selectedDrawableAttr = selectedDrawableAttr;
+        return this;
+    }
+
+    public QMUITabBuilder skinChangeWithTintColor(boolean skinChangeWithTintColor){
+        this.skinChangeWithTintColor = skinChangeWithTintColor;
+        return this;
+    }
+
 
     public QMUITabBuilder setTextSize(int normalTextSize, int selectedTextSize) {
         this.normalTextSize = normalTextSize;
@@ -238,8 +268,18 @@ public class QMUITabBuilder {
         return this;
     }
 
-    public QMUITab build() {
+    public QMUITab build(Context context) {
         QMUITab tab = new QMUITab(this.text);
+        if(!skinChangeWithTintColor){
+            if(normalDrawableAttr != 0){
+                normalDrawable = QMUIResHelper.getAttrDrawable(context, normalDrawableAttr);
+            }
+
+            if(selectedDrawableAttr != 0){
+                selectedDrawable =  QMUIResHelper.getAttrDrawable(context, selectedDrawableAttr);
+            }
+        }
+
         if (normalDrawable != null) {
             if (dynamicChangeIconColor || selectedDrawable == null) {
                 tab.tabIcon = new QMUITabIcon(normalDrawable, null);
@@ -248,6 +288,9 @@ public class QMUITabBuilder {
             }
             tab.tabIcon.setBounds(0, 0, normalTabIconWidth, normalTabIconHeight);
         }
+        tab.skinChangeWithTintColor = this.skinChangeWithTintColor;
+        tab.normalIconAttr = this.normalDrawableAttr;
+        tab.selectedIconAttr = this.selectedDrawableAttr;
         tab.normalTabIconWidth = this.normalTabIconWidth;
         tab.normalTabIconHeight = this.normalTabIconHeight;
         tab.selectedTabIconScale = this.selectedTabIconScale;

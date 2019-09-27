@@ -665,7 +665,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         if (useAdapterTitle) {
             reset();
             for (int i = 0; i < adapterCount; i++) {
-                addTab(mTabBuilder.setText(mPagerAdapter.getPageTitle(i)).build());
+                addTab(mTabBuilder.setText(mPagerAdapter.getPageTitle(i)).build(getContext()));
             }
             notifyDataChanged();
         }

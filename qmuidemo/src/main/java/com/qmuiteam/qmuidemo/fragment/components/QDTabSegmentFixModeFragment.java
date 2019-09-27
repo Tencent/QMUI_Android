@@ -149,29 +149,29 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                             case 0:
                                 mTabSegment.reset();
                                 mTabSegment.setIndicator(null);
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build());
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build());
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build(getContext()));
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build(getContext()));
                                 break;
                             case 1:
                                 mTabSegment.reset();
                                 mTabSegment.setIndicator(new QMUITabIndicator(
                                         indicatorHeight, false, true));
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build());
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build());
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build(getContext()));
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build(getContext()));
                                 break;
                             case 2:
                                 mTabSegment.reset();
                                 mTabSegment.setIndicator(new QMUITabIndicator(
                                         indicatorHeight, true, true));
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build());
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build());
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build(getContext()));
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build(getContext()));
                                 break;
                             case 3:
                                 mTabSegment.reset();
                                 mTabSegment.setIndicator(new QMUITabIndicator(
                                         indicatorHeight, false, false));
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build());
-                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build());
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_1_title)).build(getContext()));
+                                mTabSegment.addTab(tabBuilder.setText(getString(R.string.tabSegment_item_2_title)).build(getContext()));
                                 break;
                             case 4: {
                                 mTabSegment.reset();
@@ -181,12 +181,12 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
-                                        .build();
+                                        .build(getContext());
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
                                 break;
@@ -207,12 +207,12 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
-                                        .build();
+                                        .build(getContext());
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
                                 break;
@@ -227,13 +227,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
                                         .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_blue)
-                                        .build();
+                                        .build(getContext());
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
                                         .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
                                 break;
@@ -245,7 +245,7 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                 QMUITab newTab = tabBuilder.setText("动态更新")
                                         .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
                                         .setDynamicChangeIconColor(true)
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.replaceTab(0, newTab);
                                 break;
                             }
@@ -263,13 +263,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
                                         .setColorAttr(R.attr.qmui_config_color_blue, R.attr.qmui_config_color_red)
-                                        .build();
+                                        .build(getContext());
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
                                         .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
                                 break;
@@ -289,13 +289,13 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_component_selected))
                                         .setText("Components")
                                         .setColorAttr(R.attr.qmui_config_color_blue, R.attr.qmui_config_color_red)
-                                        .build();
+                                        .build(getContext());
                                 QMUITab util = tabBuilder
                                         .setNormalDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util))
                                         .setSelectedDrawable(ContextCompat.getDrawable(context, R.mipmap.icon_tabbar_util_selected))
                                         .setText("Helper")
                                         .setColorAttr(R.attr.qmui_config_color_gray_1, R.attr.qmui_config_color_red)
-                                        .build();
+                                        .build(getContext());
                                 mTabSegment.addTab(component);
                                 mTabSegment.addTab(util);
                                 break;
@@ -314,8 +314,8 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
         mContentViewPager.setAdapter(mPagerAdapter);
         mContentViewPager.setCurrentItem(mDestPage.getPosition(), false);
         QMUITabBuilder builder = mTabSegment.tabBuilder();
-        mTabSegment.addTab(builder.setText(getString(R.string.tabSegment_item_1_title)).build());
-        mTabSegment.addTab(builder.setText(getString(R.string.tabSegment_item_2_title)).build());
+        mTabSegment.addTab(builder.setText(getString(R.string.tabSegment_item_1_title)).build(getContext()));
+        mTabSegment.addTab(builder.setText(getString(R.string.tabSegment_item_2_title)).build(getContext()));
         mTabSegment.setupWithViewPager(mContentViewPager, false);
         mTabSegment.setMode(QMUITabSegment.MODE_FIXED);
         mTabSegment.addOnTabSelectedListener(new QMUITabSegment.OnTabSelectedListener() {

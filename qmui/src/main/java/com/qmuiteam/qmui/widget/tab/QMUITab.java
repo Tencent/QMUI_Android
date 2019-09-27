@@ -56,6 +56,9 @@ public class QMUITab {
     int normalTabIconHeight = QMUITabIcon.TAB_ICON_INTRINSIC;
     float selectedTabIconScale = 1f;
     QMUITabIcon tabIcon = null;
+    boolean skinChangeWithTintColor;
+    int normalIconAttr;
+    int selectedIconAttr;
     int contentWidth = 0;
     int contentLeft = 0;
     @IconPosition int iconPosition = ICON_POSITION_TOP;
@@ -134,6 +137,14 @@ public class QMUITab {
 
     public int getSelectedColorAttr() {
         return selectedColorAttr;
+    }
+
+    public int getNormalIconAttr() {
+        return normalIconAttr;
+    }
+
+    public int getSelectedIconAttr() {
+        return selectedIconAttr;
     }
 
     public int getNormalTextSize() {

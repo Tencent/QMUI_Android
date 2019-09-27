@@ -119,17 +119,17 @@ public class QDNotchHelperFragment extends BaseFragment {
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected))
                 .setText("Components")
-                .build();
+                .build(getContext());
         QMUITab util = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected))
                 .setText("Helper")
-                .build();
+                .build(getContext());
         QMUITab lab = builder
                 .setNormalDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab))
                 .setSelectedDrawable(ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected))
                 .setText("Lab")
-                .build();
+                .build(getContext());
 
         mTabSegment.addTab(component)
                 .addTab(util)

@@ -151,7 +151,7 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
         mContentViewPager.setCurrentItem(mDestPage.getPosition(), false);
         QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
-            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build());
+            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build(getContext()));
         }
         int space = QMUIDisplayHelper.dp2px(getContext(), 16);
         mTabSegment.setIndicator(new QMUITabIndicator(
@@ -194,7 +194,7 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
         mTabSegment.reset();
         QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
-            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build());
+            mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build(getContext()));
         }
         mTabSegment.notifyDataChanged();
     }

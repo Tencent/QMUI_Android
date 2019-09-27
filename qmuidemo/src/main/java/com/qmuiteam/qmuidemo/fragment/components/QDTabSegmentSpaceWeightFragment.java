@@ -142,7 +142,7 @@ public class QDTabSegmentSpaceWeightFragment extends BaseFragment {
         mContentViewPager.setCurrentItem(mDestPage.getPosition(), false);
         QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
-            QMUITab tab = tabBuilder.setText("Item " + i).build();
+            QMUITab tab = tabBuilder.setText("Item " + i).build(getContext());
             if (i == 0) {
                 tab.setSpaceWeight(0f, 1f);
             }
