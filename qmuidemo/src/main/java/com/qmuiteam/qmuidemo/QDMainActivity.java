@@ -31,6 +31,7 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFixModeFragment;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
@@ -53,6 +54,7 @@ import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
                 QDNotchHelperFragment.class,
                 QDWebExplorerFragment.class,
                 QDContinuousNestedScroll1Fragment.class,
+                QDTabSegmentFixModeFragment.class,
                 QDPopupFragment.class
         })
 @DefaultFirstFragment(HomeFragment.class)

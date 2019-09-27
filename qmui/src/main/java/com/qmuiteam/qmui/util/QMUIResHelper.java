@@ -75,6 +75,10 @@ public class QMUIResHelper {
             sTmpValue = new TypedValue();
         }
         theme.resolveAttribute(attr, sTmpValue, true);
+        if (sTmpValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
+                && sTmpValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+            return ColorStateList.valueOf(sTmpValue.data);
+        }
         if (sTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
             return getAttrColorStateList(context, theme, sTmpValue.data);
         }

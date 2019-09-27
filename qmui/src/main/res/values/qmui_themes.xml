@@ -93,6 +93,8 @@
         <item name="qmui_tab_separator_color">?attr/qmui_config_color_separator</item>
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_6</item>
         <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_tab_sign_count_view_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_tab_sign_count_view_bg_color">?attr/qmui_config_color_red</item>
         <!-- skin support-->
 
 
@@ -101,7 +103,6 @@
         <item name="qmui_tab_sign_count_view_minSize_with_text">
             @dimen/qmui_tab_sign_count_view_minSize_with_text
         </item>
-        <item name="qmui_tab_sign_count_view_bg">@drawable/qmui_sign_count_view_bg</item>
         <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
 
 

@@ -29,17 +29,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import java.util.Map;
 
@@ -47,8 +49,6 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 
-// todo custom view
-// todo gravity
 public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private static final String TAG = "QMUITabView";
     private QMUITab mTab;
@@ -74,7 +74,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private float mSelectedTextLeft = 0;
     private float mSelectedTextTop = 0;
 
-    private TextView mSignCountView;
+    private QMUIRoundButton mSignCountView;
 
     public QMUITabView(@NonNull Context context) {
         super(context);
@@ -130,7 +130,6 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
 
     public void bind(QMUITab tab) {
         mCollapsingTextHelper.setTextSize(tab.normalTextSize, tab.selectedTextSize, false);
-        updateSkinInfo(tab);
         mCollapsingTextHelper.setTypeface(tab.normalTypeface, tab.selectedTypeface, false);
         int gravity = Gravity.LEFT | Gravity.TOP;
         mCollapsingTextHelper.setGravity(gravity, gravity, false);
@@ -164,6 +163,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
                 mSignCountView.setVisibility(View.GONE);
             }
         }
+        updateSkinInfo(tab);
         requestLayout();
     }
 
@@ -254,7 +254,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         }
     }
 
-    private TextView ensureSignCountView(Context context) {
+    private QMUIRoundButton ensureSignCountView(Context context) {
         if (mSignCountView == null) {
             mSignCountView = createSignCountView(context);
             FrameLayout.LayoutParams signCountLp;
@@ -269,8 +269,16 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         return mSignCountView;
     }
 
-    protected TextView createSignCountView(Context context) {
-        return new TextView(context, null, R.attr.qmui_tab_sign_count_view);
+    protected QMUIRoundButton createSignCountView(Context context) {
+        QMUIRoundButton btn = new QMUIRoundButton(
+                context, null, R.attr.qmui_tab_sign_count_view);
+        QMUISkinSimpleDefaultAttrProvider skinProvider = new QMUISkinSimpleDefaultAttrProvider();
+        skinProvider.setDefaultSkinAttr(
+                QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_tab_sign_count_view_bg_color);
+        skinProvider.setDefaultSkinAttr(
+                QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_tab_sign_count_view_text_color);
+        btn.setTag(R.id.qmui_skin_default_attr_provider, skinProvider);
+        return btn;
     }
 
     @Override
@@ -659,37 +667,37 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
 
     @Override
     public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
-        if(mTab != null){
+        if (mTab != null) {
             updateSkinInfo(mTab);
             invalidate();
         }
     }
 
-    private void updateSkinInfo(QMUITab tab){
+    private void updateSkinInfo(QMUITab tab) {
         int normalColor = QMUISkinHelper.getSkinColor(this, tab.normalColorAttr);
         int selectedColor = QMUISkinHelper.getSkinColor(this, tab.selectedColorAttr);
         mCollapsingTextHelper.setTextColor(
                 ColorStateList.valueOf(normalColor),
                 ColorStateList.valueOf(selectedColor),
                 true);
-        if(tab.tabIcon != null){
-            if(tab.skinChangeWithTintColor){
+        if (tab.tabIcon != null) {
+            if (tab.skinChangeWithTintColor) {
                 tab.tabIcon.tint(normalColor, selectedColor);
-            }else{
+            } else {
                 Drawable normalIcon = null;
                 Drawable selectedIcon = null;
-                if(tab.normalIconAttr != 0){
+                if (tab.normalIconAttr != 0) {
                     normalIcon = QMUISkinHelper.getSkinDrawable(this, tab.normalIconAttr);
                 }
 
-                if(tab.selectedIconAttr != 0){
+                if (tab.selectedIconAttr != 0) {
                     selectedIcon = QMUISkinHelper.getSkinDrawable(this, tab.selectedIconAttr);
                 }
-                if(normalIcon != null && selectedIcon != null){
+                if (normalIcon != null && selectedIcon != null) {
                     tab.tabIcon.src(normalIcon, selectedIcon);
-                }else if(normalIcon != null && !tab.tabIcon.hasSelectedIcon()){
+                } else if (normalIcon != null && !tab.tabIcon.hasSelectedIcon()) {
                     tab.tabIcon.src(normalIcon, normalColor, selectedColor);
-                }else{
+                } else {
                     QMUILog.i(TAG, "skin attr not matched with current value.");
                 }
             }

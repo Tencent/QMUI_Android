@@ -212,11 +212,13 @@
     <attr name="qmui_tab_separator_color" format="color"/>
     <attr name="qmui_tab_normal_color" format="color|reference"/>
     <attr name="qmui_tab_selected_color" format="color|reference"/>
+    <attr name="qmui_tab_sign_count_view_text_color" format="color|reference"/>
+    <attr name="qmui_tab_sign_count_view_bg_color" format="color|reference"/>
+
 
     <attr name="qmui_tab_sign_count_view" format="reference" />
     <attr name="qmui_tab_sign_count_view_minSize" format="dimension" />
     <attr name="qmui_tab_sign_count_view_minSize_with_text" format="dimension" />
-    <attr name="qmui_tab_sign_count_view_bg" format="reference" />
     <attr name="qmui_tab_sign_count_view_padding_horizontal" format="dimension" />
 
 </resources>

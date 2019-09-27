@@ -15,17 +15,20 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
-public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorHandler {
+import androidx.core.widget.ImageViewCompat;
+
+public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, int color) {
+    void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof ImageView) {
-            QMUIViewHelper.setImageViewTintColor((ImageView) view, color);
+            ImageViewCompat.setImageTintList((ImageView) view, colorStateList);
         }
     }
 }

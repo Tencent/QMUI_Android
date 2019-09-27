@@ -17,12 +17,14 @@
 package com.qmuiteam.qmui.widget.roundwidget;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.AttributeSet;
-import android.widget.Button;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaButton;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+
+import androidx.annotation.Nullable;
 
 /**
  * 使按钮能方便地指定圆角、边框颜色、边框粗细、背景色
@@ -41,10 +43,13 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
  * 然后使用 {@link QMUIRoundButtonDrawable} 提供的方法进行设置。
  * </p>
  * <p>
+ *
  * @see QMUIRoundButtonDrawable
  * </p>
  */
 public class QMUIRoundButton extends QMUIAlphaButton {
+
+    private QMUIRoundButtonDrawable mRoundBg;
 
     public QMUIRoundButton(Context context) {
         super(context);
@@ -62,9 +67,26 @@ public class QMUIRoundButton extends QMUIAlphaButton {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        QMUIRoundButtonDrawable bg = QMUIRoundButtonDrawable.fromAttributeSet(context, attrs, defStyleAttr);
-        QMUIViewHelper.setBackgroundKeepingPadding(this, bg);
+        mRoundBg = QMUIRoundButtonDrawable.fromAttributeSet(context, attrs, defStyleAttr);
+        QMUIViewHelper.setBackgroundKeepingPadding(this, mRoundBg);
         setChangeAlphaWhenDisable(false);
         setChangeAlphaWhenPress(false);
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        mRoundBg.setBgData(ColorStateList.valueOf(color));
+    }
+
+    public void setBgData(@Nullable ColorStateList colors) {
+        mRoundBg.setBgData(colors);
+    }
+
+    public void setStrokeData(int width, @Nullable ColorStateList colors) {
+        mRoundBg.setStrokeData(width, colors);
+    }
+
+    public void setStrokeColors(ColorStateList colors) {
+        mRoundBg.setStrokeColors(colors);
     }
 }

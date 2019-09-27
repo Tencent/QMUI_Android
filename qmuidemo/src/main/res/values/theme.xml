@@ -70,6 +70,8 @@
         <item name="qmui_tab_bg">@color/qmui_config_color_pure_black</item>
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_3</item>
         <item name="qmui_tab_selected_color">@color/qmui_config_color_white</item>
+        <item name="qmui_tab_sign_count_view_text_color">@color/qmui_config_color_75_white</item>
+        <item name="qmui_tab_sign_count_view_bg_color">#80FF303A</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_1</item>

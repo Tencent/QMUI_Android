@@ -84,6 +84,10 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
         }
     }
 
+    public void setStrokeColors(@Nullable ColorStateList colors){
+        setStrokeData(mStrokeWidth, colors);
+    }
+
     private boolean hasNativeStateListAPI() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }

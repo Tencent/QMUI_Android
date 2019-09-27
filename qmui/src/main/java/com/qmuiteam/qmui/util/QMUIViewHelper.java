@@ -24,6 +24,7 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -38,6 +39,8 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
@@ -687,6 +690,10 @@ public class QMUIViewHelper {
     }
 
 
+    /**
+     * please use ImageViewCompat.setImageTintList() replace this.
+     */
+    @Deprecated
     public static ColorFilter setImageViewTintColor(ImageView imageView, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
         imageView.setColorFilter(colorFilter);

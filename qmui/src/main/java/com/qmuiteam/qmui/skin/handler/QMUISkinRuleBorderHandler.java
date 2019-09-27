@@ -15,19 +15,24 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
+import android.content.res.ColorStateList;
 import android.view.View;
 
 import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorHandler {
 
     @Override
     void handle(View view, String name, int color) {
+
         if (view instanceof IQMUILayout) {
             ((IQMUILayout) view).setBorderColor(color);
         } else if (view instanceof QMUIRadiusImageView) {
             ((QMUIRadiusImageView) view).setBorderColor(color);
+        } else if (view instanceof QMUIRoundButton) {
+            ((QMUIRoundButton) view).setStrokeColors(ColorStateList.valueOf(color));
         }
     }
 }

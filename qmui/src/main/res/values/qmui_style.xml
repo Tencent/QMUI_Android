@@ -49,14 +49,18 @@
     <style name="qmui_tab_sign_count_view">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
-        <item name="android:background">?attr/qmui_tab_sign_count_view_bg</item>
+        <item name="qmui_backgroundColor">?attr/qmui_tab_sign_count_view_bg_color</item>
+        <item name="qmui_isRadiusAdjustBounds">true</item>
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/qmui_config_color_white</item>
+        <item name="android:textColor">?attr/qmui_tab_sign_count_view_text_color</item>
         <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
         <item name="android:paddingLeft">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
         <item name="android:minWidth">?attr/qmui_tab_sign_count_view_minSize</item>
-        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>i_ta
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:ellipsize">end</item>
     </style>
 </resources>

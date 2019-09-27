@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -53,6 +54,7 @@ import butterknife.ButterKnife;
  * @date 2017-04-28
  */
 
+@LatestVisitRecord
 @Widget(group = Group.Other, name = "固定宽度，内容均分")
 public class QDTabSegmentFixModeFragment extends BaseFragment {
     @BindView(R.id.topbar)

@@ -15,15 +15,25 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
-public class QMUISkinRuleBackgroundHandler extends QMUISkinRuleDrawableHandler {
+public class QMUISkinRuleBackgroundHandler implements IQMUISkinRuleHandler {
 
     @Override
-    void handle(View view, String name, Drawable drawable) {
-        QMUIViewHelper.setBackgroundKeepingPadding(view, drawable);
+    public void handle(QMUISkinManager skinManager, View view, Resources.Theme theme, String name, int attr) {
+        if(view instanceof QMUIRoundButton){
+            ((QMUIRoundButton)view).setBgData(
+                    QMUIResHelper.getAttrColorStateList(view.getContext(), theme, attr));
+        }else{
+            QMUIViewHelper.setBackgroundKeepingPadding(view,
+                    QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+        }
     }
 }

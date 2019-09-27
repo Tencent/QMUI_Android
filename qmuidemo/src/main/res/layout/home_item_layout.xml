@@ -29,7 +29,8 @@
         android:id="@+id/item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Item Icon" />
+        android:contentDescription="Item Icon"
+        app:qmui_skin_tint_color="?attr/app_skin_common_img_tint_color"/>
 
     <TextView
         android:id="@+id/item_name"
