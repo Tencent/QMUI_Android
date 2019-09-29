@@ -75,6 +75,7 @@
     </style>
 
     <style name="QMUI" parent="AppConfigTheme">
+
         <!--***************************** qmui topbar  ***************************** -->
         <item name="qmui_topbar_height">56dp</item>
         <!-- skin support-->
@@ -105,10 +106,16 @@
         </item>
         <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
 
+        <!--****************************** qmui btn  ******************************* -->
 
+        <!-- skin support-->
+        <item name="qmui_round_btn_bg_color">@color/qmui_s_transparent</item>
+        <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
+        <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
+        <!-- skin support-->
 
-
-
+        <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
+        <item name="qmui_round_btn_border_width">@dimen/qmui_btn_border_width</item>
 
 
 
@@ -252,16 +259,6 @@
         ***********************************************-->
         <item name="qmui_s_checkbox">@drawable/qmui_s_checkbox</item>
         <item name="qmui_icon_check_mark">@drawable/qmui_icon_checkmark</item>
-
-        <!--**********************************************
-        *                   qmui btn                     *
-        ***********************************************-->
-        <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
-        <item name="qmui_round_btn_border_width">@dimen/qmui_btn_border_width</item>
-        <item name="qmui_round_btn_bg_color">@color/qmui_btn_blue_bg</item>
-        <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
-        <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
-
 
 
         <!--**********************************************

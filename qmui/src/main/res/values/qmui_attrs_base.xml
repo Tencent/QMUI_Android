@@ -162,7 +162,7 @@
     **********************************************-->
     <attr name="qmui_round_btn_text_size" format="dimension" />
     <attr name="qmui_round_btn_border_width" format="dimension" />
-    <!-- android 5.0一下不能再selector中用?attr,必须要整个drawable由使用者提供 -->
+
     <attr name="qmui_round_btn_bg_color" format="color" />
     <attr name="qmui_round_btn_border_color" format="color" />
     <attr name="qmui_round_btn_text_color" format="color" />

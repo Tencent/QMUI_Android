@@ -22,17 +22,17 @@ import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
-public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorHandler {
+public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, int color) {
+    void handle(View view, String name, ColorStateList colorStateList) {
 
         if (view instanceof IQMUILayout) {
-            ((IQMUILayout) view).setBorderColor(color);
+            ((IQMUILayout) view).setBorderColor(colorStateList.getDefaultColor());
         } else if (view instanceof QMUIRadiusImageView) {
-            ((QMUIRadiusImageView) view).setBorderColor(color);
+            ((QMUIRadiusImageView) view).setBorderColor(colorStateList.getDefaultColor());
         } else if (view instanceof QMUIRoundButton) {
-            ((QMUIRoundButton) view).setStrokeColors(ColorStateList.valueOf(color));
+            ((QMUIRoundButton) view).setStrokeColors(colorStateList);
         }
     }
 }

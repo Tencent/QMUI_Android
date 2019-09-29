@@ -42,7 +42,7 @@
         <item name="android:gravity">center</item>
         <item name="android:ellipsize">end</item>
         <item name="qmui_isRadiusAdjustBounds">true</item>
-        <item name="qmui_backgroundColor">@color/qmui_s_transparent</item>
+        <item name="qmui_backgroundColor">?attr/qmui_round_btn_bg_color</item>
         <item name="qmui_borderWidth">?attr/qmui_round_btn_border_width</item>
         <item name="qmui_borderColor">?attr/qmui_round_btn_border_color</item>
         <item name="android:textColor">?attr/qmui_round_btn_text_color</item>

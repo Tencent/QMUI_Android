@@ -22,7 +22,12 @@ import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaButton;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 
@@ -47,9 +52,10 @@ import androidx.annotation.Nullable;
  * @see QMUIRoundButtonDrawable
  * </p>
  */
-public class QMUIRoundButton extends QMUIAlphaButton {
+public class QMUIRoundButton extends QMUIAlphaButton implements IQMUISkinDefaultAttrProvider {
 
     private QMUIRoundButtonDrawable mRoundBg;
+    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
 
     public QMUIRoundButton(Context context) {
         super(context);
@@ -59,6 +65,9 @@ public class QMUIRoundButton extends QMUIAlphaButton {
     public QMUIRoundButton(Context context, AttributeSet attrs) {
         super(context, attrs, R.attr.QMUIButtonStyle);
         init(context, attrs, R.attr.QMUIButtonStyle);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_round_btn_bg_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BORDER, R.attr.qmui_round_btn_border_color);
+        mDefaultSkinAttrs.put(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_round_btn_text_color);
     }
 
     public QMUIRoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -88,5 +97,10 @@ public class QMUIRoundButton extends QMUIAlphaButton {
 
     public void setStrokeColors(ColorStateList colors) {
         mRoundBg.setStrokeColors(colors);
+    }
+
+    @Override
+    public Map<String, Integer> getDefaultSkinAttrs() {
+        return mDefaultSkinAttrs;
     }
 }

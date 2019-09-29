@@ -36,6 +36,7 @@
         <item name="android:textColor">?attr/qmui_config_color_gray_1</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="qmui_skin_text_color">?attr/app_skin_common_title_text_color</item>
     </style>
 
     <style name="QDCommonDescription">
@@ -69,7 +70,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingTop">24dp</item>
         <item name="android:paddingBottom">24dp</item>
-        <item name="android:background">@drawable/qmui_divider_bottom_bitmap</item>
+        <item name="qmui_bottomDividerHeight">1px</item>
+        <item name="qmui_bottomDividerColor">?attr/qmui_config_color_separator</item>
+        <item name="qmui_skin_separator_bottom">?attr/qmui_config_color_separator</item>
     </style>
 
     <style name="DialogTheme2" parent="QMUI.Dialog">

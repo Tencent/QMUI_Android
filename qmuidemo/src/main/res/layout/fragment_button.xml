@@ -36,41 +36,42 @@
             android:paddingLeft="@dimen/qmui_content_spacing_horizontal"
             android:paddingRight="@dimen/qmui_content_spacing_horizontal">
 
-            <RelativeLayout style="@style/button_wrapper_style">
-
+            <com.qmuiteam.qmui.layout.QMUIFrameLayout
+                style="@style/button_wrapper_style">
                 <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
                     android:paddingBottom="10dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:paddingTop="10dp"
                     android:text="圆角为短边的一半"
-                    app:qmui_isRadiusAdjustBounds="true"/>
+                    app:qmui_isRadiusAdjustBounds="true"
+                    android:layout_gravity="center"/>
 
-            </RelativeLayout>
+            </com.qmuiteam.qmui.layout.QMUIFrameLayout>
 
-            <RelativeLayout style="@style/button_wrapper_style">
+
+            <com.qmuiteam.qmui.layout.QMUIFrameLayout style="@style/button_wrapper_style">
 
                 <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
                     android:clickable="true"
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="指定圆角大小"
                     app:qmui_radius="4dp"/>
 
-            </RelativeLayout>
+            </com.qmuiteam.qmui.layout.QMUIFrameLayout>
 
-            <RelativeLayout style="@style/button_wrapper_style">
+            <com.qmuiteam.qmui.layout.QMUIFrameLayout style="@style/button_wrapper_style">
 
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true">
+                    android:layout_gravity="center">
 
                     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                         android:layout_width="60dp"
@@ -106,7 +107,7 @@
 
                 </FrameLayout>
 
-            </RelativeLayout>
+            </com.qmuiteam.qmui.layout.QMUIFrameLayout>
 
             <LinearLayout style="@style/button_wrapper_style"
                 android:orientation="vertical">
@@ -125,10 +126,14 @@
                     android:textColor="@color/s_app_color_blue_to_red"
                     app:qmui_backgroundColor="@color/s_app_color_blue_3"
                     app:qmui_borderColor="@color/s_app_color_blue_to_red"
-                    app:qmui_borderWidth="1px" />
+                    app:qmui_borderWidth="1px"
+                    android:layout_gravity="center_horizontal"
+                    app:qmui_skin_background="?attr/app_skin_btn_test_bg"
+                    app:qmui_skin_border="?attr/app_skin_btn_test_border"
+                    app:qmui_skin_text_color="?attr/app_skin_btn_test_border"/>
             </LinearLayout>
 
-            <LinearLayout style="@style/button_wrapper_style"
+            <com.qmuiteam.qmui.layout.QMUILinearLayout style="@style/button_wrapper_style"
                 android:orientation="vertical">
 
                 <TextView
@@ -146,8 +151,12 @@
                     android:textColor="@color/app_color_blue"
                     app:qmui_backgroundColor="@color/app_color_blue_3"
                     app:qmui_borderColor="@color/app_color_blue"
-                    app:qmui_borderWidth="1px" />
-            </LinearLayout>
+                    app:qmui_borderWidth="1px"
+                    android:layout_gravity="center_horizontal"
+                    app:qmui_skin_border="?attr/app_skin_btn_test_border_single"
+                    app:qmui_skin_background="?attr/app_skin_btn_test_bg_single"
+                    app:qmui_skin_text_color="?attr/app_skin_btn_test_border_single"/>
+            </com.qmuiteam.qmui.layout.QMUILinearLayout>
         </LinearLayout>
     </ScrollView>
 

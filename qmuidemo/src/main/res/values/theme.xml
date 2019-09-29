@@ -19,6 +19,11 @@
     <attr name="app_skin_s_list_item_bg" format="color|reference" />
     <attr name="app_skin_common_img_tint_color" format="color|reference"/>
     <attr name="app_skin_home_text_color" format="color|reference"/>
+    <attr name="app_skin_common_title_text_color" format="color|reference"/>
+    <attr name="app_skin_btn_test_bg" format="color|reference"/>
+    <attr name="app_skin_btn_test_border" format="color|reference"/>
+    <attr name="app_skin_btn_test_bg_single" format="color|reference"/>
+    <attr name="app_skin_btn_test_border_single" format="color|reference"/>
 
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
         <!-- 配置Android提供的theme -->
@@ -28,13 +33,6 @@
         <item name="android:listPreferredItemHeightSmall">?attr/qmui_list_item_height</item>
 
         <!-- 配置qmui提供的theme -->
-        <item name="qmui_config_color_blue">@color/app_color_blue</item>
-        <item name="qmui_round_btn_bg_color">@color/s_btn_blue_bg</item>
-        <item name="qmui_round_btn_border_color">@color/s_btn_blue_border</item>
-        <item name="qmui_round_btn_text_color">@color/s_btn_blue_text</item>
-        <item name="qmui_content_spacing_horizontal">20dp</item>
-        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</item>
-
         <item name="qmui_topbar_bg">?attr/app_primary_color</item>
         <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
         <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
@@ -48,6 +46,17 @@
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_6</item>
         <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
 
+        <item name="qmui_round_btn_border_color">@color/s_btn_blue</item>
+        <item name="qmui_round_btn_text_color">@color/s_btn_blue</item>
+
+
+
+        <item name="qmui_config_color_blue">@color/app_color_blue</item>
+        <item name="qmui_content_spacing_horizontal">20dp</item>
+        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</item>
+
+
+
         <!-- 配置app自己的theme -->
         <item name="app_primary_color">?attr/qmui_config_color_blue</item>
         <item name="app_content_bg_color">@color/qmui_config_color_white</item>
@@ -56,7 +65,11 @@
         <item name="app_skin_s_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
         <item name="app_skin_common_img_tint_color">?attr/qmui_config_color_blue</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_6</item>
-
+        <item name="app_skin_common_title_text_color">?attr/qmui_config_color_gray_1</item>
+        <item name="app_skin_btn_test_bg">@color/s_app_color_blue_3</item>
+        <item name="app_skin_btn_test_border">@color/s_app_color_blue_to_red</item>
+        <item name="app_skin_btn_test_bg_single">@color/app_color_blue_3</item>
+        <item name="app_skin_btn_test_border_single">@color/app_color_blue</item>
     </style>
 
 
@@ -66,7 +79,7 @@
 
     <!-- dark skin -->
     <style name="app_skin_dark" parent="AppTheme">
-        <item name="qmui_config_color_separator">@color/qmui_config_color_50_white</item>
+        <item name="qmui_config_color_separator">@color/qmui_config_color_blue</item>
         <item name="qmui_tab_bg">@color/qmui_config_color_pure_black</item>
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_3</item>
         <item name="qmui_tab_selected_color">@color/qmui_config_color_white</item>
@@ -78,6 +91,7 @@
         <item name="app_skin_s_list_item_bg">@drawable/list_item_bg_with_border_none_dark</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_white</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_8</item>
+        <item name="app_skin_common_title_text_color">@color/qmui_config_color_75_white</item>
     </style>
 
     <!-- white skin -->
@@ -88,9 +102,14 @@
         <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_pure_black</item>
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_5</item>
         <item name="qmui_tab_selected_color">@color/qmui_config_color_pure_black</item>
+        <item name="qmui_round_btn_border_color">@color/s_btn_gray</item>
+        <item name="qmui_round_btn_text_color">@color/s_btn_gray</item>
 
         <item name="app_primary_color">@color/qmui_config_color_white</item>
-
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_pure_black</item>
+        <item name="app_skin_btn_test_bg">@color/s_app_color_gray</item>
+        <item name="app_skin_btn_test_border">@color/s_app_color_gray_dark</item>
+        <item name="app_skin_btn_test_bg_single">?attr/qmui_config_color_gray_5</item>
+        <item name="app_skin_btn_test_border_single">?attr/qmui_config_color_gray_1</item>
     </style>
 </resources>

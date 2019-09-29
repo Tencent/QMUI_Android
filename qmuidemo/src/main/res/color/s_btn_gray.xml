@@ -16,7 +16,7 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/app_color_blue_disabled" android:state_enabled="false" />
-    <item android:color="@color/app_color_blue_pressed" android:state_pressed="true" />
-    <item android:color="@color/app_color_blue" />
+    <item android:color="@color/qmui_config_color_gray_5" android:state_enabled="false" />
+    <item android:color="@color/qmui_config_color_gray_6" android:state_pressed="true" />
+    <item android:color="@color/qmui_config_color_gray_1" />
 </selector>
