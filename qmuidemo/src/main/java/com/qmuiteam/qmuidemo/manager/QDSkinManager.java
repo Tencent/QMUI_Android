@@ -74,7 +74,7 @@ public class QDSkinManager {
     }
 
     public static void unRegister(Activity activity) {
-        for (int i = mListenActivityList.size() - 1; i >= 0; i++) {
+        for (int i = mListenActivityList.size() - 1; i >= 0; i--) {
             WeakReference<Activity> wr = mListenActivityList.get(i);
             if (wr.get() == null || wr.get() == activity) {
                 mListenActivityList.remove(wr);
