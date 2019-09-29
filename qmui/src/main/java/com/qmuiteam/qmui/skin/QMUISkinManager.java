@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.annotation.QMUISkinListenWithHierarchyChange;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.handler.IQMUISkinRuleHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleAlphaHandler;
@@ -39,11 +40,11 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTintColorHandler;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.collection.SimpleArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -68,14 +69,6 @@ public final class QMUISkinManager {
             sInstance = new QMUISkinManager(resources, packageName);
         }
         return sInstance;
-    }
-
-    public static void setSkinValue(@NonNull View view, QMUISkinValueBuilder skinValueBuilder) {
-        view.setTag(R.id.qmui_skin_value, skinValueBuilder.build());
-    }
-
-    public static void setSkinValue(@NonNull View view, String value) {
-        view.setTag(R.id.qmui_skin_value, value);
     }
 
     //==============================================================================================
@@ -159,7 +152,7 @@ public final class QMUISkinManager {
 
     @MainThread
     public void addSkin(int index, int styleRes) {
-        if(index <= 0){
+        if (index <= 0) {
             throw new IllegalArgumentException("index must greater than 0");
         }
         SkinItem skinItem = mSkins.get(index);
@@ -221,12 +214,12 @@ public final class QMUISkinManager {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
             }
-            if(view instanceof RecyclerView){
+            if (view instanceof RecyclerView) {
                 RecyclerView recyclerView = (RecyclerView) view;
                 int itemDecorationCount = recyclerView.getItemDecorationCount();
-                for(int i = 0; i < itemDecorationCount; i++){
+                for (int i = 0; i < itemDecorationCount; i++) {
                     RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
-                    if(itemDecoration instanceof IQMUISkinHandlerDecoration){
+                    if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
                         ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
                     }
                 }
@@ -242,18 +235,19 @@ public final class QMUISkinManager {
     }
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {
-        Map<String, Integer> attrs = getSkinAttrs(view);
+        SimpleArrayMap<String, Integer> attrs = getSkinAttrs(view);
         if (view instanceof IQMUISkinHandlerView) {
             ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
-        } else{
+        } else {
             defaultHandleSkinAttrs(view, theme, attrs);
         }
     }
 
-    public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, Map<String, Integer> attrs){
-        if(attrs != null){
-            for (String key : attrs.keySet()) {
-                Integer attr = attrs.get(key);
+    public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
+        if (attrs != null) {
+            for (int i = 0; i < attrs.size(); i++) {
+                String key = attrs.keyAt(i);
+                Integer attr = attrs.valueAt(i);
                 if (attr == null) {
                     continue;
                 }
@@ -261,6 +255,7 @@ public final class QMUISkinManager {
             }
         }
     }
+
     public void defaultHandleSkinAttr(View view, Resources.Theme theme, String name, int attr) {
         if (attr == 0) {
             return;
@@ -274,7 +269,7 @@ public final class QMUISkinManager {
     }
 
     @Nullable
-    private Map<String, Integer> getSkinAttrs(View view) {
+    private SimpleArrayMap<String, Integer> getSkinAttrs(View view) {
         String skinValue = (String) view.getTag(R.id.qmui_skin_value);
         String[] items;
         if (skinValue == null || skinValue.isEmpty()) {
@@ -283,16 +278,21 @@ public final class QMUISkinManager {
             items = skinValue.split("[|]");
         }
 
-        Map<String, Integer> attrs;
+        SimpleArrayMap<String, Integer> attrs = null;
         if (view instanceof IQMUISkinDefaultAttrProvider) {
-            attrs = new HashMap<>(((IQMUISkinDefaultAttrProvider) view).getDefaultSkinAttrs());
-        } else {
-            IQMUISkinDefaultAttrProvider provider = (IQMUISkinDefaultAttrProvider) view.getTag(R.id.qmui_skin_default_attr_provider);
-            if(provider != null){
-                attrs = new HashMap<>(provider.getDefaultSkinAttrs());
-            }else{
-                attrs = new HashMap<>(items.length);
+            attrs = new SimpleArrayMap<>(((IQMUISkinDefaultAttrProvider) view).getDefaultSkinAttrs());
+        }
+        IQMUISkinDefaultAttrProvider provider = (IQMUISkinDefaultAttrProvider) view.getTag(
+                R.id.qmui_skin_default_attr_provider);
+        if (provider != null) {
+            if (attrs != null) {
+                // override
+                attrs.putAll(provider.getDefaultSkinAttrs());
+            } else {
+                attrs = new SimpleArrayMap<>(provider.getDefaultSkinAttrs());
             }
+        } else if (attrs == null) {
+            attrs = new SimpleArrayMap<>(items.length);
         }
 
         for (String item : items) {

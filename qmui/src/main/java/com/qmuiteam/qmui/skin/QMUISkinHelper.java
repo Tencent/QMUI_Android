@@ -7,6 +7,7 @@ import android.view.View;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class QMUISkinHelper {
@@ -32,5 +33,14 @@ public class QMUISkinHelper {
             theme = QMUISkinManager.getInstance(view.getContext()).getTheme(skin);
         }
         return QMUIResHelper.getAttrDrawable(view.getContext(), theme, drawableAttr);
+    }
+
+
+    public static void setSkinValue(@NonNull View view, QMUISkinValueBuilder skinValueBuilder) {
+        view.setTag(R.id.qmui_skin_value, skinValueBuilder.build());
+    }
+
+    public static void setSkinValue(@NonNull View view, String value) {
+        view.setTag(R.id.qmui_skin_value, value);
     }
 }

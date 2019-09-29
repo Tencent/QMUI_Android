@@ -15,8 +15,8 @@
  */
 package com.qmuiteam.qmui.skin.defaultAttr;
 
-import java.util.Map;
+import androidx.collection.SimpleArrayMap;
 
 public interface IQMUISkinDefaultAttrProvider {
-    Map<String, Integer> getDefaultSkinAttrs();
+    SimpleArrayMap<String, Integer> getDefaultSkinAttrs();
 }

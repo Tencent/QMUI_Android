@@ -17,8 +17,8 @@ package com.qmuiteam.qmui.skin;
 
 import android.content.res.Resources;
 
-import java.util.Map;
+import androidx.collection.SimpleArrayMap;
 
 public interface IQMUISkinHandlerView {
-    void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs);
+    void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs);
 }

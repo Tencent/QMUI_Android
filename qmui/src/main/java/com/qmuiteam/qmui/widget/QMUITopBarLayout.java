@@ -28,11 +28,10 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
-import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 
-import java.util.HashMap;
-import java.util.Map;
+import androidx.collection.SimpleArrayMap;
 
 /**
  * 这是一个对 {@link QMUITopBar} 的代理类，需要它的原因是：
@@ -48,7 +47,7 @@ import java.util.Map;
 
 public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaultAttrProvider {
     private QMUITopBar mTopBar;
-    private HashMap<String, Integer> mDefaultSkinAttrs = new HashMap<>();
+    private SimpleArrayMap<String, Integer> mDefaultSkinAttrs = new SimpleArrayMap<>(2);
 
     public QMUITopBarLayout(Context context) {
         this(context, null);
@@ -178,12 +177,12 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         return alphaInt;
     }
 
-    public void setDefaultSkinAttr(String name, int attr){
+    public void setDefaultSkinAttr(String name, int attr) {
         mDefaultSkinAttrs.put(name, attr);
     }
 
     @Override
-    public Map<String, Integer> getDefaultSkinAttrs() {
+    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
         return mDefaultSkinAttrs;
     }
 }

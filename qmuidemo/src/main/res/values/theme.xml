@@ -85,6 +85,11 @@
         <item name="qmui_tab_selected_color">@color/qmui_config_color_white</item>
         <item name="qmui_tab_sign_count_view_text_color">@color/qmui_config_color_75_white</item>
         <item name="qmui_tab_sign_count_view_bg_color">#80FF303A</item>
+        <item name="qmui_empty_view_loading_color">@color/qmui_config_color_75_white</item>
+        <item name="qmui_empty_view_title_color">@color/qmui_config_color_white</item>
+        <item name="qmui_empty_view_sub_title_color">@color/qmui_config_color_75_white</item>
+        <item name="qmui_empty_view_btn_border_color">@color/s_app_color_gray</item>
+        <item name="qmui_empty_view_btn_text_color">@color/s_app_color_gray</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_1</item>
@@ -104,6 +109,8 @@
         <item name="qmui_tab_selected_color">@color/qmui_config_color_pure_black</item>
         <item name="qmui_round_btn_border_color">@color/s_btn_gray</item>
         <item name="qmui_round_btn_text_color">@color/s_btn_gray</item>
+        <item name="qmui_empty_view_btn_border_color">@color/s_app_color_gray_dark</item>
+        <item name="qmui_empty_view_btn_text_color">@color/s_app_color_gray_dark</item>
 
         <item name="app_primary_color">@color/qmui_config_color_white</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_pure_black</item>

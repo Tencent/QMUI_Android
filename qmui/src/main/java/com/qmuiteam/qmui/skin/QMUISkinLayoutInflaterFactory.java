@@ -74,7 +74,7 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             }
             getSkinValueFromAttributeSet(view, attrs, mBuilder);
             if (!mBuilder.isEmpty()) {
-                QMUISkinManager.setSkinValue(view, mBuilder);
+                QMUISkinHelper.setSkinValue(view, mBuilder);
             }
             mBuilder.clear();
         }

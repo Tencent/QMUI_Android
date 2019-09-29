@@ -3,7 +3,7 @@
 ## 概述
 
 1. 升级到 Androidx
-2. minSdkVersion 升级到 API 16
+2. minSdkVersion 升级到 API 19
 3. 提供换肤(Dark Mode)支持
 4. `QMUI.Compat` 主题改名为 `QMUI`，并移除旧的 `QMUI` 主题
 
@@ -26,4 +26,9 @@
 ### QMUIPopup
 
 - 完全重构，与旧版本完全不兼容
+
+### QMUIEmptyView
+
+- 父类更改为 ConstraintLayout
+- theme 中 添加间距、颜色、字号
 

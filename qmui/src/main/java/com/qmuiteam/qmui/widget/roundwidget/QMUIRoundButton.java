@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.roundwidget;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.util.ArrayMap;
 import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.R;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
+import androidx.collection.SimpleArrayMap;
 
 /**
  * 使按钮能方便地指定圆角、边框颜色、边框粗细、背景色
@@ -55,7 +57,15 @@ import androidx.annotation.Nullable;
 public class QMUIRoundButton extends QMUIAlphaButton implements IQMUISkinDefaultAttrProvider {
 
     private QMUIRoundButtonDrawable mRoundBg;
-    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
+    private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
+
+    static {
+        sDefaultSkinAttrs = new SimpleArrayMap<>(3);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_round_btn_bg_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BORDER, R.attr.qmui_round_btn_border_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_round_btn_text_color);
+    }
+
 
     public QMUIRoundButton(Context context) {
         super(context);
@@ -65,9 +75,6 @@ public class QMUIRoundButton extends QMUIAlphaButton implements IQMUISkinDefault
     public QMUIRoundButton(Context context, AttributeSet attrs) {
         super(context, attrs, R.attr.QMUIButtonStyle);
         init(context, attrs, R.attr.QMUIButtonStyle);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_round_btn_bg_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BORDER, R.attr.qmui_round_btn_border_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_round_btn_text_color);
     }
 
     public QMUIRoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -100,7 +107,7 @@ public class QMUIRoundButton extends QMUIAlphaButton implements IQMUISkinDefault
     }
 
     @Override
-    public Map<String, Integer> getDefaultSkinAttrs() {
-        return mDefaultSkinAttrs;
+    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
+        return sDefaultSkinAttrs;
     }
 }

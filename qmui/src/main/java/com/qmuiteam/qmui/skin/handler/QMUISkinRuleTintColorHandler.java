@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUILoadingView;
 
 import androidx.core.widget.ImageViewCompat;
 
@@ -29,6 +30,8 @@ public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorStateListHand
     void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof ImageView) {
             ImageViewCompat.setImageTintList((ImageView) view, colorStateList);
+        }else if(view instanceof QMUILoadingView){
+            ((QMUILoadingView) view).setColor(colorStateList.getDefaultColor());
         }
     }
 }

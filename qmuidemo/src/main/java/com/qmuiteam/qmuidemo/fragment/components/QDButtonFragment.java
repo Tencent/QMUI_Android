@@ -31,7 +31,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(name = "RoundButton", iconRes = R.mipmap.icon_grid_button)
+@Widget(name = "QMUIRoundButton", iconRes = R.mipmap.icon_grid_button)
 public class QDButtonFragment extends BaseFragment {
 
     @BindView(R.id.topbar)

@@ -22,13 +22,17 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+
+import androidx.annotation.NonNull;
+import androidx.collection.SimpleArrayMap;
 
 /**
  * 用于显示 Loading 的 {@link View}，支持颜色和大小的设置。
@@ -36,7 +40,7 @@ import com.qmuiteam.qmui.R;
  * @author cginechen
  * @date 2016-09-21
  */
-public class QMUILoadingView extends View {
+public class QMUILoadingView extends View implements IQMUISkinDefaultAttrProvider {
 
     private int mSize;
     private int mPaintColor;
@@ -45,6 +49,12 @@ public class QMUILoadingView extends View {
     private Paint mPaint;
     private static final int LINE_COUNT = 12;
     private static final int DEGREE_PER_LINE = 360 / LINE_COUNT;
+    private static SimpleArrayMap<String, Integer> sDefaultAttrs;
+
+    static {
+        sDefaultAttrs = new SimpleArrayMap<>();
+        sDefaultAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_loading_color);
+    }
 
     public QMUILoadingView(Context context) {
         this(context, null);
@@ -61,6 +71,7 @@ public class QMUILoadingView extends View {
         mPaintColor = array.getInt(R.styleable.QMUILoadingView_android_color, Color.WHITE);
         array.recycle();
         initPaint();
+
     }
 
     public QMUILoadingView(Context context, int size, int color) {
@@ -170,4 +181,8 @@ public class QMUILoadingView extends View {
         }
     }
 
+    @Override
+    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
+        return sDefaultAttrs;
+    }
 }

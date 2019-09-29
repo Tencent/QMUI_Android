@@ -41,13 +41,11 @@ import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +53,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.collection.SimpleArrayMap;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -155,7 +153,14 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     private AdapterChangeListener mAdapterChangeListener;
     private boolean mIsInSelectTab = false;
     private QMUILayoutHelper mLayoutHelper;
-    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
+    private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
+
+    static {
+        sDefaultSkinAttrs = new SimpleArrayMap<>(3);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_tab_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TOP_SEPARATOR, R.attr.qmui_tab_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_tab_bg);
+    }
 
     public QMUITabSegment(Context context) {
         this(context, null);
@@ -214,10 +219,6 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         addView(mContentLayout, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mTabAdapter = createTabAdapter(mContentLayout);
-
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_tab_separator_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.TOP_SEPARATOR, R.attr.qmui_tab_separator_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_tab_bg);
     }
 
     protected QMUITabAdapter createTabAdapter(ViewGroup tabParentView) {
@@ -1177,7 +1178,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
 
     @Override
     public void setRadiusAndShadow(int radius, int hideRadiusSide, int shadowElevation, int shadowColor, float shadowAlpha) {
-        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, shadowElevation,  shadowColor, shadowAlpha);
+        mLayoutHelper.setRadiusAndShadow(radius, hideRadiusSide, shadowElevation, shadowColor, shadowAlpha);
     }
 
     @Override
@@ -1319,12 +1320,12 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     }
 
     @Override
-    public Map<String, Integer> getDefaultSkinAttrs() {
-        return mDefaultSkinAttrs;
+    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
+        return sDefaultSkinAttrs;
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
+    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
         layoutIndicator(mTabAdapter.getItem(mCurrentSelectedIndex), true);
         manager.defaultHandleSkinAttrs(this, theme, attrs);
     }

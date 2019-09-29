@@ -13,20 +13,15 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.qmuiteam.qmui.skin.defaultAttr;
+package com.qmuiteam.qmui.skin.annotation;
 
-import androidx.collection.SimpleArrayMap;
 
-public class QMUISkinSimpleDefaultAttrProvider implements IQMUISkinDefaultAttrProvider {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private SimpleArrayMap<String, Integer> mSkinAttrs = new SimpleArrayMap<>();
-
-    public void setDefaultSkinAttr(String name, int attr) {
-        mSkinAttrs.put(name, attr);
-    }
-
-    @Override
-    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
-        return mSkinAttrs;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface QMUISkinChangeNotAdapted {
 }

@@ -37,10 +37,10 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
-import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
@@ -48,9 +48,9 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import androidx.collection.SimpleArrayMap;
 
 /**
  * A standard toolbar for use within application content.
@@ -90,7 +90,15 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     private int mTopBarHeight = -1;
     private Rect mTitleContainerRect;
 
-    private Map<String, Integer> mDefaultSkinAttrs = new HashMap<>();
+    private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
+
+    static {
+        sDefaultSkinAttrs = new SimpleArrayMap<>(4);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_topbar_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BTN_TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
+    }
 
     public QMUITopBar(Context context) {
         this(context, null);
@@ -111,11 +119,6 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         mRightLastViewId = DEFAULT_VIEW_ID;
         mLeftViewList = new ArrayList<>();
         mRightViewList = new ArrayList<>();
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_topbar_separator_color);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.BTN_TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
-        mDefaultSkinAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
-
     }
 
     void init(Context context, AttributeSet attrs) {
@@ -441,15 +444,15 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId){
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId) {
         return addRightImageButton(drawableResId, true, viewId);
     }
 
     /**
      * 根据 resourceId 生成一个 TopBar 的按钮，并 add 到 TopBar 的右侧
      *
-     * @param drawableResId 按钮图片的 resourceId
-     * @param viewId        该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
+     * @param drawableResId   按钮图片的 resourceId
+     * @param viewId          该按钮的 id，可在 ids.xml 中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
@@ -459,15 +462,15 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         return rightButton;
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId){
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId) {
         return addLeftImageButton(drawableResId, true, viewId);
     }
 
     /**
      * 根据 resourceId 生成一个 TopBar 的按钮，并 add 到 TopBar 的左边
      *
-     * @param drawableResId 按钮图片的 resourceId
-     * @param viewId        该按钮的 id，可在ids.xml中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
+     * @param drawableResId   按钮图片的 resourceId
+     * @param viewId          该按钮的 id，可在ids.xml中找到合适的或新增。手工指定 viewId 是为了适应自动化测试。
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
@@ -545,7 +548,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      */
     private Button generateTopBarTextButton(String text) {
         Button button = new Button(getContext());
-        if(mTopBarTextDefaultAttrProvider == null){
+        if (mTopBarTextDefaultAttrProvider == null) {
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
             provider.setDefaultSkinAttr(
                     QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
@@ -567,8 +570,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
 
-
     private IQMUISkinDefaultAttrProvider mTopBarImageColorTintColorProvider;
+
     /**
      * 生成一个图片按钮，配合 {{@link #generateTopBarImageButtonLayoutParams()} 使用
      *
@@ -576,8 +579,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      */
     private QMUIAlphaImageButton generateTopBarImageButton(int imageResourceId, boolean followTintColor) {
         QMUIAlphaImageButton imageButton = new QMUIAlphaImageButton(getContext());
-        if(followTintColor){
-            if(mTopBarImageColorTintColorProvider == null){
+        if (followTintColor) {
+            if (mTopBarImageColorTintColorProvider == null) {
                 QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
                 provider.setDefaultSkinAttr(
                         QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
@@ -742,10 +745,11 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
+    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
         if (attrs != null) {
-            for (String key : attrs.keySet()) {
-                Integer attr = attrs.get(key);
+            for (int i = 0; i < attrs.size(); i++) {
+                String key = attrs.keyAt(i);
+                Integer attr = attrs.valueAt(i);
                 if (attr == null) {
                     continue;
                 }
@@ -760,12 +764,9 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         }
     }
 
-    public void setDefaultSkinAttr(String name, int attr) {
-        mDefaultSkinAttrs.put(name, attr);
-    }
 
     @Override
-    public Map<String, Integer> getDefaultSkinAttrs() {
-        return mDefaultSkinAttrs;
+    public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
+        return sDefaultSkinAttrs;
     }
 }

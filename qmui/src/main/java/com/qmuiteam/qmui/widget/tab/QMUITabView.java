@@ -43,9 +43,8 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
-import java.util.Map;
-
 import androidx.annotation.NonNull;
+import androidx.collection.SimpleArrayMap;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 
@@ -666,7 +665,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, Map<String, Integer> attrs) {
+    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
         if (mTab != null) {
             updateSkinInfo(mTab);
             invalidate();

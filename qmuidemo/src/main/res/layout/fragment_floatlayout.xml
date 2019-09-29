@@ -25,6 +25,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_white"
+        app:qmui_skin_background="?attr/app_skin_common_background"
         android:fitsSystemWindows="true">
 
         <LinearLayout

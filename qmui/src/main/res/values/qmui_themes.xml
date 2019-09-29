@@ -117,7 +117,37 @@
         <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
         <item name="qmui_round_btn_border_width">@dimen/qmui_btn_border_width</item>
 
+        <!--************************ qmui loading view   *************************** -->
 
+        <!-- skin support-->
+        <item name="qmui_loading_color">@color/qmui_config_color_gray_5</item>
+        <!-- skin support-->
+
+        <item name="qmui_loading_size">20dp</item>
+
+
+        <!--************************ qmui empty view   *************************** -->
+
+        <!-- skin support-->
+        <item name="qmui_empty_view_loading_color">?attr/qmui_loading_color</item>
+        <item name="qmui_empty_view_title_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_empty_view_sub_title_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_empty_view_btn_bg_color">?attr/qmui_round_btn_bg_color</item>
+        <item name="qmui_empty_view_btn_border_color">?attr/qmui_round_btn_border_color</item>
+        <item name="qmui_empty_view_btn_text_color">?attr/qmui_round_btn_text_color</item>
+        <!-- skin support-->
+
+        <item name="qmui_empty_view_loading_size">?attr/qmui_loading_size</item>
+        <item name="qmui_empty_view_title_normal_margin_top">16dp</item>
+        <item name="qmui_empty_view_title_text_size">16sp</item>
+        <item name="qmui_empty_view_title_margin_hor">?attr/qmui_content_spacing_horizontal</item>
+        <item name="qmui_empty_view_sub_title_normal_margin_top">16dp</item>
+        <item name="qmui_empty_view_sub_title_text_size">14sp</item>
+        <item name="qmui_empty_view_sub_title_margin_hor">?attr/qmui_content_spacing_horizontal</item>
+        <item name="qmui_empty_view_btn_height">48dp</item>
+        <item name="qmui_empty_view_btn_margin_hor">55dp</item>
+        <item name="qmui_empty_view_btn_text_size">15sp</item>
+        <item name="qmui_empty_view_btn_normal_margin_top">10dp</item>
 
 
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
@@ -307,11 +337,6 @@
         <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
         <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
 
-        <!--**********************************************
-        *               qmui loading view                *
-        ***********************************************-->
-        <item name="qmui_loading_size">20dp</item>
-        <item name="qmui_loading_color">@color/qmui_config_color_gray_5</item>
 
         <!--**********************************************
         *                   qmui popup                   *
