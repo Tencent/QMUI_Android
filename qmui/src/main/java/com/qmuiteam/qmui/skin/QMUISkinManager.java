@@ -221,6 +221,16 @@ public final class QMUISkinManager {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
             }
+            if(view instanceof RecyclerView){
+                RecyclerView recyclerView = (RecyclerView) view;
+                int itemDecorationCount = recyclerView.getItemDecorationCount();
+                for(int i = 0; i < itemDecorationCount; i++){
+                    RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
+                    if(itemDecoration instanceof IQMUISkinHandlerDecoration){
+                        ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
+                    }
+                }
+            }
         }
     }
 

@@ -17,71 +17,73 @@
 package com.qmuiteam.qmuidemo.decorator;
 
 import android.content.Context;
-import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+import android.graphics.Paint;
+import android.view.View;
+
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerDecoration;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmuidemo.R;
+
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 /**
  * @author cginechen
  * @date 2016-10-21
  */
 
-public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
-    private static final int[] ATTRS = new int[]{
-            android.R.attr.listDivider
-    };
-    private Drawable mDivider;
+public class GridDividerItemDecoration extends RecyclerView.ItemDecoration implements IQMUISkinHandlerDecoration {
+
+    private Paint mDividerPaint = new Paint();
     private int mSpanCount;
+    private final int mDividerAttr;
 
     public GridDividerItemDecoration(Context context, int spanCount) {
-        final TypedArray a = context.obtainStyledAttributes(ATTRS);
-        mDivider = a.getDrawable(0);
-        a.recycle();
+        this(context, spanCount, R.attr.qmui_config_color_separator, 1f);
+    }
+
+    public GridDividerItemDecoration(Context context, int spanCount, int dividerColorAttr, float dividerWidth) {
         mSpanCount = spanCount;
+        mDividerAttr = dividerColorAttr;
+        mDividerPaint.setStrokeWidth(dividerWidth);
+        mDividerPaint.setStyle(Paint.Style.STROKE);
+        mDividerPaint.setColor(QMUIResHelper.getAttrColor(context, dividerColorAttr));
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        super.onDraw(c, parent, state);
+    public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        super.onDrawOver(c, parent, state);
         final int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
             int position = parent.getChildLayoutPosition(child);
-            int column = (position + 1) % 3;
-            column  = column == 0 ? mSpanCount : column;
+            int column = (position + 1) % mSpanCount;
 
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
                     .getLayoutParams();
-            final int top = child.getBottom() + params.bottomMargin +
+            final int childBottom = child.getBottom() + params.bottomMargin +
                     Math.round(ViewCompat.getTranslationY(child));
-            final int bottom = top + mDivider.getIntrinsicHeight();
-            final int left = child.getRight() + params.rightMargin +
+            final int childRight = child.getRight() + params.rightMargin +
                     Math.round(ViewCompat.getTranslationX(child));
-            final int right = left + mDivider.getIntrinsicHeight();
 
-            mDivider.setBounds(child.getLeft(), top, right, bottom);
-            mDivider.draw(c);
+            if (childBottom < parent.getHeight()) {
+                c.drawLine(child.getLeft(), childBottom, childRight, childBottom, mDividerPaint);
+            }
 
-            if(column < mSpanCount) {
-                mDivider.setBounds(left, child.getTop(), right, bottom);
-                mDivider.draw(c);
+            if (column < mSpanCount) {
+                c.drawLine(childRight, child.getTop(), childRight, childBottom, mDividerPaint);
             }
 
         }
     }
 
-
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        int position = parent.getChildLayoutPosition(view);
-        if((position+1) % mSpanCount > 0) {
-            outRect.set(0, 0, mDivider.getIntrinsicWidth(), mDivider.getIntrinsicHeight());
-        }else{
-            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
-        }
+    public void handle(RecyclerView recyclerView, QMUISkinManager manager, int skinIndex, Resources.Theme theme) {
+        mDividerPaint.setColor(QMUIResHelper.getAttrColor(theme, mDividerAttr));
+        recyclerView.invalidate();
     }
 }
