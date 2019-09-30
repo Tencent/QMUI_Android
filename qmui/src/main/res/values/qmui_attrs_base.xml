@@ -56,10 +56,18 @@
     <attr name="qmui_common_list_item_accessory_margin_left" format="dimension" />
     <attr name="qmui_common_list_item_title_v_text_size" format="dimension" />
     <attr name="qmui_common_list_item_title_h_text_size" format="dimension" />
-    <attr name="qmui_common_list_item_h_space_min_width" format="dimension" />
+    <attr name="qmui_common_list_item_title_line_space" format="dimension" />
     <attr name="qmui_common_list_item_detail_v_text_size" format="dimension" />
     <attr name="qmui_common_list_item_detail_h_text_size" format="dimension" />
     <attr name="qmui_common_list_item_detail_line_space" format="dimension" />
+    <attr name="qmui_common_list_item_detail_h_margin_with_title" format="dimension" />
+    <attr name="qmui_common_list_item_detail_h_margin_with_title_large" format="dimension" />
+    <attr name="qmui_common_list_item_detail_v_margin_with_title" format="dimension" />
+    <attr name="qmui_common_list_item_holder_margin_with_title" format="dimension"/>
+
+    <attr name="qmui_common_list_title_color" format="color|reference"/>
+    <attr name="qmui_common_list_detail_color" format="color|reference"/>
+    <attr name="qmui_common_list_icon_tint_color" format="color|reference"/>
     
 
 

@@ -32,3 +32,10 @@
 - 父类更改为 ConstraintLayout
 - theme 中 添加间距、颜色、字号
 
+### QMUIGroupListView
+
+- 配置项改名：
+    - qmui_commonList_titleColor -> qmui_common_list_title_color
+    - qmui_commonList_detailColor -> qmui_common_list_detail_color
+- QMUICommonListItemView 父类更换为 ConstraintLayout, 布局重写
+

@@ -21,6 +21,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
@@ -151,7 +154,7 @@ public class QMUIGroupListView extends LinearLayout {
         return mSections.size();
     }
 
-    public QMUICommonListItemView createItemView(Drawable imageDrawable, CharSequence titleText, String detailText, int orientation, int accessoryType, int height) {
+    public QMUICommonListItemView createItemView(@Nullable Drawable imageDrawable, CharSequence titleText, String detailText, int orientation, int accessoryType, int height) {
         QMUICommonListItemView itemView = new QMUICommonListItemView(getContext());
         itemView.setOrientation(orientation);
         itemView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, height));
@@ -162,7 +165,7 @@ public class QMUIGroupListView extends LinearLayout {
         return itemView;
     }
 
-    public QMUICommonListItemView createItemView(Drawable imageDrawable, CharSequence titleText, String detailText, int orientation, int accessoryType) {
+    public QMUICommonListItemView createItemView(@Nullable Drawable imageDrawable, CharSequence titleText, String detailText, int orientation, int accessoryType) {
         int height;
         if (orientation == QMUICommonListItemView.VERTICAL) {
             height = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_list_item_height_higher);
@@ -355,7 +358,7 @@ public class QMUIGroupListView extends LinearLayout {
             final int itemViewCount = mItemViews.size();
             QMUICommonListItemView.LayoutParamConfig leftIconLpConfig = new QMUICommonListItemView.LayoutParamConfig() {
                 @Override
-                public RelativeLayout.LayoutParams onConfig(RelativeLayout.LayoutParams lp) {
+                public ConstraintLayout.LayoutParams onConfig(ConstraintLayout.LayoutParams lp) {
                     lp.width = mLeftIconWidth;
                     lp.height = mLeftIconHeight;
                     return lp;

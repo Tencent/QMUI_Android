@@ -24,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -109,10 +110,118 @@ public class QDGroupListViewFragment extends BaseFragment {
             }
         });
 
-        QMUICommonListItemView itemWithCustom = mGroupListView.createItemView("Item 6");
+        QMUICommonListItemView itemWithDetailBelowWithChevron = mGroupListView.createItemView("Item 6");
+        itemWithDetailBelowWithChevron.setOrientation(QMUICommonListItemView.VERTICAL);
+        itemWithDetailBelowWithChevron.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        itemWithDetailBelowWithChevron.setDetailText("在标题下方的详细信息");
+
+        QMUICommonListItemView longTitleAndDetail = mGroupListView.createItemView(null,
+                "标题有点长；标题有点长；标题有点长；标题有点长；标题有点长；标题有点长",
+                "详细信息有点长; 详细信息有点长；详细信息有点长；详细信息有点长;详细信息有点长",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        int paddingVer = QMUIDisplayHelper.dp2px(getContext(), 12);
+        longTitleAndDetail.setPadding(longTitleAndDetail.getPaddingLeft(), paddingVer,
+                longTitleAndDetail.getPaddingRight(), paddingVer);
+
+        int height = QMUIResHelper.getAttrDimen(getContext(), com.qmuiteam.qmui.R.attr.qmui_list_item_height);
+
+        QMUICommonListItemView itemWithDetailBelowWithChevronWithIcon = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "Item 7",
+                "在标题下方的详细信息",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+
+
+
+        QMUICommonListItemView itemWithCustom = mGroupListView.createItemView("右方自定义 View");
         itemWithCustom.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         QMUILoadingView loadingView = new QMUILoadingView(getActivity());
         itemWithCustom.addAccessoryCustomView(loadingView);
+
+
+        QMUICommonListItemView itemRedPoint1 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "红点显示在左边",
+                "在标题下方的详细信息",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemRedPoint1.setTipPosition(QMUICommonListItemView.TIP_POSITION_LEFT);
+        itemRedPoint1.showRedDot(true);
+
+        QMUICommonListItemView itemRedPoint2 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "红点显示在右边",
+                "在标题下方的详细信息",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemRedPoint2.setTipPosition(QMUICommonListItemView.TIP_POSITION_RIGHT);
+        itemRedPoint2.showRedDot(true);
+
+        QMUICommonListItemView itemRedPoint3 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "红点显示在左边",
+                "在右方的详细信息",
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemRedPoint3.setTipPosition(QMUICommonListItemView.TIP_POSITION_LEFT);
+        itemRedPoint3.showRedDot(true);
+
+        QMUICommonListItemView itemRedPoint4 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "红点显示在右边",
+                "在右方的详细信息",
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemRedPoint4.setTipPosition(QMUICommonListItemView.TIP_POSITION_RIGHT);
+        itemRedPoint4.showRedDot(true);
+
+        QMUICommonListItemView itemNew1 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "new 标识显示在左边",
+                "在标题下方的详细信息",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemNew1.setTipPosition(QMUICommonListItemView.TIP_POSITION_LEFT);
+        itemNew1.showNewTip(true);
+
+        QMUICommonListItemView itemNew2 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "new 标识显示在右边",
+                "在标题下方的详细信息",
+                QMUICommonListItemView.VERTICAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemNew2.setTipPosition(QMUICommonListItemView.TIP_POSITION_RIGHT);
+        itemNew2.showNewTip(true);
+
+        QMUICommonListItemView itemNew3 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "new 标识显示在左边",
+                "在右方的详细信息",
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemNew3.setTipPosition(QMUICommonListItemView.TIP_POSITION_LEFT);
+        itemNew3.showNewTip(true);
+
+        QMUICommonListItemView itemNew4 = mGroupListView.createItemView(
+                ContextCompat.getDrawable(getContext(), R.mipmap.about_logo),
+                "new 标识显示在右边",
+                "在右方的详细信息",
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
+                height);
+        itemNew4.setTipPosition(QMUICommonListItemView.TIP_POSITION_RIGHT);
+        itemNew4.showNewTip(true);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -137,11 +246,23 @@ public class QDGroupListViewFragment extends BaseFragment {
                 .addItemView(itemWithDetailBelow, onClickListener)
                 .addItemView(itemWithChevron, onClickListener)
                 .addItemView(itemWithSwitch, onClickListener)
+                .addItemView(itemWithDetailBelowWithChevron, onClickListener)
+                .addItemView(itemWithDetailBelowWithChevronWithIcon, onClickListener)
+                .addItemView(longTitleAndDetail, onClickListener)
                 .addTo(mGroupListView);
 
         QMUIGroupListView.newSection(getContext())
-                .setTitle("Section 2: 自定义右侧 View")
+                .setTitle("Section 2: 自定义右侧 View/红点/new 提示")
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(itemWithCustom, onClickListener)
+                .addItemView(itemRedPoint1, onClickListener)
+                .addItemView(itemRedPoint2, onClickListener)
+                .addItemView(itemRedPoint3, onClickListener)
+                .addItemView(itemRedPoint4, onClickListener)
+                .addItemView(itemNew1, onClickListener)
+                .addItemView(itemNew2, onClickListener)
+                .addItemView(itemNew3, onClickListener)
+                .addItemView(itemNew4, onClickListener)
                 .addTo(mGroupListView);
     }
 }

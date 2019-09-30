@@ -143,11 +143,34 @@
         <item name="qmui_empty_view_title_margin_hor">?attr/qmui_content_spacing_horizontal</item>
         <item name="qmui_empty_view_sub_title_normal_margin_top">16dp</item>
         <item name="qmui_empty_view_sub_title_text_size">14sp</item>
-        <item name="qmui_empty_view_sub_title_margin_hor">?attr/qmui_content_spacing_horizontal</item>
+        <item name="qmui_empty_view_sub_title_margin_hor">?attr/qmui_content_spacing_horizontal
+        </item>
         <item name="qmui_empty_view_btn_height">48dp</item>
         <item name="qmui_empty_view_btn_margin_hor">55dp</item>
         <item name="qmui_empty_view_btn_text_size">15sp</item>
         <item name="qmui_empty_view_btn_normal_margin_top">10dp</item>
+
+
+        <!--************************ qmui common list   *************************** -->
+
+        <!-- skin support-->
+        <item name="qmui_common_list_title_color">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_common_list_detail_color">?attr/qmui_config_color_gray_5</item>
+        <item name="qmui_common_list_icon_tint_color">?attr/qmui_config_color_blue</item>
+        <!-- skin support-->
+
+        <item name="qmui_common_list_item_icon_margin_right">12dp</item>
+        <item name="qmui_common_list_item_accessory_margin_left">14dp</item>
+        <item name="qmui_common_list_item_title_v_text_size">15sp</item>
+        <item name="qmui_common_list_item_title_h_text_size">16sp</item>
+        <item name="qmui_common_list_item_title_line_space">5dp</item>
+        <item name="qmui_common_list_item_detail_v_text_size">13sp</item>
+        <item name="qmui_common_list_item_detail_h_text_size">14sp</item>
+        <item name="qmui_common_list_item_detail_line_space">5dp</item>
+        <item name="qmui_common_list_item_detail_h_margin_with_title">20dp</item>
+        <item name="qmui_common_list_item_detail_h_margin_with_title_large">52dp</item>
+        <item name="qmui_common_list_item_detail_v_margin_with_title">4dp</item>
+        <item name="qmui_common_list_item_holder_margin_with_title">8dp</item>
 
 
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
@@ -213,18 +236,6 @@
         <item name="qmui_tip_dialog_padding_vertical">12dp</item>
         <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
 
-        <!--**********************************************
-        *              qmui common list                  *
-        **********************************************-->
-
-        <item name="qmui_common_list_item_icon_margin_right">12dp</item>
-        <item name="qmui_common_list_item_accessory_margin_left">14dp</item>
-        <item name="qmui_common_list_item_title_v_text_size">15sp</item>
-        <item name="qmui_common_list_item_title_h_text_size">16sp</item>
-        <item name="qmui_common_list_item_h_space_min_width">14dp</item>
-        <item name="qmui_common_list_item_detail_v_text_size">13sp</item>
-        <item name="qmui_common_list_item_detail_h_text_size">14sp</item>
-        <item name="qmui_common_list_item_detail_line_space">5dp</item>
 
         <!--**********************************************
         *             qmui list item bg                  *
@@ -359,7 +370,6 @@
         <item name="qmui_popup_arrow_up">@drawable/qmui_popup_arrow_up</item>
         <item name="qmui_popup_arrow_up_margin_top">13dp</item>
         <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
-
 
 
         <!--**********************************************

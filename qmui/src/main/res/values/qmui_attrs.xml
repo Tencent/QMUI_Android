@@ -112,8 +112,8 @@
             <enum name="switcher" value="2"/>
             <enum name="custom" value="3"/>
         </attr>
-        <attr name="qmui_commonList_titleColor" format="color"/>
-        <attr name="qmui_commonList_detailColor" format="color"/>
+        <attr name="qmui_common_list_title_color"/>
+        <attr name="qmui_common_list_detail_color"/>
     </declare-styleable>
     <attr name="QMUIGroupListSectionViewStyle" format="reference"/>
 

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -16,20 +15,22 @@
 -->
 
 <com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_background"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:qmui_skin_background="?attr/app_skin_common_background">
 
         <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
             android:id="@+id/groupListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </ScrollView>
 
@@ -37,6 +38,6 @@
         android:id="@+id/topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"/>
+        android:fitsSystemWindows="true" />
 
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

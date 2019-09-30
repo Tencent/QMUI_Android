@@ -57,8 +57,8 @@
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
         <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
-        <item name="qmui_commonList_titleColor">?attr/qmui_config_color_gray_1</item>
-        <item name="qmui_commonList_detailColor">?attr/qmui_config_color_gray_5</item>
+        <item name="qmui_common_list_title_color">?attr/qmui_common_list_title_color</item>
+        <item name="qmui_common_list_detail_color">?attr/qmui_common_list_detail_color</item>
     </style>
 
     <style name="QMUI.GroupListSectionView">
