@@ -505,14 +505,39 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
             dispatchTabSelected(index);
             prevView.setSelectFraction(0f);
             nowView.setSelectFraction(1f);
-            if (getScrollX() > nowView.getLeft()) {
-                smoothScrollTo(nowView.getLeft(), 0);
-            } else {
-                int realWidth = getWidth() - getPaddingRight() - getPaddingLeft();
-                if (getScrollX() + realWidth < nowView.getRight()) {
-                    smoothScrollBy(nowView.getRight() - realWidth - getScrollX(), 0);
+            if(mMode == MODE_SCROLLABLE){
+                int scrollX = getScrollX(),
+                        w = getWidth(),
+                        cw = mContentLayout.getWidth(),
+                        nl = nowView.getLeft(),
+                        nw = nowView.getWidth();
+                int paddingHor = getPaddingLeft() + getPaddingRight();
+                int size = mTabAdapter.getSize();
+                int maxScrollX = cw - w + paddingHor;
+                if(index > prev){
+                    if(index >= size - 2){
+                        smoothScrollBy(maxScrollX - scrollX, 0);
+                    }else {
+                        int nextWidth = listViews.get(index + 1).getWidth();
+                        int targetScrollX = Math.min(maxScrollX, nl - (w - getPaddingRight() * 2 - nextWidth - nw - mItemSpaceInScrollMode));
+                        targetScrollX -= nextWidth - nw;
+                        if(scrollX < targetScrollX){
+                            smoothScrollBy(targetScrollX - scrollX, 0);
+                        }
+                    }
+                }else {
+                    if(index <= 1){
+                        smoothScrollBy( -scrollX, 0);
+                    }else{
+                        int prevWidth = listViews.get(index - 1).getWidth();
+                        int targetScrollX = Math.max(0, nl - prevWidth - mItemSpaceInScrollMode);
+                        if(targetScrollX < scrollX){
+                            smoothScrollBy(targetScrollX - scrollX, 0);
+                        }
+                    }
                 }
             }
+
             mCurrentSelectedIndex = index;
             mIsInSelectTab = false;
             layoutIndicator(nowModel, true);

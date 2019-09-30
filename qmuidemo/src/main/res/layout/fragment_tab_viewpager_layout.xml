@@ -25,7 +25,16 @@
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_white"
         android:fitsSystemWindows="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:qmui_skin_background="attr/app_skin_common_background">
+
+        <com.qmuiteam.qmui.widget.tab.QMUITabSegment
+            android:id="@+id/tabSegment"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/qmui_config_color_white"
+            app:qmui_bottomDividerColor="?attr/qmui_config_color_separator"
+            app:qmui_bottomDividerHeight="1px" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/contentViewPager"
@@ -34,13 +43,7 @@
             android:layout_weight="1"
             android:fitsSystemWindows="true" />
 
-        <com.qmuiteam.qmui.widget.tab.QMUITabSegment
-            android:id="@+id/tabSegment"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/qmui_config_color_white"
-            app:qmui_topDividerHeight="1px"
-            app:qmui_topDividerColor="?attr/qmui_config_color_separator"/>
+
     </LinearLayout>
 
 

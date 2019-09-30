@@ -668,10 +668,16 @@ public class QMUILayoutHelper implements IQMUILayout {
     }
 
     public void drawDividers(Canvas canvas, int w, int h) {
+        View owner = mOwner.get();
+        if(owner == null){
+            return;
+        }
         if (mDividerPaint == null &&
                 (mTopDividerHeight > 0 || mBottomDividerHeight > 0 || mLeftDividerWidth > 0 || mRightDividerWidth > 0)) {
             mDividerPaint = new Paint();
         }
+        canvas.save();
+        canvas.translate(owner.getScrollX(), owner.getScrollY());
         if (mTopDividerHeight > 0) {
             mDividerPaint.setStrokeWidth(mTopDividerHeight);
             mDividerPaint.setColor(mTopDividerColor);
@@ -709,6 +715,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             }
             canvas.drawLine(w, mRightDividerInsetTop, w, h - mRightDividerInsetBottom, mDividerPaint);
         }
+        canvas.restore();
     }
 
 
@@ -717,6 +724,7 @@ public class QMUILayoutHelper implements IQMUILayout {
         if (owner == null) {
             return;
         }
+
         boolean needCheckFakeOuterNormalDraw = mRadius > 0 && !useFeature() && mOuterNormalColor != 0;
         boolean needDrawBorder = mBorderWidth > 0 && mBorderColor != 0;
         if (!needCheckFakeOuterNormalDraw && !needDrawBorder) {
@@ -728,6 +736,8 @@ public class QMUILayoutHelper implements IQMUILayout {
         }
 
         int width = canvas.getWidth(), height = canvas.getHeight();
+        canvas.save();
+        canvas.translate(owner.getScrollX(), owner.getScrollY());
 
         // react
         if (mIsOutlineExcludePadding) {
@@ -768,6 +778,7 @@ public class QMUILayoutHelper implements IQMUILayout {
                 canvas.drawRoundRect(mBorderRect, mRadius, mRadius, mClipPaint);
             }
         }
+        canvas.restore();
     }
 
     private void drawRoundRect(Canvas canvas, RectF rect, float[] radiusArray, Paint paint) {

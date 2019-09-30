@@ -31,6 +31,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.SkinWriter;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
@@ -207,6 +210,12 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
             textView.setText("这是第 " + (page.getPosition() + 1) + " 个 Item 的内容区");
+            QMUISkinHelper.setSkinValue(textView, new SkinWriter(){
+                @Override
+                public void write(QMUISkinValueBuilder builder) {
+                    builder.textColor(R.attr.app_skin_common_desc_text_color);
+                }
+            });
             view = textView;
             mPageMap.put(page, view);
         }
