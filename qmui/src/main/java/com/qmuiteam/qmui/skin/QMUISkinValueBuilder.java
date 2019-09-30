@@ -30,6 +30,7 @@ public class QMUISkinValueBuilder {
     public static final String LEFT_SEPARATOR = "LeftSeparator";
     public static final String ALPHA = "alpha";
     public static final String TINT_COLOR = "tintColor";
+    public static final String BG_TINT_COLOR = "bgTintColor";
 
     private HashMap<String, Integer> mValues = new HashMap<>();
 
@@ -85,6 +86,11 @@ public class QMUISkinValueBuilder {
 
     public QMUISkinValueBuilder tintColor(int attr) {
         mValues.put(TINT_COLOR, attr);
+        return this;
+    }
+
+    public QMUISkinValueBuilder bgTintColor(int attr) {
+        mValues.put(BG_TINT_COLOR, attr);
         return this;
     }
 

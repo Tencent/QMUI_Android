@@ -94,13 +94,7 @@
     <attr name="QMUITabSegmentStyle" format="reference"/>
 
     <!--************** QMUIGroupListView **************-->
-    <declare-styleable name="QMUIGroupListView">
-        <attr name="separatorStyle" format="enum">
-            <enum name="normal" value="0"/>
-            <enum name="none" value="1"/>
-        </attr>
-    </declare-styleable>
-    <attr name="QMUIGroupListViewStyle" format="reference"/>
+
     <attr name="QMUICommonListItemViewStyle" format="reference"/>
     <attr name="qmui_common_list_item_chevron" format="reference"/>
     <attr name="qmui_common_list_item_switch" format="reference"/>

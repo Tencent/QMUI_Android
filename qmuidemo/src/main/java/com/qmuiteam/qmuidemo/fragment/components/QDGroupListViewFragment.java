@@ -249,6 +249,7 @@ public class QDGroupListViewFragment extends BaseFragment {
                 .addItemView(itemWithDetailBelowWithChevron, onClickListener)
                 .addItemView(itemWithDetailBelowWithChevronWithIcon, onClickListener)
                 .addItemView(longTitleAndDetail, onClickListener)
+                .setMiddleSeparatorInset(QMUIDisplayHelper.dp2px(getContext(), 16), 0)
                 .addTo(mGroupListView);
 
         QMUIGroupListView.newSection(getContext())
@@ -263,6 +264,7 @@ public class QDGroupListViewFragment extends BaseFragment {
                 .addItemView(itemNew2, onClickListener)
                 .addItemView(itemNew3, onClickListener)
                 .addItemView(itemNew4, onClickListener)
+                .setOnlyShowStartEndSeparator(true)
                 .addTo(mGroupListView);
     }
 }

@@ -129,6 +129,8 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 builder.bottomSeparator(id);
             } else if (attr == R.styleable.QMUISkinDef_qmui_skin_separator_left) {
                 builder.leftSeparator(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_bg_tint_color) {
+                builder.bgTintColor(id);
             }
         }
         a.recycle();

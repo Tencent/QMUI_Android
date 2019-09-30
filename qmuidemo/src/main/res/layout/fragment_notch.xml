@@ -15,10 +15,10 @@
  limitations under the License.
 -->
 
-<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/qmui_config_color_white">
 
     <com.qmuiteam.qmui.widget.QMUINotchConsumeLayout
@@ -56,7 +56,8 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
-            android:background="?attr/qmui_list_item_bg_with_border_top"
+            app:qmui_topDividerHeight="1px"
+            app:qmui_topDividerColor="?attr/qmui_config_color_separator"
             android:textSize="12sp"/>
     </FrameLayout>
 

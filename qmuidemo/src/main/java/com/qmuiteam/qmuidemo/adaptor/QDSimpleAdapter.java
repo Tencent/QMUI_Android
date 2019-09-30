@@ -97,7 +97,7 @@ public class QDSimpleAdapter extends BaseAdapter {
             addView(textView, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, QMUIDisplayHelper.dp2px(context, 64)));
             int paddingTvHor = QMUIDisplayHelper.dp2px(context, 16);
-            QMUIViewHelper.setBackgroundKeepingPadding(textView, QMUIResHelper.getAttrDrawable(context, R.attr.qmui_s_list_item_bg_with_border_bottom));
+            QMUIViewHelper.setBackgroundKeepingPadding(textView, QMUIResHelper.getAttrDrawable(context, R.attr.qmui_s_list_item_bg_1));
             textView.setPadding(paddingTvHor, 0, paddingTvHor, 0);
             textView.setGravity(Gravity.CENTER_VERTICAL);
         }

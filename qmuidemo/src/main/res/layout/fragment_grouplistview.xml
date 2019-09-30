@@ -25,7 +25,7 @@
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_background"
         android:fitsSystemWindows="true"
-        app:qmui_skin_background="?attr/app_skin_common_background">
+        app:qmui_skin_background="?attr/app_skin_common_background_1">
 
         <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
             android:id="@+id/groupListView"

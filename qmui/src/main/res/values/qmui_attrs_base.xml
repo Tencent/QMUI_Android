@@ -68,7 +68,11 @@
     <attr name="qmui_common_list_title_color" format="color|reference"/>
     <attr name="qmui_common_list_detail_color" format="color|reference"/>
     <attr name="qmui_common_list_icon_tint_color" format="color|reference"/>
-    
+    <attr name="qmui_common_list_red_point_tint_color" format="color|reference"/>
+    <attr name="qmui_common_list_new_drawable" format="reference"/>
+    <attr name="qmui_common_list_separator_color" format="color|reference"/>
+    <attr name="qmui_common_list_bg" format="reference"/>
+    <attr name="qmui_common_list_chevron_color" format="color|reference"/>
 
 
     <!--**********************************************
@@ -76,27 +80,11 @@
     **********************************************-->
     <attr name="qmui_list_item_height" format="dimension" />
     <attr name="qmui_list_item_height_higher" format="dimension" />
+    <attr name="qmui_s_list_item_bg_1" format="dimension" />
+    <attr name="qmui_s_list_item_bg_2" format="dimension" />
 
-
-    <!-- android 5.0以下不支持在drawable中用?attr，所以必须把所有的drawable放到theme中 -->
-    <attr name="qmui_list_item_bg_with_border_bottom" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_bottom_pressed" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_bottom_inset_left" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_bottom_inset_left_pressed" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_top" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_top_pressed" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_top_inset_left" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_top_inset_left_pressed" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_double" format="reference" />
-    <attr name="qmui_list_item_bg_with_border_double_pressed" format="reference" />
-
+    <attr name="qmui_list_item_bg_with_border_bottom" format="reference"/>
     <attr name="qmui_s_list_item_bg_with_border_bottom" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_bottom_inset" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_bottom_inset_left" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_top" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_top_inset_left" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_double" format="reference" />
-    <attr name="qmui_s_list_item_bg_with_border_none" format="reference" />
 
     <!--**********************************************
     *             qmui drawbale                      *

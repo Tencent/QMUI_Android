@@ -24,4 +24,4 @@
     android:paddingLeft="?attr/qmui_content_padding_horizontal"
     android:paddingRight="?attr/qmui_content_padding_horizontal"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:background="?attr/qmui_s_list_item_bg_with_border_bottom_inset_left"/>
+    android:background="?attr/qmui_s_list_item_bg_2"/>

@@ -32,6 +32,7 @@ import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.handler.IQMUISkinRuleHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleAlphaHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBackgroundHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBgTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBorderHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSeparatorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSrcHandler;
@@ -138,6 +139,7 @@ public final class QMUISkinManager {
         mRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
         mRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
     }
 
     @Nullable

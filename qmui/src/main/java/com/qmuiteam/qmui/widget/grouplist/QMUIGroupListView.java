@@ -18,25 +18,20 @@ package com.qmuiteam.qmui.widget.grouplist;
 
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 /**
  * 通用的列表, 常用于 App 的设置界面。
@@ -46,56 +41,6 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * 提供了 {@link Section} 的概念, 用来将列表分块。 具体见 {@link QMUIGroupListView.Section}
  * </p>
- * <p>
- * usage:
- * <pre>
- *         QMUIGroupListView groupListView = new QMUIGroupListView(context);
- *         // section 1
- *         QMUIGroupListView.newSection(context)
- *                 .setTitle("Section Title 1")
- *                 .setDescription("这是Section 1的描述")
- *                 .addItemView(groupListView.createItemView("item 1"), new OnClickListener() {
- *                     {@literal @}Override
- *                     public void onClick(View v) {
- *                         Toast.makeText(context, "section 1 item 1", Toast.LENGTH_SHORT).show();
- *                     }
- *                 })
- *                 .addItemView(groupListView.createItemView("item 2"), new OnClickListener() {
- *                     {@literal @}verride
- *                     public void onClick(View v) {
- *                         Toast.makeText(context, "section 1 item 2", Toast.LENGTH_SHORT).show();
- *                     }
- *                 })
- *                 // 设置分隔线的样式
- *                 .setSeparatorDrawableRes(
- *                         R.drawable.list_group_item_single_bg,
- *                         R.drawable.personal_list_group_item_top_bg,
- *                         R.drawable.list_group_item_bottom_bg,
- *                         R.drawable.personal_list_group_item_middle_bg)
- *                 // 如果没有title,加上默认title【Section n】
- *                 .setUseDefaultTitleIfNone(true)
- *                 // 默认使用TitleView的padding作section分隔,可以设置为false取消它
- *                 .setUseTitleViewForSectionSpace(false)
- *                 .addTo(groupListView);
- *
- *         // section 2
- *         QMUIGroupListView.newSection(context)
- *                 .setTitle("Section Title 2")
- *                 .setDescription("这是Section 2的描述")
- *                 .addItemView(groupListView.createItemView("item 1"), new OnClickListener() {
- *                     {@literal @}@Override
- *                     public void onClick(View v) {
- *                         Toast.makeText(context, "section 2 item 1", Toast.LENGTH_SHORT).show();
- *                     }
- *                 })
- *                 .addItemView(groupListView.createItemView("item 2"), new OnClickListener() {
- *                     {@literal @}Override
- *                     public void onClick(View v) {
- *                         Toast.makeText(context, "section 2 item 2", Toast.LENGTH_SHORT).show();
- *                     }
- *                 })
- *                 .addTo(groupListView);
- * </pre>
  *
  * @author cginechen
  * @date 2016-10-13
@@ -103,25 +48,19 @@ import java.lang.annotation.RetentionPolicy;
 
 public class QMUIGroupListView extends LinearLayout {
 
-    public static final int SEPARATOR_STYLE_NORMAL = 0;
-    public static final int SEPARATOR_STYLE_NONE = 1;
-    private int mSeparatorStyle;
+
     private SparseArray<Section> mSections;
 
     public QMUIGroupListView(Context context) {
-        this(context, null, R.attr.QMUIGroupListViewStyle);
+        this(context, null);
     }
 
     public QMUIGroupListView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.QMUIGroupListViewStyle);
+        this(context, attrs, 0);
     }
 
     public QMUIGroupListView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs);
-        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.QMUIGroupListView, defStyleAttr, 0);
-        mSeparatorStyle = array.getInt(R.styleable.QMUIGroupListView_separatorStyle, SEPARATOR_STYLE_NORMAL);
-        array.recycle();
-
+        super(context, attrs, defStyleAttr);
         mSections = new SparseArray<>();
         setOrientation(LinearLayout.VERTICAL);
     }
@@ -135,20 +74,6 @@ public class QMUIGroupListView extends LinearLayout {
         return new Section(context);
     }
 
-    public
-    @SeparatorStyle
-    int getSeparatorStyle() {
-        return mSeparatorStyle;
-    }
-
-    /**
-     * 设置分割线风格，具体风格可以在 {@link SeparatorStyle} 中选择。
-     *
-     * @param separatorStyle {@link #SEPARATOR_STYLE_NORMAL} 或 {@link #SEPARATOR_STYLE_NONE} 其中一个值。
-     */
-    public void setSeparatorStyle(@SeparatorStyle int separatorStyle) {
-        mSeparatorStyle = separatorStyle;
-    }
 
     public int getSectionCount() {
         return mSections.size();
@@ -209,10 +134,6 @@ public class QMUIGroupListView extends LinearLayout {
         return mSections.get(index);
     }
 
-    @IntDef({SEPARATOR_STYLE_NORMAL, SEPARATOR_STYLE_NONE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface SeparatorStyle {
-    }
 
     /**
      * Section 是组成 {@link QMUIGroupListView} 的部分。
@@ -228,11 +149,14 @@ public class QMUIGroupListView extends LinearLayout {
         private SparseArray<QMUICommonListItemView> mItemViews;
         private boolean mUseDefaultTitleIfNone;
         private boolean mUseTitleViewForSectionSpace = true;
+        private int mSeparatorColorAttr = R.attr.qmui_common_list_separator_color;
+        private boolean mHandleSeparatorCustom = false;
+        private boolean mShowSeparator = true;
+        private boolean mOnlyShowStartEndSeparator = false;
+        private int mMiddleSeparatorInsetLeft = 0;
+        private int mMiddleSeparatorInsetRight = 0;
+        private int mBgAttr = R.attr.qmui_common_list_bg;
 
-        private int mSeparatorDrawableForSingle = 0;
-        private int mSeparatorDrawableForTop = 0;
-        private int mSeparatorDrawableForBottom = 0;
-        private int mSeparatorDrawableForMiddle = 0;
         private int mLeftIconWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
         private int mLeftIconHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -303,24 +227,43 @@ public class QMUIGroupListView extends LinearLayout {
             return this;
         }
 
-        public Section setSeparatorDrawableRes(int single, int top, int bottom, int middle) {
-            mSeparatorDrawableForSingle = single;
-            mSeparatorDrawableForTop = top;
-            mSeparatorDrawableForBottom = bottom;
-            mSeparatorDrawableForMiddle = middle;
-            return this;
-        }
-
-        public Section setSeparatorDrawableRes(int middle) {
-            mSeparatorDrawableForMiddle = middle;
-            return this;
-        }
-
         public Section setLeftIconSize(int width, int height) {
             mLeftIconHeight = height;
             mLeftIconWidth = width;
             return this;
         }
+
+        public Section setSeparatorColorAttr(int attr) {
+            mSeparatorColorAttr = attr;
+            return this;
+        }
+
+        public Section setHandleSeparatorCustom(boolean handleSeparatorCustom) {
+            mHandleSeparatorCustom = handleSeparatorCustom;
+            return this;
+        }
+
+        public Section setShowSeparator(boolean showSeparator) {
+            mShowSeparator = showSeparator;
+            return this;
+        }
+
+        public Section setOnlyShowStartEndSeparator(boolean onlyShowStartEndSeparator) {
+            mOnlyShowStartEndSeparator = onlyShowStartEndSeparator;
+            return this;
+        }
+
+        public Section setMiddleSeparatorInset(int insetLeft, int insetRight) {
+            mMiddleSeparatorInsetLeft = insetLeft;
+            mMiddleSeparatorInsetRight = insetRight;
+            return this;
+        }
+
+        public Section setBgAttr(int bgAttr) {
+            mBgAttr = bgAttr;
+            return this;
+        }
+
 
         /**
          * 将 Section 添加到 {@link QMUIGroupListView} 上
@@ -337,23 +280,6 @@ public class QMUIGroupListView extends LinearLayout {
                 groupListView.addView(mTitleView);
             }
 
-            if (groupListView.getSeparatorStyle() == SEPARATOR_STYLE_NORMAL) {
-                if (mSeparatorDrawableForSingle == 0) {
-                    mSeparatorDrawableForSingle = R.drawable.qmui_s_list_item_bg_with_border_double;
-                }
-
-                if (mSeparatorDrawableForTop == 0) {
-                    mSeparatorDrawableForTop = R.drawable.qmui_s_list_item_bg_with_border_double;
-                }
-
-                if (mSeparatorDrawableForBottom == 0) {
-                    mSeparatorDrawableForBottom = R.drawable.qmui_s_list_item_bg_with_border_bottom;
-                }
-
-                if (mSeparatorDrawableForMiddle == 0) {
-                    mSeparatorDrawableForMiddle = R.drawable.qmui_s_list_item_bg_with_border_bottom;
-                }
-            }
 
             final int itemViewCount = mItemViews.size();
             QMUICommonListItemView.LayoutParamConfig leftIconLpConfig = new QMUICommonListItemView.LayoutParamConfig() {
@@ -364,24 +290,34 @@ public class QMUIGroupListView extends LinearLayout {
                     return lp;
                 }
             };
+            String skin = new QMUISkinValueBuilder()
+                    .background(mBgAttr)
+                    .topSeparator(mSeparatorColorAttr)
+                    .bottomSeparator(mSeparatorColorAttr)
+                    .build();
+            int separatorColor = QMUIResHelper.getAttrColor(groupListView.getContext(), mSeparatorColorAttr);
+            Drawable bg = QMUIResHelper.getAttrDrawable(groupListView.getContext(), mBgAttr);
             for (int i = 0; i < itemViewCount; i++) {
                 QMUICommonListItemView itemView = mItemViews.get(i);
-                int resDrawableId;
-                if (groupListView.getSeparatorStyle() == SEPARATOR_STYLE_NORMAL) {
+                QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg);
+                QMUISkinHelper.setSkinValue(itemView, skin);
+                if (!mHandleSeparatorCustom && mShowSeparator) {
                     if (itemViewCount == 1) {
-                        resDrawableId = mSeparatorDrawableForSingle;
+                        itemView.updateTopDivider(0, 0, 1, separatorColor);
+                        itemView.updateBottomDivider(0, 0, 1, separatorColor);
                     } else if (i == 0) {
-                        resDrawableId = mSeparatorDrawableForTop;
+                        itemView.updateTopDivider(0, 0, 1, separatorColor);
+                        if (!mOnlyShowStartEndSeparator) {
+                            itemView.updateBottomDivider(
+                                    mMiddleSeparatorInsetLeft, mMiddleSeparatorInsetRight, 1, separatorColor);
+                        }
                     } else if (i == itemViewCount - 1) {
-                        resDrawableId = mSeparatorDrawableForBottom;
-                    } else {
-                        resDrawableId = mSeparatorDrawableForMiddle;
+                        itemView.updateBottomDivider(0, 0, 1, separatorColor);
+                    } else if (!mOnlyShowStartEndSeparator) {
+                        itemView.updateBottomDivider(mMiddleSeparatorInsetLeft, mMiddleSeparatorInsetRight, 1, separatorColor);
                     }
-                } else {
-                    resDrawableId = R.drawable.qmui_s_list_item_bg_with_border_none;
                 }
                 itemView.updateImageViewLp(leftIconLpConfig);
-                QMUIViewHelper.setBackgroundKeepingPadding(itemView, resDrawableId);
                 groupListView.addView(itemView);
             }
 

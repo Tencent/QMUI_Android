@@ -16,6 +16,5 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/qmui_list_item_bg_with_border_bottom_inset_pressed" android:state_pressed="true"/>
-    <item android:drawable="@drawable/qmui_list_item_bg_with_border_bottom_inset"/>
+    <item android:drawable="@color/qmui_drawable_color_list_pressed" android:state_pressed="true"/>
 </selector>

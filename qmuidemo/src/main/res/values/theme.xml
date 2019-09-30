@@ -15,16 +15,6 @@
 -->
 <resources>
     <!-- skin attr define-->
-    <attr name="app_skin_common_background" format="color|reference" />
-    <attr name="app_skin_s_list_item_bg" format="color|reference" />
-    <attr name="app_skin_common_img_tint_color" format="color|reference"/>
-    <attr name="app_skin_home_text_color" format="color|reference"/>
-    <attr name="app_skin_common_title_text_color" format="color|reference"/>
-    <attr name="app_skin_btn_test_bg" format="color|reference"/>
-    <attr name="app_skin_btn_test_border" format="color|reference"/>
-    <attr name="app_skin_btn_test_bg_single" format="color|reference"/>
-    <attr name="app_skin_btn_test_border_single" format="color|reference"/>
-
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
         <!-- 配置Android提供的theme -->
         <item name="android:textAppearanceListItemSmall">@style/QDTextAppearanceListItemSmall</item>
@@ -50,11 +40,9 @@
         <item name="qmui_round_btn_text_color">@color/s_btn_blue</item>
 
 
-
         <item name="qmui_config_color_blue">@color/app_color_blue</item>
         <item name="qmui_content_spacing_horizontal">20dp</item>
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</item>
-
 
 
         <!-- 配置app自己的theme -->
@@ -62,7 +50,8 @@
         <item name="app_content_bg_color">@color/qmui_config_color_white</item>
 
         <item name="app_skin_common_background">@color/qmui_config_color_white</item>
-        <item name="app_skin_s_list_item_bg">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="app_skin_common_background_1">@color/qmui_config_color_background</item>
+        <item name="app_skin_s_list_item_bg">?attr/qmui_s_list_item_bg_2</item>
         <item name="app_skin_common_img_tint_color">?attr/qmui_config_color_blue</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_6</item>
         <item name="app_skin_common_title_text_color">?attr/qmui_config_color_gray_1</item>
@@ -71,13 +60,7 @@
         <item name="app_skin_btn_test_bg_single">@color/app_color_blue_3</item>
         <item name="app_skin_btn_test_border_single">@color/app_color_blue</item>
     </style>
-
-
-    <!-- blue skin -->
-    <style name="app_skin_blue" parent="AppTheme"/>
-
-
-    <!-- dark skin -->
+    <style name="app_skin_blue" parent="AppTheme" />
     <style name="app_skin_dark" parent="AppTheme">
         <item name="qmui_config_color_separator">@color/qmui_config_color_blue</item>
         <item name="qmui_tab_bg">@color/qmui_config_color_pure_black</item>
@@ -90,20 +73,28 @@
         <item name="qmui_empty_view_sub_title_color">@color/qmui_config_color_75_white</item>
         <item name="qmui_empty_view_btn_border_color">@color/s_app_color_gray</item>
         <item name="qmui_empty_view_btn_text_color">@color/s_app_color_gray</item>
+        <item name="qmui_common_list_title_color">@color/qmui_config_color_white</item>
+        <item name="qmui_common_list_detail_color">@color/qmui_config_color_50_white</item>
+        <item name="qmui_common_list_icon_tint_color">@color/qmui_config_color_white</item>
+        <item name="qmui_common_list_red_point_tint_color">?attr/qmui_tab_sign_count_view_bg_color
+        </item>
+        <item name="qmui_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
+        <item name="qmui_common_list_bg">@drawable/s_list_item_bg_dark_2</item>
+        <item name="qmui_common_list_chevron_color">@color/qmui_config_color_50_white</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
-        <item name="app_skin_common_background">@color/qmui_config_color_gray_1</item>
-        <item name="app_skin_s_list_item_bg">@drawable/list_item_bg_with_border_none_dark</item>
+        <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>
+        <item name="app_skin_common_background_1">@color/qmui_config_color_gray_1</item>
+        <item name="app_skin_s_list_item_bg">@drawable/s_list_item_bg_dark_1</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_white</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_8</item>
         <item name="app_skin_common_title_text_color">@color/qmui_config_color_75_white</item>
     </style>
-
-    <!-- white skin -->
     <style name="app_skin_white" parent="AppTheme">
         <item name="qmui_topbar_title_color">@color/qmui_config_color_pure_black</item>
         <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_gray_3</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_pure_black</item>
+        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_pure_black
+        </item>
         <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_pure_black</item>
         <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_5</item>
         <item name="qmui_tab_selected_color">@color/qmui_config_color_pure_black</item>
@@ -111,6 +102,9 @@
         <item name="qmui_round_btn_text_color">@color/s_btn_gray</item>
         <item name="qmui_empty_view_btn_border_color">@color/s_app_color_gray_dark</item>
         <item name="qmui_empty_view_btn_text_color">@color/s_app_color_gray_dark</item>
+        <item name="qmui_common_list_title_color">@color/qmui_config_color_pure_black</item>
+        <item name="qmui_common_list_detail_color">@color/qmui_config_color_50_pure_black</item>
+        <item name="qmui_common_list_icon_tint_color">@color/qmui_config_color_pure_black</item>
 
         <item name="app_primary_color">@color/qmui_config_color_white</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_pure_black</item>
@@ -119,4 +113,23 @@
         <item name="app_skin_btn_test_bg_single">?attr/qmui_config_color_gray_5</item>
         <item name="app_skin_btn_test_border_single">?attr/qmui_config_color_gray_1</item>
     </style>
+    <attr name="app_skin_common_background" format="color|reference" />
+    <attr name="app_skin_common_background_1" format="color|reference" />
+    <attr name="app_skin_s_list_item_bg" format="color|reference" />
+    <attr name="app_skin_common_img_tint_color" format="color|reference" />
+    <attr name="app_skin_home_text_color" format="color|reference" />
+    <attr name="app_skin_common_title_text_color" format="color|reference" />
+
+    <attr name="app_skin_btn_test_bg" format="color|reference" />
+
+
+    <!-- blue skin -->
+    <attr name="app_skin_btn_test_border" format="color|reference" />
+
+
+    <!-- dark skin -->
+    <attr name="app_skin_btn_test_bg_single" format="color|reference" />
+
+    <!-- white skin -->
+    <attr name="app_skin_btn_test_border_single" format="color|reference" />
 </resources>

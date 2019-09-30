@@ -157,6 +157,11 @@
         <item name="qmui_common_list_title_color">?attr/qmui_config_color_gray_1</item>
         <item name="qmui_common_list_detail_color">?attr/qmui_config_color_gray_5</item>
         <item name="qmui_common_list_icon_tint_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_common_list_red_point_tint_color">?attr/qmui_config_color_red</item>
+        <item name="qmui_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
+        <item name="qmui_common_list_separator_color">?attr/qmui_config_color_separator</item>
+        <item name="qmui_common_list_bg">?attr/qmui_s_list_item_bg_2</item>
+        <item name="qmui_common_list_chevron_color">?attr/qmui_config_color_gray_5</item>
         <!-- skin support-->
 
         <item name="qmui_common_list_item_icon_margin_right">12dp</item>
@@ -171,6 +176,8 @@
         <item name="qmui_common_list_item_detail_h_margin_with_title_large">52dp</item>
         <item name="qmui_common_list_item_detail_v_margin_with_title">4dp</item>
         <item name="qmui_common_list_item_holder_margin_with_title">8dp</item>
+        <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
+        <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
 
 
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
@@ -242,57 +249,15 @@
         **********************************************-->
         <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
         <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
+        <item name="qmui_s_list_item_bg_1">@drawable/qmui_s_list_item_bg_1</item>
+        <item name="qmui_s_list_item_bg_2">@drawable/qmui_s_list_item_bg_2</item>
+
 
         <item name="qmui_list_item_bg_with_border_bottom">
             @drawable/qmui_list_item_bg_with_border_bottom
         </item>
-        <item name="qmui_list_item_bg_with_border_bottom_pressed">
-            @drawable/qmui_list_item_bg_with_border_bottom_pressed
-        </item>
-        <item name="qmui_list_item_bg_with_border_bottom_inset_left">
-            @drawable/qmui_list_item_bg_with_border_bottom_inset_left
-        </item>
-        <item name="qmui_list_item_bg_with_border_bottom_inset_left_pressed">
-            @drawable/qmui_list_item_bg_with_border_bottom_inset_left_pressed
-        </item>
-        <item name="qmui_list_item_bg_with_border_top">@drawable/qmui_list_item_bg_with_border_top
-        </item>
-        <item name="qmui_list_item_bg_with_border_top_pressed">
-            @drawable/qmui_list_item_bg_with_border_top_pressed
-        </item>
-        <item name="qmui_list_item_bg_with_border_top_inset_left">
-            @drawable/qmui_list_item_bg_with_border_top_inset_left
-        </item>
-        <item name="qmui_list_item_bg_with_border_top_inset_left_pressed">
-            @drawable/qmui_list_item_bg_with_border_top_inset_left_pressed
-        </item>
-        <item name="qmui_list_item_bg_with_border_double">
-            @drawable/qmui_list_item_bg_with_double_border
-        </item>
-        <item name="qmui_list_item_bg_with_border_double_pressed">
-            @drawable/qmui_list_item_bg_with_double_border_pressed
-        </item>
-
         <item name="qmui_s_list_item_bg_with_border_bottom">
             @drawable/qmui_s_list_item_bg_with_border_bottom
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_bottom_inset">
-            @drawable/qmui_s_list_item_bg_with_border_bottom_inset
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_bottom_inset_left">
-            @drawable/qmui_s_list_item_bg_with_border_bottom_inset_left
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_top">
-            @drawable/qmui_s_list_item_bg_with_border_top
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_top_inset_left">
-            @drawable/qmui_s_list_item_bg_with_border_top_inset_left
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_double">
-            @drawable/qmui_s_list_item_bg_with_border_double
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_none">
-            @drawable/qmui_s_list_item_bg_with_border_none
         </item>
 
         <!--**********************************************
@@ -342,11 +307,7 @@
         <item name="qmui_bottom_sheet_button_text_size">15sp</item>
         <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
 
-        <!--**********************************************
-        *                 qmui common list item          *
-        ***********************************************-->
-        <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
-        <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
+
 
 
         <!--**********************************************

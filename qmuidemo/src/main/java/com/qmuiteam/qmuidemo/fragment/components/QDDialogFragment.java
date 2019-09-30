@@ -398,7 +398,7 @@ public class QDDialogFragment extends BaseFragment {
             int padding = QMUIDisplayHelper.dp2px(mContext, 20);
             layout.setPadding(padding, padding, padding, padding);
             mEditText = new AppCompatEditText(mContext);
-            QMUIViewHelper.setBackgroundKeepingPadding(mEditText, QMUIResHelper.getAttrDrawable(mContext, R.attr.qmui_list_item_bg_with_border_bottom));
+            QMUIViewHelper.setBackgroundKeepingPadding(mEditText, QMUIResHelper.getAttrDrawable(mContext, R.drawable.qmui_divider_bottom_bitmap));
             mEditText.setHint("输入框");
             LinearLayout.LayoutParams editTextLP = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, QMUIDisplayHelper.dpToPx(50));
             editTextLP.bottomMargin = QMUIDisplayHelper.dp2px(getContext(), 15);

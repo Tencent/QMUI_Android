@@ -69,7 +69,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="0dp"
         app:layout_goneMarginRight="0dp"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintHorizontal_bias="0"
+        app:qmui_skin_text_color="?attr/qmui_common_list_title_color"/>
 
 
     <TextView
@@ -89,7 +90,8 @@
         app:layout_constraintLeft_toRightOf="@id/group_list_item_textView"
         app:layout_constraintRight_toLeftOf="@id/group_list_item_holder_before_accessory"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_goneMarginRight="0dp" />
+        app:layout_goneMarginRight="0dp"
+        app:qmui_skin_text_color="?attr/qmui_common_list_detail_color"/>
 
 
 
@@ -113,10 +115,11 @@
         app:layout_constraintLeft_toRightOf="@id/group_list_item_textView"
         app:layout_constraintTop_toTopOf="@id/group_list_item_textView" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/group_list_item_tips_dot"
         style="?attr/QMUITipPointStyle"
         android:contentDescription="Red dot"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:qmui_skin_bg_tint_color="?attr/qmui_common_list_red_point_tint_color"/>
 
 </merge>

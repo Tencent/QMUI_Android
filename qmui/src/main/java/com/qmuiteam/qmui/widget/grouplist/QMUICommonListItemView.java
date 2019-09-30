@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -39,6 +41,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Placeholder;
 
@@ -422,9 +425,11 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     }
 
     private ImageView getAccessoryImageView() {
-        ImageView resultImageView = new ImageView(getContext());
+        AppCompatImageView resultImageView = new AppCompatImageView(getContext());
         resultImageView.setLayoutParams(getAccessoryLayoutParams());
         resultImageView.setScaleType(ImageView.ScaleType.CENTER);
+        QMUISkinHelper.setSkinValue(resultImageView,
+                new QMUISkinValueBuilder().tintColor(R.attr.qmui_common_list_chevron_color));
         return resultImageView;
     }
 

@@ -46,7 +46,7 @@ public class QDQQFacePagerView extends QDQQFaceBasePagerView {
             qmuiqqFaceView = new QMUIQQFaceView(getContext());
             int padding = QMUIDisplayHelper.dp2px(getContext(), 16);
             ViewCompat.setBackground(qmuiqqFaceView, QMUIResHelper.getAttrDrawable(
-                    getContext(), R.attr.qmui_s_list_item_bg_with_border_bottom));
+                    getContext(), R.attr.qmui_s_list_item_bg_1));
             qmuiqqFaceView.setPadding(padding, padding, padding, padding);
             qmuiqqFaceView.setLineSpace(QMUIDisplayHelper.dp2px(getContext(), 10));
             qmuiqqFaceView.setTextColor(Color.BLACK);

@@ -48,15 +48,11 @@
         <item name="android:textColor">?attr/qmui_round_btn_text_color</item>
     </style>
 
-    <!--********************* GroupListView *********************-->
-    <style name="QMUI.GroupListView">
-        <item name="separatorStyle">none</item>
-    </style>
 
     <style name="QMUI.CommonListItemView">
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
-        <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="android:background">?attr/qmui_s_list_item_bg_2</item>
         <item name="qmui_common_list_title_color">?attr/qmui_common_list_title_color</item>
         <item name="qmui_common_list_detail_color">?attr/qmui_common_list_detail_color</item>
     </style>
@@ -229,7 +225,7 @@
     </style>
 
     <style name="QMUI.Dialog_MenuItem">
-        <item name="android:background">?attr/qmui_s_list_item_bg_with_border_none</item>
+        <item name="android:background">?attr/qmui_s_list_item_bg_2</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_dialog_padding_horizontal</item>

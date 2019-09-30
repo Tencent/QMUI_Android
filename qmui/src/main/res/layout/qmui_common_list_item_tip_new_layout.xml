@@ -14,7 +14,9 @@
  limitations under the License.
 -->
 
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/QMUITipNewStyle"
-           android:contentDescription="Update tips"
-    android:layout_gravity="center_vertical"/>
+<androidx.appcompat.widget.AppCompatImageView style="?attr/QMUITipNewStyle"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center_vertical"
+    android:contentDescription="Update tips"
+    app:qmui_skin_src="?attr/qmui_common_list_new_drawable"/>
