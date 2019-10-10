@@ -106,6 +106,7 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
             return;
         }
 
+
         int headerPos = mCallback.getRelativeStickyItemPosition(firstVisibleItemPosition);
         if (headerPos == RecyclerView.NO_POSITION) {
             setHeaderVisibility(false);
@@ -135,7 +136,9 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
             return;
         }
 
-        if (mCallback.isHeaderItem(parent.getChildAdapterPosition(childInContact))) {
+        int childInContactPos = parent.getChildAdapterPosition(childInContact);
+
+        if (mCallback.isHeaderItem(childInContactPos) && childInContactPos > 0) {
             mTargetTop = childInContact.getTop() + parent.getTop() - sectionContainer.getHeight();
             ViewCompat.offsetTopAndBottom(sectionContainer, mTargetTop - sectionContainer.getTop());
             return;
