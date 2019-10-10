@@ -41,6 +41,7 @@ import com.qmuiteam.qmuidemo.activity.TestArchInViewPagerActivity;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +60,10 @@ public class QDArchTestFragment extends BaseFragment {
     @BindView(R.id.btn) QMUIRoundButton mBtn;
     @BindView(R.id.btn_1) QMUIRoundButton mBtn1;
 
+    @Override
+    protected void onViewCreated(@NonNull View rootView) {
+        super.onViewCreated(rootView);
+    }
 
     @Override
     protected View onCreateView() {

@@ -62,10 +62,13 @@ android {
     }
 }
 
-//apply plugin: 'com.qmuiteam.qmui'
-//qmui {
-//    parentTheme "AppRootTheme"
-//}
+
+apply plugin: 'com.qmuiteam.qmui.skinMaker'
+skinMaker{
+    file rootProject.file('qmuidemo-skin-code-generator-source')
+}
+
+
 
 // 加@aar与不加@aar的区别：
 // http://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar

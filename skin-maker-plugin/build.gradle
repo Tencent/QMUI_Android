@@ -1,0 +1,39 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id "com.gradle.plugin-publish" version "0.10.1"
+}
+
+version = QMUI_SKIN_MAKER_VERSION
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation gradleApi()
+    implementation localGroovy()
+
+    implementation 'org.javassist:javassist:3.18.2-GA'
+    implementation 'com.android.tools.build:gradle-api:3.5.1'
+    implementation 'com.android.tools.build:gradle:3.5.1'
+    implementation 'com.squareup:javapoet:1.10.0'
+    implementation 'commons-io:commons-io:2.6'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+gradlePlugin {
+    plugins {
+        skinMakerPlugin {
+            id = 'com.qmuiteam.qmui.skinMaker'
+            implementationClass = 'com.qmuiteam.qmui.SkinMakerPlugin'
+        }
+    }
+}
+
+
+File deployConfig = rootProject.file('gradle/deploy.properties')
+if (deployConfig.exists()) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+}

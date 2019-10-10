@@ -1,0 +1,3 @@
+com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment
+QDArchTestFragment,$0.mTitleTv.setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, "background:app_skin_common_background")
+;
