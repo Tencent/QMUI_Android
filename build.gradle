@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
@@ -27,10 +27,11 @@ allprojects {
         minSdkVersion = 19
         targetSdkVersion = 28
         compileSdkVersion = 28
-        appcompatVersion= '1.1.0-beta01'
-        materialVersion='1.1.0-alpha07'
+        appcompatVersion= '1.1.0'
+        materialVersion='1.1.0-alpha10'
         annotationVersion='1.1.0-beta01'
         butterknifeVersion = '10.1.0'
         constraintLayoutVersion = "1.1.3"
+        mmkvVersion = '1.0.23'
     }
 }

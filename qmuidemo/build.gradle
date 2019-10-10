@@ -85,6 +85,7 @@ dependencies {
     implementation project(':arch')
     annotationProcessor project(':compiler')
     annotationProcessor project(':arch-compiler')
+    implementation project(":skin-maker")
 
     //leak
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'

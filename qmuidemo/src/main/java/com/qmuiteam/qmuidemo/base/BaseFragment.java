@@ -19,13 +19,17 @@ package com.qmuiteam.qmuidemo.base;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.os.Bundle;
 import android.view.View;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmuidemo.QDApplication;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
@@ -38,6 +42,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 public abstract class BaseFragment extends QMUIFragment {
 
+    private int mBindId = -1;
 
     public BaseFragment() {
     }
@@ -51,13 +56,37 @@ public abstract class BaseFragment extends QMUIFragment {
     public void onResume() {
         super.onResume();
         QDUpgradeManager.getInstance(getContext()).runUpgradeTipTaskIfExist(getActivity());
-
     }
 
     @Override
     public Object onLastFragmentFinish() {
         return new HomeFragment();
 
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(QDApplication.openSkinMake){
+            openSkinMaker();
+        }
+    }
+
+    public void openSkinMaker(){
+        if(mBindId < 0){
+            mBindId = QMUISkinMaker.getInstance().bind(this);
+        }
+    }
+
+    public void closeSkinMaker(){
+        QMUISkinMaker.getInstance().unbind(mBindId);
+        mBindId = -1;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        closeSkinMaker();
     }
 
     protected void goToWebExplorer(@NonNull String url, @Nullable String title) {

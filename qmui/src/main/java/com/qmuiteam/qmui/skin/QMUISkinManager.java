@@ -245,6 +245,18 @@ public final class QMUISkinManager {
         }
     }
 
+    public void refreshTheme(@NonNull View view){
+        Integer skinIndex = (Integer) view.getTag(R.id.qmui_skin_current_index);
+        if(skinIndex == null || skinIndex <= 0){
+            return;
+        }
+
+        SkinItem skinItem = mSkins.get(skinIndex);
+        if(skinItem != null){
+            applyTheme(view, skinIndex, skinItem.theme);
+        }
+    }
+
     public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
         if (attrs != null) {
             for (int i = 0; i < attrs.size(); i++) {

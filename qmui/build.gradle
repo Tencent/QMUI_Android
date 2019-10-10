@@ -53,6 +53,7 @@ dependencies {
 
     //test
     testImplementation 'junit:junit:4.12'
+    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 }
 
 // deploy
