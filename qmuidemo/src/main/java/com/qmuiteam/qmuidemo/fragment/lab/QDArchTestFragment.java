@@ -60,10 +60,7 @@ public class QDArchTestFragment extends BaseFragment {
     @BindView(R.id.btn) QMUIRoundButton mBtn;
     @BindView(R.id.btn_1) QMUIRoundButton mBtn1;
 
-    @Override
-    protected void onViewCreated(@NonNull View rootView) {
-        super.onViewCreated(rootView);
-    }
+    private Holder mHolder = new Holder();
 
     @Override
     protected View onCreateView() {
@@ -71,6 +68,7 @@ public class QDArchTestFragment extends BaseFragment {
         final int index = args == null ? 1 : args.getInt(ARG_INDEX);
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_arch_test, null);
         ButterKnife.bind(this, view);
+        mHolder.mTestView = view.findViewById(R.id.test);
         mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,5 +217,9 @@ public class QDArchTestFragment extends BaseFragment {
                 })
                 .build()
                 .show();
+    }
+
+    static class Holder {
+        TextView mTestView;
     }
 }

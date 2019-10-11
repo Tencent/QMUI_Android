@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
@@ -31,7 +32,9 @@ import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.layout.QMUIButton;
+import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
+import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
@@ -67,6 +70,7 @@ import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 @LatestVisitRecord
 public class QDMainActivity extends BaseFragmentActivity {
 
+    private QMUILinearLayout mSkinActionLayout;
     private QMUIButton mSkinMakerBtn;
 
     @Override
@@ -76,15 +80,26 @@ public class QDMainActivity extends BaseFragmentActivity {
         QDSkinManager.register(this);
 
 
-        // toggle skin maker
-        mSkinMakerBtn = new QMUIButton(this);
+        mSkinActionLayout = new QMUILinearLayout(this);
+        mSkinActionLayout.setOrientation(LinearLayout.VERTICAL);
+        mSkinActionLayout.setBackgroundColor(Color.WHITE);
+        mSkinActionLayout.setShadowElevation(QMUIDisplayHelper.dp2px(this, 32));
+        mSkinActionLayout.setShadowAlpha(0.8f);
+        mSkinActionLayout.setRadius(QMUIDisplayHelper.dp2px(this, 6));
+        FrameLayout.LayoutParams skinLp = new FrameLayout.LayoutParams(
+                QMUIDisplayHelper.dp2px(this, 200),
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        skinLp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+        skinLp.bottomMargin = QMUIDisplayHelper.dp2px(this, 56);
+        skinLp.rightMargin = QMUIDisplayHelper.dp2px(this, 16);
+        getFragmentContainer().addView(mSkinActionLayout, skinLp);
+
+
         int btnHeight = QMUIDisplayHelper.dp2px(this, 48);
-        mSkinMakerBtn.setBackgroundColor(Color.WHITE);
-        mSkinMakerBtn.setRadius(btnHeight / 2);
+        mSkinMakerBtn = new QMUIButton(this);
         mSkinMakerBtn.setChangeAlphaWhenPress(true);
-        mSkinMakerBtn.setShadowElevation(QMUIDisplayHelper.dp2px(this, 32));
-        mSkinMakerBtn.setShadowAlpha(0.8f);
-        mSkinMakerBtn.setPadding(QMUIDisplayHelper.dp2px(this, 20), 0, QMUIDisplayHelper.dp2px(this, 20), 0);
+        mSkinMakerBtn.setBackground(null);
+        mSkinMakerBtn.setPadding(0, 0, 0, 0);
         mSkinMakerBtn.setGravity(Gravity.CENTER);
         mSkinMakerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,11 +109,25 @@ public class QDMainActivity extends BaseFragmentActivity {
 
             }
         });
-        FrameLayout.LayoutParams btnLp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, btnHeight);
-        btnLp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
-        btnLp.bottomMargin = QMUIDisplayHelper.dp2px(this, 56);
-        btnLp.rightMargin = QMUIDisplayHelper.dp2px(this, 16);
-        getFragmentContainer().addView(mSkinMakerBtn, btnLp);
+        mSkinActionLayout.addView(mSkinMakerBtn,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
+
+
+        QMUIButton skinExportBtn = new QMUIButton(this);
+        skinExportBtn.setChangeAlphaWhenPress(true);
+        skinExportBtn.setPadding(0, 0, 0, 0);
+        skinExportBtn.setGravity(Gravity.CENTER);
+        skinExportBtn.setBackground(null);
+        skinExportBtn.setText("Export SkinMaker Result");
+        skinExportBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QMUISkinMaker.getInstance().export(QDMainActivity.this);
+
+            }
+        });
+        mSkinActionLayout.addView(skinExportBtn,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
     }
 
     private void renderSkinMakerBtn() {

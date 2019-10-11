@@ -18,9 +18,14 @@ package com.qmuiteam.qmui
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtMethod
+import javassist.CtNewMethod
+import javassist.NotFoundException
+import jdk.internal.util.xml.impl.Pair
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
@@ -73,62 +78,112 @@ class SkinMakerTransform extends Transform {
         def externalDepsJars = new ArrayList<File>()
         def externalDepsDirs = new ArrayList<File>()
 
-        transformInvocation.referencedInputs.forEach { transformInput ->
-            externalDepsJars += transformInput.jarInputs.map { it.file }
-            externalDepsDirs += transformInput.directoryInputs.map { it.file }
+        transformInvocation.referencedInputs.each { transformInput ->
+            transformInput.jarInputs.each { jar ->
+                externalDepsJars.add(jar.file)
+            }
+            transformInput.directoryInputs.each { directoryInput ->
+                externalDepsDirs.add(directoryInput.file)
+            }
         }
 
         transformInvocation.outputProvider.deleteAll()
 
+
+        def inputJars = new ArrayList<File>()
+        transformInvocation.inputs.each { input ->
+            input.jarInputs.each {
+                inputJars.add(it.file)
+            }
+        }
+
         transformInvocation.inputs.each { input ->
             input.directoryInputs.each { directoryInput ->
-
                 def baseDir = directoryInput.file
                 ClassPool pool = new ClassPool()
                 pool.appendSystemPath()
-                pool.appendClassPath(baseDir.absolutePath)
                 pool.appendClassPath(androidJar)
-                externalDepsJars.each { pool.insertClassPath(it.absolutePath) }
-                externalDepsDirs.each { pool.insertClassPath(it.absolutePath) }
+                externalDepsJars.each { pool.appendClassPath(it.absolutePath) }
+                externalDepsDirs.each { pool.appendClassPath(it.absolutePath) }
+                inputJars.each { pool.appendClassPath(it.absolutePath) }
+                pool.appendClassPath(baseDir.absolutePath)
 
 
-                directoryInput.file.eachFileRecurse { file ->
-                    String filePath = file.absolutePath
-                    if (filePath.endsWith(".class")) {
-                        def className = filePath.substring(directoryInput.file.absolutePath.length() + 1, filePath.length() - 6)
-                                .replace('/', '.')
-                        def codes = injectCode.getCode(className)
-                        if (codes != null && !codes.isEmpty()) {
-                            CtClass ctClass = pool.getCtClass(className)
-                            if (ctClass.isFrozen()) {
-                                ctClass.defrost()
+                handleDirectionInput(injectCode, directoryInput, pool){ className, methodName, scope, ctClass ->
+                    if(!scope.skin.isEmpty()){
+                        def sb = new StringBuilder()
+                        sb.append("public void skinMaker")
+                        sb.append(methodName)
+                        sb.append("(){")
+                        scope.skin.each {codeInfo ->
+                            sb.append(codeInfo.fieldName)
+                            sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
+                            sb.append(codeInfo.code)
+                            sb.append("\");\n")
+                        }
+                        sb.append("}")
+                        CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
+                        ctClass.addMethod(newMethod)
+                        scope.methodCreated = true
+                    }
+                }
+
+
+                handleDirectionInput(injectCode, directoryInput, pool){ className, methodName, scope, ctClass ->
+                    if(!scope.method.isEmpty()){
+                        if(scope.methodCreated){
+                            CtMethod ctMethod = ctClass.getDeclaredMethod("skinMaker" + methodName)
+                            def sb = new StringBuilder()
+                            scope.method.each {codeInfo ->
+                                sb.append(codeInfo.fieldName)
+                                sb.append(".")
+                                sb.append("skinMaker")
+                                sb.append(codeInfo.code)
+                                sb.append("();\n")
                             }
-                            codes.keySet().each { prefix ->
-                                def sb = new StringBuilder()
-                                sb.append("public void skinMaker")
-                                sb.append(prefix)
-                                sb.append("(){")
-                                codes.get(prefix).each { text ->
-                                    sb.append(text)
-                                    sb.append(";")
-                                }
-                                sb.append("}")
-                                CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
-                                ctClass.addMethod(newMethod)
+                            ctMethod.insertAfter(sb.toString())
+                        }else{
+                            def sb = new StringBuilder()
+                            sb.append("public void skinMaker")
+                            sb.append(methodName)
+                            sb.append("(){")
+                            scope.method.each {codeInfo ->
+                                sb.append(codeInfo.fieldName)
+                                sb.append(".")
+                                sb.append("skinMaker")
+                                sb.append(codeInfo.code)
+                                sb.append("();\n")
                             }
-
-                            if (className.endsWith("Fragment")) {
-                                CtMethod ctMethod = ctClass.getDeclaredMethod("onViewCreated", pool.get("android.view.View"))
-                                ctMethod.insertAfter("skinMaker" + className.split("\\.").last() + "();")
-                            } else if (className.endsWith("Activity")) {
-                                CtMethod ctMethod = ctClass.getDeclaredMethod("onCreate", pool.get("android.os.Bundle"))
-                                ctMethod.insertAfter("skinMaker" + className.split("\\.").last() + "();")
-                            }
-
-                            ctClass.writeFile(baseDir.absolutePath)
-                            ctClass.detach()
+                            sb.append("}")
+                            CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
+                            ctClass.addMethod(newMethod)
+                            scope.methodCreated = true
                         }
                     }
+
+                    if (className.endsWith("Fragment")) {
+                        CtMethod ctMethod
+                        try{
+                            ctMethod = ctClass.getDeclaredMethod("onViewCreated", pool.get("android.view.View"))
+                        }catch(NotFoundException ignore) {
+                            ctMethod = CtNewMethod.make(
+                                    "protected void onViewCreated(android.view.View rootView) { super.onViewCreated(rootView);}", ctClass)
+                            ctClass.addMethod(ctMethod)
+                        }
+                        ctMethod.insertAfter("skinMaker" + className.split("\\.").last() + "();")
+                    } else if (className.endsWith("Activity")) {
+                        CtMethod ctMethod
+                        try{
+                            ctMethod = ctClass.getMethod("onCreate", pool.get("android.os.Bundle"))
+                        }catch(NotFoundException ignore) {
+                            ctMethod = CtNewMethod.make(
+                                    "protected void onCreate(android.os.Bundle savedInstanceState){super.onCreate(savedInstanceState);}",
+                                    ctClass)
+                            ctClass.addMethod(ctMethod)
+                        }
+                        ctMethod.insertAfter("skinMaker" + className.split("\\.").last() + "();")
+                    }
+
                 }
 
                 def dest = transformInvocation.outputProvider.getContentLocation(
@@ -157,12 +212,36 @@ class SkinMakerTransform extends Transform {
         }
     }
 
+    void handleDirectionInput(InjectCode injectCode, DirectoryInput directoryInput, ClassPool pool,
+                              @ClosureParams(value = SimpleType.class, options = ["java.lang.String", "java.lang.String","com.qmuiteam.qmui.CodeInScope", "javassist.CtClass"]) Closure closure){
+        directoryInput.file.eachFileRecurse { file ->
+            String filePath = file.absolutePath
+            if (filePath.endsWith(".class")) {
+                def className = filePath.substring(directoryInput.file.absolutePath.length() + 1, filePath.length() - 6)
+                        .replace('/', '.')
+                def codeMapForClass = injectCode.getCodeMapForClass(className)
+                if (codeMapForClass != null && !codeMapForClass.isEmpty()) {
+                    CtClass ctClass = pool.getCtClass(className)
+                    if (ctClass.isFrozen()) {
+                        ctClass.defrost()
+                    }
+                    codeMapForClass.keySet().each { methodName ->
+                        def scope = codeMapForClass.get(methodName)
+                        print("scope: " + scope.skin.size() + "; " + scope.method.size())
+                        closure.call(className, methodName, scope, ctClass)
+                    }
+                    ctClass.writeFile(directoryInput.file.absolutePath)
+                }
+            }
+        }
+    }
+
 
     class InjectCode {
-        private HashMap<String, HashMap<String, ArrayList<String>>> mCodeMap = new HashMap<>()
+        private HashMap<String, HashMap<String, CodeInScope>> mCodeMap = new HashMap<>()
 
         private String mCurrentClassName = null
-        private HashMap<String, ArrayList<String>> mCurrentCodes = null
+        private HashMap<String, CodeInScope> mCurrentCodes = null
 
         void parseFile(File file) {
             file.newReader().lines().each { text ->
@@ -171,18 +250,36 @@ class SkinMakerTransform extends Transform {
                     if (!text.isBlank()) {
                         if (mCurrentClassName == null) {
                             mCurrentClassName = text
-                            mCurrentCodes = new HashMap<String, ArrayList<String>>()
+                            mCurrentCodes = new HashMap<String, CodeInScope>()
                             mCodeMap.put(mCurrentClassName, mCurrentCodes)
                         } else if (text != ";") {
-                            int split = text.indexOf(",")
-                            if (split > 0 && split < text.length()) {
-                                String key = text.substring(0, split)
-                                ArrayList<String> codes = mCurrentCodes.get(key)
-                                if (codes == null) {
-                                    codes = new ArrayList<String>()
-                                    mCurrentCodes.put(key, codes)
-                                }
-                                codes.add(text.substring(split + 1, text.length()))
+                            int start = 0
+                            int split = text.indexOf(",", start)
+                            String key = text.substring(start, split)
+                            CodeInScope scope = mCurrentCodes.get(key)
+                            if (scope == null) {
+                                scope = new CodeInScope()
+                                mCurrentCodes.put(key, scope)
+                            }
+
+                            // type
+                            start = split + 1
+                            split = text.indexOf(",", start)
+                            def type = text.substring(start, split)
+
+                            def codeInfo = new CodeInfo()
+
+                            // field name
+                            start = split + 1
+                            split = text.indexOf(",", start)
+                            codeInfo.fieldName = text.substring(start, split)
+
+                            // code
+                            codeInfo.code = text.substring(split + 1)
+                            if(type == "skin"){
+                                scope.skin.add(codeInfo)
+                            }else if(type == "method"){
+                                scope.method.add(codeInfo)
                             }
                         } else {
                             mCurrentClassName = null
@@ -193,8 +290,19 @@ class SkinMakerTransform extends Transform {
             }
         }
 
-        HashMap<String, ArrayList<String>> getCode(String className) {
+        HashMap<String, CodeInScope> getCodeMapForClass(String className) {
             return mCodeMap.get(className)
         }
     }
+}
+
+class CodeInfo {
+    String fieldName
+    String code
+}
+
+class CodeInScope {
+    ArrayList<CodeInfo> skin = new ArrayList<>()
+    ArrayList<CodeInfo> method = new ArrayList<>()
+    boolean methodCreated = false
 }
