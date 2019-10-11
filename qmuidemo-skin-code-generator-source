@@ -1,11 +1,9 @@
-com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment
-QDProgressBarFragment,skin,mBackBtn,background:app_skin_home_text_color
-QDProgressBarFragment,skin,mStartBtn,background:app_skin_common_background
-;
 com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment$Holder
-QDArchTestFragment_mHolder,skin,mTestView,background:app_skin_s_list_item_bg
+QDArchTestFragment_mHolder,ref,mTestView,background:app_skin_common_background
 ;
 com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment
-QDArchTestFragment,skin,mBtn1,background:app_primary_color
+QDArchTestFragment,ref,mBtn1,background:app_skin_s_list_item_bg
+QDArchTestFragment,ref,mBtn,background:app_skin_common_background
 QDArchTestFragment,method,mHolder,QDArchTestFragment_mHolder
+QDArchTestFragment,id,com.qmuiteam.qmuidemo.R.id.test_only_id,background:app_skin_common_background_1@getView()
 ;

@@ -110,7 +110,7 @@ class SkinMakerTransform extends Transform {
 
 
                 handleDirectionInput(injectCode, directoryInput, pool){ className, methodName, scope, ctClass ->
-                    if(!scope.skin.isEmpty()){
+                    if(!scope.skin.isEmpty() || !scope.id.isEmpty()){
                         def sb = new StringBuilder()
                         sb.append("public void skinMaker")
                         sb.append(methodName)
@@ -120,6 +120,26 @@ class SkinMakerTransform extends Transform {
                             sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
                             sb.append(codeInfo.code)
                             sb.append("\");\n")
+                        }
+                        scope.id.each {codeInfo ->
+                            def idNameIndex = codeInfo.fieldName.lastIndexOf(".")
+                            def id = codeInfo.fieldName.substring(idNameIndex + 1)
+                            def atIndex = codeInfo.code.lastIndexOf("@")
+                            def context = codeInfo.code.substring(atIndex + 1)
+                            sb.append("android.view.View ")
+                            sb.append(id)
+                            sb.append(" = ")
+                            sb.append(context)
+                            sb.append(".findViewById(")
+                            sb.append(codeInfo.fieldName)
+                            sb.append(");\n")
+                            sb.append("if(")
+                            sb.append(id)
+                            sb.append(" != null){")
+                            sb.append(id)
+                            sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
+                            sb.append(codeInfo.code.substring(0, atIndex))
+                            sb.append("\");}\n")
                         }
                         sb.append("}")
                         CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
@@ -227,7 +247,6 @@ class SkinMakerTransform extends Transform {
                     }
                     codeMapForClass.keySet().each { methodName ->
                         def scope = codeMapForClass.get(methodName)
-                        print("scope: " + scope.skin.size() + "; " + scope.method.size())
                         closure.call(className, methodName, scope, ctClass)
                     }
                     ctClass.writeFile(directoryInput.file.absolutePath)
@@ -276,10 +295,12 @@ class SkinMakerTransform extends Transform {
 
                             // code
                             codeInfo.code = text.substring(split + 1)
-                            if(type == "skin"){
+                            if(type == "ref"){
                                 scope.skin.add(codeInfo)
                             }else if(type == "method"){
                                 scope.method.add(codeInfo)
+                            }else if(type == "id"){
+                                scope.id.add(codeInfo)
                             }
                         } else {
                             mCurrentClassName = null
@@ -304,5 +325,6 @@ class CodeInfo {
 class CodeInScope {
     ArrayList<CodeInfo> skin = new ArrayList<>()
     ArrayList<CodeInfo> method = new ArrayList<>()
+    ArrayList<CodeInfo> id = new ArrayList<>()
     boolean methodCreated = false
 }

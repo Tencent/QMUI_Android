@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.skin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,7 +76,7 @@ public class QMUISkinMaker {
         return sSkinMaker != null;
     }
 
-    public static QMUISkinMaker init(Context context, String[] packageNames, Class<?> attrsClassInR) {
+    public static QMUISkinMaker init(Context context,  String[] packageNames, Class<?> attrsClassInR) {
         if (sSkinMaker == null) {
             sSkinMaker = new QMUISkinMaker();
         }
@@ -155,6 +156,25 @@ public class QMUISkinMaker {
         tree.fieldName = object.getClass().getSimpleName();
         tree.node = object;
         recursiveReflect(tree, viewInfoMap, unIdentifyViews, scannedObjects);
+        if(!unIdentifyViews.isEmpty()){
+            for(View view: unIdentifyViews){
+                int id = view.getId();
+                if(id != View.NO_ID){
+                    try{
+                        String idName = view.getResources().getResourceName(view.getId());
+                        if(idName != null && idName.length() > 0){
+                            idName = idName.replaceAll(":id/", ".R.id.");
+                            ViewInfo viewInfo = viewInfoMap.get(view);
+                            if(viewInfo != null){
+                                viewInfo.idName = idName;
+                                viewInfo.fieldNode = tree;
+                            }
+                        }
+                    }catch (Resources.NotFoundException ignore){
+                    }
+                }
+            }
+        }
     }
 
 
@@ -221,6 +241,12 @@ public class QMUISkinMaker {
             @Override
             public void onClick(View v) {
                 final Context context = v.getContext();
+                if(viewInfo.fieldNode == null){
+                    Toast.makeText(context,
+                            "No Id And No Reference, Can not set skin by skinMaker.",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 QMUIGroupListView groupListView = new QMUIGroupListView(context);
                 groupListView.setId(QMUIViewHelper.generateViewId());
                 QMUIGroupListView.newSection(context)
@@ -347,8 +373,9 @@ public class QMUISkinMaker {
             }
             String[] splits = result.split(";");
             if (fieldNode.fieldClassName.equals(splits[0])) {
-                QMUISkinHelper.setSkinValue(view, splits[1]);
-                viewInfo.valueBuilder.convertFrom(splits[1]);
+                String value = splits[1].replaceAll("@.*", "");
+                QMUISkinHelper.setSkinValue(view, value);
+                viewInfo.valueBuilder.convertFrom(value);
             }
             QMUISkinManager.getInstance(view.getContext()).refreshTheme(view);
         }
@@ -386,20 +413,25 @@ public class QMUISkinMaker {
     }
 
 
-    static class ViewInfo {
+    class ViewInfo {
         public View.OnClickListener originClickListener;
         public View.OnClickListener skinClickListener;
         public View view;
         public QMUISkinValueBuilder valueBuilder = new QMUISkinValueBuilder();
         public FieldNode fieldNode;
         public String fieldName;
+        public String idName;
 
         @Nullable
         public String getKey() {
             if (fieldNode == null) {
                 return null;
             }
-            return fieldNode.getKey() + "_" + fieldName;
+            if(fieldName != null){
+                return "r:" + fieldNode.getKey() + "@" + fieldName;
+            }else{
+                return "i:" + fieldNode.getKey() + "@" + idName;
+            }
         }
 
         public void saveToMMKV() {
@@ -410,16 +442,24 @@ public class QMUISkinMaker {
             builder.append(fieldNode.fieldClassName);
             builder.append(";");
             builder.append(valueBuilder.build());
+            if(idName != null){
+                if(fieldNode.node instanceof Activity || fieldNode.node instanceof ViewGroup){
+                    builder.append("@this");
+                }else if(fieldNode.node instanceof Fragment){
+                    builder.append("@getView()");
+                }
+            }
+
             MMKV.mmkvWithID(MMKV_ID).encode(getKey(), builder.toString());
             FieldNode parent = fieldNode.parent;
             FieldNode current = fieldNode;
             while (parent != null) {
-                String key = parent.getKey() + "_" + current.fieldName;
+                String baseKey = parent.getKey();
                 builder.setLength(0);
                 builder.append(parent.fieldClassName);
                 builder.append(";");
-                builder.append(key);
-                MMKV.mmkvWithID(MMKV_ID).encode("m:" + key, builder.toString());
+                builder.append(baseKey + "_" + current.fieldName);
+                MMKV.mmkvWithID(MMKV_ID).encode("m:" + baseKey + "@" + current.fieldName, builder.toString());
                 current = parent;
                 parent = parent.parent;
             }
@@ -474,17 +514,23 @@ public class QMUISkinMaker {
                     result.put(className, code);
                 }
 
-                int lastUnderscoreIndex = key.lastIndexOf("_");
+                int fieldIndex = key.lastIndexOf("@");
                 if(key.startsWith("m:")){
-                    code.add(key.substring(2, lastUnderscoreIndex) +
+                    code.add(key.substring(2, fieldIndex) +
                             ",method," +
-                            key.substring(lastUnderscoreIndex + 1) +
+                            key.substring(fieldIndex + 1) +
                             "," +
                             vv[1]);
-                }else{
-                    code.add(key.substring(0, lastUnderscoreIndex) +
-                            ",skin," +
-                            key.substring(lastUnderscoreIndex + 1) +
+                }else if(key.startsWith("r:")){
+                    code.add(key.substring(2, fieldIndex) +
+                            ",ref," +
+                            key.substring(fieldIndex + 1) +
+                            "," +
+                            vv[1]);
+                }else if(key.startsWith("i:")){
+                    code.add(key.substring(2, fieldIndex) +
+                            ",id," +
+                            key.substring(fieldIndex + 1) +
                             "," +
                             vv[1]);
                 }

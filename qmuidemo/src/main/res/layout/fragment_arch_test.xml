@@ -54,6 +54,17 @@
             android:textSize="32sp"
             android:text="test for skin maker"/>
 
+        <TextView
+            android:id="@+id/test_only_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/test"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:textColor="?attr/qmui_config_color_gray_1"
+            android:textSize="32sp"
+            android:text="test for skin maker(id)"/>
+
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/btn"
