@@ -26,6 +26,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -43,9 +44,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,10 +63,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * encode: prefix:methodName@fieldName   classFullName;codeValueInfo
- * prefix: r-ref,m-method,i-id,a-adapter,c-createViewHolder
+ * prefix: r-ref,m-method,i-id,a-adapter,c-createViewHolder, p-pagerAdapter.instantiateItem
  * methodName: generated methodName to wrap generate code
  */
 public class QMUISkinMaker {
@@ -151,7 +157,7 @@ public class QMUISkinMaker {
         return ret;
     }
 
-    public int bindViewHolder(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, String prefix) {
+    private int bindViewHolder(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, String prefix) {
         int ret = bindView(viewHolder.itemView);
         HashMap<View, ViewInfo> viewInfoMap = mBindInfo.get(ret);
         String fullPrefix = prefix + "_" + viewHolder.itemView.getClass().getSimpleName();
@@ -159,11 +165,29 @@ public class QMUISkinMaker {
         restoreSkinFromMMKV(viewInfoMap);
         handleForAdapter(viewInfoMap);
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        if(adapter != null){
-            MMKV.mmkvWithID(MMKV_ID).encode("c:" + viewHolder.getClass().getName() + "@" + viewHolder.itemView.getClass().getSimpleName(),
+        if (adapter != null) {
+            MMKV.mmkvWithID(MMKV_ID).encode("c:" + viewHolder.getClass().getName() + "@" + prefix,
                     adapter.getClass().getName() + ";" + fullPrefix);
         }
         return ret;
+    }
+
+    int bindViewPagerChild(PagerAdapter pagerAdapter, Object item, String prefix) {
+        if (item instanceof Fragment) {
+            return -1;
+        }
+        if (item instanceof View) {
+            View itemView = (View) item;
+            int ret = bindView(itemView);
+            HashMap<View, ViewInfo> viewInfoMap = mBindInfo.get(ret);
+            String fullPrefix = prefix + "_" + itemView.getClass().getSimpleName();
+            bindField(itemView, fullPrefix, viewInfoMap);
+            restoreSkinFromMMKV(viewInfoMap);
+            handleForAdapter(viewInfoMap);
+            MMKV.mmkvWithID(MMKV_ID).encode("p:" + prefix + "@" + itemView.getClass().getName(),
+                    pagerAdapter.getClass().getName() + ";" + fullPrefix);
+        }
+        return -1;
     }
 
     private void bindField(Object object, String prefix, HashMap<View, ViewInfo> viewInfoMap) {
@@ -174,6 +198,13 @@ public class QMUISkinMaker {
         tree.fieldClassName = object.getClass().getName();
         tree.fieldName = prefix;
         tree.node = object;
+        if (object instanceof View) {
+            ViewInfo viewInfo = viewInfoMap.get(object);
+            if (viewInfo != null) {
+                viewInfo.fieldNode = tree;
+                viewInfo.fieldName = "this";
+            }
+        }
         recursiveReflect(tree, viewInfoMap, unIdentifyViews, scannedObjects);
         if (!unIdentifyViews.isEmpty()) {
             for (View view : unIdentifyViews) {
@@ -198,23 +229,36 @@ public class QMUISkinMaker {
 
     private void handleForAdapter(HashMap<View, ViewInfo> viewInfoMap) {
         for (View view : viewInfoMap.keySet()) {
+            ViewInfo viewInfo = viewInfoMap.get(view);
+            if (viewInfo == null || viewInfo.fieldNode == null) {
+                continue;
+            }
+
+            String fieldKey = viewInfo.fieldNode.getKey();
+            String prefix = fieldKey + "_" + viewInfo.getSimpleFieldName();
             if (view instanceof RecyclerView) {
-                ViewInfo viewInfo = viewInfoMap.get(view);
-                if (viewInfo == null || viewInfo.fieldNode == null) {
-                    continue;
-                }
-                String fieldKey = viewInfo.fieldNode.getKey();
-                String prefix = fieldKey + "_" + viewInfo.getSimpleFieldName();
-                view.setTag(R.id.qmui_skin_adapter, prefix);
-                MMKV.mmkvWithID(MMKV_ID).encode("a:" + fieldKey + "@" + viewInfo.getFullFieldNameWithPrefix(),
-                        viewInfo.fieldNode.fieldClassName + ";" + prefix + viewInfo.getSuffix());
+                setAdapterTag(viewInfo, fieldKey, prefix);
                 RecyclerView recyclerView = (RecyclerView) view;
                 for (int i = 0; i < recyclerView.getChildCount(); i++) {
                     bindViewHolder(recyclerView, recyclerView.getChildViewHolder(recyclerView.getChildAt(i)), prefix);
                 }
                 recyclerView.addOnChildAttachStateChangeListener(mRecyclerViewChildAttachStateChangeListener);
+            } else if (view instanceof ViewPager) {
+                setAdapterTag(viewInfo, fieldKey, prefix);
+                ViewPager viewPager = (ViewPager) view;
+                PagerAdapter adapter = viewPager.getAdapter();
+                if (adapter != null && !(adapter instanceof DelegateViewPagerAdapter)) {
+                    viewPager.setAdapter(new DelegateViewPagerAdapter(this, adapter, prefix));
+                }
             }
         }
+    }
+
+
+    private void setAdapterTag(ViewInfo viewInfo, String fieldKey, String prefix) {
+        viewInfo.view.setTag(R.id.qmui_skin_adapter, prefix);
+        MMKV.mmkvWithID(MMKV_ID).encode("a:" + fieldKey + "@" + viewInfo.getFullFieldNameWithPrefix(),
+                viewInfo.fieldNode.fieldClassName + ";" + prefix + viewInfo.getSuffix());
     }
 
 
@@ -263,7 +307,7 @@ public class QMUISkinMaker {
             }
         }
         viewInfoMap.put(view, generateViewInfo(view));
-        if (/*view instanceof AbsListView || view instanceof ViewPager || */view instanceof RecyclerView) {
+        if (view instanceof AbsListView || view instanceof ViewPager || view instanceof RecyclerView) {
             return;
         }
         if (view instanceof ViewGroup) {
@@ -296,7 +340,7 @@ public class QMUISkinMaker {
             Field listenerInfoFiled = View.class.getDeclaredField("mListenerInfo");
             listenerInfoFiled.setAccessible(true);
             Object listenerInfo = listenerInfoFiled.get(view);
-            if(listenerInfo != null){
+            if (listenerInfo != null) {
                 Field onClickListenerField = listenerInfo.getClass().getDeclaredField("mOnClickListener");
                 onClickListenerField.setAccessible(true);
                 viewInfo.originClickListener = (View.OnClickListener) onClickListenerField.get(listenerInfo);
@@ -352,6 +396,11 @@ public class QMUISkinMaker {
         popup.show(anchorView);
     }
 
+    private static boolean doNotNeedToGetField(Class<?> cls) {
+        return cls.isPrimitive() ||
+                cls.getName().startsWith("java");
+    }
+
     private void recursiveReflect(FieldNode tree, HashMap<View, ViewInfo> viewInfoMap,
                                   Set<View> unIdentifiedViews,
                                   Set<Object> scannedObjects) {
@@ -377,7 +426,17 @@ public class QMUISkinMaker {
                 continue;
             }
 
-            Field[] fields = object.getClass().getDeclaredFields();
+            Collection<Field> fields = new ArrayList<>(Arrays.asList(object.getClass().getDeclaredFields()));
+            Class<?> superClass = object.getClass().getSuperclass();
+            while (superClass != null && !doNotNeedToGetField(superClass)) {
+                Field[] list = superClass.getDeclaredFields();
+                for (Field field : list) {
+                    if ((field.getModifiers() & (Modifier.PUBLIC | Modifier.PROTECTED)) != 0) {
+                        fields.add(field);
+                    }
+                }
+                superClass = superClass.getSuperclass();
+            }
             try {
                 for (Field field : fields) {
                     field.setAccessible(true);
@@ -397,13 +456,15 @@ public class QMUISkinMaker {
                                 }
                             }
                         }
-                        FieldNode childNode = new FieldNode();
-                        childNode.fieldClassName = value.getClass().getName();
-                        childNode.fieldName = field.getName();
-                        childNode.parent = fieldNode;
-                        childNode.node = value;
-                        fieldNode.children.add(childNode);
-                        queue.add(childNode);
+                        if (!doNotNeedToGetField(value.getClass())) {
+                            FieldNode childNode = new FieldNode();
+                            childNode.fieldClassName = value.getClass().getName();
+                            childNode.fieldName = field.getName();
+                            childNode.parent = fieldNode;
+                            childNode.node = value;
+                            fieldNode.children.add(childNode);
+                            queue.add(childNode);
+                        }
                     }
                 }
             } catch (IllegalAccessException e) {
@@ -502,14 +563,14 @@ public class QMUISkinMaker {
         }
 
         @Nullable
-        public String getSimpleFieldName(){
-            if(fieldName != null){
+        public String getSimpleFieldName() {
+            if (fieldName != null) {
                 return fieldName;
             }
 
-            if(idName != null){
+            if (idName != null) {
                 int index = idName.lastIndexOf(".");
-                if(index >= 0 && index < idName.length()){
+                if (index >= 0 && index < idName.length()) {
                     return idName.substring(index + 1);
                 }
             }
@@ -517,25 +578,25 @@ public class QMUISkinMaker {
         }
 
         @Nullable
-        public String getFullFieldNameWithPrefix(){
-            if(fieldName != null){
+        public String getFullFieldNameWithPrefix() {
+            if (fieldName != null) {
                 return fieldName;
             }
 
-            if(idName != null){
+            if (idName != null) {
                 return "i/" + idName;
             }
             return null;
         }
 
-        private String getSuffix(){
-            if(idName != null){
+        private String getSuffix() {
+            if (idName != null) {
                 if (fieldNode.node instanceof Activity || fieldNode.node instanceof ViewGroup) {
                     return "@this";
                 } else if (fieldNode.node instanceof Fragment) {
                     return "@getView()";
-                } else if(fieldNode.node instanceof RecyclerView.ViewHolder){
-                    return"@itemView";
+                } else if (fieldNode.node instanceof RecyclerView.ViewHolder) {
+                    return "@itemView";
                 }
             }
             return "";
@@ -616,38 +677,31 @@ public class QMUISkinMaker {
                 }
 
                 int fieldIndex = key.lastIndexOf("@");
+                String type = null;
+                String methodName = key.substring(2, fieldIndex);
                 if (key.startsWith("m:")) {
-                    code.add(key.substring(2, fieldIndex) +
-                            ",method," +
-                            key.substring(fieldIndex + 1) +
-                            "," +
-                            vv[1]);
+                    type = "method";
                 } else if (key.startsWith("r:")) {
-                    code.add(key.substring(2, fieldIndex) +
-                            ",ref," +
-                            key.substring(fieldIndex + 1) +
-                            "," +
-                            vv[1]);
+                    type = "ref";
                 } else if (key.startsWith("i:")) {
-                    code.add(key.substring(2, fieldIndex) +
-                            ",id," +
-                            key.substring(fieldIndex + 1) +
+                    type = "id";
+                } else if (key.startsWith("a:")) {
+                    type = "adapter";
+                } else if (key.startsWith("c:")) {
+                    type = "c";
+                } else if (key.startsWith("p:")) {
+                    type = "p";
+                }
+
+                if (type != null) {
+                    code.add(methodName +
                             "," +
-                            vv[1]);
-                }else if(key.startsWith("a:")){
-                    code.add(key.substring(2, fieldIndex) +
-                            ",adapter," +
-                            key.substring(fieldIndex + 1) +
+                            type +
                             "," +
-                            vv[1]);
-                }else if(key.startsWith("c:")){
-                    code.add(key.substring(2, fieldIndex) +
-                            ",c," +
                             key.substring(fieldIndex + 1) +
                             "," +
                             vv[1]);
                 }
-
             }
 
             File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "qmui-skin-maker");

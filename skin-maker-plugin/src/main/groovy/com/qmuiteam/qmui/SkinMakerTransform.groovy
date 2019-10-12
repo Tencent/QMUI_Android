@@ -136,22 +136,6 @@ class SkinMakerTransform extends Transform {
                         ctClass.addMethod(newMethod)
                         scope.methodCreated = true
                     }
-                }
-
-
-                handleDirectionInput(injectCode, directoryInput, pool) { className, methodName, scope, ctClass ->
-                    if (!scope.method.isEmpty()) {
-                        CtMethod ctMethod = getOrCreateMethodFromScope(ctClass, methodName, scope)
-                        def sb = new StringBuilder()
-                        scope.method.each { codeInfo ->
-                            sb.append(codeInfo.fieldName)
-                            sb.append(".")
-                            sb.append("skinMaker")
-                            sb.append(codeInfo.code)
-                            sb.append("();\n")
-                        }
-                        ctMethod.insertAfter(sb.toString())
-                    }
 
                     if (!scope.adapter.isEmpty()) {
                         CtMethod ctMethod = getOrCreateMethodFromScope(ctClass, methodName, scope)
@@ -180,6 +164,21 @@ class SkinMakerTransform extends Transform {
                         }
                         ctMethod.insertAfter(sb.toString())
                     }
+                }
+
+                handleDirectionInput(injectCode, directoryInput, pool) { className, methodName, scope, ctClass ->
+                    if (!scope.method.isEmpty()) {
+                        CtMethod ctMethod = getOrCreateMethodFromScope(ctClass, methodName, scope)
+                        def sb = new StringBuilder()
+                        scope.method.each { codeInfo ->
+                            sb.append(codeInfo.fieldName)
+                            sb.append(".")
+                            sb.append("skinMaker")
+                            sb.append(codeInfo.code)
+                            sb.append("();\n")
+                        }
+                        ctMethod.insertAfter(sb.toString())
+                    }
 
                     if (!scope.c.isEmpty()) {
                         CtClass viewHolder = pool.get(methodName)
@@ -197,7 +196,6 @@ class SkinMakerTransform extends Transform {
                         }
                         scope.c.each { codeInfo ->
                             try {
-
                                 viewHolder.getDeclaredMethod("skinMaker" + codeInfo.code)
                                 def tagIndex = codeInfo.code.lastIndexOf('_')
                                 def tag = codeInfo.code.substring(0, tagIndex)
@@ -209,7 +207,42 @@ class SkinMakerTransform extends Transform {
                                 builder.append(codeInfo.code)
                                 builder.append("();")
                                 builder.append("}")
-                                print(builder.toString())
+                                ctMethod.insertAfter(builder.toString())
+                            } catch (NotFoundException ignore) {
+                            }
+                        }
+                    }
+
+                    if(!scope.p.isEmpty()){
+                        CtMethod ctMethod
+                        try {
+                            ctMethod = ctClass.getDeclaredMethod("instantiateItem", pool.get("android.view.ViewGroup"), CtClass.intType)
+                        } catch (NotFoundException ignore) {
+                            ctMethod = CtNewMethod.make(
+                                    "protected java.lang.Object instantiateItem(android.view.ViewGroup parent, int position) { " +
+                                            "return super.instantiateItem(parent, position);}",
+                                    ctClass)
+                            ctClass.addMethod(ctMethod)
+                        }
+
+                        scope.p.each { codeInfo ->
+                            try {
+                                def objectName = codeInfo.fieldName
+                                def objectCls = pool.get(objectName)
+                                objectCls.getDeclaredMethod("skinMaker" + codeInfo.code)
+
+                                def tagIndex = codeInfo.code.lastIndexOf('_')
+                                def tag = codeInfo.code.substring(0, tagIndex)
+                                StringBuilder builder = new StringBuilder()
+                                builder.append("if(\"")
+                                builder.append(tag)
+                                builder.append("\".equals(${'$1'}.getTag(com.qmuiteam.qmui.R.id.qmui_skin_adapter))){")
+                                builder.append("if(${'$_'} instanceof ${objectName}){")
+                                builder.append("((${objectName})${'$_'}).skinMaker")
+                                builder.append(codeInfo.code)
+                                builder.append("();")
+                                builder.append("}")
+                                builder.append("}")
                                 ctMethod.insertAfter(builder.toString())
                             } catch (NotFoundException ignore) {
                             }
@@ -353,6 +386,8 @@ class SkinMakerTransform extends Transform {
                                 scope.adapter.add(codeInfo)
                             } else if (type == "c") {
                                 scope.c.add(codeInfo)
+                            } else if(type == "p"){
+                                scope.p.add(codeInfo)
                             }
                         } else {
                             mCurrentClassName = null
@@ -380,5 +415,6 @@ class CodeInScope {
     ArrayList<CodeInfo> id = new ArrayList<>()
     ArrayList<CodeInfo> adapter = new ArrayList<>()
     ArrayList<CodeInfo> c = new ArrayList<>()
+    ArrayList<CodeInfo> p = new ArrayList<>()
     boolean methodCreated = false
 }

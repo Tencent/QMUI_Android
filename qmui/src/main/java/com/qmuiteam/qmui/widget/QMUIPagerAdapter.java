@@ -48,7 +48,7 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
 
     @Override
     @NonNull
-    public final Object instantiateItem(@NonNull ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Object item = mScrapItems.get(position);
         if (item == null) {
             item = hydrate(container, position);
