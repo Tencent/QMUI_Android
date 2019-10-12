@@ -20,12 +20,7 @@ import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
-import javassist.ClassPool
-import javassist.CtClass
-import javassist.CtMethod
-import javassist.CtNewMethod
-import javassist.NotFoundException
-import jdk.internal.util.xml.impl.Pair
+import javassist.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
@@ -109,37 +104,32 @@ class SkinMakerTransform extends Transform {
                 pool.appendClassPath(baseDir.absolutePath)
 
 
-                handleDirectionInput(injectCode, directoryInput, pool){ className, methodName, scope, ctClass ->
-                    if(!scope.skin.isEmpty() || !scope.id.isEmpty()){
+                handleDirectionInput(injectCode, directoryInput, pool) { className, methodName, scope, ctClass ->
+                    if (!scope.skin.isEmpty() || !scope.id.isEmpty()) {
                         def sb = new StringBuilder()
                         sb.append("public void skinMaker")
                         sb.append(methodName)
                         sb.append("(){")
-                        scope.skin.each {codeInfo ->
+                        scope.skin.each { codeInfo ->
                             sb.append(codeInfo.fieldName)
                             sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
                             sb.append(codeInfo.code)
                             sb.append("\");\n")
                         }
-                        scope.id.each {codeInfo ->
-                            def idNameIndex = codeInfo.fieldName.lastIndexOf(".")
-                            def id = codeInfo.fieldName.substring(idNameIndex + 1)
+                        scope.id.each { codeInfo ->
                             def atIndex = codeInfo.code.lastIndexOf("@")
                             def context = codeInfo.code.substring(atIndex + 1)
-                            sb.append("android.view.View ")
-                            sb.append(id)
-                            sb.append(" = ")
+                            sb.append("{\n")
+                            sb.append("android.view.View view = ")
                             sb.append(context)
                             sb.append(".findViewById(")
                             sb.append(codeInfo.fieldName)
                             sb.append(");\n")
-                            sb.append("if(")
-                            sb.append(id)
-                            sb.append(" != null){")
-                            sb.append(id)
-                            sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
+                            sb.append("if(view != null){")
+                            sb.append("view.setTag(com.qmuiteam.qmui.R.id.qmui_skin_value, \"")
                             sb.append(codeInfo.code.substring(0, atIndex))
                             sb.append("\");}\n")
+                            sb.append("}\n")
                         }
                         sb.append("}")
                         CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
@@ -149,43 +139,88 @@ class SkinMakerTransform extends Transform {
                 }
 
 
-                handleDirectionInput(injectCode, directoryInput, pool){ className, methodName, scope, ctClass ->
-                    if(!scope.method.isEmpty()){
-                        if(scope.methodCreated){
-                            CtMethod ctMethod = ctClass.getDeclaredMethod("skinMaker" + methodName)
-                            def sb = new StringBuilder()
-                            scope.method.each {codeInfo ->
+                handleDirectionInput(injectCode, directoryInput, pool) { className, methodName, scope, ctClass ->
+                    if (!scope.method.isEmpty()) {
+                        CtMethod ctMethod = getOrCreateMethodFromScope(ctClass, methodName, scope)
+                        def sb = new StringBuilder()
+                        scope.method.each { codeInfo ->
+                            sb.append(codeInfo.fieldName)
+                            sb.append(".")
+                            sb.append("skinMaker")
+                            sb.append(codeInfo.code)
+                            sb.append("();\n")
+                        }
+                        ctMethod.insertAfter(sb.toString())
+                    }
+
+                    if (!scope.adapter.isEmpty()) {
+                        CtMethod ctMethod = getOrCreateMethodFromScope(ctClass, methodName, scope)
+                        def sb = new StringBuilder()
+                        scope.adapter.each { codeInfo ->
+                            if (codeInfo.fieldName.startsWith("i/")) {
+                                def idFullName = codeInfo.fieldName.substring(2)
+                                def atIndex = codeInfo.code.indexOf("@")
+                                sb.append("{\n")
+                                sb.append("android.view.View view = ")
+                                sb.append(codeInfo.code.substring(atIndex + 1))
+                                sb.append(".findViewById(")
+                                sb.append(idFullName)
+                                sb.append(");\n")
+                                sb.append("if(view != null){")
+                                sb.append("view.setTag(com.qmuiteam.qmui.R.id.qmui_skin_adapter, \"")
+                                sb.append(codeInfo.code.substring(0, atIndex))
+                                sb.append("\");}\n")
+                                sb.append("}\n")
+                            } else {
                                 sb.append(codeInfo.fieldName)
-                                sb.append(".")
-                                sb.append("skinMaker")
+                                sb.append(".setTag(com.qmuiteam.qmui.R.id.qmui_skin_adapter, \"")
                                 sb.append(codeInfo.code)
-                                sb.append("();\n")
+                                sb.append("\");")
                             }
-                            ctMethod.insertAfter(sb.toString())
-                        }else{
-                            def sb = new StringBuilder()
-                            sb.append("public void skinMaker")
-                            sb.append(methodName)
-                            sb.append("(){")
-                            scope.method.each {codeInfo ->
-                                sb.append(codeInfo.fieldName)
-                                sb.append(".")
-                                sb.append("skinMaker")
-                                sb.append(codeInfo.code)
-                                sb.append("();\n")
+                        }
+                        ctMethod.insertAfter(sb.toString())
+                    }
+
+                    if (!scope.c.isEmpty()) {
+                        CtClass viewHolder = pool.get(methodName)
+                        CtMethod ctMethod
+                        try {
+                            ctMethod = ctClass.getDeclaredMethod("onCreateViewHolder", pool.get("android.view.ViewGroup"), CtClass.intType)
+                        } catch (NotFoundException ignore) {
+                            ctMethod = CtNewMethod.make(
+                                    "protected " +
+                                            methodName.replace("${'$'}", ".") +
+                                            " onCreateViewHolder(android.view.ViewGroup parent, int viewType) { " +
+                                            "return super.onCreateViewHolder(parent, viewType);}",
+                                    ctClass)
+                            ctClass.addMethod(ctMethod)
+                        }
+                        scope.c.each { codeInfo ->
+                            try {
+
+                                viewHolder.getDeclaredMethod("skinMaker" + codeInfo.code)
+                                def tagIndex = codeInfo.code.lastIndexOf('_')
+                                def tag = codeInfo.code.substring(0, tagIndex)
+                                StringBuilder builder = new StringBuilder()
+                                builder.append("if(\"")
+                                builder.append(tag)
+                                builder.append("\".equals(${'$1'}.getTag(com.qmuiteam.qmui.R.id.qmui_skin_adapter))){")
+                                builder.append("${'$_'}.skinMaker")
+                                builder.append(codeInfo.code)
+                                builder.append("();")
+                                builder.append("}")
+                                print(builder.toString())
+                                ctMethod.insertAfter(builder.toString())
+                            } catch (NotFoundException ignore) {
                             }
-                            sb.append("}")
-                            CtMethod newMethod = CtMethod.make(sb.toString(), ctClass)
-                            ctClass.addMethod(newMethod)
-                            scope.methodCreated = true
                         }
                     }
 
                     if (className.endsWith("Fragment")) {
                         CtMethod ctMethod
-                        try{
+                        try {
                             ctMethod = ctClass.getDeclaredMethod("onViewCreated", pool.get("android.view.View"))
-                        }catch(NotFoundException ignore) {
+                        } catch (NotFoundException ignore) {
                             ctMethod = CtNewMethod.make(
                                     "protected void onViewCreated(android.view.View rootView) { super.onViewCreated(rootView);}", ctClass)
                             ctClass.addMethod(ctMethod)
@@ -193,9 +228,9 @@ class SkinMakerTransform extends Transform {
                         ctMethod.insertAfter("skinMaker" + className.split("\\.").last() + "();")
                     } else if (className.endsWith("Activity")) {
                         CtMethod ctMethod
-                        try{
+                        try {
                             ctMethod = ctClass.getMethod("onCreate", pool.get("android.os.Bundle"))
-                        }catch(NotFoundException ignore) {
+                        } catch (NotFoundException ignore) {
                             ctMethod = CtNewMethod.make(
                                     "protected void onCreate(android.os.Bundle savedInstanceState){super.onCreate(savedInstanceState);}",
                                     ctClass)
@@ -232,8 +267,21 @@ class SkinMakerTransform extends Transform {
         }
     }
 
+    static CtMethod getOrCreateMethodFromScope(CtClass ctClass, String methodName, CodeInScope scope) {
+        CtMethod ctMethod
+        if (scope.methodCreated) {
+            ctMethod = ctClass.getDeclaredMethod("skinMaker" + methodName)
+        } else {
+            ctMethod = CtMethod.make("public void skinMaker" + methodName + "(){}", ctClass)
+            ctClass.addMethod(ctMethod)
+            scope.methodCreated = true
+        }
+        return ctMethod
+    }
+
+
     void handleDirectionInput(InjectCode injectCode, DirectoryInput directoryInput, ClassPool pool,
-                              @ClosureParams(value = SimpleType.class, options = ["java.lang.String", "java.lang.String","com.qmuiteam.qmui.CodeInScope", "javassist.CtClass"]) Closure closure){
+                              @ClosureParams(value = SimpleType.class, options = ["java.lang.String", "java.lang.String", "com.qmuiteam.qmui.CodeInScope", "javassist.CtClass"]) Closure closure) {
         directoryInput.file.eachFileRecurse { file ->
             String filePath = file.absolutePath
             if (filePath.endsWith(".class")) {
@@ -295,12 +343,16 @@ class SkinMakerTransform extends Transform {
 
                             // code
                             codeInfo.code = text.substring(split + 1)
-                            if(type == "ref"){
+                            if (type == "ref") {
                                 scope.skin.add(codeInfo)
-                            }else if(type == "method"){
+                            } else if (type == "method") {
                                 scope.method.add(codeInfo)
-                            }else if(type == "id"){
+                            } else if (type == "id") {
                                 scope.id.add(codeInfo)
+                            } else if (type == "adapter") {
+                                scope.adapter.add(codeInfo)
+                            } else if (type == "c") {
+                                scope.c.add(codeInfo)
                             }
                         } else {
                             mCurrentClassName = null
@@ -326,5 +378,7 @@ class CodeInScope {
     ArrayList<CodeInfo> skin = new ArrayList<>()
     ArrayList<CodeInfo> method = new ArrayList<>()
     ArrayList<CodeInfo> id = new ArrayList<>()
+    ArrayList<CodeInfo> adapter = new ArrayList<>()
+    ArrayList<CodeInfo> c = new ArrayList<>()
     boolean methodCreated = false
 }

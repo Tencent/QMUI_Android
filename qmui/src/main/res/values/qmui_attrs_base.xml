@@ -80,8 +80,8 @@
     **********************************************-->
     <attr name="qmui_list_item_height" format="dimension" />
     <attr name="qmui_list_item_height_higher" format="dimension" />
-    <attr name="qmui_s_list_item_bg_1" format="dimension" />
-    <attr name="qmui_s_list_item_bg_2" format="dimension" />
+    <attr name="qmui_s_list_item_bg_1" format="reference" />
+    <attr name="qmui_s_list_item_bg_2" format="reference" />
 
     <attr name="qmui_list_item_bg_with_border_bottom" format="reference"/>
     <attr name="qmui_s_list_item_bg_with_border_bottom" format="reference" />
