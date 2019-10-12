@@ -43,7 +43,7 @@ import butterknife.ButterKnife;
  * Created by cgspine on 15/9/15.
  */
 
-@Widget(widgetClass = QMUIBottomSheet.class, iconRes = R.mipmap.icon_grid_botton_sheet)
+@Widget(widgetClass = QMUIBottomSheet.class, iconRes = R.mipmap.icon_grid_bottom_sheet)
 public class QDBottomSheetFragment extends BaseFragment {
 
     @BindView(R.id.topbar)
