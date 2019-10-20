@@ -28,6 +28,7 @@ import com.qmuiteam.qmui.span.QMUIBlockSpaceSpan;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
@@ -216,9 +217,9 @@ public class UpgradeTipTask implements UpgradeTask {
             int start = text.length();
             text.append(widgetName);
             int end = text.length();
-            int normalColor = ContextCompat.getColor(activity, R.color.app_color_blue);
-            int pressedColor = ContextCompat.getColor(activity, R.color.app_color_blue_pressed);
-            text.setSpan(new QMUITouchableSpan(normalColor, pressedColor, 0, 0) {
+            text.setSpan(new QMUITouchableSpan(QMUIViewHelper.getActivityRoot(activity),
+                    R.attr.app_skin_span_normal_text_color,
+                    R.attr.app_skin_span_pressed_text_color, 0, 0) {
                 @Override
                 public void onSpanClick(View widget) {
                     Intent intent = QDMainActivity.createWebExplorerIntent(activity, docUrl, widgetName);

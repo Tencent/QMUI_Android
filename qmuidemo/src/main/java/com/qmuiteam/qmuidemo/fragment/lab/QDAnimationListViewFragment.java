@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIAnimationListView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.adaptor.QDSimpleAdapter;
 import com.qmuiteam.qmuidemo.R;
@@ -45,7 +46,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Lab, widgetClass = QMUIAnimationListView.class, iconRes = R.mipmap.icon_grid_anim_list_view)
 public class QDAnimationListViewFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.listview) QMUIAnimationListView mListView;
 
     private List<String> mData = new ArrayList<>();

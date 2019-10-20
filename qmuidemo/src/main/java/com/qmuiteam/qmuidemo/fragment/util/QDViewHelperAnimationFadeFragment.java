@@ -22,6 +22,7 @@ import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
@@ -42,7 +43,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Other, name = "Fade 进退场动画")
 public class QDViewHelperAnimationFadeFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.actiontBtn) QMUIRoundButton mActionButton;
     @BindView(R.id.popup) TextView mPopupView;
 

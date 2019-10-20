@@ -16,20 +16,20 @@
 
 package com.qmuiteam.qmuidemo.fragment.util;
 
-import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDDataManager;
 
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Other, name = "做背景变化动画")
 public class QDViewHelperBackgroundAnimationFullFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.actiontBtn) QMUIRoundButton mActionButton;
     @BindView(R.id.container) ViewGroup mContainer;
 

@@ -19,7 +19,7 @@
     <style name="QMUITextAppearance" parent="TextAppearanceBase">
         <item name="android:textColor">?attr/qmui_config_color_black</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+        <item name="android:textColorHighlight">?attr/qmui_skin_support_color_background_pressed</item>
     </style>
 
     <style name="QMUITextAppearance.Title"/>

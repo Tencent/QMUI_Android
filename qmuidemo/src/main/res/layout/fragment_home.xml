@@ -37,6 +37,6 @@
         android:background="@color/qmui_config_color_white"
         android:textSize="12sp"
         app:qmui_topDividerHeight="1px"
-        app:qmui_topDividerColor="?attr/qmui_config_color_separator"
+        app:qmui_topDividerColor="?attr/qmui_skin_support_color_separator"
         app:qmui_tab_icon_position="top"/>
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

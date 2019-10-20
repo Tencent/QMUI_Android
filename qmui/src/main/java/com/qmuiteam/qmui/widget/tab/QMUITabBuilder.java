@@ -25,7 +25,6 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 
 /**
@@ -65,11 +64,11 @@ public class QMUITabBuilder {
     /**
      * text color(icon color in if dynamicChangeIconColor == true) in  normal state
      */
-    private int normalColorAttr = R.attr.qmui_tab_normal_color;
+    private int normalColorAttr = R.attr.qmui_skin_support_tab_normal_color;
     /**
      * text color(icon color in if dynamicChangeIconColor == true) in  selected state
      */
-    private int selectedColorAttr = R.attr.qmui_tab_selected_color;
+    private int selectedColorAttr = R.attr.qmui_skin_support_tab_selected_color;
 
     /**
      * icon position(left/top/right/bottom)

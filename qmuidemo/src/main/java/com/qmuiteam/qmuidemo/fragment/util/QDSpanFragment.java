@@ -33,6 +33,7 @@ import com.qmuiteam.qmui.span.QMUIMarginImageSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.QDApplication;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
@@ -67,7 +68,7 @@ public class QDSpanFragment extends BaseFragment {
         }
     }
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.alignMiddle) TextView mAlignMiddleTextView;
     @BindView(R.id.marginImage) TextView mMarginImageTextView;
     @BindView(R.id.blockSpace) TextView mBlockSpaceTextView;

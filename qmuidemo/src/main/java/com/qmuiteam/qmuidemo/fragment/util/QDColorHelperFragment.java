@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Helper, widgetClass = QMUIColorHelper.class, iconRes = R.mipmap.icon_grid_color_helper)
 public class QDColorHelperFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.square_alpha) View mAlphaView;
     @BindView(R.id.square_desc_alpha) TextView mAlphaTextView;
     @BindView(R.id.ratioSeekBar) SeekBar mRatioSeekBar;

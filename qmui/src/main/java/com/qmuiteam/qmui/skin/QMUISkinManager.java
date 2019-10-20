@@ -19,14 +19,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Trace;
+import android.text.Spanned;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.skin.annotation.QMUISkinListenWithHierarchyChange;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.skin.handler.IQMUISkinRuleHandler;
@@ -34,6 +37,7 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleAlphaHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBackgroundHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBgTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBorderHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleProgressColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSeparatorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSrcHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextColorHandler;
@@ -140,6 +144,8 @@ public final class QMUISkinManager {
         mRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
+
     }
 
     @Nullable
@@ -226,6 +232,22 @@ public final class QMUISkinManager {
                     }
                 }
             }
+        } else if ((view instanceof TextView) || (view instanceof QMUIQQFaceView)) {
+            CharSequence text;
+            if (view instanceof TextView) {
+                text = ((TextView) view).getText();
+            } else {
+                text = ((QMUIQQFaceView) view).getText();
+            }
+            if (text instanceof Spanned) {
+                IQMUISkinHandlerSpan[] spans = ((Spanned) text).getSpans(0, text.length(), IQMUISkinHandlerSpan.class);
+                if (spans != null) {
+                    for (int i = 0; i < spans.length; i++) {
+                        spans[i].handle(view, this, skinIndex, theme);
+                    }
+                }
+                view.invalidate();
+            }
         }
     }
 
@@ -245,14 +267,14 @@ public final class QMUISkinManager {
         }
     }
 
-    public void refreshTheme(@NonNull View view){
+    public void refreshTheme(@NonNull View view) {
         Integer skinIndex = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        if(skinIndex == null || skinIndex <= 0){
+        if (skinIndex == null || skinIndex <= 0) {
             return;
         }
 
         SkinItem skinItem = mSkins.get(skinIndex);
-        if(skinItem != null){
+        if (skinItem != null) {
             applyTheme(view, skinIndex, skinItem.theme);
         }
     }

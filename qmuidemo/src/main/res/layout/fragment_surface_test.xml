@@ -16,8 +16,9 @@
 -->
 
 <com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:id="@+id/container"
@@ -25,7 +26,8 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_white"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:qmui_skin_background="?attr/app_skin_common_background">
     </FrameLayout>
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout

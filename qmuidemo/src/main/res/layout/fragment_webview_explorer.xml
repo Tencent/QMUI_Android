@@ -19,7 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/qmui_config_color_background">
+    android:background="?attr/qmui_skin_support_color_background">
 
     <com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer
         android:id="@+id/webview_container"

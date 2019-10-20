@@ -99,7 +99,6 @@
         <attr name="qmui_skin_background" format="string" />
         <attr name="qmui_skin_text_color" format="string" />
         <attr name="qmui_skin_second_text_color" format="string" />
-        <attr name="qmui_skin_btn_text_color" format="string" />
         <attr name="qmui_skin_src" format="string" />
         <attr name="qmui_skin_border" format="string" />
         <attr name="qmui_skin_separator_top" format="string" />
@@ -109,5 +108,6 @@
         <attr name="qmui_skin_alpha" format="string" />
         <attr name="qmui_skin_tint_color" format="string" />
         <attr name="qmui_skin_bg_tint_color" format="string" />
+        <attr name="qmui_skin_progress_color" format="string" />
     </declare-styleable>
 </resources>

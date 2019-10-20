@@ -79,23 +79,23 @@
         <!--***************************** qmui topbar  ***************************** -->
         <item name="qmui_topbar_height">56dp</item>
         <!-- skin support-->
-        <item name="qmui_topbar_separator_color">?attr/qmui_config_color_separator</item>
-        <item name="qmui_topbar_bg">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_subtitle_color">?attr/qmui_config_color_gray_3</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/qmui_config_color_gray_1</item>
-        <item name="qmui_topbar_image_tint_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_skin_support_topbar_separator_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_topbar_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_topbar_title_color">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_skin_support_topbar_subtitle_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_topbar_text_btn_color_state_list">@color/qmui_config_color_gray_1</item>
+        <item name="qmui_skin_support_topbar_image_tint_color">@color/qmui_config_color_gray_1</item>
         <!-- skin support-->
 
         <!--*************************** qmui tabSegment  *************************** -->
 
         <!-- skin support-->
-        <item name="qmui_tab_bg">@color/qmui_config_color_white</item>
-        <item name="qmui_tab_separator_color">?attr/qmui_config_color_separator</item>
-        <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_6</item>
-        <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
-        <item name="qmui_tab_sign_count_view_text_color">@color/qmui_config_color_white</item>
-        <item name="qmui_tab_sign_count_view_bg_color">?attr/qmui_config_color_red</item>
+        <item name="qmui_skin_support_tab_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_tab_separator_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_tab_normal_color">?attr/qmui_config_color_gray_6</item>
+        <item name="qmui_skin_support_tab_selected_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_tab_sign_count_view_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_tab_sign_count_view_bg_color">?attr/qmui_config_color_red</item>
         <!-- skin support-->
 
 
@@ -109,9 +109,9 @@
         <!--****************************** qmui btn  ******************************* -->
 
         <!-- skin support-->
-        <item name="qmui_round_btn_bg_color">@color/qmui_s_transparent</item>
-        <item name="qmui_round_btn_border_color">@color/qmui_btn_blue_border</item>
-        <item name="qmui_round_btn_text_color">@color/qmui_btn_blue_text</item>
+        <item name="qmui_skin_support_round_btn_bg_color">@color/qmui_s_transparent</item>
+        <item name="qmui_skin_support_round_btn_border_color">@color/qmui_btn_blue_border</item>
+        <item name="qmui_skin_support_round_btn_text_color">@color/qmui_btn_blue_text</item>
         <!-- skin support-->
 
         <item name="qmui_round_btn_text_size">@dimen/qmui_btn_text_size</item>
@@ -120,7 +120,7 @@
         <!--************************ qmui loading view   *************************** -->
 
         <!-- skin support-->
-        <item name="qmui_loading_color">@color/qmui_config_color_gray_5</item>
+        <item name="qmui_skin_support_loading_color">@color/qmui_config_color_gray_5</item>
         <!-- skin support-->
 
         <item name="qmui_loading_size">20dp</item>
@@ -129,12 +129,12 @@
         <!--************************ qmui empty view   *************************** -->
 
         <!-- skin support-->
-        <item name="qmui_empty_view_loading_color">?attr/qmui_loading_color</item>
-        <item name="qmui_empty_view_title_color">?attr/qmui_config_color_gray_3</item>
-        <item name="qmui_empty_view_sub_title_color">?attr/qmui_config_color_gray_3</item>
-        <item name="qmui_empty_view_btn_bg_color">?attr/qmui_round_btn_bg_color</item>
-        <item name="qmui_empty_view_btn_border_color">?attr/qmui_round_btn_border_color</item>
-        <item name="qmui_empty_view_btn_text_color">?attr/qmui_round_btn_text_color</item>
+        <item name="qmui_skin_support_empty_view_loading_color">?attr/qmui_skin_support_loading_color</item>
+        <item name="qmui_skin_support_empty_view_title_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_empty_view_sub_title_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_empty_view_btn_bg_color">?attr/qmui_skin_support_round_btn_bg_color</item>
+        <item name="qmui_skin_support_empty_view_btn_border_color">?attr/qmui_skin_support_round_btn_border_color</item>
+        <item name="qmui_skin_support_empty_view_btn_text_color">?attr/qmui_skin_support_round_btn_text_color</item>
         <!-- skin support-->
 
         <item name="qmui_empty_view_loading_size">?attr/qmui_loading_size</item>
@@ -154,14 +154,14 @@
         <!--************************ qmui common list   *************************** -->
 
         <!-- skin support-->
-        <item name="qmui_common_list_title_color">?attr/qmui_config_color_gray_1</item>
-        <item name="qmui_common_list_detail_color">?attr/qmui_config_color_gray_5</item>
-        <item name="qmui_common_list_icon_tint_color">?attr/qmui_config_color_blue</item>
-        <item name="qmui_common_list_red_point_tint_color">?attr/qmui_config_color_red</item>
-        <item name="qmui_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
-        <item name="qmui_common_list_separator_color">?attr/qmui_config_color_separator</item>
-        <item name="qmui_common_list_bg">?attr/qmui_s_list_item_bg_2</item>
-        <item name="qmui_common_list_chevron_color">?attr/qmui_config_color_gray_5</item>
+        <item name="qmui_skin_support_common_list_title_color">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_skin_support_common_list_detail_color">?attr/qmui_config_color_gray_5</item>
+        <item name="qmui_skin_support_common_list_icon_tint_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_common_list_red_point_tint_color">?attr/qmui_config_color_red</item>
+        <item name="qmui_skin_support_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
+        <item name="qmui_skin_support_common_list_separator_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_common_list_bg">?attr/qmui_s_list_item_bg_2</item>
+        <item name="qmui_skin_support_common_list_chevron_color">?attr/qmui_config_color_gray_5</item>
         <!-- skin support-->
 
         <item name="qmui_common_list_item_icon_margin_right">12dp</item>
@@ -189,13 +189,7 @@
         **********************************************-->
         <item name="qmui_config_color_blue">@color/qmui_config_color_blue</item>
         <item name="qmui_config_color_red">@color/qmui_config_color_red</item>
-        <item name="qmui_config_color_separator">@color/qmui_config_color_separator</item>
-        <item name="qmui_config_color_separator_darken">@color/qmui_config_color_separator_darken
-        </item>
-        <item name="qmui_config_color_background">@color/qmui_config_color_background</item>
-        <item name="qmui_config_color_background_pressed">
-            @color/qmui_config_color_background_pressed
-        </item>
+
         <item name="qmui_config_color_black">@color/qmui_config_color_black</item>
         <item name="qmui_config_color_link">@color/qmui_config_color_link</item>
         <item name="qmui_config_color_pressed">@color/qmui_config_color_pressed</item>
@@ -215,6 +209,11 @@
 
         <item name="qmui_general_shadow_elevation">14dp</item>
         <item name="qmui_general_shadow_alpha">0.25</item>
+
+        <item name="qmui_skin_support_color_separator">@color/qmui_config_color_separator</item>
+        <item name="qmui_skin_support_color_separator_darken">@color/qmui_config_color_separator_darken</item>
+        <item name="qmui_skin_support_color_background">@color/qmui_config_color_background</item>
+        <item name="qmui_skin_support_color_background_pressed">@color/qmui_config_color_background_pressed</item>
 
         <!--**********************************************
         *                qmui dialog                     *
@@ -412,7 +411,7 @@
         <item name="android:textAppearance">@style/QMUITextAppearance</item>
         <!-- textColorHighlight 放在appearance中无效，好像TextView总是默认存在一个textColorHighlight
              会覆盖掉它，并不知道原因 -->
-        <item name="android:textColorHighlight">?attr/qmui_config_color_background_pressed</item>
+        <item name="android:textColorHighlight">?attr/qmui_skin_support_color_background_pressed</item>
     </style>
 
     <style name="AutoCompleteTextView.Compat" parent="AutoCompleteTextViewBase.Compat">

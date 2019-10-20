@@ -36,6 +36,7 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -69,6 +70,7 @@ import android.widget.FrameLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.IQMUISkinDispatchInterceptor;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -86,7 +88,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @date 2017-09-02
  */
 
-public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowInsetLayout {
+public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowInsetLayout, IQMUISkinDispatchInterceptor {
 
     private static final int DEFAULT_SCRIM_ANIMATION_DURATION = 600;
 
@@ -1265,5 +1267,10 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             mCollapsingTextHelper.setExpansionFraction(
                     Math.abs(verticalOffset) / (float) expandRange);
         }
+    }
+
+    @Override
+    public boolean intercept(int skinIndex, Resources.Theme theme) {
+        return true;
     }
 }

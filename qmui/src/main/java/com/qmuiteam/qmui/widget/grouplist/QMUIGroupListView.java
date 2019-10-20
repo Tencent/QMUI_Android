@@ -149,13 +149,13 @@ public class QMUIGroupListView extends LinearLayout {
         private SparseArray<QMUICommonListItemView> mItemViews;
         private boolean mUseDefaultTitleIfNone;
         private boolean mUseTitleViewForSectionSpace = true;
-        private int mSeparatorColorAttr = R.attr.qmui_common_list_separator_color;
+        private int mSeparatorColorAttr = R.attr.qmui_skin_support_common_list_separator_color;
         private boolean mHandleSeparatorCustom = false;
         private boolean mShowSeparator = true;
         private boolean mOnlyShowStartEndSeparator = false;
         private int mMiddleSeparatorInsetLeft = 0;
         private int mMiddleSeparatorInsetRight = 0;
-        private int mBgAttr = R.attr.qmui_common_list_bg;
+        private int mBgAttr = R.attr.qmui_skin_support_common_list_bg;
 
         private int mLeftIconWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
         private int mLeftIconHeight = ViewGroup.LayoutParams.WRAP_CONTENT;

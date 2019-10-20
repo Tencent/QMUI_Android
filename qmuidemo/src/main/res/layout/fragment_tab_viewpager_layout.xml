@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@color/qmui_config_color_white"
-            app:qmui_bottomDividerColor="?attr/qmui_config_color_separator"
+            app:qmui_bottomDividerColor="?attr/qmui_skin_support_color_separator"
             app:qmui_bottomDividerHeight="1px" />
 
         <androidx.viewpager.widget.ViewPager

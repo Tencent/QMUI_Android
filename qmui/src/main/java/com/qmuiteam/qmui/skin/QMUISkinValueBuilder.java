@@ -21,7 +21,6 @@ public class QMUISkinValueBuilder {
     public static final String BACKGROUND = "background";
     public static final String TEXT_COLOR = "textColor";
     public static final String SECOND_TEXT_COLOR = "secondTextColor";
-    public static final String BTN_TEXT_COLOR = "btnTextColor";
     public static final String SRC = "src";
     public static final String BORDER = "border";
     public static final String TOP_SEPARATOR = "topSeparator";
@@ -31,6 +30,7 @@ public class QMUISkinValueBuilder {
     public static final String ALPHA = "alpha";
     public static final String TINT_COLOR = "tintColor";
     public static final String BG_TINT_COLOR = "bgTintColor";
+    public static final String PROGRESS_COLOR = "progressColor";
 
     private HashMap<String, String> mValues = new HashMap<>();
 
@@ -54,13 +54,13 @@ public class QMUISkinValueBuilder {
         return this;
     }
 
-    public QMUISkinValueBuilder btnTextColor(int attr) {
-        mValues.put(BTN_TEXT_COLOR, String.valueOf(attr));
+    public QMUISkinValueBuilder progressColor(int attr){
+        mValues.put(PROGRESS_COLOR, String.valueOf(attr));
         return this;
     }
 
-    public QMUISkinValueBuilder btnTextColor(String attrName) {
-        mValues.put(BTN_TEXT_COLOR, attrName);
+    public QMUISkinValueBuilder progressColor(String attrName){
+        mValues.put(PROGRESS_COLOR, attrName);
         return this;
     }
 

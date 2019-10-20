@@ -21,8 +21,6 @@
         <item name="qmui_tab_indicator_height">@dimen/qmui_tab_segment_indicator_height</item>
         <item name="qmui_tab_normal_text_size">@dimen/qmui_tab_segment_text_size</item>
         <item name="qmui_tab_selected_text_size">@dimen/qmui_tab_segment_text_size</item>
-        <item name="qmui_tab_normal_color">?attr/qmui_config_color_gray_5</item>
-        <item name="qmui_tab_selected_color">?attr/qmui_config_color_blue</item>
         <item name="qmui_tab_indicator_top">false</item>
         <item name="qmui_tab_icon_position">left</item>
     </style>
@@ -42,10 +40,10 @@
         <item name="android:gravity">center</item>
         <item name="android:ellipsize">end</item>
         <item name="qmui_isRadiusAdjustBounds">true</item>
-        <item name="qmui_backgroundColor">?attr/qmui_round_btn_bg_color</item>
+        <item name="qmui_backgroundColor">?attr/qmui_skin_support_round_btn_bg_color</item>
         <item name="qmui_borderWidth">?attr/qmui_round_btn_border_width</item>
-        <item name="qmui_borderColor">?attr/qmui_round_btn_border_color</item>
-        <item name="android:textColor">?attr/qmui_round_btn_text_color</item>
+        <item name="qmui_borderColor">?attr/qmui_skin_support_round_btn_border_color</item>
+        <item name="android:textColor">?attr/qmui_skin_support_round_btn_text_color</item>
     </style>
 
 
@@ -53,8 +51,8 @@
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
         <item name="android:background">?attr/qmui_s_list_item_bg_2</item>
-        <item name="qmui_common_list_title_color">?attr/qmui_common_list_title_color</item>
-        <item name="qmui_common_list_detail_color">?attr/qmui_common_list_detail_color</item>
+        <item name="qmui_common_list_title_color">?attr/qmui_skin_support_common_list_title_color</item>
+        <item name="qmui_common_list_detail_color">?attr/qmui_skin_support_common_list_detail_color</item>
     </style>
 
     <style name="QMUI.GroupListSectionView">
@@ -71,7 +69,7 @@
     <!--********************* Loading *********************-->
     <style name="QMUI.Loading">
         <item name="qmui_loading_view_size">?attr/qmui_loading_size</item>
-        <item name="android:color">?attr/qmui_loading_color</item>
+        <item name="android:color">?attr/qmui_skin_support_loading_color</item>
     </style>
 
     <style name="QMUI.Loading.White">
@@ -81,24 +79,24 @@
 
     <!--********************* TopBar *********************-->
     <style name="QMUI.TopBar">
-        <item name="android:background">?attr/qmui_topbar_bg</item>
+        <item name="android:background">?attr/qmui_skin_support_topbar_bg</item>
         <item name="qmui_bottomDividerHeight">1px</item>
-        <item name="qmui_bottomDividerColor">?attr/qmui_topbar_separator_color</item>
+        <item name="qmui_bottomDividerColor">?attr/qmui_skin_support_topbar_separator_color</item>
         <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
         <item name="qmui_topbar_title_gravity">center</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
-        <item name="qmui_topbar_title_color">?attr/qmui_topbar_title_color</item>
+        <item name="qmui_topbar_title_color">?attr/qmui_skin_support_topbar_title_color</item>
         <item name="qmui_topbar_title_text_size">17sp</item>
         <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
         <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">0dp</item>
         <item name="qmui_topbar_title_container_padding_horizontal">8dp</item>
         <item name="qmui_topbar_subtitle_text_size">11sp</item>
-        <item name="qmui_topbar_subtitle_color">?attr/qmui_topbar_subtitle_color</item>
+        <item name="qmui_topbar_subtitle_color">?attr/qmui_skin_support_topbar_subtitle_color</item>
         <item name="qmui_topbar_image_btn_width">48dp</item>
         <item name="qmui_topbar_image_btn_height">48dp</item>
         <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
-        <item name="qmui_topbar_text_btn_color_state_list">?attr/qmui_topbar_text_btn_color_state_list</item>
+        <item name="qmui_topbar_text_btn_color_state_list">?attr/qmui_skin_support_topbar_text_btn_color_state_list</item>
         <item name="qmui_topbar_text_btn_text_size">16sp</item>
     </style>
 

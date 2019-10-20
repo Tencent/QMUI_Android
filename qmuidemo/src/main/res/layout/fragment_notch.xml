@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
             app:qmui_topDividerHeight="1px"
-            app:qmui_topDividerColor="?attr/qmui_config_color_separator"
+            app:qmui_topDividerColor="?attr/qmui_skin_support_color_separator"
             android:textSize="12sp"/>
     </FrameLayout>
 

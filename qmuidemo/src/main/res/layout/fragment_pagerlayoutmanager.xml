@@ -15,21 +15,29 @@
  limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="?attr/app_primary_color">
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout2 xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.qmuiteam.qmui.widget.QMUITopBar
+    <com.qmuiteam.qmui.widget.QMUITopBarLayout
         android:id="@+id/topbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/qmui_topbar_height"/>
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fitsSystemWindows="true"/>
 
     <FrameLayout
         android:id="@+id/pagerWrap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/qmui_topbar_height"
-        android:background="@color/qmui_config_color_white"/>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/qmui_config_color_white"
+        app:qmui_skin_background="?attr/app_skin_common_background"/>
 
-</FrameLayout>
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout2>

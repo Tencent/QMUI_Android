@@ -429,7 +429,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         resultImageView.setLayoutParams(getAccessoryLayoutParams());
         resultImageView.setScaleType(ImageView.ScaleType.CENTER);
         QMUISkinHelper.setSkinValue(resultImageView,
-                new QMUISkinValueBuilder().tintColor(R.attr.qmui_common_list_chevron_color));
+                new QMUISkinValueBuilder().tintColor(R.attr.qmui_skin_support_common_list_chevron_color));
         return resultImageView;
     }
 

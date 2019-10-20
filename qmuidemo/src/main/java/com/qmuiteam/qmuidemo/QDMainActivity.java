@@ -17,6 +17,7 @@
 package com.qmuiteam.qmuidemo;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,9 +34,13 @@ import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.layout.QMUIButton;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinMaker;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
@@ -83,6 +88,7 @@ public class QDMainActivity extends BaseFragmentActivity {
         mSkinActionLayout = new QMUILinearLayout(this);
         mSkinActionLayout.setOrientation(LinearLayout.VERTICAL);
         mSkinActionLayout.setBackgroundColor(Color.WHITE);
+        QMUISkinHelper.setSkinValue(mSkinActionLayout, "background:app_skin_common_background");
         mSkinActionLayout.setShadowElevation(QMUIDisplayHelper.dp2px(this, 32));
         mSkinActionLayout.setShadowAlpha(0.8f);
         mSkinActionLayout.setRadius(QMUIDisplayHelper.dp2px(this, 6));
@@ -96,12 +102,27 @@ public class QDMainActivity extends BaseFragmentActivity {
 
 
         int btnHeight = QMUIDisplayHelper.dp2px(this, 48);
-        mSkinMakerBtn = new QMUIButton(this);
-        mSkinMakerBtn.setChangeAlphaWhenPress(true);
-        mSkinMakerBtn.setBackground(null);
-        mSkinMakerBtn.setPadding(0, 0, 0, 0);
-        mSkinMakerBtn.setGravity(Gravity.CENTER);
-        mSkinMakerBtn.setOnClickListener(new View.OnClickListener() {
+
+        QMUIButton changeThemeBtn = createFloatItemBtn("Change Theme", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] items = new String[]{"蓝色（默认）", "黑色", "白色"};
+                new QMUIDialog.MenuDialogBuilder(QDMainActivity.this)
+                        .addItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                QDSkinManager.changeSkin(which + 1);
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+        mSkinActionLayout.addView(changeThemeBtn,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
+
+        mSkinMakerBtn = createFloatItemBtn(null, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 QDApplication.openSkinMake = !QDApplication.openSkinMake;
@@ -113,21 +134,26 @@ public class QDMainActivity extends BaseFragmentActivity {
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
 
 
-        QMUIButton skinExportBtn = new QMUIButton(this);
-        skinExportBtn.setChangeAlphaWhenPress(true);
-        skinExportBtn.setPadding(0, 0, 0, 0);
-        skinExportBtn.setGravity(Gravity.CENTER);
-        skinExportBtn.setBackground(null);
-        skinExportBtn.setText("Export SkinMaker Result");
-        skinExportBtn.setOnClickListener(new View.OnClickListener() {
+        QMUIButton skinExportBtn = createFloatItemBtn("Export SkinMaker Result", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 QMUISkinMaker.getInstance().export(QDMainActivity.this);
-
             }
         });
         mSkinActionLayout.addView(skinExportBtn,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
+    }
+
+    private QMUIButton createFloatItemBtn(String text, View.OnClickListener onClickListener){
+        QMUIButton btn = new QMUIButton(this);
+        btn.setChangeAlphaWhenPress(true);
+        btn.setPadding(0, 0, 0, 0);
+        btn.setGravity(Gravity.CENTER);
+        btn.setBackground(null);
+        btn.setText(text);
+        btn.setOnClickListener(onClickListener);
+        QMUISkinHelper.setSkinValue(btn, "textColor:app_skin_common_title_text_color");
+        return btn;
     }
 
     private void renderSkinMakerBtn() {

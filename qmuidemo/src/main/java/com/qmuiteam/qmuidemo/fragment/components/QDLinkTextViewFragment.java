@@ -20,7 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.textview.QMUILinkTextView;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
 @Widget(widgetClass = QMUILinkTextView.class, iconRes = R.mipmap.icon_grid_link_text_view)
 public class QDLinkTextViewFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.link_text_view) QMUILinkTextView mLinkTextView;
 
 

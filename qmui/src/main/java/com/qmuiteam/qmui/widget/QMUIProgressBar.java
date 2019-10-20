@@ -174,6 +174,19 @@ public class QMUIProgressBar extends View {
         invalidate();
     }
 
+    @Override
+    public void setBackgroundColor(int backgroundColor) {
+        mBackgroundColor = backgroundColor;
+        mBackgroundPaint.setColor(mBackgroundColor);
+        invalidate();
+    }
+
+    public void setProgressColor(int progressColor) {
+        mProgressColor = progressColor;
+        mPaint.setColor(mProgressColor);
+        invalidate();
+    }
+
     /**
      * 设置进度文案的文字大小
      *

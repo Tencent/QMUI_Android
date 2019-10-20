@@ -273,9 +273,9 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
                 context, null, R.attr.qmui_tab_sign_count_view);
         QMUISkinSimpleDefaultAttrProvider skinProvider = new QMUISkinSimpleDefaultAttrProvider();
         skinProvider.setDefaultSkinAttr(
-                QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_tab_sign_count_view_bg_color);
+                QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_skin_support_tab_sign_count_view_bg_color);
         skinProvider.setDefaultSkinAttr(
-                QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_tab_sign_count_view_text_color);
+                QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_tab_sign_count_view_text_color);
         btn.setTag(R.id.qmui_skin_default_attr_provider, skinProvider);
         return btn;
     }

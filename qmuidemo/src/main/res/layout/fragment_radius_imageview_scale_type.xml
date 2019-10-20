@@ -25,7 +25,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="?attr/qmui_topbar_height"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:qmui_skin_background="?attr/app_skin_common_background">
 
         <TextView
             style="@style/QDCommonTitle"

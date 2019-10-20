@@ -19,4 +19,4 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_vertical"
     android:contentDescription="Update tips"
-    app:qmui_skin_src="?attr/qmui_common_list_new_drawable"/>
+    app:qmui_skin_src="?attr/qmui_skin_support_common_list_new_drawable"/>

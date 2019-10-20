@@ -43,7 +43,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration imple
     private final int mDividerAttr;
 
     public GridDividerItemDecoration(Context context, int spanCount) {
-        this(context, spanCount, R.attr.qmui_config_color_separator, 1f);
+        this(context, spanCount, R.attr.qmui_skin_support_color_separator, 1f);
     }
 
     public GridDividerItemDecoration(Context context, int spanCount, int dividerColorAttr, float dividerWidth) {

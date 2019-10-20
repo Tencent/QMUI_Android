@@ -23,10 +23,6 @@
     **********************************************-->
     <attr name="qmui_config_color_blue" format="color" />
     <attr name="qmui_config_color_red" format="color" />
-    <attr name="qmui_config_color_separator" format="color" />
-    <attr name="qmui_config_color_separator_darken" format="color" />
-    <attr name="qmui_config_color_background" format="color" />
-    <attr name="qmui_config_color_background_pressed" format="color" />
     <attr name="qmui_config_color_black" format="color" />
     <attr name="qmui_config_color_link" format="color" />
     <attr name="qmui_config_color_pressed" format="color" />
@@ -46,7 +42,12 @@
 
     <attr name="qmui_general_shadow_elevation" format="dimension" />
     <attr name="qmui_general_shadow_alpha" format="float" />
-    
+
+
+    <attr name="qmui_skin_support_color_separator" format="color" />
+    <attr name="qmui_skin_support_color_separator_darken" format="color" />
+    <attr name="qmui_skin_support_color_background" format="color" />
+    <attr name="qmui_skin_support_color_background_pressed" format="color" />
 
     <!--**********************************************
     *              qmui common list                  *
@@ -65,14 +66,14 @@
     <attr name="qmui_common_list_item_detail_v_margin_with_title" format="dimension" />
     <attr name="qmui_common_list_item_holder_margin_with_title" format="dimension"/>
 
-    <attr name="qmui_common_list_title_color" format="color|reference"/>
-    <attr name="qmui_common_list_detail_color" format="color|reference"/>
-    <attr name="qmui_common_list_icon_tint_color" format="color|reference"/>
-    <attr name="qmui_common_list_red_point_tint_color" format="color|reference"/>
-    <attr name="qmui_common_list_new_drawable" format="reference"/>
-    <attr name="qmui_common_list_separator_color" format="color|reference"/>
-    <attr name="qmui_common_list_bg" format="reference"/>
-    <attr name="qmui_common_list_chevron_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_title_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_detail_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_icon_tint_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_red_point_tint_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_new_drawable" format="reference"/>
+    <attr name="qmui_skin_support_common_list_separator_color" format="color|reference"/>
+    <attr name="qmui_skin_support_common_list_bg" format="reference"/>
+    <attr name="qmui_skin_support_common_list_chevron_color" format="color|reference"/>
 
 
     <!--**********************************************
@@ -99,37 +100,38 @@
     <attr name="qmui_round_btn_text_size" format="dimension" />
     <attr name="qmui_round_btn_border_width" format="dimension" />
 
-    <attr name="qmui_round_btn_bg_color" format="color" />
-    <attr name="qmui_round_btn_border_color" format="color" />
-    <attr name="qmui_round_btn_text_color" format="color" />
+    <attr name="qmui_skin_support_round_btn_bg_color" format="color" />
+    <attr name="qmui_skin_support_round_btn_border_color" format="color" />
+    <attr name="qmui_skin_support_round_btn_text_color" format="color" />
 
     <!--**********************************************
     *                  qmui topbar                   *
     ***********************************************-->
     <attr name="qmui_topbar_height" format="dimension" />
-    <attr name="qmui_topbar_separator_color" format="color"/>
-    <attr name="qmui_topbar_bg" format="reference"/>
-    <attr name="qmui_topbar_title_color" format="color"/>
-    <attr name="qmui_topbar_subtitle_color" format="color"/>
-    <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
-    <attr name="qmui_topbar_image_tint_color" format="color"/>
+
+    <attr name="qmui_skin_support_topbar_separator_color" format="color"/>
+    <attr name="qmui_skin_support_topbar_bg" format="reference"/>
+    <attr name="qmui_skin_support_topbar_title_color" format="color"/>
+    <attr name="qmui_skin_support_topbar_subtitle_color" format="color"/>
+    <attr name="qmui_skin_support_topbar_text_btn_color_state_list" format="reference"/>
+    <attr name="qmui_skin_support_topbar_image_tint_color" format="color"/>
 
     <!--**********************************************
     *               qmui loading view                *
     ***********************************************-->
     <attr name="qmui_loading_size" format="dimension" />
-    <attr name="qmui_loading_color" format="color" />
+    <attr name="qmui_skin_support_loading_color" format="color" />
     
 
     <!--**********************************************
     *                  qmui tabSegment              *
     ***********************************************-->
-    <attr name="qmui_tab_bg" format="reference"/>
-    <attr name="qmui_tab_separator_color" format="color"/>
-    <attr name="qmui_tab_normal_color" format="color|reference"/>
-    <attr name="qmui_tab_selected_color" format="color|reference"/>
-    <attr name="qmui_tab_sign_count_view_text_color" format="color|reference"/>
-    <attr name="qmui_tab_sign_count_view_bg_color" format="color|reference"/>
+    <attr name="qmui_skin_support_tab_bg" format="reference"/>
+    <attr name="qmui_skin_support_tab_separator_color" format="color"/>
+    <attr name="qmui_skin_support_tab_normal_color" format="color|reference"/>
+    <attr name="qmui_skin_support_tab_selected_color" format="color|reference"/>
+    <attr name="qmui_skin_support_tab_sign_count_view_text_color" format="color|reference"/>
+    <attr name="qmui_skin_support_tab_sign_count_view_bg_color" format="color|reference"/>
 
 
     <attr name="qmui_tab_sign_count_view" format="reference" />
@@ -152,12 +154,12 @@
     <attr name="qmui_empty_view_btn_normal_margin_top" format="dimension"/>
     <attr name="qmui_empty_view_btn_text_size" format="dimension"/>
 
-    <attr name="qmui_empty_view_loading_color" format="color|reference"/>
-    <attr name="qmui_empty_view_title_color" format="color|reference"/>
-    <attr name="qmui_empty_view_sub_title_color" format="color|reference"/>
-    <attr name="qmui_empty_view_btn_bg_color" format="color|reference"/>
-    <attr name="qmui_empty_view_btn_border_color" format="color|reference"/>
-    <attr name="qmui_empty_view_btn_text_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_loading_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_title_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_sub_title_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_btn_bg_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_btn_border_color" format="color|reference"/>
+    <attr name="qmui_skin_support_empty_view_btn_text_color" format="color|reference"/>
 
     <!--**********************************************
     *                  qmui popup                    *

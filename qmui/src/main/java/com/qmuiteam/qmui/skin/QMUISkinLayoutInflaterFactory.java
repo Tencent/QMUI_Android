@@ -115,8 +115,6 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 builder.textColor(id);
             } else if (attr == R.styleable.QMUISkinDef_qmui_skin_second_text_color) {
                 builder.secondTextColor(id);
-            } else if (attr == R.styleable.QMUISkinDef_qmui_skin_btn_text_color) {
-                builder.btnTextColor(id);
             } else if (attr == R.styleable.QMUISkinDef_qmui_skin_src) {
                 builder.src(id);
             } else if (attr == R.styleable.QMUISkinDef_qmui_skin_tint_color) {
@@ -131,6 +129,8 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 builder.leftSeparator(id);
             }else if(attr == R.styleable.QMUISkinDef_qmui_skin_bg_tint_color) {
                 builder.bgTintColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_progress_color){
+                builder.progressColor(id);
             }
         }
         a.recycle();

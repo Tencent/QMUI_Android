@@ -106,8 +106,8 @@
             <enum name="switcher" value="2"/>
             <enum name="custom" value="3"/>
         </attr>
-        <attr name="qmui_common_list_title_color"/>
-        <attr name="qmui_common_list_detail_color"/>
+        <attr name="qmui_common_list_title_color" format="reference|color"/>
+        <attr name="qmui_common_list_detail_color" format="reference|color"/>
     </declare-styleable>
     <attr name="QMUIGroupListSectionViewStyle" format="reference"/>
 
@@ -133,14 +133,14 @@
         <attr name="qmui_topbar_title_text_size" format="dimension"/>
         <attr name="qmui_topbar_title_text_size_with_subtitle" format="dimension"/>
         <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
-        <attr name="qmui_topbar_title_color"/>
-        <attr name="qmui_topbar_subtitle_color"/>
+        <attr name="qmui_topbar_title_color" format="color"/>
+        <attr name="qmui_topbar_subtitle_color" format="color"/>
         <attr name="qmui_topbar_title_margin_horizontal_when_no_btn_aside" format="dimension"/>
         <attr name="qmui_topbar_title_container_padding_horizontal" format="dimension"/>
         <attr name="qmui_topbar_image_btn_width" format="dimension"/>
         <attr name="qmui_topbar_image_btn_height" format="dimension"/>
         <attr name="qmui_topbar_text_btn_padding_horizontal" format="dimension"/>
-        <attr name="qmui_topbar_text_btn_color_state_list"/>
+        <attr name="qmui_topbar_text_btn_color_state_list" format="reference"/>
         <attr name="qmui_topbar_text_btn_text_size" format="dimension"/>
     </declare-styleable>
     <attr name="QMUITopBarStyle" format="reference"/>

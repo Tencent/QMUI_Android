@@ -53,7 +53,7 @@ public class QMUILoadingView extends View implements IQMUISkinDefaultAttrProvide
 
     static {
         sDefaultAttrs = new SimpleArrayMap<>();
-        sDefaultAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_loading_color);
+        sDefaultAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_skin_support_loading_color);
     }
 
     public QMUILoadingView(Context context) {

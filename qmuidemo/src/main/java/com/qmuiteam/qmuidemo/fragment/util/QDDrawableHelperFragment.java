@@ -28,6 +28,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmuidemo.R;
@@ -49,7 +50,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Helper, widgetClass = QMUIDrawableHelper.class, iconRes = R.mipmap.icon_grid_drawable_helper)
 public class QDDrawableHelperFragment extends BaseFragment {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.createFromView) QMUIRoundButton mCreateFromViewButton;
     @BindView(R.id.solidImage) ImageView mSolidImageView;
     @BindView(R.id.circleGradient) ImageView mCircleGradientView;

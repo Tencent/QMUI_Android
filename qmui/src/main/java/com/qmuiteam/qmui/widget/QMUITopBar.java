@@ -94,10 +94,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
 
     static {
         sDefaultSkinAttrs = new SimpleArrayMap<>(4);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_topbar_separator_color);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_topbar_bg);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BTN_TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_skin_support_topbar_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_skin_support_topbar_bg);
     }
 
     public QMUITopBar(Context context) {
@@ -225,7 +223,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             mTitleView.setEllipsize(TruncateAt.MIDDLE);
             mTitleView.setTextColor(mTitleTextColor);
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
-            provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_topbar_title_color);
+            provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_topbar_title_color);
             mTitleView.setTag(R.id.qmui_skin_default_attr_provider, provider);
             updateTitleViewStyle();
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
@@ -284,7 +282,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             mSubTitleView.setTextSize(mSubTitleTextSize);
             mSubTitleView.setTextColor(mSubTitleTextColor);
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
-            provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_topbar_subtitle_color);
+            provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_topbar_subtitle_color);
             mTitleView.setTag(R.id.qmui_skin_default_attr_provider, provider);
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
             titleLp.topMargin = QMUIDisplayHelper.dp2px(getContext(), 1);
@@ -551,7 +549,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         if (mTopBarTextDefaultAttrProvider == null) {
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
             provider.setDefaultSkinAttr(
-                    QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_topbar_text_btn_color_state_list);
+                    QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_topbar_text_btn_color_state_list);
             mTopBarTextDefaultAttrProvider = provider;
 
         }
@@ -583,7 +581,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             if (mTopBarImageColorTintColorProvider == null) {
                 QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
                 provider.setDefaultSkinAttr(
-                        QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_topbar_image_tint_color);
+                        QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_skin_support_topbar_image_tint_color);
                 mTopBarImageColorTintColorProvider = provider;
             }
             imageButton.setTag(R.id.qmui_skin_default_attr_provider, mTopBarImageColorTintColorProvider);

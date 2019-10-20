@@ -25,7 +25,8 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
         android:background="@color/qmui_config_color_white"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:qmui_skin_background="?attr/app_skin_common_background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +43,10 @@
                 android:textSize="16sp"
                 app:qmui_background_color="@color/qmui_config_color_gray_8"
                 app:qmui_progress_color="@color/app_color_blue_2"
-                app:qmui_type="type_rect"/>
+                app:qmui_type="type_rect"
+                app:qmui_skin_background="?attr/app_skin_progress_bar_bg_color"
+                app:qmui_skin_progress_color="?attr/app_skin_progress_bar_progress_color"
+                app:qmui_skin_text_color="?attr/app_skin_progress_bar_text_color"/>
 
             <com.qmuiteam.qmui.widget.QMUIProgressBar
                 android:id="@+id/circleProgressBar"
@@ -54,7 +58,10 @@
                 app:qmui_background_color="?attr/qmui_config_color_gray_8"
                 app:qmui_progress_color="@color/app_color_blue_2"
                 app:qmui_stroke_width="18dp"
-                app:qmui_type="type_circle"/>
+                app:qmui_type="type_circle"
+                app:qmui_skin_background="?attr/app_skin_progress_bar_bg_color"
+                app:qmui_skin_progress_color="?attr/app_skin_progress_bar_progress_color"
+                app:qmui_skin_text_color="?attr/app_skin_progress_bar_text_color"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
