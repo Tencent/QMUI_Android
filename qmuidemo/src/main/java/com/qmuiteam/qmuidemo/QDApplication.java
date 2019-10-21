@@ -55,7 +55,9 @@ public class QDApplication extends Application {
         QMUISwipeBackActivityManager.init(this);
         QMUIQQFaceCompiler.setDefaultQQFaceManager(QDQQFaceManager.getInstance());
         QDSkinManager.install(this);
-        QMUISkinMaker.init(context, new String[]{"com.qmuiteam.qmuidemo"}, R.attr.class);
+        QMUISkinMaker.init(context,
+                new String[]{"com.qmuiteam.qmuidemo"},
+                new String[]{"app_skin_"}, R.attr.class);
     }
 
     @Override

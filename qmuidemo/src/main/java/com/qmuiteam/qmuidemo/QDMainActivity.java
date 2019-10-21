@@ -165,9 +165,7 @@ public class QDMainActivity extends BaseFragmentActivity {
             }
         } else {
             mSkinMakerBtn.setText("Open SkinMaker");
-            if (baseFragment != null) {
-                baseFragment.closeSkinMaker();
-            }
+            QMUISkinMaker.getInstance().unBindAll();
         }
     }
 

@@ -289,4 +289,29 @@ public class QMUIButton extends QMUIAlphaButton implements IQMUILayout {
         mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());
         mLayoutHelper.dispatchRoundBorderDraw(canvas);
     }
+
+    @Override
+    public boolean hasBorder() {
+        return mLayoutHelper.hasBorder();
+    }
+
+    @Override
+    public boolean hasLeftSeparator() {
+        return mLayoutHelper.hasLeftSeparator();
+    }
+
+    @Override
+    public boolean hasTopSeparator() {
+        return mLayoutHelper.hasTopSeparator();
+    }
+
+    @Override
+    public boolean hasRightSeparator() {
+        return mLayoutHelper.hasRightSeparator();
+    }
+
+    @Override
+    public boolean hasBottomSeparator() {
+        return mLayoutHelper.hasBottomSeparator();
+    }
 }

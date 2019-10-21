@@ -33,6 +33,7 @@
     <attr name="app_skin_span_pressed_text_color" format="color"/>
     <attr name="app_skin_span_normal_bg_color" format="color"/>
     <attr name="app_skin_span_pressed_bg_color" format="color"/>
+    <attr name="app_skin_alpha_test" format="float"/>
 
 
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
@@ -87,6 +88,7 @@
         <item name="app_skin_span_pressed_text_color">@color/app_color_blue_pressed</item>
         <item name="app_skin_span_normal_bg_color">@color/qmui_config_color_gray_8</item>
         <item name="app_skin_span_pressed_bg_color">@color/qmui_config_color_gray_6</item>
+        <item name="app_skin_alpha_test">1</item>
     </style>
 
     <!-- blue skin -->
@@ -128,6 +130,7 @@
         <item name="app_skin_span_pressed_text_color">@color/qmui_config_color_50_white</item>
         <item name="app_skin_span_normal_bg_color">@color/qmui_config_color_gray_4</item>
         <item name="app_skin_span_pressed_bg_color">@color/qmui_config_color_gray_2</item>
+        <item name="app_skin_alpha_test">0.5</item>
     </style>
 
     <!-- white skin -->

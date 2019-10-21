@@ -296,10 +296,10 @@ public class QMUIGroupListView extends LinearLayout {
                     .bottomSeparator(mSeparatorColorAttr)
                     .build();
             int separatorColor = QMUIResHelper.getAttrColor(groupListView.getContext(), mSeparatorColorAttr);
-            Drawable bg = QMUIResHelper.getAttrDrawable(groupListView.getContext(), mBgAttr);
             for (int i = 0; i < itemViewCount; i++) {
                 QMUICommonListItemView itemView = mItemViews.get(i);
-                QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg);
+                Drawable bg = QMUISkinHelper.getSkinDrawable(groupListView, mBgAttr);
+                QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg == null ? null : bg.mutate());
                 QMUISkinHelper.setSkinValue(itemView, skin);
                 if (!mHandleSeparatorCustom && mShowSeparator) {
                     if (itemViewCount == 1) {

@@ -84,6 +84,10 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
         }
     }
 
+    public int getStrokeWidth(){
+        return mStrokeWidth;
+    }
+
     public void setStrokeColors(@Nullable ColorStateList colors){
         setStrokeData(mStrokeWidth, colors);
     }

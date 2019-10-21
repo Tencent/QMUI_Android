@@ -79,7 +79,7 @@ public abstract class BaseFragment extends QMUIFragment {
     }
 
     public void closeSkinMaker(){
-        QMUISkinMaker.getInstance().unbind(mBindId);
+        QMUISkinMaker.getInstance().unBind(mBindId);
         mBindId = -1;
     }
 

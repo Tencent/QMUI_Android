@@ -352,4 +352,14 @@ public interface IQMUILayout {
      */
     void updateBottomSeparatorColor(int color);
 
+    boolean hasTopSeparator();
+
+    boolean hasRightSeparator();
+
+    boolean hasLeftSeparator();
+
+    boolean hasBottomSeparator();
+
+    boolean hasBorder();
+
 }

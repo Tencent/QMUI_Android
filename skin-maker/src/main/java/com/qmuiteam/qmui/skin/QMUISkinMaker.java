@@ -27,15 +27,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUILoadingView;
+import com.qmuiteam.qmui.widget.QMUIProgressBar;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.popup.QMUIPopups;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.tencent.mmkv.MMKV;
 
@@ -61,6 +69,7 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.TintableBackgroundView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
@@ -84,7 +93,7 @@ public class QMUISkinMaker {
         return sSkinMaker != null;
     }
 
-    public static QMUISkinMaker init(Context context, String[] packageNames, Class<?> attrsClassInR) {
+    public static QMUISkinMaker init(Context context, String[] packageNames, String[] attrPrexfixes, Class<?> attrsClassInR) {
         if (sSkinMaker == null) {
             sSkinMaker = new QMUISkinMaker();
         }
@@ -97,18 +106,16 @@ public class QMUISkinMaker {
         sSkinMaker.mAttrsInR = new ArrayList<>();
         for (Field field : fields) {
             String name = field.getName();
-            if (name.startsWith("qmui") || name.startsWith("color") || name.startsWith("app") || name.contains("skin")) {
-                String lowerCase = name.toLowerCase();
-                if (lowerCase.endsWith("width")
-                        || lowerCase.endsWith("height")
-                        || lowerCase.endsWith("size")
-                        || lowerCase.endsWith("style")
-                        || lowerCase.endsWith("theme")) {
-                    continue;
-                }
+            if (name.startsWith("qmui_skin_support_")) {
                 sSkinMaker.mAttrsInR.add(name);
+            } else {
+                for (String prefix : attrPrexfixes) {
+                    if (name.startsWith(prefix)) {
+                        sSkinMaker.mAttrsInR.add(name);
+                        break;
+                    }
+                }
             }
-
         }
         return sSkinMaker;
     }
@@ -286,7 +293,7 @@ public class QMUISkinMaker {
         public void onChildViewDetachedFromWindow(@NonNull View view) {
             Integer bindId = mChildBindInfo.remove(view);
             if (bindId != null) {
-                unbind(bindId);
+                unBind(bindId);
             }
 
         }
@@ -318,8 +325,13 @@ public class QMUISkinMaker {
         }
     }
 
-    public void unbind(int id) {
+    public void unBind(int id) {
         HashMap<View, ViewInfo> viewInfoMap = mBindInfo.get(id);
+        unBind(viewInfoMap);
+        mBindInfo.remove(id);
+    }
+
+    private void unBind(HashMap<View, ViewInfo> viewInfoMap) {
         if (viewInfoMap != null) {
             for (View view : viewInfoMap.keySet()) {
                 ViewInfo viewInfo = viewInfoMap.get(view);
@@ -331,6 +343,13 @@ public class QMUISkinMaker {
                 }
             }
         }
+    }
+
+    public void unBindAll() {
+        for (int i = 0; i < mBindInfo.size(); i++) {
+            unBind(mBindInfo.valueAt(i));
+        }
+        mBindInfo.clear();
     }
 
     private ViewInfo generateViewInfo(final View view) {
@@ -360,22 +379,150 @@ public class QMUISkinMaker {
                 }
                 QMUIGroupListView groupListView = new QMUIGroupListView(context);
                 groupListView.setId(QMUIViewHelper.generateViewId());
-                QMUIGroupListView.newSection(context)
-                        .addItemView(groupListView.createItemView("Background"), new View.OnClickListener() {
+                QMUIGroupListView.Section section = QMUIGroupListView.newSection(context);
+                addItem(groupListView, section, viewInfo, "Background", new ValueUpdater() {
+                    @Override
+                    public void update(QMUISkinValueBuilder builder, String attrName) {
+                        builder.background(attrName);
+                    }
+                });
+
+                if (view instanceof TintableBackgroundView) {
+                    addItem(groupListView, section, viewInfo, "BackgroundTintColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.bgTintColor(attrName);
+                        }
+                    });
+                }
+
+                addItem(groupListView, section, viewInfo, "Alpha", new ValueUpdater() {
+                    @Override
+                    public void update(QMUISkinValueBuilder builder, String attrName) {
+                        builder.alpha(attrName);
+                    }
+                });
+
+                if (view instanceof IQMUILayout) {
+                    IQMUILayout layout = (IQMUILayout) view;
+                    if (layout.hasTopSeparator()) {
+                        addItem(groupListView, section, viewInfo, "TopSeparator", new ValueUpdater() {
                             @Override
-                            public void onClick(View v) {
-                                chooseAttr(view, new ValueWriter() {
-                                    @Override
-                                    public void write(String attrName) {
-                                        viewInfo.valueBuilder.background(attrName);
-                                        QMUISkinHelper.setSkinValue(view, viewInfo.valueBuilder);
-                                        viewInfo.saveToMMKV();
-                                        QMUISkinManager.getInstance(context).refreshTheme(view);
-                                    }
-                                });
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.topSeparator(attrName);
                             }
-                        })
-                        .setUseTitleViewForSectionSpace(false)
+                        });
+                    }
+                    if (layout.hasRightSeparator()) {
+                        addItem(groupListView, section, viewInfo, "RightSeparator", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.rightSeparator(attrName);
+                            }
+                        });
+                    }
+
+                    if (layout.hasBottomSeparator()) {
+                        addItem(groupListView, section, viewInfo, "BottomSeparator", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.bottomSeparator(attrName);
+                            }
+                        });
+                    }
+
+                    if (layout.hasLeftSeparator()) {
+                        addItem(groupListView, section, viewInfo, "LeftSeparator", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.leftSeparator(attrName);
+                            }
+                        });
+                    }
+
+                    if (layout.hasBorder()) {
+                        addItem(groupListView, section, viewInfo, "Border", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.border(attrName);
+                            }
+                        });
+                    }
+                }
+
+                if (view instanceof QMUIRadiusImageView) {
+                    if (((QMUIRadiusImageView) view).getBorderWidth() > 0) {
+                        addItem(groupListView, section, viewInfo, "Border", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.border(attrName);
+                            }
+                        });
+                    }
+                }
+
+                if (view instanceof QMUIRoundButton) {
+                    if (((QMUIRoundButton) view).getStrokeWidth() > 0) {
+                        addItem(groupListView, section, viewInfo, "Border", new ValueUpdater() {
+                            @Override
+                            public void update(QMUISkinValueBuilder builder, String attrName) {
+                                builder.border(attrName);
+                            }
+                        });
+                    }
+                }
+
+                if (view instanceof QMUIProgressBar) {
+                    addItem(groupListView, section, viewInfo, "TextColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.textColor(attrName);
+                        }
+                    });
+
+                    addItem(groupListView, section, viewInfo, "ProgressColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.progressColor(attrName);
+                        }
+                    });
+                }
+
+                if (view instanceof ImageView) {
+                    addItem(groupListView, section, viewInfo, "Src", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.src(attrName);
+                        }
+                    });
+
+                    addItem(groupListView, section, viewInfo, "TintColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.tintColor(attrName);
+                        }
+                    });
+                }
+
+                if (view instanceof QMUILoadingView) {
+                    addItem(groupListView, section, viewInfo, "TintColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.tintColor(attrName);
+                        }
+                    });
+                }
+
+                if (view instanceof TextView || view instanceof QMUIQQFaceView) {
+                    addItem(groupListView, section, viewInfo, "TextColor", new ValueUpdater() {
+                        @Override
+                        public void update(QMUISkinValueBuilder builder, String attrName) {
+                            builder.textColor(attrName);
+                        }
+                    });
+                }
+
+                section.setUseTitleViewForSectionSpace(false)
                         .setShowSeparator(false)
                         .addTo(groupListView);
                 QMUIPopups.popup(view.getContext(), QMUIDisplayHelper.dp2px(context, 200))
@@ -389,6 +536,32 @@ public class QMUISkinMaker {
         viewInfo.skinClickListener = skinOnClickListener;
         view.setOnClickListener(skinOnClickListener);
         return viewInfo;
+    }
+
+    private void addItem(QMUIGroupListView listView,
+                         QMUIGroupListView.Section section,
+                         final ViewInfo viewInfo,
+                         CharSequence name,
+                         final ValueUpdater valueUpdater) {
+        section.addItemView(listView.createItemView(name), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseAttr(viewInfo.view, new ValueWriter() {
+                    @Override
+                    public void write(String attrName) {
+                        valueUpdater.update(viewInfo.valueBuilder, attrName);
+                        QMUISkinHelper.setSkinValue(viewInfo.view, viewInfo.valueBuilder);
+                        viewInfo.saveToMMKV();
+                        QMUISkinManager.getInstance(viewInfo.view.getContext()).refreshTheme(viewInfo.view);
+                    }
+                });
+            }
+        });
+    }
+
+
+    interface ValueUpdater {
+        void update(QMUISkinValueBuilder builder, String attrName);
     }
 
     private void chooseAttr(View anchorView, ValueWriter valueWriter) {

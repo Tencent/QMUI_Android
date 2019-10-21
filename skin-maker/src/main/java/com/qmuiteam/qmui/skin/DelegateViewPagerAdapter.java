@@ -62,7 +62,7 @@ public class DelegateViewPagerAdapter extends PagerAdapter {
         origin.destroyItem(container, position, object);
         Integer bindId = mChildBindInfo.remove(object);
         if (bindId != null) {
-            skinMaker.unbind(bindId);
+            skinMaker.unBind(bindId);
         }
     }
 

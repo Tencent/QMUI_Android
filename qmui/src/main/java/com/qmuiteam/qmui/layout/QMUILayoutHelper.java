@@ -667,6 +667,31 @@ public class QMUILayoutHelper implements IQMUILayout {
         }
     }
 
+    @Override
+    public boolean hasTopSeparator() {
+        return mTopDividerHeight > 0;
+    }
+
+    @Override
+    public boolean hasRightSeparator() {
+        return mRightDividerWidth > 0;
+    }
+
+    @Override
+    public boolean hasBottomSeparator() {
+        return mBottomDividerHeight > 0;
+    }
+
+    @Override
+    public boolean hasLeftSeparator() {
+        return mLeftDividerWidth > 0;
+    }
+
+    @Override
+    public boolean hasBorder() {
+        return mBorderWidth > 0;
+    }
+
     public void drawDividers(Canvas canvas, int w, int h) {
         View owner = mOwner.get();
         if(owner == null){

@@ -98,6 +98,10 @@ public class QMUIRoundButton extends QMUIAlphaButton implements IQMUISkinDefault
         mRoundBg.setStrokeData(width, colors);
     }
 
+    public int getStrokeWidth(){
+        return mRoundBg.getStrokeWidth();
+    }
+
     public void setStrokeColors(ColorStateList colors) {
         mRoundBg.setStrokeColors(colors);
     }

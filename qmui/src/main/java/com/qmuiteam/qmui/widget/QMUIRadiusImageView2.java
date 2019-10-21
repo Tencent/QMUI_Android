@@ -559,4 +559,29 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
         }
         return super.onTouchEvent(event);
     }
+
+    @Override
+    public boolean hasBorder() {
+        return mLayoutHelper.hasBorder();
+    }
+
+    @Override
+    public boolean hasLeftSeparator() {
+        return mLayoutHelper.hasLeftSeparator();
+    }
+
+    @Override
+    public boolean hasTopSeparator() {
+        return mLayoutHelper.hasTopSeparator();
+    }
+
+    @Override
+    public boolean hasRightSeparator() {
+        return mLayoutHelper.hasRightSeparator();
+    }
+
+    @Override
+    public boolean hasBottomSeparator() {
+        return mLayoutHelper.hasBottomSeparator();
+    }
 }
