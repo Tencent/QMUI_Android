@@ -117,7 +117,8 @@ class SkinAttrChooseMakerPopup extends QMUIFullScreenPopup {
             qmuiqqFaceView.setTextColor(Color.BLACK);
             int paddingHor = QMUIDisplayHelper.dp2px(parent.getContext(), 20);
             int paddingVer = QMUIDisplayHelper.dp2px(parent.getContext(), 12);
-            qmuiqqFaceView.setBackground(QMUIResHelper.getAttrDrawable(parent.getContext(), R.attr.qmui_s_list_item_bg_1));
+            qmuiqqFaceView.setBackground(QMUIResHelper.getAttrDrawable(
+                    parent.getContext(), R.attr.qmui_skin_support_s_list_item_bg_1));
             qmuiqqFaceView.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
             return new VH(qmuiqqFaceView);
         }

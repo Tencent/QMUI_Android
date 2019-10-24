@@ -19,6 +19,7 @@ package com.qmuiteam.qmui.span;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 /**
  * 支持设置图片左右间距的 ImageSpan
@@ -33,13 +34,13 @@ public class QMUIMarginImageSpan extends QMUIAlignMiddleImageSpan {
     private int mOffsetY = 0;
 
     public QMUIMarginImageSpan(Drawable d, int verticalAlignment, int marginLeft, int marginRight) {
-        super(d, verticalAlignment);
-        mSpanMarginLeft = marginLeft;
-        mSpanMarginRight = marginRight;
+        this(d, verticalAlignment, marginLeft, marginRight, 0);
     }
 
     public QMUIMarginImageSpan(Drawable d, int verticalAlignment, int marginLeft, int marginRight, int offsetY) {
-        this(d, verticalAlignment, marginLeft, marginRight);
+        super(d, verticalAlignment);
+        mSpanMarginLeft = marginLeft;
+        mSpanMarginRight = marginRight;
         mOffsetY = offsetY;
     }
 

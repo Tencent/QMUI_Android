@@ -15,6 +15,8 @@
  */
 package com.qmuiteam.qmui.skin;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
@@ -23,7 +25,9 @@ import android.text.Spanned;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.BuildConfig;
@@ -37,19 +41,28 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleAlphaHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBackgroundHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBgTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBorderHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleHintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleProgressColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSeparatorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSrcHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextColorHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundSrcHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTintColorHandler;
 import com.qmuiteam.qmui.util.QMUILangHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -60,16 +73,16 @@ public final class QMUISkinManager {
     private static QMUISkinManager sInstance;
 
     @MainThread
-    public static QMUISkinManager getInstance(Context context) {
+    public static QMUISkinManager defaultInstance(Context context) {
         if (sInstance != null) {
             return sInstance;
         }
         context = context.getApplicationContext();
-        return getInstance(context.getResources(), context.getPackageName());
+        return defaultInstance(context.getResources(), context.getPackageName());
     }
 
     @MainThread
-    public static QMUISkinManager getInstance(Resources resources, String packageName) {
+    public static QMUISkinManager defaultInstance(Resources resources, String packageName) {
         if (sInstance == null) {
             sInstance = new QMUISkinManager(resources, packageName);
         }
@@ -127,7 +140,7 @@ public final class QMUISkinManager {
         }
     };
 
-    private QMUISkinManager(Resources resources, String packageName) {
+    public QMUISkinManager(Resources resources, String packageName) {
         mResources = resources;
         mPackageName = packageName;
         mRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
@@ -145,6 +158,13 @@ public final class QMUISkinManager {
         mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
         mRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TINT_COLOR, new QMUISkinRuleTextCompoundTintColorHandler());
+        IQMUISkinRuleHandler textCompoundSrcHandler = new QMUISkinRuleTextCompoundSrcHandler();
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_LEFT_SRC, textCompoundSrcHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TOP_SRC, textCompoundSrcHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
+        mRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
 
     }
 
@@ -173,7 +193,6 @@ public final class QMUISkinManager {
         skinItem = new SkinItem(styleRes);
         mSkins.append(index, skinItem);
     }
-
 
     public void dispatch(View view, int skinIndex) {
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -370,6 +389,181 @@ public final class QMUISkinManager {
             }
             return theme;
         }
+    }
+
+    // =====================================================================================
+
+    private int mCurrentSkin = DEFAULT_SKIN;
+    private final List<WeakReference<?>> mSkinObserverList = new ArrayList<>();
+    private final List<WeakReference<OnSkinChangeListener>> mSkinChangeListeners = new ArrayList<>();
+
+    public void register(@NonNull Activity activity) {
+        if (!containSkinObserver(activity)) {
+            mSkinObserverList.add(new WeakReference<>(activity));
+        }
+        dispatch(activity.findViewById(Window.ID_ANDROID_CONTENT), mCurrentSkin);
+    }
+
+    public void unRegister(@NonNull Activity activity) {
+        removeSkinObserver(activity);
+    }
+
+    public void register(@NonNull Fragment fragment) {
+        if (!containSkinObserver(fragment)) {
+            mSkinObserverList.add(new WeakReference<>(fragment));
+        }
+        dispatch(fragment.getView(), mCurrentSkin);
+    }
+
+    public void unRegister(@NonNull Fragment fragment) {
+        removeSkinObserver(fragment);
+    }
+
+    public void register(@NonNull View view) {
+        if (!containSkinObserver(view)) {
+            mSkinObserverList.add(new WeakReference<>(view));
+        }
+        dispatch(view, mCurrentSkin);
+    }
+
+    public void unRegister(@NonNull View view) {
+        removeSkinObserver(view);
+    }
+
+    public void register(@NonNull Dialog dialog) {
+        if (!containSkinObserver(dialog)) {
+            mSkinObserverList.add(new WeakReference<>(dialog));
+        }
+        Window window = dialog.getWindow();
+        if (window != null) {
+            dispatch(window.getDecorView(), mCurrentSkin);
+        }
+    }
+
+    public void unRegister(@NonNull Dialog dialog) {
+        removeSkinObserver(dialog);
+    }
+
+    public void register(@NonNull PopupWindow popupWindow) {
+        if (!containSkinObserver(popupWindow)) {
+            mSkinObserverList.add(new WeakReference<>(popupWindow));
+        }
+        dispatch(popupWindow.getContentView(), mCurrentSkin);
+    }
+
+    public void unRegister(@NonNull PopupWindow popupWindow) {
+        removeSkinObserver(popupWindow);
+    }
+
+    public void register(@NonNull Window window) {
+        if (!containSkinObserver(window)) {
+            mSkinObserverList.add(new WeakReference<>(window));
+        }
+        dispatch(window.getDecorView(), mCurrentSkin);
+    }
+
+    public void unRegister(@NonNull Window window) {
+        removeSkinObserver(window);
+    }
+
+    private void removeSkinObserver(Object object) {
+        for (int i = mSkinObserverList.size() - 1; i >= 0; i--) {
+            Object item = mSkinObserverList.get(i).get();
+            if (item == object) {
+                mSkinObserverList.remove(i);
+                return;
+            } else if (item == null) {
+                mSkinObserverList.remove(i);
+            }
+        }
+    }
+
+    private boolean containSkinObserver(Object object) {
+        //reverse order for remove
+        for (int i = mSkinObserverList.size() - 1; i >= 0; i--) {
+            Object item = mSkinObserverList.get(i).get();
+            if (item == object) {
+                return true;
+            } else if (item == null) {
+                mSkinObserverList.remove(i);
+            }
+        }
+        return false;
+    }
+
+    public void changeSkin(int index) {
+        if (mCurrentSkin == index) {
+            return;
+        }
+        int oldIndex = mCurrentSkin;
+        mCurrentSkin = index;
+        for (int i = mSkinObserverList.size() - 1; i >= 0; i--) {
+            Object item = mSkinObserverList.get(i).get();
+            if (item == null) {
+                mSkinObserverList.remove(i);
+            } else {
+                if (item instanceof Activity) {
+                    dispatch(((Activity) item).findViewById(Window.ID_ANDROID_CONTENT), index);
+                } else if (item instanceof Fragment) {
+                    dispatch(((Fragment) item).getView(), index);
+                } else if (item instanceof Dialog) {
+                    Window window = ((Dialog) item).getWindow();
+                    if (window != null) {
+                        dispatch(window.getDecorView(), index);
+                    }
+                } else if (item instanceof PopupWindow) {
+                    dispatch(((PopupWindow) item).getContentView(), index);
+                } else if (item instanceof Window) {
+                    dispatch(((Window) item).getDecorView(), index);
+                } else if (item instanceof View) {
+                    dispatch((View) item, index);
+                }
+            }
+        }
+
+        for (int i = mSkinChangeListeners.size() - 1; i >= 0; i--) {
+            OnSkinChangeListener item = mSkinChangeListeners.get(i).get();
+            if (item == null) {
+                mSkinChangeListeners.remove(i);
+            } else {
+                item.onSkinChange(oldIndex, mCurrentSkin);
+            }
+        }
+    }
+
+    public void addSkinChangeListener(@NonNull OnSkinChangeListener listener) {
+        Iterator<WeakReference<OnSkinChangeListener>> iterator = mSkinChangeListeners.iterator();
+        while (iterator.hasNext()) {
+            Object item = iterator.next().get();
+            if (item != null) {
+                return;
+            } else {
+                iterator.remove();
+            }
+        }
+        mSkinChangeListeners.add(new WeakReference<>(listener));
+    }
+
+    public void removeSkinChangeListener(@NonNull OnSkinChangeListener listener) {
+        Iterator<WeakReference<OnSkinChangeListener>> iterator = mSkinChangeListeners.iterator();
+        while (iterator.hasNext()) {
+            Object item = iterator.next().get();
+            if (item != null) {
+                if (item == listener) {
+                    iterator.remove();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    public int getCurrentSkin(){
+        return mCurrentSkin;
+    }
+
+    public interface OnSkinChangeListener {
+        void onSkinChange(int oldSkin, int newSkin);
     }
 
 }

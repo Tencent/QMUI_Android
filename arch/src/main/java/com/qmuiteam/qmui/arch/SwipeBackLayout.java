@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.util.DoNotInterceptKeyboardInset;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
@@ -43,6 +44,7 @@ import java.util.List;
  */
 
 
+@DoNotInterceptKeyboardInset
 public class SwipeBackLayout extends QMUIWindowInsetLayout {
     /**
      * Minimum velocity that will be detected as a fling

@@ -19,12 +19,18 @@ package com.qmuiteam.qmui.arch;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Build;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 
 //Fix the bug: Only fullscreen activities can request orientation in Android version 26, 27
@@ -64,10 +70,19 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
         }
     }
 
+
     @Override
-    protected void onResume() {
-        checkLatestVisitRecord();
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+        if(followSkin()){
+            QMUISkinManager.defaultInstance(this).register(this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUISkinManager.defaultInstance(this).unRegister(this);
     }
 
     private void checkLatestVisitRecord() {
@@ -82,5 +97,9 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     @Override
     public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
 
+    }
+
+    protected boolean followSkin(){
+        return true;
     }
 }

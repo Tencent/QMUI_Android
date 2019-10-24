@@ -129,6 +129,24 @@ public class QMUIResHelper {
         return TypedValue.complexToDimensionPixelSize(sTmpValue.data, QMUIDisplayHelper.getDisplayMetrics(context));
     }
 
+    @Nullable
+    public static String getAttrString(Context context, int attrRes) {
+        if (sTmpValue == null) {
+            sTmpValue = new TypedValue();
+        }
+        context.getTheme().resolveAttribute(attrRes, sTmpValue, true);
+        CharSequence str = sTmpValue.string;
+        return str == null ?  null : str.toString();
+    }
+
+    public static int getAttrInt(Context context, int attrRes) {
+        if (sTmpValue == null) {
+            sTmpValue = new TypedValue();
+        }
+        context.getTheme().resolveAttribute(attrRes, sTmpValue, true);
+        return sTmpValue.data;
+    }
+
 
     public static void assignTextViewWithAttr(TextView textView, int attrRes) {
         TypedArray a = textView.getContext().obtainStyledAttributes(null, R.styleable.QMUITextCommonStyleDef, attrRes, 0);

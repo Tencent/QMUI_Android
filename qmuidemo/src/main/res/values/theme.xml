@@ -17,7 +17,6 @@
     <!-- skin attr define-->
     <attr name="app_skin_common_background" format="color|reference" />
     <attr name="app_skin_common_background_1" format="color|reference" />
-    <attr name="app_skin_s_list_item_bg" format="color|reference" />
     <attr name="app_skin_common_img_tint_color" format="color|reference" />
     <attr name="app_skin_home_text_color" format="color|reference" />
     <attr name="app_skin_common_title_text_color" format="color|reference" />
@@ -72,7 +71,6 @@
 
         <item name="app_skin_common_background">@color/qmui_config_color_white</item>
         <item name="app_skin_common_background_1">@color/qmui_config_color_background</item>
-        <item name="app_skin_s_list_item_bg">?attr/qmui_s_list_item_bg_2</item>
         <item name="app_skin_common_img_tint_color">?attr/qmui_config_color_blue</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_6</item>
         <item name="app_skin_common_title_text_color">?attr/qmui_config_color_gray_1</item>
@@ -113,13 +111,24 @@
         <item name="qmui_skin_support_common_list_red_point_tint_color">?attr/qmui_skin_support_tab_sign_count_view_bg_color
         </item>
         <item name="qmui_skin_support_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
-        <item name="qmui_skin_support_common_list_bg">@drawable/s_list_item_bg_dark_2</item>
         <item name="qmui_skin_support_common_list_chevron_color">@color/qmui_config_color_50_white</item>
+        <item name="qmui_skin_support_s_list_item_bg_1">@drawable/s_list_item_bg_dark_1</item>
+        <item name="qmui_skin_support_s_list_item_bg_2">@drawable/s_list_item_bg_dark_2</item>
+
+        <item name="qmui_skin_support_dialog_bg">@color/qmui_config_color_black</item>
+        <item name="qmui_skin_support_dialog_title_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_dialog_message_text_color">@color/qmui_config_color_75_white</item>
+        <item name="qmui_skin_support_dialog_action_bg">@null</item>
+        <item name="qmui_skin_support_dialog_action_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_dialog_positive_action_text_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_dialog_negative_action_text_color">?attr/qmui_config_color_red</item>
+        <item name="qmui_skin_support_dialog_edit_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_dialog_edit_text_hint_color">@color/qmui_config_color_75_white</item>
+        <item name="qmui_skin_support_dialog_menu_item_text_color">@color/qmui_config_color_white</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>
         <item name="app_skin_common_background_1">@color/qmui_config_color_gray_1</item>
-        <item name="app_skin_s_list_item_bg">@drawable/s_list_item_bg_dark_1</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_white</item>
         <item name="app_skin_home_text_color">?attr/qmui_config_color_gray_8</item>
         <item name="app_skin_common_title_text_color">@color/qmui_config_color_75_white</item>

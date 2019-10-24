@@ -72,7 +72,7 @@
     </style>
 
     <style name="DialogTheme2" parent="QMUI.Dialog">
-        <item name="qmui_dialog_wrapper_style">@style/dialog_wrapper_style_63</item>
+        <item name="qmui_dialog_inset_hor">64dp</item>
         <item name="qmui_dialog_title_style">@style/DialogTheme2TitleStyle</item>
         <item name="qmui_dialog_action_container_style">@style/DialogTheme2ActionContainerStyle
         </item>
@@ -83,14 +83,8 @@
     </style>
 
     <style name="ReleaseDialogTheme" parent="DialogTheme2">
-        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper</item>
+        <item name="qmui_dialog_inset_hor">40dp</item>
         <item name="qmui_dialog_message_content_style">@style/ReleaseMessageContentStyle</item>
-
-    </style>
-
-    <style name="dialog_wrapper_style_63">
-        <item name="android:paddingLeft">63dp</item>
-        <item name="android:paddingRight">63dp</item>
     </style>
 
     <style name="DialogTheme2TitleStyle" parent="QMUI.Dialog.Title">

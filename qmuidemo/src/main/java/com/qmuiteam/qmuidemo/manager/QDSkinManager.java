@@ -15,70 +15,28 @@
  */
 package com.qmuiteam.qmuidemo.manager;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmuidemo.QDApplication;
 import com.qmuiteam.qmuidemo.R;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 public class QDSkinManager {
     public static final int SKIN_BLUE = 1;
     public static final int SKIN_DARK = 2;
     public static final int SKIN_WHITE = 3;
-    public static int sCurrentTheme = Integer.MIN_VALUE;
 
-    private static final ArrayList<WeakReference<Activity>> mListenActivityList = new ArrayList<>();
 
     public static void install(Context context) {
-        QMUISkinManager skinManager = QMUISkinManager.getInstance(context);
+        QMUISkinManager skinManager = QMUISkinManager.defaultInstance(context);
         skinManager.addSkin(SKIN_BLUE, R.style.app_skin_blue);
         skinManager.addSkin(SKIN_DARK, R.style.app_skin_dark);
         skinManager.addSkin(SKIN_WHITE, R.style.app_skin_white);
+        skinManager.changeSkin(QDPreferenceManager.getInstance(context).getSkinIndex());
     }
 
     public static void changeSkin(int index) {
-        if (sCurrentTheme == index) {
-            return;
-        }
-        sCurrentTheme = index;
+        QMUISkinManager.defaultInstance(QDApplication.getContext()).changeSkin(index);
         QDPreferenceManager.getInstance(QDApplication.getContext()).setSkinIndex(index);
-        for (WeakReference<Activity> wr : mListenActivityList) {
-            if (wr.get() != null) {
-                dispatch(wr.get(), sCurrentTheme);
-            }
-        }
-    }
-
-    public static void dispatch(Activity activity, int skin) {
-        QMUISkinManager.getInstance(activity).dispatch(QMUIViewHelper.getActivityRoot(activity), skin);
-        if(skin == SKIN_WHITE){
-            QMUIStatusBarHelper.setStatusBarLightMode(activity);
-        }else{
-            QMUIStatusBarHelper.setStatusBarDarkMode(activity);
-        }
-
-    }
-
-    public static void register(Activity activity) {
-        mListenActivityList.add(new WeakReference<>(activity));
-        if (sCurrentTheme == Integer.MIN_VALUE) {
-            sCurrentTheme = QDPreferenceManager.getInstance(activity).getSkinIndex();
-        }
-        dispatch(activity, sCurrentTheme);
-    }
-
-    public static void unRegister(Activity activity) {
-        for (int i = mListenActivityList.size() - 1; i >= 0; i--) {
-            WeakReference<Activity> wr = mListenActivityList.get(i);
-            if (wr.get() == null || wr.get() == activity) {
-                mListenActivityList.remove(wr);
-            }
-        }
     }
 }

@@ -277,7 +277,7 @@ public class QMUIWindowInsetHelper {
     }
 
     private boolean shouldInterceptKeyboardInset(ViewGroup viewGroup){
-       return viewGroup.getTag(R.id.qmui_do_not_intercept_keyboard_inset) == null;
+        return viewGroup.getClass().getAnnotation(DoNotInterceptKeyboardInset.class) == null;
     }
 
     private void dispatchNotchInsetChange(View view) {

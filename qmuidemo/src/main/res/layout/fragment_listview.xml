@@ -18,18 +18,18 @@
 <com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/app_content_bg_color"
+    app:qmui_skin_background="?attr/app_skin_common_background">
 
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/qmui_topbar_height"
-        android:background="@color/qmui_config_color_white"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:fitsSystemWindows="true"
-        app:qmui_skin_background="?attr/app_skin_common_background"/>
+        android:fitsSystemWindows="true"/>
 
     <com.qmuiteam.qmui.widget.QMUITopBarLayout
         android:id="@+id/topbar"

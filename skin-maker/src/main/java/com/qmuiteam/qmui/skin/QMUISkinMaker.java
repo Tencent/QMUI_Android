@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -534,7 +535,10 @@ public class QMUISkinMaker {
             }
         };
         viewInfo.skinClickListener = skinOnClickListener;
-        view.setOnClickListener(skinOnClickListener);
+        if(!(view instanceof AdapterView)){
+            view.setOnClickListener(skinOnClickListener);
+        }
+
         return viewInfo;
     }
 
@@ -552,7 +556,7 @@ public class QMUISkinMaker {
                         valueUpdater.update(viewInfo.valueBuilder, attrName);
                         QMUISkinHelper.setSkinValue(viewInfo.view, viewInfo.valueBuilder);
                         viewInfo.saveToMMKV();
-                        QMUISkinManager.getInstance(viewInfo.view.getContext()).refreshTheme(viewInfo.view);
+                        QMUISkinManager.defaultInstance(viewInfo.view.getContext()).refreshTheme(viewInfo.view);
                     }
                 });
             }
@@ -678,7 +682,7 @@ public class QMUISkinMaker {
                 QMUISkinHelper.setSkinValue(view, value);
                 viewInfo.valueBuilder.convertFrom(value);
             }
-            QMUISkinManager.getInstance(view.getContext()).refreshTheme(view);
+            QMUISkinManager.defaultInstance(view.getContext()).refreshTheme(view);
         }
     }
 
@@ -718,7 +722,7 @@ public class QMUISkinMaker {
         public View.OnClickListener originClickListener;
         public View.OnClickListener skinClickListener;
         public View view;
-        public QMUISkinValueBuilder valueBuilder = new QMUISkinValueBuilder();
+        public QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
         public FieldNode fieldNode;
         public String fieldName;
         public String idName;

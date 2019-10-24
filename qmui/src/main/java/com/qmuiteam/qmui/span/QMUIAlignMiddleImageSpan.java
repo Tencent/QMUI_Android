@@ -16,11 +16,21 @@
 
 package com.qmuiteam.qmui.span;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
+import android.view.View;
+
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerSpan;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+
+import androidx.annotation.NonNull;
 
 /**
  * 支持垂直居中的ImageSpan
@@ -28,7 +38,7 @@ import android.text.style.ImageSpan;
  * @author cginechen
  * @date 2016-03-17
  */
-public class QMUIAlignMiddleImageSpan extends ImageSpan {
+public class QMUIAlignMiddleImageSpan extends ImageSpan implements IQMUISkinHandlerSpan {
 
     public static final int ALIGN_MIDDLE = -100; // 不要和父类重复
 
@@ -43,13 +53,15 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan {
     private boolean mAvoidSuperChangeFontMetrics = false;
 
     @SuppressWarnings("FieldCanBeLocal") private int mWidth;
+    private Drawable mDrawable;
+    private int mDrawableTintColorAttr;
 
     /**
      * @param d                 作为 span 的 Drawable
      * @param verticalAlignment 垂直对齐方式, 如果要垂直居中, 则使用 {@link #ALIGN_MIDDLE}
      */
     public QMUIAlignMiddleImageSpan(Drawable d, int verticalAlignment) {
-        super(d, verticalAlignment);
+        this(d, verticalAlignment, 0);
     }
 
     /**
@@ -57,10 +69,20 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan {
      * @param verticalAlignment 垂直对齐方式, 如果要垂直居中, 则使用 {@link #ALIGN_MIDDLE}
      * @param fontWidthMultiple 设置这个Span占几个中文字的宽度, 当该值 > 0 时, span 的宽度为该值*一个中文字的宽度; 当该值 <= 0 时, span 的宽度由 {@link #mAvoidSuperChangeFontMetrics} 决定
      */
-    public QMUIAlignMiddleImageSpan(Drawable d, int verticalAlignment, float fontWidthMultiple) {
-        this(d, verticalAlignment);
+    public QMUIAlignMiddleImageSpan(@NonNull Drawable d, int verticalAlignment, float fontWidthMultiple) {
+        super(d.mutate(), verticalAlignment);
+        mDrawable = getDrawable();
         if (fontWidthMultiple >= 0) {
             mFontWidthMultiple = fontWidthMultiple;
+        }
+    }
+
+    public void setSkinSupportWithTintColor(View skinFollowView, int drawableTintColorAttr) {
+        mDrawableTintColorAttr = drawableTintColorAttr;
+        if (mDrawable != null && skinFollowView != null && drawableTintColorAttr != 0) {
+            QMUIDrawableHelper.setDrawableTintColor(mDrawable,
+                    QMUISkinHelper.getSkinColor(skinFollowView, drawableTintColorAttr));
+            skinFollowView.invalidate();
         }
     }
 
@@ -83,7 +105,7 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan {
     public void draw(Canvas canvas, CharSequence text, int start, int end,
                      float x, int top, int y, int bottom, Paint paint) {
         if (mVerticalAlignment == ALIGN_MIDDLE) {
-            Drawable d = getDrawable();
+            Drawable d = mDrawable;
             canvas.save();
 
 //            // 注意如果这样实现会有问题：TextView 有 lineSpacing 时，这里 bottom 偏大，导致偏下
@@ -111,5 +133,13 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan {
      */
     public void setAvoidSuperChangeFontMetrics(boolean avoidSuperChangeFontMetrics) {
         mAvoidSuperChangeFontMetrics = avoidSuperChangeFontMetrics;
+    }
+
+    @Override
+    public void handle(View view, QMUISkinManager manager, int skinIndex, Resources.Theme theme) {
+        if (mDrawableTintColorAttr != 0) {
+            QMUIDrawableHelper.setDrawableTintColor(mDrawable,
+                    QMUIResHelper.getAttrColor(theme, mDrawableTintColorAttr));
+        }
     }
 }

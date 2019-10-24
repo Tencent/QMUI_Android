@@ -167,7 +167,7 @@ public class QDDialogFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 })
-                .addAction("确定", new QMUIDialogAction.ActionListener() {
+                .addAction(0, "确定", QMUIDialogAction.ACTION_PROP_POSITIVE, new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
                         dialog.dismiss();
@@ -391,7 +391,7 @@ public class QDDialogFragment extends BaseFragment {
         }
 
         @Override
-        public View onBuildContent(QMUIDialog dialog, ScrollView parent) {
+        public View onBuildContent(QMUIDialog dialog) {
             LinearLayout layout = new LinearLayout(mContext);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

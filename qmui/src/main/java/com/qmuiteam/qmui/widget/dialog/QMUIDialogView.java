@@ -20,9 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.QMUILinearLayout;
-import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 
 import androidx.annotation.Nullable;
 
@@ -30,10 +28,9 @@ import androidx.annotation.Nullable;
  * Created by cgspine on 2018/2/28.
  */
 
-public class QMUIDialogView extends QMUILinearLayout {
+public class QMUIDialogView extends QMUIConstraintLayout {
 
-    private int mMinWidth;
-    private int mMaxWidth;
+
     private OnDecorationListener mOnDecorationListener;
 
     public QMUIDialogView(Context context) {
@@ -46,29 +43,10 @@ public class QMUIDialogView extends QMUILinearLayout {
 
     public QMUIDialogView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mMinWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_min_width);
-        mMaxWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_max_width);
     }
 
     public void setOnDecorationListener(OnDecorationListener onDecorationListener) {
         mOnDecorationListener = onDecorationListener;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        if (mMaxWidth > 0 && widthSize > mMaxWidth) {
-            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxWidth, widthMode);
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (widthMode == MeasureSpec.AT_MOST) {
-            int measureWidth = getMeasuredWidth();
-            if (measureWidth < mMinWidth && mMinWidth < widthSize) {
-                widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMinWidth, MeasureSpec.EXACTLY);
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            }
-        }
     }
 
     @Override
@@ -80,19 +58,11 @@ public class QMUIDialogView extends QMUILinearLayout {
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
+    public void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         if (mOnDecorationListener != null) {
             mOnDecorationListener.onDrawOver(canvas, this);
         }
-    }
-
-    public void setMinWidth(int minWidth) {
-        mMinWidth = minWidth;
-    }
-
-    public void setMaxWidth(int maxWidth) {
-        mMaxWidth = maxWidth;
     }
 
     public interface OnDecorationListener {

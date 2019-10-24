@@ -39,7 +39,7 @@ import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
@@ -78,12 +78,21 @@ public class QDMainActivity extends BaseFragmentActivity {
     private QMUILinearLayout mSkinActionLayout;
     private QMUIButton mSkinMakerBtn;
 
+    private QMUISkinManager.OnSkinChangeListener mOnSkinChangeListener = new QMUISkinManager.OnSkinChangeListener() {
+        @Override
+        public void onSkinChange(int oldSkin, int newSkin) {
+            if (newSkin == QDSkinManager.SKIN_WHITE) {
+                QMUIStatusBarHelper.setStatusBarLightMode(QDMainActivity.this);
+            } else {
+                QMUIStatusBarHelper.setStatusBarDarkMode(QDMainActivity.this);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory(this));
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory());
         super.onCreate(savedInstanceState);
-        QDSkinManager.register(this);
-
 
         mSkinActionLayout = new QMUILinearLayout(this);
         mSkinActionLayout.setOrientation(LinearLayout.VERTICAL);
@@ -144,7 +153,7 @@ public class QDMainActivity extends BaseFragmentActivity {
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, btnHeight));
     }
 
-    private QMUIButton createFloatItemBtn(String text, View.OnClickListener onClickListener){
+    private QMUIButton createFloatItemBtn(String text, View.OnClickListener onClickListener) {
         QMUIButton btn = new QMUIButton(this);
         btn.setChangeAlphaWhenPress(true);
         btn.setPadding(0, 0, 0, 0);
@@ -169,6 +178,11 @@ public class QDMainActivity extends BaseFragmentActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        QMUISkinManager.defaultInstance(this).addSkinChangeListener(mOnSkinChangeListener);
+    }
 
     @Override
     protected void onResume() {
@@ -177,9 +191,9 @@ public class QDMainActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        QDSkinManager.unRegister(this);
+    protected void onStop() {
+        super.onStop();
+        QMUISkinManager.defaultInstance(this).removeSkinChangeListener(mOnSkinChangeListener);
     }
 
     @Override

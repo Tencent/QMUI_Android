@@ -26,6 +26,8 @@ import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
+import androidx.annotation.Nullable;
+
 public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     private static final String TAG = "QMUISkin";
     private static final String[] sClassPrefixList = {
@@ -34,11 +36,10 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             "android.app.",
             "android.view."
     };
-    private QMUISkinValueBuilder mBuilder;
+
     private Resources.Theme mEmptyTheme;
 
-    public QMUISkinLayoutInflaterFactory(Context context) {
-        mEmptyTheme = context.getApplicationContext().getResources().newTheme();
+    public QMUISkinLayoutInflaterFactory() {
     }
 
     @Override
@@ -67,16 +68,12 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
         }
 
         if (view != null) {
-            if (mBuilder == null) {
-                mBuilder = new QMUISkinValueBuilder();
-            } else {
-                mBuilder.clear();
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+            getSkinValueFromAttributeSet(view.getContext(), attrs, builder);
+            if (!builder.isEmpty()) {
+                QMUISkinHelper.setSkinValue(view, builder);
             }
-            getSkinValueFromAttributeSet(view, attrs, mBuilder);
-            if (!mBuilder.isEmpty()) {
-                QMUISkinHelper.setSkinValue(view, mBuilder);
-            }
-            mBuilder.clear();
+            QMUISkinValueBuilder.release(builder);
         }
 
         return view;
@@ -87,8 +84,11 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
         return onCreateView(null, name, context, attrs);
     }
 
-    protected void getSkinValueFromAttributeSet(View view, AttributeSet attrs, QMUISkinValueBuilder builder) {
+    public void getSkinValueFromAttributeSet(Context context, @Nullable AttributeSet attrs, QMUISkinValueBuilder builder) {
         // use a empty theme, so we can get the attr's own value, not it's ref value
+        if(mEmptyTheme == null){
+            mEmptyTheme = context.getApplicationContext().getResources().newTheme();
+        }
         TypedArray a = mEmptyTheme.obtainStyledAttributes(attrs, R.styleable.QMUISkinDef, 0, 0);
         int count = a.getIndexCount();
         for (int i = 0; i < count; i++) {
@@ -100,8 +100,8 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             if (name.startsWith("?")) {
                 name = name.substring(1);
             }
-            int id = view.getContext().getResources().getIdentifier(
-                    name, "attr", view.getContext().getPackageName());
+            int id = context.getResources().getIdentifier(
+                    name, "attr", context.getPackageName());
             if (id == 0) {
                 continue;
             }

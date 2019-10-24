@@ -22,11 +22,9 @@ import androidx.core.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmuidemo.QDQQFaceManager;
 import com.qmuiteam.qmuidemo.R;
 
 /**
@@ -46,7 +44,7 @@ public class QDQQFacePagerView extends QDQQFaceBasePagerView {
             qmuiqqFaceView = new QMUIQQFaceView(getContext());
             int padding = QMUIDisplayHelper.dp2px(getContext(), 16);
             ViewCompat.setBackground(qmuiqqFaceView, QMUIResHelper.getAttrDrawable(
-                    getContext(), R.attr.qmui_s_list_item_bg_1));
+                    getContext(), R.attr.qmui_skin_support_s_list_item_bg_1));
             qmuiqqFaceView.setPadding(padding, padding, padding, padding);
             qmuiqqFaceView.setLineSpace(QMUIDisplayHelper.dp2px(getContext(), 10));
             qmuiqqFaceView.setTextColor(Color.BLACK);

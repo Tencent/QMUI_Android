@@ -22,4 +22,4 @@
            android:layout_marginLeft="?attr/qmui_bottom_sheet_list_item_mark_margin_left"
            android:contentDescription="Check mark icon"
            android:scaleType="centerInside"
-           android:src="?attr/qmui_icon_check_mark"/>
+           android:src="?attr/qmui_skin_support_icon_mark"/>

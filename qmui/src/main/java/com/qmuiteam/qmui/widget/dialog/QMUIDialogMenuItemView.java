@@ -19,17 +19,22 @@ package com.qmuiteam.qmui.widget.dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
-import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 
 /**
@@ -39,17 +44,22 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
  * @date 2016-1-20
  */
 
-public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
+public class QMUIDialogMenuItemView extends QMUIConstraintLayout {
     private int index = -1;
     private MenuItemViewListener mListener;
     private boolean mIsChecked = false;
 
     public QMUIDialogMenuItemView(Context context) {
         super(context, null, R.attr.qmui_dialog_menu_item_style);
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        builder.background(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_s_dialog_menu_item_bg));
+        QMUISkinHelper.setSkinValue(this, builder);
+        QMUISkinValueBuilder.release(builder);
     }
 
+    @SuppressLint("CustomViewStyleable")
     public static TextView createItemTextView(Context context) {
-        TextView tv = new TextView(context);
+        TextView tv = new QMUISpanTouchFixTextView(context);
         TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuTextStyleDef, R.attr.qmui_dialog_menu_item_style, 0);
         int count = a.getIndexCount();
         for (int i = 0; i < count; i++) {
@@ -63,10 +73,14 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
             }
         }
         a.recycle();
-
+        tv.setId(View.generateViewId());
         tv.setSingleLine(true);
         tv.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         tv.setDuplicateParentStateEnabled(false);
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        builder.textColor(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_menu_item_text_color));
+        QMUISkinHelper.setSkinValue(tv, builder);
+        QMUISkinValueBuilder.release(builder);
         return tv;
     }
 
@@ -126,28 +140,44 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
 
         private void init() {
             mTextView = createItemTextView(getContext());
-            addView(mTextView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            LayoutParams lp = new LayoutParams(0, 0);
+            lp.leftToLeft = LayoutParams.PARENT_ID;
+            lp.rightToRight = LayoutParams.PARENT_ID;
+            lp.bottomToBottom = LayoutParams.PARENT_ID;
+            lp.topToTop = LayoutParams.PARENT_ID;
+            addView(mTextView, lp);
         }
 
         public void setText(CharSequence text) {
             mTextView.setText(text);
         }
 
+        @Deprecated
         public void setTextColor(int color) {
             mTextView.setTextColor(color);
+        }
+
+        public void setTextColorAttr(int colorAttr) {
+            int color = QMUISkinHelper.getSkinColor(this, colorAttr);
+            mTextView.setTextColor(color);
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+            builder.textColor(colorAttr);
+            QMUISkinHelper.setSkinValue(mTextView, builder);
+            QMUISkinValueBuilder.release(builder);
         }
     }
 
     public static class MarkItemView extends QMUIDialogMenuItemView {
         private Context mContext;
         private TextView mTextView;
-        private ImageView mCheckedView;
+        private AppCompatImageView mCheckedView;
 
+        @SuppressLint("CustomViewStyleable")
         public MarkItemView(Context context) {
             super(context);
             mContext = context;
-            mCheckedView = new ImageView(mContext);
-            mCheckedView.setId(QMUIViewHelper.generateViewId());
+            mCheckedView = new AppCompatImageView(mContext);
+            mCheckedView.setId(View.generateViewId());
 
             TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuMarkDef,
                     R.attr.qmui_dialog_menu_item_style, 0);
@@ -162,18 +192,28 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
                 }
             }
             a.recycle();
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+            builder.src(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_mark_drawable));
+            QMUISkinHelper.setSkinValue(mCheckedView, builder);
+            QMUISkinValueBuilder.release(builder);
 
-            LayoutParams checkLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            checkLp.addRule(CENTER_VERTICAL, TRUE);
-            checkLp.addRule(ALIGN_PARENT_RIGHT, TRUE);
-            checkLp.leftMargin = markMarginHor;
+            LayoutParams checkLp = new LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            checkLp.rightToRight = LayoutParams.PARENT_ID;
+            checkLp.topToTop = LayoutParams.PARENT_ID;
+            checkLp.bottomToBottom = LayoutParams.PARENT_ID;
             addView(mCheckedView, checkLp);
 
+
             mTextView = createItemTextView(mContext);
-            LayoutParams tvLp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            tvLp.addRule(ALIGN_PARENT_LEFT, TRUE);
-            tvLp.addRule(LEFT_OF, mCheckedView.getId());
+            LayoutParams tvLp = new LayoutParams(0, 0);
+            tvLp.leftToLeft = LayoutParams.PARENT_ID;
+            tvLp.topToTop = LayoutParams.PARENT_ID;
+            tvLp.bottomToBottom = LayoutParams.PARENT_ID;
+            tvLp.rightToLeft = mCheckedView.getId();
+            tvLp.rightMargin = markMarginHor;
             addView(mTextView, tvLp);
+            mCheckedView.setVisibility(INVISIBLE);
         }
 
         public MarkItemView(Context context, CharSequence text) {
@@ -187,21 +227,21 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
 
         @Override
         protected void notifyCheckChange(boolean isChecked) {
-            QMUIViewHelper.safeSetImageViewSelected(mCheckedView, isChecked);
+            mCheckedView.setVisibility(isChecked ? VISIBLE : INVISIBLE);
         }
     }
 
-    @SuppressLint("ViewConstructor")
+    @SuppressLint({"ViewConstructor", "CustomViewStyleable"})
     public static class CheckItemView extends QMUIDialogMenuItemView {
         private Context mContext;
         private TextView mTextView;
-        private ImageView mCheckedView;
+        private AppCompatImageView mCheckedView;
 
         public CheckItemView(Context context, boolean right) {
             super(context);
             mContext = context;
-            mCheckedView = new ImageView(mContext);
-            mCheckedView.setId(QMUIViewHelper.generateViewId());
+            mCheckedView = new AppCompatImageView(mContext);
+            mCheckedView.setId(View.generateViewId());
 
             TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogMenuCheckDef,
                     R.attr.qmui_dialog_menu_item_style, 0);
@@ -217,26 +257,35 @@ public class QMUIDialogMenuItemView extends QMUIRelativeLayout {
             }
             a.recycle();
 
-            LayoutParams checkLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            checkLp.addRule(CENTER_VERTICAL, TRUE);
-            if (right) {
-                checkLp.addRule(ALIGN_PARENT_RIGHT, TRUE);
-                checkLp.leftMargin = markMarginHor;
-            } else {
-                checkLp.addRule(ALIGN_PARENT_LEFT, TRUE);
-                checkLp.rightMargin = markMarginHor;
+            LayoutParams checkLp = new LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            checkLp.topToTop = LayoutParams.PARENT_ID;
+            checkLp.bottomToBottom = LayoutParams.PARENT_ID;
+            if(right){
+                checkLp.rightToRight = LayoutParams.PARENT_ID;
+            }else{
+                checkLp.leftToLeft = LayoutParams.PARENT_ID;
             }
-
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+            builder.src(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_s_dialog_check_drawable));
+            QMUISkinHelper.setSkinValue(mCheckedView, builder);
+            QMUISkinValueBuilder.release(builder);
             addView(mCheckedView, checkLp);
 
             mTextView = createItemTextView(mContext);
-            LayoutParams tvLp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            if (right) {
-                tvLp.addRule(LEFT_OF, mCheckedView.getId());
-            } else {
-                tvLp.addRule(RIGHT_OF, mCheckedView.getId());
+            LayoutParams tvLp = new LayoutParams(0, 0);
+            if(right){
+                tvLp.leftToLeft = LayoutParams.PARENT_ID;
+                tvLp.rightToLeft = mCheckedView.getId();
+                tvLp.rightMargin = markMarginHor;
+            }else{
+                tvLp.rightToRight = LayoutParams.PARENT_ID;
+                tvLp.leftToRight = mCheckedView.getId();
+                tvLp.leftMargin = markMarginHor;
             }
 
+            tvLp.topToTop = LayoutParams.PARENT_ID;
+            tvLp.bottomToBottom = LayoutParams.PARENT_ID;
             addView(mTextView, tvLp);
         }
 

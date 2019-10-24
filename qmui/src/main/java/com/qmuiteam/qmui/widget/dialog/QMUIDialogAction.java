@@ -20,18 +20,22 @@ package com.qmuiteam.qmui.widget.dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import androidx.annotation.IntDef;
-import androidx.core.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUISpanHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 /**
  * @author cginechen
@@ -50,76 +54,87 @@ public class QMUIDialogAction {
     public static final int ACTION_PROP_NEGATIVE = 2;
 
 
-    private Context mContext;
     private CharSequence mStr;
-    private int mIconRes;
-    private int mActionProp;
+    private int mIconRes = 0;
+    private int mActionProp = ACTION_PROP_NEUTRAL;
+    private int mSkinTextColorAttr = 0;
+    private int mSkinBackgroundAttr = 0;
+    private int mSkinIconTintColorAttr = 0;
+    private int mSkinSeparatorColorAttr = R.attr.qmui_skin_support_dialog_action_divider_color;
     private ActionListener mOnClickListener;
     private QMUIButton mButton;
     private boolean mIsEnabled = true;
+    private QMUISkinValueBuilder mBtnSkinValueBuilder;
 
-    //region 构造器
 
-    /**
-     * 无图标Action
-     *
-     * @param context         context
-     * @param strRes          文案
-     * @param onClickListener 点击事件
-     */
-    public QMUIDialogAction(Context context, int strRes, ActionListener onClickListener) {
-        this(context, context.getResources().getString(strRes), ACTION_PROP_NEUTRAL, onClickListener);
+    public QMUIDialogAction(Context context, int strRes) {
+        this(context.getResources().getString(strRes));
     }
 
-    public QMUIDialogAction(Context context, String str, ActionListener onClickListener) {
-        this(context, str, ACTION_PROP_NEUTRAL, onClickListener);
+    public QMUIDialogAction(CharSequence str) {
+        this(str, null);
     }
 
-
-    /**
-     * @param context         context
-     * @param strRes          文案
-     * @param actionProp      属性
-     * @param onClickListener 点击事件
-     */
-    public QMUIDialogAction(Context context, int strRes, @Prop int actionProp, ActionListener onClickListener) {
-        mContext = context;
-        mStr = mContext.getResources().getString(strRes);
-        mActionProp = actionProp;
-        mOnClickListener = onClickListener;
+    public QMUIDialogAction(Context context, int strRes, @Nullable ActionListener onClickListener) {
+        this(context.getResources().getString(strRes), onClickListener);
     }
 
-    public QMUIDialogAction(Context context, CharSequence str, @Prop int actionProp, ActionListener onClickListener) {
-        mContext = context;
+    public QMUIDialogAction(CharSequence str, @Nullable ActionListener onClickListener) {
         mStr = str;
-        mActionProp = actionProp;
         mOnClickListener = onClickListener;
     }
 
-    public QMUIDialogAction(Context context, int iconRes, CharSequence str, @Prop int actionProp, ActionListener onClickListener) {
-        mContext = context;
+    public QMUIDialogAction prop(@Prop int actionProp) {
+        mActionProp = actionProp;
+        return this;
+    }
+
+    public QMUIDialogAction iconRes(@Prop int iconRes) {
         mIconRes = iconRes;
-        mStr = str;
-        mActionProp = actionProp;
-        mOnClickListener = onClickListener;
+        return this;
     }
 
-    //endregion
-
-
-    public void setOnClickListener(ActionListener onClickListener) {
+    public QMUIDialogAction onClick(ActionListener onClickListener) {
         mOnClickListener = onClickListener;
+        return this;
     }
 
-    public void setEnabled(boolean enabled) {
+    public QMUIDialogAction skinTextColorAttr(int skinTextColorAttr) {
+        mSkinTextColorAttr = skinTextColorAttr;
+        return this;
+    }
+
+    public QMUIDialogAction skinBackgroundAttr(int skinBackgroundAttr) {
+        mSkinBackgroundAttr = skinBackgroundAttr;
+        return this;
+    }
+
+    public QMUIDialogAction skinIconTintColorAttr(int skinIconTintColorAttr) {
+        mSkinIconTintColorAttr = skinIconTintColorAttr;
+        return this;
+    }
+
+    /**
+     * inner usage
+     * @param skinSeparatorColorAttr
+     * @return
+     */
+    QMUIDialogAction skinSeparatorColorAttr(int skinSeparatorColorAttr){
+        mSkinSeparatorColorAttr = skinSeparatorColorAttr;
+        return this;
+    }
+
+    public QMUIDialogAction setEnabled(boolean enabled) {
         mIsEnabled = enabled;
         if (mButton != null) {
             mButton.setEnabled(enabled);
         }
+        return this;
     }
 
     public QMUIButton buildActionView(final QMUIDialog dialog, final int index) {
-        mButton = generateActionButton(dialog.getContext(), mStr, mIconRes);
+        mButton = generateActionButton(dialog.getContext(), mStr, mIconRes,
+                mSkinBackgroundAttr, mSkinTextColorAttr, mSkinIconTintColorAttr);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,15 +149,16 @@ public class QMUIDialogAction {
     /**
      * 生成适用于对话框的按钮
      */
-    private QMUIButton generateActionButton(Context context, CharSequence text, int iconRes) {
-        // button 有提供 buttonStyle, 覆盖第三个参数不是好选择
+    private QMUIButton generateActionButton(Context context, CharSequence text, int iconRes,
+                                            int skinBackgroundAttr, int skinTextColorAttr, int iconTintColor) {
         QMUIButton button = new QMUIButton(context);
         QMUIViewHelper.setBackground(button, null);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
         button.setChangeAlphaWhenDisable(true);
         button.setChangeAlphaWhenPress(true);
-        TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogActionStyleDef, R.attr.qmui_dialog_action_style, 0);
+        TypedArray a = context.obtainStyledAttributes(
+                null, R.styleable.QMUIDialogActionStyleDef, R.attr.qmui_dialog_action_style, 0);
         int count = a.getIndexCount();
         int paddingHor = 0, iconSpace = 0;
         ColorStateList negativeTextColor = null, positiveTextColor = null;
@@ -168,7 +184,7 @@ public class QMUIDialogAction {
                 negativeTextColor = a.getColorStateList(attr);
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_qmui_dialog_action_icon_space) {
                 iconSpace = a.getDimensionPixelSize(attr, 0);
-            }else if(attr == R.styleable.QMUITextCommonStyleDef_android_textStyle){
+            } else if (attr == R.styleable.QMUITextCommonStyleDef_android_textStyle) {
                 int styleIndex = a.getInt(attr, -1);
                 button.setTypeface(null, styleIndex);
             }
@@ -179,17 +195,39 @@ public class QMUIDialogAction {
         if (iconRes <= 0) {
             button.setText(text);
         } else {
-            button.setText(QMUISpanHelper.generateSideIconText(true, iconSpace, text, ContextCompat.getDrawable(context, iconRes)));
+            button.setText(QMUISpanHelper.generateSideIconText(
+                    true, iconSpace, text, ContextCompat.getDrawable(context, iconRes), iconTintColor, button));
         }
+
 
         button.setClickable(true);
         button.setEnabled(mIsEnabled);
 
         if (mActionProp == ACTION_PROP_NEGATIVE) {
             button.setTextColor(negativeTextColor);
+            if (skinTextColorAttr == 0) {
+                skinTextColorAttr = R.attr.qmui_skin_support_dialog_negative_action_text_color;
+            }
         } else if (mActionProp == ACTION_PROP_POSITIVE) {
             button.setTextColor(positiveTextColor);
+            if (skinTextColorAttr == 0) {
+                skinTextColorAttr = R.attr.qmui_skin_support_dialog_positive_action_text_color;
+            }
+        } else {
+            if (skinTextColorAttr == 0) {
+                skinTextColorAttr = R.attr.qmui_skin_support_dialog_action_text_color;
+            }
         }
+        if (mBtnSkinValueBuilder == null) {
+            mBtnSkinValueBuilder = QMUISkinValueBuilder.acquire();
+        }
+        skinBackgroundAttr = skinBackgroundAttr == 0 ? R.attr.qmui_skin_support_dialog_action_bg : skinBackgroundAttr;
+        mBtnSkinValueBuilder.background(skinBackgroundAttr);
+        mBtnSkinValueBuilder.textColor(skinTextColorAttr);
+        mBtnSkinValueBuilder.topSeparator(mSkinSeparatorColorAttr);
+        mBtnSkinValueBuilder.leftSeparator(mSkinSeparatorColorAttr);
+        QMUISkinHelper.setSkinValue(button, mBtnSkinValueBuilder);
+        mBtnSkinValueBuilder.clear();
         return button;
     }
 

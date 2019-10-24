@@ -155,7 +155,7 @@ public class QMUIGroupListView extends LinearLayout {
         private boolean mOnlyShowStartEndSeparator = false;
         private int mMiddleSeparatorInsetLeft = 0;
         private int mMiddleSeparatorInsetRight = 0;
-        private int mBgAttr = R.attr.qmui_skin_support_common_list_bg;
+        private int mBgAttr = R.attr.qmui_skin_support_s_common_list_bg;
 
         private int mLeftIconWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
         private int mLeftIconHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -290,11 +290,12 @@ public class QMUIGroupListView extends LinearLayout {
                     return lp;
                 }
             };
-            String skin = new QMUISkinValueBuilder()
-                    .background(mBgAttr)
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+            String skin = builder.background(mBgAttr)
                     .topSeparator(mSeparatorColorAttr)
                     .bottomSeparator(mSeparatorColorAttr)
                     .build();
+            QMUISkinValueBuilder.release(builder);
             int separatorColor = QMUIResHelper.getAttrColor(groupListView.getContext(), mSeparatorColorAttr);
             for (int i = 0; i < itemViewCount; i++) {
                 QMUICommonListItemView itemView = mItemViews.get(i);

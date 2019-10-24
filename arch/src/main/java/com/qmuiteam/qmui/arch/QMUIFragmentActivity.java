@@ -27,6 +27,7 @@ import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
+import com.qmuiteam.qmui.util.DoNotInterceptKeyboardInset;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
@@ -347,6 +348,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     }
 
 
+    @DoNotInterceptKeyboardInset
     private static class RootView extends QMUIWindowInsetLayout {
 
         public RootView(Context context) {

@@ -44,6 +44,7 @@
     <attr name="qmui_general_shadow_alpha" format="float" />
 
 
+    <attr name="qmui_skin_support_window_background" format="color"/>
     <attr name="qmui_skin_support_color_separator" format="color" />
     <attr name="qmui_skin_support_color_separator_darken" format="color" />
     <attr name="qmui_skin_support_color_background" format="color" />
@@ -72,7 +73,7 @@
     <attr name="qmui_skin_support_common_list_red_point_tint_color" format="color|reference"/>
     <attr name="qmui_skin_support_common_list_new_drawable" format="reference"/>
     <attr name="qmui_skin_support_common_list_separator_color" format="color|reference"/>
-    <attr name="qmui_skin_support_common_list_bg" format="reference"/>
+    <attr name="qmui_skin_support_s_common_list_bg" format="reference"/>
     <attr name="qmui_skin_support_common_list_chevron_color" format="color|reference"/>
 
 
@@ -81,8 +82,8 @@
     **********************************************-->
     <attr name="qmui_list_item_height" format="dimension" />
     <attr name="qmui_list_item_height_higher" format="dimension" />
-    <attr name="qmui_s_list_item_bg_1" format="reference" />
-    <attr name="qmui_s_list_item_bg_2" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_1" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_2" format="reference" />
 
     <attr name="qmui_list_item_bg_with_border_bottom" format="reference"/>
     <attr name="qmui_s_list_item_bg_with_border_bottom" format="reference" />
@@ -90,8 +91,8 @@
     <!--**********************************************
     *             qmui drawbale                      *
     **********************************************-->
-    <attr name="qmui_icon_check_mark" format="reference" />
-    <attr name="qmui_s_checkbox" format="reference" />
+    <attr name="qmui_skin_support_icon_mark" format="reference" />
+    <attr name="qmui_skin_support_s_checkbox" format="reference" />
 
 
     <!--**********************************************
@@ -185,14 +186,47 @@
     <!--**********************************************
     *                qmui dialog                     *
     **********************************************-->
-    <attr name="qmui_dialog_min_width" format="dimension" />
-    <attr name="qmui_dialog_max_width" format="dimension" />
+    <attr name="qmui_skin_support_dialog_bg" format="reference"/>
+    <attr name="qmui_skin_support_dialog_title_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_message_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_action_bg" format="reference"/>
+    <attr name="qmui_skin_support_dialog_action_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_positive_action_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_negative_action_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_action_divider_color" format="reference"/>
+    <attr name="qmui_skin_support_s_dialog_check_drawable" format="reference"/>
+    <attr name="qmui_skin_support_dialog_mark_drawable" format="reference"/>
+    <attr name="qmui_skin_support_dialog_edit_bottom_line_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_edit_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_edit_text_hint_color" format="reference"/>
+    <attr name="qmui_skin_support_s_dialog_menu_item_bg" format="reference"/>
+    <attr name="qmui_skin_support_dialog_menu_item_text_color" format="reference"/>
+
+    <attr name="qmui_skin_def_dialog_bg" format="string"/>
+    <attr name="qmui_skin_def_dialog_title_text_color" format="string"/>
+    <attr name="qmui_skin_def_dialog_message_text_color" format="string"/>
+    <attr name="qmui_skin_def_s_dialog_check_drawable" format="string"/>
+    <attr name="qmui_skin_def_dialog_mark_drawable" format="string"/>
+    <attr name="qmui_skin_def_dialog_edit_bottom_line_color" format="string"/>
+    <attr name="qmui_skin_def_dialog_edit_text_color" format="string"/>
+    <attr name="qmui_skin_def_dialog_edit_text_hint_color" format="string"/>
+    <attr name="qmui_skin_def_s_dialog_menu_item_bg" format="string"/>
+    <attr name="qmui_skin_def_dialog_menu_item_text_color" format="string"/>
+
+
+
     <attr name="qmui_dialog_bg" format="reference" />
     <attr name="qmui_dialog_radius" format="dimension" />
-    <attr name="qmui_dialog_margin_vertical" format="dimension" />
-    <attr name="qmui_dialog_padding_horizontal" format="dimension" />
+    <attr name="qmui_dialog_min_width" format="dimension" />
+    <attr name="qmui_dialog_max_width" format="dimension" />
+    <attr name="qmui_dialog_inset_hor" format="dimension" />
+    <attr name="qmui_dialog_inset_ver" format="dimension" />
     <attr name="qmui_dialog_background_dim_amount" format="float" />
-    <attr name="qmui_dialog_wrapper_style" format="reference" />
+    <attr name="qmui_dialog_padding_horizontal" format="dimension" />
+    <attr name="qmui_dialog_edit_margin_top" format="dimension"/>
+    <attr name="qmui_dialog_edit_margin_bottom" format="dimension"/>
+    <attr name="qmui_dialog_edit_bottom_line_height" format="dimension"/>
+
     <attr name="qmui_dialog_title_style" format="reference" />
     <attr name="qmui_dialog_action_container_style" format="reference" />
     <attr name="qmui_dialog_action_style" format="reference" />

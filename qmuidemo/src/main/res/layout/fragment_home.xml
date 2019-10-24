@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Tencent is pleased to support the open source community by making QMUI_Android available.
 
  Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -16,18 +15,18 @@
 -->
 
 <com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:clipChildren="false">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/app_content_bg_color"
+    android:clipChildren="false"
+    app:qmui_skin_background="?attr/app_skin_common_background">
 
     <com.qmuiteam.qmui.widget.QMUIViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/home_tab_height"
-        android:background="?attr/app_content_bg_color"
-        app:qmui_skin_background="?attr/app_skin_common_background"/>
+        android:layout_marginBottom="@dimen/home_tab_height" />
 
     <com.qmuiteam.qmui.widget.tab.QMUITabSegment
         android:id="@+id/tabs"
@@ -36,7 +35,7 @@
         android:layout_gravity="bottom"
         android:background="@color/qmui_config_color_white"
         android:textSize="12sp"
-        app:qmui_topDividerHeight="1px"
+        app:qmui_tab_icon_position="top"
         app:qmui_topDividerColor="?attr/qmui_skin_support_color_separator"
-        app:qmui_tab_icon_position="top"/>
+        app:qmui_topDividerHeight="1px" />
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

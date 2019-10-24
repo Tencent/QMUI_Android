@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -428,8 +429,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         AppCompatImageView resultImageView = new AppCompatImageView(getContext());
         resultImageView.setLayoutParams(getAccessoryLayoutParams());
         resultImageView.setScaleType(ImageView.ScaleType.CENTER);
-        QMUISkinHelper.setSkinValue(resultImageView,
-                new QMUISkinValueBuilder().tintColor(R.attr.qmui_skin_support_common_list_chevron_color));
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        builder.tintColor(R.attr.qmui_skin_support_common_list_chevron_color);
+        QMUISkinHelper.setSkinValue(resultImageView, builder);
+        QMUISkinValueBuilder.release(builder);
         return resultImageView;
     }
 

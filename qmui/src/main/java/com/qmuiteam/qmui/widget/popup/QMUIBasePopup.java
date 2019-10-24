@@ -35,7 +35,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     public static final float DEFAULT_DIM_AMOUNT = -1f;
     public static final int NOT_SET = -1;
 
-    protected PopupWindow mWindow;
+    protected final PopupWindow mWindow;
     protected WindowManager mWindowManager;
     protected Context mContext;
     protected WeakReference<View> mAttachedViewRf;

@@ -16,6 +16,7 @@
 -->
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/text"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,4 +25,6 @@
     android:paddingLeft="?attr/qmui_content_padding_horizontal"
     android:paddingRight="?attr/qmui_content_padding_horizontal"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:background="?attr/qmui_s_list_item_bg_2"/>
+    android:background="?attr/qmui_skin_support_s_list_item_bg_1"
+    app:qmui_skin_background="?attr/qmui_skin_support_s_list_item_bg_1"
+    app:qmui_skin_text_color="?attr/app_skin_common_title_text_color"/>

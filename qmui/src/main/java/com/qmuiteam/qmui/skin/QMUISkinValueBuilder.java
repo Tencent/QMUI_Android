@@ -16,10 +16,14 @@
 package com.qmuiteam.qmui.skin;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+
+import androidx.annotation.NonNull;
 
 public class QMUISkinValueBuilder {
     public static final String BACKGROUND = "background";
     public static final String TEXT_COLOR = "textColor";
+    public static final String HINT_COLOR = "hintColor";
     public static final String SECOND_TEXT_COLOR = "secondTextColor";
     public static final String SRC = "src";
     public static final String BORDER = "border";
@@ -31,6 +35,37 @@ public class QMUISkinValueBuilder {
     public static final String TINT_COLOR = "tintColor";
     public static final String BG_TINT_COLOR = "bgTintColor";
     public static final String PROGRESS_COLOR = "progressColor";
+    public static final String TEXT_COMPOUND_TINT_COLOR = "tclTintColor";
+    public static final String TEXT_COMPOUND_LEFT_SRC = "tclTintColor";
+    public static final String TEXT_COMPOUND_RIGHT_SRC = "tcrTintColor";
+    public static final String TEXT_COMPOUND_TOP_SRC = "tctTintColor";
+    public static final String TEXT_COMPOUND_BOTTOM_SRC = "tcbTintColor";
+    private static LinkedList<QMUISkinValueBuilder> sValueBuilderPool;
+
+    public static QMUISkinValueBuilder acquire() {
+        if (sValueBuilderPool == null) {
+            return new QMUISkinValueBuilder();
+        }
+        QMUISkinValueBuilder valueBuilder = sValueBuilderPool.poll();
+        if (valueBuilder != null) {
+            return valueBuilder;
+        }
+        return new QMUISkinValueBuilder();
+    }
+
+    public static void release(@NonNull QMUISkinValueBuilder valueBuilder) {
+        valueBuilder.clear();
+        if (sValueBuilderPool == null) {
+            sValueBuilderPool = new LinkedList<>();
+        }
+        if (sValueBuilderPool.size() < 2) {
+            sValueBuilderPool.push(valueBuilder);
+        }
+    }
+
+    private QMUISkinValueBuilder() {
+
+    }
 
     private HashMap<String, String> mValues = new HashMap<>();
 
@@ -39,8 +74,58 @@ public class QMUISkinValueBuilder {
         return this;
     }
 
-    public QMUISkinValueBuilder background(String  attrName) {
+    public QMUISkinValueBuilder background(String attrName) {
         mValues.put(BACKGROUND, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundTintColor(int attr) {
+        mValues.put(TEXT_COMPOUND_TINT_COLOR, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundTintColor(String attrName) {
+        mValues.put(TEXT_COMPOUND_TINT_COLOR, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundTopSrc(int attr) {
+        mValues.put(TEXT_COMPOUND_TOP_SRC, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundTopSrc(String attrName) {
+        mValues.put(TEXT_COMPOUND_TOP_SRC, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundRightSrc(int attr) {
+        mValues.put(TEXT_COMPOUND_RIGHT_SRC, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundRightSrc(String attrName) {
+        mValues.put(TEXT_COMPOUND_RIGHT_SRC, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundBottomSrc(int attr) {
+        mValues.put(TEXT_COMPOUND_BOTTOM_SRC, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundBottomSrc(String attrName) {
+        mValues.put(TEXT_COMPOUND_BOTTOM_SRC, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundLeftSrc(int attr) {
+        mValues.put(TEXT_COMPOUND_LEFT_SRC, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder textCompoundLeftSrc(String attrName) {
+        mValues.put(TEXT_COMPOUND_LEFT_SRC, attrName);
         return this;
     }
 
@@ -54,12 +139,22 @@ public class QMUISkinValueBuilder {
         return this;
     }
 
-    public QMUISkinValueBuilder progressColor(int attr){
+    public QMUISkinValueBuilder hintColor(int attr) {
+        mValues.put(HINT_COLOR, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder hintColor(String attrName) {
+        mValues.put(HINT_COLOR, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder progressColor(int attr) {
         mValues.put(PROGRESS_COLOR, String.valueOf(attr));
         return this;
     }
 
-    public QMUISkinValueBuilder progressColor(String attrName){
+    public QMUISkinValueBuilder progressColor(String attrName) {
         mValues.put(PROGRESS_COLOR, attrName);
         return this;
     }

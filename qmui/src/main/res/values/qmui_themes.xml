@@ -68,8 +68,7 @@
         <item name="colorAccent">?attr/qmui_config_color_blue</item>
         <item name="colorControlNormal">@color/qmui_config_color_white</item>
         <item name="android:textColorPrimary">?attr/qmui_config_color_blue</item>
-        <item name="android:textColorSecondary">?attr/qmui_config_color_blue
-        </item> <!--返回箭头也是用这个颜色-->
+        <item name="android:textColorSecondary">?attr/qmui_config_color_blue</item>
         <item name="android:windowBackground">@color/qmui_config_color_white</item>
         <item name="android:editTextColor">?attr/qmui_config_color_black</item>
     </style>
@@ -160,7 +159,7 @@
         <item name="qmui_skin_support_common_list_red_point_tint_color">?attr/qmui_config_color_red</item>
         <item name="qmui_skin_support_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
         <item name="qmui_skin_support_common_list_separator_color">?attr/qmui_skin_support_color_separator</item>
-        <item name="qmui_skin_support_common_list_bg">?attr/qmui_s_list_item_bg_2</item>
+        <item name="qmui_skin_support_s_common_list_bg">?attr/qmui_skin_support_s_list_item_bg_2</item>
         <item name="qmui_skin_support_common_list_chevron_color">?attr/qmui_config_color_gray_5</item>
         <!-- skin support-->
 
@@ -219,17 +218,20 @@
         *                qmui dialog                     *
         **********************************************-->
         <item name="qmui_dialog_min_width">260dp</item>
-        <item name="qmui_dialog_max_width">304dp</item>
-        <item name="qmui_dialog_bg">@drawable/qmui_dialog_bg</item>
+        <item name="qmui_dialog_max_width">320dp</item>
         <item name="qmui_dialog_radius">@dimen/qmui_dialog_radius</item>
-        <item name="qmui_dialog_margin_vertical">20dp</item>
-        <item name="qmui_dialog_padding_horizontal">24dp</item>
+        <item name="qmui_dialog_inset_hor">40dp</item>
+        <item name="qmui_dialog_inset_ver">20dp</item>
         <item name="qmui_dialog_background_dim_amount">0.6</item>
-        <item name="qmui_dialog_wrapper_style">@style/QMUI.Dialog.Wrapper</item>
+        <item name="qmui_dialog_padding_horizontal">24dp</item>
+        <item name="qmui_dialog_edit_margin_top">20dp</item>
+        <item name="qmui_dialog_edit_margin_bottom">24dp</item>
+        <item name="qmui_dialog_edit_bottom_line_height">1dp</item>
         <item name="qmui_dialog_title_style">@style/QMUI.Dialog.Title</item>
+        <item name="qmui_dialog_message_content_style">@style/QMUI.Dialog.MessageContent</item>
+
         <item name="qmui_dialog_action_container_style">@style/QMUI.Dialog.ActionContainer</item>
         <item name="qmui_dialog_action_style">@style/QMUI.Dialog.Action</item>
-        <item name="qmui_dialog_message_content_style">@style/QMUI.Dialog.MessageContent</item>
         <item name="qmui_dialog_edit_content_style">@style/QMUI.Dialog.EditContent</item>
         <item name="qmui_dialog_menu_container_style">@style/QMUI.Dialog.MenuContainer</item>
         <item name="qmui_dialog_menu_item_style">@style/QMUI.Dialog_MenuItem</item>
@@ -242,14 +244,41 @@
         <item name="qmui_tip_dialog_padding_vertical">12dp</item>
         <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
 
+        <item name="qmui_skin_support_dialog_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_dialog_title_text_color">?attr/qmui_config_color_black</item>
+        <item name="qmui_skin_support_dialog_message_text_color">?attr/qmui_config_color_gray_4</item>
+        <item name="qmui_skin_support_dialog_action_bg">@null</item>
+        <item name="qmui_skin_support_dialog_action_text_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_dialog_positive_action_text_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_dialog_negative_action_text_color">?attr/qmui_config_color_red</item>
+        <item name="qmui_skin_support_dialog_action_divider_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_dialog_edit_bottom_line_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_dialog_edit_text_color">?attr/qmui_config_color_black</item>
+        <item name="qmui_skin_support_dialog_edit_text_hint_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_s_dialog_menu_item_bg">?attr/qmui_skin_support_s_list_item_bg_1</item>
+        <item name="qmui_skin_support_dialog_menu_item_text_color">?attr/qmui_config_color_black</item>
+        <item name="qmui_skin_support_s_dialog_check_drawable">?attr/qmui_skin_support_s_checkbox</item>
+        <item name="qmui_skin_support_dialog_mark_drawable">?attr/qmui_skin_support_icon_mark</item>
+
+        <item name="qmui_skin_def_dialog_bg">qmui_skin_support_dialog_bg</item>
+        <item name="qmui_skin_def_dialog_title_text_color">qmui_skin_support_dialog_title_text_color</item>
+        <item name="qmui_skin_def_dialog_message_text_color">qmui_skin_support_dialog_message_text_color</item>
+        <item name="qmui_skin_def_s_dialog_check_drawable">qmui_skin_support_dialog_s_check_drawable</item>
+        <item name="qmui_skin_def_dialog_mark_drawable">qmui_skin_support_dialog_mark_drawable</item>
+        <item name="qmui_skin_def_dialog_edit_bottom_line_color">qmui_skin_support_dialog_edit_bottom_line_color</item>
+        <item name="qmui_skin_def_dialog_edit_text_color">qmui_skin_support_dialog_edit_text_color</item>
+        <item name="qmui_skin_def_dialog_edit_text_hint_color">qmui_skin_support_dialog_edit_text_hint_color</item>
+        <item name="qmui_skin_def_s_dialog_menu_item_bg">qmui_skin_support_s_dialog_menu_item_bg</item>
+        <item name="qmui_skin_def_dialog_menu_item_text_color">qmui_skin_support_dialog_menu_item_text_color</item>
 
         <!--**********************************************
         *             qmui list item bg                  *
         **********************************************-->
         <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
         <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
-        <item name="qmui_s_list_item_bg_1">@drawable/qmui_s_list_item_bg_1</item>
-        <item name="qmui_s_list_item_bg_2">@drawable/qmui_s_list_item_bg_2</item>
+
+        <item name="qmui_skin_support_s_list_item_bg_1">@drawable/qmui_s_list_item_bg_1</item>
+        <item name="qmui_skin_support_s_list_item_bg_2">@drawable/qmui_s_list_item_bg_2</item>
 
 
         <item name="qmui_list_item_bg_with_border_bottom">
@@ -262,8 +291,8 @@
         <!--**********************************************
         *             qmui drawable                      *
         ***********************************************-->
-        <item name="qmui_s_checkbox">@drawable/qmui_s_checkbox</item>
-        <item name="qmui_icon_check_mark">@drawable/qmui_icon_checkmark</item>
+        <item name="qmui_skin_support_s_checkbox">@drawable/qmui_s_checkbox</item>
+        <item name="qmui_skin_support_icon_mark">@drawable/qmui_icon_checkmark</item>
 
 
         <!--**********************************************
