@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIWindowHelper;
 
@@ -113,7 +114,10 @@ public class QMUIDialogRootLayout extends ViewGroup {
             if(keyboardOverlayHeight > 0){
                 childMaxHeight = Math.max(heightSize - 2 * mInsetVer - keyboardOverlayHeight, 0);
             }else{
-                childMaxHeight = Math.max((int)(heightSize * mMaxPercent) - 2 * mInsetHor, 0);
+                // use maxPercent to keep dialog from being too high and calculated based on
+                // screen height because height size while change to actual height when multi onMeasure.
+                childMaxHeight = Math.min(heightSize - 2 * mInsetVer,
+                        (int)(QMUIDisplayHelper.getScreenHeight(getContext()) * mMaxPercent - 2 * mInsetVer));
             }
             if (mDialogViewLp.height == LayoutParams.MATCH_PARENT) {
                 childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childMaxHeight, MeasureSpec.EXACTLY);
@@ -127,7 +131,8 @@ public class QMUIDialogRootLayout extends ViewGroup {
             mDialogView.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
         // InsetVer works when keyboard overlay occurs
-        setMeasuredDimension(mDialogView.getMeasuredWidth(), mDialogView.getMeasuredHeight() + 2 * mInsetVer);
+        setMeasuredDimension(mDialogView.getMeasuredWidth(),
+                mDialogView.getMeasuredHeight() + 2 * mInsetVer);
     }
 
     @Override
