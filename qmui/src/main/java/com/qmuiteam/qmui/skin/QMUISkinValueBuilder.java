@@ -308,4 +308,8 @@ public class QMUISkinValueBuilder {
         }
         return builder.toString();
     }
+
+    public void release(){
+        QMUISkinValueBuilder.release(this);
+    }
 }

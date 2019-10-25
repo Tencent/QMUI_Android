@@ -25,6 +25,24 @@
         <item name="qmui_tab_icon_position">left</item>
     </style>
 
+    <style name="QMUI.TabSegment.SignCount">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color</item>
+        <item name="qmui_isRadiusAdjustBounds">true</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">?attr/qmui_skin_support_tab_sign_count_view_text_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:paddingRight">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
+        <item name="android:minWidth">?attr/qmui_tab_sign_count_view_minSize</item>
+        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>i_ta
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <!--********************* Button *********************-->
     <style name="QMUI.RoundButton" parent="@style/Button.Compat">
         <item name="android:layout_width">wrap_content</item>
@@ -115,8 +133,7 @@
     <style name="QMUI.Dialog" parent="android:Theme.Dialog">
         <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
-        <item name="android:windowNoTitle">true</item><!-- 不用window title，使用自己的layout来做title -->
-        <!-- <item name="android:windowTitleStyle">@style/dialog_title</item> --><!-- 不用设置windowStyleStyle，因为windowNoTitle=true -->
+        <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item><!-- 在中间弹框、背后有遮罩的效果 -->
     </style>
 
@@ -186,7 +203,6 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="qmui_paddingTopWhenNotTitle">27dp</item>
     </style>
-
 
     <style name="QMUI.Dialog.EditContent">
         <item name="android:textColor">?attr/qmui_skin_support_dialog_edit_text_color</item>

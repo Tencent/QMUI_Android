@@ -98,7 +98,7 @@
         <!-- skin support-->
 
 
-        <item name="qmui_tab_sign_count_view">@style/qmui_tab_sign_count_view</item>
+        <item name="qmui_tab_sign_count_view">@style/QMUI.TabSegment.SignCount</item>
         <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
         <item name="qmui_tab_sign_count_view_minSize_with_text">
             @dimen/qmui_tab_sign_count_view_minSize_with_text
@@ -229,20 +229,12 @@
         <item name="qmui_dialog_edit_bottom_line_height">1dp</item>
         <item name="qmui_dialog_title_style">@style/QMUI.Dialog.Title</item>
         <item name="qmui_dialog_message_content_style">@style/QMUI.Dialog.MessageContent</item>
-
         <item name="qmui_dialog_action_container_style">@style/QMUI.Dialog.ActionContainer</item>
         <item name="qmui_dialog_action_style">@style/QMUI.Dialog.Action</item>
         <item name="qmui_dialog_edit_content_style">@style/QMUI.Dialog.EditContent</item>
         <item name="qmui_dialog_menu_container_style">@style/QMUI.Dialog.MenuContainer</item>
         <item name="qmui_dialog_menu_item_style">@style/QMUI.Dialog_MenuItem</item>
 
-        <!-- tip -->
-        <item name="qmui_tip_dialog_bg">@drawable/qmui_tip_dialog_bg</item>
-        <item name="qmui_tip_dialog_min_width">120dp</item>
-        <item name="qmui_tip_dialog_min_height">56dp</item>
-        <item name="qmui_tip_dialog_margin_horizontal">?attr/qmui_content_spacing_horizontal</item>
-        <item name="qmui_tip_dialog_padding_vertical">12dp</item>
-        <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
 
         <item name="qmui_skin_support_dialog_bg">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_dialog_title_text_color">?attr/qmui_config_color_black</item>
@@ -270,6 +262,34 @@
         <item name="qmui_skin_def_dialog_edit_text_hint_color">qmui_skin_support_dialog_edit_text_hint_color</item>
         <item name="qmui_skin_def_s_dialog_menu_item_bg">qmui_skin_support_s_dialog_menu_item_bg</item>
         <item name="qmui_skin_def_dialog_menu_item_text_color">qmui_skin_support_dialog_menu_item_text_color</item>
+
+
+        <!--**********************************************
+        *             qmui tip dialog                    *
+        **********************************************-->
+        <item name="qmui_tip_dialog_min_width">120dp</item>
+        <item name="qmui_tip_dialog_min_height">40dp</item>
+        <item name="qmui_tip_dialog_max_width">270dp</item>
+        <item name="qmui_tip_dialog_padding_vertical">14dp</item>
+        <item name="qmui_tip_dialog_padding_horizontal">?attr/qmui_content_padding_horizontal</item>
+        <item name="qmui_tip_dialog_radius">15dp</item>
+        <item name="qmui_tip_dialog_loading_size">32dp</item>
+        <item name="qmui_tip_dialog_text_margin_top">12dp</item>
+        <item name="qmui_tip_dialog_text_size">14sp</item>
+
+        <item name="qmui_skin_support_tip_dialog_bg">@color/qmui_config_color_75_pure_black</item>
+        <item name="qmui_skin_support_tip_dialog_loading_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_tip_dialog_text_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_tip_dialog_icon_success_src">@drawable/qmui_icon_notify_done</item>
+        <item name="qmui_skin_support_tip_dialog_icon_error_src">@drawable/qmui_icon_notify_error</item>
+        <item name="qmui_skin_support_tip_dialog_icon_info_src">@drawable/qmui_icon_notify_info</item>
+
+        <item name="qmui_skin_def_tip_dialog_bg">qmui_skin_support_tip_dialog_bg</item>
+        <item name="qmui_skin_def_tip_dialog_loading_color">qmui_skin_support_tip_dialog_loading_color</item>
+        <item name="qmui_skin_def_tip_dialog_text_color">qmui_skin_support_tip_dialog_text_color</item>
+        <item name="qmui_skin_def_tip_dialog_icon_success_src">qmui_skin_support_tip_dialog_icon_success_src</item>
+        <item name="qmui_skin_def_tip_dialog_icon_error_src">qmui_skin_support_tip_dialog_icon_error_src</item>
+        <item name="qmui_skin_def_tip_dialog_icon_info_src">qmui_skin_support_tip_dialog_icon_info_src</item>
 
         <!--**********************************************
         *             qmui list item bg                  *

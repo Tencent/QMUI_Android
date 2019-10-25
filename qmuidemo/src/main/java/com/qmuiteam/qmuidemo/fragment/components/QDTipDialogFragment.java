@@ -95,12 +95,6 @@ public class QDTipDialogFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final QMUITipDialog tipDialog;
                 switch (position) {
-                    case 0:
-                        tipDialog = new QMUITipDialog.Builder(getContext())
-                                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                                .setTipWord("正在加载")
-                                .create();
-                        break;
                     case 1:
                         tipDialog = new QMUITipDialog.Builder(getContext())
                                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)

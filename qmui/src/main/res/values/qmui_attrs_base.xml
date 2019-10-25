@@ -235,13 +235,32 @@
     <attr name="qmui_dialog_menu_container_style" format="reference" />
     <attr name="qmui_dialog_menu_item_style" format="reference" />
 
-    <!-- tips -->
-    <attr name="qmui_tip_dialog_bg" format="reference" />
-    <attr name="qmui_tip_dialog_min_width" format="dimension" />
-    <attr name="qmui_tip_dialog_min_height" format="dimension" />
+    <!--**********************************************
+     *              qmui tip dialog                  *
+     **********************************************-->
+    <attr name="qmui_tip_dialog_min_width" format="dimension"/>
+    <attr name="qmui_tip_dialog_min_height" format="dimension"/>
+    <attr name="qmui_tip_dialog_max_width" format="dimension"/>
     <attr name="qmui_tip_dialog_padding_vertical" format="dimension" />
     <attr name="qmui_tip_dialog_padding_horizontal" format="dimension" />
-    <attr name="qmui_tip_dialog_margin_horizontal" format="dimension" />
+    <attr name="qmui_tip_dialog_radius" format="dimension"/>
+    <attr name="qmui_tip_dialog_loading_size" format="dimension"/>
+    <attr name="qmui_tip_dialog_text_margin_top" format="dimension"/>
+    <attr name="qmui_tip_dialog_text_size" format="dimension"/>
+
+    <attr name="qmui_skin_support_tip_dialog_bg" format="reference" />
+    <attr name="qmui_skin_support_tip_dialog_loading_color" format="reference"/>
+    <attr name="qmui_skin_support_tip_dialog_text_color" format="reference"/>
+    <attr name="qmui_skin_support_tip_dialog_icon_success_src" format="reference"/>
+    <attr name="qmui_skin_support_tip_dialog_icon_error_src" format="reference"/>
+    <attr name="qmui_skin_support_tip_dialog_icon_info_src" format="reference"/>
+
+    <attr name="qmui_skin_def_tip_dialog_bg" format="string"/>
+    <attr name="qmui_skin_def_tip_dialog_loading_color" format="string"/>
+    <attr name="qmui_skin_def_tip_dialog_text_color" format="string"/>
+    <attr name="qmui_skin_def_tip_dialog_icon_success_src" format="string"/>
+    <attr name="qmui_skin_def_tip_dialog_icon_error_src" format="string"/>
+    <attr name="qmui_skin_def_tip_dialog_icon_info_src" format="string"/>
 
     <!--**********************************************
     *              qmui bottom sheet                 *

@@ -126,6 +126,7 @@
         <item name="qmui_skin_support_dialog_edit_text_hint_color">@color/qmui_config_color_75_white</item>
         <item name="qmui_skin_support_dialog_menu_item_text_color">@color/qmui_config_color_white</item>
 
+
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>
         <item name="app_skin_common_background_1">@color/qmui_config_color_gray_1</item>
