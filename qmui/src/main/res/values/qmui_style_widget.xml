@@ -130,14 +130,19 @@
 
     <!--********************* Dialog *********************-->
 
-    <style name="QMUI.Dialog" parent="android:Theme.Dialog">
+    <style name="QMUI.BaseDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:buttonStyle">@style/Button.Compat</item>
+    </style>
+
+
+    <style name="QMUI.Dialog" parent="QMUI.BaseDialog">
         <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
         <item name="android:windowBackground">@color/qmui_config_color_transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item><!-- 在中间弹框、背后有遮罩的效果 -->
     </style>
 
-    <style name="QMUI.TipDialog" parent="android:Theme.Dialog">
+    <style name="QMUI.TipDialog" parent="QMUI.BaseDialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -146,13 +151,10 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="QMUI.BottomSheet" parent="android:Theme.Dialog">
-        <item name="android:backgroundDimAmount">?attr/qmui_dialog_background_dim_amount</item>
+    <style name="QMUI.BottomSheet" parent="QMUI.BaseDialog">
+        <item name="android:backgroundDimAmount">?attr/qmui_bottom_sheet_background_dim_amount</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@null
-        </item><!-- 为了避免在有 NavigationBar 的手机上 Dialog 从 NavigationBar 底部上来。去掉 Dialog 的动画，使用 View 的动画。-->
-        <item name="android:layout_width">match_parent</item>
     </style>
 
     <style name="QMUI.Dialog.Title">
@@ -238,6 +240,33 @@
         <item name="qmui_dialog_menu_item_mark_drawable">?attr/qmui_skin_support_dialog_mark_drawable</item>
         <item name="qmui_dialog_menu_item_check_drawable">?attr/qmui_skin_support_s_dialog_check_drawable</item>
         <item name="qmui_dialog_menu_item_check_mark_margin_hor">6dp</item>
+    </style>
+    
+    <style name="QMUI.BottomSheet.Title">
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_title_text_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingLeft">?attr/qmui_bottom_sheet_padding_hor</item>
+        <item name="android:paddingRight">?attr/qmui_bottom_sheet_padding_hor</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="QMUI.BottomSheet.Cancel">
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_cancel_text_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="QMUI.BottomSheet.List"/>
+
+    <style name="QMUI.BottomSheet.List.Text">
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_list_item_text_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
     <!--********************* Tip *********************-->

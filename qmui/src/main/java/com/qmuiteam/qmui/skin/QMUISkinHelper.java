@@ -24,6 +24,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
+import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -72,5 +74,10 @@ public class QMUISkinHelper {
         writer.write(sSkinValueBuilder);
         setSkinValue(view, sSkinValueBuilder.build());
         sSkinValueBuilder.clear();
+    }
+
+    public static void setSkinDefaultProvider(@NonNull View view,
+                                              IQMUISkinDefaultAttrProvider provider){
+        view.setTag(R.id.qmui_skin_default_attr_provider, provider);
     }
 }

@@ -77,7 +77,13 @@ public class QDBottomSheetFragment extends BaseFragment {
 
     private void initListView() {
         String[] listItems = new String[]{
-                "BottomSheet List",
+                "BottomSheet List:Simple",
+                "BottomSheet List:GravityCenter",
+                "BottomSheet List:With Title",
+                "BottomSheet List:With Cancel Btn",
+                "BottomSheet List:Drag Dismiss",
+                "BottomSheet List:Many Items",
+                "BottomSheet List:With Mark",
                 "BottomSheet Grid"
         };
         List<String> data = new ArrayList<>();
@@ -90,9 +96,41 @@ public class QDBottomSheetFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        showSimpleBottomSheetList();
+                        showSimpleBottomSheetList(
+                                false, false, null,
+                                3, false, false);
                         break;
                     case 1:
+                        showSimpleBottomSheetList(
+                                true, false, null,
+                                3, false, false);
+                        break;
+                    case 2:
+                        showSimpleBottomSheetList(
+                                true, false, "This is Title!!!",
+                                3, false, false);
+                        break;
+                    case 3:
+                        showSimpleBottomSheetList(
+                                true, true, "This is Title!!!",
+                                3, false, false);
+                        break;
+                    case 4:
+                        showSimpleBottomSheetList(
+                                true, true, "This is Title!!!",
+                                3, true, false);
+                        break;
+                    case 5:
+                        showSimpleBottomSheetList(
+                                true, true, "This is Title!!!",
+                                100, true, false);
+                        break;
+                    case 6:
+                        showSimpleBottomSheetList(
+                                false, true, "This is Title!!!",
+                                100, true, true);
+                        break;
+                    case 7:
                         showSimpleBottomSheetGrid();
                         break;
                 }
@@ -101,20 +139,30 @@ public class QDBottomSheetFragment extends BaseFragment {
     }
 
     // ================================ 生成不同类型的BottomSheet
-    private void showSimpleBottomSheetList() {
-        new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
-                .addItem("Item 1")
-                .addItem("Item 2")
-                .addItem("Item 3")
+    private void showSimpleBottomSheetList(boolean gravityCenter,
+                                           boolean addCancelBtn,
+                                           CharSequence title,
+                                           int itemCount,
+                                           boolean allowDragDismiss,
+                                           boolean withMark) {
+        QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(getActivity());
+        builder.setGravityCenter(gravityCenter)
+                .setTitle(title)
+                .setAddCancelBtn(addCancelBtn)
+                .setAllowDrag(allowDragDismiss)
+                .setNeedRightMark(withMark)
+                .setCheckedIndex(40)
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
                         dialog.dismiss();
                         Toast.makeText(getActivity(), "Item " + (position + 1), Toast.LENGTH_SHORT).show();
                     }
-                })
-                .build()
-                .show();
+                });
+        for (int i = 1; i <= itemCount; i++) {
+            builder.addItem("Item " + i);
+        }
+        builder.build().show();
     }
 
     private void showSimpleBottomSheetGrid() {

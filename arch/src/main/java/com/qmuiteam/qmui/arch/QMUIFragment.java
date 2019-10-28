@@ -762,7 +762,7 @@ public abstract class QMUIFragment extends Fragment implements
      *
      * @param cls the target fragment class type
      */
-    protected void popBackStack(Class<QMUIFragment> cls) {
+    protected void popBackStack(Class<? extends QMUIFragment> cls) {
         if (checkPopBack()) {
             getBaseFragmentActivity().popBackStack(cls);
         }
@@ -773,7 +773,7 @@ public abstract class QMUIFragment extends Fragment implements
      *
      * @param cls the target fragment class type
      */
-    protected void popBackStackInclusive(Class<QMUIFragment> cls) {
+    protected void popBackStackInclusive(Class<? extends QMUIFragment> cls) {
         if (checkPopBack()) {
             getBaseFragmentActivity().popBackStackInclusive(cls);
         }

@@ -22,6 +22,8 @@
     <item name="qmui_dialog_content_id" type="id"/>
     <item name="qmui_dialog_edit_input" type="id"/>
     <item name="qmui_dialog_edit_right_icon" type="id"/>
+    <item name="qmui_bottom_sheet_title" type="id"/>
+    <item name="qmui_bottom_sheet_cancel" type="id"/>
     
     <item name="qmui_tab_segment_item_id" type="id"/>
 

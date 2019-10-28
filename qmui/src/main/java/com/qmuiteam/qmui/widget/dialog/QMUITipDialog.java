@@ -18,36 +18,30 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.IntDef;
-import androidx.annotation.LayoutRes;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * 提供一个浮层展示在屏幕中间, 一般使用 {@link QMUITipDialog.Builder} 或 {@link QMUITipDialog.CustomBuilder} 生成。
@@ -60,9 +54,8 @@ import java.lang.annotation.RetentionPolicy;
  * @date 2016-10-14
  */
 
-public class QMUITipDialog extends Dialog {
+public class QMUITipDialog extends QMUIBaseDialog {
 
-    private boolean mFollowSkin = false;
 
     public QMUITipDialog(Context context) {
         this(context, R.style.QMUI_TipDialog);
@@ -71,29 +64,6 @@ public class QMUITipDialog extends Dialog {
     public QMUITipDialog(Context context, int themeResId) {
         super(context, themeResId);
         setCanceledOnTouchOutside(false);
-    }
-
-    public void setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mFollowSkin) {
-            QMUISkinManager.defaultInstance(getContext()).register(this);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        QMUISkinManager.defaultInstance(getContext()).unRegister(this);
     }
 
     /**
@@ -166,7 +136,7 @@ public class QMUITipDialog extends Dialog {
             return this;
         }
 
-        public QMUITipDialog create(){
+        public QMUITipDialog create() {
             return create(true);
         }
 
@@ -250,15 +220,15 @@ public class QMUITipDialog extends Dialog {
             return dialog;
         }
 
-        protected LinearLayout.LayoutParams onCreateIconOrLoadingLayoutParams(Context context){
+        protected LinearLayout.LayoutParams onCreateIconOrLoadingLayoutParams(Context context) {
             return new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        protected LinearLayout.LayoutParams onCreateTextLayoutParams(Context context, @IconType int iconType){
+        protected LinearLayout.LayoutParams onCreateTextLayoutParams(Context context, @IconType int iconType) {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            if(iconType != ICON_TYPE_NOTHING){
+            if (iconType != ICON_TYPE_NOTHING) {
                 lp.topMargin = QMUIResHelper.getAttrDimen(context, R.attr.qmui_tip_dialog_text_margin_top);
             }
             return lp;

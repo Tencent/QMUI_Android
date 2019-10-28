@@ -215,7 +215,6 @@
 
 
 
-    <attr name="qmui_dialog_bg" format="reference" />
     <attr name="qmui_dialog_radius" format="dimension" />
     <attr name="qmui_dialog_min_width" format="dimension" />
     <attr name="qmui_dialog_max_width" format="dimension" />
@@ -265,18 +264,48 @@
     <!--**********************************************
     *              qmui bottom sheet                 *
     **********************************************-->
+    <attr name="qmui_skin_support_bottom_sheet_bg" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_title_text_color" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_cancel_text_color" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_cancel_bg" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_separator_color" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_list_item_bg" format="reference" />
+    <attr name="qmui_skin_support_bottom_sheet_list_item_text_color" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_list_red_point_color" format="reference"/>
+    <attr name="qmui_skin_support_bottom_sheet_list_mark" format="reference"/>
+
+    <attr name="qmui_skin_def_bottom_sheet_bg" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_title_text_color" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_cancel_text_color" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_cancel_bg" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_separator_color" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_list_item_bg" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_list_red_point_color" format="string"/>
+    <attr name="qmui_skin_def_bottom_sheet_list_mark" format="string"/>
+
+    <attr name="qmui_bottom_sheet_radius" format="dimension" />
+    <attr name="qmui_bottom_sheet_padding_hor" format="dimension" />
+    <attr name="qmui_bottom_sheet_use_percent_min_height" format="dimension" />
+    <attr name="qmui_bottom_sheet_height_percent" format="float" />
+    <attr name="qmui_bottom_sheet_background_dim_amount" format="float" />
+    <attr name="qmui_bottom_sheet_cancel_btn_height" format="dimension"/>
+    <attr name="qmui_bottom_sheet_list_item_height" format="dimension"/>
+    <attr name="qmui_bottom_sheet_list_item_icon_size" format="dimension" />
+    <attr name="qmui_bottom_sheet_list_item_icon_margin_right" format="dimension" />
+    <attr name="qmui_bottom_sheet_list_item_red_point_size" format="dimension"/>
+    <attr name="qmui_bottom_sheet_list_item_mark_margin_left" format="dimension" />
+    <attr name="qmui_bottom_sheet_list_item_tip_point_margin_left" format="dimension" />
+
+    <attr name="qmui_bottom_sheet_title_style" format="reference" />
+    <attr name="qmui_bottom_sheet_cancel_style" format="reference" />
+    <attr name="qmui_bottom_sheet_list_item_text_style" format="reference"/>
+
     <attr name="qmui_bottom_sheet_title_height" format="dimension" />
     <attr name="qmui_bottom_sheet_title_appearance" format="reference" />
     <attr name="qmui_bottom_sheet_title_bg" format="reference" />
 
     <attr name="qmui_bottom_sheet_list_item_padding_horizontal" format="dimension" />
-    <attr name="qmui_bottom_sheet_list_item_height" format="dimension" />
-    <attr name="qmui_bottom_sheet_list_item_mark_margin_left" format="dimension" />
-    <attr name="qmui_bottom_sheet_list_item_tip_point_margin_left" format="dimension" />
-    <attr name="qmui_bottom_sheet_list_item_text_appearance" format="reference" />
-    <attr name="qmui_bottom_sheet_list_item_bg" format="reference" />
-    <attr name="qmui_bottom_sheet_list_item_icon_size" format="dimension" />
-    <attr name="qmui_bottom_sheet_list_item_icon_margin_right" format="dimension" />
+
 
     <attr name="qmui_bottom_sheet_grid_bg" format="color|reference" />
     <attr name="qmui_bottom_sheet_grid_padding_vertical" format="dimension" />

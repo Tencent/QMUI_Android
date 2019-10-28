@@ -18,7 +18,6 @@ package com.qmuiteam.qmui.widget.dialog;
 
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -43,12 +42,10 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.widget.QMUIWrapContentScrollView;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.util.ArrayList;
@@ -68,12 +65,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
  * @date 2015-10-20
  * @see QMUIDialogBuilder
  */
-public class QMUIDialog extends Dialog {
-    private boolean mCancelable = true;
-    private boolean mCanceledOnTouchOutside = true;
-    private boolean mCanceledOnTouchOutsideSet;
+public class QMUIDialog extends QMUIBaseDialog {
     private Context mBaseContext;
-    private boolean mFollowSkin = false;
 
     public QMUIDialog(Context context) {
         this(context, R.style.QMUI_Dialog);
@@ -90,42 +83,6 @@ public class QMUIDialog extends Dialog {
         setCanceledOnTouchOutside(true);
     }
 
-    public void setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
-    }
-
-    @Override
-    public void setCancelable(boolean cancelable) {
-        super.setCancelable(cancelable);
-        mCancelable = cancelable;
-    }
-
-    @Override
-    public void setCanceledOnTouchOutside(boolean cancel) {
-        super.setCanceledOnTouchOutside(cancel);
-        if (cancel && !mCancelable) {
-            mCancelable = true;
-        }
-        mCanceledOnTouchOutside = cancel;
-        mCanceledOnTouchOutsideSet = true;
-    }
-
-    boolean shouldWindowCloseOnTouchOutside() {
-        if (!mCanceledOnTouchOutsideSet) {
-            TypedArray a = getContext().obtainStyledAttributes(
-                    new int[]{android.R.attr.windowCloseOnTouchOutside});
-            mCanceledOnTouchOutside = a.getBoolean(0, true);
-            a.recycle();
-            mCanceledOnTouchOutsideSet = true;
-        }
-        return mCanceledOnTouchOutside;
-    }
-
-    void cancelOutSide() {
-        if (mCancelable && isShowing() && shouldWindowCloseOnTouchOutside()) {
-            cancel();
-        }
-    }
 
     public void showWithImmersiveCheck(Activity activity) {
         // http://stackoverflow.com/questions/22794049/how-to-maintain-the-immersive-mode-in-dialogs
@@ -158,19 +115,6 @@ public class QMUIDialog extends Dialog {
         showWithImmersiveCheck(activity);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mFollowSkin) {
-            QMUISkinManager.defaultInstance(mBaseContext).register(this);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        QMUISkinManager.defaultInstance(mBaseContext).unRegister(this);
-    }
 
     /**
      * 消息类型的对话框 Builder。通过它可以生成一个带标题、文本消息、按钮的对话框。

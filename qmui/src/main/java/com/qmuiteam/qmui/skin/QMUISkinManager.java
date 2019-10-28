@@ -359,7 +359,7 @@ public final class QMUISkinManager {
             if (QMUILangHelper.isNullOrEmpty(key)) {
                 continue;
             }
-            int attr = mResources.getIdentifier(kv[1].trim(), "attr", mPackageName);
+            int attr = getAttrFromName(kv[1].trim());
             if (attr == 0) {
                 QMUILog.w(TAG, "Failed to get attr id from name: " + kv[1]);
                 continue;
@@ -367,6 +367,10 @@ public final class QMUISkinManager {
             attrs.put(key, attr);
         }
         return attrs;
+    }
+
+    public int getAttrFromName(String attrName){
+        return mResources.getIdentifier(attrName, "attr", mPackageName);
     }
 
     class SkinItem {

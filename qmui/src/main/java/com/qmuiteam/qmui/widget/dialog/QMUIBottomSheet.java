@@ -20,41 +20,55 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.AppCompatImageView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.QMUILog;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.QMUIButton;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static com.qmuiteam.qmui.layout.IQMUILayout.HIDE_RADIUS_SIDE_BOTTOM;
 
 /**
  * QMUIBottomSheet 在 {@link Dialog} 的基础上重新定制了 {@link #show()} 和 {@link #hide()} 时的动画效果, 使 {@link Dialog} 在界面底部升起和降下。
@@ -66,189 +80,216 @@ import java.util.List;
  * </ul>
  * </p>
  */
-public class QMUIBottomSheet extends Dialog {
+public class QMUIBottomSheet extends QMUIBaseDialog {
     private static final String TAG = "QMUIBottomSheet";
-
-    // 动画时长
-    private final static int mAnimationDuration = 200;
-    // 持有 ContentView，为了做动画
-    private View mContentView;
-    private boolean mIsAnimating = false;
-
+    private QMUIBottomSheetRootLayout mRootView;
     private OnBottomSheetShowListener mOnBottomSheetShowListener;
+    private QMUIBottomSheetBehavior<QMUIBottomSheetRootLayout> mBehavior;
+    private boolean mAnimateToCancel = false;
+    private boolean mAnimateToDismiss = false;
+
 
     public QMUIBottomSheet(Context context) {
-        super(context, R.style.QMUI_BottomSheet);
+        this(context, R.style.QMUI_BottomSheet);
     }
 
     public QMUIBottomSheet(Context context, int style) {
         super(context, style);
+        ViewGroup container = (ViewGroup) View.inflate(context, R.layout.qmui_bottom_sheet_dialog, null);
+        mRootView = container.findViewById(R.id.bottom_sheet);
+        mBehavior = new QMUIBottomSheetBehavior<>();
+        mBehavior.setHideable(cancelable);
+        mBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_HIDDEN){
+                    if(mAnimateToCancel){
+                        // cancel() invoked
+                        cancel();
+                    }else if(mAnimateToDismiss){
+                        // dismiss() invoked but it it not triggered by cancel()
+                        dismiss();
+                    }else{
+                        // drag to cancel
+                        cancel();
+                    }
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        mBehavior.setPeekHeight(0);
+        mBehavior.setAllowDrag(false);
+        mBehavior.setSkipCollapsed(true);
+        CoordinatorLayout.LayoutParams rootViewLp = (CoordinatorLayout.LayoutParams) mRootView.getLayoutParams();
+        rootViewLp.setBehavior(mBehavior);
+
+        // We treat the CoordinatorLayout as outside the dialog though it is technically inside
+        container.findViewById(R.id.touch_outside)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (cancelable && isShowing() && shouldWindowCloseOnTouchOutside()) {
+                                    cancel();
+                                }
+                            }
+                        });
+        mRootView.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        // Consume the event and prevent it from falling through
+                        return true;
+                    }
+                });
+
+        super.setContentView(container, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    @Override
+    protected void onSetCancelable(boolean cancelable) {
+        super.onSetCancelable(cancelable);
+        mBehavior.setHideable(cancelable);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            }
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+    }
+
+    @Override
+    public void cancel() {
+        if (mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            mAnimateToCancel = false;
+            super.cancel();
+        } else {
+            mAnimateToCancel = true;
+            mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+    }
+
+    @Override
+    public void dismiss() {
+        if (mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            mAnimateToDismiss = false;
+            super.dismiss();
+        } else {
+            mAnimateToDismiss = true;
+            mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
     }
 
     public void setOnBottomSheetShowListener(OnBottomSheetShowListener onBottomSheetShowListener) {
         mOnBottomSheetShowListener = onBottomSheetShowListener;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //noinspection ConstantConditions
-        getWindow().getDecorView().setPadding(0, 0, 0, 0);
-
-        // 在底部，宽度撑满
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        params.gravity = Gravity.BOTTOM | Gravity.CENTER;
-
-        int screenWidth = QMUIDisplayHelper.getScreenWidth(getContext());
-        int screenHeight = QMUIDisplayHelper.getScreenHeight(getContext());
-        params.width = screenWidth < screenHeight ? screenWidth : screenHeight;
-        getWindow().setAttributes(params);
-        setCanceledOnTouchOutside(true);
+    public void setRadius(int radius) {
+        mRootView.setRadius(radius, HIDE_RADIUS_SIDE_BOTTOM);
     }
 
-    @Override
-    public void setContentView(int layoutResID) {
-        mContentView = LayoutInflater.from(getContext()).inflate(layoutResID, null);
-        super.setContentView(mContentView);
+    public QMUIBottomSheetRootLayout getRootView() {
+        return mRootView;
     }
 
-    @Override
-    public void setContentView(@NonNull View view, ViewGroup.LayoutParams params) {
-        mContentView = view;
-        super.setContentView(view, params);
-    }
-
-    public View getContentView() {
-        return mContentView;
-    }
-
-    @Override
-    public void setContentView(@NonNull View view) {
-        mContentView = view;
-        super.setContentView(view);
-    }
-
-    /**
-     * BottomSheet升起动画
-     */
-    private void animateUp() {
-        if (mContentView == null) {
-            return;
-        }
-        TranslateAnimation translate = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f
-        );
-        AlphaAnimation alpha = new AlphaAnimation(0, 1);
-        AnimationSet set = new AnimationSet(true);
-        set.addAnimation(translate);
-        set.addAnimation(alpha);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.setDuration(mAnimationDuration);
-        set.setFillAfter(true);
-        mContentView.startAnimation(set);
-    }
-
-    /**
-     * BottomSheet降下动画
-     */
-    private void animateDown() {
-        if (mContentView == null) {
-            return;
-        }
-        final Runnable dismissTask = new Runnable() {
-            @Override
-            public void run() {
-                // java.lang.IllegalArgumentException: View=com.android.internal.policy.PhoneWindow$DecorView{22dbf5b V.E...... R......D 0,0-1080,1083} not attached to window manager
-                // 在dismiss的时候可能已经detach了，简单try-catch一下
-                try {
-                    QMUIBottomSheet.super.dismiss();
-                } catch (Exception e) {
-                    QMUILog.w(TAG, "dismiss error\n" + Log.getStackTraceString(e));
-                }
-            }
-        };
-        if (mContentView.getHeight() == 0) {
-            // TranslateAnimation will not call onAnimationEnd if its height is 0.
-            // At this case, we run dismiss task immediately.
-            dismissTask.run();
-            return;
-        }
-        TranslateAnimation translate = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f
-        );
-        AlphaAnimation alpha = new AlphaAnimation(1, 0);
-        AnimationSet set = new AnimationSet(true);
-        set.addAnimation(translate);
-        set.addAnimation(alpha);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.setDuration(mAnimationDuration);
-        set.setFillAfter(true);
-        set.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                mIsAnimating = true;
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mIsAnimating = false;
-                /**
-                 * Bugfix： Attempting to destroy the window while drawing!
-                 */
-                mContentView.post(dismissTask);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        mContentView.startAnimation(set);
+    public QMUIBottomSheetBehavior<QMUIBottomSheetRootLayout> getBehavior() {
+        return mBehavior;
     }
 
     @Override
     public void show() {
         super.show();
-        animateUp();
         if (mOnBottomSheetShowListener != null) {
             mOnBottomSheetShowListener.onShow();
         }
-    }
-
-    @Override
-    public void dismiss() {
-        if (mIsAnimating) {
-            return;
+        if(mBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+            mRootView.postOnAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
         }
-        animateDown();
+        mAnimateToCancel = false;
+        mAnimateToDismiss = false;
     }
 
     public interface OnBottomSheetShowListener {
         void onShow();
     }
 
+    @Override
+    public void setContentView(View view) {
+        throw new IllegalStateException(
+                "Use addContentView(View, ConstraintLayout.LayoutParams) for replacement");
+    }
+
+    @Override
+    public void setContentView(int layoutResId) {
+        throw new IllegalStateException(
+                "Use addContentView(int) for replacement");
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        throw new IllegalStateException(
+                "Use addContentView(View, LinearLayout.LayoutParams) for replacement");
+    }
+
+    @Override
+    public void addContentView(View view, ViewGroup.LayoutParams params) {
+        throw new IllegalStateException(
+                "Use addContentView(View, LinearLayout.LayoutParams) for replacement");
+    }
+
+    public void addContentView(View view, LinearLayout.LayoutParams layoutParams) {
+        mRootView.addView(view, layoutParams);
+    }
+
+    public void addContentView(View view) {
+        mRootView.addView(view, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    public void addContentView(int layoutResId) {
+        LayoutInflater.from(mRootView.getContext()).inflate(layoutResId, mRootView, true);
+    }
+
+
     /**
      * 生成列表类型的 {@link QMUIBottomSheet} 对话框。
      */
-    public static class BottomListSheetBuilder {
+    public static class BottomListSheetBuilder extends QMUIBottomSheetBaseBuilder<BottomListSheetBuilder> {
 
-        private Context mContext;
 
-        private QMUIBottomSheet mDialog;
-        private List<BottomSheetListItemData> mItems;
-        private BaseAdapter mAdapter;
-        private List<View> mHeaderViews;
-        private ListView mContainerView;
+        private List<QMUIBottomSheetItemModel> mItems;
+        private List<View> mContentHeaderViews;
+        private List<View> mContentFooterViews;
         private boolean mNeedRightMark; //是否需要rightMark,标识当前项
         private int mCheckedIndex;
-        private String mTitle;
-        private TextView mTitleTv;
+        private boolean mGravityCenter = false;
         private OnSheetItemClickListener mOnSheetItemClickListener;
-        private OnDismissListener mOnBottomDialogDismissListener;
+
 
         public BottomListSheetBuilder(Context context) {
             this(context, false);
@@ -258,9 +299,8 @@ public class QMUIBottomSheet extends Dialog {
          * @param needRightMark 是否需要在被选中的 Item 右侧显示一个勾(使用 {@link #setCheckedIndex(int)} 设置选中的 Item)
          */
         public BottomListSheetBuilder(Context context, boolean needRightMark) {
-            mContext = context;
+            super(context);
             mItems = new ArrayList<>();
-            mHeaderViews = new ArrayList<>();
             mNeedRightMark = needRightMark;
         }
 
@@ -274,11 +314,32 @@ public class QMUIBottomSheet extends Dialog {
             return this;
         }
 
+        public BottomListSheetBuilder setNeedRightMark(boolean needRightMark) {
+            mNeedRightMark = needRightMark;
+            return this;
+        }
+
+        public BottomListSheetBuilder setGravityCenter(boolean gravityCenter) {
+            mGravityCenter = gravityCenter;
+            return this;
+        }
+
+        public BottomListSheetBuilder setOnSheetItemClickListener(
+                OnSheetItemClickListener onSheetItemClickListener) {
+            mOnSheetItemClickListener = onSheetItemClickListener;
+            return this;
+        }
+
+        public BottomListSheetBuilder addItem(QMUIBottomSheetItemModel itemModel) {
+            mItems.add(itemModel);
+            return this;
+        }
+
         /**
          * @param textAndTag Item 的文字内容，同时会把内容设置为 tag。
          */
         public BottomListSheetBuilder addItem(String textAndTag) {
-            mItems.add(new BottomSheetListItemData(textAndTag, textAndTag));
+            mItems.add(new QMUIBottomSheetItemModel(textAndTag, textAndTag));
             return this;
         }
 
@@ -287,7 +348,7 @@ public class QMUIBottomSheet extends Dialog {
          * @param textAndTag Item 的文字内容，同时会把内容设置为 tag。
          */
         public BottomListSheetBuilder addItem(Drawable image, String textAndTag) {
-            mItems.add(new BottomSheetListItemData(image, textAndTag, textAndTag));
+            mItems.add(new QMUIBottomSheetItemModel(textAndTag, textAndTag).image(image));
             return this;
         }
 
@@ -296,7 +357,7 @@ public class QMUIBottomSheet extends Dialog {
          * @param tag  item 的 tag。
          */
         public BottomListSheetBuilder addItem(String text, String tag) {
-            mItems.add(new BottomSheetListItemData(text, tag));
+            mItems.add(new QMUIBottomSheetItemModel(text, tag));
             return this;
         }
 
@@ -306,8 +367,7 @@ public class QMUIBottomSheet extends Dialog {
          * @param tag      Item 的 tag。
          */
         public BottomListSheetBuilder addItem(int imageRes, String text, String tag) {
-            Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
-            mItems.add(new BottomSheetListItemData(drawable, text, tag));
+            mItems.add(new QMUIBottomSheetItemModel(text, tag).image(imageRes));
             return this;
         }
 
@@ -318,8 +378,7 @@ public class QMUIBottomSheet extends Dialog {
          * @param hasRedPoint 是否显示红点。
          */
         public BottomListSheetBuilder addItem(int imageRes, String text, String tag, boolean hasRedPoint) {
-            Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
-            mItems.add(new BottomSheetListItemData(drawable, text, tag, hasRedPoint));
+            mItems.add(new QMUIBottomSheetItemModel(text, tag).image(imageRes).redPoint(hasRedPoint));
             return this;
         }
 
@@ -330,256 +389,95 @@ public class QMUIBottomSheet extends Dialog {
          * @param hasRedPoint 是否显示红点。
          * @param disabled    是否显示禁用态。
          */
-        public BottomListSheetBuilder addItem(int imageRes, String text, String tag, boolean hasRedPoint, boolean disabled) {
-            Drawable drawable = imageRes != 0 ? ContextCompat.getDrawable(mContext, imageRes) : null;
-            mItems.add(new BottomSheetListItemData(drawable, text, tag, hasRedPoint, disabled));
+        public BottomListSheetBuilder addItem(
+                int imageRes, String text, String tag, boolean hasRedPoint, boolean disabled) {
+            mItems.add(new QMUIBottomSheetItemModel(text, tag)
+                    .image(imageRes).redPoint(hasRedPoint).disabled(disabled));
             return this;
         }
 
-        public BottomListSheetBuilder setOnSheetItemClickListener(OnSheetItemClickListener onSheetItemClickListener) {
-            mOnSheetItemClickListener = onSheetItemClickListener;
-            return this;
+
+        @Deprecated
+        public BottomListSheetBuilder addHeaderView(@NonNull View view) {
+            return addContentHeaderView(view);
         }
 
-        public BottomListSheetBuilder setOnBottomDialogDismissListener(OnDismissListener listener) {
-            mOnBottomDialogDismissListener = listener;
-            return this;
-        }
-
-        public BottomListSheetBuilder addHeaderView(View view) {
-            if (view != null) {
-                mHeaderViews.add(view);
+        public BottomListSheetBuilder addContentHeaderView(@NonNull View view){
+            if(mContentHeaderViews == null){
+                mContentHeaderViews = new ArrayList<>();
             }
+            mContentHeaderViews.add(view);
             return this;
         }
 
-        public BottomListSheetBuilder setTitle(String title) {
-            mTitle = title;
-            return this;
-        }
-
-        public BottomListSheetBuilder setTitle(int resId) {
-            mTitle = mContext.getResources().getString(resId);
-            return this;
-        }
-
-        public QMUIBottomSheet build() {
-            return build(R.style.QMUI_BottomSheet);
-        }
-
-        public QMUIBottomSheet build(int style) {
-            mDialog = new QMUIBottomSheet(mContext, style);
-            View contentView = buildViews();
-            mDialog.setContentView(contentView,
-                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            if (mOnBottomDialogDismissListener != null) {
-                mDialog.setOnDismissListener(mOnBottomDialogDismissListener);
+        public BottomListSheetBuilder addContentFooterView(@NonNull View view){
+            if(mContentFooterViews == null){
+                mContentFooterViews = new ArrayList<>();
             }
-            return mDialog;
+            mContentFooterViews.add(view);
+            return this;
         }
 
-        private View buildViews() {
-            View wrapperView = View.inflate(mContext, getContentViewLayoutId(), null);
-            mTitleTv = (TextView) wrapperView.findViewById(R.id.title);
-            mContainerView = (ListView) wrapperView.findViewById(R.id.listview);
-            if (mTitle != null && mTitle.length() != 0) {
-                mTitleTv.setVisibility(View.VISIBLE);
-                mTitleTv.setText(mTitle);
-            } else {
-                mTitleTv.setVisibility(View.GONE);
-            }
-            if (mHeaderViews.size() > 0) {
-                for (View headerView : mHeaderViews) {
-                    mContainerView.addHeaderView(headerView);
+        @Nullable
+        @Override
+        protected View onCreateContentView(final QMUIBottomSheet bottomSheet,
+                                           QMUIBottomSheetRootLayout rootLayout,
+                                           Context context) {
+            RecyclerView recyclerView = new RecyclerView(context);
+            QMUIBottomSheetListAdapter adapter = new QMUIBottomSheetListAdapter(
+                    mNeedRightMark, mGravityCenter);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context){
+                @Override
+                public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                    return new RecyclerView.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            });
+            recyclerView.addItemDecoration(new QMUIBottomSheetListItemDecoration(context));
+
+            LinearLayout headerView = null;
+            if(mContentHeaderViews != null && mContentHeaderViews.size() > 0){
+                headerView = new LinearLayout(context);
+                headerView.setOrientation(LinearLayout.VERTICAL);
+                for(View view: mContentHeaderViews){
+                    if(view.getParent() != null){
+                        ((ViewGroup)view.getParent()).removeView(view);
+                    }
+                    headerView.addView(view, new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
             }
-            if (needToScroll()) {
-                mContainerView.getLayoutParams().height = getListMaxHeight();
-                mDialog.setOnBottomSheetShowListener(new OnBottomSheetShowListener() {
-                    @Override
-                    public void onShow() {
-                        mContainerView.setSelection(mCheckedIndex);
+            LinearLayout footerView = null;
+            if(mContentFooterViews != null && mContentHeaderViews.size() > 0){
+                footerView = new LinearLayout(context);
+                footerView.setOrientation(LinearLayout.VERTICAL);
+                for(View view: mContentFooterViews){
+                    if(view.getParent() != null){
+                        ((ViewGroup)view.getParent()).removeView(view);
                     }
-                });
-            }
-
-            mAdapter = new ListAdapter();
-            mContainerView.setAdapter(mAdapter);
-            return wrapperView;
-        }
-
-        private boolean needToScroll() {
-            int itemHeight = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_bottom_sheet_list_item_height);
-            int totalHeight = mItems.size() * itemHeight;
-            if (mHeaderViews.size() > 0) {
-                for (View view : mHeaderViews) {
-                    if (view.getMeasuredHeight() == 0) {
-                        view.measure(0, 0);
-                    }
-                    totalHeight += view.getMeasuredHeight();
+                    footerView.addView(view, new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
             }
-            if (mTitleTv != null && !QMUILangHelper.isNullOrEmpty(mTitle)) {
-                totalHeight += QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_bottom_sheet_title_height);
-            }
-            return totalHeight > getListMaxHeight();
+            adapter.setData(headerView, footerView, mItems);
+            adapter.setOnItemClickListener(new QMUIBottomSheetListAdapter.OnItemClickListener() {
+                @Override
+                public void onClick(QMUIBottomSheetListAdapter.VH vh, int dataPos, QMUIBottomSheetItemModel model) {
+                    if(mOnSheetItemClickListener != null){
+                        mOnSheetItemClickListener.onClick(bottomSheet, vh.itemView, dataPos, model.tag);
+                    }
+                }
+            });
+            adapter.setCheckedIndex(mCheckedIndex);
+            recyclerView.scrollToPosition(mCheckedIndex + (headerView == null ? 0 : 1));
+            return recyclerView;
         }
 
-        /**
-         * 注意:这里只考虑List的高度,如果有title或者headerView,不计入考虑中
-         */
-        protected int getListMaxHeight() {
-            return (int) (QMUIDisplayHelper.getScreenHeight(mContext) * 0.5);
-        }
-
-        public void notifyDataSetChanged() {
-            if (mAdapter != null) {
-                mAdapter.notifyDataSetChanged();
-            }
-            if (needToScroll()) {
-                mContainerView.getLayoutParams().height = getListMaxHeight();
-                mContainerView.setSelection(mCheckedIndex);
-            }
-        }
-
-        protected int getContentViewLayoutId() {
-            return R.layout.qmui_bottom_sheet_list;
-        }
 
         public interface OnSheetItemClickListener {
             void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag);
         }
-
-        private static class BottomSheetListItemData {
-
-            Drawable image = null;
-            String text;
-            String tag = "";
-            boolean hasRedPoint = false;
-            boolean isDisabled = false;
-
-            public BottomSheetListItemData(String text, String tag) {
-                this.text = text;
-                this.tag = tag;
-            }
-
-            public BottomSheetListItemData(Drawable image, String text, String tag) {
-                this.image = image;
-                this.text = text;
-                this.tag = tag;
-            }
-
-            public BottomSheetListItemData(Drawable image, String text, String tag, boolean hasRedPoint) {
-                this.image = image;
-                this.text = text;
-                this.tag = tag;
-                this.hasRedPoint = hasRedPoint;
-            }
-
-            public BottomSheetListItemData(Drawable image, String text, String tag, boolean hasRedPoint, boolean isDisabled) {
-                this.image = image;
-                this.text = text;
-                this.tag = tag;
-                this.hasRedPoint = hasRedPoint;
-                this.isDisabled = isDisabled;
-            }
-        }
-
-        private static class ViewHolder {
-            ImageView imageView;
-            TextView textView;
-            View markView;
-            View redPoint;
-        }
-
-        private class ListAdapter extends BaseAdapter {
-
-            @Override
-            public int getCount() {
-                return mItems.size();
-            }
-
-            @Override
-            public BottomSheetListItemData getItem(int position) {
-                return mItems.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return 0;
-            }
-
-            @Override
-            public View getView(final int position, View convertView, ViewGroup parent) {
-                final BottomSheetListItemData data = getItem(position);
-                final ViewHolder holder;
-                if (convertView == null) {
-                    LayoutInflater inflater = LayoutInflater.from(mContext);
-                    convertView = inflater.inflate(R.layout.qmui_bottom_sheet_list_item, parent, false);
-                    holder = new ViewHolder();
-                    holder.imageView = (ImageView) convertView.findViewById(R.id.bottom_dialog_list_item_img);
-                    holder.textView = (TextView) convertView.findViewById(R.id.bottom_dialog_list_item_title);
-                    holder.markView = convertView.findViewById(R.id.bottom_dialog_list_item_mark_view_stub);
-                    holder.redPoint = convertView.findViewById(R.id.bottom_dialog_list_item_point);
-                    convertView.setTag(holder);
-                } else {
-                    holder = (ViewHolder) convertView.getTag();
-                }
-                if (data.image != null) {
-                    holder.imageView.setVisibility(View.VISIBLE);
-                    holder.imageView.setImageDrawable(data.image);
-                } else {
-                    holder.imageView.setVisibility(View.GONE);
-                }
-
-                holder.textView.setText(data.text);
-                if (data.hasRedPoint) {
-                    holder.redPoint.setVisibility(View.VISIBLE);
-                } else {
-                    holder.redPoint.setVisibility(View.GONE);
-                }
-
-                if (data.isDisabled) {
-                    holder.textView.setEnabled(false);
-                    convertView.setEnabled(false);
-                } else {
-                    holder.textView.setEnabled(true);
-                    convertView.setEnabled(true);
-                }
-
-                if (mNeedRightMark) {
-                    if (holder.markView instanceof ViewStub) {
-                        holder.markView = ((ViewStub) holder.markView).inflate();
-                    }
-                    if (mCheckedIndex == position) {
-                        holder.markView.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.markView.setVisibility(View.GONE);
-                    }
-                } else {
-                    holder.markView.setVisibility(View.GONE);
-                }
-
-                convertView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (data.hasRedPoint) {
-                            data.hasRedPoint = false;
-                            holder.redPoint.setVisibility(View.GONE);
-                        }
-                        if (mNeedRightMark) {
-                            setCheckedIndex(position);
-                            notifyDataSetChanged();
-                        }
-                        if (mOnSheetItemClickListener != null) {
-                            mOnSheetItemClickListener.onClick(mDialog, v, position, data.tag);
-                        }
-                    }
-                });
-                return convertView;
-            }
-        }
-
     }
 
     /**
