@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
@@ -42,6 +43,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     private DialogInterface.OnDismissListener mOnBottomDialogDismissListener;
     private int mRadius = -1;
     private boolean mAllowDrag = false;
+    private boolean mFollowSkin = true;
     private QMUIBottomSheetBehavior.DownDragDecisionMaker mDownDragDecisionMaker = null;
 
     public QMUIBottomSheetBaseBuilder(Context context) {
@@ -61,6 +63,12 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     @SuppressWarnings("unchecked")
     public T setAllowDrag(boolean allowDrag) {
         mAllowDrag = allowDrag;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setFollowSkin(boolean followSkin) {
+        mFollowSkin = followSkin;
         return (T) this;
     }
 
@@ -127,6 +135,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
         if (mRadius != -1) {
             mDialog.setRadius(mRadius);
         }
+        mDialog.setFollowSkin(mFollowSkin);
         QMUIBottomSheetBehavior behavior = mDialog.getBehavior();
         behavior.setAllowDrag(mAllowDrag);
         behavior.setDownDragDecisionMaker(mDownDragDecisionMaker);
@@ -139,14 +148,18 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
                                      QMUIBottomSheetRootLayout rootLayout,
                                      Context context) {
         if (hasTitle()) {
-            TextView tv = new QMUISpanTouchFixTextView(context);
+            QMUISpanTouchFixTextView tv = new QMUISpanTouchFixTextView(context);
             tv.setId(R.id.qmui_bottom_sheet_title);
             tv.setText(mTitle);
+            tv.onlyShowBottomDivider(0, 0, 1,
+                    QMUIResHelper.getAttrColor(context, R.attr.qmui_skin_support_bottom_sheet_separator_color));
             QMUIResHelper.assignTextViewWithAttr(tv, R.attr.qmui_bottom_sheet_title_style);
             QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
 
             valueBuilder.textColor(QMUIResHelper.getAttrString(
                     context, R.attr.qmui_skin_def_bottom_sheet_title_text_color));
+            valueBuilder.bottomSeparator(QMUIResHelper.getAttrString(
+                    context, R.attr.qmui_skin_def_bottom_sheet_separator_color));
             QMUISkinHelper.setSkinValue(tv, valueBuilder);
             valueBuilder.release();
             return tv;

@@ -132,7 +132,7 @@ public class QMUIDialogRootLayout extends ViewGroup {
         }
         // InsetVer works when keyboard overlay occurs
         setMeasuredDimension(mDialogView.getMeasuredWidth(),
-                mDialogView.getMeasuredHeight() + 2 * mInsetVer);
+                mDialogView.getMeasuredHeight() + 2 * mInsetVer + keyboardOverlayHeight);
     }
 
     @Override

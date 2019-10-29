@@ -56,7 +56,6 @@ public class QMUIBottomSheetListItemDecoration extends RecyclerView.ItemDecorati
         if (adapter == null || layoutManager == null || mSeparatorAttr == 0) {
             return;
         }
-        c.drawLine(0, 0, parent.getWidth(), 0, mSeparatorPaint);
         for (int i = 0; i < parent.getChildCount(); i++) {
             View view = parent.getChildAt(i);
             int position = parent.getChildAdapterPosition(view);
