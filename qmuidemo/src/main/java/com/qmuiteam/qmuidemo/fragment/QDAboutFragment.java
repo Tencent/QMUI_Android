@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmuidemo.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.arch.SwipeBackLayout;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
@@ -107,5 +109,10 @@ public class QDAboutFragment extends BaseFragment {
     @Override
     public TransitionConfig onFetchTransitionConfig() {
         return SCALE_TRANSITION_CONFIG;
+    }
+
+    @Override
+    protected SwipeBackLayout.ViewMoveAction dragViewMoveAction() {
+        return SwipeBackLayout.MOVE_VIEW_TOP_TO_BOTTOM;
     }
 }
