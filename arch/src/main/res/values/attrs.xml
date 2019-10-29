@@ -17,15 +17,16 @@
 
 <resources>
     <declare-styleable name="SwipeBackLayout">
-        <attr name="edge_flag">
-            <enum name="left" value="0" />
-            <enum name="right" value="1" />
-            <enum name="bottom" value="2" />
-            <enum name="all" value="3" />
+        <attr name="drag_direction">
+            <enum name="left_to_right" value="0" />
+            <enum name="right_to_left" value="1" />
+            <enum name="top_to_bottom" value="3"/>
+            <enum name="bottom_top_top" value="4" />
         </attr>
         <attr name="shadow_left" format="reference"/>
         <attr name="shadow_right" format="reference"/>
         <attr name="shadow_bottom" format="reference"/>
+        <attr name="shadow_top" format="reference"/>
     </declare-styleable>
 
     <attr name="SwipeBackLayoutStyle" format="reference"/>

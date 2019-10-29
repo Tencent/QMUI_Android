@@ -16,13 +16,14 @@
 
 package com.qmuiteam.qmuidemo.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.arch.SwipeBackLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -44,8 +45,11 @@ public abstract class BaseFragment extends QMUIFragment {
     }
 
     @Override
-    protected int backViewInitOffset() {
-        return QMUIDisplayHelper.dp2px(getContext(), 100);
+    protected int backViewInitOffset(Context context, int dragDirection, int moveEdge) {
+        if (moveEdge == SwipeBackLayout.EDGE_TOP || moveEdge == SwipeBackLayout.EDGE_BOTTOM) {
+            return 0;
+        }
+        return QMUIDisplayHelper.dp2px(context, 100);
     }
 
     @Override
@@ -79,7 +83,7 @@ public abstract class BaseFragment extends QMUIFragment {
         }
     }
 
-    protected void injectDocToTopBar(QMUITopBarLayout topBar){
+    protected void injectDocToTopBar(QMUITopBarLayout topBar) {
         final QDItemDescription description = QDDataManager.getInstance().getDescription(this.getClass());
         if (description != null) {
             topBar.addRightTextButton("DOC", QMUIViewHelper.generateViewId())
