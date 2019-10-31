@@ -974,7 +974,6 @@ public class QMUIDialog extends Dialog {
                     v.getWindowVisibleDisplayFrame(mVisibleDisplayFrame);
                     int fullHeight, anchorShouldHeight;
                     if (mVisibleInsetRect != null) {
-                        Log.i("cginetest", "" + mVisibleInsetRect.bottom + "; " + mVisibleInsetRect.top);
                         fullHeight = mVisibleDisplayFrame.height() + mVisibleInsetRect.top + mVisibleInsetRect.bottom;
                         anchorShouldHeight = mVisibleInsetRect.bottom;
                     } else {
