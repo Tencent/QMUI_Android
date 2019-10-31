@@ -35,6 +35,7 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.NestedScrollingChild;
 import androidx.core.view.NestedScrollingChild2;
 import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent2;
@@ -260,7 +261,7 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
         if (getContentHeight() != HEIGHT_IS_ENOUGH_TO_SCROLL) {
             return 0;
         }
-        return mHeaderView.getHeight() +
+        return mHeaderView.getHeight() - getHeaderStickyHeight() +
                 ((IQMUIContinuousNestedBottomView) mContentView).getScrollOffsetRange();
     }
 
@@ -405,9 +406,19 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
                                int dyUnconsumed, int type) {
-        int remain = offsetBy(dyUnconsumed);
-        dispatchNestedScroll(0, dyUnconsumed - remain, 0, remain, null,
-                type);
+        if(dyUnconsumed > 0 && getCurrentScroll() >= getScrollOffsetRange()){
+            // RecyclerView does not stop scroller when over scroll with NestedScrollingParent
+            if(mContentView instanceof NestedScrollingChild2){
+                ((NestedScrollingChild2) mContentView).stopNestedScroll(type);
+            }else if(mContentView instanceof NestedScrollingChild){
+                ((NestedScrollingChild) mContentView).stopNestedScroll();
+            }
+            ((IQMUIContinuousNestedBottomView)mContentView).stopScroll();
+        }else{
+            int remain = offsetBy(dyUnconsumed);
+            dispatchNestedScroll(0, dyUnconsumed - remain, 0, remain, null,
+                    type);
+        }
     }
 
     @Override
@@ -671,11 +682,17 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
                 final int y = scroller.getCurrY();
                 int unconsumedY = y - mLastFlingY;
                 mLastFlingY = y;
-                if (!mChildHelper.hasNestedScrollingParent(ViewCompat.TYPE_NON_TOUCH)) {
-                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH);
+                IQMUIContinuousNestedBottomView bottomView = (IQMUIContinuousNestedBottomView) mContentView;
+                boolean canScroll = unconsumedY <= 0 || bottomView.getCurrentScroll() < bottomView.getScrollOffsetRange();
+                if(canScroll){
+                    if (!mChildHelper.hasNestedScrollingParent(ViewCompat.TYPE_NON_TOUCH)) {
+                        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH);
+                    }
+                    consumeScroll(unconsumedY);
+                    postOnAnimation();
+                }else{
+                    stop();
                 }
-                consumeScroll(unconsumedY);
-                postOnAnimation();
             }
 
             mEatRunOnAnimationRequest = false;

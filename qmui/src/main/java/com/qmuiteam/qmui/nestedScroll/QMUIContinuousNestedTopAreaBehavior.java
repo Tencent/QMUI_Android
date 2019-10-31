@@ -428,8 +428,21 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 int unconsumedY = y - mLastFlingY;
                 mLastFlingY = y;
                 if (mCurrentParent != null && mCurrentChild != null) {
-                    scroll(mCurrentParent, mCurrentChild, unconsumedY);
-                    postOnAnimation();
+                    boolean canScroll = true;
+                    if(mCurrentParent instanceof QMUIContinuousNestedScrollLayout){
+                        QMUIContinuousNestedScrollLayout layout = (QMUIContinuousNestedScrollLayout) mCurrentParent;
+                        if(unconsumedY > 0 && layout.getCurrentScroll() >= layout.getScrollRange()){
+                            canScroll = false;
+                        }else if(unconsumedY < 0 && layout.getCurrentScroll() <= 0){
+                            canScroll = false;
+                        }
+                    }
+                    if(canScroll){
+                        scroll(mCurrentParent, mCurrentChild, unconsumedY);
+                        postOnAnimation();
+                    }else{
+                        mOverScroller.abortAnimation();
+                    }
                 }
             }
 
@@ -437,6 +450,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
             if (mReSchedulePostAnimationCallback) {
                 internalPostOnAnimation();
             } else {
+                mCurrentParent = null;
                 mCurrentChild = null;
                 onFlingOrScrollEnd();
             }
