@@ -327,6 +327,15 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         }
     }
 
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
+        if(dyUnconsumed > 0 && getCurrentScroll() >= getScrollRange()){
+            // RecyclerView does not stop scroller when over scroll with NestedScrollingParent
+            mBottomView.stopScroll();
+        }
+    }
+
     private void dispatchScrollStateChange(int newScrollState, boolean fromTopBehavior) {
         for (OnScrollListener onScrollListener : mOnScrollListeners) {
             onScrollListener.onScrollStateChange(newScrollState, fromTopBehavior);

@@ -405,19 +405,9 @@ public abstract class QMUIContinuousNestedBottomDelegateLayout extends QMUIFrame
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
                                int dyUnconsumed, int type) {
-        if(dyUnconsumed > 0 && getCurrentScroll() >= getScrollOffsetRange()){
-            // RecyclerView does not stop scroller when over scroll with NestedScrollingParent
-            if(mContentView instanceof NestedScrollingChild2){
-                ((NestedScrollingChild2) mContentView).stopNestedScroll(type);
-            }else if(mContentView instanceof NestedScrollingChild){
-                ((NestedScrollingChild) mContentView).stopNestedScroll();
-            }
-            ((IQMUIContinuousNestedBottomView)mContentView).stopScroll();
-        }else{
-            int remain = offsetBy(dyUnconsumed);
-            dispatchNestedScroll(0, dyUnconsumed - remain, 0, remain, null,
-                    type);
-        }
+        int remain = offsetBy(dyUnconsumed);
+        dispatchNestedScroll(0, dyUnconsumed - remain, 0, remain, null,
+                type);
     }
 
     @Override
