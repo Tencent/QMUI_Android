@@ -35,6 +35,9 @@ import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /**
  * Created by cgspine on 2018/1/7.
  */
@@ -44,6 +47,31 @@ public abstract class BaseFragment extends QMUIFragment {
     private int mBindId = -1;
 
     public BaseFragment() {
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(QDApplication.openSkinMake){
+            openSkinMaker();
+        }
+    }
+
+    public void openSkinMaker(){
+        if(mBindId < 0){
+            mBindId = QMUISkinMaker.getInstance().bind(this);
+        }
+    }
+
+    public void closeSkinMaker(){
+        QMUISkinMaker.getInstance().unBind(mBindId);
+        mBindId = -1;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        closeSkinMaker();
     }
 
     @Override
