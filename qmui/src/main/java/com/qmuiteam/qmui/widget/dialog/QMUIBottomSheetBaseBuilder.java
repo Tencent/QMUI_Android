@@ -36,7 +36,7 @@ import androidx.annotation.Nullable;
 
 public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBuilder> {
     private Context mContext;
-    private QMUIBottomSheet mDialog;
+    protected QMUIBottomSheet mDialog;
     private CharSequence mTitle;
     private boolean mAddCancelBtn;
     private String mCancelText;

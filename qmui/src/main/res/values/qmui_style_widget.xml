@@ -258,6 +258,8 @@
         <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_cancel_text_color</item>
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">?attr/qmui_bottom_sheet_padding_hor</item>
+        <item name="android:paddingRight">?attr/qmui_bottom_sheet_padding_hor</item>
     </style>
 
     <style name="QMUI.BottomSheet.List"/>
@@ -267,6 +269,18 @@
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">middle</item>
         <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="QMUI.BottomSheet.Grid"/>
+
+    <style name="QMUI.BottomSheet.Grid.Text">
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_grid_item_text_color</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <!--********************* Tip *********************-->

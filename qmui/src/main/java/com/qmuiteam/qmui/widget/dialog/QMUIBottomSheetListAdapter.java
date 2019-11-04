@@ -36,7 +36,7 @@ public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomS
     private View mHeaderView;
     @Nullable
     private View mFooterView;
-    private List<QMUIBottomSheetItemModel> mData = new ArrayList<>();
+    private List<QMUIBottomSheetListItemModel> mData = new ArrayList<>();
     private final boolean mNeedMark;
     private final boolean mGravityCenter;
     private int mCheckedIndex = -1;
@@ -58,7 +58,7 @@ public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomS
 
     public void setData(@Nullable View headerView,
                         @Nullable View footerView,
-                        List<QMUIBottomSheetItemModel> data) {
+                        List<QMUIBottomSheetListItemModel> data) {
         mHeaderView = headerView;
         mFooterView = footerView;
         mData.clear();
@@ -114,7 +114,7 @@ public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomS
         if(mHeaderView != null){
             position--;
         }
-        QMUIBottomSheetItemModel itemModel = mData.get(position);
+        QMUIBottomSheetListItemModel itemModel = mData.get(position);
         QMUIBottomSheetListItemView itemView = (QMUIBottomSheetListItemView) holder.itemView;
         itemView.render(itemModel, position == mCheckedIndex);
     }
@@ -132,6 +132,6 @@ public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomS
     }
 
     interface OnItemClickListener {
-        void onClick(VH vh, int dataPos, QMUIBottomSheetItemModel model);
+        void onClick(VH vh, int dataPos, QMUIBottomSheetListItemModel model);
     }
 }

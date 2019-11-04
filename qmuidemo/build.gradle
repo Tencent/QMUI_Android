@@ -30,7 +30,6 @@ android {
         }
     }
     compileSdkVersion parent.ext.compileSdkVersion
-    buildToolsVersion parent.ext.buildToolsVersion
 
     // for butterknife, see https://github.com/JakeWharton/butterknife/blob/master/CHANGELOG.md#version-900-rc2-2018-11-19
     compileOptions {

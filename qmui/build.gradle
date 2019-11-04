@@ -5,7 +5,6 @@ version = QMUI_VERSION
 //noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion parent.ext.compileSdkVersion
-    buildToolsVersion parent.ext.buildToolsVersion
     lintOptions {
         abortOnError false
     }

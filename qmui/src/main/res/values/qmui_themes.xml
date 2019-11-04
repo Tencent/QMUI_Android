@@ -327,6 +327,7 @@
         <item name="qmui_skin_support_bottom_sheet_list_item_text_color">?attr/qmui_config_color_black</item>
         <item name="qmui_skin_support_bottom_sheet_list_red_point_color">?attr/qmui_config_color_red</item>
         <item name="qmui_skin_support_bottom_sheet_list_mark">?attr/qmui_skin_support_icon_mark</item>
+        <item name="qmui_skin_support_bottom_sheet_grid_item_text_color">?attr/qmui_config_color_gray_3</item>
 
         <item name="qmui_skin_def_bottom_sheet_bg">qmui_skin_support_bottom_sheet_bg</item>
         <item name="qmui_skin_def_bottom_sheet_title_text_color">qmui_skin_support_bottom_sheet_title_text_color</item>
@@ -341,6 +342,7 @@
         <item name="qmui_bottom_sheet_padding_hor">?attr/qmui_content_padding_horizontal</item>
         <item name="qmui_bottom_sheet_use_percent_min_height">640dp</item>
         <item name="qmui_bottom_sheet_height_percent">0.75</item>
+        <item name="qmui_bottom_sheet_max_width">500dp</item>
         <item name="qmui_bottom_sheet_background_dim_amount">0.6</item>
         <item name="qmui_bottom_sheet_cancel_btn_height">56dp</item>
         <item name="qmui_bottom_sheet_list_item_height">56dp</item>
@@ -349,41 +351,17 @@
         <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>
         <item name="qmui_bottom_sheet_list_item_mark_margin_left">12dp</item>
         <item name="qmui_bottom_sheet_list_item_tip_point_margin_left">4dp</item>
+        <item name="qmui_bottom_sheet_grid_padding_vertical">12dp</item>
+        <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
+        <item name="qmui_bottom_sheet_grid_item_padding_ver">12dp</item>
+        <item name="qmui_bottom_sheet_grid_item_text_margin_top">9dp</item>
+        <item name="qmui_bottom_sheet_grid_item_mini_width">84dp</item>
+        <item name="qmui_bottom_sheet_grid_item_icon_size">56dp</item>
 
         <item name="qmui_bottom_sheet_title_style">@style/QMUI.BottomSheet.Title</item>
         <item name="qmui_bottom_sheet_cancel_style">@style/QMUI.BottomSheet.Cancel</item>
         <item name="qmui_bottom_sheet_list_item_text_style">@style/QMUI.BottomSheet.List.Text</item>
-
-
-        <item name="qmui_bottom_sheet_title_height">56dp</item>
-        <item name="qmui_bottom_sheet_title_appearance">@style/QMUITextAppearance.Title.Gray</item>
-        <item name="qmui_bottom_sheet_title_bg">?attr/qmui_list_item_bg_with_border_bottom</item>
-
-        <item name="qmui_bottom_sheet_list_item_padding_horizontal">
-            ?attr/qmui_content_padding_horizontal
-        </item>
-
-
-        <item name="qmui_bottom_sheet_grid_bg">@color/qmui_config_color_white</item>
-        <item name="qmui_bottom_sheet_grid_padding_vertical">12dp</item>
-        <item name="qmui_bottom_sheet_grid_line_padding_horizontal">12dp</item>
-        <item name="qmui_bottom_sheet_grid_line_vertical_space">0dp</item>
-        <item name="qmui_bottom_sheet_grid_item_mini_width">84dp</item>
-        <item name="qmui_bottom_sheet_grid_item_paddingTop">0dp</item>
-        <item name="qmui_bottom_sheet_grid_item_paddingBottom">8dp</item>
-        <item name="qmui_bottom_sheet_grid_item_icon_size">56dp</item>
-        <item name="qmui_bottom_sheet_grid_item_icon_marginTop">12dp</item>
-        <item name="qmui_bottom_sheet_grid_item_icon_marginBottom">9dp</item>
-        <item name="qmui_bottom_sheet_grid_item_text_appearance">
-            @style/QMUITextAppearance.GridItem.Small
-        </item>
-
-        <item name="qmui_bottom_sheet_button_background">@drawable/qmui_divider_top_bitmap</item>
-        <item name="qmui_bottom_sheet_button_height">56dp</item>
-        <item name="qmui_bottom_sheet_button_text_size">15sp</item>
-        <item name="qmui_bottom_sheet_button_text_color">@color/qmui_config_color_gray_2</item>
-
-
+        <item name="qmui_bottom_sheet_grid_item_text_style">@style/QMUI.BottomSheet.Grid.Text</item>
 
 
         <!--**********************************************

@@ -16,56 +16,78 @@
 
 package com.qmuiteam.qmui.widget.dialog;
 
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
-public class QMUIBottomSheetItemModel {
+public class QMUIBottomSheetGridItemModel {
     Drawable image = null;
     int imageRes = 0;
     int imageSkinTintColorAttr = 0;
     int imageSkinSrcAttr = 0;
     int textSkinColorAttr = 0;
-    String text;
-    String tag = "";
-    boolean hasRedPoint = false;
-    boolean isDisabled = false;
+    CharSequence text;
+    Object tag = "";
+    Drawable subscript = null;
+    int subscriptRes = 0;
+    int subscriptSkinTintColorAttr = 0;
+    int subscriptSkinSrcAttr = 0;
+    Typeface typeface;
 
-    public QMUIBottomSheetItemModel(String text, String tag) {
+    public QMUIBottomSheetGridItemModel(CharSequence text, Object tag) {
         this.text = text;
         this.tag = tag;
     }
 
-    public QMUIBottomSheetItemModel image(Drawable image) {
+    public QMUIBottomSheetGridItemModel image(Drawable image) {
         this.image = image;
         return this;
     }
 
-    public QMUIBottomSheetItemModel image(int imageRes) {
+    public QMUIBottomSheetGridItemModel image(int imageRes) {
         this.imageRes = imageRes;
         return this;
     }
 
-    public QMUIBottomSheetItemModel skinTextColorAttr(int attr) {
+    public QMUIBottomSheetGridItemModel subscript(Drawable image) {
+        this.subscript = image;
+        return this;
+    }
+
+    public QMUIBottomSheetGridItemModel subscript(int imageRes) {
+        this.subscriptRes = imageRes;
+        return this;
+    }
+
+
+    public QMUIBottomSheetGridItemModel skinTextColorAttr(int attr) {
         this.textSkinColorAttr = attr;
         return this;
     }
 
-    public QMUIBottomSheetItemModel skinImageTintColorAttr(int attr) {
+
+    public QMUIBottomSheetGridItemModel skinImageTintColorAttr(int attr) {
         this.imageSkinTintColorAttr = attr;
         return this;
     }
 
-    public QMUIBottomSheetItemModel skinImageSrcAttr(int attr) {
+    public QMUIBottomSheetGridItemModel skinImageSrcAttr(int attr) {
         this.imageSkinSrcAttr = attr;
         return this;
     }
 
-    public QMUIBottomSheetItemModel redPoint(boolean hasRedPoint) {
-        this.hasRedPoint = hasRedPoint;
+    public QMUIBottomSheetGridItemModel skinSubscriptTintColorAttr(int attr) {
+        this.subscriptSkinTintColorAttr = attr;
         return this;
     }
 
-    public QMUIBottomSheetItemModel disabled(boolean isDisabled) {
-        this.isDisabled = isDisabled;
+    public QMUIBottomSheetGridItemModel skinSubscriptSrcAttr(int attr) {
+        this.subscriptSkinSrcAttr = attr;
         return this;
     }
+
+    public QMUIBottomSheetGridItemModel typeface(Typeface typeface) {
+        this.typeface = typeface;
+        return this;
+    }
+
 }

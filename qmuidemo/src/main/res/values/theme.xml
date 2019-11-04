@@ -35,6 +35,7 @@
     <attr name="app_skin_alpha_test" format="float"/>
 
 
+
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
         <!-- 配置Android提供的theme -->
         <item name="android:textAppearanceListItemSmall">@style/QDTextAppearanceListItemSmall</item>
@@ -130,7 +131,7 @@
         <item name="qmui_skin_support_bottom_sheet_title_text_color">@color/qmui_config_color_50_white</item>
         <item name="qmui_skin_support_bottom_sheet_cancel_text_color">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_bottom_sheet_list_item_text_color">@color/qmui_config_color_white</item>
-
+        <item name="qmui_skin_support_bottom_sheet_grid_item_text_color">@color/qmui_config_color_75_white</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>

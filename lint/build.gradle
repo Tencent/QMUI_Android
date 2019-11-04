@@ -4,7 +4,6 @@ version = QMUI_LINT_VERSION
 
 android {
     compileSdkVersion project.ext.compileSdkVersion
-    buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 14

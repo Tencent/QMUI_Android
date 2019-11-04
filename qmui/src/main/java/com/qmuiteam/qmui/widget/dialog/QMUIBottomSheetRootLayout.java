@@ -29,6 +29,7 @@ public class QMUIBottomSheetRootLayout extends QMUILinearLayout {
 
     private final int mUsePercentMinHeight;
     private final float mHeightPercent;
+    private final int mMaxWidth;
 
     public QMUIBottomSheetRootLayout(Context context) {
         this(context, null);
@@ -49,10 +50,16 @@ public class QMUIBottomSheetRootLayout extends QMUILinearLayout {
         }
         mUsePercentMinHeight = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_use_percent_min_height);
         mHeightPercent = QMUIResHelper.getAttrFloatValue(context, R.attr.qmui_bottom_sheet_height_percent);
+        mMaxWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_max_width);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if(widthSize > mMaxWidth){
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxWidth, widthMode);
+        }
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         if (heightSize >= mUsePercentMinHeight) {
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(

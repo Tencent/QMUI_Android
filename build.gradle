@@ -25,10 +25,9 @@ allprojects {
     }
 
     ext {
-        buildToolsVersion = "28.0.3"
         minSdkVersion = 19
-        targetSdkVersion = 28
-        compileSdkVersion = 28
+        targetSdkVersion = 29
+        compileSdkVersion = 29
         appcompatVersion= '1.1.0'
         materialVersion='1.2.0-alpha01'
         annotationVersion='1.1.0-beta01'

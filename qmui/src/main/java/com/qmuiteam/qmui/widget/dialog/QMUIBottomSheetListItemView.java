@@ -145,7 +145,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         mItemHeight = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_list_item_height);
     }
 
-    public void render(@NonNull QMUIBottomSheetItemModel itemModel, boolean isChekced){
+    public void render(@NonNull QMUIBottomSheetListItemModel itemModel, boolean isChecked){
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
         if(itemModel.imageSkinSrcAttr != 0){
             builder.src(itemModel.imageSkinSrcAttr);
@@ -175,6 +175,9 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         QMUISkinManager.defaultInstance(getContext()).refreshTheme(mIconView);
 
         mTextView.setText(itemModel.text);
+        if(itemModel.typeface != null){
+            mTextView.setTypeface(itemModel.typeface);
+        }
         if(itemModel.textSkinColorAttr != 0){
             builder.textColor(itemModel.textSkinColorAttr);
             QMUISkinHelper.setSkinValue(mTextView, builder);
@@ -186,7 +189,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         mRedPointView.setVisibility(itemModel.hasRedPoint ? View.VISIBLE : View.GONE);
 
         if(mMarkView != null){
-            mMarkView.setVisibility(isChekced ? View.VISIBLE : View.INVISIBLE);
+            mMarkView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
         }
     }
 

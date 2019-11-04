@@ -4,7 +4,6 @@ version = QMUI_SKIN_MAKER_VERSION
 
 android {
     compileSdkVersion parent.ext.compileSdkVersion
-    buildToolsVersion parent.ext.buildToolsVersion
 
 
     defaultConfig {
