@@ -51,6 +51,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     };
     private boolean mKeepBottomAreaStableWhenCheckLayout = false;
     private QMUIDraggableScrollBar mDraggableScrollBar;
+    private boolean mEnableScrollBarFadeInOut = true;
     private boolean mIsDraggableScrollBarEnabled = false;
     private int mCurrentScrollState = IQMUIContinuousNestedScrollCommon.SCROLL_STATE_IDLE;
     private boolean mIsDismissDownEvent = false;
@@ -72,6 +73,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     private void ensureScrollBar() {
         if (mDraggableScrollBar == null) {
             mDraggableScrollBar = createScrollBar(getContext());
+            mDraggableScrollBar.setEnableFadeInAndOut(mEnableScrollBarFadeInOut);
             mDraggableScrollBar.setCallback(this);
             CoordinatorLayout.LayoutParams lp = new CoordinatorLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -81,7 +83,32 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public void setDraggableScrollBarEnabled(boolean draggableScrollBarEnabled) {
-        mIsDraggableScrollBarEnabled = draggableScrollBarEnabled;
+        if(mIsDraggableScrollBarEnabled != draggableScrollBarEnabled){
+            mIsDraggableScrollBarEnabled = draggableScrollBarEnabled;
+            if(mIsDraggableScrollBarEnabled && !mEnableScrollBarFadeInOut){
+                ensureScrollBar();
+                mDraggableScrollBar.setPercent(getCurrentScrollPercent());
+                mDraggableScrollBar.awakenScrollBar();
+            }
+            if(mDraggableScrollBar != null){
+                mDraggableScrollBar.setVisibility(draggableScrollBarEnabled ? View.VISIBLE: View.GONE);
+            }
+        }
+    }
+
+    public void setEnableScrollBarFadeInOut(boolean enableScrollBarFadeInOut) {
+        if(mEnableScrollBarFadeInOut != enableScrollBarFadeInOut){
+            mEnableScrollBarFadeInOut = enableScrollBarFadeInOut;
+            if(mIsDraggableScrollBarEnabled && !mEnableScrollBarFadeInOut){
+                ensureScrollBar();
+                mDraggableScrollBar.setPercent(getCurrentScrollPercent());
+                mDraggableScrollBar.awakenScrollBar();
+            }
+            if(mDraggableScrollBar != null){
+                mDraggableScrollBar.setEnableFadeInAndOut(enableScrollBarFadeInOut);
+                mDraggableScrollBar.invalidate();
+            }
+        }
     }
 
     protected QMUIDraggableScrollBar createScrollBar(Context context) {
