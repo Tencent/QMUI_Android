@@ -33,6 +33,7 @@ import org.w3c.dom.Attr;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.List;
@@ -86,17 +87,35 @@ public class QMUIXmlVectorDrawableDetector extends ResourceXmlDetector {
         String resourcePath = resourceFolder.get(0).getAbsolutePath();
         // 获取 drawable 名字
         String drawableName = attribute.getValue().replace("@drawable/", "");
+        FileInputStream fileInputStream = null;
+        BufferedReader reader = null;
         try {
             // 若 drawable 为 Vector Drawable，则文件后缀为 xml，根据 resource 路径，drawable 名字，文件后缀拼接出完整路径
-            FileInputStream fileInputStream = new FileInputStream(resourcePath + "/drawable/" + drawableName + ".xml");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+            fileInputStream = new FileInputStream(resourcePath + "/drawable/" + drawableName + ".xml");
+            reader = new BufferedReader(new InputStreamReader(fileInputStream));
             String line = reader.readLine();
             if (line.contains("vector")) {
                 // 若文件存在，并且包含首行包含 vector，则为 Vector Drawable，抛出警告
                 context.report(ISSUE_XML_VECTOR_DRAWABLE, attribute, context.getLocation(attribute), attribute.getValue() + " 为 Vector Drawable，请使用 Vector 属性进行设置，避免 4.0 及以下版本的系统产生 Crash");
             }
-            fileInputStream.close();
         } catch (Exception ignored) {
+
+        }finally {
+            if(fileInputStream != null){
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
