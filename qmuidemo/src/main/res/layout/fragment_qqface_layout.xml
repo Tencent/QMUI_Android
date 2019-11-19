@@ -179,6 +179,28 @@
                 android:layout_marginTop="10dp"
                 android:ellipsize="end"/>
 
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp" />
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:layout_marginTop="10dp"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:maxLines="3"
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
     </ScrollView>
 
