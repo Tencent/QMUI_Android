@@ -170,6 +170,10 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             mFooterViewOffsetHelper.onViewLayout();
             mOffsetCurrent = -mFooterViewOffsetHelper.getTopAndBottomOffset();
         }
+
+        if(mOffsetCurrent > mOffsetRange){
+            offsetTo(mOffsetRange);
+        }
         postCheckLayout();
     }
 
