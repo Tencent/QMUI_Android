@@ -16,10 +16,15 @@
 
 package com.qmuiteam.qmuidemo.fragment.components.qqface;
 
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
+import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -51,6 +56,9 @@ public class QDQQFaceUsageFragment extends BaseFragment {
     @BindView(R.id.qqface11) QMUIQQFaceView mQQFace11;
     @BindView(R.id.qqface12) QMUIQQFaceView mQQFace12;
     @BindView(R.id.qqface13) QMUIQQFaceView mQQFace13;
+    @BindView(R.id.qqface14) QMUIQQFaceView mQQFace14;
+    @BindView(R.id.qqface15) QMUIQQFaceView mQQFace15;
+    @BindView(R.id.qqface16) QMUIQQFaceView mQQFace16;
 
     @Override
     protected View onCreateView() {
@@ -120,5 +128,22 @@ public class QDQQFaceUsageFragment extends BaseFragment {
                 "[微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑]" +
                 "[微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑][微笑]" +
                 "[微笑][微笑][微笑][微笑][微笑]");
+
+        String topic = "#[发呆][微笑]话题";
+        String text = "这是一段文本，为了测量 span 的点击在不同 Gravity 下能否正常工作。" + topic;
+
+
+        SpannableString sb = new SpannableString(text);
+        sb.setSpan(new QMUITouchableSpan(Color.BLUE, Color.BLACK, Color.GRAY, Color.GREEN) {
+            @Override
+            public void onSpanClick(View widget) {
+                Toast.makeText(widget.getContext(), "点击了话题", Toast.LENGTH_SHORT).show();
+            }
+        }, text.indexOf(topic), text.indexOf(topic) + topic.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mQQFace14.setText(sb);
+        mQQFace15.setText(sb);
+        mQQFace16.setText(sb);
+        mQQFace15.setGravity(Gravity.CENTER);
+        mQQFace16.setGravity(Gravity.RIGHT);
     }
 }

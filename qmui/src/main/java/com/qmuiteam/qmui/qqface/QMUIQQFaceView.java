@@ -45,9 +45,8 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static android.view.View.MeasureSpec.AT_MOST;
 
@@ -81,7 +80,7 @@ public class QMUIQQFaceView extends View {
     private int mMaxLine = Integer.MAX_VALUE;
     private boolean mIsSingleLine = false;
     private int mLines = 0;
-    private Set<SpanInfo> mSpanInfos = new HashSet<>();
+    private HashMap<QMUIQQFaceCompiler.Element, SpanInfo> mSpanInfos = new HashMap<>();
     private boolean mIsTouchDownInMoreText = false;
     private Rect mMoreHitRect = new Rect();
     private static final String mEllipsizeText = "...";
@@ -215,7 +214,8 @@ public class QMUIQQFaceView extends View {
                 if (mMoreHitRect.contains(x, y)) {
                     mIsTouchDownInMoreText = true;
                 } else {
-                    for (SpanInfo spanInfo : mSpanInfos) {
+
+                    for (SpanInfo spanInfo : mSpanInfos.values()) {
                         if (spanInfo.onTouch(x, y)) {
                             mTouchSpanInfo = spanInfo;
                             break;
@@ -470,6 +470,7 @@ public class QMUIQQFaceView extends View {
             throw new RuntimeException("mCompiler == null");
         }
 
+        mSpanInfos.clear();
         if (QMUILangHelper.isNullOrEmpty(mOriginText)) {
             mElementList = null;
             requestLayout();
@@ -479,6 +480,15 @@ public class QMUIQQFaceView extends View {
 
         if (mOpenQQFace && mCompiler != null) {
             mElementList = mCompiler.compile(mOriginText);
+            List<QMUIQQFaceCompiler.Element> elements = mElementList.getElements();
+            if (elements != null) {
+                for (int i = 0; i < elements.size(); i++) {
+                    QMUIQQFaceCompiler.Element element = elements.get(i);
+                    if (element.getType() == QMUIQQFaceCompiler.ElementType.SPAN) {
+                        mSpanInfos.put(element, new SpanInfo(element.getTouchableSpan()));
+                    }
+                }
+            }
         } else {
             mElementList = new QMUIQQFaceCompiler.ElementList(0, mOriginText.length());
             String[] strings = mOriginText.toString().split("\\n");
@@ -591,7 +601,6 @@ public class QMUIQQFaceView extends View {
         }
         mLastCalLimitWidth = limitWidth;
         List<QMUIQQFaceCompiler.Element> elements = mElementList.getElements();
-        mSpanInfos.clear();
         mCurrentCalLine = 1;
         mCurrentCalWidth = getPaddingLeft();
         calculateLinesInner(elements, limitWidth);
@@ -660,11 +669,7 @@ public class QMUIQQFaceView extends View {
                         calculateLinesInner(spanElementList.getElements(), limitWidth);
                         continue;
                     }
-                    SpanInfo spanInfo = new SpanInfo(span);
-                    spanInfo.setStart(mCurrentCalLine, mCurrentCalWidth);
                     calculateLinesInner(spanElementList.getElements(), limitWidth);
-                    spanInfo.setEnd(mCurrentCalLine, mCurrentCalWidth);
-                    mSpanInfos.add(spanInfo);
                 }
             } else if (element.getType() == QMUIQQFaceCompiler.ElementType.NEXTLINE) {
                 gotoCalNextLine(widthStart, true);
@@ -702,7 +707,7 @@ public class QMUIQQFaceView extends View {
         mContentCalMaxWidth = Math.max(width, mContentCalMaxWidth);
     }
 
-    private void gotoCalNextLine(int widthStart){
+    private void gotoCalNextLine(int widthStart) {
         gotoCalNextLine(widthStart, false);
     }
 
@@ -710,7 +715,7 @@ public class QMUIQQFaceView extends View {
         mCurrentCalLine++;
         setContentCalMaxWidth(mCurrentCalWidth);
         mCurrentCalWidth = widthStart;
-        if(nextParagraph){
+        if (nextParagraph) {
             if (mEllipsize == null) {
                 mParagraphShowCount++;
             } else if (mEllipsize == TextUtils.TruncateAt.END) {
@@ -869,18 +874,25 @@ public class QMUIQQFaceView extends View {
             } else if (type == QMUIQQFaceCompiler.ElementType.SPAN) {
                 QMUIQQFaceCompiler.ElementList spanElementList = element.getChildList();
                 mCurrentDrawSpan = element.getTouchableSpan();
+                SpanInfo spanInfo = mSpanInfos.get(element);
                 if (spanElementList != null && !spanElementList.getElements().isEmpty()) {
                     if (mCurrentDrawSpan == null) {
                         drawElements(canvas, spanElementList.getElements(), usefulWidth);
                         continue;
                     }
                     mIsInDrawSpan = true;
+                    if (spanInfo != null) {
+                        spanInfo.setStart(mCurrentDrawLine, mCurrentDrawUsedWidth);
+                    }
                     @ColorInt int spanColor = mCurrentDrawSpan.isPressed() ?
                             mCurrentDrawSpan.getPressedTextColor() :
                             mCurrentDrawSpan.getNormalTextColor();
                     mPaint.setColor(spanColor == 0 ? mTextColor : spanColor);
                     drawElements(canvas, spanElementList.getElements(), usefulWidth);
                     mPaint.setColor(mTextColor);
+                    if (spanInfo != null) {
+                        spanInfo.setEnd(mCurrentDrawLine, mCurrentDrawUsedWidth);
+                    }
                     mIsInDrawSpan = false;
                 }
             } else if (type == QMUIQQFaceCompiler.ElementType.NEXTLINE) {
@@ -1337,8 +1349,8 @@ public class QMUIQQFaceView extends View {
             int left = isLast ? mSpecialDrawablePadding : 0;
             int drawableWidth = drawable.getIntrinsicWidth();
             int drawableHeight = drawable.getIntrinsicHeight();
-            if(drawableHeight > mFontHeight){
-                float scale = ((float)mFontHeight) / drawableHeight;
+            if (drawableHeight > mFontHeight) {
+                float scale = ((float) mFontHeight) / drawableHeight;
                 drawableHeight = mFontHeight;
                 drawableWidth = (int) (drawableWidth * scale);
             }
@@ -1364,11 +1376,12 @@ public class QMUIQQFaceView extends View {
     }
 
     private class SpanInfo {
+        public static final int NOT_SET = -1;
         private ITouchableSpan mTouchableSpan;
-        private int mStartPoint;
-        private int mEndPoint;
-        private int mStartLine;
-        private int mEndLine;
+        private int mStartPoint = NOT_SET;
+        private int mEndPoint = NOT_SET;
+        private int mStartLine = NOT_SET;
+        private int mEndLine = NOT_SET;
 
         public SpanInfo(ITouchableSpan touchableSpan) {
             mTouchableSpan = touchableSpan;
