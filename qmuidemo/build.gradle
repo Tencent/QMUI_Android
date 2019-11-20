@@ -62,10 +62,10 @@ android {
 }
 
 
-apply plugin: 'com.qmuiteam.qmui.skinMaker'
-skinMaker{
-    file rootProject.file('qmuidemo-skin-code-generator-source')
-}
+//apply plugin: 'com.qmuiteam.qmui.skinMaker'
+//skinMaker{
+//    file rootProject.file('qmuidemo-skin-code-generator-source')
+//}
 
 
 

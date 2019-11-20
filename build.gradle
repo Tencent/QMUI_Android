@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.qmuiteam:skin-maker-plugin:0.0.1'
+//        classpath 'com.qmuiteam:skin-maker-plugin:0.0.1'
     }
 }
 
