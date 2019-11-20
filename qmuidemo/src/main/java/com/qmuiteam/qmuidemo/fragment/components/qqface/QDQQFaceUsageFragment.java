@@ -18,6 +18,7 @@ package com.qmuiteam.qmuidemo.fragment.components.qqface;
 
 import android.graphics.Color;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
