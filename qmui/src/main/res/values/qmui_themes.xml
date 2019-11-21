@@ -69,7 +69,7 @@
         <item name="colorControlNormal">@color/qmui_config_color_white</item>
         <item name="android:textColorPrimary">?attr/qmui_config_color_blue</item>
         <item name="android:textColorSecondary">?attr/qmui_config_color_blue</item>
-        <item name="android:windowBackground">@color/qmui_config_color_white</item>
+        <item name="android:windowBackground">?attr/qmui_skin_support_activity_background</item>
         <item name="android:editTextColor">?attr/qmui_config_color_black</item>
     </style>
 
@@ -209,6 +209,7 @@
         <item name="qmui_general_shadow_elevation">14dp</item>
         <item name="qmui_general_shadow_alpha">0.25</item>
 
+        <item name="qmui_skin_support_activity_background">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_color_separator">@color/qmui_config_color_separator</item>
         <item name="qmui_skin_support_color_separator_darken">@color/qmui_config_color_separator_darken</item>
         <item name="qmui_skin_support_color_background">@color/qmui_config_color_background</item>
@@ -301,13 +302,6 @@
         <item name="qmui_skin_support_s_list_item_bg_2">@drawable/qmui_s_list_item_bg_2</item>
 
 
-        <item name="qmui_list_item_bg_with_border_bottom">
-            @drawable/qmui_list_item_bg_with_border_bottom
-        </item>
-        <item name="qmui_s_list_item_bg_with_border_bottom">
-            @drawable/qmui_s_list_item_bg_with_border_bottom
-        </item>
-
         <!--**********************************************
         *             qmui drawable                      *
         ***********************************************-->
@@ -369,22 +363,15 @@
         ***********************************************-->
         <item name="qmui_popup_radius">12dp</item>
         <item name="qmui_popup_border_width">1px</item>
-        <item name="qmui_popup_border_color">@color/qmui_config_color_separator</item>
         <item name="qmui_popup_shadow_elevation">16dp</item>
         <item name="qmui_popup_shadow_alpha">0.25</item>
-        <item name="qmui_popup_bg_color">@color/qmui_config_color_white</item>
         <item name="qmui_popup_shadow_inset">30dp</item>
         <item name="qmui_popup_arrow_width">18dp</item>
         <item name="qmui_popup_arrow_height">10dp</item>
-        <item name="qmui_popup_fullscreen_close_icon">@drawable/qmui_icon_popup_fullscreen_close
-        </item>
 
-
-        <item name="qmui_popup_bg">@drawable/qmui_popup_bg</item>
-        <item name="qmui_popup_arrow_down">@drawable/qmui_popup_arrow_down</item>
-        <item name="qmui_popup_arrow_up">@drawable/qmui_popup_arrow_up</item>
-        <item name="qmui_popup_arrow_up_margin_top">13dp</item>
-        <item name="qmui_popup_arrow_down_margin_bottom">13dp</item>
+        <item name="qmui_skin_support_popup_border_color">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_skin_support_popup_bg">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_popup_close_icon">@drawable/qmui_icon_popup_close_with_bg</item>
 
 
         <!--**********************************************

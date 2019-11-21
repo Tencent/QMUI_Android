@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Tencent is pleased to support the open source community by making QMUI_Android available.
+
+ Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
+
+ Licensed under the MIT License (the "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of the License at
+
+ http://opensource.org/licenses/MIT
+
+ Unless required by applicable law or agreed to in writing, software distributed under the License is
+ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ either express or implied. See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <group
+      android:name="iconGroup"
+      android:pivotX="12"
+      android:pivotY="12"
+      android:rotation="0">
+
+    <path
+        android:name="close"
+        android:pathData="M10.95,12.05L11.95,13.05L6.0303,19.0303L4.9697,17.9697L10.95,12.05ZM4.9697,6.0303L6.0303,4.9697L19.0303,17.9697L17.9697,19.0303L4.9697,6.0303ZM17.9697,4.9697L19.0303,6.0303L13.05,11.95L12.05,10.95L17.9697,4.9697Z"
+        android:strokeWidth="1"
+        android:fillColor="#000000"
+        android:fillType="nonZero"
+        android:strokeColor="#00000000"/>
+
+  </group>
+
+</vector>

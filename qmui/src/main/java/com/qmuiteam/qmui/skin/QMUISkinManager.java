@@ -50,6 +50,7 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundSrcHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTintColorHandler;
 import com.qmuiteam.qmui.util.QMUILangHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.ref.WeakReference;
@@ -101,7 +102,8 @@ public final class QMUISkinManager {
     private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
 
         @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        public void onLayoutChange(
+                View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (v instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) v;
                 int childCount = viewGroup.getChildCount();
@@ -177,6 +179,14 @@ public final class QMUISkinManager {
         return null;
     }
 
+    @Nullable
+    public Resources.Theme getCurrentTheme() {
+        SkinItem skinItem = mSkins.get(mCurrentSkin);
+        if (skinItem != null) {
+            return skinItem.getTheme();
+        }
+        return null;
+    }
 
     @MainThread
     public void addSkin(int index, int styleRes) {
@@ -507,7 +517,10 @@ public final class QMUISkinManager {
                 mSkinObserverList.remove(i);
             } else {
                 if (item instanceof Activity) {
-                    dispatch(((Activity) item).findViewById(Window.ID_ANDROID_CONTENT), index);
+                    Activity activity = (Activity) item;
+                    activity.getWindow().setBackgroundDrawable(QMUIResHelper.getAttrDrawable(
+                            activity, mSkins.get(index).getTheme(), R.attr.qmui_skin_support_activity_background));
+                    dispatch(activity.findViewById(Window.ID_ANDROID_CONTENT), index);
                 } else if (item instanceof Fragment) {
                     dispatch(((Fragment) item).getView(), index);
                 } else if (item instanceof Dialog) {

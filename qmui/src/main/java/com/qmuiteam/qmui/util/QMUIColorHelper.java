@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.util;
 
 import android.graphics.Color;
+
 import androidx.annotation.ColorInt;
 
 /**
@@ -25,15 +26,15 @@ import androidx.annotation.ColorInt;
  */
 public class QMUIColorHelper {
 
-    public static int setColorAlpha(@ColorInt int color, float alpha){
+    public static int setColorAlpha(@ColorInt int color, float alpha) {
         return setColorAlpha(color, alpha, true);
     }
 
     /**
      * 设置颜色的alpha值
      *
-     * @param color 需要被设置的颜色值
-     * @param alpha 取值为[0,1]，0表示全透明，1表示不透明
+     * @param color    需要被设置的颜色值
+     * @param alpha    取值为[0,1]，0表示全透明，1表示不透明
      * @param override 覆盖原本的 alpha
      * @return 返回改变了 alpha 值的颜色值
      */

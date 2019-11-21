@@ -44,7 +44,7 @@
     <attr name="qmui_general_shadow_alpha" format="float" />
 
 
-    <attr name="qmui_skin_support_window_background" format="color"/>
+    <attr name="qmui_skin_support_activity_background" format="color"/>
     <attr name="qmui_skin_support_color_separator" format="color" />
     <attr name="qmui_skin_support_color_separator_darken" format="color" />
     <attr name="qmui_skin_support_color_background" format="color" />
@@ -84,9 +84,6 @@
     <attr name="qmui_list_item_height_higher" format="dimension" />
     <attr name="qmui_skin_support_s_list_item_bg_1" format="reference" />
     <attr name="qmui_skin_support_s_list_item_bg_2" format="reference" />
-
-    <attr name="qmui_list_item_bg_with_border_bottom" format="reference"/>
-    <attr name="qmui_s_list_item_bg_with_border_bottom" format="reference" />
 
     <!--**********************************************
     *             qmui drawbale                      *
@@ -167,21 +164,16 @@
     ***********************************************-->
     <attr name="qmui_popup_radius" format="dimension" />
     <attr name="qmui_popup_border_width" format="dimension" />
-    <attr name="qmui_popup_border_color" format="reference|color" />
     <attr name="qmui_popup_shadow_elevation" format="dimension" />
     <attr name="qmui_popup_shadow_alpha" format="float" />
     <attr name="qmui_popup_shadow_inset" format="dimension" />
-    <attr name="qmui_popup_bg_color" format="reference|color" />
     <attr name="qmui_popup_arrow_width" format="dimension"/>
     <attr name="qmui_popup_arrow_height" format="dimension"/>
-    <attr name="qmui_popup_fullscreen_close_icon" format="reference"/>
 
 
-    <attr name="qmui_popup_bg" format="reference" />
-    <attr name="qmui_popup_arrow_down" format="reference" />
-    <attr name="qmui_popup_arrow_up" format="reference" />
-    <attr name="qmui_popup_arrow_up_margin_top" format="dimension" /> <!-- 一般与qmui_popup_bg上阴影相等 -->
-    <attr name="qmui_popup_arrow_down_margin_bottom" format="dimension" /> <!-- 一般与qmui_popup_bg下阴影相等 -->
+    <attr name="qmui_skin_support_popup_bg" format="reference"/>
+    <attr name="qmui_skin_support_popup_border_color" format="reference|color" />
+    <attr name="qmui_skin_support_popup_close_icon" format="reference"/>
 
     <!--**********************************************
     *                qmui dialog                     *
@@ -309,4 +301,5 @@
     <attr name="qmui_bottom_sheet_cancel_style" format="reference" />
     <attr name="qmui_bottom_sheet_list_item_text_style" format="reference"/>
     <attr name="qmui_bottom_sheet_grid_item_text_style" format="reference"/>
+
 </resources>

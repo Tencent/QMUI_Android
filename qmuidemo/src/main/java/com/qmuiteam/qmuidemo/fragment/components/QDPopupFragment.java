@@ -32,7 +32,10 @@ import android.widget.Toast;
 
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.popup.QMUIFullScreenPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
@@ -74,7 +77,12 @@ public class QDPopupFragment extends BaseFragment {
         int padding = QMUIDisplayHelper.dp2px(getContext(), 20);
         textView.setPadding(padding, padding, padding, padding);
         textView.setText("QMUIBasePopup 可以设置其位置以及显示和隐藏的动画");
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
+        textView.setTextColor(
+                QMUIResHelper.getAttrColor(getContext(), R.attr.app_skin_common_title_text_color));
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        builder.textColor(R.attr.app_skin_common_title_text_color);
+        QMUISkinHelper.setSkinValue(textView, builder);
+        builder.release();
         mNormalPopup = QMUIPopups.popup(getContext(), QMUIDisplayHelper.dp2px(getContext(), 250))
                 .preferredDirection(QMUIPopup.DIRECTION_BOTTOM)
                 .view(textView)
@@ -144,7 +152,12 @@ public class QDPopupFragment extends BaseFragment {
         int padding = QMUIDisplayHelper.dp2px(getContext(), 20);
         textView.setPadding(padding, padding, padding, padding);
         textView.setText("通过 dimAmount() 设置背景遮罩");
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
+        textView.setTextColor(
+                QMUIResHelper.getAttrColor(getContext(), R.attr.app_skin_common_title_text_color));
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        builder.textColor(R.attr.app_skin_common_title_text_color);
+        QMUISkinHelper.setSkinValue(textView, builder);
+        builder.release();
         mNormalPopup = QMUIPopups.popup(getContext(), QMUIDisplayHelper.dp2px(getContext(), 250))
                 .preferredDirection(QMUIPopup.DIRECTION_BOTTOM)
                 .view(textView)
@@ -194,8 +207,12 @@ public class QDPopupFragment extends BaseFragment {
 
     @OnClick(R.id.actionBtn5)
     void onClickBtn5(View v) {
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
         QMUIFrameLayout frameLayout = new QMUIFrameLayout(getContext());
-        frameLayout.setBackgroundColor(Color.WHITE);
+        frameLayout.setBackground(
+                QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_skin_support_popup_bg));
+        builder.background(R.attr.qmui_skin_support_popup_bg);
+        QMUISkinHelper.setSkinValue(frameLayout, builder);
         frameLayout.setRadius(QMUIDisplayHelper.dp2px(getContext(), 12));
         int padding = QMUIDisplayHelper.dp2px(getContext(), 20);
         frameLayout.setPadding(padding, padding, padding, padding);
@@ -204,9 +221,15 @@ public class QDPopupFragment extends BaseFragment {
         textView.setLineSpacing(QMUIDisplayHelper.dp2px(getContext(), 4), 1.0f);
         textView.setPadding(padding, padding, padding, padding);
         textView.setText("这是自定义显示的内容");
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
+        textView.setTextColor(
+                QMUIResHelper.getAttrColor(getContext(), R.attr.app_skin_common_title_text_color));
+
+        builder.clear();
+        builder.textColor(R.attr.app_skin_common_title_text_color);
+        QMUISkinHelper.setSkinValue(textView, builder);
         textView.setGravity(Gravity.CENTER);
 
+        builder.release();
 
         int size = QMUIDisplayHelper.dp2px(getContext(), 200);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
@@ -232,8 +255,12 @@ public class QDPopupFragment extends BaseFragment {
 
     @OnClick(R.id.actionBtn6)
     void onClickBtn6(View v) {
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
         QMUIFrameLayout frameLayout = new QMUIFrameLayout(getContext());
-        frameLayout.setBackgroundColor(Color.WHITE);
+        frameLayout.setBackground(
+                QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_skin_support_popup_bg));
+        builder.background(R.attr.qmui_skin_support_popup_bg);
+        QMUISkinHelper.setSkinValue(frameLayout, builder);
         frameLayout.setRadius(QMUIDisplayHelper.dp2px(getContext(), 12));
         int padding = QMUIDisplayHelper.dp2px(getContext(), 20);
         frameLayout.setPadding(padding, padding, padding, padding);
@@ -242,25 +269,42 @@ public class QDPopupFragment extends BaseFragment {
         textView.setLineSpacing(QMUIDisplayHelper.dp2px(getContext(), 4), 1.0f);
         textView.setPadding(padding, padding, padding, padding);
         textView.setText("这是自定义显示的内容");
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
+        builder.clear();
+        builder.textColor(R.attr.app_skin_common_title_text_color);
+        QMUISkinHelper.setSkinValue(textView, builder);
         textView.setGravity(Gravity.CENTER);
         int size = QMUIDisplayHelper.dp2px(getContext(), 200);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
         frameLayout.addView(textView, lp);
 
+        int minHeight = QMUIDisplayHelper.dp2px(getContext(), 48);
         QMUIFrameLayout editParent = new QMUIFrameLayout(getContext());
+        editParent.setMinimumHeight(minHeight);
+        editParent.setRadius(minHeight / 2);
         editParent.setFitsSystemWindows(true);
+        editParent.setBackground(
+                QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_skin_support_popup_bg));
+        builder.clear();
+        builder.background(R.attr.qmui_skin_support_popup_bg);
+        QMUISkinHelper.setSkinValue(editParent, builder);
+
+
         EditText editText = new EditText(getContext());
         editText.setHint("请输入...");
-        QMUIRoundButtonDrawable editBg = new QMUIRoundButtonDrawable();
-        editBg.setIsRadiusAdjustBounds(true);
-        editBg.setBgData(ColorStateList.valueOf(Color.WHITE));
-        editText.setBackground(editBg);
+        editText.setBackground(null);
+        builder.clear();
+        builder.hintColor(R.attr.app_skin_common_desc_text_color);
+        builder.textColor(R.attr.app_skin_common_title_text_color);
+        QMUISkinHelper.setSkinValue(editText, builder);
         int paddingHor = QMUIDisplayHelper.dp2px(getContext(), 20);
         int paddingVer = QMUIDisplayHelper.dp2px(getContext(), 10);
         editText.setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
-        editParent.addView(editText, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        editText.setMaxHeight(QMUIDisplayHelper.dp2px(getContext(), 100));
+
+        FrameLayout.LayoutParams editLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        editLp.gravity = Gravity.CENTER_HORIZONTAL;
+        editParent.addView(editText, editLp);
 
 
         ConstraintLayout.LayoutParams eLp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);

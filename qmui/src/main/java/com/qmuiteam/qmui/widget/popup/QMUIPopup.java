@@ -17,7 +17,9 @@
 package com.qmuiteam.qmui.widget.popup;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -29,6 +31,10 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
+import com.qmuiteam.qmui.skin.IQMUISkinDispatchInterceptor;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -72,11 +78,15 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
     private boolean mAddShadow = false;
     private int mRadius = NOT_SET;
     private int mBorderColor = NOT_SET;
+    private int mBorderUsedColor = Color.TRANSPARENT;
+    private int mBorderColorAttr = R.attr.qmui_skin_support_popup_border_color;
     private int mBorderWidth = NOT_SET;
     private int mShadowElevation = NOT_SET;
     private float mShadowAlpha = 0f;
     private int mShadowInset = NOT_SET;
     private int mBgColor = NOT_SET;
+    private int mBgUsedColor = Color.TRANSPARENT;
+    private int mBgColorAttr = R.attr.qmui_skin_support_popup_bg;
     private int mOffsetX = 0;
     private int mOffsetYIfTop = 0;
     private int mOffsetYIfBottom = 0;
@@ -107,12 +117,6 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
 
     public QMUIPopup shadow(boolean addShadow) {
         mAddShadow = addShadow;
-        return this;
-    }
-
-    public QMUIPopup border(@ColorInt int borderColor, int borderWidth) {
-        mBorderColor = borderColor;
-        mBorderWidth = borderWidth;
         return this;
     }
 
@@ -191,6 +195,31 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
 
     public QMUIPopup view(@LayoutRes int contentViewResId) {
         return view(LayoutInflater.from(mContext).inflate(contentViewResId, null));
+    }
+
+    public QMUIPopup borderWidth(int borderWidth) {
+        mBorderWidth = borderWidth;
+        return this;
+    }
+
+    public QMUIPopup borderColor(int borderColor) {
+        mBorderColor = borderColor;
+        return this;
+    }
+
+    public QMUIPopup bgColor(int bgColor) {
+        mBgColor = bgColor;
+        return this;
+    }
+
+    public QMUIPopup borderColorAttr(int borderColorAttr) {
+        mBorderColorAttr = borderColorAttr;
+        return this;
+    }
+
+    public QMUIPopup bgColorAttr(int bgColorAttr) {
+        mBgColorAttr = bgColorAttr;
+        return this;
     }
 
     class ShowInfo {
@@ -273,16 +302,28 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
 
     private void decorateContentView(ShowInfo showInfo) {
         ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
-        if (mBorderColor == NOT_SET) {
-            mBorderColor = QMUIResHelper.getAttrColor(mContext, R.attr.qmui_popup_border_color);
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        if(mBorderColor != NOT_SET){
+            mBorderUsedColor = mBorderColor;
+        }else if(mBorderColorAttr != 0){
+            mBorderUsedColor = QMUIResHelper.getAttrColor(mContext, mBorderColorAttr);
+            builder.border(mBorderColorAttr);
+        }
+        if(mBgColor != NOT_SET){
+            mBgUsedColor = mBgColor;
+        }else if(mBgColorAttr != 0){
+            mBgUsedColor = QMUIResHelper.getAttrColor(mContext, mBgColorAttr);
+            builder.background(mBgColorAttr);
+        }
+
+        if(mBorderWidth == NOT_SET){
             mBorderWidth = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_popup_border_width);
         }
 
-        if (mBgColor == NOT_SET) {
-            mBgColor = QMUIResHelper.getAttrColor(mContext, R.attr.qmui_popup_bg_color);
-        }
-        contentView.setBackgroundColor(mBgColor);
-        contentView.setBorderColor(mBorderColor);
+        QMUISkinHelper.setSkinValue(contentView, builder);
+        builder.release();
+        contentView.setBackgroundColor(mBgUsedColor);
+        contentView.setBorderColor(mBorderUsedColor);
         contentView.setBorderWidth(mBorderWidth);
         contentView.setShowBorderOnlyBeforeL(mRemoveBorderWhenShadow);
         if (mRadius == NOT_SET) {
@@ -486,7 +527,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
         }
     }
 
-    class DecorRootView extends FrameLayout {
+    class DecorRootView extends FrameLayout implements IQMUISkinDispatchInterceptor {
         private ShowInfo mShowInfo;
         private View mContentView;
         private Paint mArrowPaint;
@@ -556,7 +597,16 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
             removeCallbacks(mUpdateWindowAction);
         }
 
-
+        @Override
+        public boolean intercept(int skinIndex, Resources.Theme theme) {
+            if(mBorderColor == NOT_SET && mBorderColorAttr != 0){
+                mBorderUsedColor = QMUIResHelper.getAttrColor(theme, mBorderColorAttr);
+            }
+            if(mBgColor == NOT_SET && mBgColorAttr != 0){
+                mBgUsedColor = QMUIResHelper.getAttrColor(theme, mBgColorAttr);
+            }
+            return false;
+        }
 
         @Override
         protected void dispatchDraw(Canvas canvas) {
@@ -565,7 +615,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
                 if (mShowInfo.direction == DIRECTION_TOP) {
                     canvas.save();
                     mArrowPaint.setStyle(Paint.Style.FILL);
-                    mArrowPaint.setColor(mBgColor);
+                    mArrowPaint.setColor(mBgUsedColor);
                     int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
                     l = Math.min(Math.max(l, mShowInfo.decorationLeft),
                             getWidth() - mShowInfo.decorationRight - mArrowWidth);
@@ -579,7 +629,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
                     canvas.drawPath(mArrowPath, mArrowPaint);
                     if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
                         mArrowPaint.setStrokeWidth(mBorderWidth);
-                        mArrowPaint.setColor(mBorderColor);
+                        mArrowPaint.setColor(mBorderUsedColor);
                         mArrowPaint.setStyle(Paint.Style.STROKE);
                         canvas.drawLine(0, 0, mArrowWidth / 2, mArrowHeight, mArrowPaint);
                         canvas.drawLine(mArrowWidth / 2, mArrowHeight, mArrowWidth, 0, mArrowPaint);
@@ -588,7 +638,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
                 } else if (mShowInfo.direction == DIRECTION_BOTTOM) {
                     canvas.save();
                     mArrowPaint.setStyle(Paint.Style.FILL);
-                    mArrowPaint.setColor(mBgColor);
+                    mArrowPaint.setColor(mBgUsedColor);
                     int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
                     l = Math.min(Math.max(l, mShowInfo.decorationLeft),
                             getWidth() - mShowInfo.decorationRight - mArrowWidth);
@@ -603,7 +653,7 @@ public class QMUIPopup extends QMUIBasePopup<QMUIPopup> {
                     if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
                         mArrowPaint.setStrokeWidth(mBorderWidth);
                         mArrowPaint.setStyle(Paint.Style.STROKE);
-                        mArrowPaint.setColor(mBorderColor);
+                        mArrowPaint.setColor(mBorderUsedColor);
                         canvas.drawLine(0, 0, mArrowWidth / 2, -mArrowHeight, mArrowPaint);
                         canvas.drawLine(mArrowWidth / 2, -mArrowHeight, mArrowWidth, 0, mArrowPaint);
                     }

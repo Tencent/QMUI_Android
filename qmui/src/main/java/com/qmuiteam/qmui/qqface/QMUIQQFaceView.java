@@ -135,6 +135,7 @@ public class QMUIQQFaceView extends View {
                 break;
             case 3:
                 mEllipsize = TextUtils.TruncateAt.END;
+                break;
             default:
                 mEllipsize = null;
                 break;

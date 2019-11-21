@@ -57,6 +57,7 @@
         <item name="qmui_skin_support_tab_normal_color">?attr/qmui_config_color_gray_6</item>
         <item name="qmui_skin_support_tab_selected_color">?attr/qmui_config_color_blue</item>
 
+        <item name="qmui_skin_support_activity_background">?attr/app_skin_common_background</item>
         <item name="qmui_skin_support_round_btn_border_color">@color/s_btn_blue</item>
         <item name="qmui_skin_support_round_btn_text_color">@color/s_btn_blue</item>
 
@@ -132,6 +133,9 @@
         <item name="qmui_skin_support_bottom_sheet_cancel_text_color">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_bottom_sheet_list_item_text_color">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_bottom_sheet_grid_item_text_color">@color/qmui_config_color_75_white</item>
+
+        <item name="qmui_skin_support_popup_bg">@color/qmui_config_color_black</item>
+        <item name="qmui_skin_support_popup_close_icon">@drawable/icon_popup_close_with_bg_dark</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>

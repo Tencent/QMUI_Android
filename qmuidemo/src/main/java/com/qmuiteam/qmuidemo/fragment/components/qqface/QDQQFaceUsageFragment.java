@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.R;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 
 @Widget(group = Group.Other, name = "QQ表情使用展示")
 public class QDQQFaceUsageFragment extends BaseFragment {
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.qqface1) QMUIQQFaceView mQQFace1;
     @BindView(R.id.qqface2) QMUIQQFaceView mQQFace2;
     @BindView(R.id.qqface3) QMUIQQFaceView mQQFace3;

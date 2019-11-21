@@ -31,6 +31,8 @@ import android.widget.ImageView;
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -70,6 +72,7 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
 
     private OnBlankClickListener mOnBlankClickListener;
     private boolean mAddCloseBtn = false;
+    private int mCloseIconAttr = R.attr.qmui_skin_support_popup_close_icon;
     private Drawable mCloseIcon = null;
     private ConstraintLayout.LayoutParams mCloseIvLayoutParams;
     private int mAnimStyle = NOT_SET;
@@ -94,6 +97,11 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
 
     public QMUIFullScreenPopup closeIcon(Drawable drawable) {
         mCloseIcon = drawable;
+        return this;
+    }
+
+    public QMUIFullScreenPopup closeIconAttr(int closeIconAttr) {
+        mCloseIconAttr = closeIconAttr;
         return this;
     }
 
@@ -150,12 +158,8 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
     }
 
     private QMUIAlphaImageButton createCloseIv() {
-        if (mCloseIcon == null) {
-            mCloseIcon = QMUIResHelper.getAttrDrawable(mContext, R.attr.qmui_popup_fullscreen_close_icon);
-        }
         QMUIAlphaImageButton closeBtn = new QMUIAlphaImageButton(mContext);
         closeBtn.setPadding(0, 0, 0, 0);
-        closeBtn.setImageDrawable(mCloseIcon);
         closeBtn.setScaleType(ImageView.ScaleType.CENTER);
         closeBtn.setId(R.id.qmui_popup_close_btn_id);
         closeBtn.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +169,16 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
             }
         });
         closeBtn.setFitsSystemWindows(true);
+        Drawable drawable = null;
+        if(mCloseIcon != null){
+            drawable = mCloseIcon;
+        }else if(mCloseIconAttr != 0){
+            QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire().src(mCloseIconAttr);
+            QMUISkinHelper.setSkinValue(closeBtn, builder);
+            builder.release();
+            drawable = QMUIResHelper.getAttrDrawable(mContext, mCloseIconAttr);
+        }
+        closeBtn.setImageDrawable(drawable);
         return closeBtn;
     }
 

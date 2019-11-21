@@ -33,8 +33,6 @@
                 android:id="@+id/listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:divider="@drawable/qmui_divider"
-                android:dividerHeight="1px"
                 android:background="@color/qmui_config_color_white"/>
         </com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout>
     </FrameLayout>
