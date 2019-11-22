@@ -55,6 +55,7 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
     private boolean mIsTouchSelectModeEnabled = true;
     private ColorFilter mColorFilter;
     private ColorFilter mSelectedColorFilter;
+    private boolean mIsInOnTouchEvent = false;
 
     public QMUIRadiusImageView2(Context context) {
         super(context);
@@ -491,7 +492,9 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
 
     @Override
     public void setSelected(boolean selected) {
-        super.setSelected(selected);
+        if(!mIsInOnTouchEvent){
+            super.setSelected(selected);
+        }
         if (mIsSelected != selected) {
             mIsSelected = selected;
             if (mIsSelected) {
@@ -538,25 +541,24 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        mIsInOnTouchEvent = true;
         if (!this.isClickable()) {
             this.setSelected(false);
             return super.onTouchEvent(event);
+        }else if(mIsTouchSelectModeEnabled){
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    this.setSelected(true);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_SCROLL:
+                case MotionEvent.ACTION_OUTSIDE:
+                case MotionEvent.ACTION_CANCEL:
+                    this.setSelected(false);
+                    break;
+            }
         }
-
-        if (!mIsTouchSelectModeEnabled) {
-            return super.onTouchEvent(event);
-        }
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                this.setSelected(true);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_SCROLL:
-            case MotionEvent.ACTION_OUTSIDE:
-            case MotionEvent.ACTION_CANCEL:
-                this.setSelected(false);
-                break;
-        }
+        mIsInOnTouchEvent = false;
         return super.onTouchEvent(event);
     }
 

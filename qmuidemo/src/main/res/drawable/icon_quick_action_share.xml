@@ -1,0 +1,39 @@
+<!--
+ Tencent is pleased to support the open source community by making QMUI_Android available.
+
+ Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
+
+ Licensed under the MIT License (the "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of the License at
+
+ http://opensource.org/licenses/MIT
+
+ Unless required by applicable law or agreed to in writing, software distributed under the License is
+ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ either express or implied. See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M12,21C7.0294,21 3,16.9706 3,12C3,7.0294 7.0294,3 12,3C16.9706,3 21,7.0294 21,12C21,16.9706 16.9706,21 12,21ZM12,19.75C16.2802,19.75 19.75,16.2802 19.75,12C19.75,7.7198 16.2802,4.25 12,4.25C7.7198,4.25 4.25,7.7198 4.25,12C4.25,16.2802 7.7198,19.75 12,19.75Z"
+      android:strokeWidth="1"
+      android:fillColor="#FFFFFF"
+      android:fillType="nonZero"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M8.6967,3.6255L14.6989,9.7078L14.1651,10.2346L7.9658,3.9526C8.2036,3.8332 8.4474,3.7239 8.6967,3.6255ZM20.3682,8.6809L14.3349,14.7946L13.8011,14.2678L20.0382,7.9475C20.1587,8.1861 20.2689,8.4307 20.3682,8.6809ZM15.208,20.4114L9.3011,14.4257L9.8349,13.8989L15.9457,20.0912C15.7056,20.2085 15.4595,20.3155 15.208,20.4114ZM3.6701,15.4139L9.6651,9.3389L10.1989,9.8657L4.0068,16.1404C3.8842,15.9041 3.7718,15.6618 3.6701,15.4139ZM8.625,20.3458L8.625,12.0667L9.375,12.0667L9.375,20.6112C9.12,20.5335 8.8698,20.4449 8.625,20.3458ZM3.75,9.4017L3.75,8.6517L12.75,8.6517L12.75,9.4017L3.75,9.4017ZM14.625,3.7067L15.375,3.7067L15.375,12.8267L14.625,12.8267L14.625,3.7067ZM20.25,14.7317L20.25,15.4817L11.25,15.4817L11.25,14.7317L20.25,14.7317Z"
+      android:strokeWidth="1"
+      android:fillColor="#FFFFFF"
+      android:fillType="nonZero"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M12,16C9.7909,16 8,14.2091 8,12C8,9.7909 9.7909,8 12,8C14.2091,8 16,9.7909 16,12C16,14.2091 14.2091,16 12,16ZM12,14.5C13.3807,14.5 14.5,13.3807 14.5,12C14.5,10.6193 13.3807,9.5 12,9.5C10.6193,9.5 9.5,10.6193 9.5,12C9.5,13.3807 10.6193,14.5 12,14.5Z"
+      android:strokeWidth="1"
+      android:fillColor="#FFFFFF"
+      android:fillType="nonZero"
+      android:strokeColor="#00000000"/>
+</vector>

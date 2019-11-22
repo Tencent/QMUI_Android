@@ -169,11 +169,19 @@
     <attr name="qmui_popup_shadow_inset" format="dimension" />
     <attr name="qmui_popup_arrow_width" format="dimension"/>
     <attr name="qmui_popup_arrow_height" format="dimension"/>
-
+    <attr name="qmui_quick_action_item_padding_hor" format="dimension"/>
+    <attr name="qmui_quick_action_item_padding_ver" format="dimension"/>
+    <attr name="qmui_quick_action_item_middle_space" format="dimension"/>
+    <attr name="qmui_quick_action_padding_hor" format="dimension"/>
+    <attr name="qmui_quick_action_more_arrow_width" format="dimension"/>
 
     <attr name="qmui_skin_support_popup_bg" format="reference"/>
     <attr name="qmui_skin_support_popup_border_color" format="reference|color" />
     <attr name="qmui_skin_support_popup_close_icon" format="reference"/>
+    <attr name="qmui_skin_support_quick_action_item_tint_color" format="reference"/>
+    <attr name="qmui_skin_support_quick_action_more_left_arrow" format="reference"/>
+    <attr name="qmui_skin_support_quick_action_more_right_arrow" format="reference"/>
+    <attr name="qmui_skin_support_quick_action_more_tint_color" format="reference"/>
 
     <!--**********************************************
     *                qmui dialog                     *

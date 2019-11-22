@@ -66,4 +66,10 @@ public class QMUIPopups {
     public static QMUIFullScreenPopup fullScreenPopup(Context context) {
         return new QMUIFullScreenPopup(context);
     }
+
+    public static QMUIQuickAction quickAction(Context context, int actionWidth, int actionHeight) {
+        return new QMUIQuickAction(context, ViewGroup.LayoutParams.WRAP_CONTENT, actionHeight)
+                .actionWidth(actionWidth)
+                .actionHeight(actionHeight);
+    }
 }

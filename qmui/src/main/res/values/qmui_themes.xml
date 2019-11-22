@@ -368,10 +368,19 @@
         <item name="qmui_popup_shadow_inset">30dp</item>
         <item name="qmui_popup_arrow_width">18dp</item>
         <item name="qmui_popup_arrow_height">10dp</item>
+        <item name="qmui_quick_action_item_padding_hor">4dp</item>
+        <item name="qmui_quick_action_item_padding_ver">2dp</item>
+        <item name="qmui_quick_action_item_middle_space">4dp</item>
+        <item name="qmui_quick_action_padding_hor">4dp</item>
+        <item name="qmui_quick_action_more_arrow_width">36dp</item>
 
         <item name="qmui_skin_support_popup_border_color">?attr/qmui_skin_support_color_separator</item>
         <item name="qmui_skin_support_popup_bg">@color/qmui_config_color_white</item>
         <item name="qmui_skin_support_popup_close_icon">@drawable/qmui_icon_popup_close_with_bg</item>
+        <item name="qmui_skin_support_quick_action_item_tint_color">?attr/qmui_config_color_gray_1</item>
+        <item name="qmui_skin_support_quick_action_more_left_arrow">@drawable/qmui_icon_quick_action_more_arrow_left</item>
+        <item name="qmui_skin_support_quick_action_more_right_arrow">@drawable/qmui_icon_quick_action_more_arrow_right</item>
+        <item name="qmui_skin_support_quick_action_more_tint_color">?attr/qmui_skin_support_quick_action_item_tint_color</item>
 
 
         <!--**********************************************

@@ -71,6 +71,17 @@
             android:id="@+id/actionBtn6"
             style="@style/QDRoundButtonStyle"
             android:text="@string/fullscreen_popup_with_input" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn7"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/quick_action" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/actionBtn8"
+            style="@style/QDRoundButtonStyle"
+            android:text="@string/quick_action_more" />
+
     </com.qmuiteam.qmui.widget.QMUIFloatLayout>
 
 

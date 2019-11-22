@@ -136,6 +136,7 @@
 
         <item name="qmui_skin_support_popup_bg">@color/qmui_config_color_black</item>
         <item name="qmui_skin_support_popup_close_icon">@drawable/icon_popup_close_with_bg_dark</item>
+        <item name="qmui_skin_support_quick_action_item_tint_color">@color/qmui_config_color_white</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>
