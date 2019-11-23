@@ -308,6 +308,14 @@
         <item name="qmui_skin_support_s_checkbox">@drawable/qmui_s_checkbox</item>
         <item name="qmui_skin_support_icon_mark">@drawable/qmui_icon_checkmark</item>
 
+        <!--**********************************************
+        *               qmui slider                      *
+        ***********************************************-->
+        <item name="qmui_skin_support_slider_bar_bg_color">?attr/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_slider_bar_progress_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_slider_thumb_bg_color">@color/qmui_config_color_white</item>
+        <item name="qmui_skin_support_slider_thumb_border_color">?attr/qmui_skin_support_color_separator</item>
+
 
         <!--**********************************************
         *                 qmui bottom sheet              *
@@ -399,6 +407,8 @@
         <item name="QMUIPullRefreshLayoutStyle">@style/QMUI.PullRefreshLayout</item>
         <item name="QMUIRadiusImageViewStyle">@style/QMUI.RadiusImageView</item>
         <item name="QMUIQQFaceStyle">@style/QMUI.QQFaceView</item>
+        <item name="QMUISliderStyle">@style/QMUI.Slider</item>
+        <item name="QMUISliderThumbStyle">@style/QMUI.SliderThumb</item>
     </style>
 
     <style name="QMUI.Compat" parent="QMUI" />

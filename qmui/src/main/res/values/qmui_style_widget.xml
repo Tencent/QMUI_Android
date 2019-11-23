@@ -28,7 +28,8 @@
     <style name="QMUI.TabSegment.SignCount">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
-        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color</item>
+        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color
+        </item>
         <item name="qmui_isRadiusAdjustBounds">true</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">?attr/qmui_skin_support_tab_sign_count_view_text_color</item>
@@ -69,8 +70,11 @@
         <item name="android:paddingLeft">?attr/qmui_content_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_padding_horizontal</item>
         <item name="android:background">?attr/qmui_skin_support_s_list_item_bg_2</item>
-        <item name="qmui_common_list_title_color">?attr/qmui_skin_support_common_list_title_color</item>
-        <item name="qmui_common_list_detail_color">?attr/qmui_skin_support_common_list_detail_color</item>
+        <item name="qmui_common_list_title_color">?attr/qmui_skin_support_common_list_title_color
+        </item>
+        <item name="qmui_common_list_detail_color">
+            ?attr/qmui_skin_support_common_list_detail_color
+        </item>
     </style>
 
     <style name="QMUI.GroupListSectionView">
@@ -114,7 +118,9 @@
         <item name="qmui_topbar_image_btn_width">48dp</item>
         <item name="qmui_topbar_image_btn_height">48dp</item>
         <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
-        <item name="qmui_topbar_text_btn_color_state_list">?attr/qmui_skin_support_topbar_text_btn_color_state_list</item>
+        <item name="qmui_topbar_text_btn_color_state_list">
+            ?attr/qmui_skin_support_topbar_text_btn_color_state_list
+        </item>
         <item name="qmui_topbar_text_btn_text_size">16sp</item>
     </style>
 
@@ -152,7 +158,8 @@
     </style>
 
     <style name="QMUI.BottomSheet" parent="QMUI.BaseDialog">
-        <item name="android:backgroundDimAmount">?attr/qmui_bottom_sheet_background_dim_amount</item>
+        <item name="android:backgroundDimAmount">?attr/qmui_bottom_sheet_background_dim_amount
+        </item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
@@ -188,8 +195,12 @@
         <item name="android:background">?attr/qmui_skin_support_dialog_action_bg</item>
         <item name="qmui_dialog_action_button_padding_horizontal">12dp</item>
         <item name="qmui_dialog_action_icon_space">6dp</item>
-        <item name="qmui_dialog_positive_action_text_color">?attr/qmui_skin_support_dialog_positive_action_text_color</item>
-        <item name="qmui_dialog_negative_action_text_color">?attr/qmui_skin_support_dialog_negative_action_text_color</item>
+        <item name="qmui_dialog_positive_action_text_color">
+            ?attr/qmui_skin_support_dialog_positive_action_text_color
+        </item>
+        <item name="qmui_dialog_negative_action_text_color">
+            ?attr/qmui_skin_support_dialog_negative_action_text_color
+        </item>
     </style>
 
     <style name="QMUI.Dialog.MessageContent">
@@ -208,7 +219,8 @@
 
     <style name="QMUI.Dialog.EditContent">
         <item name="android:textColor">?attr/qmui_skin_support_dialog_edit_text_color</item>
-        <item name="android:textColorHint">?attr/qmui_skin_support_dialog_edit_text_hint_color</item>
+        <item name="android:textColorHint">?attr/qmui_skin_support_dialog_edit_text_hint_color
+        </item>
         <item name="android:gravity">left|bottom</item>
         <item name="android:lineSpacingExtra">3dp</item>
         <item name="android:drawablePadding">8dp</item>
@@ -237,11 +249,15 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">?attr/qmui_skin_support_dialog_menu_item_text_color</item>
         <item name="android:gravity">left|center_vertical</item>
-        <item name="qmui_dialog_menu_item_mark_drawable">?attr/qmui_skin_support_dialog_mark_drawable</item>
-        <item name="qmui_dialog_menu_item_check_drawable">?attr/qmui_skin_support_s_dialog_check_drawable</item>
+        <item name="qmui_dialog_menu_item_mark_drawable">
+            ?attr/qmui_skin_support_dialog_mark_drawable
+        </item>
+        <item name="qmui_dialog_menu_item_check_drawable">
+            ?attr/qmui_skin_support_s_dialog_check_drawable
+        </item>
         <item name="qmui_dialog_menu_item_check_mark_margin_hor">6dp</item>
     </style>
-    
+
     <style name="QMUI.BottomSheet.Title">
         <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_title_text_color</item>
         <item name="android:textSize">14sp</item>
@@ -262,19 +278,21 @@
         <item name="android:paddingRight">?attr/qmui_bottom_sheet_padding_hor</item>
     </style>
 
-    <style name="QMUI.BottomSheet.List"/>
+    <style name="QMUI.BottomSheet.List" />
 
     <style name="QMUI.BottomSheet.List.Text">
-        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_list_item_text_color</item>
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_list_item_text_color
+        </item>
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">middle</item>
         <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
-    <style name="QMUI.BottomSheet.Grid"/>
+    <style name="QMUI.BottomSheet.Grid" />
 
     <style name="QMUI.BottomSheet.Grid.Text">
-        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_grid_item_text_color</item>
+        <item name="android:textColor">?attr/qmui_skin_support_bottom_sheet_grid_item_text_color
+        </item>
         <item name="android:textSize">11sp</item>
         <item name="android:ellipsize">middle</item>
         <item name="android:lineSpacingExtra">2dp</item>
@@ -296,6 +314,27 @@
         <item name="android:layout_width">37dp</item>
         <item name="android:layout_height">17dp</item>
         <item name="android:background">@drawable/qmui_icon_tip_new</item>
+    </style>
+
+    <style name="QMUI.Slider">
+        <item name="qmui_slider_bar_height">2dp</item>
+        <item name="qmui_slider_bar_normal_color">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_slider_bar_progress_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_slider_bar_tick_count">100</item>
+        <item name="qmui_slider_bar_thumb_size_size">20dp</item>
+        <item name="qmui_slider_bar_use_clip_children_by_developer">false</item>
+        <item name="qmui_slider_bar_padding_hor_for_thumb_shadow">8dp</item>
+        <item name="qmui_slider_bar_padding_ver_for_thumb_shadow">8dp</item>
+        <item name="qmui_slider_bar_thumb_style_attr">QMUISliderThumbStyle</item>
+    </style>
+
+    <style name="QMUI.SliderThumb">
+        <item name="android:background">@color/qmui_config_color_white</item>
+        <item name="qmui_borderColor">?attr/qmui_skin_support_color_separator</item>
+        <item name="qmui_borderWidth">1px</item>
+        <item name="qmui_showBorderOnlyBeforeL">false</item>
+        <item name="qmui_shadowElevation">8dp</item>
+        <item name="qmui_shadowAlpha">0.4</item>
     </style>
 
     <!-- QMUIPullRefreshLayout -->

@@ -31,6 +31,7 @@ import com.qmuiteam.qmuidemo.fragment.components.QDPriorityLinearLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDSliderFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSpanTouchFixTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTipDialogFragment;
@@ -111,6 +112,7 @@ public class QDDataManager {
         mComponentsNames.add(QDPriorityLinearLayoutFragment.class);
         mComponentsNames.add(QDSectionLayoutFragment.class);
         mComponentsNames.add(QDContinuousNestedScrollFragment.class);
+        mComponentsNames.add(QDSliderFragment.class);
     }
 
     /**

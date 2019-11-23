@@ -58,8 +58,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QMUIStatusBarHelper.translucent(this);
-        mFragmentContainer = new RootView(this);
-        mFragmentContainer.setId(getContextViewId());
+        mFragmentContainer = onCreateRootView(getContextViewId());
         setContentView(mFragmentContainer);
         mIsFirstFragmentAddedByAnnotation = false;
         if (savedInstanceState == null) {
@@ -133,6 +132,12 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
 
     public FrameLayout getFragmentContainer() {
         return mFragmentContainer;
+    }
+
+    protected RootView onCreateRootView(int fragmentContainerId){
+        RootView rootView =  new RootView(this);
+        rootView.setId(fragmentContainerId);
+        return rootView;
     }
 
     @Override
@@ -350,7 +355,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
 
 
     @DoNotInterceptKeyboardInset
-    private static class RootView extends QMUIWindowInsetLayout {
+    public static class RootView extends QMUIWindowInsetLayout {
 
         public RootView(Context context) {
             super(context);

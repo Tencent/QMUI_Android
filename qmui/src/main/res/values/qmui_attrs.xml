@@ -407,4 +407,17 @@
         <attr name="android:shadowRadius"/>
     </declare-styleable>
 
+    <declare-styleable name="QMUISlider">
+        <attr name="qmui_slider_bar_height" format="dimension"/>
+        <attr name="qmui_slider_bar_normal_color" format="color"/>
+        <attr name="qmui_slider_bar_progress_color" format="color"/>
+        <attr name="qmui_slider_bar_tick_count" format="integer"/>
+        <attr name="qmui_slider_bar_thumb_size_size" format="dimension"/>
+        <attr name="qmui_slider_bar_thumb_style_attr" format="string"/>
+        <attr name="qmui_slider_bar_use_clip_children_by_developer" format="boolean"/>
+        <attr name="qmui_slider_bar_padding_hor_for_thumb_shadow" format="dimension"/>
+        <attr name="qmui_slider_bar_padding_ver_for_thumb_shadow" format="dimension"/>
+    </declare-styleable>
+    <attr name="QMUISliderStyle" format="reference"/>
+    <attr name="QMUISliderThumbStyle" format="reference"/>
 </resources>

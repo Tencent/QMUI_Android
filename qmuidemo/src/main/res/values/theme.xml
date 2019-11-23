@@ -138,6 +138,9 @@
         <item name="qmui_skin_support_popup_close_icon">@drawable/icon_popup_close_with_bg_dark</item>
         <item name="qmui_skin_support_quick_action_item_tint_color">@color/qmui_config_color_white</item>
 
+        <item name="qmui_skin_support_slider_bar_bg_color">@color/qmui_config_color_25_white</item>
+        <item name="qmui_skin_support_slider_bar_progress_color">@color/app_color_blue_2</item>
+
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>
         <item name="app_skin_common_background">@color/qmui_config_color_gray_2</item>
         <item name="app_skin_common_background_1">@color/qmui_config_color_gray_1</item>
@@ -170,6 +173,8 @@
         <item name="qmui_skin_support_common_list_title_color">@color/qmui_config_color_pure_black</item>
         <item name="qmui_skin_support_common_list_detail_color">@color/qmui_config_color_50_pure_black</item>
         <item name="qmui_skin_support_common_list_icon_tint_color">@color/qmui_config_color_pure_black</item>
+        <item name="qmui_skin_support_slider_bar_bg_color">@color/qmui_config_color_25_pure_black</item>
+        <item name="qmui_skin_support_slider_bar_progress_color">@color/qmui_config_color_pure_black</item>
 
         <item name="app_primary_color">@color/qmui_config_color_white</item>
         <item name="app_skin_common_img_tint_color">@color/qmui_config_color_pure_black</item>

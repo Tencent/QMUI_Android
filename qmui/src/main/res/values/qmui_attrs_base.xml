@@ -160,6 +160,14 @@
     <attr name="qmui_skin_support_empty_view_btn_text_color" format="color|reference"/>
 
     <!--**********************************************
+    *                  qmui slider                   *
+    ***********************************************-->
+    <attr name="qmui_skin_support_slider_bar_bg_color" format="color"/>
+    <attr name="qmui_skin_support_slider_bar_progress_color" format="color"/>
+    <attr name="qmui_skin_support_slider_thumb_bg_color" format="color"/>
+    <attr name="qmui_skin_support_slider_thumb_border_color" format="color"/>
+
+    <!--**********************************************
     *                  qmui popup                    *
     ***********************************************-->
     <attr name="qmui_popup_radius" format="dimension" />

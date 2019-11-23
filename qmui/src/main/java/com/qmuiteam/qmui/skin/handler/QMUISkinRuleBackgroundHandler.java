@@ -23,6 +23,7 @@ import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
+import com.qmuiteam.qmui.widget.QMUISlider;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 public class QMUISkinRuleBackgroundHandler implements IQMUISkinRuleHandler {
@@ -34,6 +35,8 @@ public class QMUISkinRuleBackgroundHandler implements IQMUISkinRuleHandler {
                     QMUIResHelper.getAttrColorStateList(view.getContext(), theme, attr));
         }else if(view instanceof QMUIProgressBar){
             view.setBackgroundColor(QMUIResHelper.getAttrColor(theme, attr));
+        }else if(view instanceof QMUISlider){
+            ((QMUISlider)view).setBarNormalColor(QMUIResHelper.getAttrColor(theme, attr));
         }else{
             QMUIViewHelper.setBackgroundKeepingPadding(view,
                     QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
