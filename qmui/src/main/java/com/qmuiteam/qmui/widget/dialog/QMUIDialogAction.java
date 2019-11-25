@@ -152,7 +152,7 @@ public class QMUIDialogAction {
     private QMUIButton generateActionButton(Context context, CharSequence text, int iconRes,
                                             int skinBackgroundAttr, int skinTextColorAttr, int iconTintColor) {
         QMUIButton button = new QMUIButton(context);
-        QMUIViewHelper.setBackground(button, null);
+        button.setBackground(null);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
         button.setChangeAlphaWhenDisable(true);
@@ -173,7 +173,7 @@ public class QMUIDialogAction {
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_qmui_dialog_action_button_padding_horizontal) {
                 paddingHor = a.getDimensionPixelSize(attr, 0);
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_android_background) {
-                QMUIViewHelper.setBackground(button, a.getDrawable(attr));
+                button.setBackground(a.getDrawable(attr));
             } else if (attr == R.styleable.QMUIDialogActionStyleDef_android_minWidth) {
                 int miniWidth = a.getDimensionPixelSize(attr, 0);
                 button.setMinWidth(miniWidth);

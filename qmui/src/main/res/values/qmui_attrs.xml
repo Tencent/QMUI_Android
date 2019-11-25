@@ -344,6 +344,7 @@
         <attr name="qmui_expandedTitleTextAppearance" format="reference"/>
         <attr name="qmui_collapsedTitleTextAppearance" format="reference"/>
         <attr name="qmui_contentScrim" format="color"/>
+        <attr name="qmui_followTopBarCommonSkin" format="boolean"/>
         <attr name="qmui_statusBarScrim" format="color"/>
         <attr name="qmui_topBarId" format="reference"/>
         <attr name="qmui_scrimVisibleHeightTrigger" format="dimension"/>

@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.skin;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -37,7 +38,7 @@ public class QMUISkinHelper {
 
     public static QMUISkinValueBuilder sSkinValueBuilder = QMUISkinValueBuilder.acquire();
 
-    public static int getSkinColor(View view, int colorAttr) {
+    public static int getSkinColor(@NonNull View view, int colorAttr) {
         Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
         Resources.Theme theme;
         if (skin == null || skin <= 0) {
@@ -48,8 +49,19 @@ public class QMUISkinHelper {
         return QMUIResHelper.getAttrColor(theme, colorAttr);
     }
 
+    public static ColorStateList getSkinColorStateList(@NonNull View view, int colorAttr) {
+        Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
+        Resources.Theme theme;
+        if (skin == null || skin <= 0) {
+            theme = view.getContext().getTheme();
+        } else {
+            theme = QMUISkinManager.defaultInstance(view.getContext()).getTheme(skin);
+        }
+        return QMUIResHelper.getAttrColorStateList(view.getContext(), theme, colorAttr);
+    }
+
     @Nullable
-    public static Drawable getSkinDrawable(View view, int drawableAttr) {
+    public static Drawable getSkinDrawable(@NonNull View view, int drawableAttr) {
         Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
         Resources.Theme theme;
         if (skin == null || skin <= 0) {

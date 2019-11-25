@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -89,6 +90,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     private int mTopBarTextBtnTextSize;
     private int mTopBarHeight = -1;
     private Rect mTitleContainerRect;
+    private boolean mIsBackgroundSetterDisabled = false;
 
     private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
 
@@ -323,6 +325,17 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         return mTitleContainerRect;
     }
 
+    void disableBackgroundSetter(){
+        mIsBackgroundSetterDisabled = true;
+        super.setBackgroundDrawable(null);
+    }
+
+    @Override
+    public void setBackgroundDrawable(Drawable background) {
+        if(!mIsBackgroundSetterDisabled){
+            super.setBackgroundDrawable(background);
+        }
+    }
 
     // ========================= leftView、rightView 相关的方法
 

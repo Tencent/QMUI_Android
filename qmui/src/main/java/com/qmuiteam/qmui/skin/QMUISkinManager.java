@@ -229,17 +229,18 @@ public final class QMUISkinManager {
 
 
     private void runDispatch(@NonNull View view, int skinIndex, Resources.Theme theme) {
-        if (view instanceof IQMUISkinDispatchInterceptor) {
-            if (((IQMUISkinDispatchInterceptor) view).intercept(skinIndex, theme)) {
-                return;
-            }
-        }
 
         Integer currentTheme = (Integer) view.getTag(R.id.qmui_skin_current_index);
         if (currentTheme != null && currentTheme == skinIndex) {
             return;
         }
         view.setTag(R.id.qmui_skin_current_index, skinIndex);
+
+        if (view instanceof IQMUISkinDispatchInterceptor) {
+            if (((IQMUISkinDispatchInterceptor) view).intercept(skinIndex, theme)) {
+                return;
+            }
+        }
         applyTheme(view, skinIndex, theme);
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;

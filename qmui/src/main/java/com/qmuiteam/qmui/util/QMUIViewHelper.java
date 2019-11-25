@@ -140,7 +140,7 @@ public class QMUIViewHelper {
 
     public static void setBackgroundKeepingPadding(View view, Drawable drawable) {
         int[] padding = new int[]{view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom()};
-        setBackground(view, drawable);
+        view.setBackground(drawable);
         view.setPadding(padding[0], padding[1], padding[2], padding[3]);
     }
 
