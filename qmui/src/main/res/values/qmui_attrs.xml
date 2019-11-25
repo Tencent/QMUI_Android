@@ -219,6 +219,7 @@
         <attr name="qmui_special_drawable_padding" format="dimension"/>
         <attr name="qmui_more_action_text" format="string"/>
         <attr name="qmui_more_action_color" format="color"/>
+        <attr name="qmui_more_action_bg_color" format="color"/>
     </declare-styleable>
     <attr name="QMUIQQFaceStyle" format="reference"/>
 

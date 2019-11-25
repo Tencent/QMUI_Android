@@ -95,6 +95,10 @@ public abstract class QMUITouchableSpan extends ClickableSpan implements IToucha
         mIsNeedUnderline = isNeedUnderline;
     }
 
+    public boolean isNeedUnderline() {
+        return mIsNeedUnderline;
+    }
+
     @Override
     public void updateDrawState(TextPaint ds) {
         ds.setColor(mIsPressed ? mPressedTextColor : mNormalTextColor);

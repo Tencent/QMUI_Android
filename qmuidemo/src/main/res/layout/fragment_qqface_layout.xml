@@ -16,9 +16,10 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="?attr/app_primary_color">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/app_primary_color">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/topbar"
@@ -201,6 +202,24 @@
                 android:textColor="?attr/qmui_config_color_gray_5"
                 android:maxLines="3"
                 android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="更多"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                app:qmui_more_action_text="更多"
+                app:qmui_more_action_color="@color/s_app_color_blue_2"
+                app:qmui_more_action_bg_color="@color/s_app_color_gray"/>
         </LinearLayout>
     </ScrollView>
 

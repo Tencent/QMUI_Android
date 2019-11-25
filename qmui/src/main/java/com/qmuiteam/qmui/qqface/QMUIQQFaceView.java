@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.qqface;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -85,7 +86,8 @@ public class QMUIQQFaceView extends View {
     private Rect mMoreHitRect = new Rect();
     private static final String mEllipsizeText = "...";
     private String mMoreActionText;
-    private int mMoreActionColor;
+    private ColorStateList mMoreActionColor;
+    private ColorStateList mMoreActionBgColor;
     private int mMoreActionTextLength = 0;
     private int mEllipsizeTextLength = 0;
     private TextUtils.TruncateAt mEllipsize = TextUtils.TruncateAt.END;
@@ -103,6 +105,10 @@ public class QMUIQQFaceView extends View {
     private int mParagraphSpace = 0; // 段间距
     private int mSpecialDrawablePadding = 0;
     private int mGravity = Gravity.NO_GRAVITY;
+    private final int[] mPressedState = new int[] { android.R.attr.state_pressed};
+    private boolean mIsNeedUnderlineForMoreText = false;
+    private int mLinkUnderLineColor = 0;
+    private int mLinkUnderLineHeight = 1;
 
     public QMUIQQFaceView(Context context) {
         this(context, null);
@@ -153,7 +159,8 @@ public class QMUIQQFaceView extends View {
             };
         }
         mMoreActionText = array.getString(R.styleable.QMUIQQFaceView_qmui_more_action_text);
-        mMoreActionColor = array.getColor(R.styleable.QMUIQQFaceView_qmui_more_action_color, mTextColor);
+        mMoreActionColor = array.getColorStateList(R.styleable.QMUIQQFaceView_qmui_more_action_color);
+        mMoreActionBgColor = array.getColorStateList(R.styleable.QMUIQQFaceView_qmui_more_action_bg_color);
 
         array.recycle();
         mPaint = new TextPaint();
@@ -219,6 +226,7 @@ public class QMUIQQFaceView extends View {
 
                 if (mMoreHitRect.contains(x, y)) {
                     mIsTouchDownInMoreText = true;
+                    invalidate(mMoreHitRect);
                 } else {
 
                     for (SpanInfo spanInfo : mSpanInfos.values()) {
@@ -242,6 +250,9 @@ public class QMUIQQFaceView extends View {
                 if (mTouchSpanInfo != null) {
                     mTouchSpanInfo.setPressed(false);
                     mTouchSpanInfo.invalidateSpan();
+                }else if(mIsTouchDownInMoreText){
+                    mIsTouchDownInMoreText = false;
+                    invalidate(mMoreHitRect);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -249,6 +260,9 @@ public class QMUIQQFaceView extends View {
                     mTouchSpanInfo.setPressed(false);
                     mTouchSpanInfo.invalidateSpan();
                     mTouchSpanInfo = null;
+                }else if(mIsTouchDownInMoreText && !mMoreHitRect.contains(x, y)){
+                    mIsTouchDownInMoreText = false;
+                    invalidate(mMoreHitRect);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -269,6 +283,8 @@ public class QMUIQQFaceView extends View {
                     } else if (isClickable()) {
                         performClick();
                     }
+                    mIsTouchDownInMoreText = false;
+                    invalidate(mMoreHitRect);
                 }
 
                 break;
@@ -334,9 +350,45 @@ public class QMUIQQFaceView extends View {
         }
     }
 
+    public void setLinkUnderLineColor(int linkUnderLineColor) {
+        if(mLinkUnderLineColor != linkUnderLineColor){
+            mLinkUnderLineColor = linkUnderLineColor;
+            invalidate();
+        }
+    }
+
+    public void setLinkUnderLineHeight(int linkUnderLineHeight) {
+        if(mLinkUnderLineHeight != linkUnderLineHeight){
+            mLinkUnderLineHeight = linkUnderLineHeight;
+            invalidate();
+        }
+    }
+
+    public void setNeedUnderlineForMoreText(boolean needUnderlineForMoreText) {
+        if(mIsNeedUnderlineForMoreText != needUnderlineForMoreText){
+            mIsNeedUnderlineForMoreText = needUnderlineForMoreText;
+            invalidate();
+        }
+    }
+
     public void setMoreActionColor(int color) {
-        if (color != mMoreActionColor) {
+        setMoreActionColor(ColorStateList.valueOf(color));
+    }
+
+    public void setMoreActionColor(ColorStateList color){
+        if(mMoreActionColor != color){
             mMoreActionColor = color;
+            invalidate();
+        }
+    }
+
+    public void setMoreActionBgColor(int color) {
+        setMoreActionBgColor(ColorStateList.valueOf(color));
+    }
+
+    public void setMoreActionBgColor(ColorStateList color){
+        if(mMoreActionBgColor != color){
+            mMoreActionBgColor = color;
             invalidate();
         }
     }
@@ -917,13 +969,41 @@ public class QMUIQQFaceView extends View {
 
     private void drawMoreActionText(Canvas canvas, int widthEnd) {
         if (!QMUILangHelper.isNullOrEmpty(mMoreActionText)) {
-            mPaint.setColor(mMoreActionColor);
+            int bgColor = 0;
+            int color = mTextColor;
+            if(mMoreActionColor != null){
+                color = mMoreActionColor.getDefaultColor();
+                if(mIsTouchDownInMoreText){
+                    color = mMoreActionColor.getColorForState(mPressedState, color);
+                }
+            }
+            if(mMoreActionBgColor != null){
+                bgColor = mMoreActionBgColor.getDefaultColor();
+                if(mIsTouchDownInMoreText){
+                    bgColor = mMoreActionBgColor.getColorForState(mPressedState, bgColor);
+                }
+            }
             int top = getPaddingTop();
             if (mCurrentDrawLine > 1) {
                 top = (mCurrentDrawLine - 1) * (mFontHeight + mLineSpace) + top;
             }
-            mMoreHitRect.set(mCurrentDrawUsedWidth, top, widthEnd, top + mFontHeight);
-            canvas.drawText(mMoreActionText, 0, mMoreActionText.length(), mCurrentDrawUsedWidth, mCurrentDrawBaseLine, mPaint);
+            mMoreHitRect.set(mCurrentDrawUsedWidth, top, mCurrentDrawUsedWidth + mMoreActionTextLength, top + mFontHeight);
+
+            if(bgColor != 0){
+                mPaint.setColor(bgColor);
+                canvas.drawRect(mMoreHitRect, mPaint);
+            }
+            mPaint.setColor(color);
+            canvas.drawText(mMoreActionText, 0, mMoreActionText.length(),
+                    mCurrentDrawUsedWidth, mCurrentDrawBaseLine, mPaint);
+
+            if(mIsNeedUnderlineForMoreText && mLinkUnderLineHeight > 0){
+                int underLineColor = mLinkUnderLineColor == 0 ? mTextColor : mLinkUnderLineColor;
+                mPaint.setColor(underLineColor);
+                mPaint.setStrokeWidth(mLinkUnderLineHeight);
+                canvas.drawLine(mMoreHitRect.left, mMoreHitRect.bottom,
+                        mMoreHitRect.right, mMoreHitRect.bottom, mPaint);
+            }
             mPaint.setColor(mTextColor);
         }
     }
@@ -1203,6 +1283,20 @@ public class QMUIQQFaceView extends View {
             }
         }
         canvas.drawText(text, start, end, mCurrentDrawUsedWidth, mCurrentDrawBaseLine, mPaint);
+
+        if(mIsInDrawSpan && mCurrentDrawSpan != null &&
+                mCurrentDrawSpan.isNeedUnderline() && mLinkUnderLineHeight > 0){
+            int underLineColor = mLinkUnderLineColor == 0 ? mTextColor : mLinkUnderLineColor;
+            mPaint.setColor(underLineColor);
+            mPaint.setStrokeWidth(mLinkUnderLineHeight);
+            int bottom = mCurrentDrawBaseLine - mFirstBaseLine + mFontHeight;
+            canvas.drawLine(mCurrentDrawUsedWidth, bottom, mCurrentDrawUsedWidth + textWidth,
+                    bottom, mPaint);
+            @ColorInt int spanColor = mCurrentDrawSpan.isPressed() ?
+                    mCurrentDrawSpan.getPressedTextColor() :
+                    mCurrentDrawSpan.getNormalTextColor();
+            mPaint.setColor(spanColor);
+        }
     }
 
     private void onDrawQQFace(Canvas canvas, int res, @Nullable Drawable specialDrawable, int widthStart, int widthEnd, boolean isFirst, boolean isLast) {
@@ -1378,6 +1472,17 @@ public class QMUIQQFaceView extends View {
             }
         }
         drawable.draw(canvas);
+        if(mIsInDrawSpan && mCurrentDrawSpan != null &&
+                mCurrentDrawSpan.isNeedUnderline() && mLinkUnderLineHeight > 0){
+            int underLineColor = mLinkUnderLineColor == 0 ? mTextColor : mLinkUnderLineColor;
+            mPaint.setColor(underLineColor);
+            mPaint.setStrokeWidth(mLinkUnderLineHeight);
+            canvas.drawLine(0, mFontHeight, size, mFontHeight, mPaint);
+            @ColorInt int spanColor = mCurrentDrawSpan.isPressed() ?
+                    mCurrentDrawSpan.getPressedTextColor() :
+                    mCurrentDrawSpan.getNormalTextColor();
+            mPaint.setColor(spanColor);
+        }
         canvas.restore();
     }
 
