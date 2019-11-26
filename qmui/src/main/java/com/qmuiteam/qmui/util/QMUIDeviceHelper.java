@@ -136,9 +136,8 @@ public class QMUIDeviceHelper {
         return "v9".equals(sMiuiVersionName);
     }
 
-    public static boolean isFlymeVersionHigher5_2_4() {
-        //查不到默认高于5.2.4
-        boolean isHigher = true;
+    public static boolean isFlymeLowerThan8() {
+        boolean isLower = false;
         if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
             Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
             Matcher matcher = pattern.matcher(sFlymeVersionName);
@@ -146,30 +145,16 @@ public class QMUIDeviceHelper {
                 String versionString = matcher.group();
                 if (versionString != null && !versionString.equals("")) {
                     String[] version = versionString.split("\\.");
-                    if (version.length == 3) {
-                        if (Integer.valueOf(version[0]) < 5) {
-                            isHigher = false;
-                        } else if (Integer.valueOf(version[0]) > 5) {
-                            isHigher = true;
-                        } else {
-                            if (Integer.valueOf(version[1]) < 2) {
-                                isHigher = false;
-                            } else if (Integer.valueOf(version[1]) > 2) {
-                                isHigher = true;
-                            } else {
-                                if (Integer.valueOf(version[2]) < 4) {
-                                    isHigher = false;
-                                } else if (Integer.valueOf(version[2]) >= 5) {
-                                    isHigher = true;
-                                }
-                            }
+                    if (version.length >= 1) {
+                        if (Integer.parseInt(version[0]) < 8) {
+                            isLower = true;
                         }
                     }
 
                 }
             }
         }
-        return isMeizu() && isHigher;
+        return isMeizu() && isLower;
     }
 
     public static boolean isMeizu() {
