@@ -90,7 +90,7 @@ public class QMUIStatusBarHelper {
 
         // 小米和魅族4.4 以上版本支持沉浸式
         // 小米 Android 6.0 ，开发版 7.7.13 及以后版本设置黑色字体又需要 clear FLAG_TRANSLUCENT_STATUS, 因此还原为官方模式
-        if (QMUIDeviceHelper.isMeizu() || (QMUIDeviceHelper.isMIUI() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
+        if (QMUIDeviceHelper.isFlymeLowerThan8() || (QMUIDeviceHelper.isMIUI() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             return;
