@@ -157,6 +157,38 @@ public class QMUIDeviceHelper {
         return isMeizu() && isLower;
     }
 
+    public static boolean isFlymeVersionHigher5_2_4() {
+        boolean isHigher = true;
+        if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
+            Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
+            Matcher matcher = pattern.matcher(sFlymeVersionName);
+            if (matcher.find()) {
+                String versionString = matcher.group();
+                if (versionString != null && !versionString.equals("")) {
+                    String[] version = versionString.split("\\.");
+                    if (version.length == 3) {
+                        int majorVersion = Integer.parseInt(version[0]);
+                        if (majorVersion < 5) {
+                            isHigher = false;
+                        } else if (majorVersion == 5) {
+                            int minorVersion = Integer.parseInt(version[1]);
+                            if (minorVersion < 2) {
+                                isHigher = false;
+                            } else if (minorVersion == 2) {
+                                int patchVersion = Integer.parseInt(version[2]);
+                                if (patchVersion < 4) {
+                                    isHigher = false;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return isMeizu() && isHigher;
+    }
+
     public static boolean isMeizu() {
         return isPhone(MEIZUBOARD) || isFlyme();
     }
