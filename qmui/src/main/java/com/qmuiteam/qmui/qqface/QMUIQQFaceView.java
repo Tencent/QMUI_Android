@@ -105,7 +105,7 @@ public class QMUIQQFaceView extends View {
     private int mParagraphSpace = 0; // 段间距
     private int mSpecialDrawablePadding = 0;
     private int mGravity = Gravity.NO_GRAVITY;
-    private final int[] mPressedState = new int[] { android.R.attr.state_pressed};
+    private final int[] mPressedState = new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled};
     private boolean mIsNeedUnderlineForMoreText = false;
     private int mLinkUnderLineColor = 0;
     private int mLinkUnderLineHeight = 1;
