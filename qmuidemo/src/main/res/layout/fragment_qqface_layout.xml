@@ -213,7 +213,10 @@
                 android:layout_height="wrap_content"
                 android:textColor="?attr/qmui_config_color_gray_5"
                 android:maxLines="3"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:qmui_skin_underline="?attr/app_skin_btn_test_border"
+                app:qmui_skin_more_text_color="?attr/app_skin_btn_test_border"
+                app:qmui_skin_more_bg_color="?attr/app_skin_common_background_1"/>
 
 
             <TextView
@@ -231,7 +234,10 @@
                 android:ellipsize="end"
                 app:qmui_more_action_text="更多"
                 app:qmui_more_action_color="@color/s_app_color_blue_2"
-                app:qmui_more_action_bg_color="@color/s_app_color_gray"/>
+                app:qmui_more_action_bg_color="@color/s_app_color_gray"
+                app:qmui_skin_underline="?attr/app_skin_btn_test_border"
+                app:qmui_skin_more_text_color="?attr/app_skin_btn_test_border"
+                app:qmui_skin_more_bg_color="?attr/app_skin_common_background_1"/>
         </LinearLayout>
     </ScrollView>
 

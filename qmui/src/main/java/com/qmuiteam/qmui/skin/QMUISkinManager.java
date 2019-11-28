@@ -42,6 +42,8 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBackgroundHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBgTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleBorderHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleHintColorHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleMoreBgColorHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleMoreTextColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleProgressColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSeparatorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleSrcHandler;
@@ -49,9 +51,9 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundSrcHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTextCompoundTintColorHandler;
 import com.qmuiteam.qmui.skin.handler.QMUISkinRuleTintColorHandler;
+import com.qmuiteam.qmui.skin.handler.QMUISkinRuleUnderlineHandler;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -167,7 +169,9 @@ public final class QMUISkinManager {
         mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
         mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
         mRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
-
+        mRuleHandlers.put(QMUISkinValueBuilder.UNDERLINE, new QMUISkinRuleUnderlineHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.MORE_TEXT_COLOR, new QMUISkinRuleMoreTextColorHandler());
+        mRuleHandlers.put(QMUISkinValueBuilder.MORE_BG_COLOR, new QMUISkinRuleMoreBgColorHandler());
     }
 
     @Nullable
@@ -380,7 +384,7 @@ public final class QMUISkinManager {
         return attrs;
     }
 
-    public int getAttrFromName(String attrName){
+    public int getAttrFromName(String attrName) {
         return mResources.getIdentifier(attrName, "attr", mPackageName);
     }
 
@@ -576,7 +580,7 @@ public final class QMUISkinManager {
         }
     }
 
-    public int getCurrentSkin(){
+    public int getCurrentSkin() {
         return mCurrentSkin;
     }
 

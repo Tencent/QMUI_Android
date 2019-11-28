@@ -15,11 +15,17 @@
  */
 package com.qmuiteam.qmui.skin.handler;
 
-import android.content.res.Resources;
+import android.content.res.ColorStateList;
 import android.view.View;
 
-import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 
-public interface IQMUISkinRuleHandler {
-    void handle(QMUISkinManager skinManager, View view, Resources.Theme theme, String name, int attr);
+public class QMUISkinRuleMoreBgColorHandler extends QMUISkinRuleColorStateListHandler {
+
+    @Override
+    void handle(View view, String name, ColorStateList colorStateList) {
+        if (view instanceof QMUIQQFaceView) {
+            ((QMUIQQFaceView) view).setMoreActionBgColor(colorStateList);
+        }
+    }
 }

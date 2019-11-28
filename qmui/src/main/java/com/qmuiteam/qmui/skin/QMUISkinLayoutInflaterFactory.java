@@ -131,6 +131,12 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 builder.bgTintColor(id);
             }else if(attr == R.styleable.QMUISkinDef_qmui_skin_progress_color){
                 builder.progressColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_underline){
+                builder.underline(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_more_bg_color){
+                builder.moreBgColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_more_text_color){
+                builder.moreTextColor(id);
             }
         }
         a.recycle();

@@ -40,6 +40,9 @@ public class QMUISkinValueBuilder {
     public static final String TEXT_COMPOUND_RIGHT_SRC = "tcrTintColor";
     public static final String TEXT_COMPOUND_TOP_SRC = "tctTintColor";
     public static final String TEXT_COMPOUND_BOTTOM_SRC = "tcbTintColor";
+    public static final String UNDERLINE = "underline";
+    public static final String MORE_TEXT_COLOR = "moreTextColor";
+    public static final String MORE_BG_COLOR = "moreBgColor";
     private static LinkedList<QMUISkinValueBuilder> sValueBuilderPool;
 
     public static QMUISkinValueBuilder acquire() {
@@ -76,6 +79,36 @@ public class QMUISkinValueBuilder {
 
     public QMUISkinValueBuilder background(String attrName) {
         mValues.put(BACKGROUND, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder underline(int attr) {
+        mValues.put(UNDERLINE, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder underline(String attrName) {
+        mValues.put(UNDERLINE, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder moreTextColor(int attr) {
+        mValues.put(MORE_TEXT_COLOR, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder moreTextColor(String attrName) {
+        mValues.put(MORE_TEXT_COLOR, attrName);
+        return this;
+    }
+
+    public QMUISkinValueBuilder moreBgColor(int attr) {
+        mValues.put(MORE_BG_COLOR, String.valueOf(attr));
+        return this;
+    }
+
+    public QMUISkinValueBuilder moreBgColor(String attrName) {
+        mValues.put(MORE_BG_COLOR, attrName);
         return this;
     }
 
@@ -309,7 +342,7 @@ public class QMUISkinValueBuilder {
         return builder.toString();
     }
 
-    public void release(){
+    public void release() {
         QMUISkinValueBuilder.release(this);
     }
 }

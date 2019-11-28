@@ -250,7 +250,7 @@ public class QDMainActivity extends BaseFragmentActivity {
             });
             FrameLayout.LayoutParams globalBtnLp = new FrameLayout.LayoutParams(btnSize, btnSize);
             globalBtnLp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-            globalBtnLp.bottomMargin = QMUIDisplayHelper.dp2px(context, 32);
+            globalBtnLp.bottomMargin = QMUIDisplayHelper.dp2px(context, 60);
             globalBtnLp.rightMargin = QMUIDisplayHelper.dp2px(context, 24);
             QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
             builder.background(R.attr.app_skin_common_background);

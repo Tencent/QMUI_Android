@@ -35,6 +35,7 @@ import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -138,7 +139,11 @@ public class QDQQFaceUsageFragment extends BaseFragment {
 
 
         SpannableString sb = new SpannableString(text);
-        QMUITouchableSpan span = new QMUITouchableSpan(Color.BLUE, Color.BLACK, Color.GRAY, Color.GREEN) {
+        QMUITouchableSpan span = new QMUITouchableSpan(mQQFace14,
+                R.attr.app_skin_span_normal_text_color,
+                R.attr.app_skin_span_pressed_text_color,
+                R.attr.app_skin_span_normal_bg_color,
+                R.attr.app_skin_span_pressed_bg_color) {
             @Override
             public void onSpanClick(View widget) {
                 Toast.makeText(widget.getContext(), "点击了话题", Toast.LENGTH_SHORT).show();
@@ -146,14 +151,12 @@ public class QDQQFaceUsageFragment extends BaseFragment {
         };
         span.setIsNeedUnderline(true);
         sb.setSpan(span, text.indexOf(topic), text.indexOf(topic) + topic.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        mQQFace14.setLinkUnderLineColor(Color.RED);
-        mQQFace14.setLinkUnderLineHeight(QMUIDisplayHelper.dp2px(getContext(), 2));
         mQQFace14.setText(sb);
         mQQFace15.setText(sb);
         mQQFace15.setLinkUnderLineColor(Color.RED);
         mQQFace16.setText(sb);
         mQQFace16.setLinkUnderLineHeight(QMUIDisplayHelper.dp2px(getContext(), 4));
-        mQQFace16.setLinkUnderLineColor(Color.RED);
+        mQQFace16.setLinkUnderLineColor(ContextCompat.getColorStateList(getContext(), R.color.s_app_color_blue_to_red));
         mQQFace15.setGravity(Gravity.CENTER);
         mQQFace16.setGravity(Gravity.RIGHT);
 
