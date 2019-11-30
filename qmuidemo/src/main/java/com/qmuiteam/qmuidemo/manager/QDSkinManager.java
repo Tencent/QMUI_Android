@@ -39,4 +39,8 @@ public class QDSkinManager {
         QMUISkinManager.defaultInstance(QDApplication.getContext()).changeSkin(index);
         QDPreferenceManager.getInstance(QDApplication.getContext()).setSkinIndex(index);
     }
+
+    public static int getCurrentSkin(){
+        return QMUISkinManager.defaultInstance(QDApplication.getContext()).getCurrentSkin();
+    }
 }

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -120,6 +121,10 @@ public class QDMainActivity extends BaseFragmentActivity {
         return new CustomRootView(this, fragmentContainerId);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 
     private void renderSkinMakerBtn() {
         BaseFragment baseFragment = (BaseFragment) getCurrentFragment();

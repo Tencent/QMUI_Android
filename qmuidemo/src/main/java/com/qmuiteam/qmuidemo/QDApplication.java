@@ -19,14 +19,19 @@ package com.qmuiteam.qmuidemo;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
 import com.qmuiteam.qmui.skin.QMUISkinMaker;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;
+
+import androidx.annotation.NonNull;
 
 /**
  * Demo 的 Application 入口。
@@ -58,10 +63,20 @@ public class QDApplication extends Application {
         QMUISkinMaker.init(context,
                 new String[]{"com.qmuiteam.qmuidemo"},
                 new String[]{"app_skin_"}, R.attr.class);
+        updateSkin(getResources().getConfiguration());
     }
 
     @Override
-    public Resources.Theme getTheme() {
-        return super.getTheme();
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateSkin(newConfig);
+    }
+
+    private void updateSkin(@NonNull Configuration config){
+        if((config.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+            QDSkinManager.changeSkin(QDSkinManager.SKIN_DARK);
+        }else if(QDSkinManager.getCurrentSkin() == QDSkinManager.SKIN_DARK){
+            QDSkinManager.changeSkin(QDSkinManager.SKIN_BLUE);
+        }
     }
 }

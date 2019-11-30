@@ -91,6 +91,11 @@
         <item name="app_skin_alpha_test">1</item>
     </style>
 
+    <style name="AppTheme.Launcher">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/launcher_bg</item>
+    </style>
+
     <!-- blue skin -->
     <style name="app_skin_blue" parent="AppTheme" />
 

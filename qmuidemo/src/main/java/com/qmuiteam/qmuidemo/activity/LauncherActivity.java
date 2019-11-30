@@ -87,4 +87,10 @@ public class LauncherActivity extends Activity {
         }
         return true;
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
 }

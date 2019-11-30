@@ -31,12 +31,12 @@
 
         <activity
             android:name=".QDMainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".activity.LauncherActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -45,14 +45,14 @@
 
         <activity
             android:name=".activity.TranslucentActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
 
         <activity
             android:name=".activity.ArchTestActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
