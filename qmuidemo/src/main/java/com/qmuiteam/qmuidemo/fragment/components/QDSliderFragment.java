@@ -34,7 +34,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUISlider.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUISlider.class, iconRes = R.mipmap.icon_grid_slider)
 public class QDSliderFragment extends BaseFragment implements QMUISlider.Callback {
 
     @BindView(R.id.topbar)

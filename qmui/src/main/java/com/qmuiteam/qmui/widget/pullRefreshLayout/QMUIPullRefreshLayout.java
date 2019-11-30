@@ -33,6 +33,8 @@ import android.widget.Scroller;
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
@@ -41,6 +43,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.collection.SimpleArrayMap;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
@@ -1077,7 +1080,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         void onPull(int offset, int total, int overPull);
     }
 
-    public static class RefreshView extends AppCompatImageView implements IRefreshView {
+    public static class RefreshView extends AppCompatImageView implements IRefreshView, IQMUISkinDefaultAttrProvider {
         private static final int MAX_ALPHA = 255;
         private static final float TRIM_RATE = 0.85f;
         private static final float TRIM_OFFSET = 0.4f;
@@ -1088,10 +1091,18 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         private CircularProgressDrawable mProgress;
         private int mCircleDiameter;
 
+        private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
+
+        static {
+            sDefaultSkinAttrs = new SimpleArrayMap<>(4);
+            sDefaultSkinAttrs.put(QMUISkinValueBuilder.TINT_COLOR, R.attr.qmui_skin_support_pull_refresh_view_color);
+        }
+
         public RefreshView(Context context) {
             super(context);
             mProgress = new CircularProgressDrawable(context);
-            setColorSchemeColors(QMUIResHelper.getAttrColor(context, R.attr.qmui_config_color_blue));
+            setColorSchemeColors(QMUIResHelper.getAttrColor(
+                    context, R.attr.qmui_skin_support_pull_refresh_view_color));
             mProgress.setStyle(CircularProgressDrawable.LARGE);
             mProgress.setAlpha(MAX_ALPHA);
             mProgress.setArrowScale(0.8f);
@@ -1157,6 +1168,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
 
         public void setColorSchemeColors(@ColorInt int... colors) {
             mProgress.setColorSchemeColors(colors);
+        }
+
+        @Override
+        public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
+            return sDefaultSkinAttrs;
         }
     }
 }

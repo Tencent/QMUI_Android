@@ -214,6 +214,7 @@
         <item name="qmui_skin_support_color_separator_darken">@color/qmui_config_color_separator_darken</item>
         <item name="qmui_skin_support_color_background">@color/qmui_config_color_background</item>
         <item name="qmui_skin_support_color_background_pressed">@color/qmui_config_color_background_pressed</item>
+        <item name="qmui_skin_support_pull_refresh_view_color">?attr/qmui_config_color_blue</item>
 
         <!--**********************************************
         *                qmui dialog                     *

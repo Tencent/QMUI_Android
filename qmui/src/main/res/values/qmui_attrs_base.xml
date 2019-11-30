@@ -49,6 +49,7 @@
     <attr name="qmui_skin_support_color_separator_darken" format="color" />
     <attr name="qmui_skin_support_color_background" format="color" />
     <attr name="qmui_skin_support_color_background_pressed" format="color" />
+    <attr name="qmui_skin_support_pull_refresh_view_color" format="color" />
 
     <!--**********************************************
     *              qmui common list                  *
