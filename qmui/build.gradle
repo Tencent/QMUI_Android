@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 version = QMUI_VERSION
 
@@ -53,6 +55,7 @@ dependencies {
     //test
     testImplementation 'junit:junit:4.12'
     api 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 // deploy

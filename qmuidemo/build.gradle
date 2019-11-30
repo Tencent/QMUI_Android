@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 
 def getVersion() {
   def gitVersion
@@ -77,7 +81,8 @@ dependencies {
     implementation "androidx.annotation:annotation:$annotationVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    implementation 'com.qmuiteam:qmuilint:1.0.1'
 //    implementation 'com.qmuiteam:arch:0.3.1'
 //    implementation 'com.qmuiteam:qmui:1.2.0'
@@ -85,8 +90,8 @@ dependencies {
     api project(':lint')
     implementation project(':qmui')
     implementation project(':arch')
-    annotationProcessor project(':compiler')
-    annotationProcessor project(':arch-compiler')
+    kapt project(':compiler')
+    kapt project(':arch-compiler')
     implementation project(":skin-maker")
 
     //leak

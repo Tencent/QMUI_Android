@@ -157,6 +157,28 @@
                     app:qmui_skin_background="?attr/app_skin_btn_test_bg_single"
                     app:qmui_skin_text_color="?attr/app_skin_btn_test_border_single"/>
             </com.qmuiteam.qmui.layout.QMUILinearLayout>
+
+            <com.qmuiteam.qmui.layout.QMUILinearLayout style="@style/button_wrapper_style"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/QDCommonTitle"
+                    android:text="设置 setChangeAlphaWhenPressed(true) 在点击时改变整体 alpha" />
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:id="@+id/test_java_kotlin_skin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="通过 kotlin 设置 skin"
+                    android:textColor="@color/app_color_blue"
+                    app:qmui_backgroundColor="@color/app_color_blue_3"
+                    app:qmui_borderColor="@color/app_color_blue"
+                    app:qmui_borderWidth="1px"
+                    android:layout_gravity="center_horizontal"/>
+            </com.qmuiteam.qmui.layout.QMUILinearLayout>
         </LinearLayout>
     </ScrollView>
 
