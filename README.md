@@ -25,7 +25,7 @@ QMUI Android 的设计目的是用于辅助快速搭建一个具备基本设计�
 请查看官网的[功能列表](http://qmuiteam.com/android/page/document.html)
 
 ## 支持 Android 版本
-QMUI Android 支持 API Level 14+。
+QMUI Android 支持 API Level 19+。
 
 ## 使用方法
 请查看官网的[开始使用](http://qmuiteam.com/android/page/start.html)。
