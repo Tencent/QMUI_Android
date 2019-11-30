@@ -153,6 +153,7 @@ public class QMUIGroupListView extends LinearLayout {
         private boolean mHandleSeparatorCustom = false;
         private boolean mShowSeparator = true;
         private boolean mOnlyShowStartEndSeparator = false;
+        private boolean mOnlyShowMiddleSeparator = false;
         private int mMiddleSeparatorInsetLeft = 0;
         private int mMiddleSeparatorInsetRight = 0;
         private int mBgAttr = R.attr.qmui_skin_support_s_common_list_bg;
@@ -253,6 +254,11 @@ public class QMUIGroupListView extends LinearLayout {
             return this;
         }
 
+        public Section setOnlyShowMiddleSeparator(boolean onlyShowMiddleSeparator) {
+            mOnlyShowMiddleSeparator = onlyShowMiddleSeparator;
+            return this;
+        }
+
         public Section setMiddleSeparatorInset(int insetLeft, int insetRight) {
             mMiddleSeparatorInsetLeft = insetLeft;
             mMiddleSeparatorInsetRight = insetRight;
@@ -307,13 +313,17 @@ public class QMUIGroupListView extends LinearLayout {
                         itemView.updateTopDivider(0, 0, 1, separatorColor);
                         itemView.updateBottomDivider(0, 0, 1, separatorColor);
                     } else if (i == 0) {
-                        itemView.updateTopDivider(0, 0, 1, separatorColor);
+                        if(!mOnlyShowMiddleSeparator){
+                            itemView.updateTopDivider(0, 0, 1, separatorColor);
+                        }
                         if (!mOnlyShowStartEndSeparator) {
                             itemView.updateBottomDivider(
                                     mMiddleSeparatorInsetLeft, mMiddleSeparatorInsetRight, 1, separatorColor);
                         }
                     } else if (i == itemViewCount - 1) {
-                        itemView.updateBottomDivider(0, 0, 1, separatorColor);
+                        if(!mOnlyShowMiddleSeparator){
+                            itemView.updateBottomDivider(0, 0, 1, separatorColor);
+                        }
                     } else if (!mOnlyShowStartEndSeparator) {
                         itemView.updateBottomDivider(mMiddleSeparatorInsetLeft, mMiddleSeparatorInsetRight, 1, separatorColor);
                     }

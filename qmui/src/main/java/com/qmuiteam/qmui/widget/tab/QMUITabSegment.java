@@ -220,6 +220,14 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         mTabAdapter = createTabAdapter(mContentLayout);
     }
 
+    public void setDefaultTextSize(int normalTextSize, int selectedTextSize){
+        mTabBuilder.setTextSize(normalTextSize, selectedTextSize);
+    }
+
+    public void setDefaultTabIconPosition(@QMUITab.IconPosition int iconPosition){
+        mTabBuilder.setIconPosition(iconPosition);
+    }
+
     protected QMUITabAdapter createTabAdapter(ViewGroup tabParentView) {
         return new QMUITabAdapter(this, tabParentView);
     }
