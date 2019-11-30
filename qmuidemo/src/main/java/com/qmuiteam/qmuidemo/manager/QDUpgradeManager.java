@@ -24,7 +24,7 @@ import android.content.Context;
  */
 
 public class QDUpgradeManager {
-    public static final int INVALIDATE_VERSION_CODE = -1;
+    public static final int INVALIDATE_VERSION_CODE = 0;
 
     public static final int VERSION_1_1_0 = 110;
     public static final int VERSION_1_1_1 = 111;
@@ -42,7 +42,8 @@ public class QDUpgradeManager {
     public static final int VERSION_1_2_0 = 120;
     public static final int VERSION_1_3_1 = 131;
     public static final int VERSION_1_4_0 = 140;
-    private static final int sCurrentVersion = VERSION_1_4_0;
+    public static final int VERSION_2_0_0_alpha0 = -2000;
+    private static final int sCurrentVersion = VERSION_2_0_0_alpha0;
     private static QDUpgradeManager sQDUpgradeManager = null;
     private UpgradeTipTask mUpgradeTipTask;
 
@@ -62,7 +63,19 @@ public class QDUpgradeManager {
     public void check() {
         int oldVersion = QDPreferenceManager.getInstance(mContext).getVersionCode();
         int currentVersion = sCurrentVersion;
-        if (currentVersion > oldVersion) {
+        boolean versionUpdated = false;
+        if(currentVersion != oldVersion){
+            if(currentVersion < 0){
+                // alpha release
+                if(-currentVersion > oldVersion){
+                    versionUpdated = true;
+                }
+            }else if (currentVersion > oldVersion) {
+                versionUpdated = true;
+            }
+        }
+
+        if(versionUpdated){
             if (oldVersion == INVALIDATE_VERSION_CODE) {
                 onNewInstall(currentVersion);
             } else {

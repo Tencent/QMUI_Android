@@ -16,6 +16,8 @@
 package com.qmuiteam.qmuidemo.manager;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.util.Log;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.QDApplication;
@@ -32,7 +34,16 @@ public class QDSkinManager {
         skinManager.addSkin(SKIN_BLUE, R.style.app_skin_blue);
         skinManager.addSkin(SKIN_DARK, R.style.app_skin_dark);
         skinManager.addSkin(SKIN_WHITE, R.style.app_skin_white);
-        skinManager.changeSkin(QDPreferenceManager.getInstance(context).getSkinIndex());
+        boolean isDarkMode = (context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int storeSkinIndex = QDPreferenceManager.getInstance(context).getSkinIndex();
+        if (isDarkMode && storeSkinIndex != SKIN_DARK) {
+            skinManager.changeSkin(SKIN_DARK);
+        } else if (!isDarkMode && storeSkinIndex == SKIN_DARK) {
+            skinManager.changeSkin(SKIN_BLUE);
+        }else{
+            skinManager.changeSkin(storeSkinIndex);
+        }
     }
 
     public static void changeSkin(int index) {
@@ -40,7 +51,7 @@ public class QDSkinManager {
         QDPreferenceManager.getInstance(QDApplication.getContext()).setSkinIndex(index);
     }
 
-    public static int getCurrentSkin(){
+    public static int getCurrentSkin() {
         return QMUISkinManager.defaultInstance(QDApplication.getContext()).getCurrentSkin();
     }
 }

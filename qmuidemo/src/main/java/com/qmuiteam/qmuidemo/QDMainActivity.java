@@ -151,8 +151,8 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     private void showGlobalActionPopup(View v){
         String[] listItems = new String[]{
-                "Change Theme",
-                QDApplication.openSkinMake ? "Close SkinMaker" : "Open SkinMaker",
+                "Change Skin",
+                QDApplication.openSkinMake ? "Close SkinMaker(Developing)" : "Open SkinMaker(Developing)",
                 "Export SkinMaker Result"
         };
         List<String> data = new ArrayList<>();

@@ -63,17 +63,12 @@ public class QDApplication extends Application {
         QMUISkinMaker.init(context,
                 new String[]{"com.qmuiteam.qmuidemo"},
                 new String[]{"app_skin_"}, R.attr.class);
-        updateSkin(getResources().getConfiguration());
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        updateSkin(newConfig);
-    }
-
-    private void updateSkin(@NonNull Configuration config){
-        if((config.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+        if((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
             QDSkinManager.changeSkin(QDSkinManager.SKIN_DARK);
         }else if(QDSkinManager.getCurrentSkin() == QDSkinManager.SKIN_DARK){
             QDSkinManager.changeSkin(QDSkinManager.SKIN_BLUE);

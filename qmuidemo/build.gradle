@@ -46,7 +46,7 @@ android {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode gitVersion
-        versionName "1.4.0"
+        versionName QMUI_VERSION
     }
     buildTypes {
         debug {

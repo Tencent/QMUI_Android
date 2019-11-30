@@ -68,7 +68,12 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_1_4_0){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha0){
+            text.append("1. Migrated the library to Androidx.\n");
+            text.append("2. Provided dark mode(skin) support. Almost all widgets are covered.\n");
+            text.append("3. Refactor some widget such as QMUIPopup, QMUITabSegment. Provided more function.\n");
+            text.append("4. Provided some simple kotlin methods.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_1_4_0){
             text.append("1. Updated arch library to 0.6.0. Provide annotation MaybeFirstIn and DefaultFirstFragment.\n");
             text.append("2. Updated lint library to 1.1.0 to Support Android Studio 3.4+.\n");
             text.append("3. Replaced parent theme of QMUI.Compat with Theme.AppCompat.DayNight.\n");
