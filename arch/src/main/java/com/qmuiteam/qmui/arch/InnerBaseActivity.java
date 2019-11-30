@@ -22,14 +22,17 @@ import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.LayoutInflaterCompat;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 
@@ -38,6 +41,15 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     private static int NO_REQUESTED_ORIENTATION_SET = -100;
     private boolean mConvertToTranslucentCauseOrientationChanged = false;
     private int mPendingRequestedOrientation = NO_REQUESTED_ORIENTATION_SET;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if(followSkin()){
+            LayoutInflater layoutInflater = LayoutInflater.from(this);
+            LayoutInflaterCompat.setFactory2(layoutInflater, new QMUISkinLayoutInflaterFactory(this));
+        }
+        super.onCreate(savedInstanceState);
+    }
 
     void convertToTranslucentCauseOrientationChanged() {
         Utils.convertActivityToTranslucent(this);
@@ -53,7 +65,6 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
         } else {
             super.setRequestedOrientation(requestedOrientation);
         }
-
     }
 
     @SuppressLint("WrongConstant")

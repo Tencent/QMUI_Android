@@ -15,6 +15,7 @@
  */
 package com.qmuiteam.qmui.skin;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -26,7 +27,10 @@ import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
+import java.lang.ref.WeakReference;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     private static final String TAG = "QMUISkin";
@@ -38,32 +42,41 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     };
 
     private Resources.Theme mEmptyTheme;
+    private WeakReference<Activity> mActivityWeakReference;
 
-    public QMUISkinLayoutInflaterFactory() {
+    public QMUISkinLayoutInflaterFactory(Activity activity) {
+        mActivityWeakReference = new WeakReference<>(activity);
     }
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        Activity activity = mActivityWeakReference.get();
         View view = null;
-        if (!name.contains(".")) {
-            for (String prefix : sClassPrefixList) {
-                try {
-                    view = LayoutInflater.from(context).createView(name, prefix, attrs);
-                    if (view != null) {
-                        break;
-                    }
-                } catch (ClassNotFoundException ignore) {
+        if(activity instanceof AppCompatActivity){
+            view = ((AppCompatActivity)activity).getDelegate().createView(parent, name, context, attrs);
+        }
 
+        if(view == null){
+            if (!name.contains(".")) {
+                for (String prefix : sClassPrefixList) {
+                    try {
+                        view = LayoutInflater.from(context).createView(name, prefix, attrs);
+                        if (view != null) {
+                            break;
+                        }
+                    } catch (ClassNotFoundException ignore) {
+
+                    }
                 }
-            }
-            if (view == null) {
-                QMUILog.e(TAG, "Failed to inflate view " + name);
-            }
-        } else {
-            try {
-                view = LayoutInflater.from(context).createView(name, null, attrs);
-            } catch (ClassNotFoundException e) {
-                QMUILog.e(TAG, "Failed to inflate view " + name + "; error: " + e.getMessage());
+                if (view == null) {
+                    QMUILog.e(TAG, "Failed to inflate view " + name);
+                }
+            } else {
+                try {
+                    view = LayoutInflater.from(context).createView(name, null, attrs);
+                } catch (ClassNotFoundException e) {
+                    QMUILog.e(TAG, "Failed to inflate view " + name + "; error: " + e.getMessage());
+                }
             }
         }
 

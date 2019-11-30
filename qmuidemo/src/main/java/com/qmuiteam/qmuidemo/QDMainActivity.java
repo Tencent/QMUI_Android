@@ -111,12 +111,6 @@ public class QDMainActivity extends BaseFragmentActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new QMUISkinLayoutInflaterFactory());
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     protected RootView onCreateRootView(int fragmentContainerId) {
         return new CustomRootView(this, fragmentContainerId);
     }
