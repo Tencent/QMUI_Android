@@ -46,7 +46,8 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         if(followSkin()){
             LayoutInflater layoutInflater = LayoutInflater.from(this);
-            LayoutInflaterCompat.setFactory2(layoutInflater, new QMUISkinLayoutInflaterFactory(this));
+            LayoutInflaterCompat.setFactory2(layoutInflater,
+                    new QMUISkinLayoutInflaterFactory(this, layoutInflater));
         }
         super.onCreate(savedInstanceState);
     }

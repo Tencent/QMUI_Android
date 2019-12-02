@@ -28,6 +28,7 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,12 +41,15 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
             "android.app.",
             "android.view."
     };
+    private static final HashMap<String, String> sSuccessClassNamePrefixMap = new HashMap<>();
 
     private Resources.Theme mEmptyTheme;
     private WeakReference<Activity> mActivityWeakReference;
+    private LayoutInflater mOriginLayoutInflater;
 
-    public QMUISkinLayoutInflaterFactory(Activity activity) {
+    public QMUISkinLayoutInflaterFactory(Activity activity, LayoutInflater originLayoutInflater) {
         mActivityWeakReference = new WeakReference<>(activity);
+        mOriginLayoutInflater = originLayoutInflater;
     }
 
     @Override
@@ -57,26 +61,27 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
         }
 
         if(view == null){
-            if (!name.contains(".")) {
-                for (String prefix : sClassPrefixList) {
-                    try {
-                        view = LayoutInflater.from(context).createView(name, prefix, attrs);
-                        if (view != null) {
-                            break;
+            try{
+                if (!name.contains(".")) {
+                    if(sSuccessClassNamePrefixMap.containsKey(name)){
+                        view = LayoutInflater.from(context)
+                                .createView(name, sSuccessClassNamePrefixMap.get(name), attrs);
+                    }else{
+                        for (String prefix : sClassPrefixList) {
+                            view = mOriginLayoutInflater.createView(name, prefix, attrs);
+                            if (view != null) {
+                                sSuccessClassNamePrefixMap.put(name, prefix);
+                                break;
+                            }
                         }
-                    } catch (ClassNotFoundException ignore) {
-
                     }
+                }else{
+                    view = mOriginLayoutInflater.createView(name, null, attrs);
                 }
-                if (view == null) {
-                    QMUILog.e(TAG, "Failed to inflate view " + name);
-                }
-            } else {
-                try {
-                    view = LayoutInflater.from(context).createView(name, null, attrs);
-                } catch (ClassNotFoundException e) {
-                    QMUILog.e(TAG, "Failed to inflate view " + name + "; error: " + e.getMessage());
-                }
+            }catch (ClassNotFoundException ignore){
+
+            }catch (Exception e){
+                QMUILog.e(TAG, "Failed to inflate view " + name + "; error: " + e.getMessage());
             }
         }
 
