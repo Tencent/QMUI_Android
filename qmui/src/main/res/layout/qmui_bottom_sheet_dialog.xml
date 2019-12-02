@@ -25,7 +25,8 @@
   <androidx.coordinatorlayout.widget.CoordinatorLayout
       android:id="@+id/coordinator"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="match_parent"
+      android:fitsSystemWindows="true">
 
     <View
         android:id="@+id/touch_outside"
@@ -39,7 +40,7 @@
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"/>
+        android:layout_gravity="center_horizontal|bottom"/>
 
   </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -43,6 +43,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -111,6 +112,9 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                if(mBehavior.getState() == BottomSheetBehavior.STATE_SETTLING){
+                                    return;
+                                }
                                 if (cancelable && isShowing() && shouldWindowCloseOnTouchOutside()) {
                                     cancel();
                                 }
@@ -146,6 +150,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
             }
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
+        ViewCompat.requestApplyInsets(mRootView);
     }
 
     @Override

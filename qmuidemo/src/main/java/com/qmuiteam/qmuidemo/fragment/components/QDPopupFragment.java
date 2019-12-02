@@ -275,11 +275,13 @@ public class QDPopupFragment extends BaseFragment {
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
         frameLayout.addView(textView, lp);
 
+        FrameLayout editFitSystemWindowWrapped = new FrameLayout(getContext());
+        editFitSystemWindowWrapped.setFitsSystemWindows(true);
+
         int minHeight = QMUIDisplayHelper.dp2px(getContext(), 48);
         QMUIFrameLayout editParent = new QMUIFrameLayout(getContext());
         editParent.setMinimumHeight(minHeight);
         editParent.setRadius(minHeight / 2);
-        editParent.setFitsSystemWindows(true);
         editParent.setBackground(
                 QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_skin_support_popup_bg));
         builder.clear();
@@ -304,6 +306,9 @@ public class QDPopupFragment extends BaseFragment {
         editLp.gravity = Gravity.CENTER_HORIZONTAL;
         editParent.addView(editText, editLp);
 
+        editFitSystemWindowWrapped.addView(editParent,  new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
 
         ConstraintLayout.LayoutParams eLp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
         int mar = QMUIDisplayHelper.dp2px(getContext(), 20);
@@ -316,7 +321,7 @@ public class QDPopupFragment extends BaseFragment {
 
         QMUIPopups.fullScreenPopup(getContext())
                 .addView(frameLayout, QMUIFullScreenPopup.getOffsetHalfKeyboardHeightListener())
-                .addView(editParent, eLp, QMUIFullScreenPopup.getOffsetKeyboardHeightListener())
+                .addView(editFitSystemWindowWrapped, eLp, QMUIFullScreenPopup.getOffsetKeyboardHeightListener())
                 .onBlankClick(new QMUIFullScreenPopup.OnBlankClickListener() {
                     @Override
                     public void onBlankClick(QMUIFullScreenPopup popup) {
