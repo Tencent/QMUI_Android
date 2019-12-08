@@ -220,6 +220,18 @@
                 app:qmui_more_action_text="更多"
                 app:qmui_more_action_color="@color/s_app_color_blue_2"
                 app:qmui_more_action_bg_color="@color/s_app_color_gray"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="段间距"/>
+
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceView
+                android:id="@+id/qqface18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
     </ScrollView>
 

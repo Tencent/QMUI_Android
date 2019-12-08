@@ -61,6 +61,7 @@ public class QDQQFaceUsageFragment extends BaseFragment {
     @BindView(R.id.qqface15) QDQQFaceView mQQFace15;
     @BindView(R.id.qqface16) QDQQFaceView mQQFace16;
     @BindView(R.id.qqface17) QDQQFaceView mQQFace17;
+    @BindView(R.id.qqface18) QDQQFaceView mQQFace18;
 
     @Override
     protected View onCreateView() {
@@ -160,5 +161,9 @@ public class QDQQFaceUsageFragment extends BaseFragment {
         mQQFace17.setText("这是一段文本，为了测量更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多" +
                 "更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多" +
                 "更多更多更多更多更多更多更多更多更多更多更多更多更多更多更多的显示情况");
+
+        mQQFace18.setParagraphSpace(QMUIDisplayHelper.dp2px(getContext(), 20));
+        mQQFace18.setText("这是一段文本，为[微笑]了测量多段落[微笑]\n" +
+                "这是一段文本，为[微笑]了测量多段落[微笑]\n这是一段文本，为[微笑]了测量多段落[微笑]");
     }
 }
