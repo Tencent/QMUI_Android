@@ -19,31 +19,38 @@ package com.qmuiteam.qmuidemo.fragment.lab;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
+import com.qmuiteam.qmui.widget.webview.QMUIBridgeWebViewClient;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
+import com.qmuiteam.qmui.widget.webview.QMUIWebViewBridgeHandler;
+import com.qmuiteam.qmui.widget.webview.QMUIWebViewClient;
 import com.qmuiteam.qmui.widget.webview.QMUIWebViewContainer;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
-@Widget(group = Group.Other, name = "修复 css-env-safe-area-inset")
-public class QDWebViewFixFragment extends QDWebExplorerFragment {
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public QDWebViewFixFragment() {
-        String url = "http://cgsdream.org/static/html/test-css-env-safe-area-inset.html";
+@Widget(group = Group.Other, name = "Webview Bridge")
+public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
+
+    public QDWebViewBridgeFragment() {
+        String url = "file:///android_asset/demo.html";
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_URL, url);
-        bundle.putString(EXTRA_TITLE, "test-css-env-safe-area-inset");
+        bundle.putString(EXTRA_TITLE, "测试 Bridge");
         setArguments(bundle);
     }
 
     @Override
     protected boolean needDispatchSafeAreaInset() {
-        return true;
+        return false;
     }
 
 
@@ -80,6 +87,29 @@ public class QDWebViewFixFragment extends QDWebExplorerFragment {
                 super.onHideCustomView();
             }
         };
+    }
+
+    @Override
+    protected QMUIWebViewClient getWebViewClient() {
+        return new QMUIBridgeWebViewClient(needDispatchSafeAreaInset(), false,
+                new QMUIWebViewBridgeHandler(mWebView) {
+                    @Override
+                    protected JSONObject handleMessage(String message) {
+                        try {
+                            JSONObject json = new JSONObject(message);
+                            String id = json.getString("id");
+                            String info = json.getString("info");
+                            Toast.makeText(getContext(), "id = " + id + "; info = " + info, Toast.LENGTH_SHORT).show();
+                            JSONObject result = new JSONObject();
+                            result.put("code", 100);
+                            result.put("message", "Native 的执行结果");
+                            return result;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                });
     }
 
     @Override
