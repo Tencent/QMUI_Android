@@ -825,8 +825,6 @@ public class QMUIQQFaceView extends View {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        Log.i(TAG, "widthSize = " + widthSize + "; heightSize = " + heightSize);
-
         mLines = 0;
         mParagraphShowCount = 0;
         int width, height;
@@ -884,7 +882,7 @@ public class QMUIQQFaceView extends View {
                 break;
         }
         setMeasuredDimension(width, height);
-        Log.i(TAG, "mLines = " + mLines + " ; width = " + width + " ; height = "
+        Log.v(TAG, "mLines = " + mLines + " ; width = " + width + " ; height = "
                 + height + " ; maxLine = " + maxLine + "; measure time = "
                 + (System.currentTimeMillis() - start));
     }
@@ -901,7 +899,7 @@ public class QMUIQQFaceView extends View {
         setStartDrawUsedWidth(getPaddingLeft(), getWidth() - getPaddingLeft() - getPaddingRight());
         mIsExecutedMiddleEllipsize = false;
         drawElements(canvas, elements, getWidth() - getPaddingLeft() - getPaddingRight());
-        Log.i(TAG, "onDraw spend time = " + (System.currentTimeMillis() - start));
+        Log.v(TAG, "onDraw spend time = " + (System.currentTimeMillis() - start));
     }
 
     private int mCurrentDrawBaseLine;
