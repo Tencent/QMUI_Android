@@ -67,7 +67,7 @@ public class QDWebExplorerFragment extends BaseFragment {
     @BindView(R.id.topbar) protected QMUITopBarLayout mTopBarLayout;
     @BindView(R.id.webview_container) QMUIWebViewContainer mWebViewContainer;
     @BindView(R.id.progress_bar) ProgressBar mProgressBar;
-    private QDWebView mWebView;
+    protected QDWebView mWebView;
 
 
     private String mUrl;
