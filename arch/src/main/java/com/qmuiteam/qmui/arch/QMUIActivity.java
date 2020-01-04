@@ -121,6 +121,10 @@ public class QMUIActivity extends InnerBaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        performTranslucent();
+    }
+
+    protected void performTranslucent(){
         QMUIStatusBarHelper.translucent(this);
     }
 

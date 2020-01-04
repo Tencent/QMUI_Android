@@ -57,7 +57,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QMUIStatusBarHelper.translucent(this);
+        performTranslucent();
         mFragmentContainer = onCreateRootView(getContextViewId());
         setContentView(mFragmentContainer);
         mIsFirstFragmentAddedByAnnotation = false;
@@ -88,6 +88,10 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             }
             Log.i(TAG, "the time it takes to inject first fragment from annotation is " + (System.currentTimeMillis() - start));
         }
+    }
+
+    protected void performTranslucent(){
+        QMUIStatusBarHelper.translucent(this);
     }
 
     /**
