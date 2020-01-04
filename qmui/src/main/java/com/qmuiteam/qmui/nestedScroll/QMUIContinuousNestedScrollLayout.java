@@ -350,7 +350,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
         }
         for (OnScrollListener onScrollListener : mOnScrollListeners) {
-            onScrollListener.onScroll(topCurrent, topRange, offsetCurrent, offsetRange,
+            onScrollListener.onScroll(this, topCurrent, topRange, offsetCurrent, offsetRange,
                     bottomCurrent, bottomRange);
         }
     }
@@ -366,13 +366,13 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
     private void dispatchScrollStateChange(int newScrollState, boolean fromTopBehavior) {
         for (OnScrollListener onScrollListener : mOnScrollListeners) {
-            onScrollListener.onScrollStateChange(newScrollState, fromTopBehavior);
+            onScrollListener.onScrollStateChange(this, newScrollState, fromTopBehavior);
         }
         mCurrentScrollState = newScrollState;
     }
 
     public void scrollBy(int dy) {
-        if (dy > 0 && mTopAreaBehavior != null) {
+        if ((dy > 0 || mBottomView == null) && mTopAreaBehavior != null) {
             mTopAreaBehavior.scroll(this, ((View) mTopView), dy);
         } else if (dy != 0 && mBottomView != null) {
             mBottomView.consumeScroll(dy);
@@ -383,7 +383,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         if (dy == 0) {
             return;
         }
-        if (dy > 0 && mTopAreaBehavior != null) {
+        if ((dy > 0 || mBottomView == null) && mTopAreaBehavior != null) {
             mTopAreaBehavior.smoothScrollBy(this, ((View) mTopView), dy, duration);
         } else if (mBottomView != null) {
             mBottomView.smoothScrollYBy(dy, duration);
@@ -553,10 +553,10 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
     public interface OnScrollListener {
 
-        void onScroll(int topCurrent, int topRange,
+        void onScroll(QMUIContinuousNestedScrollLayout scrollLayout, int topCurrent, int topRange,
                       int offsetCurrent, int offsetRange,
                       int bottomCurrent, int bottomRange);
 
-        void onScrollStateChange(int newScrollState, boolean fromTopBehavior);
+        void onScrollStateChange(QMUIContinuousNestedScrollLayout scrollLayout, int newScrollState, boolean fromTopBehavior);
     }
 }
