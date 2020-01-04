@@ -209,11 +209,11 @@ public final class QMUISkinManager {
     }
 
     public void dispatch(View view, int skinIndex) {
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Trace.beginSection("QMUISkin::dispatch");
-        }
         if (view == null) {
             return;
+        }
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Trace.beginSection("QMUISkin::dispatch");
         }
         SkinItem skinItem = mSkins.get(skinIndex);
         Resources.Theme theme;
@@ -235,7 +235,8 @@ public final class QMUISkinManager {
     private void runDispatch(@NonNull View view, int skinIndex, Resources.Theme theme) {
 
         Integer currentTheme = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        if (currentTheme != null && currentTheme == skinIndex) {
+        if ((currentTheme != null && currentTheme == skinIndex) ||
+                (currentTheme == null && skinIndex == DEFAULT_SKIN)) {
             return;
         }
         view.setTag(R.id.qmui_skin_current_index, skinIndex);
