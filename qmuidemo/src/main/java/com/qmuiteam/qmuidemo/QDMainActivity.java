@@ -78,6 +78,7 @@ import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.LayoutInflaterCompat;
 import androidx.customview.widget.ViewDragHelper;
+import androidx.fragment.app.Fragment;
 
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
@@ -121,13 +122,13 @@ public class QDMainActivity extends BaseFragmentActivity {
     }
 
     private void renderSkinMakerBtn() {
-        BaseFragment baseFragment = (BaseFragment) getCurrentFragment();
-        if (QDApplication.openSkinMake) {
-            if (baseFragment != null) {
-                baseFragment.openSkinMaker();
+        Fragment baseFragment = getCurrentFragment();
+        if(baseFragment instanceof BaseFragment){
+            if (QDApplication.openSkinMake) {
+                ((BaseFragment)baseFragment).openSkinMaker();
+            } else {
+                QMUISkinMaker.getInstance().unBindAll();
             }
-        } else {
-            QMUISkinMaker.getInstance().unBindAll();
         }
     }
 
