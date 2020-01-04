@@ -107,7 +107,8 @@ public class QMUIActivity extends InnerBaseActivity {
     private SwipeBackLayout.Callback mSwipeCallback = new SwipeBackLayout.Callback() {
         @Override
         public boolean canSwipeBack(SwipeBackLayout layout, int dragDirection, int moveEdge) {
-            return QMUISwipeBackActivityManager.getInstance().canSwipeBack() && canDragBack();
+            return QMUISwipeBackActivityManager.getInstance().canSwipeBack() &&
+                    canDragBack(layout.getContext(), dragDirection, moveEdge);
         }
 
         @Override
