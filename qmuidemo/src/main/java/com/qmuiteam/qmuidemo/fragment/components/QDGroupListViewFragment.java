@@ -16,7 +16,6 @@
 
 package com.qmuiteam.qmuidemo.fragment.components;
 
-import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -92,6 +92,11 @@ public class QDGroupListViewFragment extends BaseFragment {
                 null,
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_NONE);
+
+        // 去除 icon 的 tintColor 换肤设置
+        QMUICommonListItemView.SkinConfig skinConfig = new QMUICommonListItemView.SkinConfig();
+        skinConfig.iconTintColorRes = 0;
+        itemWithDetail.setSkinConfig(skinConfig);
         itemWithDetail.setDetailText("在右方的详细信息");
 
         QMUICommonListItemView itemWithDetailBelow = mGroupListView.createItemView("Item 3");
@@ -134,7 +139,6 @@ public class QDGroupListViewFragment extends BaseFragment {
                 QMUICommonListItemView.VERTICAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
                 height);
-
 
 
         QMUICommonListItemView itemWithCustom = mGroupListView.createItemView("右方自定义 View");

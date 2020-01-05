@@ -24,7 +24,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,11 +31,9 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -136,8 +133,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     protected TextView mDetailTextView;
     protected CheckBox mSwitch;
     private ImageView mRedDot;
-    private ViewStub mNewTipViewStub;
-    private View mNewTip;
+    private ImageView mNewTipView;
     private Placeholder mAfterTitleHolder;
     private Placeholder mBeforeAccessoryHolder;
 
@@ -167,7 +163,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         mImageView = findViewById(R.id.group_list_item_imageView);
         mTextView = findViewById(R.id.group_list_item_textView);
         mRedDot = findViewById(R.id.group_list_item_tips_dot);
-        mNewTipViewStub = findViewById(R.id.group_list_item_tips_new);
+        mNewTipView = findViewById(R.id.group_list_item_tips_new);
         mDetailTextView = findViewById(R.id.group_list_item_detailTextView);
         mAfterTitleHolder = findViewById(R.id.group_list_item_holder_after_title);
         mBeforeAccessoryHolder = findViewById(R.id.group_list_item_holder_before_accessory);
@@ -208,12 +204,12 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
                 mBeforeAccessoryHolder.setContentId(mRedDot.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
-        }else if(mNewTip != null && mNewTip.getVisibility() == View.VISIBLE){
+        } else if (mNewTipView.getVisibility() == View.VISIBLE) {
             if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mNewTip.getId());
+                mAfterTitleHolder.setContentId(mNewTipView.getId());
                 mBeforeAccessoryHolder.setContentId(View.NO_ID);
             } else {
-                mBeforeAccessoryHolder.setContentId(mNewTip.getId());
+                mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
         }
@@ -247,8 +243,8 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
             mBeforeAccessoryHolder.setContentId(mRedDot.getId());
             mAfterTitleHolder.setContentId(View.NO_ID);
         }
-        if(isShow && mNewTip != null){
-            mNewTip.setVisibility(View.GONE);
+        if (isShow) {
+            mNewTipView.setVisibility(View.GONE);
             checkDetailLeftMargin();
         }
     }
@@ -261,36 +257,30 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      */
     public void showNewTip(boolean isShow) {
         if (isShow) {
-            if (mNewTip == null) {
-                mNewTip = mNewTipViewStub.inflate();
-            }
-            mNewTip.setId(QMUIViewHelper.generateViewId());
-            mNewTip.setVisibility(View.VISIBLE);
+            mNewTipView.setVisibility(View.VISIBLE);
             mRedDot.setVisibility(GONE);
             if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mNewTip.getId());
+                mAfterTitleHolder.setContentId(mNewTipView.getId());
                 mBeforeAccessoryHolder.setContentId(View.NO_ID);
             } else {
-                mBeforeAccessoryHolder.setContentId(mNewTip.getId());
+                mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
         } else {
-            if (mNewTip != null && mNewTip.getVisibility() == View.VISIBLE) {
-                mNewTip.setVisibility(View.GONE);
-            }
+            mNewTipView.setVisibility(View.GONE);
         }
         checkDetailLeftMargin();
     }
 
-    private void checkDetailLeftMargin(){
+    private void checkDetailLeftMargin() {
         LayoutParams detailLp = (LayoutParams) mDetailTextView.getLayoutParams();
-        if(mOrientation == VERTICAL){
+        if (mOrientation == VERTICAL) {
             detailLp.leftMargin = 0;
-        }else{
-            if(mNewTip == null || mNewTip.getVisibility() == View.GONE || mTipPosition == TIP_POSITION_LEFT){
+        } else {
+            if (mNewTipView.getVisibility() == View.GONE || mTipPosition == TIP_POSITION_LEFT) {
                 detailLp.leftMargin = QMUIResHelper.getAttrDimen(
                         getContext(), R.attr.qmui_common_list_item_detail_h_margin_with_title);
-            }else{
+            } else {
                 detailLp.leftMargin = QMUIResHelper.getAttrDimen(
                         getContext(), R.attr.qmui_common_list_item_detail_h_margin_with_title_large);
             }
@@ -412,10 +402,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         }
         LayoutParams titleLp = (LayoutParams) mTextView.getLayoutParams();
         LayoutParams detailLp = (LayoutParams) mDetailTextView.getLayoutParams();
-        if(mAccessoryView.getVisibility() != View.GONE){
+        if (mAccessoryView.getVisibility() != View.GONE) {
             detailLp.goneRightMargin = detailLp.rightMargin;
             titleLp.goneRightMargin = titleLp.rightMargin;
-        }else{
+        } else {
             detailLp.goneRightMargin = 0;
             titleLp.goneRightMargin = 0;
         }
@@ -463,8 +453,54 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         }
     }
 
+    public void setSkinConfig(SkinConfig skinConfig) {
+        QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        if (skinConfig.iconTintColorRes != 0) {
+            builder.tintColor(skinConfig.iconTintColorRes);
+        }
+        if (skinConfig.iconSrcRes != 0) {
+            builder.src(skinConfig.iconSrcRes);
+        }
+        QMUISkinHelper.setSkinValue(mImageView, builder);
+
+        builder.clear();
+        if (skinConfig.titleTextColorRes != 0) {
+            builder.textColor(skinConfig.titleTextColorRes);
+        }
+        QMUISkinHelper.setSkinValue(mTextView, builder);
+
+        builder.clear();
+        if (skinConfig.detailTextColorRes != 0) {
+            builder.textColor(skinConfig.detailTextColorRes);
+        }
+        QMUISkinHelper.setSkinValue(mDetailTextView, builder);
+
+        builder.clear();
+        if (skinConfig.newTipSrcRes != 0) {
+            builder.src(skinConfig.newTipSrcRes);
+        }
+        QMUISkinHelper.setSkinValue(mNewTipView, builder);
+
+        builder.clear();
+        if (skinConfig.tipDotColorRes != 0) {
+            builder.bgTintColor(skinConfig.tipDotColorRes);
+        }
+        QMUISkinHelper.setSkinValue(mRedDot, builder);
+        builder.release();
+    }
+
 
     public interface LayoutParamConfig {
         ConstraintLayout.LayoutParams onConfig(ConstraintLayout.LayoutParams lp);
+    }
+
+    public static class SkinConfig {
+
+        public int iconTintColorRes = R.attr.qmui_skin_support_common_list_icon_tint_color;
+        public int iconSrcRes = 0;
+        public int titleTextColorRes = R.attr.qmui_skin_support_common_list_title_color;
+        public int detailTextColorRes = R.attr.qmui_skin_support_common_list_detail_color;
+        public int newTipSrcRes = R.attr.qmui_skin_support_common_list_new_drawable;
+        public int tipDotColorRes = R.attr.qmui_skin_support_common_list_red_point_tint_color;
     }
 }

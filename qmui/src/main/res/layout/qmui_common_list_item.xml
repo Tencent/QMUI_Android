@@ -95,17 +95,6 @@
 
 
 
-    <ViewStub
-        android:id="@+id/group_list_item_tips_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout="@layout/qmui_common_list_item_tip_new_layout"
-        android:visibility="gone" />
-
-
-
-
     <androidx.constraintlayout.widget.Placeholder
         android:id="@+id/group_list_item_holder_after_title"
         android:layout_width="1px"
@@ -114,6 +103,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/group_list_item_textView"
         app:layout_constraintLeft_toRightOf="@+id/group_list_item_textView"
         app:layout_constraintTop_toTopOf="@+id/group_list_item_textView" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/group_list_item_tips_new"
+        android:contentDescription="Update tips"
+        android:visibility="gone"
+        style="?attr/QMUITipNewStyle"
+        app:qmui_skin_src="?attr/qmui_skin_support_common_list_new_drawable"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/group_list_item_tips_dot"
