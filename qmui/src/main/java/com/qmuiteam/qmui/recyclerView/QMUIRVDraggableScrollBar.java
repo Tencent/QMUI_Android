@@ -240,6 +240,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
         }
         if (mRecyclerView != null) {
             mRecyclerView.removeCallbacks(mFadeScrollBarAction);
+            mRecyclerView.invalidate();
         }
     }
 
@@ -250,6 +251,9 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
         }
         if (mCallback != null) {
             mCallback.onDragEnd();
+        }
+        if(mRecyclerView != null){
+            mRecyclerView.invalidate();
         }
     }
 
