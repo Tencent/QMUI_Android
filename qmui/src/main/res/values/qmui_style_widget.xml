@@ -345,6 +345,26 @@
         <item name="qmui_auto_calculate_refresh_end_offset">true</item>
     </style>
 
+    <!-- QMUIPullLayout -->
+    <style name="QMUI.PullLayout">
+        <item name="qmui_pull_enable_edge">left|right|top|bottom</item>
+    </style>
+
+    <!-- QMUIPullLoadMoreView -->
+    <style name="QMUI.PullLoadMore">
+        <item name="qmui_pull_load_more_loading_size">20dp</item>
+        <item name="qmui_pull_load_more_text_size">14sp</item>
+        <item name="qmui_pull_load_more_arrow_text_gap">10dp</item>
+        <item name="qmui_pull_load_more_height">56dp</item>
+        <item name="qmui_pull_load_more_arrow">@drawable/qmui_icon_pull_down</item>
+        <item name="qmui_pull_load_more_pull_text">上拉加载更多</item>
+        <item name="qmui_pull_load_more_release_text">松手加载更多</item>
+        <item name="qmui_skin_support_pull_load_more_bg_color">?attr/qmui_skin_support_pull_load_more_bg_color</item>
+        <item name="qmui_skin_support_pull_load_more_loading_tint_color">?attr/qmui_skin_support_pull_load_more_loading_tint_color</item>
+        <item name="qmui_skin_support_pull_load_more_arrow_tint_color">?attr/qmui_skin_support_pull_load_more_arrow_tint_color</item>
+        <item name="qmui_skin_support_pull_load_more_text_color">?attr/qmui_skin_support_pull_load_more_text_color</item>
+    </style>
+
     <!-- QMUIRadiusImageView -->
     <style name="QMUI.RadiusImageView">
         <item name="qmui_border_width">1px</item>

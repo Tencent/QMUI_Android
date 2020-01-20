@@ -31,11 +31,13 @@ import com.qmuiteam.qmuidemo.fragment.components.QDPriorityLinearLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
+import com.qmuiteam.qmuidemo.fragment.components.QDRecyclerViewDraggableScrollBarFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSliderFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSpanTouchFixTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTipDialogFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDVerticalTextViewFragment;
+import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullFragment;
 import com.qmuiteam.qmuidemo.fragment.components.qqface.QDQQFaceFragment;
 import com.qmuiteam.qmuidemo.fragment.components.section.QDSectionLayoutFragment;
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDViewPagerFragment;
@@ -113,6 +115,8 @@ public class QDDataManager {
         mComponentsNames.add(QDSectionLayoutFragment.class);
         mComponentsNames.add(QDContinuousNestedScrollFragment.class);
         mComponentsNames.add(QDSliderFragment.class);
+        mComponentsNames.add(QDPullFragment.class);
+        mComponentsNames.add(QDRecyclerViewDraggableScrollBarFragment.class);
     }
 
     /**

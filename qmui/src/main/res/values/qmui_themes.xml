@@ -125,6 +125,16 @@
         <item name="qmui_loading_size">20dp</item>
 
 
+        <!--********************* qmui pull load more view   ************************ -->
+
+        <!-- skin support-->
+        <item name="qmui_skin_support_pull_load_more_bg_color">@color/qmui_config_color_transparent</item>
+        <item name="qmui_skin_support_pull_load_more_loading_tint_color">?attr/qmui_skin_support_loading_color</item>
+        <item name="qmui_skin_support_pull_load_more_arrow_tint_color">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_skin_support_pull_load_more_text_color">@color/qmui_config_color_gray_3</item>
+        <!-- skin support-->
+
+
         <!--************************ qmui empty view   *************************** -->
 
         <!-- skin support-->
@@ -410,6 +420,8 @@
         <item name="QMUIQQFaceStyle">@style/QMUI.QQFaceView</item>
         <item name="QMUISliderStyle">@style/QMUI.Slider</item>
         <item name="QMUISliderThumbStyle">@style/QMUI.SliderThumb</item>
+        <item name="QMUIPullLayoutStyle">@style/QMUI.PullLayout</item>
+        <item name="QMUIPullLoadMoreStyle">@style/QMUI.PullLoadMore</item>
     </style>
 
     <style name="QMUI.Compat" parent="QMUI" />

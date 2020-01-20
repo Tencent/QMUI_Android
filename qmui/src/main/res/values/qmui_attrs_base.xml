@@ -120,7 +120,15 @@
     ***********************************************-->
     <attr name="qmui_loading_size" format="dimension" />
     <attr name="qmui_skin_support_loading_color" format="color" />
-    
+
+
+    <!--**********************************************
+    *               qmui load more view              *
+    ***********************************************-->
+    <attr name="qmui_skin_support_pull_load_more_bg_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_loading_tint_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_arrow_tint_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_text_color" format="color"/>
 
     <!--**********************************************
     *                  qmui tabSegment              *

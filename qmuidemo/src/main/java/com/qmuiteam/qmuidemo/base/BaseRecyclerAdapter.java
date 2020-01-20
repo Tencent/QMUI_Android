@@ -17,6 +17,8 @@
 package com.qmuiteam.qmuidemo.base;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +91,16 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public void add(int pos, T item) {
         mData.add(pos, item);
         notifyItemInserted(pos);
+    }
+
+    public void prepend(@NonNull List<T> items){
+        mData.addAll(0, items);
+        notifyDataSetChanged();
+    }
+
+    public void append(@NonNull List<T> items){
+        mData.addAll(items);
+        notifyDataSetChanged();
     }
 
     public void delete(int pos) {

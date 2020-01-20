@@ -387,6 +387,71 @@
     </declare-styleable>
     <!-- QMUICollapsingTopBarLayout end -->
 
+    <!-- QMUISlider start -->
+    <declare-styleable name="QMUISlider">
+        <attr name="qmui_slider_bar_height" format="dimension"/>
+        <attr name="qmui_slider_bar_normal_color" format="color"/>
+        <attr name="qmui_slider_bar_progress_color" format="color"/>
+        <attr name="qmui_slider_bar_tick_count" format="integer"/>
+        <attr name="qmui_slider_bar_thumb_size_size" format="dimension"/>
+        <attr name="qmui_slider_bar_thumb_style_attr" format="string"/>
+        <attr name="qmui_slider_bar_use_clip_children_by_developer" format="boolean"/>
+        <attr name="qmui_slider_bar_padding_hor_for_thumb_shadow" format="dimension"/>
+        <attr name="qmui_slider_bar_padding_ver_for_thumb_shadow" format="dimension"/>
+    </declare-styleable>
+    <attr name="QMUISliderStyle" format="reference"/>
+    <attr name="QMUISliderThumbStyle" format="reference"/>
+    <!-- QMUISlider end -->
+
+    <!-- QMUIPullLayout start -->
+    <declare-styleable name="QMUIPullLayout">
+        <attr name="qmui_pull_enable_edge">
+            <flag name="left" value="0x1"/>
+            <flag name="top" value="0x2"/>
+            <flag name="right" value="0x4"/>
+            <flag name="bottom" value="0x8"/>
+        </attr>
+    </declare-styleable>
+    <attr name="QMUIPullLayoutStyle" format="reference"/>
+
+    <declare-styleable name="QMUIPullLayout_Layout">
+        <attr name="qmui_is_target" format="boolean"/>
+        <attr name="qmui_pull_edge" format="enum">
+            <enum name="left" value="0x1"/>
+            <enum name="top" value="0x2"/>
+            <enum name="right" value="0x4"/>
+            <enum name="bottom" value="0x8"/>
+        </attr>
+        <attr name="qmui_action_view_init_offset" format="dimension"/>
+        <attr name="qmui_target_view_trigger_offset" format="dimension|enum">
+            <enum name="wrap" value="-2" />
+        </attr>
+        <attr name="qmui_can_over_pull" format="boolean"/>
+        <attr name="qmui_pull_rate" format="float"/>
+        <attr name="qmui_received_fling_fraction" format="float"/>
+        <attr name="qmui_need_receive_fling_from_target_view" format="boolean"/>
+        <attr name="qmui_scroll_speed_per_pixel" format="integer"/>
+        <attr name="qmui_trigger_until_scroll_to_trigger_offset" format="boolean"/>
+        <attr name="qmui_scroll_to_trigger_offset_after_touch_up" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIPullLoadMoreView">
+        <attr name="qmui_pull_load_more_loading_size" format="dimension"/>
+        <attr name="qmui_pull_load_more_text_size" format="dimension"/>
+        <attr name="qmui_pull_load_more_arrow_text_gap" format="dimension"/>
+        <attr name="qmui_pull_load_more_height" format="dimension"/>
+        <attr name="qmui_pull_load_more_arrow" format="reference"/>
+        <attr name="qmui_pull_load_more_pull_text" format="string"/>
+        <attr name="qmui_pull_load_more_release_text" format="string"/>
+        <attr name="qmui_skin_support_pull_load_more_bg_color"/>
+        <attr name="qmui_skin_support_pull_load_more_loading_tint_color"/>
+        <attr name="qmui_skin_support_pull_load_more_arrow_tint_color"/>
+        <attr name="qmui_skin_support_pull_load_more_text_color"/>
+    </declare-styleable>
+    <attr name="QMUIPullLoadMoreStyle" format="reference"/>
+
+    <!-- QMUIPullLayout end -->
+
     <declare-styleable name="QMUIPriorityLinearLayout_Layout">
         <attr name="qmui_layout_priority" format="enum">
             <enum name="disposable" value="1"/>
@@ -408,18 +473,4 @@
         <attr name="android:shadowDx"/>
         <attr name="android:shadowRadius"/>
     </declare-styleable>
-
-    <declare-styleable name="QMUISlider">
-        <attr name="qmui_slider_bar_height" format="dimension"/>
-        <attr name="qmui_slider_bar_normal_color" format="color"/>
-        <attr name="qmui_slider_bar_progress_color" format="color"/>
-        <attr name="qmui_slider_bar_tick_count" format="integer"/>
-        <attr name="qmui_slider_bar_thumb_size_size" format="dimension"/>
-        <attr name="qmui_slider_bar_thumb_style_attr" format="string"/>
-        <attr name="qmui_slider_bar_use_clip_children_by_developer" format="boolean"/>
-        <attr name="qmui_slider_bar_padding_hor_for_thumb_shadow" format="dimension"/>
-        <attr name="qmui_slider_bar_padding_ver_for_thumb_shadow" format="dimension"/>
-    </declare-styleable>
-    <attr name="QMUISliderStyle" format="reference"/>
-    <attr name="QMUISliderThumbStyle" format="reference"/>
 </resources>

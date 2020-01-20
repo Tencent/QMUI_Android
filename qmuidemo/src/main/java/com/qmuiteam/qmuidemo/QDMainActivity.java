@@ -20,9 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,18 +30,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
-import com.qmuiteam.qmui.layout.QMUIButton;
-import com.qmuiteam.qmui.layout.QMUIFrameLayout;
-import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
@@ -61,6 +54,9 @@ import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFixModeFragment;
+import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullHorizontalTestFragment;
+import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullRefreshAndLoadMoreTestFragment;
+import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullVerticalTestFragment;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
@@ -74,10 +70,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.LayoutInflaterCompat;
-import androidx.customview.widget.ViewDragHelper;
 import androidx.fragment.app.Fragment;
 
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
@@ -92,6 +84,9 @@ import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
                 QDWebExplorerFragment.class,
                 QDContinuousNestedScroll1Fragment.class,
                 QDTabSegmentFixModeFragment.class,
+                QDPullVerticalTestFragment.class,
+                QDPullHorizontalTestFragment.class,
+                QDPullRefreshAndLoadMoreTestFragment.class,
                 QDPopupFragment.class
         })
 @DefaultFirstFragment(HomeFragment.class)
