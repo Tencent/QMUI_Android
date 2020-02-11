@@ -23,36 +23,44 @@ import android.view.Window;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialog;
 
 public class QMUIBaseDialog extends AppCompatDialog {
     boolean cancelable = true;
     private boolean canceledOnTouchOutside = true;
     private boolean canceledOnTouchOutsideSet;
-    private boolean mFollowSkin = false;
+    private QMUISkinManager mSkinManager = null;
 
     public QMUIBaseDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
-
-    public void setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
+    public void setSkinManager(@Nullable QMUISkinManager skinManager) {
+        if(mSkinManager != null){
+            mSkinManager.unRegister(this);
+        }
+        mSkinManager = skinManager;
+        if(isShowing() && skinManager != null){
+            mSkinManager.register(this);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (mFollowSkin) {
-            QMUISkinManager.defaultInstance(getContext()).register(this);
+        if (mSkinManager != null) {
+            mSkinManager.register(this);
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        QMUISkinManager.defaultInstance(getContext()).unRegister(this);
+        if (mSkinManager != null) {
+            mSkinManager.unRegister(this);
+        }
     }
 
     @Override

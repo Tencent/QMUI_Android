@@ -31,7 +31,7 @@ allprojects {
         targetSdkVersion = 29
         compileSdkVersion = 29
         appcompatVersion= '1.1.0'
-        materialVersion='1.2.0-alpha02'
+        materialVersion='1.2.0-alpha04'
         annotationVersion='1.1.0-beta01'
         butterknifeVersion = '10.1.0'
         constraintLayoutVersion = "1.1.3"

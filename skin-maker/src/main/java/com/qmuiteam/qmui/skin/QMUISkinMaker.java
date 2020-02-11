@@ -556,7 +556,6 @@ public class QMUISkinMaker {
                         valueUpdater.update(viewInfo.valueBuilder, attrName);
                         QMUISkinHelper.setSkinValue(viewInfo.view, viewInfo.valueBuilder);
                         viewInfo.saveToMMKV();
-                        QMUISkinManager.defaultInstance(viewInfo.view.getContext()).refreshTheme(viewInfo.view);
                     }
                 });
             }
@@ -682,7 +681,6 @@ public class QMUISkinMaker {
                 QMUISkinHelper.setSkinValue(view, value);
                 viewInfo.valueBuilder.convertFrom(value);
             }
-            QMUISkinManager.defaultInstance(view.getContext()).refreshTheme(view);
         }
     }
 

@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
@@ -41,6 +42,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 /**
@@ -107,10 +109,11 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         private CharSequence mTipWord;
 
-        private boolean mFollowSkin = true;
+        private QMUISkinManager mSkinManager;
 
         public Builder(Context context) {
             mContext = context;
+            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
         /**
@@ -131,8 +134,8 @@ public class QMUITipDialog extends QMUIBaseDialog {
             return this;
         }
 
-        public Builder setFollowSkin(boolean followSkin) {
-            mFollowSkin = followSkin;
+        public Builder setSkinManager(@Nullable QMUISkinManager skinManager) {
+            mSkinManager = skinManager;
             return this;
         }
 
@@ -153,7 +156,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
         public QMUITipDialog create(boolean cancelable, int style) {
             QMUITipDialog dialog = new QMUITipDialog(mContext, style);
             dialog.setCancelable(cancelable);
-            dialog.setFollowSkin(mFollowSkin);
+            dialog.setSkinManager(mSkinManager);
             Context dialogContext = dialog.getContext();
             QMUITipDialogView dialogView = new QMUITipDialogView(dialogContext);
 
@@ -242,14 +245,15 @@ public class QMUITipDialog extends QMUIBaseDialog {
     public static class CustomBuilder {
         private Context mContext;
         private int mContentLayoutId;
-        private boolean mFollowSkin = true;
+        private QMUISkinManager mSkinManager;
 
         public CustomBuilder(Context context) {
             mContext = context;
+            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
-        public CustomBuilder setFollowSkin(boolean followSkin) {
-            mFollowSkin = followSkin;
+        public CustomBuilder setSkinManager(@Nullable QMUISkinManager skinManager) {
+            mSkinManager = skinManager;
             return this;
         }
 
@@ -260,7 +264,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         public QMUITipDialog create() {
             QMUITipDialog dialog = new QMUITipDialog(mContext);
-            dialog.setFollowSkin(mFollowSkin);
+            dialog.setSkinManager(mSkinManager);
             Context dialogContext = dialog.getContext();
             QMUITipDialogView tipDialogView = new QMUITipDialogView(dialogContext);
             LayoutInflater.from(dialogContext).inflate(mContentLayoutId, tipDialogView, true);

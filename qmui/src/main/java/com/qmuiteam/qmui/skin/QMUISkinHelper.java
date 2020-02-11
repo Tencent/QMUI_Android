@@ -16,60 +16,45 @@
 
 package com.qmuiteam.qmui.skin;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
 import android.view.View;
-
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
-import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
-import com.qmuiteam.qmui.util.QMUILangHelper;
-import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+
 public class QMUISkinHelper {
 
     public static QMUISkinValueBuilder sSkinValueBuilder = QMUISkinValueBuilder.acquire();
 
-    public static int getSkinColor(@NonNull View view, int colorAttr) {
-        Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
+    public static Resources.Theme getSkinTheme(@NonNull View view) {
+        QMUISkinManager.ViewSkinCurrent current = QMUISkinManager.getViewSkinCurrent(view);
         Resources.Theme theme;
-        if (skin == null || skin <= 0) {
+        if (current == null || current.index < 0) {
             theme = view.getContext().getTheme();
         } else {
-            theme = QMUISkinManager.defaultInstance(view.getContext()).getTheme(skin);
+            theme = QMUISkinManager.of(current.managerName, view.getContext()).getTheme(current.index);
         }
-        return QMUIResHelper.getAttrColor(theme, colorAttr);
+        return theme;
+    }
+
+    public static int getSkinColor(@NonNull View view, int colorAttr) {
+        return QMUIResHelper.getAttrColor(getSkinTheme(view), colorAttr);
     }
 
     public static ColorStateList getSkinColorStateList(@NonNull View view, int colorAttr) {
-        Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        Resources.Theme theme;
-        if (skin == null || skin <= 0) {
-            theme = view.getContext().getTheme();
-        } else {
-            theme = QMUISkinManager.defaultInstance(view.getContext()).getTheme(skin);
-        }
-        return QMUIResHelper.getAttrColorStateList(view.getContext(), theme, colorAttr);
+        return QMUIResHelper.getAttrColorStateList(view.getContext(), getSkinTheme(view), colorAttr);
     }
 
     @Nullable
     public static Drawable getSkinDrawable(@NonNull View view, int drawableAttr) {
-        Integer skin = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        Resources.Theme theme;
-        if (skin == null || skin <= 0) {
-            theme = view.getContext().getTheme();
-        } else {
-            theme = QMUISkinManager.defaultInstance(view.getContext()).getTheme(skin);
-        }
-        return QMUIResHelper.getAttrDrawable(view.getContext(), theme, drawableAttr);
+        return QMUIResHelper.getAttrDrawable(view.getContext(), getSkinTheme(view), drawableAttr);
     }
 
 
@@ -79,6 +64,10 @@ public class QMUISkinHelper {
 
     public static void setSkinValue(@NonNull View view, String value) {
         view.setTag(R.id.qmui_skin_value, value);
+        QMUISkinManager.ViewSkinCurrent skinCurrent = QMUISkinManager.getViewSkinCurrent(view);
+        if (skinCurrent != null) {
+            QMUISkinManager.of(skinCurrent.managerName, view.getContext()).refreshTheme(view, skinCurrent.index);
+        }
     }
 
     @MainThread
@@ -89,7 +78,7 @@ public class QMUISkinHelper {
     }
 
     public static void setSkinDefaultProvider(@NonNull View view,
-                                              IQMUISkinDefaultAttrProvider provider){
+                                              IQMUISkinDefaultAttrProvider provider) {
         view.setTag(R.id.qmui_skin_default_attr_provider, provider);
     }
 }

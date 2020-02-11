@@ -490,12 +490,10 @@ public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
                 }
                 mIconView.setVisibility(View.VISIBLE);
                 QMUISkinHelper.setSkinValue(mIconView, builder);
-                QMUISkinManager.defaultInstance(getContext()).refreshTheme(mIconView);
             } else if (action.iconAttr != 0) {
                 builder.src(action.iconAttr);
                 mIconView.setVisibility(View.VISIBLE);
                 QMUISkinHelper.setSkinValue(mIconView, builder);
-                QMUISkinManager.defaultInstance(getContext()).refreshTheme(mIconView);
             } else {
                 mIconView.setVisibility(View.GONE);
             }
@@ -504,7 +502,6 @@ public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
             builder.clear();
             builder.textColor(action.textColorAttr);
             QMUISkinHelper.setSkinValue(mTextView, builder);
-            QMUISkinManager.defaultInstance(getContext()).refreshTheme(mTextView);
             builder.release();
         }
     }

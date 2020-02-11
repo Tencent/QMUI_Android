@@ -39,6 +39,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Placeholder;
@@ -75,6 +76,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * 自定义右侧显示的 View
      */
     public final static int ACCESSORY_TYPE_CUSTOM = 3;
+
+    private final static int TIP_SHOW_NOTHING = 0;
+    private final static int TIP_SHOW_RED_POINT = 1;
+    private final static int TIP_SHOW_NEW = 2;
 
     /**
      * detailText 在 title 文字的下方
@@ -136,6 +141,9 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     private ImageView mNewTipView;
     private Placeholder mAfterTitleHolder;
     private Placeholder mBeforeAccessoryHolder;
+    private boolean mDisableSwitchSelf = false;
+
+    private int mTipShown = TIP_SHOW_NOTHING;
 
     public QMUICommonListItemView(Context context) {
         this(context, null);
@@ -204,6 +212,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
                 mBeforeAccessoryHolder.setContentId(mRedDot.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
+            mNewTipView.setVisibility(View.GONE);
         } else if (mNewTipView.getVisibility() == View.VISIBLE) {
             if (mTipPosition == TIP_POSITION_LEFT) {
                 mAfterTitleHolder.setContentId(mNewTipView.getId());
@@ -212,6 +221,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
                 mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
+            mRedDot.setVisibility(View.GONE);
         }
         checkDetailLeftMargin();
     }
@@ -235,20 +245,13 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * @param isShow 是否显示小红点
      */
     public void showRedDot(boolean isShow) {
-        mRedDot.setVisibility(isShow ? VISIBLE : GONE);
-        if (mTipPosition == TIP_POSITION_LEFT) {
-            mAfterTitleHolder.setContentId(mRedDot.getId());
-            mBeforeAccessoryHolder.setContentId(View.NO_ID);
-        } else {
-            mBeforeAccessoryHolder.setContentId(mRedDot.getId());
-            mAfterTitleHolder.setContentId(View.NO_ID);
+        if(isShow){
+            mTipShown = TIP_SHOW_RED_POINT;
+        }else if(mTipShown == TIP_SHOW_RED_POINT){
+            mTipShown = TIP_SHOW_NOTHING;
         }
-        if (isShow) {
-            mNewTipView.setVisibility(View.GONE);
-            checkDetailLeftMargin();
-        }
+        updateTipShown();
     }
-
 
     /**
      * 切换是否显示更新提示
@@ -256,9 +259,24 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * @param isShow 是否显示更新提示
      */
     public void showNewTip(boolean isShow) {
-        if (isShow) {
-            mNewTipView.setVisibility(View.VISIBLE);
-            mRedDot.setVisibility(GONE);
+        if(isShow){
+            mTipShown = TIP_SHOW_NEW;
+        }else if(mTipShown == TIP_SHOW_NEW){
+            mTipShown = TIP_SHOW_NOTHING;
+        }
+        updateTipShown();
+    }
+
+    private void updateTipShown(){
+        if(mTipShown == TIP_SHOW_RED_POINT){
+            if (mTipPosition == TIP_POSITION_LEFT) {
+                mAfterTitleHolder.setContentId(mRedDot.getId());
+                mBeforeAccessoryHolder.setContentId(View.NO_ID);
+            } else {
+                mBeforeAccessoryHolder.setContentId(mRedDot.getId());
+                mAfterTitleHolder.setContentId(View.NO_ID);
+            }
+        }else if(mTipShown == TIP_SHOW_NEW){
             if (mTipPosition == TIP_POSITION_LEFT) {
                 mAfterTitleHolder.setContentId(mNewTipView.getId());
                 mBeforeAccessoryHolder.setContentId(View.NO_ID);
@@ -266,9 +284,12 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
                 mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
                 mAfterTitleHolder.setContentId(View.NO_ID);
             }
-        } else {
-            mNewTipView.setVisibility(View.GONE);
+        }else{
+            mAfterTitleHolder.setContentId(View.NO_ID);
+            mBeforeAccessoryHolder.setContentId(View.NO_ID);
         }
+        mNewTipView.setVisibility(mTipShown == TIP_SHOW_NEW ? View.VISIBLE : View.GONE);
+        mRedDot.setVisibility(mTipShown == TIP_SHOW_RED_POINT ? View.VISIBLE : View.GONE);
         checkDetailLeftMargin();
     }
 
@@ -380,12 +401,14 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
             // switch开关
             case ACCESSORY_TYPE_SWITCH: {
                 if (mSwitch == null) {
-                    mSwitch = new CheckBox(getContext());
+                    mSwitch = new AppCompatCheckBox(getContext());
+                    mSwitch.setBackground(null);
                     mSwitch.setButtonDrawable(QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_common_list_item_switch));
                     mSwitch.setLayoutParams(getAccessoryLayoutParams());
-                    // disable掉且不可点击，然后通过整个item的点击事件来toggle开关的状态
-                    mSwitch.setClickable(false);
-                    mSwitch.setEnabled(false);
+                    if(mDisableSwitchSelf){
+                        mSwitch.setClickable(false);
+                        mSwitch.setEnabled(false);
+                    }
                 }
                 mAccessoryView.addView(mSwitch);
                 mAccessoryView.setVisibility(VISIBLE);
@@ -450,6 +473,14 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     public void addAccessoryCustomView(View view) {
         if (mAccessoryType == ACCESSORY_TYPE_CUSTOM) {
             mAccessoryView.addView(view);
+        }
+    }
+
+    public void setDisableSwitchSelf(boolean disableSwitchSelf) {
+        mDisableSwitchSelf = disableSwitchSelf;
+        if(mSwitch != null){
+            mSwitch.setClickable(!disableSwitchSelf);
+            mSwitch.setEnabled(!disableSwitchSelf);
         }
     }
 
