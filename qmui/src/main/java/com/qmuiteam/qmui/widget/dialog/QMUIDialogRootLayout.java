@@ -18,16 +18,17 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIWindowHelper;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class QMUIDialogRootLayout extends ViewGroup {
 
@@ -39,6 +40,9 @@ public class QMUIDialogRootLayout extends ViewGroup {
     private int mInsetVer;
     private boolean mCheckKeyboardOverlay = false;
     private float mMaxPercent = 0.75f;
+    private boolean isOverlayOccurEventNotified = false;
+    private OverlayOccurInMeasureCallback mOverlayOccurInMeasureCallback;
+    private int mLastContentInsetTop = 0;
 
 
     public QMUIDialogRootLayout(@NonNull Context context, @NonNull QMUIDialogView dialogView,
@@ -73,6 +77,10 @@ public class QMUIDialogRootLayout extends ViewGroup {
         mInsetVer = insetVer;
     }
 
+    public void setOverlayOccurInMeasureCallback(OverlayOccurInMeasureCallback overlayOccurInMeasureCallback) {
+        mOverlayOccurInMeasureCallback = overlayOccurInMeasureCallback;
+    }
+
     public void setCheckKeyboardOverlay(boolean checkKeyboardOverlay) {
         mCheckKeyboardOverlay = checkKeyboardOverlay;
     }
@@ -84,10 +92,16 @@ public class QMUIDialogRootLayout extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int keyboardOverlayHeight = 0;
+        int contentInsetVer = 0;
         if (mCheckKeyboardOverlay) {
             Rect visibleInsetRect = QMUIWindowHelper.unSafeGetWindowVisibleInsets(this);
+            Rect contentInsetRect = QMUIWindowHelper.unSafeGetContentInsets(this);
             if (visibleInsetRect != null) {
                 keyboardOverlayHeight = visibleInsetRect.bottom;
+            }
+            if (contentInsetRect != null) {
+                mLastContentInsetTop = contentInsetRect.top;
+                contentInsetVer = contentInsetRect.top + contentInsetRect.bottom;
             }
         }
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -111,13 +125,24 @@ public class QMUIDialogRootLayout extends ViewGroup {
             childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(mDialogViewLp.height, MeasureSpec.EXACTLY);
         } else {
             int childMaxHeight;
-            if(keyboardOverlayHeight > 0){
-                childMaxHeight = Math.max(heightSize - 2 * mInsetVer - keyboardOverlayHeight, 0);
-            }else{
+            if (keyboardOverlayHeight > 0) {
+                if (getRootView() != null && getRootView().getHeight() > 0) {
+                    // the overlay occurred with this height, we can't change it.
+                    heightSize = getRootView().getHeight();
+                    if (!isOverlayOccurEventNotified) {
+                        isOverlayOccurEventNotified = true;
+                        if (mOverlayOccurInMeasureCallback != null) {
+                            mOverlayOccurInMeasureCallback.call();
+                        }
+                    }
+                }
+                childMaxHeight = Math.max(heightSize - 2 * mInsetVer - keyboardOverlayHeight - contentInsetVer, 0);
+            } else {
                 // use maxPercent to keep dialog from being too high and calculated based on
                 // screen height because height size while change to actual height when multi onMeasure.
-                childMaxHeight = Math.min(heightSize - 2 * mInsetVer,
-                        (int)(QMUIDisplayHelper.getScreenHeight(getContext()) * mMaxPercent - 2 * mInsetVer));
+                isOverlayOccurEventNotified = false;
+                childMaxHeight = Math.min(heightSize - 2 * mInsetVer - contentInsetVer,
+                        (int) (QMUIDisplayHelper.getScreenHeight(getContext()) * mMaxPercent - 2 * mInsetVer));
             }
             if (mDialogViewLp.height == LayoutParams.MATCH_PARENT) {
                 childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childMaxHeight, MeasureSpec.EXACTLY);
@@ -132,7 +157,7 @@ public class QMUIDialogRootLayout extends ViewGroup {
         }
         // InsetVer works when keyboard overlay occurs
         setMeasuredDimension(mDialogView.getMeasuredWidth(),
-                mDialogView.getMeasuredHeight() + 2 * mInsetVer + keyboardOverlayHeight);
+                mDialogView.getMeasuredHeight() + 2 * mInsetVer + keyboardOverlayHeight + contentInsetVer);
     }
 
     @Override
@@ -146,5 +171,21 @@ public class QMUIDialogRootLayout extends ViewGroup {
 
     public QMUIDialogView getDialogView() {
         return mDialogView;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // I think this is a android system bug:
+        // When show keyboard In fullscreen and the content overlaps with keyboard,
+        // then the mAttachInfo.mContentInset.top equals notch's height
+        // but the event's y and draw position has different behavior if notch exist.
+        if (mLastContentInsetTop > 0) {
+            ev.offsetLocation(0, -mLastContentInsetTop);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    interface OverlayOccurInMeasureCallback {
+        void call();
     }
 }

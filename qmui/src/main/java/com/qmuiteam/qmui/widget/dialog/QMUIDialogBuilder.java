@@ -30,6 +30,7 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -92,9 +93,6 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     protected List<QMUIDialogAction> mActions = new ArrayList<>();
     private QMUIDialogView.OnDecorationListener mOnDecorationListener;
 
-
-    private int mContentAreaMaxHeight = -1;
-
     @Orientation private int mActionContainerOrientation = HORIZONTAL;
     private boolean mChangeAlphaForPressOrDisable = true;
     private int mActionDividerThickness = 0;
@@ -102,33 +100,16 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     private int mActionDividerInsetStart = 0;
     private int mActionDividerInsetEnd = 0;
     private boolean mCheckKeyboardOverlay = false;
-    private boolean mFollowSkin = true;
+    private QMUISkinManager mSkinManager;
     private float mMaxPercent = 0.75f;
 
     public QMUIDialogBuilder(Context context) {
         this.mContext = context;
-    }
-
-    protected int getContentAreaMaxHeight() {
-        if (mContentAreaMaxHeight == -1) {
-            // 屏幕高度的0.85 - 预估的 title 和 action 高度
-            return (int) (QMUIDisplayHelper.getScreenHeight(mContext) * 0.85) - QMUIDisplayHelper.dp2px(mContext, 100);
-        }
-        return mContentAreaMaxHeight;
+        mSkinManager = QMUISkinManager.defaultInstance(context);
     }
 
     public Context getBaseContext() {
         return mContext;
-    }
-
-    /**
-     * 设置内容区域最高的高度
-     *
-     * @param contentAreaMaxHeight
-     */
-    public T setContentAreaMaxHeight(int contentAreaMaxHeight) {
-        mContentAreaMaxHeight = contentAreaMaxHeight;
-        return (T) this;
     }
 
     /**
@@ -195,8 +176,8 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     }
 
     @SuppressWarnings("unchecked")
-    public T setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
+    public T setSkinManager(@Nullable QMUISkinManager skinManager) {
+        mSkinManager = skinManager;
         return (T) this;
     }
 
@@ -344,6 +325,12 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         mDialogView = onCreateDialogView(dialogContext);
         mRootView = new QMUIDialogRootLayout(dialogContext, mDialogView, onCreateDialogLayoutParams());
         mRootView.setCheckKeyboardOverlay(mCheckKeyboardOverlay);
+        mRootView.setOverlayOccurInMeasureCallback(new QMUIDialogRootLayout.OverlayOccurInMeasureCallback() {
+            @Override
+            public void call() {
+                onOverlayOccurredInMeasure();
+            }
+        });
         mRootView.setMaxPercent(mMaxPercent);
         configRootLayout(mRootView);
         mDialogView = mRootView.getDialogView();
@@ -401,12 +388,16 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mDialog.setCancelable(mCancelable);
         mDialog.setCanceledOnTouchOutside(mCanceledOnTouchOutside);
-        mDialog.setFollowSkin(mFollowSkin);
+        mDialog.setSkinManager(mSkinManager);
         onAfterCreate(mDialog, mRootView, dialogContext);
         return mDialog;
     }
 
-    protected void onAfterCreate(QMUIDialog dialog, QMUIDialogRootLayout rootLayout, Context context){
+    protected void onAfterCreate(@NonNull QMUIDialog dialog, @NonNull QMUIDialogRootLayout rootLayout, @NonNull Context context){
+
+    }
+
+    protected void onOverlayOccurredInMeasure(){
 
     }
 
@@ -416,12 +407,12 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         }
     }
 
-    protected void configRootLayout(QMUIDialogRootLayout rootLayout){
+    protected void configRootLayout(@NonNull QMUIDialogRootLayout rootLayout){
 
     }
 
     @NonNull
-    protected QMUIDialogView onCreateDialogView(Context context){
+    protected QMUIDialogView onCreateDialogView(@NonNull Context context){
         QMUIDialogView dialogView = new QMUIDialogView(context);
         dialogView.setBackground(QMUIResHelper.getAttrDrawable(context, R.attr.qmui_skin_support_dialog_bg));
         dialogView.setRadius(QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_radius));
@@ -439,7 +430,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     }
 
     @Nullable
-    protected View onCreateTitle(QMUIDialog dialog, QMUIDialogView parent, Context context) {
+    protected View onCreateTitle(@NonNull QMUIDialog dialog, @NonNull QMUIDialogView parent, @NonNull Context context) {
         if (hasTitle()) {
             TextView tv = new QMUISpanTouchFixTextView(context);
             tv.setId(R.id.qmui_dialog_title_id);
@@ -456,7 +447,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     }
 
     @NonNull
-    protected ConstraintLayout.LayoutParams onCreateTitleLayoutParams(Context context) {
+    protected ConstraintLayout.LayoutParams onCreateTitleLayoutParams(@NonNull Context context) {
         ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
         lp.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -467,7 +458,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
 
     @Nullable
-    protected abstract View onCreateContent(QMUIDialog dialog, QMUIDialogView parent, Context context);
+    protected abstract View onCreateContent(@NonNull QMUIDialog dialog, @NonNull QMUIDialogView parent, @NonNull Context context);
 
 
     protected QMUIWrapContentScrollView wrapWithScroll(@NonNull View view){
@@ -477,7 +468,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         return scrollView;
     }
 
-    protected ConstraintLayout.LayoutParams onCreateContentLayoutParams(Context context) {
+    protected ConstraintLayout.LayoutParams onCreateContentLayoutParams(@NonNull Context context) {
         ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
         lp.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -487,7 +478,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
 
     @Nullable
-    protected View onCreateOperatorLayout(final QMUIDialog dialog, QMUIDialogView parent, Context context) {
+    protected View onCreateOperatorLayout(@NonNull final QMUIDialog dialog, @NonNull QMUIDialogView parent, @NonNull Context context) {
         int size = mActions.size();
         if (size > 0) {
             TypedArray a = context.obtainStyledAttributes(null, R.styleable.QMUIDialogActionContainerCustomDef, R.attr.qmui_dialog_action_container_style, 0);
@@ -593,7 +584,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     }
 
     @NonNull
-    protected ConstraintLayout.LayoutParams onCreateOperatorLayoutLayoutParams(Context context) {
+    protected ConstraintLayout.LayoutParams onCreateOperatorLayoutLayoutParams(@NonNull Context context) {
         ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
         lp.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;

@@ -36,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -143,7 +145,7 @@ public class QMUIDialog extends QMUIBaseDialog {
 
         @Nullable
         @Override
-        protected View onCreateContent(QMUIDialog dialog, QMUIDialogView parent, Context context) {
+        protected View onCreateContent(@NonNull QMUIDialog dialog, @NonNull QMUIDialogView parent, @NonNull Context context) {
             if (mMessage != null && mMessage.length() != 0) {
                 QMUISpanTouchFixTextView tv = new QMUISpanTouchFixTextView(context);
                 assignMessageTvWithAttr(tv, hasTitle(), R.attr.qmui_dialog_message_content_style);
@@ -156,7 +158,7 @@ public class QMUIDialog extends QMUIBaseDialog {
 
         @Nullable
         @Override
-        protected View onCreateTitle(QMUIDialog dialog, QMUIDialogView parent, Context context) {
+        protected View onCreateTitle(@NonNull QMUIDialog dialog, @NonNull QMUIDialogView parent, @NonNull Context context) {
             View tv = super.onCreateTitle(dialog, parent, context);
             if (tv != null && (mMessage == null || mMessage.length() == 0)) {
                 TypedArray a = context.obtainStyledAttributes(null,
@@ -843,6 +845,8 @@ public class QMUIDialog extends QMUIBaseDialog {
      */
     public static abstract class AutoResizeDialogBuilder extends QMUIDialogBuilder {
 
+        protected ScrollView mScrollView;
+
         public AutoResizeDialogBuilder(Context context) {
             super(context);
             setCheckKeyboardOverlay(true);
@@ -851,7 +855,8 @@ public class QMUIDialog extends QMUIBaseDialog {
         @Nullable
         @Override
         protected View onCreateContent(QMUIDialog dialog, QMUIDialogView parent, Context context) {
-            return wrapWithScroll(onBuildContent(dialog));
+            mScrollView = wrapWithScroll(onBuildContent(dialog));
+            return mScrollView;
         }
 
         public abstract View onBuildContent(QMUIDialog dialog);

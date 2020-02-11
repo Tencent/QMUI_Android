@@ -103,12 +103,7 @@ public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBui
                 a.recycle();
             }
             contentTv.setText(mContent);
-
-
-            QMUIWrapContentScrollView scrollView = new QMUIWrapContentScrollView(context);
-            scrollView.setMaxHeight(getContentAreaMaxHeight());
-            scrollView.addView(contentTv);
-            return scrollView;
+            return wrapWithScroll(contentTv);
         }
         return null;
     }

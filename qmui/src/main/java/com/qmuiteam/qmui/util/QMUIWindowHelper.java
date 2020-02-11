@@ -74,4 +74,27 @@ public class QMUIWindowHelper {
         }
         return null;
     }
+
+    @Nullable
+    @SuppressWarnings({"JavaReflectionMemberAccess"})
+    public static Rect unSafeGetContentInsets(View view) {
+        try {
+            // Android P forbid the reflection for @hide filed,
+            // fortunately now it is in light greylist, just be warned.
+            Field field = View.class.getDeclaredField("mAttachInfo");
+            field.setAccessible(true);
+            Object attachInfo = field.get(view);
+            Field visibleInsetsField = attachInfo.getClass().getDeclaredField("mContentInsets");
+            visibleInsetsField.setAccessible(true);
+            Object visibleInsets = visibleInsetsField.get(attachInfo);
+            if (visibleInsets instanceof Rect) {
+                return (Rect) visibleInsets;
+            }
+        } catch (Throwable e) {
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }
