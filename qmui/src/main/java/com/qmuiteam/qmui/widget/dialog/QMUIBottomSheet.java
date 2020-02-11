@@ -403,9 +403,9 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
 
         @Nullable
         @Override
-        protected View onCreateContentView(final QMUIBottomSheet bottomSheet,
-                                           QMUIBottomSheetRootLayout rootLayout,
-                                           Context context) {
+        protected View onCreateContentView(@NonNull final QMUIBottomSheet bottomSheet,
+                                           @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                           @NonNull Context context) {
             RecyclerView recyclerView = new RecyclerView(context);
             QMUIBottomSheetListAdapter adapter = new QMUIBottomSheetListAdapter(
                     mNeedRightMark, mGravityCenter);
@@ -480,10 +480,9 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
         public static class DefaultItemViewFactory implements ItemViewFactory {
 
             @Override
-            public QMUIBottomSheetGridItemView create(QMUIBottomSheet bottomSheet, QMUIBottomSheetGridItemModel model) {
+            public QMUIBottomSheetGridItemView create(@NonNull QMUIBottomSheet bottomSheet, @NonNull QMUIBottomSheetGridItemModel model) {
                 QMUIBottomSheetGridItemView itemView = new QMUIBottomSheetGridItemView(bottomSheet.getContext());
                 itemView.render(model);
-                itemView.setTag(model.tag);
                 return itemView;
             }
         }
@@ -499,7 +498,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
             mSecondLineItems = new ArrayList<>();
         }
 
-        public BottomGridSheetBuilder addItem(QMUIBottomSheetGridItemModel model, @Style int style) {
+        public BottomGridSheetBuilder addItem(@NonNull QMUIBottomSheetGridItemModel model, @Style int style) {
             switch (style) {
                 case FIRST_LINE:
                     mFirstLineItems.add(model);
@@ -551,7 +550,9 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
 
         @Nullable
         @Override
-        protected View onCreateContentView(QMUIBottomSheet bottomSheet, QMUIBottomSheetRootLayout rootLayout, Context context) {
+        protected View onCreateContentView(@NonNull QMUIBottomSheet bottomSheet,
+                                           @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                           @NonNull Context context) {
             if (mFirstLineItems.isEmpty() && mSecondLineItems.isEmpty()) {
                 return null;
             }

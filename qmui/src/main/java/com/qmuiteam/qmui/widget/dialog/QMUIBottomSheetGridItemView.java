@@ -24,6 +24,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
@@ -33,15 +37,13 @@ import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
-
 
 public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
 
-    private AppCompatImageView mIconIv;
-    private AppCompatImageView mSubscriptIv;
-    private TextView mTitleTv;
+    protected AppCompatImageView mIconIv;
+    protected AppCompatImageView mSubscriptIv;
+    protected TextView mTitleTv;
+    protected Object mModelTag;
 
 
     public QMUIBottomSheetGridItemView(Context context) {
@@ -57,7 +59,7 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
         setChangeAlphaWhenPress(true);
         int paddingVer = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_grid_item_padding_ver);
         setPadding(0, paddingVer, 0, paddingVer);
-        mIconIv = new AppCompatImageView(context);
+        mIconIv = onCreateIconView(context);
         mIconIv.setId(View.generateViewId());
         mIconIv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
@@ -68,7 +70,7 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
         iconLp.topToTop = LayoutParams.PARENT_ID;
         addView(mIconIv, iconLp);
 
-        mTitleTv = new QMUISpanTouchFixTextView(context);
+        mTitleTv = onCreateTitleView(context);
         mTitleTv.setId(View.generateViewId());
         QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
         provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR,
@@ -86,8 +88,31 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
         addView(mTitleTv, titleLp);
     }
 
-    public void render(QMUIBottomSheetGridItemModel model) {
+    protected AppCompatImageView onCreateIconView(Context context) {
+        return new AppCompatImageView(context);
+    }
+
+    protected TextView onCreateTitleView(Context context) {
+        return new QMUISpanTouchFixTextView(context);
+    }
+
+    public void render(@NonNull QMUIBottomSheetGridItemModel model) {
+        mModelTag = model.tag;
+        setTag(model.tag);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
+        renderIcon(model, builder);
+        builder.clear();
+        renderTitle(model, builder);
+        builder.clear();
+        renderSubScript(model, builder);
+        builder.release();
+    }
+
+    public Object getModelTag() {
+        return mModelTag;
+    }
+
+    protected void renderIcon(@NonNull QMUIBottomSheetGridItemModel model, @NonNull QMUISkinValueBuilder builder) {
         if (model.imageSkinSrcAttr != 0) {
             builder.src(model.imageSkinSrcAttr);
             QMUISkinHelper.setSkinValue(mIconIv, builder);
@@ -105,23 +130,24 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
             if (model.imageSkinTintColorAttr != 0) {
                 builder.tintColor(model.imageSkinTintColorAttr);
                 QMUISkinHelper.setSkinValue(mIconIv, builder);
-                QMUISkinManager.defaultInstance(getContext()).refreshTheme(mIconIv);
             } else {
                 QMUISkinHelper.setSkinValue(mIconIv, "");
             }
         }
-        builder.clear();
+    }
+
+    protected void renderTitle(@NonNull QMUIBottomSheetGridItemModel model, @NonNull QMUISkinValueBuilder builder) {
         mTitleTv.setText(model.text);
         if (model.textSkinColorAttr != 0) {
             builder.textColor(model.textSkinColorAttr);
         }
         QMUISkinHelper.setSkinValue(mTitleTv, builder);
-        QMUISkinManager.defaultInstance(getContext()).refreshTheme(mTitleTv);
-        if(model.typeface != null){
+        if (model.typeface != null) {
             mTitleTv.setTypeface(model.typeface);
         }
-        builder.clear();
+    }
 
+    protected void renderSubScript(@NonNull QMUIBottomSheetGridItemModel model, @NonNull QMUISkinValueBuilder builder) {
         if (model.subscriptRes != 0 || model.subscript != null || model.subscriptSkinSrcAttr != 0) {
             if (mSubscriptIv == null) {
                 mSubscriptIv = new AppCompatImageView(getContext());
@@ -150,7 +176,6 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
                 if (model.subscriptSkinTintColorAttr != 0) {
                     builder.tintColor(model.subscriptSkinTintColorAttr);
                     QMUISkinHelper.setSkinValue(mSubscriptIv, builder);
-                    QMUISkinManager.defaultInstance(getContext()).refreshTheme(mSubscriptIv);
                 } else {
                     QMUISkinHelper.setSkinValue(mSubscriptIv, "");
                 }
@@ -158,6 +183,5 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
         } else if (mSubscriptIv != null) {
             mSubscriptIv.setVisibility(View.GONE);
         }
-        builder.release();
     }
 }

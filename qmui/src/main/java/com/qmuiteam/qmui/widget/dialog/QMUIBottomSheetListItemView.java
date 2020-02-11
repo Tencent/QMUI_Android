@@ -172,7 +172,6 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
             }
         }
         builder.clear();
-        QMUISkinManager.defaultInstance(getContext()).refreshTheme(mIconView);
 
         mTextView.setText(itemModel.text);
         if(itemModel.typeface != null){
@@ -181,10 +180,10 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         if(itemModel.textSkinColorAttr != 0){
             builder.textColor(itemModel.textSkinColorAttr);
             QMUISkinHelper.setSkinValue(mTextView, builder);
+            mTextView.setTextColor(QMUISkinHelper.getSkinColorStateList(mTextView, itemModel.textSkinColorAttr));
         }else{
-            QMUISkinHelper.setSkinValue(mIconView, "");
+            QMUISkinHelper.setSkinValue(mTextView, "");
         }
-        QMUISkinManager.defaultInstance(getContext()).refreshTheme(mTextView);
 
         mRedPointView.setVisibility(itemModel.hasRedPoint ? View.VISIBLE : View.GONE);
 

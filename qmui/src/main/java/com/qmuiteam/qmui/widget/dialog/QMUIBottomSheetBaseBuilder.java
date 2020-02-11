@@ -43,11 +43,12 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     private DialogInterface.OnDismissListener mOnBottomDialogDismissListener;
     private int mRadius = -1;
     private boolean mAllowDrag = false;
-    private boolean mFollowSkin = true;
+    private QMUISkinManager mSkinManager;
     private QMUIBottomSheetBehavior.DownDragDecisionMaker mDownDragDecisionMaker = null;
 
     public QMUIBottomSheetBaseBuilder(Context context) {
         mContext = context;
+        mSkinManager = QMUISkinManager.defaultInstance(context);
     }
 
     @SuppressWarnings("unchecked")
@@ -67,8 +68,8 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     }
 
     @SuppressWarnings("unchecked")
-    public T setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
+    public T setSkinManager(@Nullable QMUISkinManager skinManager) {
+        mSkinManager = skinManager;
         return (T) this;
     }
 
@@ -135,7 +136,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
         if (mRadius != -1) {
             mDialog.setRadius(mRadius);
         }
-        mDialog.setFollowSkin(mFollowSkin);
+        mDialog.setSkinManager(mSkinManager);
         QMUIBottomSheetBehavior behavior = mDialog.getBehavior();
         behavior.setAllowDrag(mAllowDrag);
         behavior.setDownDragDecisionMaker(mDownDragDecisionMaker);
@@ -144,9 +145,9 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
 
 
     @Nullable
-    protected View onCreateTitleView(QMUIBottomSheet bottomSheet,
-                                     QMUIBottomSheetRootLayout rootLayout,
-                                     Context context) {
+    protected View onCreateTitleView(@NonNull QMUIBottomSheet bottomSheet,
+                                     @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                     @NonNull Context context) {
         if (hasTitle()) {
             QMUISpanTouchFixTextView tv = new QMUISpanTouchFixTextView(context);
             tv.setId(R.id.qmui_bottom_sheet_title);
@@ -167,25 +168,25 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
         return null;
     }
 
-    protected void onAddCustomViewBetweenTitleAndContent(QMUIBottomSheet bottomSheet,
-                                                         QMUIBottomSheetRootLayout rootLayout,
-                                                         Context context) {
+    protected void onAddCustomViewBetweenTitleAndContent(@NonNull QMUIBottomSheet bottomSheet,
+                                                         @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                                         @NonNull Context context) {
     }
 
     @Nullable
-    protected abstract View onCreateContentView(QMUIBottomSheet bottomSheet,
-                                                QMUIBottomSheetRootLayout rootLayout,
-                                                Context context);
+    protected abstract View onCreateContentView(@NonNull QMUIBottomSheet bottomSheet,
+                                                @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                                @NonNull Context context);
 
-    protected void onAddCustomViewAfterContent(QMUIBottomSheet bottomSheet,
-                                               QMUIBottomSheetRootLayout rootLayout,
-                                               Context context) {
+    protected void onAddCustomViewAfterContent(@NonNull QMUIBottomSheet bottomSheet,
+                                               @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                               @NonNull Context context) {
     }
 
     @NonNull
-    protected View onCreateCancelBtn(final QMUIBottomSheet bottomSheet,
-                                     QMUIBottomSheetRootLayout rootLayout,
-                                     Context context) {
+    protected View onCreateCancelBtn(@NonNull final QMUIBottomSheet bottomSheet,
+                                     @NonNull QMUIBottomSheetRootLayout rootLayout,
+                                     @NonNull Context context) {
         QMUIButton button = new QMUIButton(context);
         button.setId(R.id.qmui_bottom_sheet_cancel);
         if (mCancelText == null || mCancelText.isEmpty()) {

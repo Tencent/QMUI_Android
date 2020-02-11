@@ -20,10 +20,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 public class QMUIBottomSheetBehavior<V extends ViewGroup> extends BottomSheetBehavior<V> {
     private boolean mAllowDrag = true;

@@ -631,20 +631,24 @@ public final class QMUICollapsingTextHelper {
         final float newTextSize;
         boolean updateDrawText = false;
 
-        if (isClose(textSize, mCollapsedTextSize)) {
-            newTextSize = mCollapsedTextSize;
-            mScale = 1f;
+        if(mExpandedFraction == 1f){
             if (mCurrentTypeface != mCollapsedTypeface) {
                 mCurrentTypeface = mCollapsedTypeface;
                 updateDrawText = true;
             }
-            availableWidth = collapsedWidth;
-        } else {
-            newTextSize = mExpandedTextSize;
+        }else if(mExpandedFraction == 0f){
             if (mCurrentTypeface != mExpandedTypeface) {
                 mCurrentTypeface = mExpandedTypeface;
                 updateDrawText = true;
             }
+        }
+
+        if (isClose(textSize, mCollapsedTextSize)) {
+            newTextSize = mCollapsedTextSize;
+            mScale = 1f;
+            availableWidth = collapsedWidth;
+        } else {
+            newTextSize = mExpandedTextSize;
             if (isClose(textSize, mExpandedTextSize)) {
                 // If we're close to the expanded text size, snap to it and use a scale of 1
                 mScale = 1f;
