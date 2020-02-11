@@ -99,9 +99,9 @@
 
 
         <item name="qmui_tab_sign_count_view">@style/QMUI.TabSegment.SignCount</item>
-        <item name="qmui_tab_sign_count_view_minSize">@dimen/qmui_tab_sign_count_view_minSize</item>
-        <item name="qmui_tab_sign_count_view_minSize_with_text">
-            @dimen/qmui_tab_sign_count_view_minSize_with_text
+        <item name="qmui_tab_sign_count_view_min_size">@dimen/qmui_tab_sign_count_view_min_size</item>
+        <item name="qmui_tab_sign_count_view_min_size_with_text">
+            @dimen/qmui_tab_sign_count_view_min_size_with_text
         </item>
         <item name="qmui_tab_sign_count_view_padding_horizontal">4dp</item>
 

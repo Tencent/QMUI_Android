@@ -47,8 +47,8 @@
     **********************************************-->
     <dimen name="qmui_tab_segment_indicator_height">2dp</dimen>
     <dimen name="qmui_tab_segment_text_size">16sp</dimen>
-    <dimen name="qmui_tab_sign_count_view_minSize_with_text">14dp</dimen>
-    <dimen name="qmui_tab_sign_count_view_minSize">6dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_min_size_with_text">14dp</dimen>
+    <dimen name="qmui_tab_sign_count_view_min_size">6dp</dimen>
 
 
     <!--**********************************************

@@ -71,6 +71,16 @@ public class QMUITabBuilder {
     private int selectedColorAttr = R.attr.qmui_skin_support_tab_selected_color;
 
     /**
+     * text color with no skin support
+     */
+    private int normalColor = 0;
+
+    /**
+     * text color with no skin support
+     */
+    private int selectColor = 0;
+
+    /**
      * icon position(left/top/right/bottom)
      */
     private @QMUITab.IconPosition int iconPosition = QMUITab.ICON_POSITION_TOP;
@@ -247,6 +257,36 @@ public class QMUITabBuilder {
         return this;
     }
 
+    public QMUITabBuilder setNormalColorAttr(int normalColorAttr) {
+        this.normalColorAttr = normalColorAttr;
+        return this;
+    }
+
+    public QMUITabBuilder setSelectedColorAttr(int selectedColorAttr) {
+        this.selectedColorAttr = selectedColorAttr;
+        return this;
+    }
+
+    public QMUITabBuilder setColor(int normalColor, int selectColor){
+        this.normalColorAttr = 0;
+        this.selectedColorAttr = 0;
+        this.normalColor = normalColor;
+        this.selectColor = selectColor;
+        return this;
+    }
+
+    public QMUITabBuilder setNormalColor(int normalColor) {
+        this.normalColorAttr = 0;
+        this.normalColor = normalColor;
+        return this;
+    }
+
+    public QMUITabBuilder setSelectColor(int selectColor) {
+        this.selectedColorAttr = 0;
+        this.selectColor = selectColor;
+        return this;
+    }
+
     public QMUITabBuilder setDynamicChangeIconColor(boolean dynamicChangeIconColor) {
         this.dynamicChangeIconColor = dynamicChangeIconColor;
         return this;
@@ -281,9 +321,9 @@ public class QMUITabBuilder {
 
         if (normalDrawable != null) {
             if (dynamicChangeIconColor || selectedDrawable == null) {
-                tab.tabIcon = new QMUITabIcon(normalDrawable, null);
+                tab.tabIcon = new QMUITabIcon(normalDrawable, null, dynamicChangeIconColor);
             } else {
-                tab.tabIcon = new QMUITabIcon(normalDrawable, selectedDrawable);
+                tab.tabIcon = new QMUITabIcon(normalDrawable, selectedDrawable, false);
             }
             tab.tabIcon.setBounds(0, 0, normalTabIconWidth, normalTabIconHeight);
         }
@@ -301,6 +341,8 @@ public class QMUITabBuilder {
         tab.selectedTypeface = this.selectedTypeface;
         tab.normalColorAttr = this.normalColorAttr;
         tab.selectedColorAttr = this.selectedColorAttr;
+        tab.normalColor = this.normalColor;
+        tab.selectColor = this.selectColor;
         tab.signCount = this.signCount;
         tab.signCountDigits = this.signCountDigits;
         tab.signCountLeftMarginWithIconOrText = this.signCountLeftMarginWithIconOrText;
