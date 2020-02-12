@@ -282,16 +282,6 @@ public final class QMUISkinManager {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
             }
-            if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                int itemDecorationCount = recyclerView.getItemDecorationCount();
-                for (int i = 0; i < itemDecorationCount; i++) {
-                    RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
-                    if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
-                        ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
-                    }
-                }
-            }
         } else if ((view instanceof TextView) || (view instanceof QMUIQQFaceView)) {
             CharSequence text;
             if (view instanceof TextView) {
@@ -324,6 +314,25 @@ public final class QMUISkinManager {
             ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
         } else {
             defaultHandleSkinAttrs(view, theme, attrs);
+        }
+        if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            int itemDecorationCount = recyclerView.getItemDecorationCount();
+            for (int i = 0; i < itemDecorationCount; i++) {
+                RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
+                if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
+                    ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
+                }
+            }
+        }
+    }
+
+    void refreshRecyclerDecoration(@NonNull RecyclerView recyclerView,
+                                 @NonNull IQMUISkinHandlerDecoration decoration,
+                                 int skinIndex){
+        SkinItem skinItem = mSkins.get(skinIndex);
+        if (skinItem != null) {
+            decoration.handle(recyclerView, this, skinIndex, skinItem.theme);
         }
     }
 

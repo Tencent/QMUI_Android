@@ -100,7 +100,7 @@ public class QDRecyclerViewDraggableScrollBarFragment extends BaseFragment {
             }
         });
 
-        QMUIRVDraggableScrollBar scrollBar = new QMUIRVDraggableScrollBar(0, 0, 0, true, true);
+        QMUIRVDraggableScrollBar scrollBar = new QMUIRVDraggableScrollBar(0, 0, 0);
         scrollBar.setEnableScrollBarFadeInOut(true);
         scrollBar.attachToRecyclerView(mRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {

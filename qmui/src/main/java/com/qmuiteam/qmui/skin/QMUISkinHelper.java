@@ -24,6 +24,7 @@ import android.view.View;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
@@ -75,6 +76,13 @@ public class QMUISkinHelper {
         writer.write(sSkinValueBuilder);
         setSkinValue(view, sSkinValueBuilder.build());
         sSkinValueBuilder.clear();
+    }
+
+    public static void refreshRVItemDecoration(@NonNull RecyclerView view, IQMUISkinHandlerDecoration itemDecoration){
+        QMUISkinManager.ViewSkinCurrent skinCurrent = QMUISkinManager.getViewSkinCurrent(view);
+        if(skinCurrent != null){
+            QMUISkinManager.of(skinCurrent.managerName, view.getContext()).refreshRecyclerDecoration(view, itemDecoration, skinCurrent.index);
+        }
     }
 
     public static void setSkinDefaultProvider(@NonNull View view,

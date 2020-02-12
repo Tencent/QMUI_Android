@@ -4,18 +4,22 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.MotionEvent;
-
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerDecoration;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUILangHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+
+public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implements IQMUISkinHandlerDecoration {
     private int[] STATE_PRESSED = new int[]{android.R.attr.state_pressed};
     private int[] STATE_NORMAL = new int[]{};
     private static final long DEFAULT_KEE_SHOW_DURATION = 800L;
@@ -41,6 +45,8 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
     private int mCurrentAlpha = 255;
     private float mPercent = 0f;
     private int mDragInnerStart = 0;
+    private int mScrollBarSkinRes = 0;
+    private int mScrollBarSkinTintColorRes = 0;
 
     public QMUIRVDraggableScrollBar(int startMargin,
                                     int endMargin,
@@ -98,7 +104,6 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
                     endDrag();
                 }
             }
-            Log.i("cgine", "mIsInDragging = " + mIsInDragging);
             return mIsInDragging;
         }
 
@@ -167,6 +172,24 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
         if (scrollBarDrawable != null) {
             scrollBarDrawable.setState(mIsInDragging ? STATE_PRESSED : STATE_NORMAL);
         }
+        if (mRecyclerView != null) {
+            QMUISkinHelper.refreshRVItemDecoration(mRecyclerView, this);
+            mRecyclerView.invalidate();
+        }
+    }
+
+    public void setScrollBarSkinRes(int scrollBarSkinRes) {
+        mScrollBarSkinRes = scrollBarSkinRes;
+        if (mRecyclerView != null) {
+            QMUISkinHelper.refreshRVItemDecoration(mRecyclerView, this);
+        }
+    }
+
+    public void setScrollBarSkinTintColorRes(int colorRes) {
+        mScrollBarSkinTintColorRes = colorRes;
+        if (mRecyclerView != null) {
+            QMUISkinHelper.refreshRVItemDecoration(mRecyclerView, this);
+        }
     }
 
     public void setDraggable(boolean draggable) {
@@ -184,12 +207,12 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
                 mBeginAlpha = -1;
                 mTargetAlpha = -1;
                 mCurrentAlpha = 255;
-            }else{
-                if(mRecyclerView != null){
-                    if(mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE){
+            } else {
+                if (mRecyclerView != null) {
+                    if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
                         mCurrentAlpha = 0;
                     }
-                }else{
+                } else {
                     mCurrentAlpha = 0;
                 }
             }
@@ -212,8 +235,8 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
         }
         mRecyclerView = recyclerView;
         if (recyclerView != null) {
-            final Resources resources = recyclerView.getResources();
             setupCallbacks();
+            QMUISkinHelper.refreshRVItemDecoration(recyclerView, this);
         }
     }
 
@@ -252,7 +275,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
         if (mCallback != null) {
             mCallback.onDragEnd();
         }
-        if(mRecyclerView != null){
+        if (mRecyclerView != null) {
             mRecyclerView.invalidate();
         }
     }
@@ -364,9 +387,26 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration {
 
     public Drawable ensureScrollBar(RecyclerView recyclerView) {
         if (mScrollBarDrawable == null) {
-            mScrollBarDrawable = ContextCompat.getDrawable(recyclerView.getContext(), R.drawable.qmui_icon_scroll_bar);
+            setScrollBarDrawable(
+                    ContextCompat.getDrawable(recyclerView.getContext(), R.drawable.qmui_icon_scroll_bar));
         }
         return mScrollBarDrawable;
+    }
+
+    @Override
+    public void handle(@NonNull RecyclerView recyclerView,
+                       @NonNull QMUISkinManager manager,
+                       int skinIndex,
+                       @NonNull Resources.Theme theme) {
+        if (mScrollBarSkinRes != 0) {
+            mScrollBarDrawable = QMUIResHelper.getAttrDrawable(
+                    recyclerView.getContext(), theme, mScrollBarSkinRes);
+        } else if (mScrollBarSkinTintColorRes != 0 && mScrollBarDrawable != null) {
+            DrawableCompat.setTintList(mScrollBarDrawable,
+                    QMUIResHelper.getAttrColorStateList(
+                            recyclerView.getContext(), theme, mScrollBarSkinTintColorRes));
+        }
+        recyclerView.invalidate();
     }
 
     interface Callback {

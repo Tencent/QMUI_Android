@@ -17,10 +17,11 @@ package com.qmuiteam.qmui.skin;
 
 import android.content.res.Resources;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public interface IQMUISkinHandlerDecoration {
 
-    void handle(RecyclerView recyclerView, QMUISkinManager manager,
-                int skinIndex, Resources.Theme theme);
+    void handle(@NonNull RecyclerView recyclerView, @NonNull QMUISkinManager manager,
+                int skinIndex, @NonNull Resources.Theme theme);
 }
