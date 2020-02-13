@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.recyclerView.QMUIRVDraggableScrollBar;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
@@ -109,6 +110,9 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
     protected void initStickyLayout() {
         mLayoutManager = createLayoutManager();
         mSectionLayout.setLayoutManager(mLayoutManager);
+        QMUIRVDraggableScrollBar scrollBar = new QMUIRVDraggableScrollBar(0, 0, 0);
+        scrollBar.setEnableScrollBarFadeInOut(false);
+        scrollBar.attachToStickSectionLayout(mSectionLayout);
     }
 
     private void initData() {

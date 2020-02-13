@@ -21,11 +21,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStickySectionAdapter.ViewCallback {
 
@@ -33,6 +40,7 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
     private QMUIFrameLayout mStickySectionWrapView;
     private QMUIStickySectionItemDecoration mStickySectionItemDecoration;
     private int mStickySectionViewHeight = -1;
+    private List<DrawDecoration> mDrawDecorations;
     /**
      * if scrollToPosition happened before mStickySectionWrapView finished layout,
      * the target item may be covered by mStickySectionWrapView, so we delay to
@@ -66,6 +74,20 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
                 }
             }
         });
+    }
+
+    public void addDrawDecoration(@NonNull DrawDecoration drawDecoration){
+        if(mDrawDecorations == null){
+            mDrawDecorations = new ArrayList<>();
+        }
+        mDrawDecorations.add(drawDecoration);
+    }
+
+    public void removeDrawDecoration(@NonNull DrawDecoration drawDecoration){
+        if(mDrawDecorations == null || mDrawDecorations.isEmpty()){
+            return;
+        }
+        mDrawDecorations.remove(drawDecoration);
     }
 
     public void configStickySectionWrapView(StickySectionWrapViewConfig stickySectionWrapViewConfig) {
@@ -234,5 +256,33 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
 
     public interface StickySectionWrapViewConfig {
         void config(QMUIFrameLayout stickySectionWrapView);
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        if(mDrawDecorations != null){
+            for(DrawDecoration drawDecoration: mDrawDecorations){
+                drawDecoration.onDraw(canvas, this);
+            }
+        }
+        super.dispatchDraw(canvas);
+        if(mDrawDecorations != null){
+            for(DrawDecoration drawDecoration: mDrawDecorations){
+                drawDecoration.onDrawOver(canvas, this);
+            }
+        }
+    }
+
+    @Override
+    public void onDescendantInvalidated(@NonNull View child, @NonNull View target) {
+        super.onDescendantInvalidated(child, target);
+        if(target == mRecyclerView && mDrawDecorations != null && !mDrawDecorations.isEmpty()){
+            invalidate();
+        }
+    }
+
+    public interface DrawDecoration {
+        void onDraw(@NonNull Canvas c, @NonNull QMUIStickySectionLayout parent);
+        void onDrawOver(@NonNull Canvas c, @NonNull QMUIStickySectionLayout parent);
     }
 }
