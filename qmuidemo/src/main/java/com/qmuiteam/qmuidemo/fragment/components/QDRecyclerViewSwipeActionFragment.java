@@ -54,7 +54,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUIRVItemSwipeAction.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUIRVItemSwipeAction.class, iconRes = R.mipmap.icon_grid_rv_item_swipe_action)
 @LatestVisitRecord
 public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
     @BindView(R.id.topbar)
