@@ -59,6 +59,9 @@
     <dimen name="qmui_group_list_section_header_footer_padding_vertical">8dp</dimen>
     <dimen name="qmui_group_list_section_header_footer_textSize">13sp</dimen>
 
+    <dimen name="qmui_rv_swipe_action_escape_max_velocity">800dp</dimen>
+    <dimen name="qmui_rv_swipe_action_escape_velocity">120dp</dimen>
+
 
     <!-- 全局统一的界面左右间距，例如列表分隔线inset -->
     <dimen name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal
