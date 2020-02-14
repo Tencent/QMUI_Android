@@ -31,7 +31,7 @@ import com.qmuiteam.qmuidemo.model.QDItemDescription;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUIPullLayout.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUIPullLayout.class, iconRes = R.mipmap.icon_grid_pull_layout)
 public class QDPullFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;

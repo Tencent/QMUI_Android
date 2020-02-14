@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.qmuiteam.qmui.nestedScroll.QMUIDraggableScrollBar;
 import com.qmuiteam.qmui.recyclerView.QMUIRVDraggableScrollBar;
+import com.qmuiteam.qmui.recyclerView.QMUIRVItemSwipeAction;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.pullLayout.QMUIPullLayout;
 import com.qmuiteam.qmuidemo.R;
@@ -45,7 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUIRVDraggableScrollBar.class, iconRes = R.mipmap.icon_grid_in_progress)
+@Widget(widgetClass = QMUIRVDraggableScrollBar.class, iconRes = R.mipmap.icon_grid_scroll_animator)
 public class QDRecyclerViewDraggableScrollBarFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
@@ -103,6 +104,19 @@ public class QDRecyclerViewDraggableScrollBarFragment extends BaseFragment {
         QMUIRVDraggableScrollBar scrollBar = new QMUIRVDraggableScrollBar(0, 0, 0);
         scrollBar.setEnableScrollBarFadeInOut(true);
         scrollBar.attachToRecyclerView(mRecyclerView);
+
+        QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(new QMUIRVItemSwipeAction.Callback() {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                mAdapter.remove(viewHolder.getAdapterPosition());
+            }
+
+            @Override
+            public int getSwipeDirection(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return QMUIRVItemSwipeAction.SWIPE_RIGHT;
+            }
+        });
+        swipeAction.attachToRecyclerView(mRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
