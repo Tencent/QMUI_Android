@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.recyclerView;
 
 import android.animation.Animator;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -444,7 +445,6 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             return;
         }
 
-        mRecyclerView.removeCallbacks(mLongPressToSwipe);
         final RecyclerView.ViewHolder vh = findSwipedView(motionEvent, isLongPressToSwipe);
         if (vh == null) {
             return;
@@ -492,8 +492,13 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             }
         }
 
+        mRecyclerView.removeCallbacks(mLongPressToSwipe);
         mDx = mDy = 0f;
         mActivePointerId = motionEvent.getPointerId(0);
+        MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
+        cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+        vh.itemView.dispatchTouchEvent(cancelEvent);
+        cancelEvent.recycle();
         select(vh);
     }
 
@@ -549,7 +554,8 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
                         mDy += targetTranslateY - currentTranslateY;
                         final RecoverAnimation rv = new RecoverAnimation(swipeViewHolder,
                                 currentTranslateX, currentTranslateY,
-                                targetTranslateX, targetTranslateY);
+                                targetTranslateX, targetTranslateY,
+                                mCallback.getInterpolator(ANIMATION_TYPE_SWIPE_ACTION));
                         final long duration = mCallback.getAnimationDuration(mRecyclerView,
                                 ANIMATION_TYPE_SWIPE_ACTION,
                                 targetTranslateX - currentTranslateX,
@@ -604,9 +610,14 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
                         targetTranslateY = 0;
                 }
 
+                final int animType = swipeDir > 0 ? ANIMATION_TYPE_SWIPE_SUCCESS : ANIMATION_TYPE_SWIPE_CANCEL;
+                if(swipeDir > 0){
+                    mCallback.onStartSwipeAnimation(mSelected, swipeDir);
+                }
                 final RecoverAnimation rv = new RecoverAnimation(prevSelected,
                         currentTranslateX, currentTranslateY,
-                        targetTranslateX, targetTranslateY) {
+                        targetTranslateX, targetTranslateY,
+                        mCallback.getInterpolator(ANIMATION_TYPE_SWIPE_ACTION)) {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -629,8 +640,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
                         }
                     }
                 };
-                final long duration = mCallback.getAnimationDuration(mRecyclerView,
-                        swipeDir > 0 ? ANIMATION_TYPE_SWIPE_SUCCESS : ANIMATION_TYPE_SWIPE_CANCEL,
+                final long duration = mCallback.getAnimationDuration(mRecyclerView, animType,
                         targetTranslateX - currentTranslateX,
                         targetTranslateY - currentTranslateY);
                 rv.setDuration(duration);
@@ -894,7 +904,9 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
 
         private float mFraction;
 
-        RecoverAnimation(RecyclerView.ViewHolder viewHolder, float startDx, float startDy, float targetX, float targetY) {
+        RecoverAnimation(RecyclerView.ViewHolder viewHolder,
+                         float startDx, float startDy, float targetX, float targetY,
+                         TimeInterpolator interpolator) {
             mViewHolder = viewHolder;
             mStartDx = startDx;
             mStartDy = startDy;
@@ -910,6 +922,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
                     });
             mValueAnimator.setTarget(viewHolder.itemView);
             mValueAnimator.addListener(this);
+            mValueAnimator.setInterpolator(interpolator);
             setFraction(0f);
         }
 
@@ -988,7 +1001,13 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             return SWIPE_NONE;
         }
 
-        public abstract void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction);
+        public void onStartSwipeAnimation(@NonNull RecyclerView.ViewHolder viewHolder, int direction){
+
+        }
+
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction){
+
+        }
 
 
         public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
@@ -1016,6 +1035,10 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
 
         public void onClickAction(RecyclerView.ViewHolder selected, QMUISwipeAction action){
 
+        }
+
+        public TimeInterpolator getInterpolator(int animationType){
+            return null;
         }
 
         void onDraw(Canvas c, RecyclerView parent, RecyclerView.ViewHolder selected,
