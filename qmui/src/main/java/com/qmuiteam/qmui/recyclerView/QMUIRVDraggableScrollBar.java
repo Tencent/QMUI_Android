@@ -442,7 +442,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
     }
 
     private float calculatePercent(@NonNull RecyclerView recyclerView) {
-        return getCurrentOffset(recyclerView) * 1f / getScrollRange(recyclerView);
+        return QMUILangHelper.constrain(getCurrentOffset(recyclerView) * 1f / getScrollRange(recyclerView), 0f, 1f);
     }
 
     public Drawable ensureScrollBar(Context context) {
