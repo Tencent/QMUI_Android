@@ -99,7 +99,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
 
         @Override
         public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            if (!mIsDraggable || mScrollBarDrawable == null) {
+            if (!mIsDraggable || mScrollBarDrawable == null || !needDrawScrollBar(rv)) {
                 return false;
             }
             int action = e.getAction();
@@ -126,7 +126,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
 
         @Override
         public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            if (!mIsDraggable || mScrollBarDrawable == null) {
+            if (!mIsDraggable || mScrollBarDrawable == null || !needDrawScrollBar(rv)) {
                 return;
             }
             int action = e.getAction();
@@ -377,7 +377,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
 
     private void drawScrollBar(@NonNull Canvas c, @NonNull RecyclerView recyclerView) {
         Drawable drawable = ensureScrollBar(recyclerView.getContext());
-        if (drawable == null) {
+        if (drawable == null || !needDrawScrollBar(recyclerView)) {
             return;
         }
 
@@ -408,6 +408,13 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
             return recyclerView.getHeight() - mStartMargin - mEndMargin;
         }
         return recyclerView.getWidth() - mStartMargin - mEndMargin;
+    }
+
+    private boolean needDrawScrollBar(RecyclerView recyclerView){
+        if(mIsVerticalScroll){
+            return recyclerView.canScrollVertically(-1) || recyclerView.canScrollVertically(1);
+        }
+        return recyclerView.canScrollHorizontally(-1) || recyclerView.canScrollHorizontally(1);
     }
 
     private void setScrollBarBounds(@NonNull RecyclerView recyclerView, @NonNull Drawable drawable) {
