@@ -40,7 +40,7 @@ public class QMUIBottomSheetRootLayout extends QMUILinearLayout {
         setOrientation(VERTICAL);
         setBackground(QMUIResHelper.getAttrDrawable(context, R.attr.qmui_skin_support_bottom_sheet_bg));
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        builder.background(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_bottom_sheet_bg));
+        builder.background(R.attr.qmui_skin_support_bottom_sheet_bg);
         QMUISkinHelper.setSkinValue(this, builder);
         builder.release();
 

@@ -417,7 +417,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         dialogView.setBackground(QMUIResHelper.getAttrDrawable(context, R.attr.qmui_skin_support_dialog_bg));
         dialogView.setRadius(QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_radius));
         QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
-        valueBuilder.background(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_bg));
+        valueBuilder.background(R.attr.qmui_skin_support_dialog_bg);
         QMUISkinHelper.setSkinValue(dialogView, valueBuilder);
         QMUISkinValueBuilder.release(valueBuilder);
         return dialogView;
@@ -438,7 +438,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
             QMUIResHelper.assignTextViewWithAttr(tv, R.attr.qmui_dialog_title_style);
             QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
 
-            valueBuilder.textColor(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_title_text_color));
+            valueBuilder.textColor(R.attr.qmui_skin_support_dialog_title_text_color);
             QMUISkinHelper.setSkinValue(tv, valueBuilder);
             QMUISkinValueBuilder.release(valueBuilder);
             return tv;

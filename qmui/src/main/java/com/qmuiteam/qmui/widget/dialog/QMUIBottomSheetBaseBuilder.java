@@ -157,10 +157,8 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
             QMUIResHelper.assignTextViewWithAttr(tv, R.attr.qmui_bottom_sheet_title_style);
             QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
 
-            valueBuilder.textColor(QMUIResHelper.getAttrString(
-                    context, R.attr.qmui_skin_def_bottom_sheet_title_text_color));
-            valueBuilder.bottomSeparator(QMUIResHelper.getAttrString(
-                    context, R.attr.qmui_skin_def_bottom_sheet_separator_color));
+            valueBuilder.textColor(R.attr.qmui_skin_support_bottom_sheet_title_text_color);
+            valueBuilder.bottomSeparator(R.attr.qmui_skin_support_bottom_sheet_separator_color);
             QMUISkinHelper.setSkinValue(tv, valueBuilder);
             valueBuilder.release();
             return tv;
@@ -208,12 +206,9 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
                         context, R.attr.qmui_skin_support_bottom_sheet_separator_color));
 
         QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
-        valueBuilder.textColor(QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_cancel_text_color));
-        valueBuilder.topSeparator(QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_separator_color));
-        valueBuilder.background(QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_cancel_bg));
+        valueBuilder.textColor(R.attr.qmui_skin_support_bottom_sheet_cancel_text_color);
+        valueBuilder.topSeparator(R.attr.qmui_skin_support_bottom_sheet_separator_color);
+        valueBuilder.background(R.attr.qmui_skin_support_bottom_sheet_cancel_bg);
         QMUISkinHelper.setSkinValue(button, valueBuilder);
         valueBuilder.release();
         return button;

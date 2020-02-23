@@ -52,8 +52,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         int paddingHor = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_padding_hor);
         setPadding(paddingHor, 0, paddingHor, 0);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        builder.background(QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_list_item_bg));
+        builder.background(R.attr.qmui_skin_support_bottom_sheet_list_item_bg);
         QMUISkinHelper.setSkinValue(this, builder);
         builder.clear();
 
@@ -73,8 +72,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         mRedPointView.setId(View.generateViewId());
         mRedPointView.setBackgroundColor(QMUIResHelper.getAttrColor(
                 context, R.attr.qmui_skin_support_bottom_sheet_list_red_point_color));
-        builder.background(QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_list_red_point_color));
+        builder.background(R.attr.qmui_skin_support_bottom_sheet_list_red_point_color);
         QMUISkinHelper.setSkinValue(mRedPointView, builder);
         builder.clear();
 
@@ -84,8 +82,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
             mMarkView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             mMarkView.setImageDrawable(QMUIResHelper.getAttrDrawable(
                     context, R.attr.qmui_skin_support_bottom_sheet_list_mark));
-            builder.src(QMUIResHelper.getAttrString(
-                    context, R.attr.qmui_skin_def_bottom_sheet_list_mark));
+            builder.src(R.attr.qmui_skin_support_bottom_sheet_list_mark);
             QMUISkinHelper.setSkinValue(mMarkView, builder);
         }
         builder.release();

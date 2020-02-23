@@ -52,7 +52,7 @@ public class QMUIDialogMenuItemView extends QMUIConstraintLayout {
     public QMUIDialogMenuItemView(Context context) {
         super(context, null, R.attr.qmui_dialog_menu_item_style);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        builder.background(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_s_dialog_menu_item_bg));
+        builder.background(R.attr.qmui_skin_support_s_dialog_menu_item_bg);
         QMUISkinHelper.setSkinValue(this, builder);
         QMUISkinValueBuilder.release(builder);
     }
@@ -78,7 +78,7 @@ public class QMUIDialogMenuItemView extends QMUIConstraintLayout {
         tv.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         tv.setDuplicateParentStateEnabled(false);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        builder.textColor(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_menu_item_text_color));
+        builder.textColor(R.attr.qmui_skin_support_dialog_menu_item_text_color);
         QMUISkinHelper.setSkinValue(tv, builder);
         QMUISkinValueBuilder.release(builder);
         return tv;
@@ -193,7 +193,7 @@ public class QMUIDialogMenuItemView extends QMUIConstraintLayout {
             }
             a.recycle();
             QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-            builder.src(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_dialog_mark_drawable));
+            builder.src(R.attr.qmui_skin_support_dialog_mark_drawable);
             QMUISkinHelper.setSkinValue(mCheckedView, builder);
             QMUISkinValueBuilder.release(builder);
 
@@ -267,7 +267,7 @@ public class QMUIDialogMenuItemView extends QMUIConstraintLayout {
                 checkLp.leftToLeft = LayoutParams.PARENT_ID;
             }
             QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-            builder.src(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_s_dialog_check_drawable));
+            builder.src(R.attr.qmui_skin_support_s_dialog_check_drawable);
             QMUISkinHelper.setSkinValue(mCheckedView, builder);
             QMUISkinValueBuilder.release(builder);
             addView(mCheckedView, checkLp);

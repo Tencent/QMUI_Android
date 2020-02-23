@@ -219,16 +219,7 @@
     <attr name="qmui_skin_support_s_dialog_menu_item_bg" format="reference"/>
     <attr name="qmui_skin_support_dialog_menu_item_text_color" format="reference"/>
 
-    <attr name="qmui_skin_def_dialog_bg" format="string"/>
-    <attr name="qmui_skin_def_dialog_title_text_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_message_text_color" format="string"/>
-    <attr name="qmui_skin_def_s_dialog_check_drawable" format="string"/>
-    <attr name="qmui_skin_def_dialog_mark_drawable" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_bottom_line_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_text_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_text_hint_color" format="string"/>
-    <attr name="qmui_skin_def_s_dialog_menu_item_bg" format="string"/>
-    <attr name="qmui_skin_def_dialog_menu_item_text_color" format="string"/>
+
 
 
 
@@ -271,13 +262,6 @@
     <attr name="qmui_skin_support_tip_dialog_icon_error_src" format="reference"/>
     <attr name="qmui_skin_support_tip_dialog_icon_info_src" format="reference"/>
 
-    <attr name="qmui_skin_def_tip_dialog_bg" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_loading_color" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_text_color" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_success_src" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_error_src" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_info_src" format="string"/>
-
     <!--**********************************************
     *              qmui bottom sheet                 *
     **********************************************-->
@@ -291,15 +275,6 @@
     <attr name="qmui_skin_support_bottom_sheet_list_red_point_color" format="reference"/>
     <attr name="qmui_skin_support_bottom_sheet_list_mark" format="reference"/>
     <attr name="qmui_skin_support_bottom_sheet_grid_item_text_color" format="reference"/>
-
-    <attr name="qmui_skin_def_bottom_sheet_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_title_text_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_cancel_text_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_cancel_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_separator_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_item_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_red_point_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_mark" format="string"/>
 
     <attr name="qmui_bottom_sheet_radius" format="dimension" />
     <attr name="qmui_bottom_sheet_padding_hor" format="dimension" />

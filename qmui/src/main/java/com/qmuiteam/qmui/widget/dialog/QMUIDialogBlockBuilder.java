@@ -39,7 +39,7 @@ public class QMUIDialogBlockBuilder extends QMUIDialogBuilder<QMUIDialogBlockBui
 
     public QMUIDialogBlockBuilder(Context context) {
         super(context);
-        setActionDivider(1, R.color.qmui_config_color_separator, 0, 0);
+        setActionDivider(1, R.attr.qmui_skin_support_dialog_action_divider_color, 0, 0);
     }
 
 

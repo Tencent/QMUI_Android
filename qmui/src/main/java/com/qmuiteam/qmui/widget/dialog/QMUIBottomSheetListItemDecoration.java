@@ -40,9 +40,7 @@ public class QMUIBottomSheetListItemDecoration extends RecyclerView.ItemDecorati
         mSeparatorPaint = new Paint();
         mSeparatorPaint.setStrokeWidth(1);
         mSeparatorPaint.setStyle(Paint.Style.STROKE);
-        String attrName = QMUIResHelper.getAttrString(
-                context, R.attr.qmui_skin_def_bottom_sheet_separator_color);
-        mSeparatorAttr = QMUISkinManager.defaultInstance(context).getAttrFromName(attrName);
+        mSeparatorAttr = R.attr.qmui_skin_support_bottom_sheet_separator_color;
         if (mSeparatorAttr != 0) {
             mSeparatorPaint.setColor(QMUIResHelper.getAttrColor(context, mSeparatorAttr));
         }

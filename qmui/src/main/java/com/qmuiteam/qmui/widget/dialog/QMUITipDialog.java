@@ -168,8 +168,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
                 loadingView.setSize(QMUIResHelper.getAttrDimen(
                         dialogContext, R.attr.qmui_tip_dialog_loading_size));
-                builder.tintColor(QMUIResHelper.getAttrString(
-                        dialogContext, R.attr.qmui_skin_def_tip_dialog_loading_color));
+                builder.tintColor(R.attr.qmui_skin_support_tip_dialog_loading_color);
                 QMUISkinHelper.setSkinValue(loadingView, builder);
                 dialogView.addView(loadingView, onCreateIconOrLoadingLayoutParams(dialogContext));
 
@@ -183,18 +182,15 @@ public class QMUITipDialog extends QMUIBaseDialog {
                 if (mCurrentIconType == ICON_TYPE_SUCCESS) {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_success_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_success_src));
+                    builder.src( R.attr.qmui_skin_support_tip_dialog_icon_success_src);
                 } else if (mCurrentIconType == ICON_TYPE_FAIL) {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_error_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_error_src));
+                    builder.src(R.attr.qmui_skin_support_tip_dialog_icon_error_src);
                 } else {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_info_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_info_src));
+                    builder.src(R.attr.qmui_skin_support_tip_dialog_icon_info_src);
                 }
                 imageView.setImageDrawable(drawable);
                 QMUISkinHelper.setSkinValue(imageView, builder);
@@ -213,8 +209,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
                 tipView.setText(mTipWord);
 
                 builder.clear();
-                builder.textColor(QMUIResHelper.getAttrString(
-                        dialogContext, R.attr.qmui_skin_def_tip_dialog_text_color));
+                builder.textColor(R.attr.qmui_skin_support_tip_dialog_text_color);
                 QMUISkinHelper.setSkinValue(tipView, builder);
                 dialogView.addView(tipView, onCreateTextLayoutParams(dialogContext, mCurrentIconType));
             }
