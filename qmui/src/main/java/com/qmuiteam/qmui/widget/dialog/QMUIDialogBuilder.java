@@ -99,6 +99,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
     private int mActionDividerColorAttr = R.attr.qmui_skin_support_dialog_action_divider_color;
     private int mActionDividerInsetStart = 0;
     private int mActionDividerInsetEnd = 0;
+    private int mActionDividerColor = 0;
     private boolean mCheckKeyboardOverlay = false;
     private QMUISkinManager mSkinManager;
     private float mMaxPercent = 0.75f;
@@ -166,6 +167,27 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         mActionDividerColorAttr = colorAttr;
         mActionDividerInsetStart = startInset;
         mActionDividerInsetEnd = endInset;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setActionDividerInsetAndThickness(int thickness, int startInset, int endInset){
+        mActionDividerThickness = thickness;
+        mActionDividerInsetStart = startInset;
+        mActionDividerInsetEnd = endInset;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setActionDividerColorAttr(int colorAttr){
+        mActionDividerColorAttr = colorAttr;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setActionDividerColor(int color){
+        mActionDividerColor = color;
+        mActionDividerColorAttr = 0;
         return (T) this;
     }
 
@@ -518,7 +540,7 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
                     layout.addView(createActionContainerSpace(context));
                 }
                 QMUIDialogAction action = mActions.get(i);
-
+                action.skinSeparatorColorAttr(mActionDividerColorAttr);
                 LinearLayout.LayoutParams actionLp;
                 if (mActionContainerOrientation == VERTICAL) {
                     actionLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, actionHeight);
@@ -539,14 +561,15 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
                 // add divider
                 if (mActionDividerThickness > 0 && i > 0 && spaceInsertPos != i) {
+                    int color = mActionDividerColorAttr == 0 ? mActionDividerColor :
+                            QMUISkinHelper.getSkinColor(actionView, mActionDividerColorAttr);
                     if (mActionContainerOrientation == VERTICAL) {
-                        actionView.onlyShowTopDivider(mActionDividerInsetStart, mActionDividerInsetEnd,
-                                mActionDividerThickness, QMUISkinHelper.getSkinColor(actionView, mActionDividerColorAttr));
+                        actionView.onlyShowTopDivider(mActionDividerInsetStart,
+                                mActionDividerInsetEnd, mActionDividerThickness, color);
                     } else {
-                        actionView.onlyShowLeftDivider(mActionDividerInsetStart, mActionDividerInsetEnd,
-                                mActionDividerThickness, QMUISkinHelper.getSkinColor(actionView, mActionDividerColorAttr));
+                        actionView.onlyShowLeftDivider(mActionDividerInsetStart,
+                                mActionDividerInsetEnd, mActionDividerThickness, color);
                     }
-
                 }
 
                 actionView.setChangeAlphaWhenDisable(mChangeAlphaForPressOrDisable);

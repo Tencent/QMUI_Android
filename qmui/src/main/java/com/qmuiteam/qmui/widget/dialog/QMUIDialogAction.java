@@ -224,8 +224,10 @@ public class QMUIDialogAction {
         skinBackgroundAttr = skinBackgroundAttr == 0 ? R.attr.qmui_skin_support_dialog_action_bg : skinBackgroundAttr;
         mBtnSkinValueBuilder.background(skinBackgroundAttr);
         mBtnSkinValueBuilder.textColor(skinTextColorAttr);
-        mBtnSkinValueBuilder.topSeparator(mSkinSeparatorColorAttr);
-        mBtnSkinValueBuilder.leftSeparator(mSkinSeparatorColorAttr);
+        if(mSkinSeparatorColorAttr != 0){
+            mBtnSkinValueBuilder.topSeparator(mSkinSeparatorColorAttr);
+            mBtnSkinValueBuilder.leftSeparator(mSkinSeparatorColorAttr);
+        }
         QMUISkinHelper.setSkinValue(button, mBtnSkinValueBuilder);
         mBtnSkinValueBuilder.clear();
         return button;
