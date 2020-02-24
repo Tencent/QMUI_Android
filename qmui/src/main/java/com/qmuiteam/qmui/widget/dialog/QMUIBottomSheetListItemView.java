@@ -17,25 +17,25 @@
 package com.qmuiteam.qmui.widget.dialog;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
-import com.qmuiteam.qmui.layout.QMUIFrameLayout;
-import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
-import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
-import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
 
@@ -76,7 +76,7 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         QMUISkinHelper.setSkinValue(mRedPointView, builder);
         builder.clear();
 
-        if(markStyle){
+        if (markStyle) {
             mMarkView = new AppCompatImageView(context);
             mMarkView.setId(View.generateViewId());
             mMarkView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -106,31 +106,31 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         lp.bottomToBottom = LayoutParams.PARENT_ID;
         lp.horizontalChainStyle = LayoutParams.CHAIN_PACKED;
         lp.horizontalBias = gravityCenter ? 0.5f : 0f;
-        lp.leftMargin =  QMUIResHelper.getAttrDimen(
+        lp.leftMargin = QMUIResHelper.getAttrDimen(
                 context, R.attr.qmui_bottom_sheet_list_item_icon_margin_right);
         lp.goneLeftMargin = 0;
         addView(mTextView, lp);
 
-        int redPointSize =  QMUIResHelper.getAttrDimen(
+        int redPointSize = QMUIResHelper.getAttrDimen(
                 context, R.attr.qmui_bottom_sheet_list_item_red_point_size);
         lp = new ConstraintLayout.LayoutParams(redPointSize, redPointSize);
         lp.leftToRight = mTextView.getId();
-        if(markStyle){
+        if (markStyle) {
             lp.rightToLeft = mMarkView.getId();
             lp.rightMargin = QMUIResHelper.getAttrDimen(
                     context, R.attr.qmui_bottom_sheet_list_item_mark_margin_left);
-        }else{
+        } else {
             lp.rightToRight = LayoutParams.PARENT_ID;
         }
         lp.topToTop = LayoutParams.PARENT_ID;
         lp.bottomToBottom = LayoutParams.PARENT_ID;
         lp.horizontalChainStyle = LayoutParams.CHAIN_PACKED;
         lp.horizontalBias = gravityCenter ? 0.5f : 0f;
-        lp.leftMargin =  QMUIResHelper.getAttrDimen(
+        lp.leftMargin = QMUIResHelper.getAttrDimen(
                 context, R.attr.qmui_bottom_sheet_list_item_tip_point_margin_left);
         addView(mRedPointView, lp);
 
-        if(markStyle){
+        if (markStyle) {
             lp = new ConstraintLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lp.rightToRight = LayoutParams.PARENT_ID;
@@ -142,49 +142,52 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         mItemHeight = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_list_item_height);
     }
 
-    public void render(@NonNull QMUIBottomSheetListItemModel itemModel, boolean isChecked){
+    public void render(@NonNull QMUIBottomSheetListItemModel itemModel, boolean isChecked) {
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        if(itemModel.imageSkinSrcAttr != 0){
+        if (itemModel.imageSkinSrcAttr != 0) {
             builder.src(itemModel.imageSkinSrcAttr);
             QMUISkinHelper.setSkinValue(mIconView, builder);
             mIconView.setImageDrawable(
                     QMUISkinHelper.getSkinDrawable(this, itemModel.imageSkinSrcAttr));
             mIconView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             Drawable drawable = itemModel.image;
-            if(drawable == null && itemModel.imageRes != 0){
+            if (drawable == null && itemModel.imageRes != 0) {
                 drawable = ContextCompat.getDrawable(getContext(), itemModel.imageRes);
             }
-            if(drawable != null){
+            if (drawable != null) {
                 drawable.mutate();
                 mIconView.setImageDrawable(drawable);
-                if(itemModel.imageSkinTintColorAttr != 0){
+                if (itemModel.imageSkinTintColorAttr != 0) {
                     builder.tintColor(itemModel.imageSkinTintColorAttr);
                     QMUISkinHelper.setSkinValue(mIconView, builder);
-                }else{
+                } else {
                     QMUISkinHelper.setSkinValue(mIconView, "");
                 }
-            }else{
+            } else {
                 mIconView.setVisibility(View.GONE);
             }
         }
         builder.clear();
 
         mTextView.setText(itemModel.text);
-        if(itemModel.typeface != null){
+        if (itemModel.typeface != null) {
             mTextView.setTypeface(itemModel.typeface);
         }
-        if(itemModel.textSkinColorAttr != 0){
+        if (itemModel.textSkinColorAttr != 0) {
             builder.textColor(itemModel.textSkinColorAttr);
             QMUISkinHelper.setSkinValue(mTextView, builder);
-            mTextView.setTextColor(QMUISkinHelper.getSkinColorStateList(mTextView, itemModel.textSkinColorAttr));
-        }else{
+            ColorStateList color = QMUISkinHelper.getSkinColorStateList(mTextView, itemModel.textSkinColorAttr);
+            if (color != null) {
+                mTextView.setTextColor(color);
+            }
+        } else {
             QMUISkinHelper.setSkinValue(mTextView, "");
         }
 
         mRedPointView.setVisibility(itemModel.hasRedPoint ? View.VISIBLE : View.GONE);
 
-        if(mMarkView != null){
+        if (mMarkView != null) {
             mMarkView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
         }
     }

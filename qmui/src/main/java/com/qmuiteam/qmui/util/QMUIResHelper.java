@@ -66,10 +66,12 @@ public class QMUIResHelper {
         return sTmpValue.data;
     }
 
+    @Nullable
     public static ColorStateList getAttrColorStateList(Context context, int attrRes) {
         return getAttrColorStateList(context, context.getTheme(), attrRes);
     }
 
+    @Nullable
     public static ColorStateList getAttrColorStateList(Context context, Resources.Theme theme, int attr) {
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
@@ -81,6 +83,9 @@ public class QMUIResHelper {
         }
         if (sTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
             return getAttrColorStateList(context, theme, sTmpValue.data);
+        }
+        if(sTmpValue.resourceId == 0){
+            return null;
         }
         return ContextCompat.getColorStateList(context, sTmpValue.resourceId);
     }

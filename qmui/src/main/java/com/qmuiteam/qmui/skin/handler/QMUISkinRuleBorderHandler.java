@@ -27,7 +27,9 @@ public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorStateListHandler
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
-
+        if(colorStateList == null){
+            return;
+        }
         if (view instanceof IQMUILayout) {
             ((IQMUILayout) view).setBorderColor(colorStateList.getDefaultColor());
         } else if (view instanceof QMUIRadiusImageView) {

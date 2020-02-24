@@ -14,6 +14,9 @@ public class QMUISkinRuleTextCompoundTintColorHandler extends QMUISkinRuleColorS
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
+        if(colorStateList == null){
+            return;
+        }
         if (view instanceof TextView) {
             TextView tv = (TextView) view;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

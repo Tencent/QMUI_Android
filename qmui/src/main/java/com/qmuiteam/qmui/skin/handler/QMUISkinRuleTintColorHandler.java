@@ -29,6 +29,9 @@ public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorStateListHand
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
+        if(colorStateList == null){
+            return;
+        }
         if(view instanceof QMUILoadingView){
             ((QMUILoadingView) view).setColor(colorStateList.getDefaultColor());
         }else if(view instanceof QMUIPullRefreshLayout.RefreshView){

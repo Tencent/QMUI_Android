@@ -26,6 +26,9 @@ public class QMUISkinRuleTextColorHandler extends QMUISkinRuleColorStateListHand
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
+        if(colorStateList == null){
+            return;
+        }
         if (view instanceof TextView) {
             ((TextView) view).setTextColor(colorStateList);
         } else if (view instanceof QMUIQQFaceView) {
