@@ -210,6 +210,7 @@
     <attr name="qmui_skin_support_dialog_action_text_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_positive_action_text_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_negative_action_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_action_container_separator_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_action_divider_color" format="reference"/>
     <attr name="qmui_skin_support_s_dialog_check_drawable" format="reference"/>
     <attr name="qmui_skin_support_dialog_mark_drawable" format="reference"/>

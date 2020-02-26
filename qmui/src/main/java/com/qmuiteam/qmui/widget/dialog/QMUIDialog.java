@@ -151,6 +151,12 @@ public class QMUIDialog extends QMUIBaseDialog {
                 assignMessageTvWithAttr(tv, hasTitle(), R.attr.qmui_dialog_message_content_style);
                 tv.setText(mMessage);
                 tv.setMovementMethodDefault();
+
+                QMUISkinValueBuilder valueBuilder = QMUISkinValueBuilder.acquire();
+                valueBuilder.textColor(R.attr.qmui_skin_support_dialog_message_text_color);
+                QMUISkinHelper.setSkinValue(tv, valueBuilder);
+                QMUISkinValueBuilder.release(valueBuilder);
+
                 return wrapWithScroll(tv);
             }
             return null;

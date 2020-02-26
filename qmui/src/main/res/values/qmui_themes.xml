@@ -253,6 +253,7 @@
         <item name="qmui_skin_support_dialog_message_text_color">?attr/qmui_config_color_gray_4</item>
         <item name="qmui_skin_support_dialog_action_bg">@null</item>
         <item name="qmui_skin_support_dialog_action_text_color">?attr/qmui_config_color_blue</item>
+        <item name="qmui_skin_support_dialog_action_container_separator_color">?attr/qmui_skin_support_color_separator</item>
         <item name="qmui_skin_support_dialog_positive_action_text_color">?attr/qmui_config_color_blue</item>
         <item name="qmui_skin_support_dialog_negative_action_text_color">?attr/qmui_config_color_red</item>
         <item name="qmui_skin_support_dialog_action_divider_color">?attr/qmui_skin_support_color_separator</item>
