@@ -104,9 +104,7 @@ public class QDSpanFragment extends BaseFragment {
         final float spanWidthCharacterCount = 2f;
         SpannableString spannable = new SpannableString("[icon]" + "这是一行示例文字，前面的 Span 设置了和文字垂直居中并占 " + spanWidthCharacterCount + " 个中文字的宽度");
         Drawable iconDrawable = QMUIDrawableHelper.createDrawableWithSize(getResources(), alignMiddleIconLength, alignMiddleIconLength, QMUIDisplayHelper.dp2px(getContext(), 4), ContextCompat.getColor(getContext(), R.color.app_color_theme_3));
-        if (iconDrawable != null) {
-            iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
-        }
+        iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
         ImageSpan alignMiddleImageSpan = new QMUIAlignMiddleImageSpan(iconDrawable, QMUIAlignMiddleImageSpan.ALIGN_MIDDLE, spanWidthCharacterCount);
         spannable.setSpan(alignMiddleImageSpan, 0, "[icon]".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         mAlignMiddleTextView.setText(spannable);

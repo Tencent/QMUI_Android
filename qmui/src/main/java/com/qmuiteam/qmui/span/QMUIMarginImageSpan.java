@@ -46,9 +46,8 @@ public class QMUIMarginImageSpan extends QMUIAlignMiddleImageSpan {
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         if (mSpanMarginLeft != 0 || mSpanMarginRight != 0) {
-            super.getSize(paint, text, start, end, fm);
             Drawable d = getDrawable();
-            return d.getIntrinsicWidth() + mSpanMarginLeft + mSpanMarginRight;
+            return d.getBounds().width() + mSpanMarginLeft + mSpanMarginRight;
         } else {
             return super.getSize(paint, text, start, end, fm);
         }
