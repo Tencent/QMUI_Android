@@ -239,7 +239,7 @@
         <item name="qmui_dialog_menu_item_height">48dp</item>
     </style>
 
-    <style name="QMUI.Dialog_MenuItem">
+    <style name="QMUI.Dialog.MenuItem">
         <item name="android:background">?attr/qmui_skin_support_s_dialog_menu_item_bg</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>

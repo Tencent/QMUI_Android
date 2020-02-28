@@ -245,7 +245,7 @@
         <item name="qmui_dialog_action_style">@style/QMUI.Dialog.Action</item>
         <item name="qmui_dialog_edit_content_style">@style/QMUI.Dialog.EditContent</item>
         <item name="qmui_dialog_menu_container_style">@style/QMUI.Dialog.MenuContainer</item>
-        <item name="qmui_dialog_menu_item_style">@style/QMUI.Dialog_MenuItem</item>
+        <item name="qmui_dialog_menu_item_style">@style/QMUI.Dialog.MenuItem</item>
 
 
         <item name="qmui_skin_support_dialog_bg">@color/qmui_config_color_white</item>
