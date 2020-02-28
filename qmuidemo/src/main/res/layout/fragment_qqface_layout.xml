@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textColor="@color/s_btn_blue_text"
                 android:ellipsize="end"/>
 
             <TextView
@@ -70,7 +70,7 @@
                 android:id="@+id/qqface3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/qmui_config_color_gray_5"
+                android:textColor="@color/s_btn_blue_text"
                 android:singleLine="true"
                 android:ellipsize="start"/>
 

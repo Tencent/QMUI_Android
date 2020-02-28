@@ -85,9 +85,16 @@ public class QDQQFaceUsageFragment extends BaseFragment {
 
     private void initData() {
         mQQFace1.setText("这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示");
+        mQQFace2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "点击态", Toast.LENGTH_SHORT).show();
+            }
+        });
         mQQFace2.setText("这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +
                 "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +
                 "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行。");
+        mQQFace3.setEnabled(false);
         mQQFace3.setText("这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示");
         mQQFace4.setText("这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +
                 "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +
