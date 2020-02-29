@@ -290,11 +290,13 @@
     <attr name="qmui_bottom_sheet_list_item_red_point_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_list_item_mark_margin_left" format="dimension" />
     <attr name="qmui_bottom_sheet_list_item_tip_point_margin_left" format="dimension" />
-    <attr name="qmui_bottom_sheet_grid_padding_vertical" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_padding_top" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_padding_bottom" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_line_vertical_space" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_text_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_item_icon_size" format="dimension" />
-    <attr name="qmui_bottom_sheet_grid_item_padding_ver" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_item_padding_top" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_item_padding_bottom" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_text_margin_top" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_mini_width" format="dimension" />
 

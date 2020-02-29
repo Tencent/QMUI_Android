@@ -57,8 +57,9 @@ public class QMUIBottomSheetGridItemView extends QMUIConstraintLayout {
     public QMUIBottomSheetGridItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setChangeAlphaWhenPress(true);
-        int paddingVer = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_grid_item_padding_ver);
-        setPadding(0, paddingVer, 0, paddingVer);
+        int paddingTop = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_grid_item_padding_top);
+        int paddingBottom = QMUIResHelper.getAttrDimen(context, R.attr.qmui_bottom_sheet_grid_item_padding_bottom);
+        setPadding(0, paddingTop, 0, paddingBottom);
         mIconIv = onCreateIconView(context);
         mIconIv.setId(View.generateViewId());
         mIconIv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
