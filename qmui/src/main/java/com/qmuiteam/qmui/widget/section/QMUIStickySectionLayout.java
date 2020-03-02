@@ -166,6 +166,11 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
                 public void onHeaderVisibilityChanged(boolean visible) {
 
                 }
+
+                @Override
+                public void invalidate() {
+                    mRecyclerView.invalidate();
+                }
             };
             mStickySectionItemDecoration = new QMUIStickySectionItemDecoration<>(mStickySectionWrapView, callback);
             mRecyclerView.addItemDecoration(mStickySectionItemDecoration);

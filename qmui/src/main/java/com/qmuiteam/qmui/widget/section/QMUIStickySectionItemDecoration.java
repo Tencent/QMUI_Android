@@ -44,6 +44,31 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
         mWeakSectionContainer = new WeakReference<>(sectionContainer);
 
         mCallback.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                mStickyHeaderViewPosition = RecyclerView.NO_POSITION;
+                mCallback.invalidate();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                if (positionStart <= mStickyHeaderViewPosition) {
+                    mStickyHeaderViewPosition = RecyclerView.NO_POSITION;
+                    mCallback.invalidate();
+                }
+            }
+
+            @Override
+            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount);
+                if (fromPosition == mStickyHeaderViewPosition ||
+                        toPosition == mStickyHeaderViewPosition) {
+                    mStickyHeaderViewPosition = RecyclerView.NO_POSITION;
+                    mCallback.invalidate();
+                }
+            }
 
             @Override
             public void onItemRangeChanged(int positionStart, int itemCount) {
@@ -53,7 +78,8 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
                         && mStickyHeaderViewPosition < positionStart + itemCount
                         && mStickyHeaderViewHolder != null
                         && mWeakSectionContainer.get() != null) {
-                    bindStickyViewHolder(mWeakSectionContainer.get(), mStickyHeaderViewHolder, mStickyHeaderViewPosition);
+                    mStickyHeaderViewPosition = RecyclerView.NO_POSITION;
+                    mCallback.invalidate();
                 }
             }
 
@@ -106,7 +132,6 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
             return;
         }
 
-
         int headerPos = mCallback.getRelativeStickyItemPosition(firstVisibleItemPosition);
         if (headerPos == RecyclerView.NO_POSITION) {
             setHeaderVisibility(false);
@@ -136,9 +161,7 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
             return;
         }
 
-        int childInContactPos = parent.getChildAdapterPosition(childInContact);
-
-        if (mCallback.isHeaderItem(childInContactPos) && childInContactPos > 0) {
+        if (mCallback.isHeaderItem(parent.getChildAdapterPosition(childInContact))) {
             mTargetTop = childInContact.getTop() + parent.getTop() - sectionContainer.getHeight();
             ViewCompat.offsetTopAndBottom(sectionContainer, mTargetTop - sectionContainer.getTop());
             return;
@@ -185,5 +208,7 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
         void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer);
 
         void onHeaderVisibilityChanged(boolean visible);
+
+        void invalidate();
     }
 }
