@@ -310,20 +310,26 @@ public final class QMUISkinManager {
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {
         SimpleArrayMap<String, Integer> attrs = getSkinAttrs(view);
-        if (view instanceof IQMUISkinHandlerView) {
-            ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
-        } else {
-            defaultHandleSkinAttrs(view, theme, attrs);
-        }
-        if (view instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            int itemDecorationCount = recyclerView.getItemDecorationCount();
-            for (int i = 0; i < itemDecorationCount; i++) {
-                RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
-                if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
-                    ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
+        try{
+            if (view instanceof IQMUISkinHandlerView) {
+                ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
+            } else {
+                defaultHandleSkinAttrs(view, theme, attrs);
+            }
+            if (view instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                int itemDecorationCount = recyclerView.getItemDecorationCount();
+                for (int i = 0; i < itemDecorationCount; i++) {
+                    RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
+                    if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
+                        ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
+                    }
                 }
             }
+        }catch (Throwable throwable){
+            QMUILog.printErrStackTrace(TAG, throwable,
+                    "catch error when apply theme: " + view.getClass().getSimpleName() +
+                            "; " + skinIndex + "; attrs = " + (attrs == null ? "null" : attrs.toString()));
         }
     }
 
