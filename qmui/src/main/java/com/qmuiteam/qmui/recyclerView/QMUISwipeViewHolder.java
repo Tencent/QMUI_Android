@@ -16,13 +16,16 @@
 
 package com.qmuiteam.qmui.recyclerView;
 
+import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +45,15 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
     ActionWrapper mCurrentTouchAction = null;
     float mActionDownX = 0;
     float mActionDownY = 0;
-
+    private QMUISwipeViewHolder.ActionWrapper.Callback mCallback = new ActionWrapper.Callback() {
+        @Override
+        public void invalidate() {
+            ViewParent viewParent = itemView.getParent();
+            if (viewParent instanceof RecyclerView) {
+                ((RecyclerView) viewParent).invalidate();
+            }
+        }
+    };
 
     public QMUISwipeViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -52,23 +63,24 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
         if (mSwipeActions == null) {
             mSwipeActions = new ArrayList<>();
         }
-        mSwipeActions.add(new ActionWrapper(action));
+        ActionWrapper actionWrapper = new ActionWrapper(action, mCallback);
+        mSwipeActions.add(actionWrapper);
     }
 
-    public boolean hasAction(){
+    public boolean hasAction() {
         return mSwipeActions != null && !mSwipeActions.isEmpty();
     }
 
-    public void clearTouchInfo(){
+    public void clearTouchInfo() {
         mCurrentTouchAction = null;
         mActionDownY = -1;
         mActionDownX = -1;
     }
 
-    void setup(int swipeDirection) {
+    void setup(int swipeDirection, boolean swipeDeleteIfOnlyOneAction) {
         mActionTotalWidth = 0;
         mActionTotalHeight = 0;
-        if(mSwipeActions == null || mSwipeActions.isEmpty()){
+        if (mSwipeActions == null || mSwipeActions.isEmpty()) {
             return;
         }
         mSetupDirection = swipeDirection;
@@ -79,15 +91,22 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
                         action.contentWidth + 2 * action.mPaddingStartEnd);
                 wrapper.measureHeight = itemView.getHeight();
                 mActionTotalWidth += wrapper.measureWidth;
-            } else if(swipeDirection == SWIPE_UP || swipeDirection == SWIPE_DOWN){
+            } else if (swipeDirection == SWIPE_UP || swipeDirection == SWIPE_DOWN) {
                 wrapper.measureHeight = Math.max(action.mSwipeDirectionMiniSize,
                         action.contentHeight + 2 * action.mPaddingStartEnd);
                 wrapper.measureWidth = itemView.getWidth();
                 mActionTotalHeight += wrapper.measureHeight;
             }
         }
-        
-        
+
+        if (mSwipeActions.size() == 1 && swipeDeleteIfOnlyOneAction) {
+            mSwipeActions.get(0).swipeDeleteMode = true;
+        } else {
+            for (ActionWrapper wrapper : mSwipeActions) {
+                wrapper.swipeDeleteMode = false;
+            }
+        }
+
         if (swipeDirection == SWIPE_LEFT) {
             int targetLeft = itemView.getRight() - mActionTotalWidth;
             for (ActionWrapper wrapper : mSwipeActions) {
@@ -135,16 +154,16 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
         return false;
     }
 
-    QMUISwipeAction checkUp(float x, float y, int touchSlop){
-        if(mCurrentTouchAction != null && mCurrentTouchAction.hitTest(x, y)){
-            if(Math.abs(x - mActionDownX) < touchSlop && Math.abs(y - mActionDownY) < touchSlop){
+    QMUISwipeAction checkUp(float x, float y, int touchSlop) {
+        if (mCurrentTouchAction != null && mCurrentTouchAction.hitTest(x, y)) {
+            if (Math.abs(x - mActionDownX) < touchSlop && Math.abs(y - mActionDownY) < touchSlop) {
                 return mCurrentTouchAction.action;
             }
         }
         return null;
     }
 
-    void draw(Canvas canvas, float dx, float dy){
+    void draw(Canvas canvas, boolean overSwipeThreshold, float dx, float dy) {
         if (mSwipeActions.isEmpty()) {
             return;
         }
@@ -197,12 +216,18 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
             }
         }
         for (ActionWrapper actionInfo : mSwipeActions) {
-            actionInfo.draw(canvas);
+            actionInfo.draw(canvas, overSwipeThreshold, mSetupDirection);
         }
     }
-    
+
     static class ActionWrapper {
+        static int SWIPE_DELETE_BEFORE = 0;
+        static int SWIPE_DELETE_ANIMATING_TO_AFTER = 1;
+        static int SWIPE_DELETE_ANIMATING_TO_BEFORE = 2;
+        static int SWIPE_DELETE_AFTER = 3;
+        static int MAX_SWIPE_MOVE_DURATION = 250;
         final QMUISwipeAction action;
+        final Callback callback;
 
         float measureWidth;
         float measureHeight;
@@ -215,39 +240,173 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
         float width;
         float height;
 
-        public ActionWrapper(QMUISwipeAction action){
+        boolean swipeDeleteMode = false;
+        private int swipeDeleteState = SWIPE_DELETE_BEFORE;
+        private float currentAnimationProgress = 0;
+        private ValueAnimator animator;
+        private ValueAnimator.AnimatorUpdateListener listener = new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                currentAnimationProgress = (float) animation.getAnimatedValue();
+                callback.invalidate();
+            }
+        };
+        private float lastLeft = -1, lastTop = -1, animStartLeft = -1, animStartTop = -1;
+
+        public ActionWrapper(@NonNull QMUISwipeAction action, @NonNull Callback callback) {
             this.action = action;
+            this.callback = callback;
         }
 
         boolean hitTest(float x, float y) {
             return x > left && x < left + width && y > top && y < top + height;
         }
 
-        void draw(Canvas canvas) {
+        void draw(Canvas canvas, boolean overSwipeThreshold, int direction) {
             canvas.save();
             canvas.translate(left, top);
             action.paint.setStyle(Paint.Style.FILL);
             action.paint.setColor(action.mBackgroundColor);
             canvas.drawRect(0, 0, width, height, action.paint);
-            canvas.translate((width - action.contentWidth) / 2f, 0);
-
-            if (action.mIcon != null) {
-                action.mIcon.setBounds(0, 0, action.mIcon.getIntrinsicWidth(), action.mIcon.getIntrinsicHeight());
-                float translateY = (height - action.mIcon.getIntrinsicHeight()) / 2;
-                canvas.translate(0, translateY);
-                action.mIcon.draw(canvas);
-                canvas.translate(0, -translateY);
+            if (!swipeDeleteMode) {
+                canvas.translate((width - action.contentWidth) / 2f, (height - action.contentHeight) / 2);
+            } else {
+                float anchorLeft = getAnchorDrawLeft(direction);
+                float anchorTop = getAnchorDrawTop(direction);
+                float followLeft = getFollowDrawLeft(direction);
+                float followTop = getFollowDrawTop(direction);
+                float drawLeft, drawTop;
+                if (!overSwipeThreshold) {
+                    if (swipeDeleteState == SWIPE_DELETE_BEFORE) {
+                        drawLeft = anchorLeft;
+                        drawTop = anchorTop;
+                    } else if (swipeDeleteState == SWIPE_DELETE_AFTER) {
+                        swipeDeleteState = SWIPE_DELETE_ANIMATING_TO_BEFORE;
+                        drawLeft = followLeft;
+                        drawTop = followTop;
+                        startAnimator(drawLeft, drawTop, anchorLeft, anchorTop, direction);
+                    } else if (swipeDeleteState == SWIPE_DELETE_ANIMATING_TO_AFTER) {
+                        swipeDeleteState = SWIPE_DELETE_ANIMATING_TO_BEFORE;
+                        drawLeft = lastLeft;
+                        drawTop = lastTop;
+                        startAnimator(drawLeft, drawTop, anchorLeft, anchorTop, direction);
+                    } else {
+                        if (isVer(direction)) {
+                            drawLeft = anchorLeft;
+                            drawTop = animStartTop + (anchorTop - animStartTop) * currentAnimationProgress;
+                        } else {
+                            drawLeft = animStartLeft + (anchorLeft - animStartLeft) * currentAnimationProgress;
+                            drawTop = anchorTop;
+                        }
+                        if (currentAnimationProgress >= 1f) {
+                            swipeDeleteState = SWIPE_DELETE_BEFORE;
+                        }
+                    }
+                } else {
+                    if (swipeDeleteState == SWIPE_DELETE_AFTER) {
+                        drawLeft = followLeft;
+                        drawTop = followTop;
+                    } else if (swipeDeleteState == SWIPE_DELETE_ANIMATING_TO_BEFORE) {
+                        swipeDeleteState = SWIPE_DELETE_ANIMATING_TO_AFTER;
+                        drawLeft = lastLeft;
+                        drawTop = lastTop;
+                        startAnimator(drawLeft, drawTop, followLeft, followTop, direction);
+                    } else if (swipeDeleteState == SWIPE_DELETE_BEFORE) {
+                        swipeDeleteState = SWIPE_DELETE_ANIMATING_TO_AFTER;
+                        drawLeft = anchorLeft;
+                        drawTop = anchorTop;
+                        startAnimator(drawLeft, drawTop, followLeft, followTop, direction);
+                    } else {
+                        if (isVer(direction)) {
+                            drawLeft = followLeft;
+                            drawTop = animStartTop + (followTop - animStartTop) * currentAnimationProgress;
+                        } else {
+                            drawLeft = animStartLeft + (followLeft - animStartLeft) * currentAnimationProgress;
+                            drawTop = followTop;
+                        }
+                        if (currentAnimationProgress >= 1f) {
+                            swipeDeleteState = SWIPE_DELETE_AFTER;
+                        }
+                    }
+                }
+                canvas.translate(drawLeft - left, drawTop - top);
+                lastLeft = drawLeft;
+                lastTop = drawTop;
             }
-            if (action.mIcon != null && action.mText != null) {
-                canvas.translate(action.mIconTextGap, 0);
-            }
-            if (action.mText != null) {
-                action.paint.setColor(action.mTextColor);
-                Paint.FontMetrics metricsInt = action.paint.getFontMetrics();
-                float baseLine = (height - metricsInt.descent + metricsInt.ascent) / 2 - metricsInt.ascent;
-                canvas.drawText(action.mText, 0, baseLine, action.paint);
-            }
+            action.paint.setColor(action.mTextColor);
+            action.draw(canvas);
             canvas.restore();
+        }
+
+        private void startAnimator(float curLeft, float curTop, float targetLeft, float targetTop, int direction) {
+            QMUIViewHelper.clearValueAnimator(animator);
+            if (isVer(direction)) {
+                animator = ValueAnimator.ofFloat(0, 1);
+                animStartTop = curTop;
+            } else {
+                animator = ValueAnimator.ofFloat(0, 1);
+                animStartLeft = curLeft;
+            }
+            float dis = isVer(direction) ? Math.abs(targetTop - curTop) : Math.abs(targetLeft - curLeft);
+            int duration = Math.min(MAX_SWIPE_MOVE_DURATION, (int) (dis / action.mSwipePxPerMS));
+            animator.setDuration(duration);
+            animator.setInterpolator(action.mSwipeMoveInterpolator);
+            animator.addUpdateListener(listener);
+            animator.start();
+        }
+
+        private boolean isVer(int direction) {
+            return direction == SWIPE_DOWN || direction == SWIPE_UP;
+        }
+
+        private float getAnchorDrawLeft(int direction) {
+            if(direction == SWIPE_LEFT){
+                if(left > targetLeft){
+                    return getFollowDrawLeft(direction);
+                }
+            }else if(direction == SWIPE_RIGHT){
+                if(left < targetLeft){
+                    return getFollowDrawLeft(direction);
+                }
+            }
+            return targetLeft + (measureWidth - action.contentWidth) / 2;
+        }
+
+        private float getAnchorDrawTop(int direction) {
+            if(direction == SWIPE_UP){
+                if(top > targetTop){
+                    return getFollowDrawTop(direction);
+                }
+            }else if(direction == SWIPE_DOWN){
+                if(top < targetTop){
+                    return getFollowDrawTop(direction);
+                }
+            }
+            return targetTop + (measureHeight - action.contentHeight) / 2;
+        }
+
+        private float getFollowDrawLeft(int direction) {
+            float innerHor = (measureWidth - action.contentWidth) / 2;
+            if (direction == SWIPE_LEFT) {
+                return left + innerHor;
+            } else if (direction == SWIPE_RIGHT) {
+                return left + width - measureWidth + innerHor;
+            }
+            return left + (width - action.contentWidth) / 2f;
+        }
+
+        private float getFollowDrawTop(int direction) {
+            float innerVer = (measureHeight - action.contentHeight) / 2;
+            if (direction == SWIPE_UP) {
+                return top + innerVer;
+            } else if (direction == SWIPE_DOWN) {
+                return top + height - measureHeight + innerVer;
+            }
+            return top + (height - action.contentHeight) / 2f;
+        }
+
+        interface Callback {
+            void invalidate();
         }
     }
 }

@@ -105,7 +105,7 @@ public class QDRecyclerViewDraggableScrollBarFragment extends BaseFragment {
         scrollBar.setEnableScrollBarFadeInOut(true);
         scrollBar.attachToRecyclerView(mRecyclerView);
 
-        QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(new QMUIRVItemSwipeAction.Callback() {
+        QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(true, new QMUIRVItemSwipeAction.Callback() {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 mAdapter.remove(viewHolder.getAdapterPosition());

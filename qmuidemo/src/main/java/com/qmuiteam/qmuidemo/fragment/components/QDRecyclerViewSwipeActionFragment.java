@@ -110,7 +110,7 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
             }
         });
 
-        QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(new QMUIRVItemSwipeAction.Callback() {
+        QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(true, new QMUIRVItemSwipeAction.Callback() {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 mAdapter.remove(viewHolder.getAdapterPosition());
@@ -122,14 +122,15 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
             }
 
             @Override
-            public void onClickAction(RecyclerView.ViewHolder selected, QMUISwipeAction action) {
-                super.onClickAction(selected, action);
+            public void onClickAction(QMUIRVItemSwipeAction swipeAction, RecyclerView.ViewHolder selected, QMUISwipeAction action) {
+                super.onClickAction(swipeAction, selected, action);
+                mAdapter.remove(selected.getAdapterPosition());
                 Toast.makeText(getContext(),
                         "你点击了第 " + selected.getAdapterPosition() + " 个 item 的" + action.getText(),
                         Toast.LENGTH_SHORT).show();
+                swipeAction.clear();
             }
         });
-        swipeAction.setPressTimeToSwipe(1000);
         swipeAction.attachToRecyclerView(mRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
@@ -221,7 +222,7 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_list_item_1, parent, false);
             final QMUISwipeViewHolder vh = new QMUISwipeViewHolder(view);
             vh.addSwipeAction(mDeleteAction);
-            vh.addSwipeAction(mWriteReviewAction);
+//            vh.addSwipeAction(mWriteReviewAction);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
