@@ -53,7 +53,7 @@ import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDRecyclerViewSwipeActionFragment;
+import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeMutiActionFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFixModeFragment;
 import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullHorizontalTestFragment;
 import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullRefreshAndLoadMoreTestFragment;
@@ -88,7 +88,7 @@ import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
                 QDPullVerticalTestFragment.class,
                 QDPullHorizontalTestFragment.class,
                 QDPullRefreshAndLoadMoreTestFragment.class,
-                QDRecyclerViewSwipeActionFragment.class,
+                QDRVSwipeMutiActionFragment.class,
                 QDPopupFragment.class
         })
 @DefaultFirstFragment(HomeFragment.class)

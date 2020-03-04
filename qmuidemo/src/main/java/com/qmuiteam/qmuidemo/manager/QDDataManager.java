@@ -32,7 +32,8 @@ import com.qmuiteam.qmuidemo.fragment.components.QDProgressBarFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRecyclerViewDraggableScrollBarFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDRecyclerViewSwipeActionFragment;
+import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeActionFragment;
+import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeMutiActionFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSliderFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSpanTouchFixTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
@@ -118,7 +119,7 @@ public class QDDataManager {
         mComponentsNames.add(QDSliderFragment.class);
         mComponentsNames.add(QDPullFragment.class);
         mComponentsNames.add(QDRecyclerViewDraggableScrollBarFragment.class);
-        mComponentsNames.add(QDRecyclerViewSwipeActionFragment.class);
+        mComponentsNames.add(QDRVSwipeActionFragment.class);
     }
 
     /**

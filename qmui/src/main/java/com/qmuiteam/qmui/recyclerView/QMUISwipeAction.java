@@ -217,8 +217,8 @@ public class QMUISwipeAction {
         int mPaddingStartEnd = 0;
         int mOrientation = VERTICAL;
         boolean mReverseDrawOrder = false;
-        TimeInterpolator mSwipeMoveInterpolator = QMUIInterpolatorStaticHolder.LINEAR_INTERPOLATOR;
-        int mSwipePxPerMS = 3;
+        TimeInterpolator mSwipeMoveInterpolator = QMUIInterpolatorStaticHolder.ACCELERATE_INTERPOLATOR;
+        int mSwipePxPerMS = 2;
 
         public ActionBuilder text(String text) {
             mText = text;

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmuidemo.fragment.components;
+package com.qmuiteam.qmuidemo.fragment.components.swipeAction;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.icu.util.ValueIterator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +26,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
-import com.qmuiteam.qmui.recyclerView.QMUIRVDraggableScrollBar;
 import com.qmuiteam.qmui.recyclerView.QMUIRVItemSwipeAction;
 import com.qmuiteam.qmui.recyclerView.QMUISwipeAction;
 import com.qmuiteam.qmui.recyclerView.QMUISwipeViewHolder;
@@ -40,8 +38,7 @@ import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.pullLayout.QMUIPullLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.base.BaseRecyclerAdapter;
-import com.qmuiteam.qmuidemo.base.RecyclerViewHolder;
+import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
@@ -54,9 +51,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(widgetClass = QMUIRVItemSwipeAction.class, iconRes = R.mipmap.icon_grid_rv_item_swipe_action)
-@LatestVisitRecord
-public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
+@Widget(group = Group.Other, name = "Swipe Left: Muti Actions With Only Icon")
+public class QDRVSwipeMutiActionOnlyIconFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
     @BindView(R.id.pull_layout)
@@ -124,11 +120,14 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
             @Override
             public void onClickAction(QMUIRVItemSwipeAction swipeAction, RecyclerView.ViewHolder selected, QMUISwipeAction action) {
                 super.onClickAction(swipeAction, selected, action);
-                mAdapter.remove(selected.getAdapterPosition());
                 Toast.makeText(getContext(),
                         "你点击了第 " + selected.getAdapterPosition() + " 个 item 的" + action.getText(),
                         Toast.LENGTH_SHORT).show();
-                swipeAction.clear();
+                if(mAdapter.mAction1 == action){
+                    mAdapter.remove(selected.getAdapterPosition());
+                }else{
+                    swipeAction.clear();
+                }
             }
         });
         swipeAction.attachToRecyclerView(mRecyclerView);
@@ -175,8 +174,8 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
 
         private List<String> mData = new ArrayList<>();
 
-        private final QMUISwipeAction mDeleteAction;
-        private final QMUISwipeAction mWriteReviewAction;
+        final QMUISwipeAction mAction1;
+        final QMUISwipeAction mAction2;
 
         public Adapter(Context context){
             QMUISwipeAction.ActionBuilder builder = new QMUISwipeAction.ActionBuilder()
@@ -184,8 +183,18 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
                     .textColor(Color.WHITE)
                     .paddingStartEnd(QMUIDisplayHelper.dp2px(getContext(), 14));
 
-            mDeleteAction = builder.text("删除").backgroundColor(Color.RED).build();
-            mWriteReviewAction = builder.text("写想法").backgroundColor(Color.BLUE).build();
+            mAction1 = builder
+                    .backgroundColor(Color.RED)
+                    .icon(ContextCompat.getDrawable(context, R.drawable.icon_quick_action_delete_line))
+                    .orientation(QMUISwipeAction.ActionBuilder.VERTICAL)
+                    .reverseDrawOrder(false)
+                    .build();
+            mAction2 = builder
+                    .backgroundColor(Color.BLUE)
+                    .icon(ContextCompat.getDrawable(context, R.drawable.icon_quick_action_share))
+                    .orientation(QMUISwipeAction.ActionBuilder.VERTICAL)
+                    .reverseDrawOrder(true)
+                    .build();
         }
 
         public void setData(@Nullable List<String> list) {
@@ -221,8 +230,8 @@ public class QDRecyclerViewSwipeActionFragment extends BaseFragment {
         public QMUISwipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_list_item_1, parent, false);
             final QMUISwipeViewHolder vh = new QMUISwipeViewHolder(view);
-            vh.addSwipeAction(mDeleteAction);
-//            vh.addSwipeAction(mWriteReviewAction);
+            vh.addSwipeAction(mAction1);
+            vh.addSwipeAction(mAction2);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
