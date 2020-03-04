@@ -68,7 +68,12 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha2){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha4){
+            text.append("1. Features: Add new widget: QMUIPullLayout.\n");
+            text.append("2. Features: Add new widget: QMUIRVItemSwipeAction.\n");
+            text.append("3. Support muti instance for QMUISkinManager.\n");
+            text.append("4. some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha2){
             text.append("1. Bugfix: Crash Happened on Android 7 and lower.\n");
             text.append("2. Bugfix: QMUIBottomSheet overlapped the navigation bar.");
         }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha1){
