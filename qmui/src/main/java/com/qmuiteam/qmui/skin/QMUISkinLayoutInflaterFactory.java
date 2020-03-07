@@ -155,6 +155,18 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                 builder.moreBgColor(id);
             }else if(attr == R.styleable.QMUISkinDef_qmui_skin_more_text_color){
                 builder.moreTextColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_hint_color){
+                builder.hintColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_text_compound_tint_color){
+                builder.textCompoundTintColor(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_text_compound_src_left){
+                builder.textCompoundLeftSrc(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_text_compound_src_top){
+                builder.textCompoundTopSrc(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_text_compound_src_right){
+                builder.textCompoundRightSrc(id);
+            }else if(attr == R.styleable.QMUISkinDef_qmui_skin_text_compound_src_bottom){
+                builder.textCompoundBottomSrc(id);
             }
         }
         a.recycle();

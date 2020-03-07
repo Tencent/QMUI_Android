@@ -47,9 +47,9 @@ fun View.onDebounceClick(wait: Long = 200, block: ((View) -> Unit)) {
     setOnClickListener(debounceClick(wait, block))
 }
 
-fun View.skin(block:((QMUISkinValueBuilder) -> Unit)){
+fun View.skin(block:(QMUISkinValueBuilder.() -> Unit)){
     val builder = QMUISkinValueBuilder.acquire();
-    block(builder)
+    builder.block()
     QMUISkinHelper.setSkinValue(this, builder)
     builder.release()
 }

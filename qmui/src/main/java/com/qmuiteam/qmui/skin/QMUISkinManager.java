@@ -67,7 +67,6 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -108,7 +107,40 @@ public final class QMUISkinManager {
     private Resources mResources;
     private String mPackageName;
     private SparseArray<SkinItem> mSkins = new SparseArray<>();
-    private HashMap<String, IQMUISkinRuleHandler> mRuleHandlers = new HashMap<>();
+    private static HashMap<String, IQMUISkinRuleHandler> sRuleHandlers = new HashMap<>();
+    private static HashMap<Integer, Resources.Theme> sStyleIdThemeMap = new HashMap<>();
+
+    static {
+        sRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
+        IQMUISkinRuleHandler textColorHandler = new QMUISkinRuleTextColorHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, textColorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.SECOND_TEXT_COLOR, textColorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.SRC, new QMUISkinRuleSrcHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.BORDER, new QMUISkinRuleBorderHandler());
+        IQMUISkinRuleHandler separatorHandler = new QMUISkinRuleSeparatorHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TOP_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.RIGHT_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TINT_COLOR, new QMUISkinRuleTextCompoundTintColorHandler());
+        IQMUISkinRuleHandler textCompoundSrcHandler = new QMUISkinRuleTextCompoundSrcHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_LEFT_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TOP_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.UNDERLINE, new QMUISkinRuleUnderlineHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.MORE_TEXT_COLOR, new QMUISkinRuleMoreTextColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.MORE_BG_COLOR, new QMUISkinRuleMoreBgColorHandler());
+    }
+
+    public static void setRuleHandler(String name, IQMUISkinRuleHandler handler){
+        sRuleHandlers.put(name, handler);
+    }
 
     // Actually, ViewGroup.OnHierarchyChangeListener is a better choice, but it only has a setter.
     // Add child will trigger onLayoutChange
@@ -162,31 +194,6 @@ public final class QMUISkinManager {
         mName = name;
         mResources = resources;
         mPackageName = packageName;
-        mRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
-        IQMUISkinRuleHandler textColorHandler = new QMUISkinRuleTextColorHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, textColorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.SECOND_TEXT_COLOR, textColorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.SRC, new QMUISkinRuleSrcHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.BORDER, new QMUISkinRuleBorderHandler());
-        IQMUISkinRuleHandler separatorHandler = new QMUISkinRuleSeparatorHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TOP_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.RIGHT_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TINT_COLOR, new QMUISkinRuleTextCompoundTintColorHandler());
-        IQMUISkinRuleHandler textCompoundSrcHandler = new QMUISkinRuleTextCompoundSrcHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_LEFT_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TOP_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.UNDERLINE, new QMUISkinRuleUnderlineHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.MORE_TEXT_COLOR, new QMUISkinRuleMoreTextColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.MORE_BG_COLOR, new QMUISkinRuleMoreBgColorHandler());
     }
 
     public String getName() {
@@ -338,14 +345,14 @@ public final class QMUISkinManager {
                                  int skinIndex){
         SkinItem skinItem = mSkins.get(skinIndex);
         if (skinItem != null) {
-            decoration.handle(recyclerView, this, skinIndex, skinItem.theme);
+            decoration.handle(recyclerView, this, skinIndex, skinItem.getTheme());
         }
     }
 
     void refreshTheme(@NonNull View view, int skinIndex) {
         SkinItem skinItem = mSkins.get(skinIndex);
         if (skinItem != null) {
-            applyTheme(view, skinIndex, skinItem.theme);
+            applyTheme(view, skinIndex, skinItem.getTheme());
         }
     }
 
@@ -366,7 +373,7 @@ public final class QMUISkinManager {
         if (attr == 0) {
             return;
         }
-        IQMUISkinRuleHandler handler = mRuleHandlers.get(name);
+        IQMUISkinRuleHandler handler = sRuleHandlers.get(name);
         if (handler == null) {
             QMUILog.w(TAG, "Do not find handler for skin attr name: " + name);
             return;
@@ -425,7 +432,6 @@ public final class QMUISkinManager {
     }
 
     class SkinItem {
-        private Resources.Theme theme;
         private int styleRes;
 
         SkinItem(int styleRes) {
@@ -438,9 +444,11 @@ public final class QMUISkinManager {
 
         @NonNull
         Resources.Theme getTheme() {
+            Resources.Theme theme = sStyleIdThemeMap.get(styleRes);
             if (theme == null) {
                 theme = mResources.newTheme();
                 theme.applyStyle(styleRes, true);
+                sStyleIdThemeMap.put(styleRes, theme);
             }
             return theme;
         }

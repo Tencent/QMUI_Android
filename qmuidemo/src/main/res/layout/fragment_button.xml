@@ -109,7 +109,7 @@
 
             </com.qmuiteam.qmui.layout.QMUIFrameLayout>
 
-            <LinearLayout style="@style/button_wrapper_style"
+            <com.qmuiteam.qmui.layout.QMUILinearLayout style="@style/button_wrapper_style"
                 android:orientation="vertical">
 
                 <TextView
@@ -131,7 +131,7 @@
                     app:qmui_skin_background="?attr/app_skin_btn_test_bg"
                     app:qmui_skin_border="?attr/app_skin_btn_test_border"
                     app:qmui_skin_text_color="?attr/app_skin_btn_test_border"/>
-            </LinearLayout>
+            </com.qmuiteam.qmui.layout.QMUILinearLayout>
 
             <com.qmuiteam.qmui.layout.QMUILinearLayout style="@style/button_wrapper_style"
                 android:orientation="vertical">
