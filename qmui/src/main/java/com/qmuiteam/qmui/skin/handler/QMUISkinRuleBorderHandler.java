@@ -19,6 +19,7 @@ import android.content.res.ColorStateList;
 import android.view.View;
 
 import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUISlider;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -38,6 +39,8 @@ public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorStateListHandler
             ((QMUIRoundButton) view).setStrokeColors(colorStateList);
         } else if(view instanceof QMUISlider.DefaultThumbView){
             ((QMUISlider.DefaultThumbView)view).setBorderColor(colorStateList.getDefaultColor());
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

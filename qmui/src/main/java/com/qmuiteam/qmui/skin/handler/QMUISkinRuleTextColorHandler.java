@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
 public class QMUISkinRuleTextColorHandler extends QMUISkinRuleColorStateListHandler {
@@ -35,6 +36,8 @@ public class QMUISkinRuleTextColorHandler extends QMUISkinRuleColorStateListHand
             ((QMUIQQFaceView) view).setTextColor(colorStateList.getDefaultColor());
         }else if(view instanceof QMUIProgressBar){
             ((QMUIProgressBar) view).setTextColor(colorStateList.getDefaultColor());
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

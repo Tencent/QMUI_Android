@@ -19,6 +19,7 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
@@ -38,6 +39,8 @@ public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorStateListHand
             ((QMUIPullRefreshLayout.RefreshView)view).setColorSchemeColors(colorStateList.getDefaultColor());
         }else if (view instanceof ImageView) {
             ImageViewCompat.setImageTintList((ImageView) view, colorStateList);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

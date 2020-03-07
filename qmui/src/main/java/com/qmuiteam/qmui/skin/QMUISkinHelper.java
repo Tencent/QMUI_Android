@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -88,5 +89,10 @@ public class QMUISkinHelper {
     public static void setSkinDefaultProvider(@NonNull View view,
                                               IQMUISkinDefaultAttrProvider provider) {
         view.setTag(R.id.qmui_skin_default_attr_provider, provider);
+    }
+
+    public static void warnRuleNotSupport(View view, String rule){
+        QMUILog.w("QMUISkinManager",
+                view.getClass().getSimpleName() + " does't support " + rule);
     }
 }

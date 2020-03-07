@@ -17,6 +17,7 @@ package com.qmuiteam.qmui.skin.handler;
 
 import android.view.View;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUISlider;
 
@@ -28,6 +29,8 @@ public class QMUISkinRuleProgressColorHandler extends QMUISkinRuleColorHandler {
             ((QMUIProgressBar) view).setProgressColor(color);
         }else if(view instanceof QMUISlider){
             ((QMUISlider) view).setBarProgressColor(color);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
 public class QMUISkinRuleUnderlineHandler extends QMUISkinRuleColorStateListHandler {
@@ -28,6 +29,8 @@ public class QMUISkinRuleUnderlineHandler extends QMUISkinRuleColorStateListHand
     void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof QMUIQQFaceView) {
             ((QMUIQQFaceView) view).setLinkUnderLineColor(colorStateList);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

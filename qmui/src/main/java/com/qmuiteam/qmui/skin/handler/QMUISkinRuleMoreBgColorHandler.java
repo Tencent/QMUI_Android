@@ -19,6 +19,7 @@ import android.content.res.ColorStateList;
 import android.view.View;
 
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 
 public class QMUISkinRuleMoreBgColorHandler extends QMUISkinRuleColorStateListHandler {
 
@@ -26,6 +27,8 @@ public class QMUISkinRuleMoreBgColorHandler extends QMUISkinRuleColorStateListHa
     void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof QMUIQQFaceView) {
             ((QMUIQQFaceView) view).setMoreActionBgColor(colorStateList);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

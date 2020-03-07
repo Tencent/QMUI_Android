@@ -23,6 +23,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
 
+import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
 import com.qmuiteam.qmui.skin.QMUISkinMaker;
@@ -55,6 +56,33 @@ public class QDApplication extends Application {
             return;
         }
         LeakCanary.install(this);
+
+        QMUILog.setDelegete(new QMUILog.QMUILogDelegate() {
+            @Override
+            public void e(String tag, String msg, Object... obj) {
+
+            }
+
+            @Override
+            public void w(String tag, String msg, Object... obj) {
+                Log.w(tag, msg);
+            }
+
+            @Override
+            public void i(String tag, String msg, Object... obj) {
+
+            }
+
+            @Override
+            public void d(String tag, String msg, Object... obj) {
+
+            }
+
+            @Override
+            public void printErrStackTrace(String tag, Throwable tr, String format, Object... obj) {
+
+            }
+        });
 
         QDUpgradeManager.getInstance(this).check();
         QMUISwipeBackActivityManager.init(this);
