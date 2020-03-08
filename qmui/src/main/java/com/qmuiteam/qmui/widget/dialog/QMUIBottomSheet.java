@@ -407,6 +407,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
                                            @NonNull QMUIBottomSheetRootLayout rootLayout,
                                            @NonNull Context context) {
             RecyclerView recyclerView = new RecyclerView(context);
+            recyclerView.setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
             QMUIBottomSheetListAdapter adapter = new QMUIBottomSheetListAdapter(
                     mNeedRightMark, mGravityCenter);
             recyclerView.setAdapter(adapter);
