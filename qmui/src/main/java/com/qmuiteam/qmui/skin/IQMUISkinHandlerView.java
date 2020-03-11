@@ -17,8 +17,13 @@ package com.qmuiteam.qmui.skin;
 
 import android.content.res.Resources;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
 
 public interface IQMUISkinHandlerView {
-    void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs);
+    void handle(@NonNull QMUISkinManager manager,
+                int skinIndex,
+                @NonNull Resources.Theme theme,
+                @Nullable SimpleArrayMap<String, Integer> attrs);
 }

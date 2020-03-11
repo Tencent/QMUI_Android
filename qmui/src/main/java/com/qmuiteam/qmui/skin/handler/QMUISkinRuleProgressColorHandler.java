@@ -21,10 +21,12 @@ import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUISlider;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleProgressColorHandler extends QMUISkinRuleColorHandler {
 
     @Override
-    void handle(View view, String name, int color) {
+    protected void handle(@NotNull View view, @NotNull String name, int color) {
         if (view instanceof QMUIProgressBar) {
             ((QMUIProgressBar) view).setProgressColor(color);
         }else if(view instanceof QMUISlider){

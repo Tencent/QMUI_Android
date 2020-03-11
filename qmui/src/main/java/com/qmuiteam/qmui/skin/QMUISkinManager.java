@@ -356,7 +356,7 @@ public final class QMUISkinManager {
         }
     }
 
-    public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
+    public void defaultHandleSkinAttrs(@NonNull View view, Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         if (attrs != null) {
             for (int i = 0; i < attrs.size(); i++) {
                 String key = attrs.keyAt(i);

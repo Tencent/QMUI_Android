@@ -23,10 +23,12 @@ import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleUnderlineHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, ColorStateList colorStateList) {
+    protected void handle(@NotNull View view, @NotNull String name, ColorStateList colorStateList) {
         if (view instanceof QMUIQQFaceView) {
             ((QMUIQQFaceView) view).setLinkUnderLineColor(colorStateList);
         }else{

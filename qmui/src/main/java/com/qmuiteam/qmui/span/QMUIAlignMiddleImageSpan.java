@@ -32,6 +32,8 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * 支持垂直居中的ImageSpan
  *
@@ -136,7 +138,7 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan implements IQMUISkinHand
     }
 
     @Override
-    public void handle(View view, QMUISkinManager manager, int skinIndex, Resources.Theme theme) {
+    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
         if (mDrawableTintColorAttr != 0) {
             QMUIDrawableHelper.setDrawableTintColor(mDrawable,
                     QMUIResHelper.getAttrColor(theme, mDrawableTintColorAttr));

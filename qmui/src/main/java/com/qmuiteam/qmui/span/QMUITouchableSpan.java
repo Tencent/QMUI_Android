@@ -31,6 +31,8 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import androidx.annotation.ColorInt;
 import androidx.core.view.ViewCompat;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * 可 Touch 的 Span，在 {@link #setPressed(boolean)} 后根据是否 pressed 来触发不同的UI状态
  * <p>
@@ -142,7 +144,7 @@ public abstract class QMUITouchableSpan extends ClickableSpan implements IToucha
     }
 
     @Override
-    public void handle(View view, QMUISkinManager manager, int skinIndex, Resources.Theme theme) {
+    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
         boolean noAttrExist = true;
         if (mNormalTextColorAttr != 0) {
             mNormalTextColor = QMUIResHelper.getAttrColor(theme, mNormalTextColorAttr);

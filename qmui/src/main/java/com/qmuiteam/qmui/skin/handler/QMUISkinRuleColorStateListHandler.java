@@ -19,15 +19,21 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class QMUISkinRuleColorStateListHandler implements IQMUISkinRuleHandler {
     @Override
-    public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
-                             String name, int attr) {
+    public final void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull Resources.Theme theme,
+                             @NotNull String name, int attr) {
         handle(view, name, QMUIResHelper.getAttrColorStateList(view.getContext(), theme, attr));
     }
 
-    abstract void handle(View view, String name, ColorStateList colorStateList);
+    protected abstract void handle(@NonNull View view,
+                                   @NonNull String name,
+                                   ColorStateList colorStateList);
 }

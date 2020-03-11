@@ -57,6 +57,8 @@ import androidx.collection.SimpleArrayMap;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import org.jetbrains.annotations.NotNull;
+
 
 /**
  * <p>用于横向多个 Tab 的布局，可以灵活配置 Tab</p>
@@ -1375,7 +1377,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
+    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         manager.defaultHandleSkinAttrs(this, theme, attrs);
         if(mIndicator != null){
             mIndicator.handleSkinChange(manager, skinIndex, theme, mTabAdapter.getItem(mCurrentSelectedIndex));

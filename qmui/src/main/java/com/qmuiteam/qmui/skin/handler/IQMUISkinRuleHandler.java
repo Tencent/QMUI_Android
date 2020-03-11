@@ -18,8 +18,13 @@ package com.qmuiteam.qmui.skin.handler;
 import android.content.res.Resources;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 public interface IQMUISkinRuleHandler {
-    void handle(QMUISkinManager skinManager, View view, Resources.Theme theme, String name, int attr);
+    void handle(@NonNull QMUISkinManager skinManager,
+                @NonNull View view,
+                @NonNull Resources.Theme theme,
+                @NonNull String name, int attr);
 }

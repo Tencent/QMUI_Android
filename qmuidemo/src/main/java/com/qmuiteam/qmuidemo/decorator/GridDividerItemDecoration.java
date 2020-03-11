@@ -31,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author cginechen
  * @date 2016-10-21
@@ -82,7 +84,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration imple
     }
 
     @Override
-    public void handle(RecyclerView recyclerView, QMUISkinManager manager, int skinIndex, Resources.Theme theme) {
+    public void handle(@NotNull RecyclerView recyclerView, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
         mDividerPaint.setColor(QMUIResHelper.getAttrColor(theme, mDividerAttr));
         recyclerView.invalidate();
     }

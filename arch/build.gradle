@@ -25,7 +25,7 @@ android {
 
 dependencies {
     api "androidx.appcompat:appcompat:$appcompatVersion"
-    api "androidx.fragment:fragment:1.2.0-beta02"
+    api "androidx.fragment:fragment:1.2.0"
     api project(':arch-annotation')
     compileOnly project(':qmui')
     testImplementation 'junit:junit:4.12'

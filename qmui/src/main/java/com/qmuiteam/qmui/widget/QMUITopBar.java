@@ -51,7 +51,10 @@ import com.qmuiteam.qmui.util.QMUIViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A standard toolbar for use within application content.
@@ -756,7 +759,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
+    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         if (attrs != null) {
             for (int i = 0; i < attrs.size(); i++) {
                 String key = attrs.keyAt(i);

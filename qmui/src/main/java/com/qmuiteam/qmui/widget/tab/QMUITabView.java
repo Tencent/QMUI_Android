@@ -44,9 +44,12 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
+
+import org.jetbrains.annotations.NotNull;
 
 public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private static final String TAG = "QMUITabView";
@@ -684,7 +687,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     }
 
     @Override
-    public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
+    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         if (mTab != null) {
             updateSkinInfo(mTab);
             invalidate();

@@ -18,15 +18,19 @@ package com.qmuiteam.qmui.skin.handler;
 import android.content.res.Resources;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class QMUISkinRuleColorHandler implements IQMUISkinRuleHandler {
     @Override
-    public final void handle(QMUISkinManager skinManager, View view, Resources.Theme theme,
-                             String name, int attr) {
+    public final void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull Resources.Theme theme,
+                             @NotNull String name, int attr) {
         handle(view, name, QMUIResHelper.getAttrColor(theme, attr));
     }
 
-    abstract void handle(View view, String name, int color);
+    protected abstract void handle(@NonNull View view, @NonNull String name, int color);
 }

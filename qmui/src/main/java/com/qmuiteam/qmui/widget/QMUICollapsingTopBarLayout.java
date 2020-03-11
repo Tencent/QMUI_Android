@@ -78,6 +78,8 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -1339,7 +1341,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
     }
 
     @Override
-    public boolean intercept(int skinIndex, Resources.Theme theme) {
+    public boolean intercept(int skinIndex, @NotNull Resources.Theme theme) {
         if(mContentScrimSkinAttr != 0){
             setContentScrimInner(QMUIResHelper.getAttrDrawable(getContext(), theme, mContentScrimSkinAttr));
         }

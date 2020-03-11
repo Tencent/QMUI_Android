@@ -44,6 +44,8 @@ import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     public static final int ANIM_AUTO = 0;
@@ -619,7 +621,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         }
 
         @Override
-        public boolean intercept(int skinIndex, Resources.Theme theme) {
+        public boolean intercept(int skinIndex, @NotNull Resources.Theme theme) {
             if (mBorderColor == NOT_SET && mBorderColorAttr != 0) {
                 mBorderUsedColor = QMUIResHelper.getAttrColor(theme, mBorderColorAttr);
             }

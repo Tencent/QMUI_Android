@@ -17,6 +17,8 @@ package com.qmuiteam.qmui.skin;
 
 import android.content.res.Resources;
 
+import androidx.annotation.NonNull;
+
 public interface IQMUISkinDispatchInterceptor {
-    boolean intercept(int skinIndex, Resources.Theme theme);
+    boolean intercept(int skinIndex, @NonNull Resources.Theme theme);
 }

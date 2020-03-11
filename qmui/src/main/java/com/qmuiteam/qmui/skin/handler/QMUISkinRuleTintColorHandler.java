@@ -26,10 +26,12 @@ import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 
 import androidx.core.widget.ImageViewCompat;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleTintColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, ColorStateList colorStateList) {
+    protected void handle(@NotNull View view, @NotNull String name, ColorStateList colorStateList) {
         if(colorStateList == null){
             return;
         }

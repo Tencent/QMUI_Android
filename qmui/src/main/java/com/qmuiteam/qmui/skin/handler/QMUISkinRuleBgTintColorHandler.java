@@ -22,10 +22,12 @@ import androidx.core.view.TintableBackgroundView;
 
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleBgTintColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, ColorStateList colorStateList) {
+    protected void handle(@NotNull View view, @NotNull String name, ColorStateList colorStateList) {
         if (view instanceof TintableBackgroundView) {
             ((TintableBackgroundView) view).setSupportBackgroundTintList(colorStateList);
         }else{

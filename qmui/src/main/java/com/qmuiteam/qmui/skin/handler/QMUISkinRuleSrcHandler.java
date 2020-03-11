@@ -22,10 +22,12 @@ import android.widget.ImageView;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleSrcHandler extends QMUISkinRuleDrawableHandler {
 
     @Override
-    void handle(View view, String name, Drawable drawable) {
+    protected void handle(@NotNull View view, @NotNull String name, Drawable drawable) {
 
         if (view instanceof ImageView) {
             ((ImageView) view).setImageDrawable(drawable);

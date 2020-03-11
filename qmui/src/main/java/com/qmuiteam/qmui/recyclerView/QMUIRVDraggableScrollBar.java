@@ -37,6 +37,8 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implements IQMUISkinHandlerDecoration, QMUIStickySectionLayout.DrawDecoration {
     private int[] STATE_PRESSED = new int[]{android.R.attr.state_pressed};
     private int[] STATE_NORMAL = new int[]{};
@@ -461,10 +463,10 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
     }
 
     @Override
-    public void handle(@NonNull RecyclerView recyclerView,
-                       @NonNull QMUISkinManager manager,
+    public void handle(@NotNull @NonNull RecyclerView recyclerView,
+                       @NotNull @NonNull QMUISkinManager manager,
                        int skinIndex,
-                       @NonNull Resources.Theme theme) {
+                       @NotNull @NonNull Resources.Theme theme) {
         if (mScrollBarSkinRes != 0) {
             mScrollBarDrawable = QMUIResHelper.getAttrDrawable(
                     recyclerView.getContext(), theme, mScrollBarSkinRes);

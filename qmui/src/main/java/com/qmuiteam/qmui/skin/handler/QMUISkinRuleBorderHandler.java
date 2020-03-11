@@ -24,10 +24,12 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUISlider;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleBorderHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, ColorStateList colorStateList) {
+    protected void handle(@NotNull View view, @NotNull String name, ColorStateList colorStateList) {
         if(colorStateList == null){
             return;
         }

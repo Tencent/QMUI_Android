@@ -17,10 +17,12 @@ package com.qmuiteam.qmui.skin.handler;
 
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleAlphaHandler extends QMUISkinRuleFloatHandler {
 
     @Override
-    void handle(View view, String name, float value) {
+    protected void handle(@NotNull View view, @NotNull String name, float value) {
         view.setAlpha(value);
     }
 }

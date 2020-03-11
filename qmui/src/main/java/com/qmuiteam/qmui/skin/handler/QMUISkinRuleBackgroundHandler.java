@@ -26,10 +26,12 @@ import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUISlider;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleBackgroundHandler implements IQMUISkinRuleHandler {
 
     @Override
-    public void handle(QMUISkinManager skinManager, View view, Resources.Theme theme, String name, int attr) {
+    public void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull Resources.Theme theme, @NotNull String name, int attr) {
         if(view instanceof QMUIRoundButton){
             ((QMUIRoundButton)view).setBgData(
                     QMUIResHelper.getAttrColorStateList(view.getContext(), theme, attr));

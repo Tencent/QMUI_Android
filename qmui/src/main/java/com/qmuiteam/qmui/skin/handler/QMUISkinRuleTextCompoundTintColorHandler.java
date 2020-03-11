@@ -11,10 +11,12 @@ import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 
 import androidx.core.widget.TintableCompoundDrawablesView;
 
+import org.jetbrains.annotations.NotNull;
+
 public class QMUISkinRuleTextCompoundTintColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
-    void handle(View view, String name, ColorStateList colorStateList) {
+    protected void handle(@NotNull View view, @NotNull String name, ColorStateList colorStateList) {
         if(colorStateList == null){
             return;
         }
