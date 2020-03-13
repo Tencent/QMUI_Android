@@ -94,7 +94,7 @@ public class QMUISkinHelper {
     public static void syncViewSkin(@NonNull View view, @NonNull View sourceView){
         QMUISkinManager.ViewSkinCurrent source = QMUISkinManager.getViewSkinCurrent(sourceView);
         if (source != null) {
-            QMUISkinManager.ViewSkinCurrent skin = QMUISkinManager.getViewSkinCurrent(sourceView);
+            QMUISkinManager.ViewSkinCurrent skin = QMUISkinManager.getViewSkinCurrent(view);
             if(!source.equals(skin)) {
                 QMUISkinManager.of(source.managerName, view.getContext()).dispatch(view, source.index);
             }
