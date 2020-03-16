@@ -26,17 +26,16 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.R;
-
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.qmuiteam.qmui.R;
 
 /**
  * @author cginechen
  * @date 2016-09-22
  */
 public class QMUIResHelper {
-
     private static TypedValue sTmpValue;
 
     public static float getAttrFloatValue(Context context, int attr) {
@@ -47,7 +46,9 @@ public class QMUIResHelper {
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        theme.resolveAttribute(attr, sTmpValue, true);
+        if (!theme.resolveAttribute(attr, sTmpValue, true)) {
+            return 0;
+        }
         return sTmpValue.getFloat();
     }
 
@@ -59,28 +60,40 @@ public class QMUIResHelper {
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        theme.resolveAttribute(attr, sTmpValue, true);
+        if (!theme.resolveAttribute(attr, sTmpValue, true)) {
+            return 0;
+        }
         if (sTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
             return getAttrColor(theme, sTmpValue.data);
         }
         return sTmpValue.data;
     }
 
+    @Nullable
     public static ColorStateList getAttrColorStateList(Context context, int attrRes) {
         return getAttrColorStateList(context, context.getTheme(), attrRes);
     }
 
+    @Nullable
     public static ColorStateList getAttrColorStateList(Context context, Resources.Theme theme, int attr) {
+        if (attr == 0) {
+            return null;
+        }
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        theme.resolveAttribute(attr, sTmpValue, true);
+        if (!theme.resolveAttribute(attr, sTmpValue, true)) {
+            return null;
+        }
         if (sTmpValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
                 && sTmpValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
             return ColorStateList.valueOf(sTmpValue.data);
         }
         if (sTmpValue.type == TypedValue.TYPE_ATTRIBUTE) {
             return getAttrColorStateList(context, theme, sTmpValue.data);
+        }
+        if (sTmpValue.resourceId == 0) {
+            return null;
         }
         return ContextCompat.getColorStateList(context, sTmpValue.resourceId);
     }
@@ -92,10 +105,15 @@ public class QMUIResHelper {
 
     @Nullable
     public static Drawable getAttrDrawable(Context context, Resources.Theme theme, int attr) {
+        if (attr == 0) {
+            return null;
+        }
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        theme.resolveAttribute(attr, sTmpValue, true);
+        if (!theme.resolveAttribute(attr, sTmpValue, true)) {
+            return null;
+        }
         if (sTmpValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
                 && sTmpValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
             return new ColorDrawable(sTmpValue.data);
@@ -125,7 +143,9 @@ public class QMUIResHelper {
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        context.getTheme().resolveAttribute(attrRes, sTmpValue, true);
+        if (!context.getTheme().resolveAttribute(attrRes, sTmpValue, true)) {
+            return 0;
+        }
         return TypedValue.complexToDimensionPixelSize(sTmpValue.data, QMUIDisplayHelper.getDisplayMetrics(context));
     }
 
@@ -134,9 +154,11 @@ public class QMUIResHelper {
         if (sTmpValue == null) {
             sTmpValue = new TypedValue();
         }
-        context.getTheme().resolveAttribute(attrRes, sTmpValue, true);
+        if (!context.getTheme().resolveAttribute(attrRes, sTmpValue, true)) {
+            return null;
+        }
         CharSequence str = sTmpValue.string;
-        return str == null ?  null : str.toString();
+        return str == null ? null : str.toString();
     }
 
     public static int getAttrInt(Context context, int attrRes) {

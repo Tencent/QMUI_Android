@@ -30,7 +30,7 @@ import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
-@Widget(group = Group.Lab, widgetClass = QMUIWebView.class, iconRes = R.mipmap.icon_grid_webview)
+@Widget(group = Group.Other, name = "修复 css-env-safe-area-inset")
 public class QDWebViewFixFragment extends QDWebExplorerFragment {
 
     public QDWebViewFixFragment() {

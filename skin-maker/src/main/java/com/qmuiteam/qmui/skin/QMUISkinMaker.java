@@ -556,7 +556,6 @@ public class QMUISkinMaker {
                         valueUpdater.update(viewInfo.valueBuilder, attrName);
                         QMUISkinHelper.setSkinValue(viewInfo.view, viewInfo.valueBuilder);
                         viewInfo.saveToMMKV();
-                        QMUISkinManager.defaultInstance(viewInfo.view.getContext()).refreshTheme(viewInfo.view);
                     }
                 });
             }
@@ -682,7 +681,6 @@ public class QMUISkinMaker {
                 QMUISkinHelper.setSkinValue(view, value);
                 viewInfo.valueBuilder.convertFrom(value);
             }
-            QMUISkinManager.defaultInstance(view.getContext()).refreshTheme(view);
         }
     }
 
@@ -842,6 +840,9 @@ public class QMUISkinMaker {
             }
             MMKV kv = MMKV.mmkvWithID(MMKV_ID);
             String[] keys = kv.allKeys();
+            if(keys == null || keys.length == 0){
+                return false;
+            }
             HashMap<String, ArrayList<String>> result = new HashMap<>();
             for (String key : keys) {
                 String value = kv.decodeString(key);

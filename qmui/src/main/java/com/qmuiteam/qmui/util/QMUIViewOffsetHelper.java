@@ -44,7 +44,7 @@ import androidx.core.view.ViewCompat;
  * Also the setting of absolute offsets (similar to translationX/Y), rather than additive
  * offsets.
  */
-public class QMUIViewOffsetHelper {
+public final class QMUIViewOffsetHelper {
 
     private final View mView;
 

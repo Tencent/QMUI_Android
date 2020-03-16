@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseActivity;
 
@@ -39,7 +40,7 @@ import butterknife.ButterKnife;
 @LatestVisitRecord
 public class TranslucentActivity extends BaseActivity {
 
-    @BindView(R.id.topbar) QMUITopBar mTopBar;
+    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,6 @@ public class TranslucentActivity extends BaseActivity {
     }
 
     private void initTopBar() {
-        mTopBar.setBackgroundColor(ContextCompat.getColor(this, R.color.app_color_theme_4));
         mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

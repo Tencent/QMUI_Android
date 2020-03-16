@@ -238,6 +238,19 @@
                 app:qmui_skin_underline="?attr/app_skin_btn_test_border"
                 app:qmui_skin_more_text_color="?attr/app_skin_btn_test_border"
                 app:qmui_skin_more_bg_color="?attr/app_skin_common_background_1"/>
+
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:layout_marginTop="20dp"
+                android:text="段间距"/>
+
+            <com.qmuiteam.qmui.qqface.QMUIQQFaceView
+                android:id="@+id/qqface18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/qmui_config_color_gray_5"
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
     </ScrollView>
 

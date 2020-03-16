@@ -16,12 +16,17 @@
 
 package com.qmuiteam.qmui.widget.tab;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,19 +60,35 @@ public class QMUITabIndicator {
      */
     private Paint mIndicatorPaint = null;
 
+    private int mFixedColorAttr = 0;
+    private boolean mShouldReGetFixedColor = true;
+    private int mFixedColor = 0;
+
     public QMUITabIndicator(int indicatorHeight, boolean indicatorTop,
-                            boolean isIndicatorWidthFollowContent) {
+                            boolean isIndicatorWidthFollowContent){
+        this(indicatorHeight, indicatorTop, isIndicatorWidthFollowContent, 0);
+    }
+
+    public QMUITabIndicator(int indicatorHeight, boolean indicatorTop,
+                            boolean isIndicatorWidthFollowContent,  int fixedColorAttr) {
         mIndicatorHeight = indicatorHeight;
         mIndicatorTop = indicatorTop;
         mIsIndicatorWidthFollowContent = isIndicatorWidthFollowContent;
+        mFixedColorAttr = fixedColorAttr;
     }
 
     public QMUITabIndicator(@NonNull Drawable drawable, boolean indicatorTop,
-                            boolean isIndicatorWidthFollowContent) {
+                            boolean isIndicatorWidthFollowContent){
+        this(drawable, indicatorTop, isIndicatorWidthFollowContent, 0);
+    }
+
+    public QMUITabIndicator(@NonNull Drawable drawable, boolean indicatorTop,
+                            boolean isIndicatorWidthFollowContent, int fixedColorAttr) {
         mIndicatorDrawable = drawable;
         mIndicatorHeight = drawable.getIntrinsicHeight();
         mIndicatorTop = indicatorTop;
         mIsIndicatorWidthFollowContent = isIndicatorWidthFollowContent;
+        mFixedColorAttr = fixedColorAttr;
     }
 
     public boolean isIndicatorWidthFollowContent() {
@@ -86,7 +107,12 @@ public class QMUITabIndicator {
             mIndicatorRect.left = left;
             mIndicatorRect.right = left + width;
         }
+        if(mFixedColorAttr == 0){
+            updateColor(color);
+        }
+    }
 
+    private void updateColor(int color){
         if (mIndicatorDrawable != null) {
             QMUIDrawableHelper.setDrawableTintColor(mIndicatorDrawable, color);
         } else {
@@ -98,8 +124,13 @@ public class QMUITabIndicator {
         }
     }
 
-    protected void draw(Canvas canvas, int viewTop, int viewBottom) {
+    protected void draw(@NonNull View hostView, @NonNull Canvas canvas, int viewTop, int viewBottom) {
         if (mIndicatorRect != null) {
+            if(mFixedColorAttr != 0 && mShouldReGetFixedColor){
+                mShouldReGetFixedColor = false;
+                mFixedColor = QMUISkinHelper.getSkinColor(hostView, mFixedColorAttr);
+                updateColor(mFixedColor);
+            }
             if (mIndicatorTop) {
                 mIndicatorRect.top = viewTop;
                 mIndicatorRect.bottom = mIndicatorRect.top + mIndicatorHeight;
@@ -113,6 +144,16 @@ public class QMUITabIndicator {
             } else {
                 canvas.drawRect(mIndicatorRect, mIndicatorPaint);
             }
+        }
+    }
+
+    protected void handleSkinChange(@NonNull QMUISkinManager manager, int skinIndex,
+                                    @NonNull Resources.Theme theme,
+                                    @Nullable QMUITab selectedTab){
+        mShouldReGetFixedColor = true;
+        if(selectedTab != null && mFixedColorAttr == 0){
+            updateColor(
+                    selectedTab.selectedColorAttr == 0 ? selectedTab.selectColor : QMUIResHelper.getAttrColor(theme,selectedTab.selectedColorAttr));
         }
     }
 }

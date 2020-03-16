@@ -93,6 +93,7 @@ public class QMUIJavaVectorDrawableDetector extends Detector implements Detector
                         // 若文件存在，并且包含首行包含 vector，则为 Vector Drawable，抛出警告
                         context.report(ISSUE_JAVA_VECTOR_DRAWABLE, method, context.getLocation(method), expression.toString() + " 为 Vector Drawable，请使用 getVectorDrawable 方法获取，避免 4.0 及以下版本的系统产生 Crash");
                     }
+                    reader.close();
                     fileInputStream.close();
                 } catch (Exception ignored) {
                 }

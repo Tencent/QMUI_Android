@@ -25,6 +25,7 @@ import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -122,6 +123,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     private int mPendingSelectedIndex = NO_POSITION;
 
     private QMUITabIndicator mIndicator = null;
+    private boolean mHideIndicatorWhenTabCountLessTwo = true;
 
     /**
      * TabSegmentMode
@@ -228,6 +230,10 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         mTabBuilder.setIconPosition(iconPosition);
     }
 
+    public void updateParentTabBuilder(TabBuilderUpdater updater){
+        updater.update(mTabBuilder);
+    }
+
     protected QMUITabAdapter createTabAdapter(ViewGroup tabParentView) {
         return new QMUITabAdapter(this, tabParentView);
     }
@@ -255,6 +261,10 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     public void setIndicator(@Nullable QMUITabIndicator indicator) {
         mIndicator = indicator;
         mContentLayout.requestLayout();
+    }
+
+    public void setHideIndicatorWhenTabCountLessTwo(boolean hideIndicatorWhenTabCountLessTwo) {
+        mHideIndicatorWhenTabCountLessTwo = hideIndicatorWhenTabCountLessTwo;
     }
 
     public void setItemSpaceInScrollMode(int itemSpaceInScrollMode) {
@@ -315,6 +325,9 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     public void setMode(@Mode int mode) {
         if (mMode != mode) {
             mMode = mode;
+            if(mode == MODE_SCROLLABLE){
+                mTabBuilder.setGravity(Gravity.LEFT);
+            }
             mContentLayout.invalidate();
         }
     }
@@ -605,7 +618,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         if (model == null || mIndicator == null) {
             return;
         }
-        mIndicator.updateInfo(model.contentLeft, model.contentWidth, QMUISkinHelper.getSkinColor(this, model.selectedColorAttr));
+        mIndicator.updateInfo(model.contentLeft, model.contentWidth, model.selectedColorAttr == 0 ? model.selectColor : QMUISkinHelper.getSkinColor(this, model.selectedColorAttr));
         if (invalidate) {
             mContentLayout.invalidate();
         }
@@ -620,8 +633,8 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         final int targetLeft = (int) (preModel.contentLeft + leftDistance * offsetPercent);
         final int targetWidth = (int) (preModel.contentWidth + widthDistance * offsetPercent);
         int indicatorColor = QMUIColorHelper.computeColor(
-                QMUISkinHelper.getSkinColor(this, preModel.selectedColorAttr),
-                QMUISkinHelper.getSkinColor(this, targetModel.selectedColorAttr),
+                preModel.selectedColorAttr == 0 ? preModel.selectColor : QMUISkinHelper.getSkinColor(this, preModel.selectedColorAttr),
+                targetModel.selectedColorAttr == 0 ? targetModel.selectColor : QMUISkinHelper.getSkinColor(this, targetModel.selectedColorAttr),
                 offsetPercent);
         mIndicator.updateInfo(targetLeft, targetWidth, indicatorColor);
         mContentLayout.invalidate();
@@ -676,7 +689,12 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
      */
     public void replaceTab(int index, QMUITab model) {
         try {
+            if(mCurrentSelectedIndex == index){
+                // re select
+                mCurrentSelectedIndex = NO_POSITION;
+            }
             mTabAdapter.replaceItem(index, model);
+            notifyDataChanged();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -750,7 +768,7 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         return mCurrentSelectedIndex;
     }
 
-    private int getTabCount() {
+    public int getTabCount() {
         return mTabAdapter.getSize();
     }
 
@@ -1117,8 +1135,8 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
         @Override
         protected void dispatchDraw(Canvas canvas) {
             super.dispatchDraw(canvas);
-            if (mIndicator != null) {
-                mIndicator.draw(canvas, getPaddingTop(), getHeight() - getPaddingBottom());
+            if (mIndicator != null && (!mHideIndicatorWhenTabCountLessTwo || mTabAdapter.getSize() > 1)) {
+                mIndicator.draw(this, canvas, getPaddingTop(), getHeight() - getPaddingBottom());
             }
         }
     }
@@ -1358,8 +1376,11 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
 
     @Override
     public void handle(QMUISkinManager manager, int skinIndex, Resources.Theme theme, SimpleArrayMap<String, Integer> attrs) {
-        layoutIndicator(mTabAdapter.getItem(mCurrentSelectedIndex), true);
         manager.defaultHandleSkinAttrs(this, theme, attrs);
+        if(mIndicator != null){
+            mIndicator.handleSkinChange(manager, skinIndex, theme, mTabAdapter.getItem(mCurrentSelectedIndex));
+            mContentLayout.invalidate();
+        }
     }
 
     @Override
@@ -1385,5 +1406,9 @@ public class QMUITabSegment extends HorizontalScrollView implements IQMUILayout,
     @Override
     public boolean hasBottomSeparator() {
         return mLayoutHelper.hasBottomSeparator();
+    }
+
+    public interface TabBuilderUpdater {
+        void update(QMUITabBuilder builder);
     }
 }

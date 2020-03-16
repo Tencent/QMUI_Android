@@ -33,6 +33,8 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import java.lang.ref.WeakReference;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
 import androidx.core.view.ViewCompat;
 
 public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
@@ -47,7 +49,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     private int mDimAmountAttr = 0;
     private PopupWindow.OnDismissListener mDismissListener;
     private boolean mDismissIfOutsideTouch = true;
-    private boolean mFollowSkin = true;
+    private QMUISkinManager mSkinManager;
     private QMUISkinManager.OnSkinChangeListener mOnSkinChangeListener = new QMUISkinManager.OnSkinChangeListener() {
         @Override
         public void onSkinChange(int oldSkin, int newSkin) {
@@ -85,6 +87,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
 
     public QMUIBasePopup(Context context) {
         mContext = context;
+        mSkinManager = QMUISkinManager.defaultInstance(context);
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mWindow = new PopupWindow(context);
         initWindow();
@@ -110,8 +113,8 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
 
     }
 
-    public boolean isFollowSkin() {
-        return mFollowSkin;
+    public QMUISkinManager getSkinManager() {
+        return mSkinManager;
     }
 
     public T dimAmount(float dimAmount) {
@@ -124,8 +127,8 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         return (T) this;
     }
 
-    public T setFollowSkin(boolean followSkin) {
-        mFollowSkin = followSkin;
+    public T skinManager(@Nullable QMUISkinManager skinManager) {
+        mSkinManager = skinManager;
         return (T) this;
     }
 
@@ -185,12 +188,11 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         parent.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
         mAttachedViewRf = new WeakReference<>(parent);
         mWindow.showAtLocation(parent, Gravity.NO_GRAVITY, x, y);
-        if (mFollowSkin) {
-            QMUISkinManager skinManager = QMUISkinManager.defaultInstance(mContext);
-            skinManager.register(mWindow);
-            skinManager.addSkinChangeListener(mOnSkinChangeListener);
+        if (mSkinManager != null) {
+            mSkinManager.register(mWindow);
+            mSkinManager.addSkinChangeListener(mOnSkinChangeListener);
             if (mDimAmountAttr != 0) {
-                Resources.Theme currentTheme = skinManager.getCurrentTheme();
+                Resources.Theme currentTheme = mSkinManager.getCurrentTheme();
                 currentTheme = currentTheme == null ? parent.getContext().getTheme() : currentTheme;
                 mDimAmount = QMUIResHelper.getAttrFloatValue(currentTheme, mDimAmountAttr);
             }
@@ -222,9 +224,10 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     public final void dismiss() {
         removeOldAttachStateChangeListener();
         mAttachedViewRf = null;
-        QMUISkinManager skinManager = QMUISkinManager.defaultInstance(mContext);
-        skinManager.unRegister(mWindow);
-        skinManager.removeSkinChangeListener(mOnSkinChangeListener);
+        if(mSkinManager != null){
+            mSkinManager.unRegister(mWindow);
+            mSkinManager.removeSkinChangeListener(mOnSkinChangeListener);
+        }
         mWindow.dismiss();
     }
 }

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 
 import androidx.core.widget.TintableCompoundDrawablesView;
@@ -14,6 +15,9 @@ public class QMUISkinRuleTextCompoundTintColorHandler extends QMUISkinRuleColorS
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
+        if(colorStateList == null){
+            return;
+        }
         if (view instanceof TextView) {
             TextView tv = (TextView) view;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -32,6 +36,8 @@ public class QMUISkinRuleTextCompoundTintColorHandler extends QMUISkinRuleColorS
                 }
                 tv.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
             }
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

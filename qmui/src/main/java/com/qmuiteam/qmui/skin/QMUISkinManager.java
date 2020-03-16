@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Trace;
 import android.text.Spanned;
+import android.util.ArrayMap;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -73,35 +75,76 @@ public final class QMUISkinManager {
     private static final String TAG = "QMUISkinManager";
     public static final int DEFAULT_SKIN = -1;
     private static final String[] EMPTY_ITEMS = new String[]{};
-    private static QMUISkinManager sInstance;
+    private static ArrayMap<String, QMUISkinManager> sInstances = new ArrayMap<>();
+    private static final String DEFAULT_NAME = "default";
 
     @MainThread
     public static QMUISkinManager defaultInstance(Context context) {
-        if (sInstance != null) {
-            return sInstance;
-        }
         context = context.getApplicationContext();
-        return defaultInstance(context.getResources(), context.getPackageName());
+        return of(DEFAULT_NAME, context.getResources(), context.getPackageName());
     }
 
     @MainThread
-    public static QMUISkinManager defaultInstance(Resources resources, String packageName) {
-        if (sInstance == null) {
-            sInstance = new QMUISkinManager(resources, packageName);
+    public static QMUISkinManager of(String name, Resources resources, String packageName) {
+        QMUISkinManager instance = sInstances.get(name);
+        if(instance == null){
+            instance =  new QMUISkinManager(name, resources, packageName);
+            sInstances.put(name, instance);
         }
-        return sInstance;
+        return instance;
     }
+
+    @MainThread
+    public static QMUISkinManager of(String name, Context context){
+        context = context.getApplicationContext();
+        return of(name, context.getResources(), context.getPackageName());
+    }
+
 
     //==============================================================================================
 
+    private String mName;
     private Resources mResources;
     private String mPackageName;
     private SparseArray<SkinItem> mSkins = new SparseArray<>();
-    private HashMap<String, IQMUISkinRuleHandler> mRuleHandlers = new HashMap<>();
+    private static HashMap<String, IQMUISkinRuleHandler> sRuleHandlers = new HashMap<>();
+    private static HashMap<Integer, Resources.Theme> sStyleIdThemeMap = new HashMap<>();
+
+    static {
+        sRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
+        IQMUISkinRuleHandler textColorHandler = new QMUISkinRuleTextColorHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, textColorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.SECOND_TEXT_COLOR, textColorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.SRC, new QMUISkinRuleSrcHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.BORDER, new QMUISkinRuleBorderHandler());
+        IQMUISkinRuleHandler separatorHandler = new QMUISkinRuleSeparatorHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TOP_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.RIGHT_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TINT_COLOR, new QMUISkinRuleTextCompoundTintColorHandler());
+        IQMUISkinRuleHandler textCompoundSrcHandler = new QMUISkinRuleTextCompoundSrcHandler();
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_LEFT_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TOP_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
+        sRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.UNDERLINE, new QMUISkinRuleUnderlineHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.MORE_TEXT_COLOR, new QMUISkinRuleMoreTextColorHandler());
+        sRuleHandlers.put(QMUISkinValueBuilder.MORE_BG_COLOR, new QMUISkinRuleMoreBgColorHandler());
+    }
+
+    public static void setRuleHandler(String name, IQMUISkinRuleHandler handler){
+        sRuleHandlers.put(name, handler);
+    }
 
     // Actually, ViewGroup.OnHierarchyChangeListener is a better choice, but it only has a setter.
     // Add child will trigger onLayoutChange
-    private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
+    private static View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
 
         @Override
         public void onLayoutChange(
@@ -110,14 +153,14 @@ public final class QMUISkinManager {
                 ViewGroup viewGroup = (ViewGroup) v;
                 int childCount = viewGroup.getChildCount();
                 if (childCount > 0) {
-                    Integer currentTheme = (Integer) viewGroup.getTag(R.id.qmui_skin_current_index);
-                    if (currentTheme != null) {
+                    ViewSkinCurrent current = getViewSkinCurrent(viewGroup);
+                    if (current != null) {
                         View child;
                         for (int i = 0; i < childCount; i++) {
                             child = viewGroup.getChildAt(i);
-                            Integer childTheme = (Integer) child.getTag(R.id.qmui_skin_current_index);
-                            if (!currentTheme.equals(childTheme)) {
-                                dispatch(child, currentTheme);
+                            ViewSkinCurrent childTheme = getViewSkinCurrent(child);
+                            if (!current.equals(childTheme)) {
+                                of(current.managerName, child.getContext()).dispatch(child, current.index);
                             }
                         }
                     }
@@ -126,14 +169,15 @@ public final class QMUISkinManager {
         }
     };
 
-    private ViewGroup.OnHierarchyChangeListener mOnHierarchyChangeListener = new ViewGroup.OnHierarchyChangeListener() {
+
+    private static ViewGroup.OnHierarchyChangeListener mOnHierarchyChangeListener = new ViewGroup.OnHierarchyChangeListener() {
         @Override
         public void onChildViewAdded(View parent, View child) {
-            Integer currentTheme = (Integer) parent.getTag(R.id.qmui_skin_current_index);
-            if (currentTheme != null) {
-                Integer childTheme = (Integer) child.getTag(R.id.qmui_skin_current_index);
-                if (!currentTheme.equals(childTheme)) {
-                    dispatch(child, currentTheme);
+            ViewSkinCurrent current = getViewSkinCurrent(parent);
+            if (current != null) {
+                ViewSkinCurrent childTheme = getViewSkinCurrent(child);
+                if (!current.equals(childTheme)) {
+                    of(current.managerName, child.getContext()).dispatch(child, current.index);
                 }
             }
         }
@@ -144,34 +188,16 @@ public final class QMUISkinManager {
         }
     };
 
-    public QMUISkinManager(Resources resources, String packageName) {
+
+
+    public QMUISkinManager(String name, Resources resources, String packageName) {
+        mName = name;
         mResources = resources;
         mPackageName = packageName;
-        mRuleHandlers.put(QMUISkinValueBuilder.BACKGROUND, new QMUISkinRuleBackgroundHandler());
-        IQMUISkinRuleHandler textColorHandler = new QMUISkinRuleTextColorHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COLOR, textColorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.SECOND_TEXT_COLOR, textColorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.SRC, new QMUISkinRuleSrcHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.BORDER, new QMUISkinRuleBorderHandler());
-        IQMUISkinRuleHandler separatorHandler = new QMUISkinRuleSeparatorHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TOP_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.RIGHT_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.LEFT_SEPARATOR, separatorHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TINT_COLOR, new QMUISkinRuleTintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.ALPHA, new QMUISkinRuleAlphaHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.BG_TINT_COLOR, new QMUISkinRuleBgTintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.PROGRESS_COLOR, new QMUISkinRuleProgressColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TINT_COLOR, new QMUISkinRuleTextCompoundTintColorHandler());
-        IQMUISkinRuleHandler textCompoundSrcHandler = new QMUISkinRuleTextCompoundSrcHandler();
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_LEFT_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_TOP_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_RIGHT_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.TEXT_COMPOUND_BOTTOM_SRC, textCompoundSrcHandler);
-        mRuleHandlers.put(QMUISkinValueBuilder.HINT_COLOR, new QMUISkinRuleHintColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.UNDERLINE, new QMUISkinRuleUnderlineHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.MORE_TEXT_COLOR, new QMUISkinRuleMoreTextColorHandler());
-        mRuleHandlers.put(QMUISkinValueBuilder.MORE_BG_COLOR, new QMUISkinRuleMoreBgColorHandler());
+    }
+
+    public String getName() {
+        return mName;
     }
 
     @Nullable
@@ -208,12 +234,20 @@ public final class QMUISkinManager {
         mSkins.append(index, skinItem);
     }
 
-    public void dispatch(View view, int skinIndex) {
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Trace.beginSection("QMUISkin::dispatch");
+    static ViewSkinCurrent getViewSkinCurrent(View view){
+        Object current = view.getTag(R.id.qmui_skin_current);
+        if(current instanceof ViewSkinCurrent){
+            return (ViewSkinCurrent) current;
         }
+        return null;
+    }
+
+    public void dispatch(View view, int skinIndex) {
         if (view == null) {
             return;
+        }
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Trace.beginSection("QMUISkin::dispatch");
         }
         SkinItem skinItem = mSkins.get(skinIndex);
         Resources.Theme theme;
@@ -233,12 +267,11 @@ public final class QMUISkinManager {
 
 
     private void runDispatch(@NonNull View view, int skinIndex, Resources.Theme theme) {
-
-        Integer currentTheme = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        if (currentTheme != null && currentTheme == skinIndex) {
+        ViewSkinCurrent currentTheme = getViewSkinCurrent(view);
+        if(currentTheme != null && currentTheme.index == skinIndex && Objects.equals(currentTheme.managerName, mName)){
             return;
         }
-        view.setTag(R.id.qmui_skin_current_index, skinIndex);
+        view.setTag(R.id.qmui_skin_current, new ViewSkinCurrent(mName, skinIndex));
 
         if (view instanceof IQMUISkinDispatchInterceptor) {
             if (((IQMUISkinDispatchInterceptor) view).intercept(skinIndex, theme)) {
@@ -255,16 +288,6 @@ public final class QMUISkinManager {
             }
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
-            }
-            if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                int itemDecorationCount = recyclerView.getItemDecorationCount();
-                for (int i = 0; i < itemDecorationCount; i++) {
-                    RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
-                    if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
-                        ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
-                    }
-                }
             }
         } else if ((view instanceof TextView) || (view instanceof QMUIQQFaceView)) {
             CharSequence text;
@@ -294,22 +317,42 @@ public final class QMUISkinManager {
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {
         SimpleArrayMap<String, Integer> attrs = getSkinAttrs(view);
-        if (view instanceof IQMUISkinHandlerView) {
-            ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
-        } else {
-            defaultHandleSkinAttrs(view, theme, attrs);
+        try{
+            if (view instanceof IQMUISkinHandlerView) {
+                ((IQMUISkinHandlerView) view).handle(this, skinIndex, theme, attrs);
+            } else {
+                defaultHandleSkinAttrs(view, theme, attrs);
+            }
+            if (view instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                int itemDecorationCount = recyclerView.getItemDecorationCount();
+                for (int i = 0; i < itemDecorationCount; i++) {
+                    RecyclerView.ItemDecoration itemDecoration = recyclerView.getItemDecorationAt(i);
+                    if (itemDecoration instanceof IQMUISkinHandlerDecoration) {
+                        ((IQMUISkinHandlerDecoration) itemDecoration).handle(recyclerView, this, skinIndex, theme);
+                    }
+                }
+            }
+        }catch (Throwable throwable){
+            QMUILog.printErrStackTrace(TAG, throwable,
+                    "catch error when apply theme: " + view.getClass().getSimpleName() +
+                            "; " + skinIndex + "; attrs = " + (attrs == null ? "null" : attrs.toString()));
         }
     }
 
-    public void refreshTheme(@NonNull View view) {
-        Integer skinIndex = (Integer) view.getTag(R.id.qmui_skin_current_index);
-        if (skinIndex == null || skinIndex <= 0) {
-            return;
-        }
-
+    void refreshRecyclerDecoration(@NonNull RecyclerView recyclerView,
+                                 @NonNull IQMUISkinHandlerDecoration decoration,
+                                 int skinIndex){
         SkinItem skinItem = mSkins.get(skinIndex);
         if (skinItem != null) {
-            applyTheme(view, skinIndex, skinItem.theme);
+            decoration.handle(recyclerView, this, skinIndex, skinItem.getTheme());
+        }
+    }
+
+    void refreshTheme(@NonNull View view, int skinIndex) {
+        SkinItem skinItem = mSkins.get(skinIndex);
+        if (skinItem != null) {
+            applyTheme(view, skinIndex, skinItem.getTheme());
         }
     }
 
@@ -330,7 +373,7 @@ public final class QMUISkinManager {
         if (attr == 0) {
             return;
         }
-        IQMUISkinRuleHandler handler = mRuleHandlers.get(name);
+        IQMUISkinRuleHandler handler = sRuleHandlers.get(name);
         if (handler == null) {
             QMUILog.w(TAG, "Do not find handler for skin attr name: " + name);
             return;
@@ -389,7 +432,6 @@ public final class QMUISkinManager {
     }
 
     class SkinItem {
-        private Resources.Theme theme;
         private int styleRes;
 
         SkinItem(int styleRes) {
@@ -402,9 +444,11 @@ public final class QMUISkinManager {
 
         @NonNull
         Resources.Theme getTheme() {
+            Resources.Theme theme = sStyleIdThemeMap.get(styleRes);
             if (theme == null) {
                 theme = mResources.newTheme();
                 theme.applyStyle(styleRes, true);
+                sStyleIdThemeMap.put(styleRes, theme);
             }
             return theme;
         }
@@ -588,4 +632,26 @@ public final class QMUISkinManager {
         void onSkinChange(int oldSkin, int newSkin);
     }
 
+    class ViewSkinCurrent{
+        String managerName;
+        int index;
+        ViewSkinCurrent(String managerName, int index){
+            this.managerName = managerName;
+            this.index = index;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ViewSkinCurrent that = (ViewSkinCurrent) o;
+            return index == that.index &&
+                    Objects.equals(managerName, that.managerName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(managerName, index);
+        }
+    }
 }

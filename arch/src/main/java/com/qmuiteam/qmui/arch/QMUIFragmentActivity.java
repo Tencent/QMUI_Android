@@ -57,7 +57,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QMUIStatusBarHelper.translucent(this);
+        performTranslucent();
         mFragmentContainer = onCreateRootView(getContextViewId());
         setContentView(mFragmentContainer);
         mIsFirstFragmentAddedByAnnotation = false;
@@ -88,6 +88,10 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             }
             Log.i(TAG, "the time it takes to inject first fragment from annotation is " + (System.currentTimeMillis() - start));
         }
+    }
+
+    protected void performTranslucent(){
+        QMUIStatusBarHelper.translucent(this);
     }
 
     /**
@@ -142,15 +146,19 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
 
     @Override
     public void onBackPressed() {
-        QMUIFragment fragment = getCurrentFragment();
-        if (fragment != null && !fragment.isInSwipeBack()) {
-            fragment.onBackPressed();
+        QMUIFragment fragment = getCurrentQMUIFragment();
+        if (fragment != null) {
+            if(!fragment.isInSwipeBack()){
+                fragment.onBackPressed();
+            }
+        }else{
+            super.onBackPressed();
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        QMUIFragment fragment = getCurrentFragment();
+        QMUIFragment fragment = getCurrentQMUIFragment();
         if (fragment != null && !fragment.isInSwipeBack() && fragment.onKeyDown(keyCode, event)) {
             return true;
         }
@@ -159,7 +167,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        QMUIFragment fragment = getCurrentFragment();
+        QMUIFragment fragment = getCurrentQMUIFragment();
         if (fragment != null && !fragment.isInSwipeBack() && fragment.onKeyUp(keyCode, event)) {
             return true;
         }
@@ -169,8 +177,18 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     /**
      * get the current Fragment.
      */
-    public QMUIFragment getCurrentFragment() {
-        return (QMUIFragment) getSupportFragmentManager().findFragmentById(getContextViewId());
+    @Nullable
+    public Fragment getCurrentFragment() {
+        return getSupportFragmentManager().findFragmentById(getContextViewId());
+    }
+
+    @Nullable
+    private QMUIFragment getCurrentQMUIFragment(){
+        Fragment current = getCurrentFragment();
+        if(current instanceof QMUIFragment){
+            return (QMUIFragment) current;
+        }
+        return null;
     }
 
     /**
@@ -263,7 +281,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
     public void popBackStack() {
         Log.i(TAG, "popBackStack: getSupportFragmentManager().getBackStackEntryCount() = " + getSupportFragmentManager().getBackStackEntryCount());
         if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
-            QMUIFragment fragment = getCurrentFragment();
+            QMUIFragment fragment = getCurrentQMUIFragment();
             if (fragment == null || QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
                 finish();
                 return;

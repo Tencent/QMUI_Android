@@ -64,7 +64,6 @@ public class QMUIDialogAction {
     private ActionListener mOnClickListener;
     private QMUIButton mButton;
     private boolean mIsEnabled = true;
-    private QMUISkinValueBuilder mBtnSkinValueBuilder;
 
 
     public QMUIDialogAction(Context context, int strRes) {
@@ -218,16 +217,16 @@ public class QMUIDialogAction {
                 skinTextColorAttr = R.attr.qmui_skin_support_dialog_action_text_color;
             }
         }
-        if (mBtnSkinValueBuilder == null) {
-            mBtnSkinValueBuilder = QMUISkinValueBuilder.acquire();
-        }
+        QMUISkinValueBuilder skinValueBuilder = QMUISkinValueBuilder.acquire();
         skinBackgroundAttr = skinBackgroundAttr == 0 ? R.attr.qmui_skin_support_dialog_action_bg : skinBackgroundAttr;
-        mBtnSkinValueBuilder.background(skinBackgroundAttr);
-        mBtnSkinValueBuilder.textColor(skinTextColorAttr);
-        mBtnSkinValueBuilder.topSeparator(mSkinSeparatorColorAttr);
-        mBtnSkinValueBuilder.leftSeparator(mSkinSeparatorColorAttr);
-        QMUISkinHelper.setSkinValue(button, mBtnSkinValueBuilder);
-        mBtnSkinValueBuilder.clear();
+        skinValueBuilder.background(skinBackgroundAttr);
+        skinValueBuilder.textColor(skinTextColorAttr);
+        if(mSkinSeparatorColorAttr != 0){
+            skinValueBuilder.topSeparator(mSkinSeparatorColorAttr);
+            skinValueBuilder.leftSeparator(mSkinSeparatorColorAttr);
+        }
+        QMUISkinHelper.setSkinValue(button, skinValueBuilder);
+        skinValueBuilder.release();
         return button;
     }
 

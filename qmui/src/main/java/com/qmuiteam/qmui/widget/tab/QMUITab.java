@@ -18,12 +18,16 @@ package com.qmuiteam.qmui.widget.tab;
 
 import android.graphics.Typeface;
 import android.view.Gravity;
+import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 
 public class QMUITab {
     public static final int ICON_POSITION_LEFT = 0;
@@ -31,8 +35,10 @@ public class QMUITab {
     public static final int ICON_POSITION_RIGHT = 2;
     public static final int ICON_POSITION_BOTTOM = 3;
 
-    static final int NO_SIGN_COUNT_AND_RED_POINT = -1;
-    static final int RED_POINT_SIGN_COUNT = 0;
+    public static final int NO_SIGN_COUNT_AND_RED_POINT = 0;
+    public static final int RED_POINT_SIGN_COUNT = -1;
+
+    public static final int SIGN_COUNT_VIEW_LAYOUT_VERTICAL_CENTER = Integer.MIN_VALUE;
 
     @IntDef(value = {
             ICON_POSITION_LEFT,
@@ -50,6 +56,8 @@ public class QMUITab {
     int selectedTextSize;
     Typeface normalTypeface;
     Typeface selectedTypeface;
+    int normalColor;
+    int selectColor;
     int normalColorAttr;
     int selectedColorAttr;
     int normalTabIconWidth = QMUITabIcon.TAB_ICON_INTRINSIC;
@@ -130,6 +138,19 @@ public class QMUITab {
         this.signCount = NO_SIGN_COUNT_AND_RED_POINT;
     }
 
+    public int getNormalColor(@NonNull View skinFollowView) {
+        if(normalColorAttr == 0){
+            return normalColor;
+        }
+        return QMUISkinHelper.getSkinColor(skinFollowView, normalColorAttr);
+    }
+
+    public int getSelectColor(@NonNull View skinFollowView) {
+        if(selectedColorAttr == 0){
+            return selectColor;
+        }
+        return QMUISkinHelper.getSkinColor(skinFollowView, selectedColorAttr);
+    }
 
     public int getNormalColorAttr() {
         return normalColorAttr;

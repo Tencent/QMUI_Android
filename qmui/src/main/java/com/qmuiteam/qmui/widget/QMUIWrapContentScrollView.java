@@ -59,7 +59,7 @@ public class QMUIWrapContentScrollView extends QMUIObservableScrollView {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int maxHeight = Math.min(heightSize, mMaxHeight);
         int expandSpec;
-        if (lp.height > 0 && lp.height <= mMaxHeight) {
+        if (lp != null && lp.height > 0 && lp.height <= mMaxHeight) {
             expandSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
         } else {
             expandSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);

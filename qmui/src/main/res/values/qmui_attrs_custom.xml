@@ -112,5 +112,11 @@
         <attr name="qmui_skin_underline" format="string"/>
         <attr name="qmui_skin_more_text_color" format="string"/>
         <attr name="qmui_skin_more_bg_color" format="string"/>
+        <attr name="qmui_skin_hint_color" format="string"/>
+        <attr name="qmui_skin_text_compound_tint_color" format="string"/>
+        <attr name="qmui_skin_text_compound_src_left" format="string"/>
+        <attr name="qmui_skin_text_compound_src_top" format="string"/>
+        <attr name="qmui_skin_text_compound_src_right" format="string"/>
+        <attr name="qmui_skin_text_compound_src_bottom" format="string"/>
     </declare-styleable>
 </resources>

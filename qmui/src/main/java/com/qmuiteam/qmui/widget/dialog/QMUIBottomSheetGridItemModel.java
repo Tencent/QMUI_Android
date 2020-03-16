@@ -90,4 +90,51 @@ public class QMUIBottomSheetGridItemModel {
         return this;
     }
 
+    public CharSequence getText() {
+        return text;
+    }
+
+    public Drawable getImage() {
+        return image;
+    }
+
+    public Drawable getSubscript() {
+        return subscript;
+    }
+
+    public int getImageRes() {
+        return imageRes;
+    }
+
+    public int getImageSkinSrcAttr() {
+        return imageSkinSrcAttr;
+    }
+
+    public int getImageSkinTintColorAttr() {
+        return imageSkinTintColorAttr;
+    }
+
+    public int getSubscriptRes() {
+        return subscriptRes;
+    }
+
+    public int getSubscriptSkinSrcAttr() {
+        return subscriptSkinSrcAttr;
+    }
+
+    public int getSubscriptSkinTintColorAttr() {
+        return subscriptSkinTintColorAttr;
+    }
+
+    public int getTextSkinColorAttr() {
+        return textSkinColorAttr;
+    }
+
+    public Object getTag() {
+        return tag;
+    }
+
+    public Typeface getTypeface() {
+        return typeface;
+    }
 }

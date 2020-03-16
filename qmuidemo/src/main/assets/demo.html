@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover">
+    <title>
+        js调用java
+    </title>
+</head>
+
+<body>
+
+<div>
+    <input type="button" id="enter" value="发消息给Native" onclick="testClick();"/>
+</div>
+<div id="message_console">
+
+</div>
+</body>
+<script>
+    var messageConsoleBox = document.getElementById("message_console");
+
+    function testClick() {
+        var data = {id: 1, info: "来自 Webview 的消息"};
+        window.QMUIBridge.send(data, function (responseData) {
+            var text = document.createElement('p');
+            text.innerText = "code = " + responseData.code + "; message = " + responseData.message;
+            messageConsoleBox.appendChild(text);
+        });
+
+    }
+
+    document.addEventListener('QMUIBridgeReady', function () {
+        var text = document.createElement('p')
+        text.innerText = "Bridge加载完成。"
+        messageConsoleBox.appendChild(text)
+    }, false);
+</script>
+
+</html>
+

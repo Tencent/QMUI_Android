@@ -713,7 +713,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             if (mTopDividerAlpha < 255) {
                 mDividerPaint.setAlpha(mTopDividerAlpha);
             }
-            float y = mTopDividerHeight * 1f / 2;
+            float y = mTopDividerHeight / 2f;
             canvas.drawLine(mTopDividerInsetLeft, y, w - mTopDividerInsetRight, y, mDividerPaint);
         }
 
@@ -723,7 +723,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             if (mBottomDividerAlpha < 255) {
                 mDividerPaint.setAlpha(mBottomDividerAlpha);
             }
-            float y = (float) Math.floor(h - mBottomDividerHeight * 1f / 2);
+            float y = (float) Math.floor(h - mBottomDividerHeight / 2f);
             canvas.drawLine(mBottomDividerInsetLeft, y, w - mBottomDividerInsetRight, y, mDividerPaint);
         }
 
@@ -733,7 +733,8 @@ public class QMUILayoutHelper implements IQMUILayout {
             if (mLeftDividerAlpha < 255) {
                 mDividerPaint.setAlpha(mLeftDividerAlpha);
             }
-            canvas.drawLine(0, mLeftDividerInsetTop, 0, h - mLeftDividerInsetBottom, mDividerPaint);
+            float x = mLeftDividerWidth / 2f;
+            canvas.drawLine(x, mLeftDividerInsetTop, x, h - mLeftDividerInsetBottom, mDividerPaint);
         }
 
         if (mRightDividerWidth > 0) {
@@ -742,7 +743,8 @@ public class QMUILayoutHelper implements IQMUILayout {
             if (mRightDividerAlpha < 255) {
                 mDividerPaint.setAlpha(mRightDividerAlpha);
             }
-            canvas.drawLine(w, mRightDividerInsetTop, w, h - mRightDividerInsetBottom, mDividerPaint);
+            float x = (float) Math.floor(w - mRightDividerWidth / 2f);
+            canvas.drawLine(x, mRightDividerInsetTop, x, h - mRightDividerInsetBottom, mDividerPaint);
         }
         canvas.restore();
     }
@@ -769,16 +771,17 @@ public class QMUILayoutHelper implements IQMUILayout {
         canvas.translate(owner.getScrollX(), owner.getScrollY());
 
         // react
+        float halfBorderWith = mBorderWidth / 2f;
         if (mIsOutlineExcludePadding) {
             mBorderRect.set(
-                    owner.getPaddingLeft(),
-                    owner.getPaddingTop(),
-                    width - owner.getPaddingRight(),
-                    height - owner.getPaddingBottom());
+                    owner.getPaddingLeft() + halfBorderWith,
+                    owner.getPaddingTop() + halfBorderWith,
+                    width - owner.getPaddingRight() - halfBorderWith,
+                    height - owner.getPaddingBottom() - halfBorderWith);
         } else {
-            mBorderRect.set( 0, 0, width, height);
+            mBorderRect.set(halfBorderWith, halfBorderWith,
+                    width- halfBorderWith, height - halfBorderWith);
         }
-
 
         if (needCheckFakeOuterNormalDraw) {
             int layerId = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);

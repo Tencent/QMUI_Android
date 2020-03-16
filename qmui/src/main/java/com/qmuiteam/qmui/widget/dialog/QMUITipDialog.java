@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUILoadingView;
@@ -41,6 +42,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 /**
@@ -107,10 +109,11 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         private CharSequence mTipWord;
 
-        private boolean mFollowSkin = true;
+        private QMUISkinManager mSkinManager;
 
         public Builder(Context context) {
             mContext = context;
+            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
         /**
@@ -131,8 +134,8 @@ public class QMUITipDialog extends QMUIBaseDialog {
             return this;
         }
 
-        public Builder setFollowSkin(boolean followSkin) {
-            mFollowSkin = followSkin;
+        public Builder setSkinManager(@Nullable QMUISkinManager skinManager) {
+            mSkinManager = skinManager;
             return this;
         }
 
@@ -153,7 +156,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
         public QMUITipDialog create(boolean cancelable, int style) {
             QMUITipDialog dialog = new QMUITipDialog(mContext, style);
             dialog.setCancelable(cancelable);
-            dialog.setFollowSkin(mFollowSkin);
+            dialog.setSkinManager(mSkinManager);
             Context dialogContext = dialog.getContext();
             QMUITipDialogView dialogView = new QMUITipDialogView(dialogContext);
 
@@ -165,8 +168,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
                 loadingView.setSize(QMUIResHelper.getAttrDimen(
                         dialogContext, R.attr.qmui_tip_dialog_loading_size));
-                builder.tintColor(QMUIResHelper.getAttrString(
-                        dialogContext, R.attr.qmui_skin_def_tip_dialog_loading_color));
+                builder.tintColor(R.attr.qmui_skin_support_tip_dialog_loading_color);
                 QMUISkinHelper.setSkinValue(loadingView, builder);
                 dialogView.addView(loadingView, onCreateIconOrLoadingLayoutParams(dialogContext));
 
@@ -180,18 +182,15 @@ public class QMUITipDialog extends QMUIBaseDialog {
                 if (mCurrentIconType == ICON_TYPE_SUCCESS) {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_success_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_success_src));
+                    builder.src( R.attr.qmui_skin_support_tip_dialog_icon_success_src);
                 } else if (mCurrentIconType == ICON_TYPE_FAIL) {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_error_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_error_src));
+                    builder.src(R.attr.qmui_skin_support_tip_dialog_icon_error_src);
                 } else {
                     drawable = QMUIResHelper.getAttrDrawable(
                             dialogContext, R.attr.qmui_skin_support_tip_dialog_icon_info_src);
-                    builder.src(QMUIResHelper.getAttrString(
-                            dialogContext, R.attr.qmui_skin_def_tip_dialog_icon_info_src));
+                    builder.src(R.attr.qmui_skin_support_tip_dialog_icon_info_src);
                 }
                 imageView.setImageDrawable(drawable);
                 QMUISkinHelper.setSkinValue(imageView, builder);
@@ -210,8 +209,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
                 tipView.setText(mTipWord);
 
                 builder.clear();
-                builder.textColor(QMUIResHelper.getAttrString(
-                        dialogContext, R.attr.qmui_skin_def_tip_dialog_text_color));
+                builder.textColor(R.attr.qmui_skin_support_tip_dialog_text_color);
                 QMUISkinHelper.setSkinValue(tipView, builder);
                 dialogView.addView(tipView, onCreateTextLayoutParams(dialogContext, mCurrentIconType));
             }
@@ -242,14 +240,15 @@ public class QMUITipDialog extends QMUIBaseDialog {
     public static class CustomBuilder {
         private Context mContext;
         private int mContentLayoutId;
-        private boolean mFollowSkin = true;
+        private QMUISkinManager mSkinManager;
 
         public CustomBuilder(Context context) {
             mContext = context;
+            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
-        public CustomBuilder setFollowSkin(boolean followSkin) {
-            mFollowSkin = followSkin;
+        public CustomBuilder setSkinManager(@Nullable QMUISkinManager skinManager) {
+            mSkinManager = skinManager;
             return this;
         }
 
@@ -260,7 +259,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         public QMUITipDialog create() {
             QMUITipDialog dialog = new QMUITipDialog(mContext);
-            dialog.setFollowSkin(mFollowSkin);
+            dialog.setSkinManager(mSkinManager);
             Context dialogContext = dialog.getContext();
             QMUITipDialogView tipDialogView = new QMUITipDialogView(dialogContext);
             LayoutInflater.from(dialogContext).inflate(mContentLayoutId, tipDialogView, true);

@@ -120,7 +120,15 @@
     ***********************************************-->
     <attr name="qmui_loading_size" format="dimension" />
     <attr name="qmui_skin_support_loading_color" format="color" />
-    
+
+
+    <!--**********************************************
+    *               qmui load more view              *
+    ***********************************************-->
+    <attr name="qmui_skin_support_pull_load_more_bg_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_loading_tint_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_arrow_tint_color" format="color"/>
+    <attr name="qmui_skin_support_pull_load_more_text_color" format="color"/>
 
     <!--**********************************************
     *                  qmui tabSegment              *
@@ -134,8 +142,8 @@
 
 
     <attr name="qmui_tab_sign_count_view" format="reference" />
-    <attr name="qmui_tab_sign_count_view_minSize" format="dimension" />
-    <attr name="qmui_tab_sign_count_view_minSize_with_text" format="dimension" />
+    <attr name="qmui_tab_sign_count_view_min_size" format="dimension" />
+    <attr name="qmui_tab_sign_count_view_min_size_with_text" format="dimension" />
     <attr name="qmui_tab_sign_count_view_padding_horizontal" format="dimension" />
 
     <!--**********************************************
@@ -202,6 +210,7 @@
     <attr name="qmui_skin_support_dialog_action_text_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_positive_action_text_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_negative_action_text_color" format="reference"/>
+    <attr name="qmui_skin_support_dialog_action_container_separator_color" format="reference"/>
     <attr name="qmui_skin_support_dialog_action_divider_color" format="reference"/>
     <attr name="qmui_skin_support_s_dialog_check_drawable" format="reference"/>
     <attr name="qmui_skin_support_dialog_mark_drawable" format="reference"/>
@@ -211,16 +220,7 @@
     <attr name="qmui_skin_support_s_dialog_menu_item_bg" format="reference"/>
     <attr name="qmui_skin_support_dialog_menu_item_text_color" format="reference"/>
 
-    <attr name="qmui_skin_def_dialog_bg" format="string"/>
-    <attr name="qmui_skin_def_dialog_title_text_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_message_text_color" format="string"/>
-    <attr name="qmui_skin_def_s_dialog_check_drawable" format="string"/>
-    <attr name="qmui_skin_def_dialog_mark_drawable" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_bottom_line_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_text_color" format="string"/>
-    <attr name="qmui_skin_def_dialog_edit_text_hint_color" format="string"/>
-    <attr name="qmui_skin_def_s_dialog_menu_item_bg" format="string"/>
-    <attr name="qmui_skin_def_dialog_menu_item_text_color" format="string"/>
+
 
 
 
@@ -263,13 +263,6 @@
     <attr name="qmui_skin_support_tip_dialog_icon_error_src" format="reference"/>
     <attr name="qmui_skin_support_tip_dialog_icon_info_src" format="reference"/>
 
-    <attr name="qmui_skin_def_tip_dialog_bg" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_loading_color" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_text_color" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_success_src" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_error_src" format="string"/>
-    <attr name="qmui_skin_def_tip_dialog_icon_info_src" format="string"/>
-
     <!--**********************************************
     *              qmui bottom sheet                 *
     **********************************************-->
@@ -284,15 +277,6 @@
     <attr name="qmui_skin_support_bottom_sheet_list_mark" format="reference"/>
     <attr name="qmui_skin_support_bottom_sheet_grid_item_text_color" format="reference"/>
 
-    <attr name="qmui_skin_def_bottom_sheet_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_title_text_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_cancel_text_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_cancel_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_separator_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_item_bg" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_red_point_color" format="string"/>
-    <attr name="qmui_skin_def_bottom_sheet_list_mark" format="string"/>
-
     <attr name="qmui_bottom_sheet_radius" format="dimension" />
     <attr name="qmui_bottom_sheet_padding_hor" format="dimension" />
     <attr name="qmui_bottom_sheet_use_percent_min_height" format="dimension" />
@@ -306,11 +290,13 @@
     <attr name="qmui_bottom_sheet_list_item_red_point_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_list_item_mark_margin_left" format="dimension" />
     <attr name="qmui_bottom_sheet_list_item_tip_point_margin_left" format="dimension" />
-    <attr name="qmui_bottom_sheet_grid_padding_vertical" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_padding_top" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_padding_bottom" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_line_vertical_space" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_text_size" format="dimension"/>
     <attr name="qmui_bottom_sheet_grid_item_icon_size" format="dimension" />
-    <attr name="qmui_bottom_sheet_grid_item_padding_ver" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_item_padding_top" format="dimension" />
+    <attr name="qmui_bottom_sheet_grid_item_padding_bottom" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_text_margin_top" format="dimension" />
     <attr name="qmui_bottom_sheet_grid_item_mini_width" format="dimension" />
 

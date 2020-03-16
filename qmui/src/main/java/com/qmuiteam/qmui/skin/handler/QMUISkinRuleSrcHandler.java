@@ -19,6 +19,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.qmuiteam.qmui.QMUILog;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+
 public class QMUISkinRuleSrcHandler extends QMUISkinRuleDrawableHandler {
 
     @Override
@@ -26,6 +29,8 @@ public class QMUISkinRuleSrcHandler extends QMUISkinRuleDrawableHandler {
 
         if (view instanceof ImageView) {
             ((ImageView) view).setImageDrawable(drawable);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

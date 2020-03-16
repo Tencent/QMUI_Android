@@ -20,12 +20,16 @@ import android.view.View;
 
 import androidx.core.view.TintableBackgroundView;
 
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+
 public class QMUISkinRuleBgTintColorHandler extends QMUISkinRuleColorStateListHandler {
 
     @Override
     void handle(View view, String name, ColorStateList colorStateList) {
         if (view instanceof TintableBackgroundView) {
             ((TintableBackgroundView) view).setSupportBackgroundTintList(colorStateList);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

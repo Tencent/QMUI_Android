@@ -27,9 +27,8 @@
 
     <style name="QMUI.TabSegment.SignCount">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">?attr/qmui_tab_sign_count_view_minSize</item>
-        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color
-        </item>
+        <item name="android:layout_height">?attr/qmui_tab_sign_count_view_min_size</item>
+        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color</item>
         <item name="qmui_isRadiusAdjustBounds">true</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">?attr/qmui_skin_support_tab_sign_count_view_text_color</item>
@@ -37,8 +36,8 @@
         <item name="android:singleLine">true</item>
         <item name="android:paddingLeft">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_tab_sign_count_view_padding_horizontal</item>
-        <item name="android:minWidth">?attr/qmui_tab_sign_count_view_minSize</item>
-        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_minSize</item>i_ta
+        <item name="android:minWidth">?attr/qmui_tab_sign_count_view_min_size</item>
+        <item name="android:minHeight">?attr/qmui_tab_sign_count_view_min_size</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
         <item name="android:ellipsize">end</item>
@@ -240,7 +239,7 @@
         <item name="qmui_dialog_menu_item_height">48dp</item>
     </style>
 
-    <style name="QMUI.Dialog_MenuItem">
+    <style name="QMUI.Dialog.MenuItem">
         <item name="android:background">?attr/qmui_skin_support_s_dialog_menu_item_bg</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingLeft">?attr/qmui_dialog_padding_horizontal</item>
@@ -343,6 +342,26 @@
         <item name="qmui_target_refresh_offset">72dp</item>
         <item name="qmui_auto_calculate_refresh_init_offset">true</item>
         <item name="qmui_auto_calculate_refresh_end_offset">true</item>
+    </style>
+
+    <!-- QMUIPullLayout -->
+    <style name="QMUI.PullLayout">
+        <item name="qmui_pull_enable_edge">left|right|top|bottom</item>
+    </style>
+
+    <!-- QMUIPullLoadMoreView -->
+    <style name="QMUI.PullLoadMore">
+        <item name="qmui_pull_load_more_loading_size">20dp</item>
+        <item name="qmui_pull_load_more_text_size">14sp</item>
+        <item name="qmui_pull_load_more_arrow_text_gap">10dp</item>
+        <item name="qmui_pull_load_more_height">56dp</item>
+        <item name="qmui_pull_load_more_arrow">@drawable/qmui_icon_pull_down</item>
+        <item name="qmui_pull_load_more_pull_text">上拉加载更多</item>
+        <item name="qmui_pull_load_more_release_text">松手加载更多</item>
+        <item name="qmui_skin_support_pull_load_more_bg_color">?attr/qmui_skin_support_pull_load_more_bg_color</item>
+        <item name="qmui_skin_support_pull_load_more_loading_tint_color">?attr/qmui_skin_support_pull_load_more_loading_tint_color</item>
+        <item name="qmui_skin_support_pull_load_more_arrow_tint_color">?attr/qmui_skin_support_pull_load_more_arrow_tint_color</item>
+        <item name="qmui_skin_support_pull_load_more_text_color">?attr/qmui_skin_support_pull_load_more_text_color</item>
     </style>
 
     <!-- QMUIRadiusImageView -->

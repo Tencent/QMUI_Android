@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 
 public class QMUISkinRuleHintColorHandler extends QMUISkinRuleColorStateListHandler {
     @Override
@@ -13,6 +14,8 @@ public class QMUISkinRuleHintColorHandler extends QMUISkinRuleColorStateListHand
             ((TextView) view).setHintTextColor(colorStateList);
         } else if (view instanceof TextInputLayout) {
             ((TextInputLayout) view).setHintTextColor(colorStateList);
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.skin.handler;
 import android.view.View;
 
 import com.qmuiteam.qmui.layout.IQMUILayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 
 public class QMUISkinRuleSeparatorHandler extends QMUISkinRuleColorHandler {
@@ -34,6 +35,8 @@ public class QMUISkinRuleSeparatorHandler extends QMUISkinRuleColorHandler {
             } else if (QMUISkinValueBuilder.RIGHT_SEPARATOR.equals(name)) {
                 ((IQMUILayout) view).updateRightSeparatorColor(color);
             }
+        }else{
+            QMUISkinHelper.warnRuleNotSupport(view, name);
         }
     }
 }

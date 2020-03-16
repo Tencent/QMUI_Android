@@ -45,9 +45,11 @@ public class QMUIBottomSheetGridLineLayout extends LinearLayout {
         super(bottomSheet.getContext());
         setOrientation(VERTICAL);
         setGravity(Gravity.TOP);
-        int paddingVer = QMUIResHelper.getAttrDimen(
-                bottomSheet.getContext(), R.attr.qmui_bottom_sheet_grid_padding_vertical);
-        setPadding(0, paddingVer, 0, paddingVer);
+        int paddingTop = QMUIResHelper.getAttrDimen(
+                bottomSheet.getContext(), R.attr.qmui_bottom_sheet_grid_padding_top);
+        int paddingBottom = QMUIResHelper.getAttrDimen(
+                bottomSheet.getContext(), R.attr.qmui_bottom_sheet_grid_padding_bottom);
+        setPadding(0, paddingTop, 0, paddingBottom);
         mFirstLineViews = firstLineViews;
         mSecondLineViews = secondLineViews;
         maxItemCountInLines = Math.max(

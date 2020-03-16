@@ -44,7 +44,7 @@ public class QMUITipDialogView extends QMUILinearLayout {
         setPadding(paddingHor, paddingVer, paddingHor, paddingVer);
         setRadius(radius);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        builder.background(QMUIResHelper.getAttrString(context, R.attr.qmui_skin_def_tip_dialog_bg));
+        builder.background(R.attr.qmui_skin_support_tip_dialog_bg);
         QMUISkinHelper.setSkinValue(this, builder);
         builder.release();
         mMaxWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_tip_dialog_max_width);

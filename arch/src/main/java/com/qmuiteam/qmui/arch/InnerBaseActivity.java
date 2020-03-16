@@ -23,6 +23,7 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.LayoutInflaterCompat;
+import androidx.lifecycle.Lifecycle;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -41,15 +42,17 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     private static int NO_REQUESTED_ORIENTATION_SET = -100;
     private boolean mConvertToTranslucentCauseOrientationChanged = false;
     private int mPendingRequestedOrientation = NO_REQUESTED_ORIENTATION_SET;
+    private QMUISkinManager mSkinManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        if(followSkin()){
+        if(useQMUISkinLayoutInflaterFactory()){
             LayoutInflater layoutInflater = LayoutInflater.from(this);
             LayoutInflaterCompat.setFactory2(layoutInflater,
                     new QMUISkinLayoutInflaterFactory(this, layoutInflater));
         }
         super.onCreate(savedInstanceState);
+        mSkinManager = QMUISkinManager.defaultInstance(this);
     }
 
     void convertToTranslucentCauseOrientationChanged() {
@@ -86,15 +89,17 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     @Override
     protected void onStart() {
         super.onStart();
-        if(followSkin()){
-            QMUISkinManager.defaultInstance(this).register(this);
+        if(mSkinManager != null){
+            mSkinManager.register(this);
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        QMUISkinManager.defaultInstance(this).unRegister(this);
+        if(mSkinManager != null){
+            mSkinManager.unRegister(this);
+        }
     }
 
     private void checkLatestVisitRecord() {
@@ -111,7 +116,19 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
 
     }
 
-    protected boolean followSkin(){
+    public void setSkinManager(@Nullable QMUISkinManager skinManager){
+        if(mSkinManager != null){
+            mSkinManager.unRegister(this);
+        }
+        mSkinManager = skinManager;
+        if(skinManager != null){
+            if(getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+                skinManager.register(this);
+            }
+        }
+    }
+
+    protected boolean useQMUISkinLayoutInflaterFactory(){
         return true;
     }
 }
