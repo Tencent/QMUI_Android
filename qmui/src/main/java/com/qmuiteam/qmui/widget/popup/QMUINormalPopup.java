@@ -159,8 +159,8 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
     public T edgeProtection(int left, int top, int right, int bottom) {
         mEdgeProtectionLeft = left;
-        mEdgeProtectionRight = top;
-        mEdgeProtectionTop = right;
+        mEdgeProtectionTop = top;
+        mEdgeProtectionRight = right;
         mEdgeProtectionBottom = bottom;
         return (T) this;
     }
