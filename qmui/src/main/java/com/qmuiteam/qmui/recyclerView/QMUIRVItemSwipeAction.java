@@ -530,7 +530,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             return;
         }
         swipeViewHolder.clearTouchInfo();
-        final int swipeDir = checkSwipe(mSelected, mSwipeDirection);
+        final int swipeDir = checkSwipe(mSelected, mSwipeDirection, true);
         if (swipeDir == SWIPE_NONE) {
             select(null, true);
         } else {
@@ -594,7 +594,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             final RecyclerView.ViewHolder prevSelected = mSelected;
             if (prevSelected.itemView.getParent() != null) {
                 endRecoverAnimation(prevSelected, true);
-                final int swipeDir = isActionUp ? checkSwipe(mSelected, mSwipeDirection) : SWIPE_NONE;
+                final int swipeDir = isActionUp ? checkSwipe(mSelected, mSwipeDirection, false) : SWIPE_NONE;
                 getSelectedDxDy(mTmpPosition);
                 final float currentTranslateX = mTmpPosition[0];
                 final float currentTranslateY = mTmpPosition[1];
@@ -724,7 +724,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
         return false;
     }
 
-    private int checkSwipe(RecyclerView.ViewHolder viewHolder, int swipeDirection) {
+    private int checkSwipe(RecyclerView.ViewHolder viewHolder, int swipeDirection, boolean checkAction) {
         if (swipeDirection == SWIPE_LEFT || swipeDirection == SWIPE_RIGHT) {
             final int dirFlag = mDx > 0 ? SWIPE_RIGHT : SWIPE_LEFT;
             if (mVelocityTracker != null && mActivePointerId > -1) {
@@ -740,8 +740,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             }
 
             float threshold;
-            if (viewHolder instanceof QMUISwipeViewHolder) {
-                QMUISwipeViewHolder vh = (QMUISwipeViewHolder) viewHolder;
+            if (checkAction && viewHolder instanceof QMUISwipeViewHolder) {
                 threshold = ((QMUISwipeViewHolder) viewHolder).mActionTotalWidth;
             } else {
                 threshold = mRecyclerView.getWidth() * mCallback.getSwipeThreshold(viewHolder);
@@ -765,8 +764,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
             }
 
             float threshold;
-            if (viewHolder instanceof QMUISwipeViewHolder) {
-                QMUISwipeViewHolder vh = (QMUISwipeViewHolder) viewHolder;
+            if (checkAction && viewHolder instanceof QMUISwipeViewHolder) {
                 threshold = ((QMUISwipeViewHolder) viewHolder).mActionTotalHeight;
             } else {
                 threshold = mRecyclerView.getHeight() * mCallback.getSwipeThreshold(viewHolder);
