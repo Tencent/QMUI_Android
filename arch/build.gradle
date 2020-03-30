@@ -25,10 +25,10 @@ android {
 
 dependencies {
     api "androidx.appcompat:appcompat:$appcompatVersion"
-    api "androidx.fragment:fragment:1.2.0"
+    api "androidx.fragment:fragment:1.2.3"
     api project(':arch-annotation')
     compileOnly project(':qmui')
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junitVersion"
     lintChecks project(':lintrule')
 }
 

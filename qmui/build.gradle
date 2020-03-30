@@ -53,7 +53,7 @@ dependencies {
     lintChecks project(':lintrule')
 
     //test
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junitVersion"
     api 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
