@@ -69,6 +69,10 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         addView(mTopBar, lp);
     }
 
+    public QMUITopBar getTopBar() {
+        return mTopBar;
+    }
+
     public void setCenterView(View view) {
         mTopBar.setCenterView(view);
     }

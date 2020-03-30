@@ -328,6 +328,10 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         return mTitleContainerRect;
     }
 
+    public LinearLayout getTitleContainerView() {
+        return mTitleContainerView;
+    }
+
     void disableBackgroundSetter(){
         mIsBackgroundSetterDisabled = true;
         super.setBackgroundDrawable(null);
