@@ -33,6 +33,7 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qmuiteam.qmui.Beta;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
 
@@ -41,6 +42,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
+@Beta
 public class QMUIPullLayout extends FrameLayout implements NestedScrollingParent3 {
     public static final float DEFAULT_PULL_RATE = 0.45f;
     public static final float DEFAULT_FLING_FRACTION = 0.002f;
