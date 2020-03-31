@@ -75,6 +75,13 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
             }
         });
 
+        mCollapsingTopBarLayout.addOnOffsetUpdateListener(new QMUICollapsingTopBarLayout.OnOffsetUpdateListener() {
+            @Override
+            public void onOffsetChanged(QMUICollapsingTopBarLayout layout, int offset, float expandFraction) {
+                Log.i(TAG, "offset = " + offset + "; expandFraction = " + expandFraction);
+            }
+        });
+
         return rootView;
     }
 
