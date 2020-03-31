@@ -163,7 +163,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
      * @param alpha 取值范围：[0, 255]，255表示不透明
      */
     public void setBackgroundAlpha(int alpha) {
-        this.getBackground().setAlpha(alpha);
+        this.getBackground().mutate().setAlpha(alpha);
     }
 
     /**
