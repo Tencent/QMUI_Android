@@ -298,4 +298,20 @@ public class QMUITabSegment extends QMUIBasicTabSegment {
             populateFromPagerAdapter(mUseAdapterTitle);
         }
     }
+
+    /**
+     * Please use QMUIBasicTabSegment.OnTabClickListener for a replacement
+     */
+    @Deprecated
+    public interface OnTabClickListener extends QMUIBasicTabSegment.OnTabClickListener{
+
+    }
+
+    /**
+     * Please use QMUIBasicTabSegment.OnTabSelectedListener for a replacement
+     */
+    @Deprecated
+    public interface OnTabSelectedListener extends QMUIBasicTabSegment.OnTabSelectedListener{
+
+    }
 }
