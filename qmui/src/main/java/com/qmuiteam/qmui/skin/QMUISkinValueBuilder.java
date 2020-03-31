@@ -35,11 +35,11 @@ public class QMUISkinValueBuilder {
     public static final String TINT_COLOR = "tintColor";
     public static final String BG_TINT_COLOR = "bgTintColor";
     public static final String PROGRESS_COLOR = "progressColor";
-    public static final String TEXT_COMPOUND_TINT_COLOR = "tclTintColor";
-    public static final String TEXT_COMPOUND_LEFT_SRC = "tclTintColor";
-    public static final String TEXT_COMPOUND_RIGHT_SRC = "tcrTintColor";
-    public static final String TEXT_COMPOUND_TOP_SRC = "tctTintColor";
-    public static final String TEXT_COMPOUND_BOTTOM_SRC = "tcbTintColor";
+    public static final String TEXT_COMPOUND_TINT_COLOR = "tcTintColor";
+    public static final String TEXT_COMPOUND_LEFT_SRC = "tclSrc";
+    public static final String TEXT_COMPOUND_RIGHT_SRC = "tcrSrc";
+    public static final String TEXT_COMPOUND_TOP_SRC = "tctSrc";
+    public static final String TEXT_COMPOUND_BOTTOM_SRC = "tcbSrc";
     public static final String UNDERLINE = "underline";
     public static final String MORE_TEXT_COLOR = "moreTextColor";
     public static final String MORE_BG_COLOR = "moreBgColor";
