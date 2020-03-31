@@ -16,12 +16,6 @@
 
 package com.qmuiteam.qmuidemo.fragment.components;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -31,16 +25,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.skin.SkinWriter;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabIndicator;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
-import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmui.widget.tab.QMUITabSegment2;
 import com.qmuiteam.qmuidemo.R;
+import com.qmuiteam.qmuidemo.adaptor.QDRecyclerViewAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDLazyTestObserver;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -54,63 +56,27 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@Widget(group = Group.Other, name = "内容自适应，超过父容器则滚动")
-public class QDTabSegmentScrollableModeFragment extends BaseFragment {
-    @SuppressWarnings("FieldCanBeLocal") private final int TAB_COUNT = 10;
 
-    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
-    @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
-    @BindView(R.id.contentViewPager) ViewPager mContentViewPager;
+@Widget(group = Group.Other, name = "ViewPager2: 内容自适应，超过父容器则滚动")
+public class QDTabSegment2ScrollableModeFragment extends BaseFragment {
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int TAB_COUNT = 10;
 
-    private Map<ContentPage, View> mPageMap = new HashMap<>();
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.tabSegment)
+    QMUITabSegment2 mTabSegment;
+    @BindView(R.id.contentViewPager)
+    ViewPager2 mContentViewPager;
+
     private ContentPage mDestPage = ContentPage.Item1;
     private QDItemDescription mQDItemDescription;
     private int mCurrentItemCount = TAB_COUNT;
-    private PagerAdapter mPagerAdapter = new PagerAdapter() {
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public int getCount() {
-            return mCurrentItemCount;
-        }
-
-        @Override
-        public Object instantiateItem(final ViewGroup container, int position) {
-            ContentPage page = ContentPage.getPage(position);
-            View view = getPageView(page);
-            view.setTag(page);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            container.addView(view, params);
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
-        @Override
-        public int getItemPosition(@NonNull Object object) {
-            View view = (View) object;
-            Object page = view.getTag();
-            if (page instanceof ContentPage) {
-                int pos = ((ContentPage) page).getPosition();
-                if (pos >= mCurrentItemCount) {
-                    return POSITION_NONE;
-                }
-                return POSITION_UNCHANGED;
-            }
-            return POSITION_NONE;
-        }
-    };
+    private QDRecyclerViewAdapter mPageAdapter;
 
     @Override
     protected View onCreateView() {
-        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager_layout, null);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tab_viewpager2_layout, null);
         ButterKnife.bind(this, rootView);
 
         mQDItemDescription = QDDataManager.getInstance().getDescription(this.getClass());
@@ -145,7 +111,9 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
     }
 
     private void initTabAndPager() {
-        mContentViewPager.setAdapter(mPagerAdapter);
+        mPageAdapter = new QDRecyclerViewAdapter();
+        mPageAdapter.setItemCount(mCurrentItemCount);
+        mContentViewPager.setAdapter(mPageAdapter);
         mContentViewPager.setCurrentItem(mDestPage.getPosition(), false);
         QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
@@ -156,7 +124,7 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
                 QMUIDisplayHelper.dp2px(getContext(), 2), false, true));
         mTabSegment.setMode(QMUITabSegment.MODE_SCROLLABLE);
         mTabSegment.setItemSpaceInScrollMode(space);
-        mTabSegment.setupWithViewPager(mContentViewPager, false);
+        mTabSegment.setupWithViewPager(mContentViewPager);
         mTabSegment.setPadding(space, 0, space, 0);
         mTabSegment.addOnTabSelectedListener(new QMUITabSegment.OnTabSelectedListener() {
             @Override
@@ -188,33 +156,14 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             return;
         }
         mCurrentItemCount--;
-        mPagerAdapter.notifyDataSetChanged();
+        mPageAdapter.setItemCount(mCurrentItemCount);
+        mPageAdapter.notifyDataSetChanged();
         mTabSegment.reset();
         QMUITabBuilder tabBuilder = mTabSegment.tabBuilder();
         for (int i = 0; i < mCurrentItemCount; i++) {
             mTabSegment.addTab(tabBuilder.setText("Item " + (i + 1)).build(getContext()));
         }
         mTabSegment.notifyDataChanged();
-    }
-
-    private View getPageView(ContentPage page) {
-        View view = mPageMap.get(page);
-        if (view == null) {
-            TextView textView = new TextView(getContext());
-            textView.setGravity(Gravity.CENTER);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.app_color_description));
-            textView.setText("这是第 " + (page.getPosition() + 1) + " 个 Item 的内容区");
-            QMUISkinHelper.setSkinValue(textView, new SkinWriter(){
-                @Override
-                public void write(QMUISkinValueBuilder builder) {
-                    builder.textColor(R.attr.app_skin_common_desc_text_color);
-                }
-            });
-            view = textView;
-            mPageMap.put(page, view);
-        }
-        return view;
     }
 
     public enum ContentPage {

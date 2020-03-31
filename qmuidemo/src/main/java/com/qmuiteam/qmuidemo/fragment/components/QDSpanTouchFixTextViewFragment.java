@@ -38,10 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * @author cginechen
- * @date 2017-05-05
- */
 @Widget(widgetClass = QMUISpanTouchFixTextView.class, iconRes = R.mipmap.icon_grid_span_touch_fix_text_view)
 public class QDSpanTouchFixTextViewFragment extends BaseFragment {
 

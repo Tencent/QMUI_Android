@@ -21,9 +21,9 @@ import android.view.ViewGroup;
 import com.qmuiteam.qmui.widget.QMUIItemViewsAdapter;
 
 public class QMUITabAdapter extends QMUIItemViewsAdapter<QMUITab, QMUITabView> implements QMUITabView.Callback {
-    private QMUITabSegment mTabSegment;
+    private QMUIBasicTabSegment mTabSegment;
 
-    public QMUITabAdapter(QMUITabSegment tabSegment, ViewGroup parentView) {
+    public QMUITabAdapter(QMUIBasicTabSegment tabSegment, ViewGroup parentView) {
         super(parentView);
         mTabSegment = tabSegment;
     }
