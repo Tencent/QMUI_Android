@@ -274,8 +274,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      *
      * @param resId TopBar 的副标题 resId
      */
-    public void setSubTitle(int resId) {
-        setSubTitle(getResources().getString(resId));
+    public QMUIQQFaceView setSubTitle(int resId) {
+        return setSubTitle(getResources().getString(resId));
     }
 
     private QMUIQQFaceView getSubTitleView() {
@@ -288,7 +288,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             mSubTitleView.setTextColor(mSubTitleTextColor);
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
             provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_topbar_subtitle_color);
-            mTitleView.setTag(R.id.qmui_skin_default_attr_provider, provider);
+            mSubTitleView.setTag(R.id.qmui_skin_default_attr_provider, provider);
             LinearLayout.LayoutParams titleLp = generateTitleViewAndSubTitleViewLp();
             titleLp.topMargin = QMUIDisplayHelper.dp2px(getContext(), 1);
             makeSureTitleContainerView().addView(mSubTitleView, titleLp);

@@ -85,16 +85,16 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         return mTopBar.setTitle(title);
     }
 
-    public void showTitlteView(boolean toShow) {
+    public void showTitleView(boolean toShow) {
         mTopBar.showTitleView(toShow);
     }
 
-    public void setSubTitle(int resId) {
-        mTopBar.setSubTitle(resId);
+    public QMUIQQFaceView setSubTitle(int resId) {
+        return mTopBar.setSubTitle(resId);
     }
 
-    public void setSubTitle(String subTitle) {
-        mTopBar.setSubTitle(subTitle);
+    public QMUIQQFaceView setSubTitle(String subTitle) {
+        return mTopBar.setSubTitle(subTitle);
     }
 
     public void setTitleGravity(int gravity) {
