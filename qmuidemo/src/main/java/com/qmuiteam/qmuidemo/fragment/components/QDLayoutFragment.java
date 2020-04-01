@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIWindowHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
@@ -64,6 +65,24 @@ public class QDLayoutFragment extends BaseFragment {
     @OnClick(R.id.shadow_color_blue)
     void changeToShadowColorBlue(){
         mTestLayout.setShadowColor(0xff0000ff);
+    }
+
+    @OnClick(R.id.radius_15dp)
+    void changeToRadius15dp(){
+        mRadius = QMUIDisplayHelper.dp2px(getContext(), 15);
+        mTestLayout.setRadius(mRadius);
+    }
+
+    @OnClick(R.id.radius_half_width)
+    void changeToRadiusHalfWidth(){
+        mRadius = QMUILayoutHelper.RADIUS_OF_HALF_VIEW_WIDTH;
+        mTestLayout.setRadius(mRadius);
+    }
+
+    @OnClick(R.id.radius_half_height)
+    void changeToRadiusHalfHeight(){
+        mRadius = QMUILayoutHelper.RADIUS_OF_HALF_VIEW_HEIGHT;
+        mTestLayout.setRadius(mRadius);
     }
 
     @Override

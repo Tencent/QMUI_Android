@@ -46,6 +46,8 @@ import androidx.core.content.ContextCompat;
  */
 
 public class QMUILayoutHelper implements IQMUILayout {
+    public static final int RADIUS_OF_HALF_VIEW_HEIGHT = -1;
+    public static final int RADIUS_OF_HALF_VIEW_WIDTH = -2;
     private Context mContext;
     // size
     private int mWidthLimit = 0;
@@ -86,6 +88,7 @@ public class QMUILayoutHelper implements IQMUILayout {
     private int mRadius;
     private @IQMUILayout.HideRadiusSide int mHideRadiusSide = HIDE_RADIUS_SIDE_NONE;
     private float[] mRadiusArray;
+    private boolean mShouldUseRadiusArray;
     private RectF mBorderRect;
     private int mBorderColor = 0;
     private int mBorderWidth = 1;
@@ -427,25 +430,12 @@ public class QMUILayoutHelper implements IQMUILayout {
         mRadius = radius;
         mHideRadiusSide = hideRadiusSide;
 
-        if (mRadius > 0) {
-            if (hideRadiusSide == HIDE_RADIUS_SIDE_TOP) {
-                mRadiusArray = new float[]{0, 0, 0, 0, mRadius, mRadius, mRadius, mRadius};
-            } else if (hideRadiusSide == HIDE_RADIUS_SIDE_RIGHT) {
-                mRadiusArray = new float[]{mRadius, mRadius, 0, 0, 0, 0, mRadius, mRadius};
-            } else if (hideRadiusSide == HIDE_RADIUS_SIDE_BOTTOM) {
-                mRadiusArray = new float[]{mRadius, mRadius, mRadius, mRadius, 0, 0, 0, 0};
-            } else if (hideRadiusSide == HIDE_RADIUS_SIDE_LEFT) {
-                mRadiusArray = new float[]{0, 0, mRadius, mRadius, mRadius, mRadius, 0, 0};
-            } else {
-                mRadiusArray = null;
-            }
-        }
-
+        mShouldUseRadiusArray = isRadiusWithSideHidden();
         mShadowElevation = shadowElevation;
         mShadowAlpha = shadowAlpha;
         mShadowColor = shadowColor;
         if (useFeature()) {
-            if (mShadowElevation == 0 || isRadiusWithSideHidden()) {
+            if (mShadowElevation == 0 || mShouldUseRadiusArray) {
                 owner.setElevation(0);
             } else {
                 owner.setElevation(mShadowElevation);
@@ -461,19 +451,20 @@ public class QMUILayoutHelper implements IQMUILayout {
                     if (w == 0 || h == 0) {
                         return;
                     }
-                    if (isRadiusWithSideHidden()) {
+                    int radius = getRealRadius();
+                    if (mShouldUseRadiusArray) {
                         int left = 0, top = 0, right = w, bottom = h;
                         if (mHideRadiusSide == HIDE_RADIUS_SIDE_LEFT) {
-                            left -= mRadius;
+                            left -= radius;
                         } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_TOP) {
-                            top -= mRadius;
+                            top -= radius;
                         } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_RIGHT) {
-                            right += mRadius;
+                            right += radius;
                         } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_BOTTOM) {
-                            bottom += mRadius;
+                            bottom += radius;
                         }
                         outline.setRoundRect(left, top,
-                                right, bottom, mRadius);
+                                right, bottom, radius);
                         return;
                     }
 
@@ -494,16 +485,16 @@ public class QMUILayoutHelper implements IQMUILayout {
 
                     outline.setAlpha(shadowAlpha);
 
-                    if (mRadius <= 0) {
+                    if (radius <= 0) {
                         outline.setRect(left, top,
                                 right, bottom);
                     } else {
                         outline.setRoundRect(left, top,
-                                right, bottom, mRadius);
+                                right, bottom, radius);
                     }
                 }
             });
-            owner.setClipToOutline(mRadius > 0);
+            owner.setClipToOutline(mRadius == RADIUS_OF_HALF_VIEW_WIDTH || mRadius == RADIUS_OF_HALF_VIEW_HEIGHT || mRadius > 0);
 
         }
         owner.invalidate();
@@ -515,7 +506,9 @@ public class QMUILayoutHelper implements IQMUILayout {
      * @return
      */
     public boolean isRadiusWithSideHidden() {
-        return mRadius > 0 && mHideRadiusSide != HIDE_RADIUS_SIDE_NONE;
+        return (mRadius == RADIUS_OF_HALF_VIEW_HEIGHT ||
+                mRadius == RADIUS_OF_HALF_VIEW_WIDTH ||
+                mRadius > 0) && mHideRadiusSide != HIDE_RADIUS_SIDE_NONE;
     }
 
     @Override
@@ -750,13 +743,30 @@ public class QMUILayoutHelper implements IQMUILayout {
     }
 
 
+    private int getRealRadius(){
+        View owner = mOwner.get();
+        if (owner == null) {
+            return mRadius;
+        }
+        int radius;
+        if(mRadius == RADIUS_OF_HALF_VIEW_HEIGHT){
+            radius = owner.getHeight() /2;
+        }else if(mRadius == RADIUS_OF_HALF_VIEW_WIDTH){
+            radius = owner.getWidth() / 2;
+        }else{
+            radius = mRadius;
+        }
+        return radius;
+    }
+
     public void dispatchRoundBorderDraw(Canvas canvas) {
         View owner = mOwner.get();
         if (owner == null) {
             return;
         }
 
-        boolean needCheckFakeOuterNormalDraw = mRadius > 0 && !useFeature() && mOuterNormalColor != 0;
+        int radius = getRealRadius();
+        boolean needCheckFakeOuterNormalDraw = radius > 0 && !useFeature() && mOuterNormalColor != 0;
         boolean needDrawBorder = mBorderWidth > 0 && mBorderColor != 0;
         if (!needCheckFakeOuterNormalDraw && !needDrawBorder) {
             return;
@@ -783,14 +793,41 @@ public class QMUILayoutHelper implements IQMUILayout {
                     width- halfBorderWith, height - halfBorderWith);
         }
 
+        if(mShouldUseRadiusArray){
+            if(mRadiusArray == null){
+                mRadiusArray = new float[8];
+            }
+            if (mHideRadiusSide == HIDE_RADIUS_SIDE_TOP) {
+                mRadiusArray[4] = radius;
+                mRadiusArray[5] = radius;
+                mRadiusArray[6] = radius;
+                mRadiusArray[7] = radius;
+            } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_RIGHT) {
+                mRadiusArray[0] = radius;
+                mRadiusArray[1] = radius;
+                mRadiusArray[6] = radius;
+                mRadiusArray[7] = radius;
+            } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_BOTTOM) {
+                mRadiusArray[0] = radius;
+                mRadiusArray[1] = radius;
+                mRadiusArray[2] = radius;
+                mRadiusArray[3] = radius;
+            } else if (mHideRadiusSide == HIDE_RADIUS_SIDE_LEFT) {
+                mRadiusArray[2] = radius;
+                mRadiusArray[3] = radius;
+                mRadiusArray[4] = radius;
+                mRadiusArray[5] = radius;
+            }
+        }
+
         if (needCheckFakeOuterNormalDraw) {
             int layerId = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
             canvas.drawColor(mOuterNormalColor);
             mClipPaint.setColor(mOuterNormalColor);
             mClipPaint.setStyle(Paint.Style.FILL);
             mClipPaint.setXfermode(mMode);
-            if (mRadiusArray == null) {
-                canvas.drawRoundRect(mBorderRect, mRadius, mRadius, mClipPaint);
+            if (!mShouldUseRadiusArray) {
+                canvas.drawRoundRect(mBorderRect, radius, radius, mClipPaint);
             } else {
                 drawRoundRect(canvas, mBorderRect, mRadiusArray, mClipPaint);
             }
@@ -802,12 +839,12 @@ public class QMUILayoutHelper implements IQMUILayout {
             mClipPaint.setColor(mBorderColor);
             mClipPaint.setStrokeWidth(mBorderWidth);
             mClipPaint.setStyle(Paint.Style.STROKE);
-            if (mRadiusArray != null) {
+            if (mShouldUseRadiusArray) {
                 drawRoundRect(canvas, mBorderRect, mRadiusArray, mClipPaint);
-            } else if (mRadius <= 0) {
+            } else if (radius <= 0) {
                 canvas.drawRect(mBorderRect, mClipPaint);
             } else {
-                canvas.drawRoundRect(mBorderRect, mRadius, mRadius, mClipPaint);
+                canvas.drawRoundRect(mBorderRect, radius, radius, mClipPaint);
             }
         }
         canvas.restore();

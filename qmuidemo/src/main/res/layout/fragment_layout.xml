@@ -29,7 +29,7 @@
         <com.qmuiteam.qmui.layout.QMUILinearLayout
             android:id="@id/layout_for_test"
             android:layout_width="260dp"
-            android:layout_height="300dp"
+            android:layout_height="260dp"
             android:background="@color/qmui_config_color_white"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
@@ -128,6 +128,47 @@
                     android:layout_height="wrap_content"
                     android:text="#0000ff"
                     android:textColor="#0000ff"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="radius"/>
+                <Button
+                    android:id="@+id/radius_15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"/>
+                <Button
+                    android:id="@+id/radius_half_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="half_width"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"/>
+                <Button
+                    android:id="@+id/radius_half_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="half_height"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:paddingLeft="10dp"
