@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmuidemo.R;
@@ -155,6 +156,7 @@ public class QDBottomSheetFragment extends BaseFragment {
                                            boolean withMark) {
         QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(getActivity());
         builder.setGravityCenter(gravityCenter)
+                .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
                 .setTitle(title)
                 .setAddCancelBtn(addCancelBtn)
                 .setAllowDrag(allowDragDismiss)
@@ -193,6 +195,7 @@ public class QDBottomSheetFragment extends BaseFragment {
                 .addItem(R.mipmap.icon_more_operation_share_chat, "分享到私信", TAG_SHARE_CHAT, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
                 .addItem(R.mipmap.icon_more_operation_save, "保存到本地", TAG_SHARE_LOCAL, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
                 .setAddCancelBtn(true)
+                .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView) {

@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -84,6 +85,7 @@ public class QDPopupFragment extends BaseFragment {
         mNormalPopup = QMUIPopups.popup(getContext(), QMUIDisplayHelper.dp2px(getContext(), 250))
                 .preferredDirection(QMUIPopup.DIRECTION_BOTTOM)
                 .view(textView)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .edgeProtection(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .offsetX(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .offsetYIfBottom(QMUIDisplayHelper.dp2px(getContext(), 5))
@@ -134,6 +136,7 @@ public class QDPopupFragment extends BaseFragment {
                 .preferredDirection(QMUIPopup.DIRECTION_TOP)
                 .shadow(true)
                 .offsetYIfTop(QMUIDisplayHelper.dp2px(getContext(), 5))
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .onDismiss(new PopupWindow.OnDismissListener() {
                     @Override
                     public void onDismiss() {
@@ -162,6 +165,7 @@ public class QDPopupFragment extends BaseFragment {
                 .edgeProtection(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .dimAmount(0.6f)
                 .animStyle(QMUIPopup.ANIM_GROW_FROM_CENTER)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .onDismiss(new PopupWindow.OnDismissListener() {
                     @Override
                     public void onDismiss() {
@@ -184,6 +188,7 @@ public class QDPopupFragment extends BaseFragment {
                 .view(textView)
                 .edgeProtection(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .dimAmount(0.6f)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .animStyle(QMUIPopup.ANIM_GROW_FROM_CENTER)
                 .onDismiss(new PopupWindow.OnDismissListener() {
                     @Override
@@ -236,6 +241,7 @@ public class QDPopupFragment extends BaseFragment {
         QMUIPopups.fullScreenPopup(getContext())
                 .addView(frameLayout)
                 .closeBtn(true)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .onBlankClick(new QMUIFullScreenPopup.OnBlankClickListener() {
                     @Override
                     public void onBlankClick(QMUIFullScreenPopup popup) {
@@ -322,6 +328,7 @@ public class QDPopupFragment extends BaseFragment {
         QMUIPopups.fullScreenPopup(getContext())
                 .addView(frameLayout, QMUIFullScreenPopup.getOffsetHalfKeyboardHeightListener())
                 .addView(editFitSystemWindowWrapped, eLp, QMUIFullScreenPopup.getOffsetKeyboardHeightListener())
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .onBlankClick(new QMUIFullScreenPopup.OnBlankClickListener() {
                     @Override
                     public void onBlankClick(QMUIFullScreenPopup popup) {
@@ -344,6 +351,7 @@ public class QDPopupFragment extends BaseFragment {
                 QMUIDisplayHelper.dp2px(getContext(), 56),
                 QMUIDisplayHelper.dp2px(getContext(), 56))
                 .shadow(true)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .edgeProtection(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .addAction(new QMUIQuickAction.Action().icon(R.drawable.icon_quick_action_copy).text("复制").onClick(
                         new QMUIQuickAction.OnClickListener() {
@@ -381,6 +389,7 @@ public class QDPopupFragment extends BaseFragment {
                 QMUIDisplayHelper.dp2px(getContext(), 56),
                 QMUIDisplayHelper.dp2px(getContext(), 56))
                 .shadow(true)
+                .skinManager(QMUISkinManager.defaultInstance(getContext()))
                 .edgeProtection(QMUIDisplayHelper.dp2px(getContext(), 20))
                 .addAction(new QMUIQuickAction.Action().icon(R.drawable.icon_quick_action_copy).text("复制").onClick(
                         new QMUIQuickAction.OnClickListener() {

@@ -52,7 +52,6 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
                     new QMUISkinLayoutInflaterFactory(this, layoutInflater));
         }
         super.onCreate(savedInstanceState);
-        mSkinManager = QMUISkinManager.defaultInstance(this);
     }
 
     void convertToTranslucentCauseOrientationChanged() {
@@ -85,6 +84,9 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
         }
     }
 
+    public QMUISkinManager getSkinManager() {
+        return mSkinManager;
+    }
 
     @Override
     protected void onStart() {

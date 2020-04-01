@@ -21,6 +21,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -68,6 +69,7 @@ public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
                                 dialog.dismiss();
                             }
                         }))
+                        .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
                         .show();
             }
         });

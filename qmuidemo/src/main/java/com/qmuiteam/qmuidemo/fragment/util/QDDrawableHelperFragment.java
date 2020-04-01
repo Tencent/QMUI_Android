@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -118,6 +119,7 @@ public class QDDrawableHelperFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 QMUIDialog.CustomDialogBuilder dialogBuilder = new QMUIDialog.CustomDialogBuilder(getContext());
+                dialogBuilder.setSkinManager(QMUISkinManager.defaultInstance(getContext()));
                 dialogBuilder.setLayout(R.layout.drawablehelper_createfromview);
                 final QMUIDialog dialog = dialogBuilder.setTitle("示例效果（点击下图关闭本浮层）").create();
                 ImageView displayImageView = (ImageView) dialog.findViewById(R.id.createFromViewDisplay);

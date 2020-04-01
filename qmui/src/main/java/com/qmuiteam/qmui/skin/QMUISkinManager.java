@@ -592,7 +592,7 @@ public final class QMUISkinManager {
             if (item == null) {
                 mSkinChangeListeners.remove(i);
             } else {
-                item.onSkinChange(oldIndex, mCurrentSkin);
+                item.onSkinChange(this, oldIndex, mCurrentSkin);
             }
         }
     }
@@ -629,7 +629,7 @@ public final class QMUISkinManager {
     }
 
     public interface OnSkinChangeListener {
-        void onSkinChange(int oldSkin, int newSkin);
+        void onSkinChange(QMUISkinManager skinManager, int oldSkin, int newSkin);
     }
 
     class ViewSkinCurrent{

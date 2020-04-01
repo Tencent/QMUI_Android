@@ -24,6 +24,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.span.QMUIBlockSpaceSpan;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -53,6 +54,7 @@ public class UpgradeTipTask implements UpgradeTask {
         String title = String.format(activity.getString(R.string.app_upgrade_tip_title), QMUIPackageHelper.getAppVersion(activity));
         CharSequence message = getUpgradeWord(activity);
         new QMUIDialog.MessageDialogBuilder(activity)
+                .setSkinManager(QMUISkinManager.defaultInstance(activity))
                 .setTitle(title)
                 .setMessage(message)
                 .create(R.style.ReleaseDialogTheme)

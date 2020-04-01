@@ -569,6 +569,7 @@ public class QMUISkinMaker {
 
     private void chooseAttr(View anchorView, ValueWriter valueWriter) {
         SkinAttrChooseMakerPopup popup = new SkinAttrChooseMakerPopup(anchorView.getContext(), mAttrsInR, valueWriter);
+        popup.skinManager(QMUISkinManager.defaultInstance(anchorView.getContext()));
         popup.show(anchorView);
     }
 

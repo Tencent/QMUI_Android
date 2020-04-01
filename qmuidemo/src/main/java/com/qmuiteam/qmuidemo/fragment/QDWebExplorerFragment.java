@@ -32,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ZoomButtonsController;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -156,6 +157,7 @@ public class QDWebExplorerFragment extends BaseFragment {
                                     popBackStack();
                                 }
                             })
+                            .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
                             .show();
                 } else {
                     doDownload(url);

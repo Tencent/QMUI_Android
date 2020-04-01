@@ -106,7 +106,6 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
 
     public QMUIDialogBuilder(Context context) {
         this.mContext = context;
-        mSkinManager = QMUISkinManager.defaultInstance(context);
     }
 
     public Context getBaseContext() {

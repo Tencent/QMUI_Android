@@ -113,7 +113,6 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         public Builder(Context context) {
             mContext = context;
-            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
         /**
@@ -244,7 +243,6 @@ public class QMUITipDialog extends QMUIBaseDialog {
 
         public CustomBuilder(Context context) {
             mContext = context;
-            mSkinManager = QMUISkinManager.defaultInstance(context);
         }
 
         public CustomBuilder setSkinManager(@Nullable QMUISkinManager skinManager) {

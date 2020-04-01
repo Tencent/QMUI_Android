@@ -99,7 +99,7 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     private QMUISkinManager.OnSkinChangeListener mOnSkinChangeListener = new QMUISkinManager.OnSkinChangeListener() {
         @Override
-        public void onSkinChange(int oldSkin, int newSkin) {
+        public void onSkinChange(QMUISkinManager skinManager, int oldSkin, int newSkin) {
             if (newSkin == QDSkinManager.SKIN_WHITE) {
                 QMUIStatusBarHelper.setStatusBarLightMode(QDMainActivity.this);
             } else {
@@ -107,6 +107,12 @@ public class QDMainActivity extends BaseFragmentActivity {
             }
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setSkinManager(QMUISkinManager.defaultInstance(this));
+    }
 
     @Override
     protected RootView onCreateRootView(int fragmentContainerId) {
@@ -132,7 +138,9 @@ public class QDMainActivity extends BaseFragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        QMUISkinManager.defaultInstance(this).addSkinChangeListener(mOnSkinChangeListener);
+        if(getSkinManager() != null){
+            getSkinManager().addSkinChangeListener(mOnSkinChangeListener);
+        }
     }
 
     @Override
@@ -144,7 +152,9 @@ public class QDMainActivity extends BaseFragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        QMUISkinManager.defaultInstance(this).removeSkinChangeListener(mOnSkinChangeListener);
+        if(getSkinManager() != null){
+            getSkinManager().removeSkinChangeListener(mOnSkinChangeListener);
+        }
     }
 
     private void showGlobalActionPopup(View v){
@@ -171,6 +181,7 @@ public class QDMainActivity extends BaseFragmentActivity {
                                     dialog.dismiss();
                                 }
                             })
+                            .setSkinManager(QMUISkinManager.defaultInstance(QDMainActivity.this))
                             .create()
                             .show();
                 }else if(i == 1){
@@ -194,6 +205,7 @@ public class QDMainActivity extends BaseFragmentActivity {
                 .shadow(true)
                 .edgeProtection(QMUIDisplayHelper.dp2px(this, 10))
                 .offsetYIfTop(QMUIDisplayHelper.dp2px(this, 5))
+                .skinManager(QMUISkinManager.defaultInstance(this))
                 .show(v);
     }
 

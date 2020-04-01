@@ -52,9 +52,9 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     private QMUISkinManager mSkinManager;
     private QMUISkinManager.OnSkinChangeListener mOnSkinChangeListener = new QMUISkinManager.OnSkinChangeListener() {
         @Override
-        public void onSkinChange(int oldSkin, int newSkin) {
+        public void onSkinChange(QMUISkinManager skinManager, int oldSkin, int newSkin) {
             if (mDimAmountAttr != 0) {
-                Resources.Theme theme = QMUISkinManager.defaultInstance(mContext).getTheme(newSkin);
+                Resources.Theme theme = skinManager.getTheme(newSkin);
                 mDimAmount = QMUIResHelper.getAttrFloatValue(theme, mDimAmountAttr);
                 updateDimAmount(mDimAmount);
                 QMUIBasePopup.this.onSkinChange(oldSkin, newSkin);
@@ -87,7 +87,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
 
     public QMUIBasePopup(Context context) {
         mContext = context;
-        mSkinManager = QMUISkinManager.defaultInstance(context);
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mWindow = new PopupWindow(context);
         initWindow();

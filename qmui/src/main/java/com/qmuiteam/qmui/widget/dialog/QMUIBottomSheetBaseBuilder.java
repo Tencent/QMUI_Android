@@ -48,7 +48,6 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
 
     public QMUIBottomSheetBaseBuilder(Context context) {
         mContext = context;
-        mSkinManager = QMUISkinManager.defaultInstance(context);
     }
 
     @SuppressWarnings("unchecked")
