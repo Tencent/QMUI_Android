@@ -70,7 +70,12 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha4){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha6){
+            text.append("1. Features: Add new widget QMUITabSegment2 to support ViewPager2.\n");
+            text.append("2. Remove the default support for skin.\n");
+            text.append("3. QMUILayout support radius which is half of the view height or width.\n");
+            text.append("4. Some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha4){
             text.append("1. Features: Add new widget: QMUIPullLayout.\n");
             text.append("2. Features: Add new widget: QMUIRVItemSwipeAction.\n");
             text.append("3. Support muti instance for QMUISkinManager.\n");
