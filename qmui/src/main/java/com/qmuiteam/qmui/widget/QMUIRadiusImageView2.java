@@ -73,7 +73,6 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        setScaleType(ScaleType.CENTER_CROP);
         mLayoutHelper = new QMUILayoutHelper(context, attrs, defStyleAttr, this);
         setChangeAlphaWhenPress(false);
         setChangeAlphaWhenDisable(false);

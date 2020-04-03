@@ -46,7 +46,6 @@ public class QDRadiusImageView2ScaleTypeFragment extends BaseFragment {
     protected View onCreateView() {
         View root = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_radius_imageview2_scale_type, null);
         ButterKnife.bind(this, root);
-
         initTopBar();
 
         return root;
