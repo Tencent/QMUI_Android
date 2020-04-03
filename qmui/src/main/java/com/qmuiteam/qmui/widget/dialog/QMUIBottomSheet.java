@@ -433,7 +433,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
                 }
             }
             LinearLayout footerView = null;
-            if (mContentFooterViews != null && mContentHeaderViews.size() > 0) {
+            if (mContentFooterViews != null && mContentFooterViews.size() > 0) {
                 footerView = new LinearLayout(context);
                 footerView.setOrientation(LinearLayout.VERTICAL);
                 for (View view : mContentFooterViews) {
