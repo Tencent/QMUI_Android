@@ -82,6 +82,15 @@ public class QMUIProgressBar extends View {
     private int mStrokeWidth;
     private int mCircleRadius;
     private Point mCenterPoint;
+    private OnProgressChangeListener mOnProgressChangeListener;
+    private Runnable mNotifyProgressChangeAction = new Runnable() {
+        @Override
+        public void run() {
+            if(mOnProgressChangeListener != null){
+                mOnProgressChangeListener.onProgressChange(QMUIProgressBar.this, mValue, mMaxValue);
+            }
+        }
+    };
 
 
     public QMUIProgressBar(Context context) {
@@ -126,6 +135,10 @@ public class QMUIProgressBar extends View {
         configPaint(mTextColor, mTextSize, mRoundCap);
 
         setProgress(mValue);
+    }
+
+    public void setOnProgressChangeListener(OnProgressChangeListener onProgressChangeListener) {
+        mOnProgressChangeListener = onProgressChangeListener;
     }
 
     private void configShape() {
@@ -234,9 +247,11 @@ public class QMUIProgressBar extends View {
             long elapsed = System.currentTimeMillis() - mAnimationStartTime;
             if (elapsed >= mAnimationDuration) {
                 mValue = mPendingValue;
+                post(mNotifyProgressChangeAction);
                 mPendingValue = PENDING_VALUE_NOT_SET;
             } else {
                 mValue = (int) (mPendingValue - (1f - ((float) elapsed / mAnimationDuration)) * mAnimationDistance);
+                post(mNotifyProgressChangeAction);
                 ViewCompat.postInvalidateOnAnimation(this);
             }
         }
@@ -332,6 +347,7 @@ public class QMUIProgressBar extends View {
         if (!animated) {
             mPendingValue = PENDING_VALUE_NOT_SET;
             mValue = progress;
+            mNotifyProgressChangeAction.run();
             invalidate();
         } else {
             mAnimationDuration = Math.abs((int) (TOTAL_DURATION * (mValue - progress) / (float) mMaxValue));
@@ -359,5 +375,9 @@ public class QMUIProgressBar extends View {
          * @return 进度文案
          */
         String generateText(QMUIProgressBar progressBar, int value, int maxValue);
+    }
+
+    public interface OnProgressChangeListener {
+        void onProgressChange(QMUIProgressBar progressBar, int currentValue, int maxValue);
     }
 }
