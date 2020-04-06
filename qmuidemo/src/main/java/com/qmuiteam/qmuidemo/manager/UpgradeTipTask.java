@@ -70,7 +70,11 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha6){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha7){
+            text.append("1. Add OnProgressChangeListener for QMUIProgressBar.\n");
+            text.append("2. Add skin support for CompoundButton.\n");
+            text.append("3. Some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha6){
             text.append("1. Features: Add new widget QMUITabSegment2 to support ViewPager2.\n");
             text.append("2. Remove the skin's default usage.\n");
             text.append("3. QMUILayout support radius which is half of the view height or width.\n");
