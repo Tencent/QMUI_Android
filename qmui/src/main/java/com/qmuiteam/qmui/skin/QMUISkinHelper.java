@@ -84,6 +84,14 @@ public class QMUISkinHelper {
         }
     }
 
+    public static int getCurrentSkinIndex(@NonNull View view) {
+        QMUISkinManager.ViewSkinCurrent viewSkinCurrent = QMUISkinManager.getViewSkinCurrent(view);
+        if (viewSkinCurrent != null) {
+            return viewSkinCurrent.index;
+        }
+        return QMUISkinManager.DEFAULT_SKIN;
+    }
+
     public static void refreshViewSkin(@NonNull View view){
         QMUISkinManager.ViewSkinCurrent skinCurrent = QMUISkinManager.getViewSkinCurrent(view);
         if (skinCurrent != null) {
