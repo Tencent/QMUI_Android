@@ -398,8 +398,14 @@
         <attr name="qmui_slider_bar_use_clip_children_by_developer" format="boolean"/>
         <attr name="qmui_slider_bar_padding_hor_for_thumb_shadow" format="dimension"/>
         <attr name="qmui_slider_bar_padding_ver_for_thumb_shadow" format="dimension"/>
+        <attr name="qmui_slider_bar_constraint_thumb_in_moving" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="QMUISeekBar">
+        <attr name="qmui_seek_bar_tick_height" format="dimension"/>
+        <attr name="qmui_seek_bar_tick_width" format="dimension"/>
     </declare-styleable>
     <attr name="QMUISliderStyle" format="reference"/>
+    <attr name="QMUISeekBarStyle" format="reference"/>
     <attr name="QMUISliderThumbStyle" format="reference"/>
     <!-- QMUISlider end -->
 

@@ -325,6 +325,22 @@
         <item name="qmui_slider_bar_padding_hor_for_thumb_shadow">8dp</item>
         <item name="qmui_slider_bar_padding_ver_for_thumb_shadow">8dp</item>
         <item name="qmui_slider_bar_thumb_style_attr">QMUISliderThumbStyle</item>
+        <item name="qmui_slider_bar_constraint_thumb_in_moving">false</item>
+    </style>
+
+    <style name="QMUI.SeekBar">
+        <item name="qmui_slider_bar_height">1dp</item>
+        <item name="qmui_slider_bar_normal_color">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_slider_bar_progress_color">@color/qmui_config_color_gray_3</item>
+        <item name="qmui_slider_bar_tick_count">10</item>
+        <item name="qmui_slider_bar_thumb_size_size">20dp</item>
+        <item name="qmui_slider_bar_use_clip_children_by_developer">false</item>
+        <item name="qmui_slider_bar_padding_hor_for_thumb_shadow">8dp</item>
+        <item name="qmui_slider_bar_padding_ver_for_thumb_shadow">8dp</item>
+        <item name="qmui_slider_bar_thumb_style_attr">QMUISliderThumbStyle</item>
+        <item name="qmui_slider_bar_constraint_thumb_in_moving">true</item>
+        <item name="qmui_seek_bar_tick_height">6dp</item>
+        <item name="qmui_seek_bar_tick_width">2dp</item>
     </style>
 
     <style name="QMUI.SliderThumb">

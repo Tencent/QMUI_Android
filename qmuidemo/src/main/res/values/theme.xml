@@ -145,6 +145,7 @@
         <item name="qmui_skin_support_quick_action_item_tint_color">@color/qmui_config_color_white</item>
 
         <item name="qmui_skin_support_slider_bar_bg_color">@color/qmui_config_color_25_white</item>
+        <item name="qmui_skin_support_seek_bar_color">@color/qmui_config_color_gray_9</item>
         <item name="qmui_skin_support_slider_bar_progress_color">@color/app_color_blue_2</item>
 
         <item name="app_primary_color">@color/qmui_config_color_pure_black</item>

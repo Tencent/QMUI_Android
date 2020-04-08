@@ -22,6 +22,7 @@ import android.view.View;
 
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.widget.QMUISeekBar;
 import com.qmuiteam.qmui.widget.QMUISlider;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -43,6 +44,9 @@ public class QDSliderFragment extends BaseFragment implements QMUISlider.Callbac
     @BindView(R.id.slider)
     QMUISlider mSlider;
 
+    @BindView(R.id.seekBar)
+    QMUISeekBar mSeekBar;
+
     private QDItemDescription mQDItemDescription;
 
     @Override
@@ -62,6 +66,7 @@ public class QDSliderFragment extends BaseFragment implements QMUISlider.Callbac
 //        mSlider.setThumbSkin(builder);
 //        builder.clear();
         mSlider.setCallback(this);
+        mSeekBar.setCallback(this);
 
         return view;
     }
