@@ -136,22 +136,41 @@ public class QMUIDeviceHelper {
         return "v9".equals(sMiuiVersionName);
     }
 
-    public static boolean isFlymeLowerThan(int checkVersion) {
+    public static boolean isFlymeLowerThan(int majorVersion){
+        return isFlymeLowerThan(majorVersion, 0, 0);
+    }
+
+    public static boolean isFlymeLowerThan(int majorVersion, int minorVersion, int patchVersion) {
         boolean isLower = false;
         if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
-            Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
-            Matcher matcher = pattern.matcher(sFlymeVersionName);
-            if (matcher.find()) {
-                String versionString = matcher.group();
-                if (versionString != null && !versionString.equals("")) {
-                    String[] version = versionString.split("\\.");
-                    if (version.length >= 1) {
-                        if (Integer.parseInt(version[0]) < checkVersion) {
-                            isLower = true;
+            try{
+                Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
+                Matcher matcher = pattern.matcher(sFlymeVersionName);
+                if (matcher.find()) {
+                    String versionString = matcher.group();
+                    if (versionString.length() > 0) {
+                        String[] version = versionString.split("\\.");
+                        if (version.length >= 1) {
+                            if (Integer.parseInt(version[0]) < majorVersion) {
+                                isLower = true;
+                            }
+                        }
+
+                        if(version.length >= 2 && minorVersion > 0){
+                            if (Integer.parseInt(version[1]) < majorVersion) {
+                                isLower = true;
+                            }
+                        }
+
+                        if(version.length >= 3 && patchVersion > 0){
+                            if (Integer.parseInt(version[2]) < majorVersion) {
+                                isLower = true;
+                            }
                         }
                     }
-
                 }
+            }catch (Throwable ignore){
+
             }
         }
         return isMeizu() && isLower;
