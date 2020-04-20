@@ -170,9 +170,6 @@ public class QMUIWindowInsetHelper {
 
     @TargetApi(21)
     public boolean defaultApplySystemWindowInsetsCompat(ViewGroup viewGroup, WindowInsetsCompat insets) {
-        if (!insets.hasSystemWindowInsets()) {
-            return false;
-        }
         boolean consumed = false;
         boolean showKeyboard = false;
         if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY &&
@@ -235,42 +232,40 @@ public class QMUIWindowInsetHelper {
         }
 
         boolean consumed = false;
-        if (insets.hasSystemWindowInsets()) {
-            boolean showKeyboard = false;
-            if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY &&
-                    shouldInterceptKeyboardInset(viewGroup)) {
-                showKeyboard = true;
-                if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                    ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(insets.getSystemWindowInsetBottom());
-                }else{
-                    QMUIViewHelper.setPaddingBottom(viewGroup, insets.getSystemWindowInsetBottom());
-                }
-                viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, KEYBOARD_CONSUMER);
-            } else {
-                if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                    ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(0);
-                }else{
-                    QMUIViewHelper.setPaddingBottom(viewGroup, 0);
-                }
-                viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
+        boolean showKeyboard = false;
+        if (insets.getSystemWindowInsetBottom() >= KEYBOARD_HEIGHT_BOUNDARY &&
+                shouldInterceptKeyboardInset(viewGroup)) {
+            showKeyboard = true;
+            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
+                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(insets.getSystemWindowInsetBottom());
+            }else{
+                QMUIViewHelper.setPaddingBottom(viewGroup, insets.getSystemWindowInsetBottom());
             }
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View child = viewGroup.getChildAt(i);
-
-                if (jumpDispatch(child)) {
-                    continue;
-                }
-
-                Rect childInsets = new Rect(
-                        insets.getSystemWindowInsetLeft(),
-                        insets.getSystemWindowInsetTop(),
-                        insets.getSystemWindowInsetRight(),
-                        showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
-                computeInsets(child, childInsets);
-                WindowInsets childWindowInsets = insets.replaceSystemWindowInsets(childInsets);
-                WindowInsets windowInsets = child.dispatchApplyWindowInsets(childWindowInsets);
-                consumed = consumed || windowInsets.isConsumed();
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, KEYBOARD_CONSUMER);
+        } else {
+            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
+                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(0);
+            }else{
+                QMUIViewHelper.setPaddingBottom(viewGroup, 0);
             }
+            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
+        }
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+
+            if (jumpDispatch(child)) {
+                continue;
+            }
+
+            Rect childInsets = new Rect(
+                    insets.getSystemWindowInsetLeft(),
+                    insets.getSystemWindowInsetTop(),
+                    insets.getSystemWindowInsetRight(),
+                    showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
+            computeInsets(child, childInsets);
+            WindowInsets childWindowInsets = insets.replaceSystemWindowInsets(childInsets);
+            WindowInsets windowInsets = child.dispatchApplyWindowInsets(childWindowInsets);
+            consumed = consumed || windowInsets.isConsumed();
         }
         sApplySystemWindowInsetsCount--;
         return consumed;
