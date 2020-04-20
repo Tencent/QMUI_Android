@@ -89,7 +89,7 @@ public class QMUIStatusBarHelper {
 
         // 小米和魅族4.4 以上版本支持沉浸式
         // 小米 Android 6.0 ，开发版 7.7.13 及以后版本设置黑色字体又需要 clear FLAG_TRANSLUCENT_STATUS, 因此还原为官方模式
-        if (QMUIDeviceHelper.isFlymeLowerThan8() || (QMUIDeviceHelper.isMIUI() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
+        if (QMUIDeviceHelper.isFlymeLowerThan(8) || (QMUIDeviceHelper.isMIUI() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             return;
@@ -328,29 +328,35 @@ public class QMUIStatusBarHelper {
     public static boolean FlymeSetStatusBarLightMode(Window window, boolean light) {
         boolean result = false;
         if (window != null) {
-            // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
+
             Android6SetStatusBarLightMode(window, light);
 
-            try {
-                WindowManager.LayoutParams lp = window.getAttributes();
-                Field darkFlag = WindowManager.LayoutParams.class
-                        .getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
-                Field meizuFlags = WindowManager.LayoutParams.class
-                        .getDeclaredField("meizuFlags");
-                darkFlag.setAccessible(true);
-                meizuFlags.setAccessible(true);
-                int bit = darkFlag.getInt(null);
-                int value = meizuFlags.getInt(lp);
-                if (light) {
-                    value |= bit;
-                } else {
-                    value &= ~bit;
-                }
-                meizuFlags.setInt(lp, value);
-                window.setAttributes(lp);
-                result = true;
-            } catch (Exception ignored) {
+            // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
+            // 高版本调用这个出现不可预期的 Bug,官方文档也没有给出完整的高低版本兼容方案
+            if(QMUIDeviceHelper.isFlymeLowerThan(7)){
+                try {
+                    WindowManager.LayoutParams lp = window.getAttributes();
+                    Field darkFlag = WindowManager.LayoutParams.class
+                            .getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
+                    Field meizuFlags = WindowManager.LayoutParams.class
+                            .getDeclaredField("meizuFlags");
+                    darkFlag.setAccessible(true);
+                    meizuFlags.setAccessible(true);
+                    int bit = darkFlag.getInt(null);
+                    int value = meizuFlags.getInt(lp);
+                    if (light) {
+                        value |= bit;
+                    } else {
+                        value &= ~bit;
+                    }
+                    meizuFlags.setInt(lp, value);
+                    window.setAttributes(lp);
+                    result = true;
+                } catch (Exception ignored) {
 
+                }
+            }else{
+                result = true;
             }
         }
         return result;
