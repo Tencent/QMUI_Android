@@ -393,18 +393,28 @@ public final class QMUISkinManager {
 
         SimpleArrayMap<String, Integer> attrs = null;
         if (view instanceof IQMUISkinDefaultAttrProvider) {
-            attrs = new SimpleArrayMap<>(((IQMUISkinDefaultAttrProvider) view).getDefaultSkinAttrs());
+            SimpleArrayMap<String, Integer> defaultAttrs = ((IQMUISkinDefaultAttrProvider) view).getDefaultSkinAttrs();
+            if(defaultAttrs != null && !defaultAttrs.isEmpty()){
+                attrs = new SimpleArrayMap<>(defaultAttrs);
+            }
         }
         IQMUISkinDefaultAttrProvider provider = (IQMUISkinDefaultAttrProvider) view.getTag(
                 R.id.qmui_skin_default_attr_provider);
         if (provider != null) {
-            if (attrs != null) {
-                // override
-                attrs.putAll(provider.getDefaultSkinAttrs());
-            } else {
-                attrs = new SimpleArrayMap<>(provider.getDefaultSkinAttrs());
+            SimpleArrayMap<String, Integer> providedAttrs = provider.getDefaultSkinAttrs();
+            if(providedAttrs != null && !providedAttrs.isEmpty()){
+                if (attrs != null) {
+                    attrs.putAll(providedAttrs);
+                } else {
+                    attrs = new SimpleArrayMap<>(providedAttrs);
+                }
             }
-        } else if (attrs == null) {
+        }
+
+        if (attrs == null) {
+            if(items.length <= 0){
+                return null;
+            }
             attrs = new SimpleArrayMap<>(items.length);
         }
 
