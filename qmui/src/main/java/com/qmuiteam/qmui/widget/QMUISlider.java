@@ -146,6 +146,21 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         }
     }
 
+    public int getCurrentProgress() {
+        return mCurrentProgress;
+    }
+
+    public void setTickCount(int tickCount) {
+        if(mTickCount != tickCount){
+            mTickCount = tickCount;
+            invalidate();
+        }
+    }
+
+    public int getTickCount() {
+        return mTickCount;
+    }
+
     public void setThumbSkin(QMUISkinValueBuilder valueBuilder) {
         QMUISkinHelper.setSkinValue(convertThumbToView(), valueBuilder);
     }
