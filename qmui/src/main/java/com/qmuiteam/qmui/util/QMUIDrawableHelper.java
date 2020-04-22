@@ -38,6 +38,8 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import android.view.View;
 import android.widget.ImageView;
 
@@ -167,7 +169,10 @@ public class QMUIDrawableHelper {
     /**
      * 设置Drawable的颜色
      * <b>这里不对Drawable进行mutate()，会影响到所有用到这个Drawable的地方，如果要避免，请先自行mutate()</b>
+     *
+     * please use {@link DrawableCompat#setTint(Drawable, int)} replace this.
      */
+    @Deprecated
     public static ColorFilter setDrawableTintColor(Drawable drawable, @ColorInt int tintColor) {
         LightingColorFilter colorFilter = new LightingColorFilter(Color.argb(255, 0, 0, 0), tintColor);
         if(drawable != null){
