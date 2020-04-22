@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import butterknife.BindView;
@@ -389,12 +390,10 @@ public class QDDialogFragment extends BaseFragment {
     }
 
     class QMAutoTestDialogBuilder extends QMUIDialog.AutoResizeDialogBuilder {
-        private Context mContext;
         private EditText mEditText;
 
         public QMAutoTestDialogBuilder(Context context) {
             super(context);
-            mContext = context;
         }
 
         public EditText getEditText() {
@@ -402,20 +401,20 @@ public class QDDialogFragment extends BaseFragment {
         }
 
         @Override
-        public View onBuildContent(QMUIDialog dialog) {
-            LinearLayout layout = new LinearLayout(mContext);
+        public View onBuildContent(@NonNull QMUIDialog dialog, @NonNull Context context) {
+            LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            int padding = QMUIDisplayHelper.dp2px(mContext, 20);
+            int padding = QMUIDisplayHelper.dp2px(context, 20);
             layout.setPadding(padding, padding, padding, padding);
-            mEditText = new AppCompatEditText(mContext);
-            QMUIViewHelper.setBackgroundKeepingPadding(mEditText, QMUIResHelper.getAttrDrawable(mContext, R.drawable.qmui_divider_bottom_bitmap));
+            mEditText = new AppCompatEditText(context);
+            QMUIViewHelper.setBackgroundKeepingPadding(mEditText, QMUIResHelper.getAttrDrawable(context, R.drawable.qmui_divider_bottom_bitmap));
             mEditText.setHint("输入框");
             LinearLayout.LayoutParams editTextLP = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, QMUIDisplayHelper.dpToPx(50));
             editTextLP.bottomMargin = QMUIDisplayHelper.dp2px(getContext(), 15);
             mEditText.setLayoutParams(editTextLP);
             layout.addView(mEditText);
-            TextView textView = new TextView(mContext);
+            TextView textView = new TextView(context);
             textView.setLineSpacing(QMUIDisplayHelper.dp2px(getContext(), 4), 1.0f);
             textView.setText("观察聚焦输入框后，键盘升起降下时 dialog 的高度自适应变化。\n\n" +
                     "QMUI Android 的设计目的是用于辅助快速搭建一个具备基本设计还原效果的 Android 项目，" +

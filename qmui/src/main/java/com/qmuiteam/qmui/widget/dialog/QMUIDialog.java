@@ -858,11 +858,11 @@ public class QMUIDialog extends QMUIBaseDialog {
 
         @Nullable
         @Override
-        protected View onCreateContent(QMUIDialog dialog, QMUIDialogView parent, Context context) {
-            mScrollView = wrapWithScroll(onBuildContent(dialog));
+        protected View onCreateContent(@NonNull QMUIDialog dialog,@NonNull QMUIDialogView parent, @NonNull Context context) {
+            mScrollView = wrapWithScroll(onBuildContent(dialog, context));
             return mScrollView;
         }
 
-        public abstract View onBuildContent(QMUIDialog dialog);
+        public abstract View onBuildContent(@NonNull QMUIDialog dialog, @NonNull Context context);
     }
 }
