@@ -361,8 +361,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         if (dstId == FirstFragmentFinder.NO_ID) {
             String fragmentName = firstFragment.getName();
             throw new RuntimeException("Can not find ID for " + fragmentName +
-                    "; You must add annotation MayFirstFragment which include " + targetActivity.getName() +
-                    " in " + fragmentName + " .");
+                    "; You must add " + fragmentName + " to " +  targetActivity.getName() + " with annotation @FirstFragments.");
         }
         intent.putExtra(QMUI_INTENT_DST_FRAGMENT, dstId);
         if (fragmentArgs != null) {
