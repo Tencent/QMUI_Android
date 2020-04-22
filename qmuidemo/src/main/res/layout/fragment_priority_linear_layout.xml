@@ -299,7 +299,8 @@
                     android:layout_marginRight="4dp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="测试文案测试文案测试"/>
+                    android:text="测试文案测试文案测试"
+                    app:qmui_layout_priority="disposable"/>
 
                 <TextView
                     android:layout_width="wrap_content"
