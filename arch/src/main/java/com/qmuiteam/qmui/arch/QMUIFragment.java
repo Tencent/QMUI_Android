@@ -39,11 +39,14 @@ import androidx.arch.core.util.Function;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
@@ -247,9 +250,7 @@ public abstract class QMUIFragment extends Fragment implements
         if(activity == null){
             throw new RuntimeException("Fragment(" + getClass().getSimpleName() + ") not attached to Activity.");
         }
-        if(mFragmentEffectRegistry == null){
-            mFragmentEffectRegistry = new ViewModelProvider(requireActivity()).get(QMUIFragmentEffectRegistry.class);
-        }
+        ensureFragmentEffectRegistry();
         return mFragmentEffectRegistry.register(lifecycleOwner, effectHandler);
     }
 
@@ -259,13 +260,20 @@ public abstract class QMUIFragment extends Fragment implements
             QMUILog.d(TAG,"Fragment(" + getClass().getSimpleName() + ") not attached to Activity.");
             return;
         }
-        if(mFragmentEffectRegistry == null){
-            mFragmentEffectRegistry = new ViewModelProvider(requireActivity()).get(QMUIFragmentEffectRegistry.class);
-        }
+        ensureFragmentEffectRegistry();
         mFragmentEffectRegistry.notifyEffect(effect);
     }
 
-    private QMUIFragmentContainerProvider findFragmentContainerProvider(){
+    private void ensureFragmentEffectRegistry(){
+        if(mFragmentEffectRegistry == null){
+            QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+            ViewModelStoreOwner viewModelStoreOwner = provider != null ? provider.getContainerViewModelStoreOwner() : requireActivity();
+            mFragmentEffectRegistry = new ViewModelProvider(viewModelStoreOwner).get(QMUIFragmentEffectRegistry.class);
+        }
+    }
+
+    @Nullable
+    protected QMUIFragmentContainerProvider findFragmentContainerProvider(){
         Fragment parent = getParentFragment();
         while (parent != null){
             if(parent instanceof QMUIFragmentContainerProvider){
@@ -486,14 +494,28 @@ public abstract class QMUIFragment extends Fragment implements
                 new SwipeBackLayout.Callback() {
                     @Override
                     public boolean canSwipeBack(SwipeBackLayout layout, int dragDirection, int moveEdge) {
+                        // 1. can not swipe back if in animation
                         if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
                             return false;
                         }
-                        if (!canDragBack(layout.getContext(), dragDirection, moveEdge)) {
+
+                        // 2. can not swipe back if it is not managed by FragmentContainer
+                        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+                        if(provider == null){
                             return false;
                         }
 
-                        if (getParentFragment() != null) {
+                        FragmentManager fragmentManager = provider.getContainerFragmentManager();
+                        if(fragmentManager == null || fragmentManager != getParentFragmentManager()){
+                            return false;
+                        }
+
+                        // 3. need be handled by inner FragmentContainer
+                        if(fragmentManager.getPrimaryNavigationFragment() != null){
+                            return false;
+                        }
+
+                        if (!canDragBack(layout.getContext(), dragDirection, moveEdge)) {
                             return false;
                         }
 
@@ -505,14 +527,13 @@ public abstract class QMUIFragment extends Fragment implements
                         // if the Fragment is in ViewPager, then stop drag back
                         ViewParent parent = view.getParent();
                         while (parent != null) {
-                            if (parent instanceof ViewPager) {
+                            if (parent instanceof ViewPager || parent instanceof ViewPager2) {
                                 return false;
                             }
                             parent = parent.getParent();
                         }
 
-                        FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager == null || fragmentManager.getBackStackEntryCount() <= 1) {
+                        if (fragmentManager.getBackStackEntryCount() <= 1) {
                             return QMUISwipeBackActivityManager.getInstance().canSwipeBack();
                         }
                         return true;
@@ -534,7 +555,11 @@ public abstract class QMUIFragment extends Fragment implements
         @Override
         public void onScrollStateChange(int state, float scrollPercent) {
             Log.i(TAG, "SwipeListener:onScrollStateChange: state = " + state + " ;scrollPercent = " + scrollPercent);
-            ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
+            QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+            if(provider == null || provider.getFragmentContainerView() == null){
+                return;
+            }
+            FragmentContainerView container = provider.getFragmentContainerView();
             mIsInSwipeBack = state != SwipeBackLayout.STATE_IDLE;
             if (state == SwipeBackLayout.STATE_IDLE) {
                 if (mSwipeBackgroundView != null) {
@@ -556,7 +581,7 @@ public abstract class QMUIFragment extends Fragment implements
                     handleSwipeBackCancelOrFinished(container);
                 } else if (scrollPercent >= 1.0F) {
                     handleSwipeBackCancelOrFinished(container);
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = provider.getContainerFragmentManager();
                     Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
                         @Override
                         public boolean handle(Object op) {
@@ -604,7 +629,11 @@ public abstract class QMUIFragment extends Fragment implements
         @Override
         public void onScroll(int dragDirection, int moveEdge, float scrollPercent) {
             scrollPercent = Math.max(0f, Math.min(1f, scrollPercent));
-            ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
+            QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+            if(provider == null || provider.getFragmentContainerView() == null){
+                return;
+            }
+            FragmentContainerView container = provider.getFragmentContainerView();
             int targetOffset = (int) (Math.abs(
                     backViewInitOffset(container.getContext(), dragDirection, moveEdge)) * (1 - scrollPercent));
             int childCount = container.getChildCount();
@@ -624,12 +653,15 @@ public abstract class QMUIFragment extends Fragment implements
         @Override
         public void onSwipeBackBegin(final int dragDirection, final int moveEdge) {
             Log.i(TAG, "SwipeListener:onSwipeBackBegin: moveEdge = " + moveEdge);
-            FragmentManager fragmentManager = getFragmentManager();
-            if (fragmentManager == null) {
+            QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+            if(provider == null || provider.getFragmentContainerView() == null){
                 return;
             }
+            final FragmentContainerView container = provider.getFragmentContainerView();
+
             QMUIKeyboardHelper.hideKeyboard(mBaseView);
             onDragStart();
+            FragmentManager fragmentManager = provider.getContainerFragmentManager();
             int backStackCount = fragmentManager.getBackStackEntryCount();
             if (backStackCount > 1) {
                 Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
@@ -656,7 +688,6 @@ public abstract class QMUIFragment extends Fragment implements
                                     Object fragmentObject = fragmentField.get(op);
                                     if (fragmentObject instanceof QMUIFragment) {
                                         mModifiedFragment = (QMUIFragment) fragmentObject;
-                                        ViewGroup container = getBaseFragmentActivity().getFragmentContainer();
                                         mModifiedFragment.isCreateForSwipeBack = true;
                                         View baseView = mModifiedFragment.onCreateView(LayoutInflater.from(getContext()), container, null);
                                         mModifiedFragment.isCreateForSwipeBack = false;
@@ -867,7 +898,7 @@ public abstract class QMUIFragment extends Fragment implements
 
     protected void handleOnBackPressed() {
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
-        if(provider == null || provider.getContainerFragmentManager() == null ||
+        if(!(provider instanceof FragmentActivity) || provider.getContainerFragmentManager() == null ||
                 provider.getContainerFragmentManager().getBackStackEntryCount() > 1){
             // disable this and go with FragmentManager's backPressesCallback
             // because it will call execPendingActions before popBackStackImmediate

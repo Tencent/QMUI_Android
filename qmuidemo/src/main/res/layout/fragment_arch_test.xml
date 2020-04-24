@@ -81,7 +81,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="10dp"
-            android:text="圆角为高度的一半"
+            android:text=""
             app:qmui_isRadiusAdjustBounds="true"/>
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -99,6 +99,23 @@
             android:paddingRight="16dp"
             android:paddingTop="10dp"
             android:text="popBackStack and then startActivity"
+            app:qmui_isRadiusAdjustBounds="true"/>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="?attr/qmui_content_spacing_horizontal"
+            android:layout_marginRight="?attr/qmui_content_spacing_horizontal"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp"
+            android:text="start nav fragment"
             app:qmui_isRadiusAdjustBounds="true"/>
     </RelativeLayout>
 

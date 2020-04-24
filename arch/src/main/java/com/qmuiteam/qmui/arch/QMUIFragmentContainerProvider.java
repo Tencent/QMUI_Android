@@ -16,9 +16,18 @@
 
 package com.qmuiteam.qmui.arch;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 public interface QMUIFragmentContainerProvider {
     int getContextViewId();
+
     FragmentManager getContainerFragmentManager();
+
+    @Nullable
+    FragmentContainerView getFragmentContainerView();
+
+    ViewModelStoreOwner getContainerViewModelStoreOwner();
 }

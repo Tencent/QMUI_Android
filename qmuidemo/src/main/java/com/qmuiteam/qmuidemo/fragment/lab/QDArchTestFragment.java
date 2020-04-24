@@ -28,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.arch.QMUINavFragment;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -63,6 +64,8 @@ public class QDArchTestFragment extends BaseFragment {
     QMUIRoundButton mBtn;
     @BindView(R.id.btn_1)
     QMUIRoundButton mBtn1;
+    @BindView(R.id.btn_2)
+    QMUIRoundButton mBtn2;
 
     private Holder mHolder = new Holder();
 
@@ -104,6 +107,14 @@ public class QDArchTestFragment extends BaseFragment {
                 popBackStack();
                 Intent intent = QDMainActivity.of(getContext(), QDArchTestFragment.class);
                 startActivity(intent);
+            }
+        });
+
+        mBtn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QMUINavFragment fragment = QMUINavFragment.getDefaultInstance(QDArchTestFragment.class, null);
+                startFragment(fragment);
             }
         });
         return view;
