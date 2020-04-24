@@ -44,6 +44,7 @@ import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
+import com.qmuiteam.qmuidemo.model.CustomEffect;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.ArrayList;
@@ -98,6 +99,11 @@ public class QDDialogFragment extends BaseFragment {
                 });
 
         mTopBar.setTitle(mQDItemDescription.getName());
+
+        notifyEffect(new CustomEffect("custom effect: 1"));
+        notifyEffect(new CustomEffect("custom effect: 2"));
+        notifyEffect(new CustomEffect("custom effect: 3"));
+        notifyEffect(new CustomEffect("custom effect: 4"));
     }
 
 

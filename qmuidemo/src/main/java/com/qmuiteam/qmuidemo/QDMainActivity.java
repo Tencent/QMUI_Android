@@ -72,6 +72,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
 import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
@@ -235,7 +236,7 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     class CustomRootView extends RootView {
 
-        private QMUIWindowInsetLayout fragmentContainer;
+        private FragmentContainerView fragmentContainer;
         private QMUIRadiusImageView2  globalBtn;
         private QMUIViewOffsetHelper globalBtnOffsetHelper;
         private int btnSize;
@@ -248,11 +249,11 @@ public class QDMainActivity extends BaseFragmentActivity {
         private boolean isTouchDownInGlobalBtn = false;
 
         public CustomRootView(Context context, int fragmentContainerId) {
-            super(context);
+            super(context, fragmentContainerId);
 
             btnSize = QMUIDisplayHelper.dp2px(context, 56);
 
-            fragmentContainer = new QMUIWindowInsetLayout(context);
+            fragmentContainer = new FragmentContainerView(context);
             fragmentContainer.setId(fragmentContainerId);
             addView(fragmentContainer, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

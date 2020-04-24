@@ -20,10 +20,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +31,27 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.arch.core.util.Function;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
+
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
+import com.qmuiteam.qmui.arch.effect.Effect;
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectHandler;
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistration;
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistry;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
@@ -48,15 +64,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
-import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.viewpager.widget.ViewPager;
 
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
@@ -78,11 +85,11 @@ public abstract class QMUIFragment extends Fragment implements
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
-    protected static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
+    public static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             R.anim.slide_in_right, R.anim.slide_out_left,
             R.anim.slide_in_left, R.anim.slide_out_right);
 
-    protected static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
+    public static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
             R.anim.scale_enter, R.anim.slide_still,
             R.anim.slide_still, R.anim.scale_exit);
 
@@ -131,9 +138,25 @@ public abstract class QMUIFragment extends Fragment implements
         }
     };
     private QMUIFragmentLazyLifecycleOwner mLazyViewLifecycleOwner;
+    private QMUIFragmentEffectRegistry mFragmentEffectRegistry;
+
+    private OnBackPressedDispatcher mOnBackPressedDispatcher;
+    private OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            QMUIFragment.this.handleOnBackPressed();
+        }
+    };
 
     public QMUIFragment() {
         super();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mOnBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
+        mOnBackPressedDispatcher.addCallback(this, mOnBackPressedCallback);
     }
 
     public final QMUIFragmentActivity getBaseFragmentActivity() {
@@ -195,52 +218,141 @@ public abstract class QMUIFragment extends Fragment implements
 
     }
 
-    protected void startFragmentAndDestroyCurrent(QMUIFragment fragment) {
-        startFragmentAndDestroyCurrent(fragment, true);
+
+    @Nullable
+    public <T extends Effect> QMUIFragmentEffectRegistration registerEffect(
+            @NonNull final LifecycleOwner lifecycleOwner,
+            @NonNull final QMUIFragmentEffectHandler<T> effectHandler) {
+        FragmentActivity activity = getActivity();
+        if(activity == null){
+            throw new RuntimeException("Fragment(" + getClass().getSimpleName() + ") not attached to Activity.");
+        }
+        if(mFragmentEffectRegistry == null){
+            mFragmentEffectRegistry = new ViewModelProvider(requireActivity()).get(QMUIFragmentEffectRegistry.class);
+        }
+        return mFragmentEffectRegistry.register(lifecycleOwner, effectHandler);
     }
 
+    public <T extends Effect> void notifyEffect(T effect){
+        FragmentActivity activity = getActivity();
+        if(activity == null){
+            QMUILog.d(TAG,"Fragment(" + getClass().getSimpleName() + ") not attached to Activity.");
+            return;
+        }
+        if(mFragmentEffectRegistry == null){
+            mFragmentEffectRegistry = new ViewModelProvider(requireActivity()).get(QMUIFragmentEffectRegistry.class);
+        }
+        mFragmentEffectRegistry.notifyEffect(effect);
+    }
+
+    protected int startFragmentAndDestroyCurrent(QMUIFragment fragment) {
+        return startFragmentAndDestroyCurrent(fragment, true);
+    }
+
+
     /**
-     * see {@link QMUIFragmentActivity#startFragmentAndDestroyCurrent(QMUIFragment, boolean)}
+     * start a new fragment and then destroy current fragment.
+     * assume there is a fragment stack(A->B->C), and you use this method to start a new
+     * fragment D and destroy fragment C. Now you are in fragment D, if you want call
+     * {@link #popBackStack()} to back to B, what the animation should be? Sometimes we hope run
+     * animation generated by transition B->C, but sometimes we hope run animation generated by
+     * transition C->D. this why second parameter exists.
      *
      * @param fragment                      new fragment to start
-     * @param useNewTransitionConfigWhenPop
+     * @param useNewTransitionConfigWhenPop if true, use animation generated by transition C->D,
+     *                                      else, use animation generated by transition B->C
      */
-    protected void startFragmentAndDestroyCurrent(QMUIFragment fragment, boolean useNewTransitionConfigWhenPop) {
+    protected int startFragmentAndDestroyCurrent(final QMUIFragment fragment,
+                                                  final boolean useNewTransitionConfigWhenPop) {
         if (!checkStateLoss("startFragmentAndDestroyCurrent")) {
-            return;
+            return -1;
         }
         if (getTargetFragment() != null) {
             // transfer target fragment
             fragment.setTargetFragment(getTargetFragment(), getTargetRequestCode());
             setTargetFragment(null, 0);
         }
-        QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
-        if (baseFragmentActivity != null) {
-            if (this.isAttachedToActivity()) {
-                ViewCompat.setTranslationZ(mCacheSwipeBackLayout, --mBackStackIndex);
-                baseFragmentActivity.startFragmentAndDestroyCurrent(fragment, useNewTransitionConfigWhenPop);
-            } else {
-                Log.e("QMUIFragment", "fragment not attached:" + this);
+
+        ViewCompat.setTranslationZ(mCacheSwipeBackLayout, --mBackStackIndex);
+        final QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
+        String tagName = fragment.getClass().getSimpleName();
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        transitionConfig.enter, transitionConfig.exit,
+                        transitionConfig.popenter, transitionConfig.popout)
+                .replace(getBaseFragmentActivity().getContextViewId(), fragment, tagName);
+        int index = transaction.commit();
+        Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
+            @Override
+            public boolean handle(Object op) {
+                Field cmdField = null;
+                try {
+                    cmdField = Utils.getOpCmdField(op);
+                    cmdField.setAccessible(true);
+                    int cmd = (int) cmdField.get(op);
+                    if (cmd == 1) {
+                        if (useNewTransitionConfigWhenPop) {
+                            Field popEnterAnimField = Utils.getOpPopEnterAnimField(op);
+                            popEnterAnimField.setAccessible(true);
+                            popEnterAnimField.set(op, transitionConfig.popenter);
+
+                            Field popExitAnimField = Utils.getOpPopExitAnimField(op);
+                            popExitAnimField.setAccessible(true);
+                            popExitAnimField.set(op, transitionConfig.popout);
+                        }
+
+                        Field oldFragmentField = Utils.getOpFragmentField(op);
+                        oldFragmentField.setAccessible(true);
+                        Object fragmentObj = oldFragmentField.get(op);
+                        oldFragmentField.set(op, fragment);
+                        Field backStackNestField = Fragment.class.getDeclaredField("mBackStackNesting");
+                        backStackNestField.setAccessible(true);
+                        int oldFragmentBackStackNest = (int) backStackNestField.get(fragmentObj);
+                        backStackNestField.set(fragment, oldFragmentBackStackNest);
+                        backStackNestField.set(fragmentObj, --oldFragmentBackStackNest);
+                        return true;
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                return false;
             }
-        } else {
-            Log.e("QMUIFragment", "startFragment null:" + this);
-        }
+
+            @Override
+            public boolean needReNameTag() {
+                return true;
+            }
+
+            @Override
+            public String newTagName() {
+                return fragment.getClass().getSimpleName();
+            }
+        });
+        return index;
     }
 
-    protected void startFragment(QMUIFragment fragment) {
+
+    /**
+     * start a new fragment and add to BackStack
+     * @param fragment the fragment to start
+     * @return Returns the identifier of this transaction's back stack entry,
+     * if {@link FragmentTransaction#addToBackStack(String)} had been called.  Otherwise, returns
+     * a negative number.
+     */
+    public int startFragment(QMUIFragment fragment) {
         if (!checkStateLoss("startFragment")) {
-            return;
+            return -1;
         }
-        QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
-        if (baseFragmentActivity != null) {
-            if (this.isAttachedToActivity()) {
-                baseFragmentActivity.startFragment(fragment);
-            } else {
-                Log.e("QMUIFragment", "fragment not attached:" + this);
-            }
-        } else {
-            Log.e("QMUIFragment", "startFragment null:" + this);
-        }
+        QMUIFragmentActivity baseFragmentActivity = getBaseFragmentActivity();
+        QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
+        String tagName = fragment.getClass().getSimpleName();
+        return getParentFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
+                .replace(baseFragmentActivity.getContextViewId(), fragment, tagName)
+                .addToBackStack(tagName)
+                .commit();
     }
 
     /**
@@ -249,9 +361,12 @@ public abstract class QMUIFragment extends Fragment implements
      * 2. Pass data from fragment2 to fragment1 via setFragmentResult(RESULT_OK, data)
      * 3. Get data in fragment1 through onFragmentResult(requestCode, resultCode, data)
      *
+     * @deprecated use {@link #registerEffect} for a replacement
+     *
      * @param fragment    target fragment
      * @param requestCode request code
      */
+    @Deprecated
     public void startFragmentForResult(QMUIFragment fragment, int requestCode) {
         if (!checkStateLoss("startFragmentForResult")) {
             return;
@@ -288,6 +403,12 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
 
+    /**
+     * @deprecated use {@link #notifyEffect} for a replacement
+     * @param resultCode
+     * @param data
+     */
+    @Deprecated
     public void setFragmentResult(int resultCode, Intent data) {
         int targetRequestCode = getTargetRequestCode();
         if (targetRequestCode == 0) {
@@ -760,27 +881,64 @@ public abstract class QMUIFragment extends Fragment implements
         return swipeBackLayout;
     }
 
-    protected void onBackPressed() {
-        popBackStack();
+    protected void handleOnBackPressed() {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1) {
+            // disable this and go with FragmentManager's backPressesCallback
+            // because it will call execPendingActions before popBackStackImmediate
+            mOnBackPressedCallback.setEnabled(false);
+            mOnBackPressedDispatcher.onBackPressed();
+            mOnBackPressedCallback.setEnabled(true);
+        } else {
+            QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
+            if (QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+                requireActivity().finish();
+                requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                return;
+            }
+            Object toExec = onLastFragmentFinish();
+            if (toExec != null) {
+                if (toExec instanceof QMUIFragment) {
+                    QMUIFragment fragment = (QMUIFragment) toExec;
+                    startFragmentAndDestroyCurrent(fragment, false);
+                } else if (toExec instanceof Intent) {
+                    Intent intent = (Intent) toExec;
+                    startActivity(intent);
+                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    requireActivity().finish();
+                } else {
+                    throw new Error("can not handle the result in onLastFragmentFinish");
+                }
+            } else {
+                requireActivity().finish();
+                requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+            }
+        }
     }
 
     /**
      * pop back
      */
     protected void popBackStack() {
-        if (checkPopBack()) {
-            getBaseFragmentActivity().popBackStack();
+        if(mOnBackPressedDispatcher != null){
+            mOnBackPressedDispatcher.onBackPressed();
         }
     }
 
     /**
-     * pop back to a class type fragment
+     * pop back to a clazz type fragment
+     * <p>
+     * Assuming there is a back stack: Home -> List -> Detail. Perform popBackStack(Home.class),
+     * Home is the current fragment
+     * <p>
+     * if the clazz type fragment doest not exist in back stack, this method is Equivalent
+     * to popBackStack()
      *
-     * @param cls the target fragment class type
+     * @param cls the type of target fragment
      */
     protected void popBackStack(Class<? extends QMUIFragment> cls) {
         if (checkPopBack()) {
-            getBaseFragmentActivity().popBackStack(cls);
+           getParentFragmentManager().popBackStack(cls.getSimpleName(), 0);
         }
     }
 
@@ -791,7 +949,7 @@ public abstract class QMUIFragment extends Fragment implements
      */
     protected void popBackStackInclusive(Class<? extends QMUIFragment> cls) {
         if (checkPopBack()) {
-            getBaseFragmentActivity().popBackStackInclusive(cls);
+            getParentFragmentManager().popBackStack(cls.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 
@@ -824,27 +982,13 @@ public abstract class QMUIFragment extends Fragment implements
         }
     }
 
-
     private boolean checkStateLoss(String logName) {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager == null) {
-            QMUILog.d(TAG, logName + " can not be invoked because fragmentManager == null");
-            return false;
-        }
+        FragmentManager fragmentManager = getParentFragmentManager();
         if (fragmentManager.isStateSaved()) {
             QMUILog.d(TAG, logName + " can not be invoked after onSaveInstanceState");
             return false;
         }
         return true;
-    }
-
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return false;
     }
 
     @Override
@@ -871,10 +1015,7 @@ public abstract class QMUIFragment extends Fragment implements
         if (enter) {
             try {
                 animation = AnimationUtils.loadAnimation(getContext(), nextAnim);
-
-            } catch (Resources.NotFoundException ignored) {
-
-            } catch (RuntimeException ignored) {
+            } catch (Throwable ignored) {
 
             }
             if (animation != null) {

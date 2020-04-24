@@ -16,23 +16,32 @@
 
 package com.qmuiteam.qmuidemo.fragment.home;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectHandler;
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentMapEffectHandler;
+import com.qmuiteam.qmui.arch.effect.MapEffect;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.tab.QMUITab;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
+import com.qmuiteam.qmuidemo.model.CustomEffect;
 
 import java.util.HashMap;
+import java.util.List;
 
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -44,8 +53,10 @@ import butterknife.ButterKnife;
 public class HomeFragment extends BaseFragment {
     private final static String TAG = HomeFragment.class.getSimpleName();
 
-    @BindView(R.id.pager) ViewPager mViewPager;
-    @BindView(R.id.tabs) QMUITabSegment mTabSegment;
+    @BindView(R.id.pager)
+    ViewPager mViewPager;
+    @BindView(R.id.tabs)
+    QMUITabSegment mTabSegment;
     private HashMap<Pager, HomeController> mPages;
     private PagerAdapter mPagerAdapter = new PagerAdapter() {
 
@@ -89,6 +100,42 @@ public class HomeFragment extends BaseFragment {
         }
     };
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        registerEffect(this, new QMUIFragmentMapEffectHandler() {
+            @Override
+            public boolean shouldHandleEffect(@NonNull MapEffect effect) {
+                return effect.getValue("interested_type_key") != null;
+            }
+
+            @Override
+            public void handleEffect(@NonNull MapEffect effect) {
+                Object value = effect.getValue("interested_value_key");
+                if(value instanceof String){
+                    Toast.makeText(context, ((String)value), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        registerEffect(this, new QMUIFragmentEffectHandler<CustomEffect>() {
+            @Override
+            public boolean shouldHandleEffect(@NonNull CustomEffect effect) {
+                return true;
+            }
+
+            @Override
+            public void handleEffect(@NonNull CustomEffect effect) {
+                Toast.makeText(context, effect.getContent(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void handleEffect(@NonNull List<CustomEffect> effects) {
+               // we can only handle the last effect.
+               handleEffect(effects.get(effects.size() - 1));
+            }
+        });
+    }
 
     @Override
     protected View onCreateView() {
@@ -98,6 +145,7 @@ public class HomeFragment extends BaseFragment {
         initPagers();
         return layout;
     }
+
 
     private void initTabs() {
 

@@ -22,9 +22,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
@@ -42,8 +43,6 @@ import com.qmuiteam.qmuidemo.activity.TestArchInViewPagerActivity;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -56,10 +55,14 @@ public class QDArchTestFragment extends BaseFragment {
     private static final int REQUEST_CODE = 1;
     private static final String DATA_TEST = "data_test";
 
-    @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
-    @BindView(R.id.title) TextView mTitleTv;
-    @BindView(R.id.btn) QMUIRoundButton mBtn;
-    @BindView(R.id.btn_1) QMUIRoundButton mBtn1;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
+    @BindView(R.id.title)
+    TextView mTitleTv;
+    @BindView(R.id.btn)
+    QMUIRoundButton mBtn;
+    @BindView(R.id.btn_1)
+    QMUIRoundButton mBtn1;
 
     private Holder mHolder = new Holder();
 
