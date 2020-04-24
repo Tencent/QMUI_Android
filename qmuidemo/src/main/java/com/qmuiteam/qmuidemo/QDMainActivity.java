@@ -210,11 +210,6 @@ public class QDMainActivity extends BaseFragmentActivity {
                 .show(v);
     }
 
-    @Override
-    protected int getContextViewId() {
-        return R.id.qmuidemo;
-    }
-
 
     public static Intent createWebExplorerIntent(Context context, String url, String title) {
         Bundle bundle = new Bundle();
@@ -395,6 +390,11 @@ public class QDMainActivity extends BaseFragmentActivity {
                 isTouchDownInGlobalBtn = false;
             }
             return isDragging || super.onTouchEvent(event);
+        }
+
+        @Override
+        public FragmentContainerView getFragmentContainerView() {
+            return fragmentContainer;
         }
     }
 }

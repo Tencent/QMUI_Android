@@ -49,9 +49,11 @@ import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.effect.Effect;
+import com.qmuiteam.qmui.arch.effect.FragmentResultEffect;
 import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectHandler;
 import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistration;
 import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistry;
+import com.qmuiteam.qmui.arch.effect.QMUIFragmentResultEffectHandler;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
@@ -64,6 +66,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
@@ -104,17 +107,16 @@ public abstract class QMUIFragment extends Fragment implements
 
 
     private static final int NO_REQUEST_CODE = 0;
+    private static final AtomicInteger sNextRc = new AtomicInteger(1);
     private int mSourceRequestCode = NO_REQUEST_CODE;
-    private Intent mResultData = null;
-    private int mResultCode = RESULT_CANCELED;
-    private QMUIFragment mChildTargetFragment;
-
+    private int mRequestCodeUUid = sNextRc.getAndIncrement();
+    private int mTargetRequestCodeUUid = -1;
+    private int mTargetRequestCode = NO_REQUEST_CODE;
 
     private View mBaseView;
     private SwipeBackLayout mCacheSwipeBackLayout;
     private View mCacheRootView;
     private boolean isCreateForSwipeBack = false;
-    private int mBackStackIndex = 0;
     private SwipeBackLayout.ListenerRemover mListenerRemover;
     private SwipeBackgroundView mSwipeBackgroundView;
     private boolean mIsInSwipeBack = false;
@@ -157,6 +159,24 @@ public abstract class QMUIFragment extends Fragment implements
         super.onAttach(context);
         mOnBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
         mOnBackPressedDispatcher.addCallback(this, mOnBackPressedCallback);
+        registerEffect(this, new QMUIFragmentResultEffectHandler() {
+            @Override
+            public boolean shouldHandleEffect(@NonNull FragmentResultEffect effect) {
+                return effect.getRequestCode() == mSourceRequestCode && effect.getRequestCodeUUid() == mRequestCodeUUid;
+            }
+
+            @Override
+            public void handleEffect(@NonNull FragmentResultEffect effect) {
+                onFragmentResult(effect.getRequestCode(), effect.getResultCode(), effect.getIntent());
+                mSourceRequestCode = NO_REQUEST_CODE;
+            }
+
+            @Override
+            public void handleEffect(@NonNull List<FragmentResultEffect> effects) {
+                // only handle the latest
+                handleEffect(effects.get(effects.size() - 1));
+            }
+        });
     }
 
     public final QMUIFragmentActivity getBaseFragmentActivity() {
@@ -245,6 +265,22 @@ public abstract class QMUIFragment extends Fragment implements
         mFragmentEffectRegistry.notifyEffect(effect);
     }
 
+    private QMUIFragmentContainerProvider findFragmentContainerProvider(){
+        Fragment parent = getParentFragment();
+        while (parent != null){
+            if(parent instanceof QMUIFragmentContainerProvider){
+                return (QMUIFragmentContainerProvider)parent;
+            }else{
+                parent = parent.getParentFragment();
+            }
+        }
+        Activity activity = getActivity();
+        if(activity instanceof QMUIFragmentContainerProvider){
+            return (QMUIFragmentContainerProvider)activity;
+        }
+        return null;
+    }
+
     protected int startFragmentAndDestroyCurrent(QMUIFragment fragment) {
         return startFragmentAndDestroyCurrent(fragment, true);
     }
@@ -267,21 +303,25 @@ public abstract class QMUIFragment extends Fragment implements
         if (!checkStateLoss("startFragmentAndDestroyCurrent")) {
             return -1;
         }
-        if (getTargetFragment() != null) {
-            // transfer target fragment
-            fragment.setTargetFragment(getTargetFragment(), getTargetRequestCode());
-            setTargetFragment(null, 0);
+
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider == null){
+            if(BuildConfig.DEBUG){
+                throw new RuntimeException("Can not find the fragment container provider.");
+            }else{
+                Log.d(TAG, "Can not find the fragment container provider.");
+                return -1;
+            }
         }
 
-        ViewCompat.setTranslationZ(mCacheSwipeBackLayout, --mBackStackIndex);
         final QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
         String tagName = fragment.getClass().getSimpleName();
-        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentManager fragmentManager = provider.getContainerFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(
                         transitionConfig.enter, transitionConfig.exit,
                         transitionConfig.popenter, transitionConfig.popout)
-                .replace(getBaseFragmentActivity().getContextViewId(), fragment, tagName);
+                .replace(provider.getContextViewId(), fragment, tagName);
         int index = transaction.commit();
         Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
             @Override
@@ -332,7 +372,6 @@ public abstract class QMUIFragment extends Fragment implements
         return index;
     }
 
-
     /**
      * start a new fragment and add to BackStack
      * @param fragment the fragment to start
@@ -344,15 +383,16 @@ public abstract class QMUIFragment extends Fragment implements
         if (!checkStateLoss("startFragment")) {
             return -1;
         }
-        QMUIFragmentActivity baseFragmentActivity = getBaseFragmentActivity();
-        QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
-        String tagName = fragment.getClass().getSimpleName();
-        return getParentFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
-                .replace(baseFragmentActivity.getContextViewId(), fragment, tagName)
-                .addToBackStack(tagName)
-                .commit();
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider == null){
+            if(BuildConfig.DEBUG){
+                throw new RuntimeException("Can not find the fragment container provider.");
+            }else{
+                Log.d(TAG, "Can not find the fragment container provider.");
+                return -1;
+            }
+        }
+        return startFragment(fragment, provider);
     }
 
     /**
@@ -367,41 +407,39 @@ public abstract class QMUIFragment extends Fragment implements
      * @param requestCode request code
      */
     @Deprecated
-    public void startFragmentForResult(QMUIFragment fragment, int requestCode) {
+    public int startFragmentForResult(QMUIFragment fragment, int requestCode) {
         if (!checkStateLoss("startFragmentForResult")) {
-            return;
+            return -1;
         }
         if (requestCode == NO_REQUEST_CODE) {
             throw new RuntimeException("requestCode can not be " + NO_REQUEST_CODE);
         }
-        QMUIFragmentActivity baseFragmentActivity = this.getBaseFragmentActivity();
-        if (baseFragmentActivity != null) {
-            FragmentManager targetFragmentManager = baseFragmentActivity.getSupportFragmentManager();
-            Fragment topFragment = this;
-            Fragment parent = this;
-            while (parent != null) {
-                topFragment = parent;
-                if (parent.getFragmentManager() == targetFragmentManager) {
-                    break;
-                }
-                parent = parent.getParentFragment();
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider == null){
+            if(BuildConfig.DEBUG){
+                throw new RuntimeException("Can not find the fragment container provider.");
+            }else{
+                Log.d(TAG, "Can not find the fragment container provider.");
+                return -1;
             }
-            mSourceRequestCode = requestCode;
-            if (topFragment == this) {
-                mChildTargetFragment = null;
-                fragment.setTargetFragment(this, requestCode);
-            } else if (topFragment.getFragmentManager() == targetFragmentManager) {
-                QMUIFragment qmuiFragment = (QMUIFragment) topFragment;
-                qmuiFragment.mSourceRequestCode = requestCode;
-                qmuiFragment.mChildTargetFragment = this;
-                fragment.setTargetFragment(qmuiFragment, requestCode);
-            } else {
-                throw new RuntimeException("fragment manager not matched");
-            }
-            startFragment(fragment);
         }
+
+        mSourceRequestCode = requestCode;
+        fragment.mTargetRequestCodeUUid = mRequestCodeUUid;
+        fragment.mTargetRequestCode = requestCode;
+        return startFragment(fragment, provider);
     }
 
+    private int startFragment(QMUIFragment fragment, QMUIFragmentContainerProvider provider){
+        QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
+        String tagName = fragment.getClass().getSimpleName();
+        return provider.getContainerFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
+                .replace(provider.getContextViewId(), fragment, tagName)
+                .addToBackStack(tagName)
+                .commit();
+    }
 
     /**
      * @deprecated use {@link #notifyEffect} for a replacement
@@ -410,40 +448,10 @@ public abstract class QMUIFragment extends Fragment implements
      */
     @Deprecated
     public void setFragmentResult(int resultCode, Intent data) {
-        int targetRequestCode = getTargetRequestCode();
-        if (targetRequestCode == 0) {
-            QMUILog.w(TAG, "call setFragmentResult, but not requestCode exists");
+        if(mTargetRequestCode == NO_REQUEST_CODE){
             return;
         }
-        Fragment fragment = getTargetFragment();
-        if (!(fragment instanceof QMUIFragment)) {
-            return;
-        }
-        QMUIFragment targetFragment = (QMUIFragment) fragment;
-
-        if (targetFragment.mSourceRequestCode == targetRequestCode) {
-            if (targetFragment.mChildTargetFragment != null) {
-                targetFragment = targetFragment.mChildTargetFragment;
-            }
-            targetFragment.mResultCode = resultCode;
-            targetFragment.mResultData = data;
-        }
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager != null) {
-            int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-            for (int i = backStackEntryCount - 1; i >= 0; i--) {
-                FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
-                if (getClass().getSimpleName().equals(entry.getName())) {
-                    mBackStackIndex = i;
-                    break;
-                }
-            }
-        }
+        notifyEffect(new FragmentResultEffect(mTargetRequestCodeUUid, resultCode, mTargetRequestCode, data));
     }
 
     @Override
@@ -455,27 +463,6 @@ public abstract class QMUIFragment extends Fragment implements
         mLazyViewLifecycleOwner = new QMUIFragmentLazyLifecycleOwner(this);
         mLazyViewLifecycleOwner.setViewVisible(getUserVisibleHint());
         getViewLifecycleOwner().getLifecycle().addObserver(mLazyViewLifecycleOwner);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        int requestCode = mSourceRequestCode;
-        int resultCode = mResultCode;
-        Intent data = mResultData;
-        QMUIFragment childTargetFragment = mChildTargetFragment;
-
-        mSourceRequestCode = NO_REQUEST_CODE;
-        mResultCode = RESULT_CANCELED;
-        mResultData = null;
-        mChildTargetFragment = null;
-
-        if (requestCode != NO_REQUEST_CODE) {
-            if (childTargetFragment == null) {
-                // only handle the result when there is not child target.
-                onFragmentResult(requestCode, resultCode, data);
-            }
-        }
     }
 
     private SwipeBackLayout newSwipeBackLayout() {
@@ -869,9 +856,6 @@ public abstract class QMUIFragment extends Fragment implements
             swipeBackLayout.setTag(R.id.qmui_arch_swipe_layout_in_back, null);
         }
 
-        ViewCompat.setTranslationZ(swipeBackLayout, mBackStackIndex);
-        Log.i(TAG, getClass().getSimpleName() + " onCreateView: mBackStackIndex = " + mBackStackIndex);
-
         swipeBackLayout.setFitsSystemWindows(false);
 
         if (getActivity() != null) {
@@ -882,8 +866,9 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     protected void handleOnBackPressed() {
-        FragmentManager fragmentManager = getParentFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 1) {
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider == null || provider.getContainerFragmentManager() == null ||
+                provider.getContainerFragmentManager().getBackStackEntryCount() > 1){
             // disable this and go with FragmentManager's backPressesCallback
             // because it will call execPendingActions before popBackStackImmediate
             mOnBackPressedCallback.setEnabled(false);

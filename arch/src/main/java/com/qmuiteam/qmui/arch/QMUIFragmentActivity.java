@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmui.arch;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -47,7 +48,7 @@ import androidx.fragment.app.FragmentTransaction;
  * the container activity for {@link QMUIFragment}.
  * Created by cgspine on 15/9/14.
  */
-public abstract class QMUIFragmentActivity extends InnerBaseActivity {
+public abstract class QMUIFragmentActivity extends InnerBaseActivity implements QMUIFragmentContainerProvider{
     public static final String QMUI_INTENT_DST_FRAGMENT = "qmui_intent_dst_fragment";
     public static final String QMUI_INTENT_FRAGMENT_ARG = "qmui_intent_fragment_arg";
     private static final String TAG = "QMUIFragmentActivity";
@@ -58,8 +59,15 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         QMUIWindowInsetHelper.addHandleContainer(FragmentContainerView.class);
     }
 
-    @SuppressWarnings("SameReturnValue")
-    protected abstract int getContextViewId();
+    @Override
+    public int getContextViewId() {
+        return R.id.qmui_activity_fragment_container_id;
+    }
+
+    @Override
+    public FragmentManager getContainerFragmentManager() {
+        return getSupportFragmentManager();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,8 +149,8 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         return null;
     }
 
-    public FrameLayout getFragmentContainer() {
-        return findViewById(getContextViewId());
+    public FragmentContainerView getFragmentContainer() {
+        return mRootView.getFragmentContainerView();
     }
 
     protected RootView onCreateRootView(int fragmentContainerId){
@@ -204,8 +212,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
         return intent;
     }
 
-
-    @DoNotInterceptKeyboardInset
     public static abstract class RootView extends QMUIWindowInsetLayout {
 
 
@@ -232,8 +238,12 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             super.applySystemWindowInsets19(insets);
             return true;
         }
+
+        public abstract FragmentContainerView getFragmentContainerView();
     }
 
+    @SuppressLint("ViewConstructor")
+    @DoNotInterceptKeyboardInset
     public static class DefaultRootView extends RootView {
         private FragmentContainerView mFragmentContainerView;
 
@@ -244,6 +254,11 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity {
             addView(mFragmentContainerView, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        @Override
+        public FragmentContainerView getFragmentContainerView() {
+            return mFragmentContainerView;
         }
     }
 }

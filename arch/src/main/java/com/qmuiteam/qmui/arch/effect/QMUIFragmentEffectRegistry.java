@@ -134,7 +134,7 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
                 while (handlerCls != null && handlerCls.getSuperclass() != QMUIFragmentEffectHandler.class) {
                     handlerCls = handlerCls.getSuperclass();
                 }
-                if(handlerCls != null){
+                if (handlerCls != null) {
                     Type type = handlerCls.getGenericSuperclass();
                     if (type instanceof ParameterizedType) {
                         Type[] params = ((ParameterizedType) type).getActualTypeArguments();
@@ -166,10 +166,14 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
         @MainThread
         @SuppressWarnings("unchecked")
         void pushOrHandleEffect(Effect effect) {
-            if (mHandler.handleImmediately() || mLifecycle.getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            QMUIFragmentEffectHandler.HandlePolicy policy = mHandler.provideHandlePolicy();
+            if (policy == QMUIFragmentEffectHandler.HandlePolicy.Immediately ||
+                    (policy == QMUIFragmentEffectHandler.HandlePolicy.ImmediatelyIfStarted &&
+                            mLifecycle.getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
                 mHandler.handleEffect((T) effect);
                 return;
             }
+
             if (mEffects == null) {
                 mEffects = new ArrayList<>();
             }
@@ -182,7 +186,11 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
                 if (mEffects != null && !mEffects.isEmpty()) {
                     List<T> effects = mEffects;
                     mEffects = null;
-                    mHandler.handleEffect(effects);
+                    if (effects.size() == 1) {
+                        mHandler.handleEffect(effects.get(0));
+                    } else {
+                        mHandler.handleEffect(effects);
+                    }
                 }
             } else if (event == Lifecycle.Event.ON_DESTROY) {
                 cancel();

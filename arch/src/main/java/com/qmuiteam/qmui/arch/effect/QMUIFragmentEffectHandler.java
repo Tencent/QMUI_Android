@@ -23,13 +23,28 @@ import java.util.List;
 
 public abstract class QMUIFragmentEffectHandler<T extends Effect> {
 
+    public enum HandlePolicy {
+        /**
+         * handle the effect immediately without lifeCycle check
+         */
+        Immediately,
+        /**
+         * handle the effect immediately if the lifecycle is after started.
+         */
+        ImmediatelyIfStarted,
+
+        /**
+         * handle the effect util next start event.
+         */
+        NextStartEvent
+    }
+
     /**
-     * handle the effect immediately without lifeCycle check. You can override this to true to
-     * pre load the data from db or network. But you should be careful with the UI rendering.
-     * @return true to handle the effect immediately.
+     * provide the handle policy to determine when to handle the effects.
+     * @return handle policy
      */
-    public boolean handleImmediately() {
-        return false;
+    public HandlePolicy provideHandlePolicy() {
+        return HandlePolicy.ImmediatelyIfStarted;
     }
 
     /**
@@ -40,16 +55,13 @@ public abstract class QMUIFragmentEffectHandler<T extends Effect> {
     public abstract boolean shouldHandleEffect(@NonNull T effect);
 
     /**
-     * the time to handle effect depends on {@link #handleImmediately()}.
-     * if {@link #handleImmediately()} return true，handle the effect immediately.
-     * if {@link #handleImmediately()} return false, handle the effect after {@link Lifecycle.State#STARTED}
+     * the time to handle effect depends on {@link HandlePolicy}.
      * @param effect
      */
     public abstract void handleEffect(@NonNull T effect);
 
     /**
-     * if {@link #handleImmediately()} return false, we may need handle more than one effects.
-     * then you may want merge them or only handle the newest.
+     * if the handle policy is not {@link HandlePolicy#Immediately}, we may need handle more than one effects.
      * @param effects
      */
     public void handleEffect(@NonNull List<T> effects) {
