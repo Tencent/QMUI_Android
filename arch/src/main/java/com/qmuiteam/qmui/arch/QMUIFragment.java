@@ -74,6 +74,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_NONE;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_BOTTOM;
@@ -469,9 +470,11 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     /**
-     * @deprecated use {@link #notifyEffect} for a replacement
+     *
      * @param resultCode
      * @param data
+     *
+     * @deprecated use {@link #notifyEffect} for a replacement
      */
     @Deprecated
     public void setFragmentResult(int resultCode, Intent data) {
@@ -508,59 +511,55 @@ public abstract class QMUIFragment extends Fragment implements
         } else {
             rootView.setFitsSystemWindows(true);
         }
-        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView, dragBackDirection(),
+        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView,
                 dragViewMoveAction(),
                 new SwipeBackLayout.Callback() {
                     @Override
-                    public boolean canSwipeBack(SwipeBackLayout layout, int dragDirection, int moveEdge) {
+                    public int getDragDirection(SwipeBackLayout swipeBackLayout, SwipeBackLayout.ViewMoveAction viewMoveAction, float downX, float downY, float dx, float dy, float touchSlop) {
                         // 1. can not swipe back if in animation
                         if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
-                            return false;
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
 
                         // 2. can not swipe back if it is not managed by FragmentContainer
                         QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
                         if(provider == null){
-                            return false;
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
 
                         FragmentManager fragmentManager = provider.getContainerFragmentManager();
                         if(fragmentManager == null || fragmentManager != getParentFragmentManager()){
-                            return false;
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
 
                         // 3. need be handled by inner FragmentContainer
                         if(fragmentManager.getPrimaryNavigationFragment() != null){
-                            return false;
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
 
-                        if (!canDragBack(layout.getContext(), dragDirection, moveEdge)) {
-                            return false;
-                        }
-
+                        // 4. can not swipe back if the view is null
                         View view = getView();
                         if (view == null) {
-                            return false;
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
 
-                        // if the Fragment is in ViewPager, then stop drag back
+                        // 5. can not swipe back if if the Fragment is in ViewPager
                         ViewParent parent = view.getParent();
                         while (parent != null) {
                             if (parent instanceof ViewPager || parent instanceof ViewPager2) {
-                                return false;
+                                return SwipeBackLayout.DRAG_DIRECTION_NONE;
                             }
                             parent = parent.getParent();
                         }
 
-                        if (fragmentManager.getBackStackEntryCount() <= 1) {
-                            return QMUISwipeBackActivityManager.getInstance().canSwipeBack();
+                        // 6. can not swipe back if the backStack entry count is less than 2
+                        if (fragmentManager.getBackStackEntryCount() <= 1 &&
+                                !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
                         }
-                        return true;
-                    }
 
-                    @Override
-                    public boolean shouldBeginDrag(SwipeBackLayout swipeBackLayout, float downX, float downY, int dragDirection) {
-                        return QMUIFragment.this.shouldBeginDrag(swipeBackLayout, downX, downY, dragDirection);
+                        return QMUIFragment.this.getDragDirection(
+                                swipeBackLayout, viewMoveAction, downX, downY, dx, dy, touchSlop);
                     }
                 });
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
@@ -1112,7 +1111,10 @@ public abstract class QMUIFragment extends Fragment implements
      * @param requestCode request code
      * @param resultCode  result code
      * @param data        extra data
+     *
+     * @deprecated use {@link #registerEffect} for a replacement
      */
+    @Deprecated
     protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
 
     }
@@ -1121,7 +1123,7 @@ public abstract class QMUIFragment extends Fragment implements
      * disable or enable drag back
      *
      * @return if true open dragBack, otherwise close dragBack
-     * @deprecated Use {@link #canDragBack(Context, int, int)}
+     * @deprecated Use {@link #getDragDirection(SwipeBackLayout, SwipeBackLayout.ViewMoveAction, float, float, float, float, float)}
      */
     @Deprecated
     protected boolean canDragBack() {
@@ -1129,6 +1131,16 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
 
+    /**
+     * disable or enable drag back
+     * @param context context
+     * @param dragDirection gesture direction
+     * @param moveEdge view move edge
+     * @return if true open dragBack, otherwise close dragBack
+     *
+     * @deprecated Use {@link #getDragDirection(SwipeBackLayout, SwipeBackLayout.ViewMoveAction, float, float, float, float, float)}
+     */
+    @Deprecated
     protected boolean canDragBack(Context context, int dragDirection, int moveEdge) {
         return canDragBack();
     }
@@ -1162,6 +1174,12 @@ public abstract class QMUIFragment extends Fragment implements
         return EDGE_LEFT;
     }
 
+    /**
+     *
+     * @return
+     * @deprecated Use {@link #getDragDirection(SwipeBackLayout, SwipeBackLayout.ViewMoveAction, float, float, float, float, float)}
+     */
+    @Deprecated
     protected int dragBackDirection() {
         int oldEdge = dragBackEdge();
         if (oldEdge == EDGE_RIGHT) {
@@ -1178,19 +1196,33 @@ public abstract class QMUIFragment extends Fragment implements
         return SwipeBackLayout.MOVE_VIEW_AUTO;
     }
 
-    protected boolean shouldBeginDrag(SwipeBackLayout swipeBackLayout,
-                                      float downX, float downY, int dragDirection) {
-        int edgeSize = QMUIDisplayHelper.dp2px(swipeBackLayout.getContext(), 20);
-        if (dragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT) {
-            return downX < edgeSize;
-        } else if (dragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT) {
-            return downX > swipeBackLayout.getWidth() - edgeSize;
-        } else if (dragDirection == DRAG_DIRECTION_TOP_TO_BOTTOM) {
-            return downY < edgeSize;
-        } else if (dragDirection == DRAG_DIRECTION_BOTTOM_TO_TOP) {
-            return downY > swipeBackLayout.getHeight() - edgeSize;
+    protected int getDragDirection(@NonNull SwipeBackLayout swipeBackLayout,
+                                   @NonNull SwipeBackLayout.ViewMoveAction viewMoveAction,
+                                       float downX, float downY, float dx, float dy, float slopTouch){
+        int targetDirection = dragBackDirection();
+        if(!canDragBack(swipeBackLayout.getContext(), targetDirection, viewMoveAction.getEdge(targetDirection))){
+            return DRAG_DIRECTION_NONE;
         }
-        return true;
+        int edgeSize = QMUIDisplayHelper.dp2px(swipeBackLayout.getContext(), 20);
+        if (targetDirection == DRAG_DIRECTION_LEFT_TO_RIGHT) {
+            if(downX < edgeSize && dx >= slopTouch){
+                return targetDirection;
+            }
+        } else if (targetDirection == DRAG_DIRECTION_RIGHT_TO_LEFT) {
+            if(downX > swipeBackLayout.getWidth() - edgeSize && -dx >= slopTouch){
+                return targetDirection;
+            }
+        } else if (targetDirection == DRAG_DIRECTION_TOP_TO_BOTTOM) {
+            if(downY < edgeSize && dy >= slopTouch){
+                return targetDirection;
+            }
+        } else if (targetDirection == DRAG_DIRECTION_BOTTOM_TO_TOP) {
+            if(downY > swipeBackLayout.getHeight() - edgeSize && -dy >= slopTouch){
+                return targetDirection;
+            }
+        }
+
+         return DRAG_DIRECTION_NONE;
     }
 
     /**

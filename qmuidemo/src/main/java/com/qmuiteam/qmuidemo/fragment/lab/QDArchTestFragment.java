@@ -25,10 +25,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUINavFragment;
+import com.qmuiteam.qmui.arch.SwipeBackLayout;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -160,6 +162,22 @@ public class QDArchTestFragment extends BaseFragment {
         if (data != null) {
             Log.i(TAG, data.getStringExtra(DATA_TEST));
         }
+    }
+
+    @Override
+    protected int getDragDirection(@NonNull SwipeBackLayout swipeBackLayout,
+                                   @NonNull SwipeBackLayout.ViewMoveAction viewMoveAction,
+                                   float downX, float downY, float dx, float dy, float slopTouch) {
+        if(dx >= slopTouch){
+            return SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
+        }else if(-dx>= slopTouch){
+            return SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
+        } else if(dy >= slopTouch){
+            return SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
+        }else if(-dy >= slopTouch){
+            return SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
+        }
+        return SwipeBackLayout.DRAG_DIRECTION_NONE;
     }
 
     public static void injectEntrance(final QMUITopBarLayout topbar) {

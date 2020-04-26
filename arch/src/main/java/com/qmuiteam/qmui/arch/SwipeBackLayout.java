@@ -60,6 +60,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private static final int MAX_SETTLE_DURATION = 600; // ms
 
 
+    public static final int DRAG_DIRECTION_NONE = 0;
     public static final int DRAG_DIRECTION_LEFT_TO_RIGHT = 1;
     public static final int DRAG_DIRECTION_RIGHT_TO_LEFT = 2;
     public static final int DRAG_DIRECTION_TOP_TO_BOTTOM = 3;
@@ -108,10 +109,10 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private QMUIViewOffsetHelper mViewOffsetHelper;
     private ViewMoveAction mViewMoveAction = MOVE_VIEW_AUTO;
 
-    private int mDragDirection;
+    private int mCurrentDragDirection = 0;
     private boolean mIsScrollOverValid = true;
+    private boolean mEnableSwipeBack = true;
 
-    private boolean mPreventSwipeBackWhenDown = false;
 
     public SwipeBackLayout(Context context) {
         this(context, null);
@@ -126,8 +127,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeBackLayout, defStyle,
                 R.style.SwipeBackLayout);
-
-        mDragDirection = a.getInt(R.styleable.SwipeBackLayout_drag_direction, DRAG_DIRECTION_LEFT_TO_RIGHT);
 
         int shadowLeft = a.getResourceId(R.styleable.SwipeBackLayout_shadow_left,
                 R.drawable.shadow_left);
@@ -149,6 +148,14 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         mMaxVelocity = vc.getScaledMaximumFlingVelocity();
         mMinVelocity = minVel;
         mScroller = new OverScroller(context, QUNITIC_INTERPOLATOR);
+    }
+
+    public void setEnableSwipeBack(boolean enableSwipeBack) {
+        mEnableSwipeBack = enableSwipeBack;
+    }
+
+    public boolean isEnableSwipeBack() {
+        return mEnableSwipeBack;
     }
 
     private final Runnable mSetIdleRunnable = new Runnable() {
@@ -178,16 +185,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     public void setCallback(Callback callback) {
         mCallback = callback;
-    }
-
-    private boolean canSwipeBack() {
-        return mContentView != null && (mCallback == null ||
-                mCallback.canSwipeBack(
-                        this, mDragDirection, mViewMoveAction.getEdge(mDragDirection)));
-    }
-
-    public void setDragDirection(int dragDirection) {
-        mDragDirection = dragDirection;
     }
 
     /**
@@ -315,16 +312,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         setShadow(getResources().getDrawable(resId), edgeFlag);
     }
 
-
-    private boolean preventSwipeBack(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            mPreventSwipeBackWhenDown = !canSwipeBack();
-            return mPreventSwipeBackWhenDown;
-        } else {
-            return !canSwipeBack() || mPreventSwipeBackWhenDown;
-        }
-    }
-
     void setDragState(int state) {
         removeCallbacks(mSetIdleRunnable);
         if (mDragState != state) {
@@ -338,33 +325,24 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
                 && y >= mContentView.getTop() && y < mContentView.getBottom();
     }
 
-    private boolean shouldStartDrag(float x, float y) {
+
+    private int selectDragDirection(float x, float y) {
         final float dx = x - mInitialMotionX;
         final float dy = y - mInitialMotionY;
-        boolean start = false;
-        if (mDragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT) {
-            start = dx >= mTouchSlop;
-        } else if (mDragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT) {
-            start = -dx >= mTouchSlop;
-        } else if (mDragDirection == DRAG_DIRECTION_TOP_TO_BOTTOM) {
-            start = dy >= mTouchSlop;
-        } else if (mDragDirection == DRAG_DIRECTION_BOTTOM_TO_TOP) {
-            start = -dy >= mTouchSlop;
-        }
-
-        start = start && (mCallback == null ||
-                mCallback.shouldBeginDrag(this, mInitialMotionX, mInitialMotionY, mDragDirection));
-        if (start) {
+        mCurrentDragDirection = mCallback == null ? DRAG_DIRECTION_NONE :
+                mCallback.getDragDirection(this, mViewMoveAction, mInitialMotionX, mInitialMotionY, dx, dy, mTouchSlop);
+        if(mCurrentDragDirection != DRAG_DIRECTION_NONE){
             mInitialMotionX = mLastMotionX = x;
             mInitialMotionY = mLastMotionY = y;
             onSwipeBackBegin();
+            setDragState(STATE_DRAGGING);
         }
-        return start;
+        return mCurrentDragDirection;
     }
 
     private float getTouchMoveDelta(float x, float y) {
-        if (mDragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT ||
-                mDragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT) {
+        if (mCurrentDragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT ||
+                mCurrentDragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT) {
             return x - mLastMotionX;
         } else {
             return y - mLastMotionY;
@@ -373,11 +351,12 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (preventSwipeBack(ev)) {
+        if(!mEnableSwipeBack){
+            cancel();
             return false;
         }
-        final int action = ev.getActionMasked();
 
+        final int action = ev.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
             cancel();
         }
@@ -386,6 +365,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
             mVelocityTracker = VelocityTracker.obtain();
         }
         mVelocityTracker.addMovement(ev);
+
+
         final float x = ev.getX();
         final float y = ev.getY();
         switch (action) {
@@ -402,20 +383,16 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
             case MotionEvent.ACTION_MOVE: {
                 if (mDragState == STATE_IDLE) {
-                    boolean shouldStartDrag = shouldStartDrag(x, y);
-                    if (shouldStartDrag) {
-                        setDragState(STATE_DRAGGING);
-                    }
+                    selectDragDirection(x, y);
                 } else if (mDragState == STATE_DRAGGING) {
                     mViewMoveAction.move(this, mContentView, mViewOffsetHelper,
-                            mDragDirection, getTouchMoveDelta(x, y));
+                            mCurrentDragDirection, getTouchMoveDelta(x, y));
                     onScroll();
                 } else {
                     if (isTouchInContentView(x, y)) {
                         setDragState(STATE_DRAGGING);
                     }
                 }
-
                 mLastMotionX = x;
                 mLastMotionY = y;
                 break;
@@ -433,9 +410,11 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (preventSwipeBack(ev)) {
+        if(!mEnableSwipeBack){
+            cancel();
             return false;
         }
+
         final int action = ev.getActionMasked();
 
         if (action == MotionEvent.ACTION_DOWN) {
@@ -462,20 +441,16 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
             case MotionEvent.ACTION_MOVE: {
                 if (mDragState == STATE_IDLE) {
-                    boolean shouldStartDrag = shouldStartDrag(x, y);
-                    if (shouldStartDrag) {
-                        setDragState(STATE_DRAGGING);
-                    }
+                    selectDragDirection(x, y);
                 } else if (mDragState == STATE_DRAGGING) {
                     mViewMoveAction.move(this, mContentView, mViewOffsetHelper,
-                            mDragDirection, getTouchMoveDelta(x, y));
+                            mCurrentDragDirection, getTouchMoveDelta(x, y));
                     onScroll();
                 } else {
                     if (isTouchInContentView(x, y)) {
                         setDragState(STATE_DRAGGING);
                     }
                 }
-
                 mLastMotionX = x;
                 mLastMotionY = y;
                 break;
@@ -504,10 +479,10 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     private void releaseViewForPointerUp() {
         mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);
-        int moveEdge = mViewMoveAction.getEdge(mDragDirection);
+        int moveEdge = mViewMoveAction.getEdge(mCurrentDragDirection);
         float v;
-        if(mDragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT ||
-                mDragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT){
+        if(mCurrentDragDirection == DRAG_DIRECTION_LEFT_TO_RIGHT ||
+                mCurrentDragDirection == DRAG_DIRECTION_RIGHT_TO_LEFT){
             v = clampMag(mVelocityTracker.getXVelocity(), mMinVelocity, mMaxVelocity);
         }else{
             v = clampMag(mVelocityTracker.getYVelocity(), mMinVelocity, mMaxVelocity);
@@ -515,11 +490,11 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
         if (moveEdge == EDGE_LEFT || moveEdge == EDGE_RIGHT) {
             int target = mViewMoveAction.getSettleTarget(this, mContentView,
-                    v, mDragDirection, mScrollThreshold);
+                    v, mCurrentDragDirection, mScrollThreshold);
             settleContentViewAt(target, 0, (int) v, 0);
         } else {
             int target = mViewMoveAction.getSettleTarget(this, mContentView,
-                    v, mDragDirection, mScrollThreshold);
+                    v, mCurrentDragDirection, mScrollThreshold);
             settleContentViewAt(0, target, 0, (int) v);
         }
     }
@@ -598,7 +573,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         final float yweight = yvel != 0 ? (float) absYVel / addedVel :
                 (float) absDy / addedDistance;
 
-        int range = mViewMoveAction.getDragRange(this, mDragDirection);
+        int range = mViewMoveAction.getDragRange(this, mCurrentDragDirection);
         int xduration = computeAxisDuration(dx, xvel, range);
         int yduration = computeAxisDuration(dy, yvel, range);
 
@@ -714,7 +689,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         final int baseAlpha = (mScrimColor & 0xff000000) >>> 24;
         final int alpha = (int) (baseAlpha * mScrimOpacity);
         final int color = alpha << 24 | (mScrimColor & 0xffffff);
-        int movingEdge = mViewMoveAction.getEdge(mDragDirection);
+        int movingEdge = mViewMoveAction.getEdge(mCurrentDragDirection);
         if ((movingEdge & EDGE_LEFT) != 0) {
             canvas.clipRect(0, 0, child.getLeft(), getHeight());
         } else if ((movingEdge & EDGE_RIGHT) != 0) {
@@ -730,7 +705,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private void drawShadow(Canvas canvas, View child) {
 
 
-        int movingEdge = mViewMoveAction.getEdge(mDragDirection);
+        int movingEdge = mViewMoveAction.getEdge(mCurrentDragDirection);
         if ((movingEdge & EDGE_LEFT) != 0) {
             mShadowLeft.setBounds(child.getLeft() - mShadowLeft.getIntrinsicWidth(),
                     child.getTop(), child.getLeft(), child.getBottom());
@@ -763,18 +738,18 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     private void onSwipeBackBegin() {
         mIsScrollOverValid = true;
-        mScrimOpacity = 1 - mViewMoveAction.getCurrentPercent(this, mContentView, mDragDirection);
+        mScrimOpacity = 1 - mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
         if (mListeners != null && !mListeners.isEmpty()) {
             for (SwipeListener listener : mListeners) {
-                listener.onSwipeBackBegin(mDragDirection, mViewMoveAction.getEdge(mDragDirection));
+                listener.onSwipeBackBegin(mCurrentDragDirection, mViewMoveAction.getEdge(mCurrentDragDirection));
             }
         }
         invalidate();
     }
 
     private void onScroll() {
-        mScrollPercent = mViewMoveAction.getCurrentPercent(this, mContentView, mDragDirection);
-        mScrimOpacity = 1 - mViewMoveAction.getCurrentPercent(this, mContentView, mDragDirection);
+        mScrollPercent = mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
+        mScrimOpacity = 1 - mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
         if (mScrollPercent < mScrollThreshold && !mIsScrollOverValid) {
             mIsScrollOverValid = true;
         }
@@ -785,7 +760,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         }
         if (mListeners != null && !mListeners.isEmpty()) {
             for (SwipeListener listener : mListeners) {
-                listener.onScroll(mDragDirection, mViewMoveAction.getEdge(mDragDirection), mScrollPercent);
+                listener.onScroll(mCurrentDragDirection, mViewMoveAction.getEdge(mCurrentDragDirection), mScrollPercent);
             }
         }
         invalidate();
@@ -803,15 +778,13 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         if (mListeners != null && !mListeners.isEmpty()) {
             for (SwipeListener listener : mListeners) {
                 listener.onScrollStateChange(dragState,
-                        mViewMoveAction.getCurrentPercent(this, mContentView, mDragDirection));
+                        mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection));
             }
         }
     }
 
-    public static SwipeBackLayout wrap(View child, int dragDirection,
-                                       ViewMoveAction viewMoveAction, Callback callback) {
+    public static SwipeBackLayout wrap(View child, ViewMoveAction viewMoveAction, Callback callback) {
         SwipeBackLayout wrapper = new SwipeBackLayout(child.getContext());
-        wrapper.setDragDirection(dragDirection);
         wrapper.addView(child, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         wrapper.setContentView(child);
@@ -820,10 +793,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         return wrapper;
     }
 
-    public static SwipeBackLayout wrap(Context context, int childRes, int dragDirection,
-                                       ViewMoveAction viewMoveAction, Callback callback) {
+    public static SwipeBackLayout wrap(Context context, int childRes, ViewMoveAction viewMoveAction, Callback callback) {
         SwipeBackLayout wrapper = new SwipeBackLayout(context);
-        wrapper.setDragDirection(dragDirection);
         View child = LayoutInflater.from(context).inflate(childRes, wrapper, false);
         wrapper.addView(child, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -864,9 +835,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     }
 
     public interface Callback {
-        boolean shouldBeginDrag(SwipeBackLayout swipeBackLayout, float downX, float downY, int dragDirection);
-
-        boolean canSwipeBack(SwipeBackLayout swipeBackLayout, int dragDirection, int moveEdge);
+        int getDragDirection(SwipeBackLayout swipeBackLayout, ViewMoveAction moveAction,
+                             float downX, float downY, float dx, float dy, float touchSlop);
     }
 
     public interface ViewMoveAction {
