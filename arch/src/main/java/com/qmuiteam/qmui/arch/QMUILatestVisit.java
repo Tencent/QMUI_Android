@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import androidx.annotation.MainThread;
+import androidx.fragment.app.Fragment;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.record.DefaultLatestVisitStorage;
@@ -12,19 +16,23 @@ import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditorImpl;
 import com.qmuiteam.qmui.arch.record.RecordIdClassMap;
 
-import androidx.annotation.MainThread;
+import java.util.Map;
 
 public class QMUILatestVisit {
     private static final String TAG = "QMUILatestVisit";
+    private static String NAV_STORE_PREFIX = "_qmui_nav";
+    private static String NAV_STORE_FRAGMENT_SUFFIX = ".class";
     private static QMUILatestVisit sInstance;
     private QMUILatestVisitStorage mStorage;
     private Context mContext;
     private RecordIdClassMap mRecordMap;
     private RecordArgumentEditor mRecordArgumentEditor;
+    private RecordArgumentEditor mNavRecordArgumentEditor;
 
     private QMUILatestVisit(Context context) {
         mContext = context.getApplicationContext();
         mRecordArgumentEditor = new RecordArgumentEditorImpl();
+        mNavRecordArgumentEditor = new RecordArgumentEditorImpl();
         try {
             Class<?> cls = Class.forName(RecordIdClassMap.class.getCanonicalName() + "Impl");
             mRecordMap = (RecordIdClassMap) cls.newInstance();
@@ -89,22 +97,61 @@ public class QMUILatestVisit {
                 if (fragmentId == QMUILatestVisitStorage.NOT_EXIST) {
                     return null;
                 }
-
                 Class<?> fragmentCls = mRecordMap.getRecordClassById(fragmentId);
                 if (fragmentCls == null) {
                     return null;
                 }
                 Class<? extends QMUIFragmentActivity> activity = (Class<? extends QMUIFragmentActivity>) activityCls;
                 Class<? extends QMUIFragment> fragment = (Class<? extends QMUIFragment>) fragmentCls;
-                Bundle bundle = new Bundle();
-                getStorage().getAndWriteFragmentArgumentsToBundle(bundle);
-                intent = QMUIFragmentActivity.intentOf(context, activity, fragment, bundle);
+                Map<String, RecordArgumentEditor.Argument> arguments = getStorage().getFragmentArguments();
+                if (arguments == null || arguments.isEmpty()) {
+                    intent = QMUIFragmentActivity.intentOf(context, activity, fragment, null);
+                } else {
+                    Bundle bundle = new Bundle();
+                    boolean hasNav = false;
+                    for (String key : arguments.keySet()) {
+                        if (key.startsWith(NAV_STORE_PREFIX)) {
+                            hasNav = true;
+                        } else {
+                            RecordArgumentEditor.Argument argument = arguments.get(key);
+                            if (argument != null) {
+                                argument.putToBundle(bundle, key);
+                            }
+                        }
+                    }
+                    if (!hasNav) {
+                        intent = QMUIFragmentActivity.intentOf(context, activity, fragment, bundle);
+                    } else {
+                        int navLevel = 0;
+                        String fragmentClassName = fragment.getName();
+                        while (true) {
+                            String navPrefix = getNavFragmentStorePrefix(navLevel);
+                            String navClassNameKey = navPrefix + NAV_STORE_FRAGMENT_SUFFIX;
+                            RecordArgumentEditor.Argument navClassNameArg = arguments.get(navClassNameKey);
+                            if (navClassNameArg == null) {
+                                break;
+                            }
+                            bundle = QMUINavFragment.initArguments(fragmentClassName, bundle);
+                            fragmentClassName = (String) navClassNameArg.getValue();
+                            for (String key : arguments.keySet()) {
+                                if (key.startsWith(navPrefix) && !key.equals(navClassNameKey)) {
+                                    RecordArgumentEditor.Argument arg = arguments.get(key);
+                                    if (arg != null) {
+                                        arg.putToBundle(bundle, key.substring(navPrefix.length()));
+                                    }
+                                }
+                            }
+                            navLevel++;
+                        }
+                        intent = QMUIFragmentActivity.intentOf(context, activity, fragmentClassName, bundle);
+                    }
+                }
             } else {
                 intent = new Intent(context, activityCls);
             }
             getStorage().getAndWriteActivityArgumentsToIntent(intent);
             return intent;
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
             QMUILog.e(TAG, "getLatestVisitIntent failed.", throwable);
             getStorage().clearAll();
         }
@@ -126,9 +173,26 @@ public class QMUILatestVisit {
             return;
         }
         mRecordArgumentEditor.clear();
+        mNavRecordArgumentEditor.clear();
         fragment.onCollectLatestVisitArgument(mRecordArgumentEditor);
+        Fragment parent = fragment.getParentFragment();
+        int level = 0;
+        while (parent instanceof QMUINavFragment) {
+            String navInfo = getNavFragmentStorePrefix(level);
+            QMUINavFragment nav = (QMUINavFragment) parent;
+            mNavRecordArgumentEditor.clear();
+            nav.onCollectLatestVisitArgument(mNavRecordArgumentEditor);
+            Map<String, RecordArgumentEditor.Argument> args = mNavRecordArgumentEditor.getAll();
+            mRecordArgumentEditor.putString(navInfo + NAV_STORE_FRAGMENT_SUFFIX, nav.getClass().getName());
+            for (String arg : args.keySet()) {
+                mRecordArgumentEditor.put(navInfo + arg, args.get(arg));
+            }
+            parent = parent.getParentFragment();
+            level++;
+        }
         getStorage().saveFragmentRecordInfo(id, mRecordArgumentEditor.getAll());
         mRecordArgumentEditor.clear();
+        mNavRecordArgumentEditor.clear();
     }
 
     void performLatestVisitRecord(InnerBaseActivity activity) {
@@ -140,5 +204,10 @@ public class QMUILatestVisit {
         activity.onCollectLatestVisitArgument(mRecordArgumentEditor);
         getStorage().saveActivityRecordInfo(id, mRecordArgumentEditor.getAll());
         mRecordArgumentEditor.clear();
+    }
+
+
+    private String getNavFragmentStorePrefix(int level) {
+        return NAV_STORE_PREFIX + level + "_";
     }
 }

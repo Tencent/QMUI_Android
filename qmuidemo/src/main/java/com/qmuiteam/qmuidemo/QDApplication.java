@@ -60,7 +60,7 @@ public class QDApplication extends Application {
         QMUILog.setDelegete(new QMUILog.QMUILogDelegate() {
             @Override
             public void e(String tag, String msg, Object... obj) {
-
+                Log.e(tag, msg);
             }
 
             @Override

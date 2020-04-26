@@ -1,9 +1,9 @@
 package com.qmuiteam.qmui.arch.record;
 
+import androidx.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 
 public class RecordArgumentEditorImpl implements RecordArgumentEditor {
@@ -38,6 +38,12 @@ public class RecordArgumentEditorImpl implements RecordArgumentEditor {
     @Override
     public synchronized RecordArgumentEditor putBoolean(String key, boolean value) {
         mMap.put(key, new Argument(value, Boolean.TYPE));
+        return this;
+    }
+
+    @Override
+    public RecordArgumentEditor put(String key, Argument argument) {
+        mMap.put(key, argument);
         return this;
     }
 

@@ -20,14 +20,14 @@ import android.content.Intent;
 import androidx.annotation.Nullable;
 
 public class FragmentResultEffect extends Effect {
-    private final int mRequestCodeUUid;
+    private final int mRequestFragmentUUid;
     private final int mResultCode;
     private final int mRequestCode;
     @Nullable
     private final Intent mIntent;
 
-    public FragmentResultEffect(int requestCodeUUid, int resultCode, int requestCode, @Nullable Intent intent){
-        mRequestCodeUUid = requestCodeUUid;
+    public FragmentResultEffect(int requestFragmentUUid, int resultCode, int requestCode, @Nullable Intent intent) {
+        mRequestFragmentUUid = requestFragmentUUid;
         mResultCode = resultCode;
         mRequestCode = requestCode;
         mIntent = intent;
@@ -45,7 +45,7 @@ public class FragmentResultEffect extends Effect {
         return mIntent;
     }
 
-    public int getRequestCodeUUid() {
-        return mRequestCodeUUid;
+    public int getRequestFragmentUUid() {
+        return mRequestFragmentUUid;
     }
 }

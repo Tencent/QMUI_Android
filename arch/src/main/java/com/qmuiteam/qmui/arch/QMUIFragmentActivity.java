@@ -235,6 +235,18 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         return intent;
     }
 
+    public static Intent intentOf(@NonNull Context context,
+                                  @NonNull Class<? extends QMUIFragmentActivity> targetActivity,
+                                  @NonNull String firstFragmentClassName,
+                                  @Nullable Bundle fragmentArgs) {
+        Intent intent = new Intent(context, targetActivity);
+        intent.putExtra(QMUI_INTENT_DST_FRAGMENT_NAME, firstFragmentClassName);
+        if (fragmentArgs != null) {
+            intent.putExtra(QMUI_INTENT_FRAGMENT_ARG, fragmentArgs);
+        }
+        return intent;
+    }
+
     public static abstract class RootView extends QMUIWindowInsetLayout {
 
 

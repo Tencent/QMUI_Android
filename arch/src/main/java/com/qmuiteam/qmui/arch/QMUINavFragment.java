@@ -19,32 +19,29 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
     private FragmentContainerView mContainerView;
     private boolean mIsFirstFragmentAdded = false;
 
-    private QMUINavFragment() {
-
-    }
-
-    public static QMUINavFragment getDefaultInstance(Class<? extends QMUIFragment> cls, @Nullable Bundle bundle){
+    public static QMUINavFragment getDefaultInstance(Class<? extends QMUIFragment> firstFragmentCls,
+                                                     @Nullable Bundle firstFragmentArgument){
         QMUINavFragment navFragment = new QMUINavFragment();
         Bundle arg = new Bundle();
-        arg.putString(QMUI_ARGUMENT_DST_FRAGMENT, cls.getName());
-        arg.putBundle(QMUI_ARGUMENT_FRAGMENT_ARG, bundle);
-        navFragment.setArguments(arg);
+        arg.putString(QMUI_ARGUMENT_DST_FRAGMENT, firstFragmentCls.getName());
+        arg.putBundle(QMUI_ARGUMENT_FRAGMENT_ARG, firstFragmentArgument);
+        navFragment.setArguments(initArguments(firstFragmentCls, firstFragmentArgument));
         return navFragment;
     }
 
-    @Nullable
-    public static QMUINavFragment getInstance(Class<? extends QMUINavFragment> navCls, Class<? extends QMUIFragment> cls, @Nullable Bundle bundle) {
-        QMUINavFragment navFragment = null;
-        try {
-            navFragment = navCls.newInstance();
-            Bundle arg = new Bundle();
-            arg.putString(QMUI_ARGUMENT_DST_FRAGMENT, cls.getName());
-            arg.putBundle(QMUI_ARGUMENT_FRAGMENT_ARG, bundle);
-            navFragment.setArguments(arg);
-        } catch (Throwable ignore) {
+    public static Bundle initArguments(Class<? extends QMUIFragment> firstFragmentCls,
+                                           @Nullable Bundle firstFragmentArgument){
+        Bundle arg = new Bundle();
+        arg.putString(QMUI_ARGUMENT_DST_FRAGMENT, firstFragmentCls.getName());
+        arg.putBundle(QMUI_ARGUMENT_FRAGMENT_ARG, firstFragmentArgument);
+        return arg;
+    }
 
-        }
-        return navFragment;
+    static Bundle initArguments(String firstFragmentClsName, @Nullable Bundle firstFragmentArgument){
+        Bundle arg = new Bundle();
+        arg.putString(QMUI_ARGUMENT_DST_FRAGMENT, firstFragmentClsName);
+        arg.putBundle(QMUI_ARGUMENT_FRAGMENT_ARG, firstFragmentArgument);
+        return arg;
     }
 
     @Override

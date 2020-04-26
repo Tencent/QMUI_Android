@@ -42,6 +42,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -111,9 +112,10 @@ public abstract class QMUIFragment extends Fragment implements
 
     private static final int NO_REQUEST_CODE = 0;
     private static final AtomicInteger sNextRc = new AtomicInteger(1);
+    private static int sLatestVisitFragmentUUid = -1;
     private int mSourceRequestCode = NO_REQUEST_CODE;
-    private int mRequestCodeUUid = sNextRc.getAndIncrement();
-    private int mTargetRequestCodeUUid = -1;
+    private final int mUUid = sNextRc.getAndIncrement();
+    private int mTargetFragmentUUid = -1;
     private int mTargetRequestCode = NO_REQUEST_CODE;
 
     private View mBaseView;
@@ -165,7 +167,7 @@ public abstract class QMUIFragment extends Fragment implements
         registerEffect(this, new QMUIFragmentResultEffectHandler() {
             @Override
             public boolean shouldHandleEffect(@NonNull FragmentResultEffect effect) {
-                return effect.getRequestCode() == mSourceRequestCode && effect.getRequestCodeUUid() == mRequestCodeUUid;
+                return effect.getRequestCode() == mSourceRequestCode && effect.getRequestFragmentUUid() == mUUid;
             }
 
             @Override
@@ -207,11 +209,23 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     private void checkLatestVisitRecord() {
-        Class<? extends QMUIFragment> cls = getClass();
+
         Activity activity = getActivity();
-        if (getParentFragment() != null || !(activity instanceof QMUIFragmentActivity)) {
+        if (!(activity instanceof QMUIFragmentActivity)) {
             return;
         }
+
+        if(this instanceof QMUINavFragment){
+            return;
+        }
+
+        Fragment parentFragment = getParentFragment();
+        if(!(parentFragment instanceof QMUINavFragment)){
+            return;
+        }
+
+        sLatestVisitFragmentUUid = mUUid;
+        Class<? extends QMUIFragment> cls = getClass();
         if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
             QMUILatestVisit.getInstance(getContext()).clearFragmentLatestVisitRecord();
             return;
@@ -235,6 +249,11 @@ public abstract class QMUIFragment extends Fragment implements
         }
     }
 
+    public final void onLatestVisitArgumentChanged(){
+        if(getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED) && sLatestVisitFragmentUUid == mUUid){
+            checkLatestVisitRecord();
+        }
+    }
 
     @Override
     public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
@@ -433,7 +452,7 @@ public abstract class QMUIFragment extends Fragment implements
         }
 
         mSourceRequestCode = requestCode;
-        fragment.mTargetRequestCodeUUid = mRequestCodeUUid;
+        fragment.mTargetFragmentUUid = mUUid;
         fragment.mTargetRequestCode = requestCode;
         return startFragment(fragment, provider);
     }
@@ -459,7 +478,7 @@ public abstract class QMUIFragment extends Fragment implements
         if(mTargetRequestCode == NO_REQUEST_CODE){
             return;
         }
-        notifyEffect(new FragmentResultEffect(mTargetRequestCodeUUid, resultCode, mTargetRequestCode, data));
+        notifyEffect(new FragmentResultEffect(mTargetFragmentUUid, resultCode, mTargetRequestCode, data));
     }
 
     @Override

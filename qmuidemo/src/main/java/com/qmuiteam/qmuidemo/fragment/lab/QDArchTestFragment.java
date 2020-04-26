@@ -113,7 +113,7 @@ public class QDArchTestFragment extends BaseFragment {
         mBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QMUINavFragment fragment = QMUINavFragment.getDefaultInstance(QDArchTestFragment.class, null);
+                QMUINavFragment fragment = QDArchNavFragment.getInstance(QDArchTestFragment.class, null);
                 startFragment(fragment);
             }
         });

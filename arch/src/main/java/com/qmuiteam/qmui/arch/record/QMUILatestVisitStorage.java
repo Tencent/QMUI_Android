@@ -3,6 +3,7 @@ package com.qmuiteam.qmui.arch.record;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,9 @@ public interface QMUILatestVisitStorage {
 
     int getFragmentRecordId();
 
-    void getAndWriteFragmentArgumentsToBundle(@NonNull Bundle bundle);
+    @Nullable
+    Map<String, RecordArgumentEditor.Argument> getFragmentArguments();
+
 
     void clearFragmentStorage();
 
