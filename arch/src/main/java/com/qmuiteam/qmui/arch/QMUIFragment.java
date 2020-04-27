@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,7 +153,7 @@ public abstract class QMUIFragment extends Fragment implements
     private OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            QMUIFragment.this.handleOnBackPressed();
+            QMUIFragment.this.onBackPressed();
         }
     };
 
@@ -914,7 +915,7 @@ public abstract class QMUIFragment extends Fragment implements
         return swipeBackLayout;
     }
 
-    protected void handleOnBackPressed() {
+    protected void onBackPressed() {
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
         if(!(provider instanceof FragmentActivity) || provider.getContainerFragmentManager() == null ||
                 provider.getContainerFragmentManager().getBackStackEntryCount() > 1){
@@ -1326,6 +1327,14 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public boolean isVisibleToUser() {
         return getUserVisibleHint() && isParentVisibleToUser();
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return false;
     }
 
     /**
