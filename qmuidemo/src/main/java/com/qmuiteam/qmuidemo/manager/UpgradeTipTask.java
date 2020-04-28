@@ -70,7 +70,13 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha7){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha8){
+            text.append("1. Feature: Add new widget QMUISeekBar.\n");
+            text.append("2. Feature: Provide QMUIFragment#registerEffect to replace startFragmentForResult.\n");
+            text.append("3. Feature: Provide QMUINavFragment to support child fragment navigation\n");
+            text.append("4. Feature: Refactor swipe back to support muti direction.\n");
+            text.append("5. Some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha7){
             text.append("1. Add OnProgressChangeListener for QMUIProgressBar.\n");
             text.append("2. Add skin support for CompoundButton.\n");
             text.append("3. Some bug fixes.");
