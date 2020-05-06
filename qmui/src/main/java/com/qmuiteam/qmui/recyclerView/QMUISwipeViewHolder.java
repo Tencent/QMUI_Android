@@ -67,6 +67,12 @@ public class QMUISwipeViewHolder extends RecyclerView.ViewHolder {
         mSwipeActions.add(actionWrapper);
     }
 
+    public void clearActions(){
+        if(mSwipeActions != null){
+            mSwipeActions.clear();
+        }
+    }
+
     public boolean hasAction() {
         return mSwipeActions != null && !mSwipeActions.isEmpty();
     }
