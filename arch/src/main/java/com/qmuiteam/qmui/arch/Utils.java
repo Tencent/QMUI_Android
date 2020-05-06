@@ -165,13 +165,15 @@ public class Utils {
 
 
                 Field opsField = Utils.getOpsField(backStackEntry);
-                opsField.setAccessible(true);
-                Object opsObj = opsField.get(backStackEntry);
-                if (opsObj instanceof List<?>) {
-                    List<?> ops = (List<?>) opsObj;
-                    for (Object op : ops) {
-                        if (handler.handle(op)) {
-                            return;
+                if(opsField != null){
+                    opsField.setAccessible(true);
+                    Object opsObj = opsField.get(backStackEntry);
+                    if (opsObj instanceof List<?>) {
+                        List<?> ops = (List<?>) opsObj;
+                        for (Object op : ops) {
+                            if (handler.handle(op)) {
+                                return;
+                            }
                         }
                     }
                 }
