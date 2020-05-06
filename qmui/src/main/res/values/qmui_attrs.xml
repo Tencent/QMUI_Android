@@ -90,6 +90,7 @@
             <enum name="right" value="2"/>
             <enum name="bottom" value="3"/>
         </attr>
+        <attr name="qmui_tab_select_no_animation" format="boolean" />
     </declare-styleable>
     <attr name="QMUITabSegmentStyle" format="reference"/>
 

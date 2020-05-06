@@ -132,6 +132,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
 
     protected QMUITabBuilder mTabBuilder;
 
+    private boolean mSelectNoAnimation;
     protected Animator mSelectAnimator;
     private OnTabClickListener mOnTabClickListener;
 
@@ -196,6 +197,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         mMode = array.getInt(R.styleable.QMUITabSegment_qmui_tab_mode, MODE_FIXED);
         mItemSpaceInScrollMode = array.getDimensionPixelSize(
                 R.styleable.QMUITabSegment_qmui_tab_space, QMUIDisplayHelper.dp2px(context, 10));
+        mSelectNoAnimation = array.getBoolean(R.styleable.QMUITabSegment_qmui_tab_select_no_animation, false);
         array.recycle();
 
 
@@ -321,7 +323,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         }
         QMUITab model = mTabAdapter.getItem(index);
         if (model != null) {
-            selectTab(index, false, true);
+            selectTab(index, mSelectNoAnimation, true);
         }
         if (mOnTabClickListener != null) {
             mOnTabClickListener.onTabClick(index);
@@ -368,8 +370,12 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         }
     }
 
+    public void setSelectNoAnimation(boolean noAnimation) {
+        mSelectNoAnimation = noAnimation;
+    }
+
     public void selectTab(int index) {
-        selectTab(index, false, false);
+        selectTab(index, mSelectNoAnimation, false);
     }
 
     public void selectTab(final int index, boolean noAnimation, boolean fromTabClick) {
