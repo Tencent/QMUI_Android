@@ -180,7 +180,7 @@ public class QMUILayoutHelper implements IQMUILayout {
                 } else if (index == R.styleable.QMUILayout_qmui_outerNormalColor) {
                     mOuterNormalColor = ta.getColor(index, mOuterNormalColor);
                 } else if (index == R.styleable.QMUILayout_qmui_hideRadiusSide) {
-                    mHideRadiusSide = ta.getColor(index, mHideRadiusSide);
+                    mHideRadiusSide = ta.getInt(index, mHideRadiusSide);
                 } else if (index == R.styleable.QMUILayout_qmui_showBorderOnlyBeforeL) {
                     mIsShowBorderOnlyBeforeL = ta.getBoolean(index, mIsShowBorderOnlyBeforeL);
                 } else if (index == R.styleable.QMUILayout_qmui_shadowElevation) {
