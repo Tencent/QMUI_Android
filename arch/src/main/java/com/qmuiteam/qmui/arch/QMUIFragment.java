@@ -564,6 +564,9 @@ public abstract class QMUIFragment extends Fragment implements
                     }
                 });
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
+        if(isCreateForSwipeBack){
+            swipeBackLayout.setTag(R.id.fragment_container_view_tag, this);
+        }
         return swipeBackLayout;
     }
 
