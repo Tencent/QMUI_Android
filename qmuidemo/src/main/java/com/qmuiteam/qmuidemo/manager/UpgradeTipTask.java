@@ -70,7 +70,9 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha8){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha9){
+            text.append("1. Some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha8){
             text.append("1. Feature: Add new widget QMUISeekBar.\n");
             text.append("2. Feature: Provide QMUIFragment#registerEffect to replace startFragmentForResult.\n");
             text.append("3. Feature: Provide QMUINavFragment to support child fragment navigation\n");
