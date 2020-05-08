@@ -30,7 +30,7 @@ allprojects {
         minSdkVersion = 19
         targetSdkVersion = 29
         compileSdkVersion = 29
-        appcompatVersion= '1.2.0-beta01'
+        appcompatVersion= '1.2.0-alpha03'
         materialVersion='1.1.0'
         annotationVersion='1.1.0-beta01'
         butterknifeVersion = '10.1.0'
