@@ -221,11 +221,6 @@ public abstract class QMUIFragment extends Fragment implements
             return;
         }
 
-        Fragment parentFragment = getParentFragment();
-        if(!(parentFragment instanceof QMUINavFragment)){
-            return;
-        }
-
         sLatestVisitFragmentUUid = mUUid;
         Class<? extends QMUIFragment> cls = getClass();
         if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
