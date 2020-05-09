@@ -21,11 +21,12 @@ import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUILinearLayout;
+import com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
-public class QMUIBottomSheetRootLayout extends QMUILinearLayout {
+public class QMUIBottomSheetRootLayout extends QMUIPriorityLinearLayout {
 
     private final int mUsePercentMinHeight;
     private final float mHeightPercent;

@@ -325,12 +325,12 @@ public class QMUIPriorityLinearLayout extends QMUILinearLayout {
     }
 
     public static class LayoutParams extends LinearLayout.LayoutParams {
-        static final int PRIORITY_DISPOSABLE = 1;
-        static final int PRIORITY_MINI_CONTENT_PROTECTION = 2;
-        static final int PRIORITY_INCOMPRESSIBLE = 3;
+        public static final int PRIORITY_DISPOSABLE = 1;
+        public static final int PRIORITY_MINI_CONTENT_PROTECTION = 2;
+        public static final int PRIORITY_INCOMPRESSIBLE = 3;
 
         private int priority = PRIORITY_MINI_CONTENT_PROTECTION;
-        public int miniContentProtectionSize = 0;
+        private int miniContentProtectionSize = 0;
 
         private int backupWidth = Integer.MIN_VALUE;
         private int backupHeight = Integer.MIN_VALUE;
@@ -375,6 +375,10 @@ public class QMUIPriorityLinearLayout extends QMUILinearLayout {
 
         public void setPriority(int priority) {
             this.priority = priority;
+        }
+
+        public void setMiniContentProtectionSize(int miniContentProtectionSize) {
+            this.miniContentProtectionSize = miniContentProtectionSize;
         }
 
         public int getPriority(int orientation) {

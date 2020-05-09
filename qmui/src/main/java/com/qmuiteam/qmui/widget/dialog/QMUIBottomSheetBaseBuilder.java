@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
+import com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
@@ -118,13 +119,16 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
         onAddCustomViewBetweenTitleAndContent(mDialog, rootLayout, dialogContext);
         View contentView = onCreateContentView(mDialog, rootLayout, dialogContext);
         if (contentView != null) {
-            mDialog.addContentView(contentView);
+            QMUIPriorityLinearLayout.LayoutParams lp = new QMUIPriorityLinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setPriority(QMUIPriorityLinearLayout.LayoutParams.PRIORITY_DISPOSABLE);
+            mDialog.addContentView(contentView, lp);
         }
         onAddCustomViewAfterContent(mDialog, rootLayout, dialogContext);
 
         if (mAddCancelBtn) {
             mDialog.addContentView(onCreateCancelBtn(mDialog, rootLayout, dialogContext),
-                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    new QMUIPriorityLinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                             QMUIResHelper.getAttrDimen(dialogContext,
                                     R.attr.qmui_bottom_sheet_cancel_btn_height)));
         }
