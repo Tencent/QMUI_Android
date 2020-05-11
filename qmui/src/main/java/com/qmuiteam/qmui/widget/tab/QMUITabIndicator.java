@@ -30,6 +30,7 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 public class QMUITabIndicator {
 
@@ -99,7 +100,8 @@ public class QMUITabIndicator {
         return mIndicatorTop;
     }
 
-    protected void updateInfo(int left, int width, int color) {
+    @Deprecated
+    protected void updateInfo(int left, int width, int color){
         if (mIndicatorRect == null) {
             mIndicatorRect = new Rect(left, 0,
                     left + width, 0);
@@ -112,9 +114,13 @@ public class QMUITabIndicator {
         }
     }
 
-    private void updateColor(int color){
+    protected void updateInfo(int left, int width, int color, float offsetPercent) {
+        updateInfo(left, width, color);
+    }
+
+    protected void updateColor(int color){
         if (mIndicatorDrawable != null) {
-            QMUIDrawableHelper.setDrawableTintColor(mIndicatorDrawable, color);
+            DrawableCompat.setTint(mIndicatorDrawable, color);
         } else {
             if (mIndicatorPaint == null) {
                 mIndicatorPaint = new Paint();

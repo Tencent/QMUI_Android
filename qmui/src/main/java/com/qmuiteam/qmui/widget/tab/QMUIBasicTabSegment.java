@@ -534,7 +534,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         if (model == null || mIndicator == null) {
             return;
         }
-        mIndicator.updateInfo(model.contentLeft, model.contentWidth, model.selectedColorAttr == 0 ? model.selectColor : QMUISkinHelper.getSkinColor(this, model.selectedColorAttr));
+        mIndicator.updateInfo(model.contentLeft, model.contentWidth, model.selectedColorAttr == 0 ? model.selectColor : QMUISkinHelper.getSkinColor(this, model.selectedColorAttr), 0f);
         if (invalidate) {
             mContentLayout.invalidate();
         }
@@ -552,7 +552,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
                 preModel.selectedColorAttr == 0 ? preModel.selectColor : QMUISkinHelper.getSkinColor(this, preModel.selectedColorAttr),
                 targetModel.selectedColorAttr == 0 ? targetModel.selectColor : QMUISkinHelper.getSkinColor(this, targetModel.selectedColorAttr),
                 offsetPercent);
-        mIndicator.updateInfo(targetLeft, targetWidth, indicatorColor);
+        mIndicator.updateInfo(targetLeft, targetWidth, indicatorColor, offsetPercent);
         mContentLayout.invalidate();
     }
 
