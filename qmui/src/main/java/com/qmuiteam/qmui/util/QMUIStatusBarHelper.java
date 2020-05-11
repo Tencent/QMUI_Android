@@ -47,8 +47,8 @@ public class QMUIStatusBarHelper {
     // 在某些机子上存在不同的density值，所以增加两个虚拟值
     public static float sVirtualDensity = -1;
     public static float sVirtualDensityDpi = -1;
-    private static int sStatusbarHeight = -1;
-    private static @StatusBarType int mStatuBarType = STATUSBAR_TYPE_DEFAULT;
+    private static int sStatusBarHeight = -1;
+    private static @StatusBarType int mStatusBarType = STATUSBAR_TYPE_DEFAULT;
     private static Integer sTransparentValue;
 
     public static void translucent(Activity activity) {
@@ -174,19 +174,19 @@ public class QMUIStatusBarHelper {
             return false;
         }
 
-        if (mStatuBarType != STATUSBAR_TYPE_DEFAULT) {
-            return setStatusBarLightMode(activity, mStatuBarType);
+        if (mStatusBarType != STATUSBAR_TYPE_DEFAULT) {
+            return setStatusBarLightMode(activity, mStatusBarType);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (isMIUICustomStatusBarLightModeImpl() && MIUISetStatusBarLightMode(activity.getWindow(), true)) {
-                mStatuBarType = STATUSBAR_TYPE_MIUI;
+                mStatusBarType = STATUSBAR_TYPE_MIUI;
                 return true;
             } else if (FlymeSetStatusBarLightMode(activity.getWindow(), true)) {
-                mStatuBarType = STATUSBAR_TYPE_FLYME;
+                mStatusBarType = STATUSBAR_TYPE_FLYME;
                 return true;
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Android6SetStatusBarLightMode(activity.getWindow(), true);
-                mStatuBarType = STATUSBAR_TYPE_ANDROID6;
+                mStatusBarType = STATUSBAR_TYPE_ANDROID6;
                 return true;
             }
         }
@@ -218,16 +218,16 @@ public class QMUIStatusBarHelper {
      */
     public static boolean setStatusBarDarkMode(Activity activity) {
         if (activity == null) return false;
-        if (mStatuBarType == STATUSBAR_TYPE_DEFAULT) {
+        if (mStatusBarType == STATUSBAR_TYPE_DEFAULT) {
             // 默认状态，不需要处理
             return true;
         }
 
-        if (mStatuBarType == STATUSBAR_TYPE_MIUI) {
+        if (mStatusBarType == STATUSBAR_TYPE_MIUI) {
             return MIUISetStatusBarLightMode(activity.getWindow(), false);
-        } else if (mStatuBarType == STATUSBAR_TYPE_FLYME) {
+        } else if (mStatusBarType == STATUSBAR_TYPE_FLYME) {
             return FlymeSetStatusBarLightMode(activity.getWindow(), false);
-        } else if (mStatuBarType == STATUSBAR_TYPE_ANDROID6) {
+        } else if (mStatusBarType == STATUSBAR_TYPE_ANDROID6) {
             return Android6SetStatusBarLightMode(activity.getWindow(), false);
         }
         return true;
@@ -355,7 +355,7 @@ public class QMUIStatusBarHelper {
                 } catch (Exception ignored) {
 
                 }
-            }else{
+            }else if(QMUIDeviceHelper.isFlyme()){
                 result = true;
             }
         }
@@ -423,10 +423,10 @@ public class QMUIStatusBarHelper {
      * 获取状态栏的高度。
      */
     public static int getStatusbarHeight(Context context) {
-        if (sStatusbarHeight == -1) {
+        if (sStatusBarHeight == -1) {
             initStatusBarHeight(context);
         }
-        return sStatusbarHeight;
+        return sStatusBarHeight;
     }
 
     private static void initStatusBarHeight(Context context) {
@@ -452,21 +452,21 @@ public class QMUIStatusBarHelper {
         if (field != null && obj != null) {
             try {
                 int id = Integer.parseInt(field.get(obj).toString());
-                sStatusbarHeight = context.getResources().getDimensionPixelSize(id);
+                sStatusBarHeight = context.getResources().getDimensionPixelSize(id);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
         }
         if (QMUIDeviceHelper.isTablet(context)
-                && sStatusbarHeight > QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP)) {
+                && sStatusBarHeight > QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP)) {
             //状态栏高度大于25dp的平板，状态栏通常在下方
-            sStatusbarHeight = 0;
+            sStatusBarHeight = 0;
         } else {
-            if (sStatusbarHeight <= 0) {
+            if (sStatusBarHeight <= 0) {
                 if (sVirtualDensity == -1) {
-                    sStatusbarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
+                    sStatusBarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
                 } else {
-                    sStatusbarHeight = (int) (STATUS_BAR_DEFAULT_HEIGHT_DP * sVirtualDensity + 0.5f);
+                    sStatusBarHeight = (int) (STATUS_BAR_DEFAULT_HEIGHT_DP * sVirtualDensity + 0.5f);
                 }
             }
         }
