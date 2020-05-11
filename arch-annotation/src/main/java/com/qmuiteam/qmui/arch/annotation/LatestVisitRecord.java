@@ -19,4 +19,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface LatestVisitRecord {
+    boolean onlyForDebug() default false;
 }

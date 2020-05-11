@@ -123,8 +123,9 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
     private void checkLatestVisitRecord() {
         Class<? extends InnerBaseActivity> cls = getClass();
         sLatestVisitActivityUUid = mUUid;
-        if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
-            QMUILatestVisit.getInstance(this).clearActivityLatestVisitRecord();
+        LatestVisitRecord latestVisitRecord = cls.getAnnotation(LatestVisitRecord.class);
+        if(latestVisitRecord == null || (latestVisitRecord.onlyForDebug() && !BuildConfig.DEBUG)){
+            QMUILatestVisit.getInstance(this).clearFragmentLatestVisitRecord();
             return;
         }
         QMUILatestVisit.getInstance(this).performLatestVisitRecord(this);

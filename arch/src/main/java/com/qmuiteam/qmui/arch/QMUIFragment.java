@@ -223,10 +223,13 @@ public abstract class QMUIFragment extends Fragment implements
 
         sLatestVisitFragmentUUid = mUUid;
         Class<? extends QMUIFragment> cls = getClass();
-        if (!cls.isAnnotationPresent(LatestVisitRecord.class)) {
+        LatestVisitRecord latestVisitRecord = cls.getAnnotation(LatestVisitRecord.class);
+        if(latestVisitRecord == null || (latestVisitRecord.onlyForDebug() && !BuildConfig.DEBUG)){
             QMUILatestVisit.getInstance(getContext()).clearFragmentLatestVisitRecord();
             return;
         }
+
+
         if (!activity.getClass().isAnnotationPresent(LatestVisitRecord.class)) {
             throw new RuntimeException(String.format("Can not perform LatestVisitRecord, " +
                     "%s must be annotated by LatestVisitRecord", activity.getClass().getSimpleName()));
