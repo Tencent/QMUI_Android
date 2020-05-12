@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.LayoutInflaterCompat;
 import androidx.lifecycle.Lifecycle;
 
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
@@ -120,11 +121,21 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
         }
     }
 
+    protected boolean shouldPerformLatestVisitRecord() {
+        return true;
+    }
+
     private void checkLatestVisitRecord() {
         Class<? extends InnerBaseActivity> cls = getClass();
         sLatestVisitActivityUUid = mUUid;
+
+        if (!shouldPerformLatestVisitRecord()) {
+            QMUILatestVisit.getInstance(this).clearFragmentLatestVisitRecord();
+            return;
+        }
+
         LatestVisitRecord latestVisitRecord = cls.getAnnotation(LatestVisitRecord.class);
-        if(latestVisitRecord == null || (latestVisitRecord.onlyForDebug() && !BuildConfig.DEBUG)){
+        if(latestVisitRecord == null || (latestVisitRecord.onlyForDebug() && !QMUIConfig.DEBUG)){
             QMUILatestVisit.getInstance(this).clearFragmentLatestVisitRecord();
             return;
         }
