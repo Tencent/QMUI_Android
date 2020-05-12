@@ -174,7 +174,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
             } else if (mCurrentIconType == ICON_TYPE_SUCCESS ||
                     mCurrentIconType == ICON_TYPE_FAIL ||
                     mCurrentIconType == ICON_TYPE_INFO) {
-                ImageView imageView = new AppCompatImageView(mContext);
+                ImageView imageView = new AppCompatImageView(dialogContext);
 
                 builder.clear();
                 Drawable drawable;
@@ -198,7 +198,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
             }
 
             if (mTipWord != null && mTipWord.length() > 0) {
-                TextView tipView = new QMUISpanTouchFixTextView(mContext);
+                TextView tipView = new QMUISpanTouchFixTextView(dialogContext);
                 tipView.setEllipsize(TextUtils.TruncateAt.END);
                 tipView.setGravity(Gravity.CENTER);
                 tipView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -221,6 +221,8 @@ public class QMUITipDialog extends QMUIBaseDialog {
             return new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+
+
 
         protected LinearLayout.LayoutParams onCreateTextLayoutParams(Context context, @IconType int iconType) {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(

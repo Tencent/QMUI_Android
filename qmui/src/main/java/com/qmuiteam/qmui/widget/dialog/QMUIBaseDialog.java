@@ -18,13 +18,16 @@ package com.qmuiteam.qmui.widget.dialog;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.view.LayoutInflater;
 import android.view.Window;
 
+import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialog;
+import androidx.core.view.LayoutInflaterCompat;
 
 public class QMUIBaseDialog extends AppCompatDialog {
     boolean cancelable = true;
@@ -53,6 +56,18 @@ public class QMUIBaseDialog extends AppCompatDialog {
         if (mSkinManager != null) {
             mSkinManager.register(this);
         }
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater getLayoutInflater() {
+        LayoutInflater layoutInflater = super.getLayoutInflater();
+        LayoutInflater.Factory2 factory2 = layoutInflater.getFactory2();
+        if(factory2 instanceof QMUISkinLayoutInflaterFactory){
+            LayoutInflaterCompat.setFactory2(layoutInflater,
+                    ((QMUISkinLayoutInflaterFactory)factory2).cloneForLayoutInflaterIfNeeded(layoutInflater));
+        }
+        return layoutInflater;
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.qmuiteam.qmuidemo.fragment.components;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -78,6 +79,7 @@ public class QDEmptyViewFragment extends BaseFragment {
 
     private void showBottomSheetList() {
         new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
+                .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
                 .addItem(getResources().getString(R.string.emptyView_mode_title_double_text))
                 .addItem(getResources().getString(R.string.emptyView_mode_title_single_text))
                 .addItem(getResources().getString(R.string.emptyView_mode_title_loading))
