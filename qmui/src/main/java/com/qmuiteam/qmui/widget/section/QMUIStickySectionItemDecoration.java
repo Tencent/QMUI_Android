@@ -105,6 +105,10 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
         mCallback.onHeaderVisibilityChanged(visibility);
     }
 
+    public int getStickyHeaderViewPosition() {
+        return mStickyHeaderViewPosition;
+    }
+
     @Override
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent,
                            @NonNull RecyclerView.State state) {

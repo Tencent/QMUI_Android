@@ -113,6 +113,13 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
         return mStickySectionWrapView.getChildAt(0);
     }
 
+    public int getStickyHeaderPosition() {
+        if (mStickySectionItemDecoration == null) {
+            return RecyclerView.NO_POSITION;
+        }
+        return mStickySectionItemDecoration.getStickyHeaderViewPosition();
+    }
+
     /**
      * proxy to {@link RecyclerView#setLayoutManager(RecyclerView.LayoutManager)}
      *
