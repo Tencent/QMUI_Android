@@ -393,8 +393,9 @@
         <attr name="qmui_slider_bar_height" format="dimension"/>
         <attr name="qmui_slider_bar_normal_color" format="color"/>
         <attr name="qmui_slider_bar_progress_color" format="color"/>
+        <attr name="qmui_slider_bar_record_progress_color" format="color"/>
         <attr name="qmui_slider_bar_tick_count" format="integer"/>
-        <attr name="qmui_slider_bar_thumb_size_size" format="dimension"/>
+        <attr name="qmui_slider_bar_thumb_size" format="dimension"/>
         <attr name="qmui_slider_bar_thumb_style_attr" format="string"/>
         <attr name="qmui_slider_bar_use_clip_children_by_developer" format="boolean"/>
         <attr name="qmui_slider_bar_padding_hor_for_thumb_shadow" format="dimension"/>

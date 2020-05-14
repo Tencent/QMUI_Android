@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.widget.QMUISlider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,8 @@ public class QMUISkinRuleHintColorHandler extends QMUISkinRuleColorStateListHand
             ((TextView) view).setHintTextColor(colorStateList);
         } else if (view instanceof TextInputLayout) {
             ((TextInputLayout) view).setHintTextColor(colorStateList);
+        }else if(view instanceof QMUISlider){
+            ((QMUISlider)view).setBarProgressColor(colorStateList.getDefaultColor());
         }else{
             QMUISkinHelper.warnRuleNotSupport(view, name);
         }
