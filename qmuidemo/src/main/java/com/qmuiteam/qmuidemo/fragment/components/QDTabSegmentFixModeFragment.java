@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.arch.annotation.FragmentScheme;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -33,6 +34,7 @@ import com.qmuiteam.qmui.widget.tab.QMUITab;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabIndicator;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
@@ -56,6 +58,11 @@ import butterknife.ButterKnife;
 
 @LatestVisitRecord
 @Widget(group = Group.Other, name = "固定宽度，内容均分")
+@FragmentScheme(
+        name = "tab",
+        activities = {QDMainActivity.class},
+        required = {"mode=1"},
+        keysWithIntValue = {"mode"})
 public class QDTabSegmentFixModeFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;

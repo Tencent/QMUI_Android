@@ -29,6 +29,7 @@ import java.util.Stack;
 public class QMUISwipeBackActivityManager implements Application.ActivityLifecycleCallbacks {
     private static QMUISwipeBackActivityManager sInstance;
     private Stack<Activity> mActivityStack = new Stack<>();
+    private Activity mCurrentActivity = null;
 
 
     @MainThread
@@ -51,40 +52,44 @@ public class QMUISwipeBackActivityManager implements Application.ActivityLifecyc
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
         mActivityStack.add(activity);
     }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
         mActivityStack.remove(activity);
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityResumed(Activity activity) {
+    public void onActivityResumed(@NonNull Activity activity) {
+        mCurrentActivity = activity;
+    }
+
+    @Override
+    public void onActivityPaused(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityStopped(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
 
     }
 
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
+    @Nullable
+    public Activity getCurrentActivity(){
+        return mCurrentActivity;
     }
-
 
     /**
      *

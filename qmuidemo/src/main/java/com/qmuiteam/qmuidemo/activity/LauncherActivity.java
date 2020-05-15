@@ -23,18 +23,20 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.arch.QMUILatestVisit;
-import com.qmuiteam.qmuidemo.QDMainActivity;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.qmuiteam.qmui.arch.QMUILatestVisit;
+import com.qmuiteam.qmui.arch.annotation.ActivityScheme;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 
 /**
  * @author cginechen
  * @date 2016-12-08
  */
 
+@ActivityScheme(name = "launcher")
 public class LauncherActivity extends Activity {
 
     private static final int PERMISSIONS_REQUEST_CODE = 10;
@@ -79,9 +81,9 @@ public class LauncherActivity extends Activity {
     }
 
 
-    private boolean allPermissionsGranted(){
-        for(String permission: PERMISSIONS_REQUIRED){
-            if(ContextCompat.checkSelfPermission(getBaseContext(), permission) != PackageManager.PERMISSION_GRANTED){
+    private boolean allPermissionsGranted() {
+        for (String permission : PERMISSIONS_REQUIRED) {
+            if (ContextCompat.checkSelfPermission(getBaseContext(), permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }

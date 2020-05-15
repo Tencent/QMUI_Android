@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.arch.annotation.FragmentScheme;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.skin.SkinWriter;
@@ -40,6 +41,7 @@ import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabIndicator;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDLazyTestObserver;
@@ -55,6 +57,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Widget(group = Group.Other, name = "内容自适应，超过父容器则滚动")
+@FragmentScheme(
+        name = "tab",
+        activities = {QDMainActivity.class},
+        required = {"mode=2"},
+        keysWithIntValue = {"mode"})
 public class QDTabSegmentScrollableModeFragment extends BaseFragment {
     @SuppressWarnings("FieldCanBeLocal") private final int TAB_COUNT = 10;
 

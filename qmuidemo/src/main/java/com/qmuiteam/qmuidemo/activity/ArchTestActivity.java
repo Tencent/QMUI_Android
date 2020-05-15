@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.qmuiteam.qmui.arch.annotation.ActivityScheme;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseActivity;
@@ -30,6 +31,7 @@ import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@ActivityScheme(name = "arch", required = {"aa", "bb=3"}, keysWithBoolValue = {"aa"})
 public class ArchTestActivity extends BaseActivity {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
 

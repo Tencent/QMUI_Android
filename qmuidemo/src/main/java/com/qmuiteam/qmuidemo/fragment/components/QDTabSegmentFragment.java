@@ -19,9 +19,11 @@ package com.qmuiteam.qmuidemo.fragment.components;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.qmuiteam.qmui.arch.annotation.FragmentScheme;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
+import com.qmuiteam.qmuidemo.QDMainActivity;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
@@ -36,6 +38,7 @@ import butterknife.ButterKnife;
  * @date 2016-10-21
  */
 
+@FragmentScheme(name = "tab", activities = {QDMainActivity.class})
 @Widget(widgetClass = QMUITabSegment.class, iconRes = R.mipmap.icon_grid_tab_segment)
 public class QDTabSegmentFragment extends BaseFragment {
 
