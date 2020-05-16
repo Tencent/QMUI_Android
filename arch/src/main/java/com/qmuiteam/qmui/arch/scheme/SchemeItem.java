@@ -128,5 +128,7 @@ public abstract class SchemeItem {
         return true;
     }
 
-    public abstract boolean handle(@NonNull Activity activity, @Nullable Map<String, SchemeValue> scheme);
+    public abstract boolean handle(@NonNull QMUISchemeHandler handler,
+                                   @NonNull Activity activity,
+                                   @Nullable Map<String, SchemeValue> scheme);
 }

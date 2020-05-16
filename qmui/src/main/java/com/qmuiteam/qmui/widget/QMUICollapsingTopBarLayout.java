@@ -422,11 +422,15 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             }
         }
 
+        for (int i = 0, z = getChildCount(); i < z; i++) {
+            getViewOffsetHelper(getChildAt(i)).onViewLayout(false);
+        }
+
         // Update the collapsed bounds by getting it's transformed bounds
         if (mCollapsingTitleEnabled) {
             // Update the collapsed bounds
             final int maxOffset = getMaxOffsetForPinChild(
-                    mTopBarDirectChild != null ? mTopBarDirectChild : mTopBar, true);
+                    mTopBarDirectChild != null ? mTopBarDirectChild : mTopBar);
             QMUIViewHelper.getDescendantRect(this, mTopBar, mTmpRect);
 //            mTmpRect.top = mTmpRect.top - topBarInsetAdjustTop;
             Rect rect = mTopBar.getTitleContainerRect();
@@ -446,11 +450,6 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             mCollapsingTextHelper.recalculate();
         }
 
-        // Update our child view offset helpers. This needs to be done after the title has been
-        // setup, so that any Toolbars are in their original position
-        for (int i = 0, z = getChildCount(); i < z; i++) {
-            getViewOffsetHelper(getChildAt(i)).onViewLayout();
-        }
 
         // Finally, set our minimum height to enable proper AppBarLayout collapsing
         if (mTopBar != null) {
@@ -466,6 +465,10 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         }
 
         updateScrimVisibility();
+
+        for (int i = 0, z = getChildCount(); i < z; i++) {
+            getViewOffsetHelper(getChildAt(i)).applyOffsets();
+        }
     }
 
     private static int getHeightWithMargins(@NonNull final View view) {
@@ -1280,25 +1283,11 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         }
     }
 
-    /**
-     * if in onLayout, the child.getTop is precise， but QMUIViewOffsetHelper.onViewLayout may not called,
-     * so offsetHelper.getLayoutTop() maybe wrong
-     *
-     * @param child
-     * @param onLayout
-     * @return
-     */
-    final int getMaxOffsetForPinChild(View child, boolean onLayout) {
-        int layoutTop = child.getTop();
-        if (!onLayout) {
-            final QMUIViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
-            layoutTop = offsetHelper.getLayoutTop();
-        }
+
+    final int getMaxOffsetForPinChild(View child) {
+        final QMUIViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
         final QMUICollapsingTopBarLayout.LayoutParams lp = (QMUICollapsingTopBarLayout.LayoutParams) child.getLayoutParams();
-        return getHeight()
-                - layoutTop
-                - child.getHeight()
-                - lp.bottomMargin;
+        return getHeight() - offsetHelper.getLayoutTop() - child.getHeight() - lp.bottomMargin;
     }
 
     public void addOnOffsetUpdateListener(@NonNull OnOffsetUpdateListener listener) {
@@ -1327,7 +1316,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
                 switch (lp.mCollapseMode) {
                     case QMUICollapsingTopBarLayout.LayoutParams.COLLAPSE_MODE_PIN:
                         offsetHelper.setTopAndBottomOffset(
-                                QMUILangHelper.constrain(-verticalOffset, 0, getMaxOffsetForPinChild(child, false)));
+                                QMUILangHelper.constrain(-verticalOffset, 0, getMaxOffsetForPinChild(child)));
                         break;
                     case QMUICollapsingTopBarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX:
                         offsetHelper.setTopAndBottomOffset(
