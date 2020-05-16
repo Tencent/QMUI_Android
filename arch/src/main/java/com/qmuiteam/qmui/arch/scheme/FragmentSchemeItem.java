@@ -37,7 +37,7 @@ class FragmentSchemeItem extends SchemeItem {
     private final Class<? extends QMUIFragmentActivity>[] mActivityClsList;
     private final boolean mForceNewActivity;
     private final String mForceNewActivityKey;
-    @NonNull
+    @Nullable
     private final Class<? extends QMUISchemeFragmentFactory> mFragmentFactoryCls;
 
     public FragmentSchemeItem(@NonNull Class<? extends QMUIFragment> fragmentCls,
@@ -56,15 +56,13 @@ class FragmentSchemeItem extends SchemeItem {
         mActivityClsList = activityClsList;
         mForceNewActivity = forceNewActivity;
         mForceNewActivityKey = forceNewActivityKey;
-        if(fragmentFactoryCls == null){
-            mFragmentFactoryCls = QMUIDefaultSchemeFragmentFactory.class;
-        }else{
-            mFragmentFactoryCls = fragmentFactoryCls;
-        }
+        mFragmentFactoryCls = fragmentFactoryCls;
     }
 
     @Override
-    public boolean handle(@NonNull Activity activity, @Nullable Map<String, SchemeValue> scheme) {
+    public boolean handle(@NonNull QMUISchemeHandler handler,
+                          @NonNull Activity activity,
+                          @Nullable Map<String, SchemeValue> scheme) {
         if (mActivityClsList.length == 0) {
             QMUILog.d(QMUISchemeHandler.TAG, "Can not start a new fragment because the host is't provided");
             return false;
@@ -72,21 +70,27 @@ class FragmentSchemeItem extends SchemeItem {
         if (sFactories == null) {
             sFactories = new HashMap<>();
         }
-        QMUISchemeFragmentFactory factory = sFactories.get(mFragmentFactoryCls);
+
+        Class<? extends QMUISchemeFragmentFactory> factoryCls = mFragmentFactoryCls;
+        if (factoryCls == null) {
+            factoryCls = handler.getDefaultFragmentFactory();
+        }
+
+        QMUISchemeFragmentFactory factory = sFactories.get(factoryCls);
         if (factory == null) {
             try {
-                factory = mFragmentFactoryCls.newInstance();
-                sFactories.put(mFragmentFactoryCls, factory);
+                factory = factoryCls.newInstance();
+                sFactories.put(factoryCls, factory);
             } catch (Exception e) {
                 QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
-                        "error to instance QMUISchemeFragmentFactory: %d", mFragmentFactoryCls.getSimpleName());
+                        "error to instance QMUISchemeFragmentFactory: %d", factoryCls.getSimpleName());
             }
         }
         if (factory == null) {
             return false;
         }
 
-        if(factory.shouldBlockJump(activity, mFragmentCls, scheme)){
+        if (factory.shouldBlockJump(activity, mFragmentCls, scheme)) {
             return true;
         }
 

@@ -60,7 +60,7 @@ import butterknife.ButterKnife;
 @FragmentScheme(
         name = "tab",
         activities = {QDMainActivity.class},
-        required = {"mode=2"},
+        required = {"mode=2", "name"},
         keysWithIntValue = {"mode"})
 public class QDTabSegmentScrollableModeFragment extends BaseFragment {
     @SuppressWarnings("FieldCanBeLocal") private final int TAB_COUNT = 10;
@@ -114,6 +114,22 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             return POSITION_NONE;
         }
     };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(isStartedByScheme()){
+            Toast.makeText(getContext(), "started by scheme", Toast.LENGTH_SHORT).show();
+
+            Bundle args = getArguments();
+            if(args != null){
+                int mode = args.getInt("mode");
+                Toast.makeText(getContext(), "mode = " + mode, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 
     @Override
     protected View onCreateView() {

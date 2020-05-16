@@ -19,12 +19,19 @@ package com.qmuiteam.qmui.arch.scheme;
 import android.app.Activity;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.Map;
 
 public class QMUISchemeParamValueDecoder implements QMUISchemeHandleInterpolator {
 
     @Override
-    public boolean intercept(Activity activity, String action, Map<String, String> params, String origin) {
+    public boolean intercept(@NonNull QMUISchemeHandler schemeHandler,
+                             @NonNull Activity activity,
+                             @NonNull String action,
+                             @Nullable Map<String, String> params,
+                             @NonNull String origin) {
         if (params != null) {
             for (String key : params.keySet()) {
                 String oldValue = params.get(key);

@@ -18,8 +18,15 @@ package com.qmuiteam.qmui.arch.scheme;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.Map;
 
 public interface QMUISchemeHandleInterpolator {
-    boolean intercept(Activity activity, String action, Map<String, String> params, String origin);
+    boolean intercept(@NonNull QMUISchemeHandler schemeHandler,
+                      @NonNull Activity activity,
+                      @NonNull String action,
+                      @Nullable Map<String, String> params,
+                      @NonNull String origin);
 }

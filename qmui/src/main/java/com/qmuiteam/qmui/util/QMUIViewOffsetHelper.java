@@ -61,15 +61,18 @@ public final class QMUIViewOffsetHelper {
     }
 
     public void onViewLayout() {
-        // Now grab the intended top
-        mLayoutTop = mView.getTop();
-        mLayoutLeft = mView.getLeft();
-
-        // And offset it as needed
-        updateOffsets();
+        onViewLayout(true);
     }
 
-    private void updateOffsets() {
+    public void onViewLayout(boolean applyOffset) {
+        mLayoutTop = mView.getTop();
+        mLayoutLeft = mView.getLeft();
+        if(applyOffset){
+            applyOffsets();
+        }
+    }
+
+    public void applyOffsets() {
         ViewCompat.offsetTopAndBottom(mView, mOffsetTop - (mView.getTop() - mLayoutTop));
         ViewCompat.offsetLeftAndRight(mView, mOffsetLeft - (mView.getLeft() - mLayoutLeft));
     }
@@ -83,7 +86,7 @@ public final class QMUIViewOffsetHelper {
     public boolean setTopAndBottomOffset(int offset) {
         if (mVerticalOffsetEnabled && mOffsetTop != offset) {
             mOffsetTop = offset;
-            updateOffsets();
+            applyOffsets();
             return true;
         }
         return false;
@@ -98,7 +101,7 @@ public final class QMUIViewOffsetHelper {
     public boolean setLeftAndRightOffset(int offset) {
         if (mHorizontalOffsetEnabled && mOffsetLeft != offset) {
             mOffsetLeft = offset;
-            updateOffsets();
+            applyOffsets();
             return true;
         }
         return false;
@@ -111,7 +114,7 @@ public final class QMUIViewOffsetHelper {
             if (mOffsetLeft != leftOffset || mOffsetTop != topOffset) {
                 mOffsetLeft = leftOffset;
                 mOffsetTop = topOffset;
-                updateOffsets();
+                applyOffsets();
                 return true;
             }
             return false;

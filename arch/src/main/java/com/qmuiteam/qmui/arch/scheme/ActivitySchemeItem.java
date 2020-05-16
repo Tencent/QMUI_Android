@@ -33,7 +33,7 @@ class ActivitySchemeItem extends SchemeItem {
 
     @NonNull
     private final Class<? extends Activity> mActivityClass;
-    @NonNull
+    @Nullable
     private final Class<? extends QMUISchemeIntentFactory> mIntentFactoryCls;
 
     public ActivitySchemeItem(@NonNull Class<? extends Activity> activityClass,
@@ -46,31 +46,33 @@ class ActivitySchemeItem extends SchemeItem {
                               @Nullable String[] keysForDouble) {
         super(required, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble);
         mActivityClass = activityClass;
-        if (intentFactoryCls == null) {
-            mIntentFactoryCls = QMUIDefaultSchemeIntentFactory.class;
-        } else {
-            mIntentFactoryCls = intentFactoryCls;
-        }
+        mIntentFactoryCls = intentFactoryCls;
     }
 
     @Override
-    public boolean handle(@NonNull Activity activity, @NonNull Map<String, SchemeValue> scheme) {
+    public boolean handle(@NonNull QMUISchemeHandler handler,
+                          @NonNull Activity activity,
+                          @Nullable Map<String, SchemeValue> scheme) {
         if (sFactories == null) {
             sFactories = new HashMap<>();
         }
-        QMUISchemeIntentFactory factory = sFactories.get(mIntentFactoryCls);
+        Class<? extends QMUISchemeIntentFactory> factoryCls = mIntentFactoryCls;
+        if(factoryCls == null){
+            factoryCls = handler.getDefaultIntentFactory();
+        }
+
+        QMUISchemeIntentFactory factory = sFactories.get(factoryCls);
         if (factory == null) {
             try {
-                factory = mIntentFactoryCls.newInstance();
-                sFactories.put(mIntentFactoryCls, factory);
+                factory = factoryCls.newInstance();
+                sFactories.put(factoryCls, factory);
             } catch (Exception e) {
                 QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
-                        "error to instance QMUISchemeIntentFactory: %d", mIntentFactoryCls.getSimpleName());
+                        "error to instance QMUISchemeIntentFactory: %d", factoryCls.getSimpleName());
             }
         }
 
         if (factory != null) {
-
             if (factory.shouldBlockJump(activity, mActivityClass, scheme)) {
                 return true;
             }

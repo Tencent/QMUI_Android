@@ -61,6 +61,7 @@ import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistry;
 import com.qmuiteam.qmui.arch.effect.QMUIFragmentResultEffectHandler;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -1361,6 +1362,13 @@ public abstract class QMUIFragment extends Fragment implements
     protected boolean restoreSubWindowWhenDragBack() {
         return true;
     }
+
+
+    public final boolean isStartedByScheme(){
+        Bundle arguments = getArguments();
+        return  arguments != null && arguments.getBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, false);
+    }
+
 
     /**
      * Fragment Transition Controller

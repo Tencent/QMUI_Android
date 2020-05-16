@@ -32,6 +32,7 @@ import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler;
 import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 
@@ -157,6 +158,10 @@ class InnerBaseActivity extends AppCompatActivity implements LatestVisitArgument
                 skinManager.register(this);
             }
         }
+    }
+
+    public final boolean isStartedByScheme() {
+        return getIntent().getBooleanExtra(QMUISchemeHandler.ARG_FROM_SCHEME, false);
     }
 
     protected boolean useQMUISkinLayoutInflaterFactory() {

@@ -64,10 +64,12 @@ public class QMUISchemeHandler {
         }
     }
 
-
     private final String mPrefix;
     private final List<QMUISchemeHandleInterpolator> mInterpolatorList;
     private final long mBlockSameSchemeTimeout;
+    private final Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory;
+    private final Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory;
+
     private String mLastHandledScheme = null;
     private long mLastSchemeHandledTime = 0;
 
@@ -80,6 +82,26 @@ public class QMUISchemeHandler {
             mInterpolatorList = null;
         }
         mBlockSameSchemeTimeout = builder.mBlockSameSchemeTimeout;
+        mDefaultIntentFactory = builder.mDefaultIntentFactory;
+        mDefaultFragmentFactory = builder.mDefaultFragmentFactory;
+
+    }
+
+    public String getPrefix() {
+        return mPrefix;
+    }
+
+    public Class<? extends QMUISchemeFragmentFactory> getDefaultFragmentFactory() {
+        return mDefaultFragmentFactory;
+    }
+
+    public Class<? extends QMUISchemeIntentFactory> getDefaultIntentFactory() {
+        return mDefaultIntentFactory;
+    }
+
+    @Nullable
+    public SchemeItem getSchemeItem(String action, Map<String, String> params){
+        return sSchemeMap.findScheme(action, params);
     }
 
     public boolean handle(String scheme){
@@ -116,7 +138,7 @@ public class QMUISchemeHandler {
         boolean handled = false;
         if(mInterpolatorList != null && !mInterpolatorList.isEmpty()){
             for(QMUISchemeHandleInterpolator interpolator: mInterpolatorList){
-                if(interpolator.intercept(currentActivity, action, params, scheme)){
+                if(interpolator.intercept(this, currentActivity, action, params, scheme)){
                     handled = true;
                     break;
                 }
@@ -126,7 +148,7 @@ public class QMUISchemeHandler {
         if(!handled){
             SchemeItem schemeItem = sSchemeMap.findScheme(action, params);
             if(schemeItem != null){
-                handled = schemeItem.handle(currentActivity, schemeItem.convertFrom(params));
+                handled = schemeItem.handle(this, currentActivity, schemeItem.convertFrom(params));
             }
         }
 
@@ -177,6 +199,8 @@ public class QMUISchemeHandler {
         private String mPrefix;
         private List<QMUISchemeHandleInterpolator> mInterpolatorList;
         private long mBlockSameSchemeTimeout = BLOCK_SAME_SCHEME_DEFAULT_TIMEOUT;
+        private Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory = QMUIDefaultSchemeIntentFactory.class;
+        private Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory = QMUIDefaultSchemeFragmentFactory.class;
 
         public Builder(@NonNull String prefix) {
             mPrefix = prefix;
@@ -190,8 +214,18 @@ public class QMUISchemeHandler {
             return this;
         }
 
-        public Builder setBlockSameSchemeTimeout(long blockSameSchemeTimeout) {
+        public Builder blockSameSchemeTimeout(long blockSameSchemeTimeout) {
             mBlockSameSchemeTimeout = blockSameSchemeTimeout;
+            return this;
+        }
+
+        public Builder defaultFragmentFactory(Class<? extends QMUISchemeFragmentFactory> defaultFragmentFactory) {
+            mDefaultFragmentFactory = defaultFragmentFactory;
+            return this;
+        }
+
+        public Builder defaultIntentFactory(Class<? extends QMUISchemeIntentFactory> defaultIntentFactory) {
+            mDefaultIntentFactory = defaultIntentFactory;
             return this;
         }
 
