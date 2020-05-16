@@ -16,9 +16,12 @@
 
 package com.qmuiteam.qmuidemo.fragment.lab;
 
+import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -34,6 +37,7 @@ import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
+import com.qmuiteam.qmuidemo.manager.QDSchemeManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,25 +97,42 @@ public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
 
     @Override
     protected QMUIWebViewClient getWebViewClient() {
-        return new QMUIBridgeWebViewClient(needDispatchSafeAreaInset(), false,
-                new QMUIWebViewBridgeHandler(mWebView) {
-                    @Override
-                    protected JSONObject handleMessage(String message) {
-                        try {
-                            JSONObject json = new JSONObject(message);
-                            String id = json.getString("id");
-                            String info = json.getString("info");
-                            Toast.makeText(getContext(), "id = " + id + "; info = " + info, Toast.LENGTH_SHORT).show();
-                            JSONObject result = new JSONObject();
-                            result.put("code", 100);
-                            result.put("message", "Native 的执行结果");
-                            return result;
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                });
+        QMUIWebViewBridgeHandler handler = new QMUIWebViewBridgeHandler(mWebView) {
+            @Override
+            protected JSONObject handleMessage(String message) {
+                try {
+                    JSONObject json = new JSONObject(message);
+                    String id = json.getString("id");
+                    String info = json.getString("info");
+                    Toast.makeText(getContext(), "id = " + id + "; info = " + info, Toast.LENGTH_SHORT).show();
+                    JSONObject result = new JSONObject();
+                    result.put("code", 100);
+                    result.put("message", "Native 的执行结果");
+                    return result;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        return new QMUIBridgeWebViewClient(needDispatchSafeAreaInset(), false, handler){
+            @Override
+            @TargetApi(21)
+            protected boolean onShouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if(QDSchemeManager.getInstance().handle(request.getUrl().toString())){
+                    return true;
+                }
+                return super.onShouldOverrideUrlLoading(view, request);
+            }
+
+            @Override
+            protected boolean onShouldOverrideUrlLoading(WebView view, String url) {
+                if(QDSchemeManager.getInstance().handle(url)){
+                    return true;
+                }
+                return super.onShouldOverrideUrlLoading(view, url);
+            }
+        };
     }
 
     @Override

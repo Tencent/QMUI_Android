@@ -124,7 +124,8 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
             Bundle args = getArguments();
             if(args != null){
                 int mode = args.getInt("mode");
-                Toast.makeText(getContext(), "mode = " + mode, Toast.LENGTH_SHORT).show();
+                String name = args.getString("name");
+                Toast.makeText(getContext(), "mode = " + mode + "; name = " + name, Toast.LENGTH_SHORT).show();
             }
         }
     }
