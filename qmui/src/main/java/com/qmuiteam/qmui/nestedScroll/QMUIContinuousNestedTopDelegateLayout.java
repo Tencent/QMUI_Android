@@ -550,13 +550,15 @@ public class QMUIContinuousNestedTopDelegateLayout extends FrameLayout implement
             }
         } else if (unconsumed < 0) {
             int bottomMargin = getPaddingBottom() + (mFooterView != null ? mFooterView.getHeight() : 0);
-            int b = mOffsetRange - bottomMargin;
-            if (mOffsetCurrent + unconsumed >= b) {
-                offsetTo(mOffsetCurrent + unconsumed);
-                consumed[1] += unconsumed;
-            } else if (mOffsetCurrent > b) {
-                consumed[1] += b - mOffsetCurrent;
-                offsetTo(b);
+            if(mOffsetRange > bottomMargin){
+                int b = mOffsetRange - bottomMargin;
+                if (mOffsetCurrent + unconsumed >= b) {
+                    offsetTo(mOffsetCurrent + unconsumed);
+                    consumed[1] += unconsumed;
+                } else if (mOffsetCurrent > b) {
+                    consumed[1] += b - mOffsetCurrent;
+                    offsetTo(b);
+                }
             }
         }
     }
