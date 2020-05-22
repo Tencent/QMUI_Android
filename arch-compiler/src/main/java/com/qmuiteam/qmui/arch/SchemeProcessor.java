@@ -54,6 +54,7 @@ import javax.lang.model.type.TypeMirror;
 public class SchemeProcessor extends BaseProcessor {
     private static String QMUISchemeIntentFactoryType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeIntentFactory";
     private static String QMUISchemeFragmentFactoryType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeFragmentFactory";
+    private static String QMUISchemeMatcherType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeMatcher";
 
     private static ClassName SchemeMap = ClassName.get(
             "com.qmuiteam.qmui.arch.scheme", "SchemeMap");
@@ -164,6 +165,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock longParam = generateTypedParams(annotation.keysWithLongValue());
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
+                    CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
 
                     CodeBlock codeBlock = CodeBlock.builder()
                             .add("elements.add(")
@@ -183,6 +185,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(floatParam)
                             /*---*/.add(",")
                             /*---*/.add(doubleParam)
+                            /*---*/.add(",")
+                            /*---*/.add(customMatcher)
                             /**/.add(")")
                             .add(")")
                             .build();
@@ -201,6 +205,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock longParam = generateTypedParams(annotation.keysWithLongValue());
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
+                    CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
 
                     CodeBlock codeBlock = CodeBlock.builder()
                             .add("elements.add(")
@@ -226,6 +231,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(floatParam)
                             /*---*/.add(",")
                             /*---*/.add(doubleParam)
+                            /*---*/.add(",")
+                            /*---*/.add(customMatcher)
                             /**/.add(")")
                             .add(")")
                             .build();
@@ -239,8 +246,9 @@ public class SchemeProcessor extends BaseProcessor {
         ExecutableElement findScheme = getOverrideMethod(
                 SchemeMap, "findScheme");
         List<? extends VariableElement> findSchemeParams = findScheme.getParameters();
-        String schemeAction = findSchemeParams.get(0).getSimpleName().toString();
-        String schemeParam = findSchemeParams.get(1).getSimpleName().toString();
+        String schemeHandler = findSchemeParams.get(0).getSimpleName().toString();
+        String schemeAction = findSchemeParams.get(1).getSimpleName().toString();
+        String schemeParam = findSchemeParams.get(2).getSimpleName().toString();
         MethodSpec.Builder getRecordMetaById = MethodSpec.overriding(findScheme)
                 .addStatement("$T list = mSchemeMap.get($L)", SchemeItemList, schemeAction)
                 .beginControlFlow("if(list == null || list.isEmpty())")
@@ -248,7 +256,7 @@ public class SchemeProcessor extends BaseProcessor {
                 .endControlFlow()
                 .beginControlFlow("for (int i = 0; i < list.size(); i++)")
                 /**/.addStatement("$T item = list.get(i)", SchemeItem)
-                /**/.beginControlFlow("if(item.match($L))", schemeParam)
+                /**/.beginControlFlow("if(item.match($L, $L))", schemeHandler, schemeParam)
                 /*--*/.addStatement("return item")
                 /**/.endControlFlow()
                 .endControlFlow()
@@ -256,7 +264,7 @@ public class SchemeProcessor extends BaseProcessor {
         ExecutableElement exists = getOverrideMethod(
                 SchemeMap, "exists");
         MethodSpec.Builder getRecordMetaByClass = MethodSpec.overriding(exists)
-                .addStatement("return mSchemeMap.containsKey($L)", exists.getParameters().get(0).getSimpleName().toString());
+                .addStatement("return mSchemeMap.containsKey($L)", exists.getParameters().get(1).getSimpleName().toString());
 
         classBuilder
                 .addMethod(constructorBuilder.build())
@@ -325,6 +333,19 @@ public class SchemeProcessor extends BaseProcessor {
             if (!isSubtypeOfType(typeMirror, QMUISchemeFragmentFactoryType)) {
                 throw new IllegalStateException("customFactory must implement interface QMUISchemeFragmentFactory.");
             }
+        }
+
+        return CodeBlock.of("$T.class", typeMirror);
+    }
+
+    private CodeBlock generateCustomMatcher(AnnotationMirror annotationMirror){
+        AnnotationValue customFactory = getAnnotationValue(annotationMirror, "customMatcher");
+        if (customFactory == null) {
+            return CodeBlock.of("null");
+        }
+        TypeMirror typeMirror = (TypeMirror) customFactory.getValue();
+        if (!isSubtypeOfType(typeMirror, QMUISchemeMatcherType)) {
+            throw new IllegalStateException("customMatcher must implement interface QMUISchemeMatcher.");
         }
 
         return CodeBlock.of("$T.class", typeMirror);

@@ -16,11 +16,13 @@
 
 package com.qmuiteam.qmui.arch.scheme;
 
+import androidx.annotation.Nullable;
+
 import java.util.Map;
 
-public interface SchemeMap {
-
-    SchemeItem findScheme(QMUISchemeHandler handler, String schemeAction, Map<String, String> params);
-
-    boolean exists(QMUISchemeHandler handler, String schemeAction);
+public class QMUIDefaultSchemeMatcher implements QMUISchemeMatcher {
+    @Override
+    public boolean match(SchemeItem schemeItem, @Nullable Map<String, String> params) {
+        return schemeItem.matchRequiredParam(params);
+    }
 }

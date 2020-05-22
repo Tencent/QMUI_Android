@@ -26,6 +26,7 @@ public @interface FragmentScheme {
     String name();
     Class<?>[] activities();
     String[] required() default {};
+    Class<?> customMatcher() default void.class;
     boolean forceNewActivity() default false;
     String forceNewActivityKey() default "";
     Class<?> customFactory() default void.class;

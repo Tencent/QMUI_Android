@@ -43,8 +43,9 @@ class ActivitySchemeItem extends SchemeItem {
                               @Nullable String[] keysForBool,
                               @Nullable String[] keysForLong,
                               @Nullable String[] keysForFloat,
-                              @Nullable String[] keysForDouble) {
-        super(required, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble);
+                              @Nullable String[] keysForDouble,
+                              @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
+        super(required, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble, schemeMatcherCls);
         mActivityClass = activityClass;
         mIntentFactoryCls = intentFactoryCls;
     }

@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SchemeItem {
+    private static HashMap<Class<? extends QMUISchemeMatcher>, QMUISchemeMatcher> sSchemeMatchers;
+
     @Nullable
     private ArrayMap<String, String> mRequired;
     @Nullable
@@ -39,19 +41,23 @@ public abstract class SchemeItem {
     private String[] mKeysForFloat;
     @Nullable
     private String[] mKeysForDouble;
+    @Nullable
+    private Class<? extends QMUISchemeMatcher> mSchemeMatcherCls;
 
     public SchemeItem(@Nullable ArrayMap<String, String> required,
                       @Nullable String[] keysForInt,
                       @Nullable String[] keysForBool,
                       @Nullable String[] keysForLong,
                       @Nullable String[] keysForFloat,
-                      @Nullable String[] keysForDouble) {
+                      @Nullable String[] keysForDouble,
+                      @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
         mRequired = required;
         mKeysForInt = keysForInt;
         mKeysForBool = keysForBool;
         mKeysForLong = keysForLong;
         mKeysForFloat = keysForFloat;
         mKeysForDouble = keysForDouble;
+        mSchemeMatcherCls = schemeMatcherCls;
     }
 
     @Nullable
@@ -61,10 +67,10 @@ public abstract class SchemeItem {
         }
 
         Map<String, SchemeValue> queryMap = new HashMap<>();
-        for(Map.Entry<String, String> param: schemeParams.entrySet()){
+        for (Map.Entry<String, String> param : schemeParams.entrySet()) {
             String name = param.getKey();
             String value = param.getValue();
-            if(name == null || name.isEmpty()){
+            if (name == null || name.isEmpty()) {
                 continue;
             }
             try {
@@ -90,12 +96,35 @@ public abstract class SchemeItem {
         return queryMap;
     }
 
+    @Nullable
+    private QMUISchemeMatcher getSchemeMatcher(@NonNull QMUISchemeHandler handler) {
+        if (sSchemeMatchers == null) {
+            sSchemeMatchers = new HashMap<>();
+        }
+        Class<? extends QMUISchemeMatcher> schemeMatcherCls = mSchemeMatcherCls;
+        if (schemeMatcherCls == null) {
+            schemeMatcherCls = handler.getDefaultSchemeMatcher();
+        }
+
+        QMUISchemeMatcher matcher = sSchemeMatchers.get(schemeMatcherCls);
+        if (matcher == null) {
+            try {
+                matcher = schemeMatcherCls.newInstance();
+                sSchemeMatchers.put(schemeMatcherCls, matcher);
+            } catch (Exception e) {
+                QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
+                        "error to instance QMUISchemeMatcher: %d", schemeMatcherCls.getSimpleName());
+            }
+        }
+        return matcher;
+    }
+
     private static boolean contains(@Nullable String[] array, @NonNull String key) {
         if (array == null || array.length == 0) {
             return false;
         }
-        for (int i = 0; i < array.length; i++) {
-            if (key.equals(array[i])) {
+        for (String s : array) {
+            if (key.equals(s)) {
                 return true;
             }
         }
@@ -103,24 +132,32 @@ public abstract class SchemeItem {
     }
 
     // used by generated code(SchemeMapImpl)
-    boolean match(@Nullable Map<String, String> scheme) {
+    boolean match(@NonNull QMUISchemeHandler handler, @Nullable Map<String, String> params) {
+        QMUISchemeMatcher matcher = getSchemeMatcher(handler);
+        if (matcher != null) {
+            return matcher.match(this, params);
+        }
+        return matchRequiredParam(params);
+    }
+
+    public boolean matchRequiredParam(@Nullable Map<String, String> params) {
         if (mRequired == null || mRequired.isEmpty()) {
             return true;
         }
-        if (scheme == null || scheme.isEmpty()) {
+        if (params == null || params.isEmpty()) {
             return false;
         }
         for (int i = 0; i < mRequired.size(); i++) {
             String key = mRequired.keyAt(i);
-            if(!scheme.containsKey(key)){
+            if (!params.containsKey(key)) {
                 return false;
             }
             String value = mRequired.valueAt(i);
-            if(value == null){
+            if (value == null) {
                 // if no value. that means scheme must provide this key.
                 continue;
             }
-            String actual = scheme.get(key);
+            String actual = params.get(key);
             if (actual == null || !actual.equals(value)) {
                 return false;
             }

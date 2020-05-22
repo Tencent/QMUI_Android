@@ -17,14 +17,11 @@
 package com.qmuiteam.qmui.arch.scheme;
 
 import android.app.Activity;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
-import com.qmuiteam.qmui.arch.record.QMUILatestVisitStorage;
-import com.qmuiteam.qmui.arch.record.RecordIdClassMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,14 +41,13 @@ public class QMUISchemeHandler {
             sSchemeMap = (SchemeMap) cls.newInstance();
         } catch (ClassNotFoundException e) {
             sSchemeMap = new SchemeMap() {
-                @Nullable
                 @Override
-                public SchemeItem findScheme(@NonNull String schemeName, @Nullable Map<String, String> params) {
+                public SchemeItem findScheme(QMUISchemeHandler handler, String schemeAction, Map<String, String> params) {
                     return null;
                 }
 
                 @Override
-                public boolean exists(@NonNull String schemeName) {
+                public boolean exists(QMUISchemeHandler handler, String schemeAction) {
                     return false;
                 }
             };
@@ -69,6 +65,7 @@ public class QMUISchemeHandler {
     private final long mBlockSameSchemeTimeout;
     private final Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory;
     private final Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory;
+    private final Class<? extends QMUISchemeMatcher> mDefaultSchemeMatcher;
 
     private String mLastHandledScheme = null;
     private long mLastSchemeHandledTime = 0;
@@ -76,15 +73,15 @@ public class QMUISchemeHandler {
     private QMUISchemeHandler(Builder builder) {
         mPrefix = builder.mPrefix;
         List<QMUISchemeHandleInterpolator> interpolatorList = builder.mInterpolatorList;
-        if(interpolatorList != null && !interpolatorList.isEmpty()){
+        if (interpolatorList != null && !interpolatorList.isEmpty()) {
             mInterpolatorList = new ArrayList<>(interpolatorList);
-        }else{
+        } else {
             mInterpolatorList = null;
         }
         mBlockSameSchemeTimeout = builder.mBlockSameSchemeTimeout;
         mDefaultIntentFactory = builder.mDefaultIntentFactory;
         mDefaultFragmentFactory = builder.mDefaultFragmentFactory;
-
+        mDefaultSchemeMatcher = builder.mDefaultSchemeMatcher;
     }
 
     public String getPrefix() {
@@ -99,60 +96,64 @@ public class QMUISchemeHandler {
         return mDefaultIntentFactory;
     }
 
-    @Nullable
-    public SchemeItem getSchemeItem(String action, Map<String, String> params){
-        return sSchemeMap.findScheme(action, params);
+    public Class<? extends QMUISchemeMatcher> getDefaultSchemeMatcher() {
+        return mDefaultSchemeMatcher;
     }
 
-    public boolean handle(String scheme){
-        if(scheme == null || !scheme.startsWith(mPrefix)){
+    @Nullable
+    public SchemeItem getSchemeItem(String action, Map<String, String> params) {
+        return sSchemeMap.findScheme(this, action, params);
+    }
+
+    public boolean handle(String scheme) {
+        if (scheme == null || !scheme.startsWith(mPrefix)) {
             return false;
         }
 
-        if(scheme.equals(mLastHandledScheme) && System.currentTimeMillis() - mLastSchemeHandledTime < mBlockSameSchemeTimeout){
+        if (scheme.equals(mLastHandledScheme) && System.currentTimeMillis() - mLastSchemeHandledTime < mBlockSameSchemeTimeout) {
             return true;
         }
 
         Activity currentActivity = QMUISwipeBackActivityManager.getInstance().getCurrentActivity();
-        if(currentActivity == null){
+        if (currentActivity == null) {
             return false;
         }
 
         scheme = scheme.substring(mPrefix.length());
         String[] elements = scheme.split("\\?");
-        if(elements.length == 0 || elements[0] == null || elements[0].isEmpty()){
+        if (elements.length == 0 || elements[0] == null || elements[0].isEmpty()) {
             return false;
         }
         String action = elements[0];
-        if(!sSchemeMap.exists(action)){
+        if (!sSchemeMap.exists(this, action)) {
             return false;
         }
 
         Map<String, String> params;
-        if(elements.length < 2){
+        if (elements.length < 2) {
             params = null;
-        }else{
+        } else {
             params = parseParams(elements[1]);
         }
 
         boolean handled = false;
-        if(mInterpolatorList != null && !mInterpolatorList.isEmpty()){
-            for(QMUISchemeHandleInterpolator interpolator: mInterpolatorList){
-                if(interpolator.intercept(this, currentActivity, action, params, scheme)){
+        if (mInterpolatorList != null && !mInterpolatorList.isEmpty()) {
+            for (QMUISchemeHandleInterpolator interpolator : mInterpolatorList) {
+                if (interpolator.intercept(this, currentActivity, action, params, scheme)) {
                     handled = true;
                     break;
                 }
             }
         }
 
-        if(!handled){
-            SchemeItem schemeItem = sSchemeMap.findScheme(action, params);
-            if(schemeItem != null){
+        if (!handled) {
+            SchemeItem schemeItem = sSchemeMap.findScheme(this, action, params);
+            if (schemeItem != null) {
                 handled = schemeItem.handle(this, currentActivity, schemeItem.convertFrom(params));
             }
         }
 
-        if(handled){
+        if (handled) {
             mLastHandledScheme = scheme;
             mLastSchemeHandledTime = System.currentTimeMillis();
         }
@@ -201,14 +202,15 @@ public class QMUISchemeHandler {
         private long mBlockSameSchemeTimeout = BLOCK_SAME_SCHEME_DEFAULT_TIMEOUT;
         private Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory = QMUIDefaultSchemeIntentFactory.class;
         private Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory = QMUIDefaultSchemeFragmentFactory.class;
+        private Class<? extends QMUISchemeMatcher> mDefaultSchemeMatcher = QMUIDefaultSchemeMatcher.class;
 
         public Builder(@NonNull String prefix) {
             mPrefix = prefix;
         }
 
         public Builder addInterpolator(QMUISchemeHandleInterpolator interpolator) {
-            if(mInterpolatorList == null){
-                 mInterpolatorList = new ArrayList<>();
+            if (mInterpolatorList == null) {
+                mInterpolatorList = new ArrayList<>();
             }
             mInterpolatorList.add(interpolator);
             return this;
@@ -226,6 +228,11 @@ public class QMUISchemeHandler {
 
         public Builder defaultIntentFactory(Class<? extends QMUISchemeIntentFactory> defaultIntentFactory) {
             mDefaultIntentFactory = defaultIntentFactory;
+            return this;
+        }
+
+        public Builder defaultSchemeMatcher(Class<? extends QMUISchemeMatcher> defaultSchemeMatcher){
+            mDefaultSchemeMatcher = defaultSchemeMatcher;
             return this;
         }
 
