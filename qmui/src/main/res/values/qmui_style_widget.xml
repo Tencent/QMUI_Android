@@ -28,7 +28,8 @@
     <style name="QMUI.TabSegment.SignCount">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">?attr/qmui_tab_sign_count_view_min_size</item>
-        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color</item>
+        <item name="qmui_backgroundColor">?attr/qmui_skin_support_tab_sign_count_view_bg_color
+        </item>
         <item name="qmui_isRadiusAdjustBounds">true</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">?attr/qmui_skin_support_tab_sign_count_view_text_color</item>
@@ -109,11 +110,13 @@
         <item name="android:paddingRight">4dp</item>
         <item name="qmui_topbar_title_color">?attr/qmui_skin_support_topbar_title_color</item>
         <item name="qmui_topbar_title_text_size">17sp</item>
+        <item name="qmui_topbar_title_bold">false</item>
         <item name="qmui_topbar_title_text_size_with_subtitle">16sp</item>
         <item name="qmui_topbar_title_margin_horizontal_when_no_btn_aside">0dp</item>
         <item name="qmui_topbar_title_container_padding_horizontal">8dp</item>
         <item name="qmui_topbar_subtitle_text_size">11sp</item>
         <item name="qmui_topbar_subtitle_color">?attr/qmui_skin_support_topbar_subtitle_color</item>
+        <item name="qmui_topbar_subtitle_bold">false</item>
         <item name="qmui_topbar_image_btn_width">48dp</item>
         <item name="qmui_topbar_image_btn_height">48dp</item>
         <item name="qmui_topbar_text_btn_padding_horizontal">12dp</item>
@@ -121,6 +124,7 @@
             ?attr/qmui_skin_support_topbar_text_btn_color_state_list
         </item>
         <item name="qmui_topbar_text_btn_text_size">16sp</item>
+        <item name="qmui_topbar_text_btn_bold">false</item>
     </style>
 
     <style name="QMUI.CollapsingTopBarLayoutExpanded">
@@ -374,10 +378,18 @@
         <item name="qmui_pull_load_more_arrow">@drawable/qmui_icon_pull_down</item>
         <item name="qmui_pull_load_more_pull_text">上拉加载更多</item>
         <item name="qmui_pull_load_more_release_text">松手加载更多</item>
-        <item name="qmui_skin_support_pull_load_more_bg_color">?attr/qmui_skin_support_pull_load_more_bg_color</item>
-        <item name="qmui_skin_support_pull_load_more_loading_tint_color">?attr/qmui_skin_support_pull_load_more_loading_tint_color</item>
-        <item name="qmui_skin_support_pull_load_more_arrow_tint_color">?attr/qmui_skin_support_pull_load_more_arrow_tint_color</item>
-        <item name="qmui_skin_support_pull_load_more_text_color">?attr/qmui_skin_support_pull_load_more_text_color</item>
+        <item name="qmui_skin_support_pull_load_more_bg_color">
+            ?attr/qmui_skin_support_pull_load_more_bg_color
+        </item>
+        <item name="qmui_skin_support_pull_load_more_loading_tint_color">
+            ?attr/qmui_skin_support_pull_load_more_loading_tint_color
+        </item>
+        <item name="qmui_skin_support_pull_load_more_arrow_tint_color">
+            ?attr/qmui_skin_support_pull_load_more_arrow_tint_color
+        </item>
+        <item name="qmui_skin_support_pull_load_more_text_color">
+            ?attr/qmui_skin_support_pull_load_more_text_color
+        </item>
     </style>
 
     <!-- QMUIRadiusImageView -->

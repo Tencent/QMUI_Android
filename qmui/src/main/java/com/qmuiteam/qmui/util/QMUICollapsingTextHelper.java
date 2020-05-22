@@ -225,9 +225,7 @@ public final class QMUICollapsingTextHelper {
         mCollapsedShadowRadius = a.getFloat(R.styleable.QMUITextAppearance_android_shadowRadius, 0);
         a.recycle();
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            mCollapsedTypeface = readFontFamilyTypeface(resId);
-        }
+        mCollapsedTypeface = readFontFamilyTypeface(resId);
 
         recalculate();
     }
@@ -251,9 +249,7 @@ public final class QMUICollapsingTextHelper {
                 R.styleable.QMUITextAppearance_android_shadowRadius, 0);
         a.recycle();
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            mExpandedTypeface = readFontFamilyTypeface(resId);
-        }
+        mExpandedTypeface = readFontFamilyTypeface(resId);
 
         recalculate();
     }
