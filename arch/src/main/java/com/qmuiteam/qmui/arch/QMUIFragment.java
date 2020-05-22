@@ -868,39 +868,52 @@ public abstract class QMUIFragment extends Fragment implements
         return swipeBackLayout;
     }
 
+
+    private void bubbleBackPressedEvent(){
+        // disable this and go with FragmentManager's backPressesCallback
+        // because it will call execPendingActions before popBackStackImmediate
+        mOnBackPressedCallback.setEnabled(false);
+        mOnBackPressedDispatcher.onBackPressed();
+        mOnBackPressedCallback.setEnabled(true);
+    }
+
     protected void onBackPressed() {
-        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
-        if (!(provider instanceof FragmentActivity) || provider.getContainerFragmentManager() == null ||
-                provider.getContainerFragmentManager().getBackStackEntryCount() > 1) {
-            // disable this and go with FragmentManager's backPressesCallback
-            // because it will call execPendingActions before popBackStackImmediate
-            mOnBackPressedCallback.setEnabled(false);
-            mOnBackPressedDispatcher.onBackPressed();
-            mOnBackPressedCallback.setEnabled(true);
-        } else {
-            QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
-            if (QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
-                requireActivity().finish();
-                requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
-                return;
-            }
-            Object toExec = onLastFragmentFinish();
-            if (toExec != null) {
-                if (toExec instanceof QMUIFragment) {
-                    QMUIFragment fragment = (QMUIFragment) toExec;
-                    startFragmentAndDestroyCurrent(fragment, false);
-                } else if (toExec instanceof Intent) {
-                    Intent intent = (Intent) toExec;
-                    startActivity(intent);
-                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+        if(getParentFragment() != null){
+            bubbleBackPressedEvent();
+            return;
+        }
+        Activity activity = requireActivity();
+        if(activity instanceof QMUIFragmentContainerProvider){
+            QMUIFragmentContainerProvider provider = (QMUIFragmentContainerProvider) activity;
+            if(provider.getContainerFragmentManager().getBackStackEntryCount() > 1){
+                bubbleBackPressedEvent();
+            }else{
+                QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
+                if (QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
                     requireActivity().finish();
-                } else {
-                    onHandleSpecLastFragmentFinish(requireActivity(), transitionConfig, toExec);
+                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    return;
                 }
-            } else {
-                requireActivity().finish();
-                requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                Object toExec = onLastFragmentFinish();
+                if (toExec != null) {
+                    if (toExec instanceof QMUIFragment) {
+                        QMUIFragment fragment = (QMUIFragment) toExec;
+                        startFragmentAndDestroyCurrent(fragment, false);
+                    } else if (toExec instanceof Intent) {
+                        Intent intent = (Intent) toExec;
+                        startActivity(intent);
+                        requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                        requireActivity().finish();
+                    } else {
+                        onHandleSpecLastFragmentFinish(requireActivity(), transitionConfig, toExec);
+                    }
+                } else {
+                    requireActivity().finish();
+                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                }
             }
+        }else{
+            bubbleBackPressedEvent();
         }
     }
 
