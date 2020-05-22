@@ -126,6 +126,7 @@
 
     <!--************ QMUITopBar ***********-->
     <declare-styleable name="QMUITopBar">
+        <attr name="android:ellipsize"/>
         <attr name="qmui_topbar_title_gravity" format="enum">
             <enum name="left_center" value="19"/>
             <enum name="center" value="17"/>

@@ -102,6 +102,7 @@
     <!--********************* TopBar *********************-->
     <style name="QMUI.TopBar">
         <item name="android:background">?attr/qmui_skin_support_topbar_bg</item>
+        <item name="android:ellipsize">end</item>
         <item name="qmui_bottomDividerHeight">1px</item>
         <item name="qmui_bottomDividerColor">?attr/qmui_skin_support_topbar_separator_color</item>
         <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
