@@ -20,7 +20,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.QMUILinearLayout;
 import com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
@@ -58,7 +57,7 @@ public class QMUIBottomSheetRootLayout extends QMUIPriorityLinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        if(widthSize > mMaxWidth){
+        if (widthSize > mMaxWidth) {
             widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxWidth, widthMode);
         }
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);

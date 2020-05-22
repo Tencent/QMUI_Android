@@ -164,7 +164,7 @@ public class QMUIPriorityLinearLayout extends QMUILinearLayout {
                 // no space for disposableChild
                 for (View view : mTempDisposableChildList) {
                     LayoutParams lp = (LayoutParams) view.getLayoutParams();
-                    lp.width = 0;
+                    lp.height = 0;
                     lp.topMargin = 0;
                     lp.bottomMargin = 0;
                 }
@@ -312,11 +312,6 @@ public class QMUIPriorityLinearLayout extends QMUILinearLayout {
     @Override
     public LinearLayout.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
-    }
-
-    @Override
-    protected LinearLayout.LayoutParams generateDefaultLayoutParams() {
-        return new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @Override
