@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -45,6 +46,7 @@ import butterknife.ButterKnife;
  */
 
 @Widget(group = Group.Other, name = "QQ表情使用展示")
+@LatestVisitRecord
 public class QDQQFaceUsageFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.qqface1) QMUIQQFaceView mQQFace1;

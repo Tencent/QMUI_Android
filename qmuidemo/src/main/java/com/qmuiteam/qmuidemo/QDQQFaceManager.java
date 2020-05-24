@@ -18,11 +18,14 @@ package com.qmuiteam.qmuidemo;
 
 import android.graphics.drawable.Drawable;
 import androidx.collection.ArrayMap;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.util.SparseIntArray;
 
 import com.qmuiteam.qmui.qqface.IQMUIQQFaceManager;
 import com.qmuiteam.qmui.qqface.QQFace;
+import com.qmuiteam.qmui.type.parser.EmojiResourceProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +36,7 @@ import java.util.List;
  * @date 2016-12-21
  */
 
-public class QDQQFaceManager implements IQMUIQQFaceManager {
+public class QDQQFaceManager implements IQMUIQQFaceManager, EmojiResourceProvider {
     private static final HashMap<String, Integer> sQQFaceMap = new HashMap<>();
     private static final List<QQFace> mQQFaceList = new ArrayList<>();
     private static final SparseIntArray sEmojisMap = new SparseIntArray(846);
@@ -1683,5 +1686,41 @@ public class QDQQFaceManager implements IQMUIQQFaceManager {
             return 0;
         }
         return integer;
+    }
+
+    @Override
+    public Drawable queryForDrawable(CharSequence text) {
+        Integer integer = sQQFaceMap.get(text.toString());
+        if (integer == null) {
+            return null;
+        }
+        return ContextCompat.getDrawable(QDApplication.getContext(), integer);
+    }
+
+    @Override
+    public Drawable queryForDrawable(char c) {
+        int res = sSoftbanksMap.get(c);
+        if(res == 0){
+            return null;
+        }
+        return ContextCompat.getDrawable(QDApplication.getContext(), res);
+    }
+
+    @Override
+    public Drawable queryForDrawable(int codePoint) {
+        int res = sEmojisMap.get(codePoint);
+        if(res == 0){
+            return null;
+        }
+        return ContextCompat.getDrawable(QDApplication.getContext(), res);
+    }
+
+    @Override
+    public Drawable queryForDrawable(int firstCodePoint, int secondCodePint) {
+        int res = getDoubleUnicodeEmoji(firstCodePoint, secondCodePint);
+        if(res == 0){
+            return null;
+        }
+        return ContextCompat.getDrawable(QDApplication.getContext(), res);
     }
 }

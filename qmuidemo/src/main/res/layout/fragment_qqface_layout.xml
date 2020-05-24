@@ -46,6 +46,11 @@
             android:orientation="vertical"
             android:padding="25dp">
 
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.QMUIQQFaceView2
+                android:id="@+id/test_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <TextView
                 style="@style/QDCommonTitle"
                 android:text="单行表情，末尾省略"/>

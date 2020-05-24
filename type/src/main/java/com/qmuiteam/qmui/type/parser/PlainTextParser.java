@@ -46,19 +46,8 @@ public class PlainTextParser implements TextParser {
             } else {
                 tmp = new CharElement(c, index, i);
             }
-            if(isEnglishLetterOrNumber(c)){
-                if(last == null ||
-                        last.getWordPart() == Element.WORD_PART_WHOLE ||
-                        last.getWordPart() == Element.WORD_PART_END){
-                    tmp.setWordPart(Element.WORD_PART_START);
-                }else{
-                    tmp.setWordPart(Element.WORD_PART_MIDDLE);
-                }
-            }else{
-                if(last != null && last.getWordPart() == Element.WORD_PART_MIDDLE){
-                    last.setWordPart(Element.WORD_PART_END);
-                }
-            }
+
+            ParserHelper.handleWordPart(c, last, tmp);
 
             index++;
             if (first == null) {
@@ -71,9 +60,5 @@ public class PlainTextParser implements TextParser {
             map.put(tmp.getIndex(), tmp);
         }
         return new TypeModel(map, first, last);
-    }
-
-    private boolean isEnglishLetterOrNumber(char c){
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
     }
 }
