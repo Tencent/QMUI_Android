@@ -1,2 +1,3 @@
 include ':qmuidemo', ':qmui', ':lib', ':compiler', ':lint', ':lintrule', ':arch', ':arch-compiler',
         ':arch-annotation', ':skin-maker', ':skin-maker-plugin'
+include ':type'

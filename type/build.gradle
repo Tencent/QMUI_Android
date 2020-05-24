@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+
+version = QMUI_TYPE_VERSION
+
+android {
+
+    compileSdkVersion parent.ext.compileSdkVersion
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        minSdkVersion parent.ext.minSdkVersion
+        targetSdkVersion parent.ext.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    api "androidx.annotation:annotation:$annotationVersion"
+    api "androidx.core:core:$appcompatVersion"
+}
+
+// deploy
+File deployConfig = rootProject.file('gradle/deploy.properties')
+if (deployConfig.exists()) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+}
