@@ -19,7 +19,7 @@ package com.qmuiteam.qmui.type.parser;
 import android.graphics.drawable.Drawable;
 
 import com.qmuiteam.qmui.type.TypeModel;
-import com.qmuiteam.qmui.type.element.CharElement;
+import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
 import com.qmuiteam.qmui.type.element.DrawableElement;
 import com.qmuiteam.qmui.type.element.Element;
 import com.qmuiteam.qmui.type.element.EmojiElement;
@@ -73,7 +73,7 @@ public class EmojiTextParser implements TextParser {
                     j++;
                 }
                 if (!find) {
-                    tmp = new CharElement(c, index, i);
+                    tmp = new CharOrPhraseElement(c, index, i);
                 }
             } else {
                 boolean handled = false;
@@ -107,7 +107,7 @@ public class EmojiTextParser implements TextParser {
                 }
 
                 if (!handled) {
-                    tmp = new CharElement(c, index, i);
+                    tmp = new CharOrPhraseElement(c, index, i);
                 }
             }
 
@@ -123,6 +123,6 @@ public class EmojiTextParser implements TextParser {
             }
             map.put(tmp.getIndex(), tmp);
         }
-        return new TypeModel(map, first, last);
+        return new TypeModel(map, first, last, null);
     }
 }

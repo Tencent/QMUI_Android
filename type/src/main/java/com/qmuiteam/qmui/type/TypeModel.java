@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.type;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.type.element.Element;
 
@@ -27,15 +28,23 @@ public class TypeModel {
     private final Map<Integer, Element> mElementMap;
     private Element mFirstElement;
     private Element mLastElement;
+    @Nullable
+    private Element mFirstEffect;
 
     public TypeModel(@NonNull Map<Integer, Element> elementMap,
                      Element firstElement,
-                     Element lastElement) {
+                     Element lastElement,
+                     @Nullable Element firstEffect) {
         mElementMap = elementMap;
         mFirstElement = firstElement;
         mLastElement = lastElement;
+        mFirstEffect = firstEffect;
     }
 
+    @Nullable
+    public Element getFirstEffect() {
+        return mFirstEffect;
+    }
 
     public void insertAfterElement(Element element, @NonNull Element toInsert) {
         Element next = element.getNext();

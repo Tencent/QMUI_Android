@@ -21,10 +21,12 @@ import android.graphics.Canvas;
 import androidx.core.util.Pools;
 
 import com.qmuiteam.qmui.type.element.BreakWordLineElement;
-import com.qmuiteam.qmui.type.element.CharElement;
+import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
 import com.qmuiteam.qmui.type.element.Element;
+import com.qmuiteam.qmui.type.element.NextParagraphElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +51,8 @@ public class Line {
     private int mContentWidth;
     private int mContentHeight;
     private int mLayoutWidth;
-    private List<Element> mElements = new ArrayList<>();
+    private List<Element> mElements = new LinkedList<>();
+    private HashMap<Element, Integer> mVisibleChanged;
 
     public void init(int x, int y, int widthLimit) {
         mX = x;
@@ -58,10 +61,19 @@ public class Line {
     }
 
     public void add(Element element) {
-        element.setVisible(Element.VISIBLE);
         mElements.add(element);
         mContentWidth += element.getMeasureWidth();
         mContentHeight = (int) Math.max(mContentHeight, element.getMeasureHeight());
+    }
+
+    public void addFirst(Element element){
+        mElements.add(0, element);
+        mContentWidth += element.getMeasureWidth();
+        mContentHeight = (int) Math.max(mContentHeight, element.getMeasureHeight());
+    }
+
+    public Element first(){
+        return mElements.isEmpty() ? null : mElements.get(0);
     }
 
     public int getSize() {
@@ -76,6 +88,10 @@ public class Line {
         return mLayoutWidth;
     }
 
+    public int getWidthLimit() {
+        return mWidthLimit;
+    }
+
     public int getContentHeight() {
         return mContentHeight;
     }
@@ -86,6 +102,20 @@ public class Line {
 
     public int getY() {
         return mY;
+    }
+
+    public void setX(int x) {
+        mX = x;
+    }
+
+    public void setY(int y) {
+        mY = y;
+    }
+
+    void move(TypeEnvironment environment){
+        for(Element el: mElements){
+            el.move(environment);
+        }
     }
 
     public List<Element> handleWordBreak(TypeEnvironment environment) {
@@ -142,28 +172,46 @@ public class Line {
         return back;
     }
 
-    private void hideLastIfSpaceIfNeeded(boolean dropLastIfSpace){
+    private boolean hideLastIfSpaceIfNeeded(boolean dropLastIfSpace) {
         Element last = mElements.get(mElements.size() - 1);
-        if (dropLastIfSpace && last instanceof CharElement && last.getChar() == ' ') {
-            last.setVisible(Element.GONE);
+        if (dropLastIfSpace && last instanceof CharOrPhraseElement && last.getChar() == ' ' && last.getVisible() != Element.GONE) {
+            changeVisibleInner(last, Element.GONE);
             mContentWidth -= last.getMeasureWidth();
+            return true;
         }
+        return false;
     }
 
-    private int calculateGapCount(){
+    private void changeVisibleInner(Element element, int visible) {
+        int oldVal = element.getVisible();
+        if (visible == oldVal) {
+            return;
+        }
+        if (mVisibleChanged == null) {
+            mVisibleChanged = new HashMap<>();
+        }
+        mVisibleChanged.put(element, oldVal);
+        element.setVisible(visible);
+    }
+
+    private int calculateGapCount() {
         int ret = 0;
-        for(int i = 1; i < mElements.size(); i++){
+        for (int i = 1; i < mElements.size(); i++) {
             Element el = mElements.get(i);
-            if(el.getVisible() != Element.GONE &&
+            if (el.getVisible() != Element.GONE &&
                     (el.getWordPart() == Element.WORD_PART_WHOLE ||
-                    el.getWordPart() == Element.WORD_PART_START)){
-                ret ++;
+                            el.getWordPart() == Element.WORD_PART_START)) {
+                ret++;
             }
         }
         return ret;
     }
 
-    public void layout(TypeEnvironment env, boolean dropLastIfSpace, boolean isParagraphLast) {
+    public boolean isMiddleParagraphEndLine(){
+        return !mElements.isEmpty() && mElements.get(mElements.size() - 1) instanceof NextParagraphElement;
+    }
+
+    public void layout(TypeEnvironment env, boolean dropLastIfSpace, boolean isEnd) {
         if (mElements.isEmpty()) {
             return;
         }
@@ -178,9 +226,9 @@ public class Line {
             start = mX + (mWidthLimit - mContentWidth) / 2f;
         } else if (alignment == TypeEnvironment.Alignment.JUSTIFY) {
             float remain = mWidthLimit - mContentWidth;
-            if (!isParagraphLast || remain < env.getLastLineJustifyMaxWidth()) {
+            if (!(isEnd || isMiddleParagraphEndLine()) || remain < env.getLastLineJustifyMaxWidth()) {
                 int gapCount = calculateGapCount();
-                if(gapCount > 0){
+                if (gapCount > 0) {
                     addSpace = remain / gapCount;
                     mLayoutWidth = mWidthLimit;
                 }
@@ -205,6 +253,36 @@ public class Line {
         }
     }
 
+    void restoreVisibleChange(){
+        if (mVisibleChanged != null) {
+            for (Element entry : mVisibleChanged.keySet()) {
+                Integer visible = mVisibleChanged.get(entry);
+                if (visible != null) {
+                    entry.setVisible(visible);
+                }
+            }
+            mVisibleChanged.clear();
+        }
+    }
+
+    public List<Element> popAll(){
+        List<Element> elements = new ArrayList<>(mElements);
+        mElements.clear();
+        restoreVisibleChange();
+        mContentWidth = 0;
+        mContentHeight = 0;
+        mLayoutWidth = 0;
+        return elements;
+    }
+
+    public void clear(){
+        mElements.clear();
+        restoreVisibleChange();
+        mContentWidth = 0;
+        mContentHeight = 0;
+        mLayoutWidth = 0;
+    }
+
     public void release() {
         mX = 0;
         mY = 0;
@@ -213,6 +291,7 @@ public class Line {
         mContentHeight = 0;
         mLayoutWidth = 0;
         mElements.clear();
+        restoreVisibleChange();
         sLinePool.release(this);
     }
 }

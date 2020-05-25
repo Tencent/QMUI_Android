@@ -16,10 +16,34 @@
 
 package com.qmuiteam.qmui.type.element;
 
-public class BreakWordLineElement extends CharOrPhraseElement {
+import android.graphics.Canvas;
 
-    public BreakWordLineElement() {
-        super('-', -1, -1);
-        setWordPart(WORD_PART_MIDDLE);
+import com.qmuiteam.qmui.type.EnvironmentUpdater;
+import com.qmuiteam.qmui.type.TypeEnvironment;
+
+import java.util.List;
+
+public class EffectElement extends Element {
+
+    public EffectElement(final List<Element> list) {
+        super(' ', null, -1, -1, "");
+        addEnvironmentUpdater(new EnvironmentUpdater() {
+            @Override
+            public void update(TypeEnvironment env) {
+                for (Element element : list) {
+                    element.move(env);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onMeasure(TypeEnvironment env) {
+        setMeasureDimen(0, 0, 0);
+    }
+
+    @Override
+    protected void onDraw(TypeEnvironment env, Canvas canvas) {
+
     }
 }

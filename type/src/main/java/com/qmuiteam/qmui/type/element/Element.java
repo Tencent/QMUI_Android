@@ -25,7 +25,6 @@ import com.qmuiteam.qmui.type.EnvironmentUpdater;
 import com.qmuiteam.qmui.type.TypeEnvironment;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class Element {
@@ -41,12 +40,11 @@ public abstract class Element {
     private final int mIndex;
     private final int mOriginIndex;
     private final String mDescription;
-    private Element mDep;
-    private List<Element> mSubs;
+    private Element mNextEffect;
     private Element mPrev;
     private Element mNext;
-    private int wordPart = WORD_PART_WHOLE;
-    private boolean canBreakWord = false;
+    private int mWordPart = WORD_PART_WHOLE;
+    private boolean mCanBreakWord = false;
     private int mVisible = VISIBLE;
 
 
@@ -73,15 +71,12 @@ public abstract class Element {
         mDescription = description;
     }
 
-    public void depOn(Element element) {
-        if (mDep != null && mDep.mSubs != null) {
-            mDep.mSubs.remove(this);
+    public void insetNextEffect(Element element) {
+        Element origin = mNextEffect;
+        mNextEffect = element;
+        if (element != null) {
+            element.mNextEffect = origin;
         }
-        mDep = element;
-        if (element.mSubs == null) {
-            element.mSubs = new ArrayList<>();
-        }
-        element.mSubs.add(this);
     }
 
     public void setPrev(Element element) {
@@ -99,32 +94,32 @@ public abstract class Element {
     }
 
     public void setWordPart(int wordPart) {
-        this.wordPart = wordPart;
+        this.mWordPart = wordPart;
     }
 
     public int getWordPart() {
-        return wordPart;
+        return mWordPart;
     }
 
     public void setCanBreakWord(boolean canBreakWord) {
-        this.canBreakWord = canBreakWord;
+        this.mCanBreakWord = canBreakWord;
     }
 
     public boolean isCanBreakWord() {
-        return canBreakWord;
+        return mCanBreakWord;
     }
 
-    void addSaveType(int type){
-        if(mSaveType == null){
+    void addSaveType(int type) {
+        if (mSaveType == null) {
             mSaveType = new ArrayList<>();
         }
         mSaveType.add(type);
     }
 
-    void removeSaveType(int type){
-        if(mSaveType != null){
-            for(int i = 0; i <mSaveType.size(); i++){
-                if(mSaveType.get(i) == type){
+    void removeSaveType(int type) {
+        if (mSaveType != null) {
+            for (int i = 0; i < mSaveType.size(); i++) {
+                if (mSaveType.get(i) == type) {
                     mSaveType.remove(i);
                     break;
                 }
@@ -132,17 +127,17 @@ public abstract class Element {
         }
     }
 
-    void addRestoreType(int type){
-        if(mRestoreType == null){
+    void addRestoreType(int type) {
+        if (mRestoreType == null) {
             mRestoreType = new ArrayList<>();
         }
         mRestoreType.add(type);
     }
 
-    void removeStoreType(int type){
-        if(mRestoreType != null){
-            for(int i = 0; i <mRestoreType.size(); i++){
-                if(mRestoreType.get(i) == type){
+    void removeStoreType(int type) {
+        if (mRestoreType != null) {
+            for (int i = 0; i < mRestoreType.size(); i++) {
+                if (mRestoreType.get(i) == type) {
                     mRestoreType.remove(i);
                     break;
                 }
@@ -150,20 +145,37 @@ public abstract class Element {
         }
     }
 
-    public boolean hasEnvironmentUpdater(){
+    public boolean hasEnvironmentUpdater() {
         return mEnvironmentUpdater != null && mEnvironmentUpdater.size() > 0;
     }
 
     void addEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
-        if(mEnvironmentUpdater == null){
+        if (mEnvironmentUpdater == null) {
             mEnvironmentUpdater = new ArrayList<>();
         }
         mEnvironmentUpdater.add(environmentUpdater);
     }
 
-    void removeEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater){
-        if(mEnvironmentUpdater != null){
+    void removeEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
+        if (mEnvironmentUpdater != null) {
             mEnvironmentUpdater.remove(environmentUpdater);
+        }
+    }
+
+    public void unsafeSingleEnvironmentUpdater(@Nullable List<Integer> changedTypes, @NonNull EnvironmentUpdater environmentUpdater) {
+        if (changedTypes != null) {
+            for (Integer type : changedTypes) {
+                addRestoreType(type);
+                addSaveType(type);
+            }
+        }
+        addEnvironmentUpdater(environmentUpdater);
+    }
+
+    public void move(TypeEnvironment environment) {
+        if (hasEnvironmentUpdater()) {
+            updateEnv(environment);
+            restoreEnv(environment);
         }
     }
 
@@ -183,7 +195,7 @@ public abstract class Element {
         return mChar;
     }
 
-    public boolean isSingleChar(){
+    public boolean isSingleChar() {
         return mText == null;
     }
 
@@ -198,15 +210,7 @@ public abstract class Element {
     }
 
     public String getDescription() {
-        return mDescription != null ?mDescription : toString();
-    }
-
-    public Element getDep() {
-        return mDep;
-    }
-
-    public List<Element> getSubs() {
-        return Collections.unmodifiableList(mSubs);
+        return mDescription != null ? mDescription : toString();
     }
 
     protected void setMeasureDimen(float measureWidth, float measureHeight, float baseline) {
@@ -262,34 +266,39 @@ public abstract class Element {
     public void measure(TypeEnvironment env) {
         updateEnv(env);
         onMeasure(env);
+        restoreEnv(env);
     }
 
     public void draw(TypeEnvironment env, Canvas canvas) {
         updateEnv(env);
-        if(mVisible != VISIBLE){
-            return;
+        if (mVisible == VISIBLE) {
+            onDraw(env, canvas);
         }
-        onDraw(env, canvas);
+        restoreEnv(env);
     }
 
-    private void updateEnv(TypeEnvironment env){
-        if(mRestoreType != null){
-            for(Integer type: mRestoreType){
-                env.restore(type);
-            }
-        }
-        if(mSaveType != null){
-            for(Integer type: mSaveType){
+    void updateEnv(TypeEnvironment env) {
+        if (mSaveType != null) {
+            for (Integer type : mSaveType) {
                 env.save(type);
             }
         }
         if (mEnvironmentUpdater != null) {
-            for(EnvironmentUpdater updater: mEnvironmentUpdater){
+            for (EnvironmentUpdater updater : mEnvironmentUpdater) {
                 updater.update(env);
             }
         }
     }
 
+    void restoreEnv(TypeEnvironment env) {
+        if (mRestoreType != null) {
+            for (Integer type : mRestoreType) {
+                env.restore(type);
+            }
+        }
+    }
+
     protected abstract void onMeasure(TypeEnvironment env);
+
     protected abstract void onDraw(TypeEnvironment env, Canvas canvas);
 }

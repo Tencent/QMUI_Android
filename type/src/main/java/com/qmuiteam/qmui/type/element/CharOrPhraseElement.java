@@ -25,14 +25,18 @@ import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.type.TypeEnvironment;
 
-public class CharElement extends Element {
+public class CharOrPhraseElement extends Element {
 
-    public CharElement(char singleChar, int index, int originIndex) {
+    public CharOrPhraseElement(char singleChar, int index, int originIndex) {
         super(singleChar, null, index, originIndex);
     }
 
-    public CharElement(char singleChar, int index, int originIndex, @Nullable String description) {
+    public CharOrPhraseElement(char singleChar, int index, int originIndex, @Nullable String description) {
         super(singleChar, null, index, originIndex, description);
+    }
+
+    public CharOrPhraseElement(String text, int index, int originIndex) {
+        super('\u0000', text, index, originIndex);
     }
 
     @Override
@@ -43,12 +47,8 @@ public class CharElement extends Element {
                 -paint.getFontMetrics().ascent);
     }
 
-    static Paint sPaint = new Paint();
-
     @Override
     protected void onDraw(TypeEnvironment env, Canvas canvas) {
-        sPaint.setColor(Color.RED);
-//        canvas.drawRect(getX(), getY(), getX() + getMeasureWidth(), getY() + getMeasureHeight(), sPaint);
         canvas.drawText(toString(), getX(), getY() + getBaseLine(), env.getPaint());
     }
 }

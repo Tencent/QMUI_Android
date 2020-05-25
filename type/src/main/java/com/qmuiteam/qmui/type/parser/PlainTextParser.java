@@ -17,7 +17,7 @@
 package com.qmuiteam.qmui.type.parser;
 
 import com.qmuiteam.qmui.type.TypeModel;
-import com.qmuiteam.qmui.type.element.CharElement;
+import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
 import com.qmuiteam.qmui.type.element.Element;
 import com.qmuiteam.qmui.type.element.NextParagraphElement;
 
@@ -44,7 +44,7 @@ public class PlainTextParser implements TextParser {
                     tmp = new NextParagraphElement(c, null, index, i);
                 }
             } else {
-                tmp = new CharElement(c, index, i);
+                tmp = new CharOrPhraseElement(c, index, i);
             }
 
             ParserHelper.handleWordPart(c, last, tmp);
@@ -59,6 +59,6 @@ public class PlainTextParser implements TextParser {
             }
             map.put(tmp.getIndex(), tmp);
         }
-        return new TypeModel(map, first, last);
+        return new TypeModel(map, first, last, null);
     }
 }

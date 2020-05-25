@@ -18,6 +18,8 @@ package com.qmuiteam.qmuidemo.fragment.components.qqface;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -35,11 +37,11 @@ import com.qmuiteam.qmuidemo.QDQQFaceManager;
 public class QMUIQQFaceView2 extends View {
 
     private TypeEnvironment mTypeEnvironment = new TypeEnvironment();
-    private LineLayout mLineLayout = new LineLayout.Builder(mTypeEnvironment)
+    private LineLayout mLineLayout = new LineLayout(mTypeEnvironment)
             .setCalculateWholeLines(true)
-            .setEllipsize(TextUtils.TruncateAt.END)
-            .setMaxLines(10)
-            .build();
+            .setEllipsize(TextUtils.TruncateAt.MIDDLE)
+            .setMoreText("更多", Color.RED, Typeface.DEFAULT_BOLD)
+            .setMaxLines(10);
     private TextParser mTextParser = new EmojiTextParser(QDQQFaceManager.getInstance());
 
     public QMUIQQFaceView2(Context context) {
