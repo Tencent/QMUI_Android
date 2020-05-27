@@ -110,7 +110,7 @@ public abstract class QMUIFragment extends Fragment implements
     public static final int ANIMATION_ENTER_STATUS_NOT_START = -1;
     public static final int ANIMATION_ENTER_STATUS_STARTED = 0;
     public static final int ANIMATION_ENTER_STATUS_END = 1;
-
+    private static boolean sPopBackWhenSwipeFinished = false;
 
     private static final int NO_REQUEST_CODE = 0;
     private static final AtomicInteger sNextRc = new AtomicInteger(1);
@@ -153,6 +153,11 @@ public abstract class QMUIFragment extends Fragment implements
     private OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
+            if(sPopBackWhenSwipeFinished){
+                // must use normal back procedure when swipe finished.
+                onNormalBackPressed();
+                return;
+            }
             QMUIFragment.this.onBackPressed();
         }
     };
@@ -542,10 +547,12 @@ public abstract class QMUIFragment extends Fragment implements
                     } else if (scrollPercent >= 1.0F) {
                         // unbind mSwipeBackgroundView util onDestroy
                         if (getActivity() != null) {
+                            sPopBackWhenSwipeFinished = true;
                             popBackStack();
                             int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
                                     R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
                             getActivity().overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
+                            sPopBackWhenSwipeFinished = false;
                         }
                     }
                     return;
@@ -594,7 +601,9 @@ public abstract class QMUIFragment extends Fragment implements
                             return null;
                         }
                     });
+                    sPopBackWhenSwipeFinished = true;
                     popBackStack();
+                    sPopBackWhenSwipeFinished = false;
                 }
             }
         }
@@ -878,7 +887,8 @@ public abstract class QMUIFragment extends Fragment implements
         mOnBackPressedCallback.setEnabled(true);
     }
 
-    protected void onBackPressed() {
+    protected final void onNormalBackPressed() {
+        runSideEffectOnNormalBackPressed();
         if(getParentFragment() != null){
             bubbleBackPressedEvent();
             return;
@@ -916,6 +926,14 @@ public abstract class QMUIFragment extends Fragment implements
         }else{
             bubbleBackPressedEvent();
         }
+    }
+
+    protected void runSideEffectOnNormalBackPressed() {
+
+    }
+
+    protected void onBackPressed() {
+        onNormalBackPressed();
     }
 
     protected void onHandleSpecLastFragmentFinish(FragmentActivity fragmentActivity,
