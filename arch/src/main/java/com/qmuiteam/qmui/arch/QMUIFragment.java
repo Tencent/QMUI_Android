@@ -153,7 +153,7 @@ public abstract class QMUIFragment extends Fragment implements
     private OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            if(sPopBackWhenSwipeFinished){
+            if (sPopBackWhenSwipeFinished) {
                 // must use normal back procedure when swipe finished.
                 onNormalBackPressed();
                 return;
@@ -879,7 +879,7 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
 
-    private void bubbleBackPressedEvent(){
+    private void bubbleBackPressedEvent() {
         // disable this and go with FragmentManager's backPressesCallback
         // because it will call execPendingActions before popBackStackImmediate
         mOnBackPressedCallback.setEnabled(false);
@@ -889,16 +889,16 @@ public abstract class QMUIFragment extends Fragment implements
 
     protected final void onNormalBackPressed() {
         runSideEffectOnNormalBackPressed();
-        if(getParentFragment() != null){
+        if (getParentFragment() != null) {
             bubbleBackPressedEvent();
             return;
         }
         Activity activity = requireActivity();
-        if(activity instanceof QMUIFragmentContainerProvider){
+        if (activity instanceof QMUIFragmentContainerProvider) {
             QMUIFragmentContainerProvider provider = (QMUIFragmentContainerProvider) activity;
-            if(provider.getContainerFragmentManager().getBackStackEntryCount() > 1){
+            if (provider.getContainerFragmentManager().getBackStackEntryCount() > 1) {
                 bubbleBackPressedEvent();
-            }else{
+            } else {
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
                 if (QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
                     requireActivity().finish();
@@ -923,7 +923,7 @@ public abstract class QMUIFragment extends Fragment implements
                     requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
                 }
             }
-        }else{
+        } else {
             bubbleBackPressedEvent();
         }
     }
@@ -1010,6 +1010,9 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     private boolean checkStateLoss(String logName) {
+        if (!isAdded()) {
+            return false;
+        }
         FragmentManager fragmentManager = getParentFragmentManager();
         if (fragmentManager.isStateSaved()) {
             QMUILog.d(TAG, logName + " can not be invoked after onSaveInstanceState");
@@ -1401,9 +1404,9 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
 
-    public final boolean isStartedByScheme(){
+    public final boolean isStartedByScheme() {
         Bundle arguments = getArguments();
-        return  arguments != null && arguments.getBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, false);
+        return arguments != null && arguments.getBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, false);
     }
 
 
