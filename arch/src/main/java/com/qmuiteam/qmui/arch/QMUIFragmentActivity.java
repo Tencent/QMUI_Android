@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -344,6 +345,20 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         }
 
         public abstract FragmentContainerView getFragmentContainerView();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+            try{
+                super.onBackPressed();
+            }catch (Exception ignore){
+                // Under Android O, Activity#onBackPressed doesn't check FragmentManager's save state.
+            }
+        }else{
+            super.onBackPressed();
+        }
+
     }
 
     @SuppressLint("ViewConstructor")
