@@ -349,16 +349,12 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
 
     @Override
     public void onBackPressed() {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
-            try{
-                super.onBackPressed();
-            }catch (Exception ignore){
-                // Under Android O, Activity#onBackPressed doesn't check FragmentManager's save state.
-            }
-        }else{
+        try{
             super.onBackPressed();
+        }catch (Exception ignore){
+            // 1. Under Android O, Activity#onBackPressed doesn't check FragmentManager's save state.
+            // 2. IndexOutOfBoundsException caused by ViewGroup#removeView(View) in EmotionUI.
         }
-
     }
 
     @SuppressLint("ViewConstructor")
