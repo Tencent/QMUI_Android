@@ -77,9 +77,9 @@ public class QMUISkinHelper {
         sSkinValueBuilder.clear();
     }
 
-    public static void refreshRVItemDecoration(@NonNull RecyclerView view, IQMUISkinHandlerDecoration itemDecoration){
+    public static void refreshRVItemDecoration(@NonNull RecyclerView view, IQMUISkinHandlerDecoration itemDecoration) {
         QMUISkinManager.ViewSkinCurrent skinCurrent = QMUISkinManager.getViewSkinCurrent(view);
-        if(skinCurrent != null){
+        if (skinCurrent != null) {
             QMUISkinManager.of(skinCurrent.managerName, view.getContext()).refreshRecyclerDecoration(view, itemDecoration, skinCurrent.index);
         }
     }
@@ -92,18 +92,18 @@ public class QMUISkinHelper {
         return QMUISkinManager.DEFAULT_SKIN;
     }
 
-    public static void refreshViewSkin(@NonNull View view){
+    public static void refreshViewSkin(@NonNull View view) {
         QMUISkinManager.ViewSkinCurrent skinCurrent = QMUISkinManager.getViewSkinCurrent(view);
         if (skinCurrent != null) {
             QMUISkinManager.of(skinCurrent.managerName, view.getContext()).refreshTheme(view, skinCurrent.index);
         }
     }
 
-    public static void syncViewSkin(@NonNull View view, @NonNull View sourceView){
+    public static void syncViewSkin(@NonNull View view, @NonNull View sourceView) {
         QMUISkinManager.ViewSkinCurrent source = QMUISkinManager.getViewSkinCurrent(sourceView);
         if (source != null) {
             QMUISkinManager.ViewSkinCurrent skin = QMUISkinManager.getViewSkinCurrent(view);
-            if(!source.equals(skin)) {
+            if (!source.equals(skin)) {
                 QMUISkinManager.of(source.managerName, view.getContext()).dispatch(view, source.index);
             }
         }
@@ -114,7 +114,20 @@ public class QMUISkinHelper {
         view.setTag(R.id.qmui_skin_default_attr_provider, provider);
     }
 
-    public static void warnRuleNotSupport(View view, String rule){
+    public static void setSkinApplyListener(@NonNull View view, @Nullable IQMUISkinApplyListener listener) {
+        view.setTag(R.id.qmui_skin_apply_listener, listener);
+    }
+
+    @Nullable
+    public static IQMUISkinApplyListener getSkinApplyListener(@NonNull View view) {
+        Object listener = view.getTag(R.id.qmui_skin_apply_listener);
+        if (listener instanceof IQMUISkinApplyListener) {
+            return (IQMUISkinApplyListener) listener;
+        }
+        return null;
+    }
+
+    public static void warnRuleNotSupport(View view, String rule) {
         QMUILog.w("QMUISkinManager",
                 view.getClass().getSimpleName() + " does't support " + rule);
     }

@@ -278,6 +278,7 @@ public final class QMUISkinManager {
                 return;
             }
         }
+
         applyTheme(view, skinIndex, theme);
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
@@ -323,6 +324,12 @@ public final class QMUISkinManager {
             } else {
                 defaultHandleSkinAttrs(view, theme, attrs);
             }
+
+            Object skinApplyListener = view.getTag(R.id.qmui_skin_apply_listener);
+            if(skinApplyListener instanceof IQMUISkinApplyListener){
+                ((IQMUISkinApplyListener)skinApplyListener).onApply(view, skinIndex, theme);
+            }
+
             if (view instanceof RecyclerView) {
                 RecyclerView recyclerView = (RecyclerView) view;
                 int itemDecorationCount = recyclerView.getItemDecorationCount();

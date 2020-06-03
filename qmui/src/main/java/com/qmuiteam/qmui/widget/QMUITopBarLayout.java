@@ -63,6 +63,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         mDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_skin_support_topbar_bg);
         mTopBar = new QMUITopBar(context, attrs, defStyleAttr);
         mTopBar.setBackground(null);
+        mTopBar.setVisibility(View.VISIBLE);
         mTopBar.updateBottomDivider(0, 0, 0, 0);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, mTopBar.getTopBarHeight());
