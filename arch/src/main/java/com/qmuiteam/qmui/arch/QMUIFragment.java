@@ -61,6 +61,7 @@ import com.qmuiteam.qmui.arch.effect.QMUIFragmentEffectRegistry;
 import com.qmuiteam.qmui.arch.effect.QMUIFragmentResultEffectHandler;
 import com.qmuiteam.qmui.arch.record.LatestVisitArgumentCollector;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
+import com.qmuiteam.qmui.arch.scheme.FragmentSchemeRefreshable;
 import com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
@@ -89,7 +90,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment implements
-        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentCollector {
+        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentCollector, FragmentSchemeRefreshable {
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -1322,6 +1323,11 @@ public abstract class QMUIFragment extends Fragment implements
             parentFragment = parentFragment.getParentFragment();
         }
         return true;
+    }
+
+    @Override
+    public void refreshFromScheme(@Nullable Bundle bundle) {
+
     }
 
     private void notifyFragmentVisibleToUserChanged(boolean isVisibleToUser) {

@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.qmuiteam.qmui.arch.scheme.ActivitySchemeRefreshable;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 
@@ -41,7 +42,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
 
-public class QMUIActivity extends InnerBaseActivity {
+public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRefreshable {
     private static final String TAG = "QMUIActivity";
     private SwipeBackLayout.ListenerRemover mListenerRemover;
     private SwipeBackgroundView mSwipeBackgroundView;
@@ -327,5 +328,10 @@ public class QMUIActivity extends InnerBaseActivity {
             }
         }
         super.finish();
+    }
+
+    @Override
+    public void refreshFromScheme(@Nullable Intent intent) {
+
     }
 }

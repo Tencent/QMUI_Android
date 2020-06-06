@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 public @interface ActivityScheme {
     String name();
     String[] required() default {};
+    boolean useRefreshIfCurrentMatched() default false;
     Class<?> customMatcher() default void.class;
     Class<?> customFactory() default void.class;
     String[] keysWithIntValue() default {};

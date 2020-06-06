@@ -35,36 +35,7 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
 
     @Override
     @Nullable
-    public QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
-                                @Nullable Map<String, SchemeValue> scheme) {
-        try {
-            QMUIFragment fragment = fragmentCls.newInstance();
-            fragment.setArguments(createBundleForScheme(scheme));
-            return fragment;
-        } catch (Exception e) {
-            QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
-                    "Error to create fragment: %s", fragmentCls.getSimpleName());
-            return null;
-        }
-    }
-
-    @Override
-    @Nullable
-    public Intent factory(@NonNull Activity activity,
-                          @NonNull Class<? extends QMUIFragmentActivity>[] activityClassList,
-                          @NonNull Class<? extends QMUIFragment> fragmentCls,
-                          @Nullable Map<String, SchemeValue> scheme) {
-        Bundle bundle = createBundleForScheme(scheme);
-        if (activityClassList.length == 0) {
-            return null;
-        }
-        Intent intent = QMUIFragmentActivity.intentOf(activity, activityClassList[0], fragmentCls, bundle);
-        intent.putExtra(ARG_FROM_SCHEME, true);
-        return intent;
-    }
-
-    @NonNull
-    private Bundle createBundleForScheme(@Nullable Map<String, SchemeValue> scheme) {
+    public Bundle factory(@Nullable Map<String, SchemeValue> scheme) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, true);
         if (scheme != null && !scheme.isEmpty()) {
@@ -87,6 +58,21 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             }
         }
         return bundle;
+    }
+
+    @Override
+    @Nullable
+    public Intent factory(@NonNull Activity activity,
+                          @NonNull Class<? extends QMUIFragmentActivity>[] activityClassList,
+                          @NonNull Class<? extends QMUIFragment> fragmentCls,
+                          @Nullable Map<String, SchemeValue> scheme) {
+        Bundle bundle = factory(scheme);
+        if (activityClassList.length == 0) {
+            return null;
+        }
+        Intent intent = QMUIFragmentActivity.intentOf(activity, activityClassList[0], fragmentCls, bundle);
+        intent.putExtra(ARG_FROM_SCHEME, true);
+        return intent;
     }
 
     @Override

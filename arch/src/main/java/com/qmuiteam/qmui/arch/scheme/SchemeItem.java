@@ -44,7 +44,10 @@ public abstract class SchemeItem {
     @Nullable
     private Class<? extends QMUISchemeMatcher> mSchemeMatcherCls;
 
+    private boolean mUseRefreshIfMatchedCurrent;
+
     public SchemeItem(@Nullable ArrayMap<String, String> required,
+                      boolean useRefreshIfMatchedCurrent,
                       @Nullable String[] keysForInt,
                       @Nullable String[] keysForBool,
                       @Nullable String[] keysForLong,
@@ -52,12 +55,17 @@ public abstract class SchemeItem {
                       @Nullable String[] keysForDouble,
                       @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
         mRequired = required;
+        mUseRefreshIfMatchedCurrent = useRefreshIfMatchedCurrent;
         mKeysForInt = keysForInt;
         mKeysForBool = keysForBool;
         mKeysForLong = keysForLong;
         mKeysForFloat = keysForFloat;
         mKeysForDouble = keysForDouble;
         mSchemeMatcherCls = schemeMatcherCls;
+    }
+
+    public boolean isUseRefreshIfMatchedCurrent() {
+        return mUseRefreshIfMatchedCurrent;
     }
 
     @Nullable

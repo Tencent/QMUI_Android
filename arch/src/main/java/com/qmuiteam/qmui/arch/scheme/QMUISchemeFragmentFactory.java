@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.arch.scheme;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,8 +30,7 @@ import java.util.Map;
 
 public interface QMUISchemeFragmentFactory {
     @Nullable
-    QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
-                         @Nullable Map<String, SchemeValue> scheme);
+    Bundle factory(@Nullable Map<String, SchemeValue> scheme);
 
     @Nullable
     Intent factory(@NonNull Activity activity,

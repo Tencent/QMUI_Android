@@ -37,6 +37,7 @@ class ActivitySchemeItem extends SchemeItem {
     private final Class<? extends QMUISchemeIntentFactory> mIntentFactoryCls;
 
     public ActivitySchemeItem(@NonNull Class<? extends Activity> activityClass,
+                              boolean useRefreshIfMatchedCurrent,
                               @Nullable Class<? extends QMUISchemeIntentFactory> intentFactoryCls,
                               @Nullable ArrayMap<String, String> required,
                               @Nullable String[] keysForInt,
@@ -45,7 +46,7 @@ class ActivitySchemeItem extends SchemeItem {
                               @Nullable String[] keysForFloat,
                               @Nullable String[] keysForDouble,
                               @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
-        super(required, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble, schemeMatcherCls);
+        super(required, useRefreshIfMatchedCurrent, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble, schemeMatcherCls);
         mActivityClass = activityClass;
         mIntentFactoryCls = intentFactoryCls;
     }
@@ -79,7 +80,12 @@ class ActivitySchemeItem extends SchemeItem {
             }
 
             Intent intent = factory.factory(activity, mActivityClass, scheme);
-            activity.startActivity(intent);
+
+            if(isUseRefreshIfMatchedCurrent() && mActivityClass == activity.getClass() && activity instanceof ActivitySchemeRefreshable){
+                ((ActivitySchemeRefreshable) activity).refreshFromScheme(intent);
+            }else{
+                activity.startActivity(intent);
+            }
             return true;
         }
         return false;

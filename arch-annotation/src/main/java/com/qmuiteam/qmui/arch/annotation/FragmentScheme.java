@@ -26,6 +26,7 @@ public @interface FragmentScheme {
     String name();
     Class<?>[] activities();
     String[] required() default {};
+    boolean useRefreshIfCurrentMatched() default false;
     Class<?> customMatcher() default void.class;
     boolean forceNewActivity() default false;
     String forceNewActivityKey() default "";

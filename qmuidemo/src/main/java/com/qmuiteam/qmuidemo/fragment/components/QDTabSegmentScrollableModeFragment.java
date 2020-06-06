@@ -48,6 +48,7 @@ import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDLazyTestObserver;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
+import com.qmuiteam.qmuidemo.manager.QDSchemeManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import butterknife.ButterKnife;
 @Widget(group = Group.Other, name = "内容自适应，超过父容器则滚动")
 @FragmentScheme(
         name = "tab",
+        useRefreshIfCurrentMatched = true,
         activities = {QDMainActivity.class},
         required = {"mode=2", "name"},
         keysWithIntValue = {"mode"})
@@ -235,6 +237,12 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
                     builder.textColor(R.attr.app_skin_common_desc_text_color);
                 }
             });
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    QDSchemeManager.getInstance().handle("qmui://tab?mode=2&name=xixi");
+                }
+            });
             view = textView;
             mPageMap.put(page, view);
         }
@@ -288,5 +296,12 @@ public class QDTabSegmentScrollableModeFragment extends BaseFragment {
         public int getPosition() {
             return position;
         }
+    }
+
+    @Override
+    public void refreshFromScheme(@Nullable Bundle bundle) {
+        Toast.makeText(getContext(),
+                "refreshFromScheme: name = " + bundle.getString("name"),
+                Toast.LENGTH_SHORT).show();
     }
 }

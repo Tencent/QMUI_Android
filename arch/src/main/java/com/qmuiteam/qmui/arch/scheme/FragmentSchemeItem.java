@@ -18,10 +18,12 @@ package com.qmuiteam.qmui.arch.scheme;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -41,6 +43,7 @@ class FragmentSchemeItem extends SchemeItem {
     private final Class<? extends QMUISchemeFragmentFactory> mFragmentFactoryCls;
 
     public FragmentSchemeItem(@NonNull Class<? extends QMUIFragment> fragmentCls,
+                              boolean useRefreshIfMatchedCurrent,
                               @NonNull Class<? extends QMUIFragmentActivity>[] activityClsList,
                               @Nullable Class<? extends QMUISchemeFragmentFactory> fragmentFactoryCls,
                               boolean forceNewActivity,
@@ -52,7 +55,7 @@ class FragmentSchemeItem extends SchemeItem {
                               @Nullable String[] keysForFloat,
                               @Nullable String[] keysForDouble,
                               @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
-        super(required, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble, schemeMatcherCls);
+        super(required, useRefreshIfMatchedCurrent, keysForInt, keysForBool, keysForLong, keysForFloat, keysForDouble, schemeMatcherCls);
         mFragmentCls = fragmentCls;
         mActivityClsList = activityClsList;
         mForceNewActivity = forceNewActivity;
@@ -105,14 +108,28 @@ class FragmentSchemeItem extends SchemeItem {
         }
 
         QMUIFragmentActivity fragmentActivity = (QMUIFragmentActivity) activity;
-        QMUIFragment fragment = factory.factory(mFragmentCls, scheme);
-        if (fragment != null) {
+        Bundle args = factory.factory(scheme);
+        Fragment currentFragment = fragmentActivity.getCurrentFragment();
+        if(isUseRefreshIfMatchedCurrent()
+                && currentFragment != null
+                && currentFragment.getClass() == mFragmentCls
+                && currentFragment instanceof FragmentSchemeRefreshable){
+            ((FragmentSchemeRefreshable) currentFragment).refreshFromScheme(args);
+            return true;
+        }
+
+        try {
+            QMUIFragment fragment = mFragmentCls.newInstance();
+            fragment.setArguments(args);
             int commitId = fragmentActivity.startFragment(fragment);
             if (commitId == -1) {
                 QMUILog.d(QMUISchemeHandler.TAG, "start fragment failed.");
                 return false;
             }
             return true;
+        } catch (Exception e) {
+            QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
+                    "Error to create fragment: %s", mFragmentCls.getSimpleName());
         }
         return false;
     }
