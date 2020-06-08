@@ -70,7 +70,13 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha9){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha10){
+            text.append("1. Feature: Added a new widget: QMUISchemeHandler.\n");
+            text.append("2. Feature: Supported to remove section title if only one section in QMUIStickSectionAdapter.\n");
+            text.append("3. Feature: Supported to add a QMUISkinApplyListener to View.\n");
+            text.append("4. Feature: Add a boolean return value for QMUITabSegment#OnTabClickListener to decide to interrupt the event or not.\n");
+            text.append("5. Some bug fixes.");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha9){
             text.append("1. Some bug fixes.");
         }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha8){
             text.append("1. Feature: Add new widget QMUISeekBar.\n");
