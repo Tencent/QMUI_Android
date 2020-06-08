@@ -29,6 +29,11 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import java.util.Map;
 
 public interface QMUISchemeFragmentFactory {
+
+    @Nullable
+    QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
+                         @Nullable Map<String, SchemeValue> scheme);
+
     @Nullable
     Bundle factory(@Nullable Map<String, SchemeValue> scheme);
 

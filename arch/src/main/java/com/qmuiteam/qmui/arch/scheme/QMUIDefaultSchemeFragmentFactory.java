@@ -35,6 +35,22 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
 
     @Override
     @Nullable
+    public QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
+                                @Nullable Map<String, SchemeValue> scheme) {
+        try {
+            QMUIFragment fragment = fragmentCls.newInstance();
+            fragment.setArguments(factory(scheme));
+            return fragment;
+        } catch (Exception e) {
+            QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
+                    "Error to create fragment: %s", fragmentCls.getSimpleName());
+            return null;
+        }
+    }
+
+
+    @Override
+    @Nullable
     public Bundle factory(@Nullable Map<String, SchemeValue> scheme) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, true);

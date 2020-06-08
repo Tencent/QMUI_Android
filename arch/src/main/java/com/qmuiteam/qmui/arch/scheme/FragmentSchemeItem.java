@@ -108,28 +108,23 @@ class FragmentSchemeItem extends SchemeItem {
         }
 
         QMUIFragmentActivity fragmentActivity = (QMUIFragmentActivity) activity;
-        Bundle args = factory.factory(scheme);
         Fragment currentFragment = fragmentActivity.getCurrentFragment();
         if(isUseRefreshIfMatchedCurrent()
                 && currentFragment != null
                 && currentFragment.getClass() == mFragmentCls
                 && currentFragment instanceof FragmentSchemeRefreshable){
-            ((FragmentSchemeRefreshable) currentFragment).refreshFromScheme(args);
+            ((FragmentSchemeRefreshable) currentFragment).refreshFromScheme(factory.factory(scheme));
             return true;
         }
 
-        try {
-            QMUIFragment fragment = mFragmentCls.newInstance();
-            fragment.setArguments(args);
+        QMUIFragment fragment = factory.factory(mFragmentCls, scheme);
+        if(fragment != null){
             int commitId = fragmentActivity.startFragment(fragment);
             if (commitId == -1) {
                 QMUILog.d(QMUISchemeHandler.TAG, "start fragment failed.");
                 return false;
             }
             return true;
-        } catch (Exception e) {
-            QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
-                    "Error to create fragment: %s", mFragmentCls.getSimpleName());
         }
         return false;
     }
