@@ -26,6 +26,13 @@ public abstract class QMUIDefaultStickySectionAdapter<
         T extends QMUISection.Model<T>> extends
         QMUIStickySectionAdapter<H, T, QMUIStickySectionAdapter.ViewHolder> {
 
+    public QMUIDefaultStickySectionAdapter() {
+    }
+
+    public QMUIDefaultStickySectionAdapter(boolean removeSectionTitleIfOnlyOneSection) {
+        super(removeSectionTitleIfOnlyOneSection);
+    }
+
     @NonNull
     @Override
     protected ViewHolder onCreateSectionLoadingViewHolder(@NonNull ViewGroup viewGroup) {

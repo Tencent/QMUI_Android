@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.section.QMUIDefaultStickySectionAdapter;
 import com.qmuiteam.qmui.widget.section.QMUISection;
 import com.qmuiteam.qmuidemo.R;
@@ -36,6 +37,13 @@ import com.qmuiteam.qmuidemo.view.QDLoadingItemView;
 import com.qmuiteam.qmuidemo.view.QDSectionHeaderView;
 
 public class QDGridSectionAdapter extends QMUIDefaultStickySectionAdapter<SectionHeader, SectionItem> {
+
+    public QDGridSectionAdapter() {
+    }
+
+    public QDGridSectionAdapter(boolean removeSectionTitleIfOnlyOneSection) {
+        super(removeSectionTitleIfOnlyOneSection);
+    }
 
     @NonNull
     @Override

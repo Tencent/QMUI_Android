@@ -39,6 +39,7 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
 
     private SparseIntArray mNewSectionIndex = new SparseIntArray();
     private SparseIntArray mNewItemIndex = new SparseIntArray();
+    private boolean mRemoveSectionTitleIfOnlyOnceSection;
 
     public QMUISectionDiffCallback(
             @Nullable List<QMUISection<H, T>> oldList,
@@ -50,9 +51,12 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         if (newList != null) {
             mNewList.addAll(newList);
         }
+    }
 
-        generateIndex(mOldList, mOldSectionIndex, mOldItemIndex);
-        generateIndex(mNewList, mNewSectionIndex, mNewItemIndex);
+    void generateIndex(boolean removeSectionTitleIfOnlyOnceSection){
+        mRemoveSectionTitleIfOnlyOnceSection = removeSectionTitleIfOnlyOnceSection;
+        generateIndex(mOldList, mOldSectionIndex, mOldItemIndex, removeSectionTitleIfOnlyOnceSection);
+        generateIndex(mNewList, mNewSectionIndex, mNewItemIndex, removeSectionTitleIfOnlyOnceSection);
     }
 
     public void cloneNewIndexTo(@NonNull SparseIntArray sectionIndex, @NonNull SparseIntArray itemIndex) {
@@ -67,7 +71,8 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
     }
 
     private void generateIndex(List<QMUISection<H, T>> list,
-                               SparseIntArray sectionIndex, SparseIntArray itemIndex) {
+                               SparseIntArray sectionIndex, SparseIntArray itemIndex,
+                               boolean removeSectionTitleIfOnlyOnceSection) {
         sectionIndex.clear();
         itemIndex.clear();
         IndexGenerationInfo generationInfo = new IndexGenerationInfo(sectionIndex, itemIndex);
@@ -80,7 +85,9 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             if (section.isLocked()) {
                 continue;
             }
-            generationInfo.appendIndex(i, ITEM_INDEX_SECTION_HEADER);
+            if(!removeSectionTitleIfOnlyOnceSection || list.size() > 1){
+                generationInfo.appendIndex(i, ITEM_INDEX_SECTION_HEADER);
+            }
             if (section.isFold()) {
                 continue;
             }
@@ -223,6 +230,16 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
 
         if (newSectionIndex < 0) {
             return areCustomContentsTheSame(null, oldItemIndex, null, newItemIndex);
+        }
+
+        if(mRemoveSectionTitleIfOnlyOnceSection){
+            // may be the indentation is changed.
+            if(mOldList.size() == 1 && mNewList.size() != 1){
+                return false;
+            }
+            if(mOldList.size() != 1 && mNewList.size() == 1){
+                return false;
+            }
         }
 
         QMUISection<H, T> oldModel = mOldList.get(oldSectionIndex);

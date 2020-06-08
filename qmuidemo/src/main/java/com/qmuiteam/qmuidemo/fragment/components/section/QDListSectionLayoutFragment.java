@@ -31,7 +31,7 @@ public class QDListSectionLayoutFragment extends QDBaseSectionLayoutFragment {
 
     @Override
     protected QMUIStickySectionAdapter<SectionHeader, SectionItem, QMUIStickySectionAdapter.ViewHolder> createAdapter() {
-        return new QDListSectionAdapter();
+        return new QDListSectionAdapter(true);
     }
 
     @Override

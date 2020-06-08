@@ -52,6 +52,16 @@ public abstract class QMUIStickySectionAdapter<
 
     private Callback<H, T> mCallback;
     private ViewCallback mViewCallback;
+    private final boolean mRemoveSectionTitleIfOnlyOneSection;
+
+
+    public QMUIStickySectionAdapter() {
+        this(false);
+    }
+
+    public QMUIStickySectionAdapter(boolean removeSectionTitleIfOnlyOneSection) {
+        mRemoveSectionTitleIfOnlyOneSection = removeSectionTitleIfOnlyOneSection;
+    }
 
     /**
      * see {@link #setData(List, boolean, boolean)}
@@ -142,6 +152,7 @@ public abstract class QMUIStickySectionAdapter<
         }
         // only used to generate index info
         QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
+        callback.generateIndex(mRemoveSectionTitleIfOnlyOneSection);
         callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
         notifyDataSetChanged();
         mBackupData.clear();
@@ -152,6 +163,7 @@ public abstract class QMUIStickySectionAdapter<
 
     private void diff(boolean newDataSet, boolean onlyMutateState) {
         QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
+        callback.generateIndex(mRemoveSectionTitleIfOnlyOneSection);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
         callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
         diffResult.dispatchUpdatesTo(this);
@@ -175,13 +187,15 @@ public abstract class QMUIStickySectionAdapter<
      */
     public void refreshCustomData() {
         QMUISectionDiffCallback callback = createDiffCallback(mBackupData, mCurrentData);
+        callback.generateIndex(mRemoveSectionTitleIfOnlyOneSection);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
         callback.cloneNewIndexTo(mSectionIndex, mItemIndex);
         diffResult.dispatchUpdatesTo(this);
     }
 
     protected QMUISectionDiffCallback<H, T> createDiffCallback(
-            List<QMUISection<H, T>> lastData, List<QMUISection<H, T>> currentData) {
+            List<QMUISection<H, T>> lastData,
+            List<QMUISection<H, T>> currentData) {
         return new QMUISectionDiffCallback<>(lastData, currentData);
     }
 
@@ -193,6 +207,10 @@ public abstract class QMUIStickySectionAdapter<
         mViewCallback = viewCallback;
     }
 
+
+    public int getSectionCount() {
+        return mCurrentData.size();
+    }
 
     public int getItemIndex(int position) {
         if (position < 0 || position >= mItemIndex.size()) {
@@ -568,6 +586,10 @@ public abstract class QMUIStickySectionAdapter<
             }
         }
         return position;
+    }
+
+    public boolean isRemoveSectionTitleIfOnlyOneSection() {
+        return mRemoveSectionTitleIfOnlyOneSection;
     }
 
     @Override

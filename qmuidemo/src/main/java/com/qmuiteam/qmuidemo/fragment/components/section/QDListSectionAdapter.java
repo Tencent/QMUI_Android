@@ -29,6 +29,13 @@ import com.qmuiteam.qmuidemo.R;
 
 public class QDListSectionAdapter extends QDGridSectionAdapter {
 
+    public QDListSectionAdapter() {
+    }
+
+    public QDListSectionAdapter(boolean removeSectionTitleIfOnlyOneSection) {
+        super(removeSectionTitleIfOnlyOneSection);
+    }
+
     @NonNull
     @Override
     protected ViewHolder onCreateSectionItemViewHolder(@NonNull ViewGroup viewGroup) {
