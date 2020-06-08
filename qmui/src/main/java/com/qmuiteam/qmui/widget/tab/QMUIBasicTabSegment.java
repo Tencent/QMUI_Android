@@ -317,16 +317,20 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
     }
 
 
-    void onClickTab(int index) {
+    protected void onClickTab(QMUITabView view, int index) {
         if (mSelectAnimator != null || needPreventEvent()) {
             return;
         }
+
+        if (mOnTabClickListener != null) {
+            if (mOnTabClickListener.onTabClick(view, index)) {
+                return;
+            }
+        }
+
         QMUITab model = mTabAdapter.getItem(index);
         if (model != null) {
             selectTab(index, mSelectNoAnimation, true);
-        }
-        if (mOnTabClickListener != null) {
-            mOnTabClickListener.onTabClick(index);
         }
     }
 
@@ -499,12 +503,13 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mSelectAnimator = null;
                 prevView.setSelectFraction(0f);
                 nowView.setSelectFraction(1f);
+                mSelectAnimator = null;
+                // set current selected index first, dispatchTabSelected may call selectTab again.
+                mCurrentSelectedIndex = index;
                 dispatchTabSelected(index);
                 dispatchTabUnselected(prev);
-                mCurrentSelectedIndex = index;
                 if (mPendingSelectedIndex != NO_POSITION && !needPreventEvent()) {
                     selectTab(mPendingSelectedIndex, true, false);
                     mPendingSelectedIndex = NO_POSITION;
@@ -711,9 +716,12 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         /**
          * 当某个 Tab 被点击时会触发
          *
+         * @param tabView 被点击的View
          * @param index 被点击的 Tab 下标
+         *
+         * @return true 拦截 selectTab 事件
          */
-        void onTabClick(int index);
+        boolean onTabClick(QMUITabView tabView, int index);
     }
 
     public interface OnTabSelectedListener {

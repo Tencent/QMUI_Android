@@ -46,7 +46,7 @@ public class QMUITabAdapter extends QMUIItemViewsAdapter<QMUITab, QMUITabView> i
     @Override
     public void onClick(QMUITabView view) {
         int index = getViews().indexOf(view);
-        mTabSegment.onClickTab(index);
+        mTabSegment.onClickTab(view, index);
     }
 
     @Override
