@@ -32,7 +32,9 @@ import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
+import com.qmuiteam.qmui.widget.IWindowInsetKeyboardConsumer;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATO
  */
 
 
-public class SwipeBackLayout extends QMUIWindowInsetLayout {
+public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowInsetKeyboardConsumer {
 
     private static final int MIN_FLING_VELOCITY = 400; // dips per second
     private static final int DEFAULT_SCRIM_COLOR = 0x99000000;
@@ -83,9 +85,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     private float mScrollThreshold = DEFAULT_SCROLL_THRESHOLD;
 
     private View mContentView;
-    private float mScrollPercent;
     private List<SwipeListener> mListeners;
     private Callback mCallback;
+    private OnKeyboardInsetHandler mOnKeyboardInsetHandler;
 
     private Drawable mShadowLeft;
     private Drawable mShadowRight;
@@ -236,35 +238,15 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         mListeners = null;
     }
 
-    public interface SwipeListener {
-        /**
-         * Invoke when state change
-         *
-         * @param state         flag to describe scroll state
-         * @param scrollPercent scroll percent of this view
-         * @see #STATE_IDLE
-         * @see #STATE_DRAGGING
-         * @see #STATE_SETTLING
-         */
-        void onScrollStateChange(int state, float scrollPercent);
+    public void setOnKeyboardInsetHandler(OnKeyboardInsetHandler onKeyboardInsetHandler) {
+        mOnKeyboardInsetHandler = onKeyboardInsetHandler;
+    }
 
-        /**
-         * Invoke when scrolling
-         *
-         * @param moveEdge      flag to describe edge
-         * @param scrollPercent scroll percent of this view
-         */
-        void onScroll(int dragDirection, int moveEdge, float scrollPercent);
-
-        /**
-         * Invoke when swipe back begin.
-         */
-        void onSwipeBackBegin(int dragDirection, int moveEdge);
-
-        /**
-         * Invoke when scroll percent over the threshold for the first time
-         */
-        void onScrollOverThreshold();
+    @Override
+    public void onHandleKeyboard(int keyboardInset) {
+        if(mOnKeyboardInsetHandler == null || !mOnKeyboardInsetHandler.handleKeyboardInset(keyboardInset)){
+            QMUIViewHelper.setPaddingBottom(this, keyboardInset);
+        }
     }
 
     /**
@@ -748,19 +730,19 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
     }
 
     private void onScroll() {
-        mScrollPercent = mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
+        float scrollPercent = mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
         mScrimOpacity = 1 - mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection);
-        if (mScrollPercent < mScrollThreshold && !mIsScrollOverValid) {
+        if (scrollPercent < mScrollThreshold && !mIsScrollOverValid) {
             mIsScrollOverValid = true;
         }
         if (mDragState == STATE_DRAGGING && mIsScrollOverValid &&
-                mScrollPercent >= mScrollThreshold) {
+                scrollPercent >= mScrollThreshold) {
             mIsScrollOverValid = false;
             onScrollOverThreshold();
         }
         if (mListeners != null && !mListeners.isEmpty()) {
             for (SwipeListener listener : mListeners) {
-                listener.onScroll(mCurrentDragDirection, mViewMoveAction.getEdge(mCurrentDragDirection), mScrollPercent);
+                listener.onScroll(mCurrentDragDirection, mViewMoveAction.getEdge(mCurrentDragDirection), scrollPercent);
             }
         }
         invalidate();
@@ -804,33 +786,19 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
         return wrapper;
     }
 
-    public static void offsetInSwipeBack(View view, int edgeFlag, int targetOffset) {
-        Object offsetHelperObj = view.getTag(R.id.qmui_arch_swipe_offset_helper);
-        QMUIViewOffsetHelper offsetHelper;
-        if (!(offsetHelperObj instanceof QMUIViewOffsetHelper)) {
-            offsetHelper = new QMUIViewOffsetHelper(view);
-            view.setTag(R.id.qmui_arch_swipe_offset_helper, offsetHelper);
-        } else {
-            offsetHelper = (QMUIViewOffsetHelper) offsetHelperObj;
-        }
+    public static void translateInSwipeBack(View view, int edgeFlag, int targetOffset){
         if (edgeFlag == EDGE_BOTTOM) {
-            offsetHelper.setTopAndBottomOffset(targetOffset);
-            offsetHelper.setLeftAndRightOffset(0);
+            view.setTranslationY(targetOffset);
+            view.setTranslationX(0);
         } else if (edgeFlag == EDGE_RIGHT) {
-            offsetHelper.setTopAndBottomOffset(0);
-            offsetHelper.setLeftAndRightOffset(targetOffset);
-        } else {
-            offsetHelper.setTopAndBottomOffset(0);
-            offsetHelper.setLeftAndRightOffset(-targetOffset);
-        }
-    }
-
-    public static void updateLayoutInSwipeBack(View view) {
-        if (view.getTag(R.id.qmui_arch_swipe_layout_in_back) == QMUIFragment.SWIPE_BACK_VIEW) {
-            Object offsetHelperObj = view.getTag(R.id.qmui_arch_swipe_offset_helper);
-            if (offsetHelperObj instanceof QMUIViewOffsetHelper) {
-                ((QMUIViewOffsetHelper) offsetHelperObj).onViewLayout();
-            }
+            view.setTranslationY(0);
+            view.setTranslationX(targetOffset);
+        } else if(edgeFlag == EDGE_LEFT){
+            view.setTranslationY(0);
+            view.setTranslationX(-targetOffset);
+        }else{
+            view.setTranslationY(-targetOffset);
+            view.setTranslationX(0);
         }
     }
 
@@ -859,6 +827,41 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout {
 
     public interface ListenerRemover {
         void remove();
+    }
+
+    public interface SwipeListener {
+        /**
+         * Invoke when state change
+         *
+         * @param state         flag to describe scroll state
+         * @param scrollPercent scroll percent of this view
+         * @see #STATE_IDLE
+         * @see #STATE_DRAGGING
+         * @see #STATE_SETTLING
+         */
+        void onScrollStateChange(int state, float scrollPercent);
+
+        /**
+         * Invoke when scrolling
+         *
+         * @param moveEdge      flag to describe edge
+         * @param scrollPercent scroll percent of this view
+         */
+        void onScroll(int dragDirection, int moveEdge, float scrollPercent);
+
+        /**
+         * Invoke when swipe back begin.
+         */
+        void onSwipeBackBegin(int dragDirection, int moveEdge);
+
+        /**
+         * Invoke when scroll percent over the threshold for the first time
+         */
+        void onScrollOverThreshold();
+    }
+
+    public interface OnKeyboardInsetHandler {
+        boolean handleKeyboardInset(int inset);
     }
 
     public static class ViewMoveAuto implements ViewMoveAction {

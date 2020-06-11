@@ -42,7 +42,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
 
-public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRefreshable {
+public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRefreshable, SwipeBackLayout.OnKeyboardInsetHandler {
     private static final String TAG = "QMUIActivity";
     private SwipeBackLayout.ListenerRemover mListenerRemover;
     private SwipeBackgroundView mSwipeBackgroundView;
@@ -76,7 +76,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
                 scrollPercent = Math.max(0f, Math.min(1f, scrollPercent));
                 int targetOffset = (int) (Math.abs(backViewInitOffset(
                         QMUIActivity.this, dragDirection, movingEdge)) * (1 - scrollPercent));
-                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, movingEdge, targetOffset);
+                SwipeBackLayout.translateInSwipeBack(mSwipeBackgroundView, movingEdge, targetOffset);
             }
         }
 
@@ -97,7 +97,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
                 }
                 mSwipeBackgroundView.bind(prevActivity,
                         QMUIActivity.this, restoreSubWindowWhenDragBack());
-                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, moveEdge,
+                SwipeBackLayout.translateInSwipeBack(mSwipeBackgroundView, moveEdge,
                         Math.abs(backViewInitOffset(decorView.getContext(), dragDirection, moveEdge)));
             }
         }
@@ -138,6 +138,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
     @Override
     public void setContentView(int layoutResID) {
         SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(this, layoutResID, dragViewMoveAction(), mSwipeCallback);
+        swipeBackLayout.setOnKeyboardInsetHandler(this);
         if (translucentFull()) {
             swipeBackLayout.getContentView().setFitsSystemWindows(false);
         } else {
@@ -159,6 +160,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
             view.setFitsSystemWindows(true);
         }
         final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(view, dragViewMoveAction(), mSwipeCallback);
+        swipeBackLayout.setOnKeyboardInsetHandler(this);
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
         return swipeBackLayout;
     }
@@ -317,6 +319,11 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     public Intent onLastActivityFinish() {
         return null;
+    }
+
+    @Override
+    public boolean handleKeyboardInset(int inset) {
+        return false;
     }
 
     @Override

@@ -90,7 +90,10 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment implements
-        QMUIFragmentLazyLifecycleOwner.Callback, LatestVisitArgumentCollector, FragmentSchemeRefreshable {
+        QMUIFragmentLazyLifecycleOwner.Callback,
+        LatestVisitArgumentCollector,
+        FragmentSchemeRefreshable,
+        SwipeBackLayout.OnKeyboardInsetHandler{
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -520,6 +523,7 @@ public abstract class QMUIFragment extends Fragment implements
                     }
                 });
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
+        swipeBackLayout.setOnKeyboardInsetHandler(this);
         if (isCreateForSwipeBack) {
             swipeBackLayout.setTag(R.id.fragment_container_view_tag, this);
         }
@@ -623,11 +627,11 @@ public abstract class QMUIFragment extends Fragment implements
                 View view = container.getChildAt(i);
                 Object tag = view.getTag(R.id.qmui_arch_swipe_layout_in_back);
                 if (SWIPE_BACK_VIEW.equals(tag)) {
-                    SwipeBackLayout.offsetInSwipeBack(view, moveEdge, targetOffset);
+                    SwipeBackLayout.translateInSwipeBack(view, moveEdge, targetOffset);
                 }
             }
             if (mSwipeBackgroundView != null) {
-                SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, moveEdge, targetOffset);
+                SwipeBackLayout.translateInSwipeBack(mSwipeBackgroundView, moveEdge, targetOffset);
             }
         }
 
@@ -676,7 +680,7 @@ public abstract class QMUIFragment extends Fragment implements
                                         if (baseView != null) {
                                             addViewInSwipeBack(container, baseView, 0);
                                             handleChildFragmentListWhenSwipeBackStart(mModifiedFragment, baseView);
-                                            SwipeBackLayout.offsetInSwipeBack(baseView, moveEdge,
+                                            SwipeBackLayout.translateInSwipeBack(baseView, moveEdge,
                                                     Math.abs(backViewInitOffset(baseView.getContext(), dragDirection, moveEdge)));
                                         }
                                     }
@@ -712,7 +716,7 @@ public abstract class QMUIFragment extends Fragment implements
                                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     }
                     mSwipeBackgroundView.bind(prevActivity, currentActivity, restoreSubWindowWhenDragBack());
-                    SwipeBackLayout.offsetInSwipeBack(mSwipeBackgroundView, moveEdge,
+                    SwipeBackLayout.translateInSwipeBack(mSwipeBackgroundView, moveEdge,
                             Math.abs(backViewInitOffset(decorView.getContext(), dragDirection, moveEdge)));
                 }
             }
@@ -1344,6 +1348,11 @@ public abstract class QMUIFragment extends Fragment implements
             parentFragment = parentFragment.getParentFragment();
         }
         return true;
+    }
+
+    @Override
+    public boolean handleKeyboardInset(int inset) {
+        return false;
     }
 
     @Override

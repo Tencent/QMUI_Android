@@ -251,14 +251,6 @@ public class QDMainActivity extends BaseFragmentActivity {
 
             fragmentContainer = new FragmentContainerView(context);
             fragmentContainer.setId(fragmentContainerId);
-            fragmentContainer.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    for (int i = 0; i < getChildCount(); i++) {
-                        SwipeBackLayout.updateLayoutInSwipeBack(getChildAt(i));
-                    }
-                }
-            });
             addView(fragmentContainer, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
