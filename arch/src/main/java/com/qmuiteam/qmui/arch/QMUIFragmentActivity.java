@@ -54,6 +54,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     private static final String TAG = "QMUIFragmentActivity";
     private RootView mRootView;
     private boolean mIsFirstFragmentAdded = false;
+    private boolean isChildHandlePopBackRequested = false;
 
     static {
         QMUIWindowInsetHelper.addHandleContainer(FragmentContainerView.class);
@@ -179,6 +180,16 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     @Override
     public ViewModelStoreOwner getContainerViewModelStoreOwner() {
         return this;
+    }
+
+    @Override
+    public void requestForHandlePopBack(boolean toHandle) {
+        isChildHandlePopBackRequested = toHandle;
+    }
+
+    @Override
+    public boolean isChildHandlePopBackRequested() {
+        return isChildHandlePopBackRequested;
     }
 
     protected RootView onCreateRootView(int fragmentContainerId) {

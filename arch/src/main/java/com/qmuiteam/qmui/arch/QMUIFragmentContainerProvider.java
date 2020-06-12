@@ -30,4 +30,8 @@ public interface QMUIFragmentContainerProvider {
     FragmentContainerView getFragmentContainerView();
 
     ViewModelStoreOwner getContainerViewModelStoreOwner();
+
+    void requestForHandlePopBack(boolean toHandle);
+
+    boolean isChildHandlePopBackRequested();
 }

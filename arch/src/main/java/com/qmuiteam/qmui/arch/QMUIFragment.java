@@ -26,7 +26,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -47,8 +46,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.QMUILog;
@@ -423,6 +420,7 @@ public abstract class QMUIFragment extends Fragment implements
         String tagName = fragment.getClass().getSimpleName();
         return provider.getContainerFragmentManager()
                 .beginTransaction()
+                .setPrimaryNavigationFragment(null)
                 .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
                 .replace(provider.getContextViewId(), fragment, tagName)
                 .addToBackStack(tagName)
@@ -476,48 +474,16 @@ public abstract class QMUIFragment extends Fragment implements
                 new SwipeBackLayout.Callback() {
                     @Override
                     public int getDragDirection(SwipeBackLayout swipeBackLayout, SwipeBackLayout.ViewMoveAction viewMoveAction, float downX, float downY, float dx, float dy, float touchSlop) {
-                        // 1. can not swipe back if in animation
-                        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
+
+                        mCalled = false;
+                        boolean canHandle = canHandleSwipeBack();
+                        if (!mCalled) {
+                            throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.shouldPreventSwipeBack()");
                         }
 
-                        // 2. can not swipe back if it is not managed by FragmentContainer
-                        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
-                        if (provider == null) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
+                        if(!canHandle){
+                            return DRAG_DIRECTION_NONE;
                         }
-
-                        FragmentManager fragmentManager = provider.getContainerFragmentManager();
-                        if (fragmentManager == null || fragmentManager != getParentFragmentManager()) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
-                        }
-
-                        // 3. need be handled by inner FragmentContainer
-                        if (fragmentManager.getPrimaryNavigationFragment() != null) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
-                        }
-
-                        // 4. can not swipe back if the view is null
-                        View view = getView();
-                        if (view == null) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
-                        }
-
-                        // 5. can not swipe back if if the Fragment is in ViewPager
-                        ViewParent parent = view.getParent();
-                        while (parent != null) {
-                            if (parent instanceof ViewPager || parent instanceof ViewPager2) {
-                                return SwipeBackLayout.DRAG_DIRECTION_NONE;
-                            }
-                            parent = parent.getParent();
-                        }
-
-                        // 6. can not swipe back if the backStack entry count is less than 2
-                        if (fragmentManager.getBackStackEntryCount() <= 1 &&
-                                !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
-                            return SwipeBackLayout.DRAG_DIRECTION_NONE;
-                        }
-
                         return QMUIFragment.this.getDragDirection(
                                 swipeBackLayout, viewMoveAction, downX, downY, dx, dy, touchSlop);
                     }
@@ -748,6 +714,8 @@ public abstract class QMUIFragment extends Fragment implements
                         if (onRemove != null) {
                             onRemove.apply(view);
                         }
+                        view.setTranslationY(0);
+                        view.setTranslationX(0);
                         parent.removeView(view);
                     }
                 }
@@ -1082,7 +1050,7 @@ public abstract class QMUIFragment extends Fragment implements
         mCalled = false;
         onEnterAnimationEnd(animation);
         if (!mCalled) {
-            throw new RuntimeException("QMUIFragment " + this + " did not call through to super.onEnterAnimationEnd(Animation)");
+            throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationEnd(Animation)");
         }
     }
 
@@ -1194,6 +1162,44 @@ public abstract class QMUIFragment extends Fragment implements
 
     protected SwipeBackLayout.ViewMoveAction dragViewMoveAction() {
         return SwipeBackLayout.MOVE_VIEW_AUTO;
+    }
+
+    protected boolean canHandleSwipeBack(){
+        mCalled = true;
+        // 1. can not swipe back if enter animation is not finished
+        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
+            return false;
+        }
+
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if (provider == null) {
+            return false;
+        }
+        FragmentManager fragmentManager = provider.getContainerFragmentManager();
+
+        // 3. is not managed by QMUIFragmentContainerProvider
+        if (fragmentManager == null || fragmentManager != getParentFragmentManager()) {
+            return false;
+        }
+
+        // 4. should handle by child
+        if(provider.isChildHandlePopBackRequested()){
+            return false;
+        }
+
+        // 5. can not swipe back if the view is null
+        View view = getView();
+        if (view == null) {
+            return false;
+        }
+
+        // 6. can not swipe back if the backStack entry count is less than 2
+        if (fragmentManager.getBackStackEntryCount() <= 1 &&
+                !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+            return false;
+        }
+
+        return true;
     }
 
     protected int getDragDirection(@NonNull SwipeBackLayout swipeBackLayout,
