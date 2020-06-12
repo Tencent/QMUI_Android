@@ -648,12 +648,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
     }
 
     @Override
-    public boolean applySystemWindowInsets21(Object insets) {
-        super.applySystemWindowInsets21(insets);
-        return true;
-    }
-
-    @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         final boolean drawContent = child == mContentView;
 

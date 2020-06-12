@@ -18,17 +18,15 @@ package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.view.View;
-
-import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-
-import java.lang.reflect.Field;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.appbar.AppBarLayout;
+
+import java.lang.reflect.Field;
 
 /**
  * add support for API 19 when use with {@link CoordinatorLayout}
@@ -42,6 +40,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
  */
 
 public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout {
+
     public QMUIAppBarLayout(Context context) {
         super(context);
     }
@@ -50,25 +49,28 @@ public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout
         super(context, attrs);
     }
 
+
+    private Field mLastInsetField = null;
+
     @Override
     public boolean applySystemWindowInsets19(final Rect insets) {
         if (ViewCompat.getFitsSystemWindows(this)) {
-            Field field = null;
-            try {
-                // support 28 change the name
-                field = AppBarLayout.class.getDeclaredField("lastInsets");
-            } catch (NoSuchFieldException e) {
+            if(mLastInsetField == null){
                 try {
-                    field = AppBarLayout.class.getDeclaredField("mLastInsets");
-                } catch (NoSuchFieldException ignored) {
+                    // support 28 change the name
+                    mLastInsetField = AppBarLayout.class.getDeclaredField("lastInsets");
+                } catch (NoSuchFieldException e) {
+                    try {
+                        mLastInsetField = AppBarLayout.class.getDeclaredField("mLastInsets");
+                    } catch (NoSuchFieldException ignored) {
 
+                    }
                 }
             }
-
-            if (field != null) {
-                field.setAccessible(true);
+            if (mLastInsetField != null) {
+                mLastInsetField.setAccessible(true);
                 try {
-                    field.set(this, new WindowInsetsCompat(null) {
+                    mLastInsetField.set(this, new WindowInsetsCompat(null) {
                         @Override
                         public int getSystemWindowInsetTop() {
                             return insets.top;
@@ -78,29 +80,14 @@ public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout
 
                 }
             }
-
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                if (QMUIWindowInsetHelper.jumpDispatch(child)) {
-                    continue;
-                }
-
-
-                if (!QMUIWindowInsetHelper.isHandleContainer(child)) {
-                    child.setPadding(insets.left, insets.top, insets.right, insets.bottom);
-                } else {
-                    if (child instanceof IWindowInsetLayout) {
-                        ((IWindowInsetLayout) child).applySystemWindowInsets19(insets);
-                    }
-                }
-            }
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean applySystemWindowInsets21(Object insets) {
-        return true;
+    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
+        // will not run here.
+        return insets;
     }
 }

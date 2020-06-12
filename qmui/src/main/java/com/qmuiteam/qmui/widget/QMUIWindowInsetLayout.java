@@ -21,6 +21,8 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import android.util.AttributeSet;
 
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
@@ -38,7 +40,6 @@ import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
  * @date 2016-03-25
  */
 public class QMUIWindowInsetLayout extends QMUIFrameLayout implements IWindowInsetLayout {
-    protected QMUIWindowInsetHelper mQMUIWindowInsetHelper;
 
     public QMUIWindowInsetLayout(Context context) {
         this(context, null);
@@ -50,7 +51,7 @@ public class QMUIWindowInsetLayout extends QMUIFrameLayout implements IWindowIns
 
     public QMUIWindowInsetLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mQMUIWindowInsetHelper = new QMUIWindowInsetHelper(this, this);
+        QMUIWindowInsetHelper.apply(this);
     }
 
 
@@ -65,12 +66,12 @@ public class QMUIWindowInsetLayout extends QMUIFrameLayout implements IWindowIns
 
     @Override
     public boolean applySystemWindowInsets19(Rect insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets19(this, insets);
+        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets19(this, insets);
     }
 
     @Override
-    public boolean applySystemWindowInsets21(Object insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
+    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
+        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
     }
 
     @Override

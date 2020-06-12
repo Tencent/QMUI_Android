@@ -32,10 +32,9 @@
     <item name="qmui_topbar_item_left_back" type="id"/>
 
     <item name="qmui_view_offset_helper" type="id"/>
+    <item name="qmui_window_inset_layout_display_cutout" type="id"/>
 
     <item name="qmui_window_inset_keyboard_area_consumer" type="id"/>
-
-    <item name="qmui_do_not_intercept_keyboard_inset" type="id"/>
 
     <item name="qmui_popup_close_btn_id" type="id"/>
 

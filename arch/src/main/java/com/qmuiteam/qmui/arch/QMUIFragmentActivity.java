@@ -20,11 +20,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -333,12 +331,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         }
 
         @Override
-        public boolean applySystemWindowInsets21(Object insets) {
-            super.applySystemWindowInsets21(insets);
-            return true;
-        }
-
-        @Override
         public boolean applySystemWindowInsets19(Rect insets) {
             super.applySystemWindowInsets19(insets);
             return true;
@@ -349,9 +341,9 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
 
     @Override
     public void onBackPressed() {
-        try{
+        try {
             super.onBackPressed();
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
             // 1. Under Android O, Activity#onBackPressed doesn't check FragmentManager's save state.
             // 2. IndexOutOfBoundsException caused by ViewGroup#removeView(View) in EmotionUI.
         }

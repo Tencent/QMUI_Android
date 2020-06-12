@@ -27,6 +27,7 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.util.QMUINotchHelper;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import androidx.annotation.NonNull;
@@ -90,31 +91,21 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
     public boolean applySystemWindowInsets19(Rect insets) {
         if (getFitsSystemWindows()) {
             Rect childInsets = new Rect(insets);
-            mQMUIWindowInsetHelper.computeInsets(this, childInsets);
+            QMUIWindowInsetHelper.computeInsets(this, childInsets);
             setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
             return true;
         }
         return super.applySystemWindowInsets19(insets);
     }
 
+
     @Override
-    @TargetApi(21)
-    public boolean applySystemWindowInsets21(Object insets) {
+    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
         if (getFitsSystemWindows()) {
-            int insetLeft = 0, insetRight = 0, insetTop = 0, insetBottom = 0;
-            if (insets instanceof WindowInsetsCompat) {
-                WindowInsetsCompat windowInsetsCompat = (WindowInsetsCompat) insets;
-                insetLeft = windowInsetsCompat.getSystemWindowInsetLeft();
-                insetRight = windowInsetsCompat.getSystemWindowInsetRight();
-                insetTop = windowInsetsCompat.getSystemWindowInsetTop();
-                insetBottom = windowInsetsCompat.getSystemWindowInsetBottom();
-            } else if (insets instanceof WindowInsets) {
-                WindowInsets windowInsets = (WindowInsets) insets;
-                insetLeft = windowInsets.getSystemWindowInsetLeft();
-                insetRight = windowInsets.getSystemWindowInsetRight();
-                insetTop = windowInsets.getSystemWindowInsetTop();
-                insetBottom = windowInsets.getSystemWindowInsetBottom();
-            }
+            int insetLeft = insets.getSystemWindowInsetLeft();
+            int insetRight = insets.getSystemWindowInsetRight();
+            int insetTop = insets.getSystemWindowInsetTop();
+            int insetBottom = insets.getSystemWindowInsetBottom();
 
             if (QMUINotchHelper.needFixLandscapeNotchAreaFitSystemWindow(this) &&
                     getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -123,11 +114,10 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
             }
 
             Rect childInsets = new Rect(insetLeft, insetTop, insetRight, insetBottom);
-            mQMUIWindowInsetHelper.computeInsets(this, childInsets);
+            QMUIWindowInsetHelper.computeInsets(this, childInsets);
             setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-            return true;
+            return insets.consumeSystemWindowInsets();
         }
-
         return super.applySystemWindowInsets21(insets);
     }
 }

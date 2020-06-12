@@ -22,11 +22,11 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.ViewCompat;
 
 /**
  * From: https://github.com/oxoooo/earth/blob/30bd82fac7867be596bddf3bd0b32d8be3800665/app/src/main/java/ooo/oxo/apps/earth/widget/WindowInsetsFrameLayout.java
@@ -40,8 +40,6 @@ import androidx.core.view.ViewCompat;
  * @date 2016-03-25
  */
 public class QMUIWindowInsetLayout2 extends QMUIConstraintLayout implements IWindowInsetLayout {
-    protected QMUIWindowInsetHelper mQMUIWindowInsetHelper;
-
     public QMUIWindowInsetLayout2(Context context) {
         this(context, null);
     }
@@ -52,7 +50,7 @@ public class QMUIWindowInsetLayout2 extends QMUIConstraintLayout implements IWin
 
     public QMUIWindowInsetLayout2(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mQMUIWindowInsetHelper = new QMUIWindowInsetHelper(this, this);
+        QMUIWindowInsetHelper.apply(this);
     }
 
 
@@ -67,12 +65,12 @@ public class QMUIWindowInsetLayout2 extends QMUIConstraintLayout implements IWin
 
     @Override
     public boolean applySystemWindowInsets19(Rect insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets19(this, insets);
+        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets19(this, insets);
     }
 
     @Override
-    public boolean applySystemWindowInsets21(Object insets) {
-        return mQMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
+    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
+        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
     }
 
     @Override

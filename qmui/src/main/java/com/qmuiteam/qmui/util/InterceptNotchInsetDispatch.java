@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package com.qmuiteam.qmui.widget;
+package com.qmuiteam.qmui.util;
 
-import android.graphics.Rect;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import androidx.core.view.WindowInsetsCompat;
-
-/**
- * @author cginechen
- * @date 2017-09-13
- */
-
-public interface IWindowInsetLayout {
-
-    boolean applySystemWindowInsets19(Rect insets);
-
-    WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface InterceptNotchInsetDispatch {
 }

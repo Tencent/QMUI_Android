@@ -43,7 +43,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -221,18 +220,9 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
                 new androidx.core.view.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                        return setWindowInsets(insets);
+                        return applySystemWindowInsets21(insets);
                     }
                 });
-    }
-
-    private WindowInsetsCompat setWindowInsets(WindowInsetsCompat insets) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            if (applySystemWindowInsets21(insets)) {
-                return insets.consumeSystemWindowInsets();
-            }
-        }
-        return insets;
     }
 
     public void followTopBarCommonSkin() {
@@ -1144,7 +1134,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
     }
 
     @Override
-    public boolean applySystemWindowInsets21(Object insets) {
+    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
         Object newInsets = null;
         if (ViewCompat.getFitsSystemWindows(this)) {
             // If we're set to fit system windows, keep the insets
@@ -1156,7 +1146,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
             mLastInsets = newInsets;
             requestLayout();
         }
-        return true;
+        return insets.consumeSystemWindowInsets();
     }
 
     public static class LayoutParams extends FrameLayout.LayoutParams {

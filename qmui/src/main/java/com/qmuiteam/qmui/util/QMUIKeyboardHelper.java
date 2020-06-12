@@ -22,9 +22,15 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+
+import com.qmuiteam.qmui.R;
 
 /**
  * @author cginechen
@@ -40,6 +46,7 @@ public class QMUIKeyboardHelper {
     public static final int SHOW_KEYBOARD_DELAY_TIME = 200;
     private static final String TAG = "QMUIKeyboardHelper";
     public final static int KEYBOARD_VISIBLE_THRESHOLD_DP = 100;
+    static final Object KEYBOARD_CONSUMER = new Object();
 
 
     public static void showKeyboard(final EditText editText, boolean delay) {
@@ -192,5 +199,21 @@ public class QMUIKeyboardHelper {
          * @return to remove global listener or not
          */
         boolean onVisibilityChanged(boolean isOpen, int heightDiff);
+    }
+
+    public static View findKeyboardAreaConsumer(@NonNull View view) {
+        while (view != null) {
+            Object tag = view.getTag(R.id.qmui_window_inset_keyboard_area_consumer);
+            if (KEYBOARD_CONSUMER == tag) {
+                return view;
+            }
+            ViewParent viewParent = view.getParent();
+            if (viewParent instanceof View) {
+                view = (View) viewParent;
+            } else {
+                view = null;
+            }
+        }
+        return null;
     }
 }

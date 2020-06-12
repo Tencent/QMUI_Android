@@ -34,6 +34,10 @@ import androidx.annotation.Nullable;
  * @date 2016-08-05
  */
 public class QMUIWindowHelper {
+
+    public static final int KEYBOARD_HEIGHT_BOUNDARY_DP = 100;
+
+
     /**
      * 设置WindowManager.LayoutParams的type
      * <p>
