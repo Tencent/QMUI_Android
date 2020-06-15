@@ -160,7 +160,7 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
 
         @SuppressWarnings("unchecked")
         boolean shouldHandleEffect(Effect effect) {
-            return effect.getClass() == mEffectType && mHandler.shouldHandleEffect((T) effect);
+            return mEffectType != null && mEffectType.isAssignableFrom(effect.getClass()) && mHandler.shouldHandleEffect((T) effect);
         }
 
         @MainThread
