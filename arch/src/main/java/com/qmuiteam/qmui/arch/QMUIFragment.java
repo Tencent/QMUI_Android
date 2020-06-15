@@ -44,6 +44,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
@@ -129,6 +133,7 @@ public abstract class QMUIFragment extends Fragment implements
     private boolean mIsInSwipeBack = false;
 
     private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
+    private MutableLiveData<Boolean> isInEnterAnimationLiveData = new MutableLiveData<>(false);
     private boolean mCalled = true;
     private ArrayList<Runnable> mDelayRenderRunnableList;
     private ArrayList<Runnable> mPostResumeRunnableList;
@@ -209,9 +214,17 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void onResume() {
         checkLatestVisitRecord();
+        checkForRequestForHandlePopBack();
         super.onResume();
         if (mBaseView != null && mPostResumeRunnableList != null && !mPostResumeRunnableList.isEmpty()) {
             mBaseView.post(mCheckPostResumeRunnable);
+        }
+    }
+
+    protected void checkForRequestForHandlePopBack(){
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider != null){
+            provider.requestForHandlePopBack(false);
         }
     }
 
@@ -351,6 +364,7 @@ public abstract class QMUIFragment extends Fragment implements
                 .setCustomAnimations(
                         transitionConfig.enter, transitionConfig.exit,
                         transitionConfig.popenter, transitionConfig.popout)
+                .setPrimaryNavigationFragment(null)
                 .replace(provider.getContextViewId(), fragment, tagName);
         int index = transaction.commit();
         Utils.modifyOpForStartFragmentAndDestroyCurrent(fragmentManager, fragment, useNewTransitionConfigWhenPop, transitionConfig);
@@ -627,13 +641,6 @@ public abstract class QMUIFragment extends Fragment implements
                             cmdField.setAccessible(true);
                             int cmd = (int) cmdField.get(op);
                             if (cmd == 3) {
-                                Field popEnterAnimField = Utils.getOpPopEnterAnimField(op);
-                                if (popEnterAnimField != null) {
-                                    popEnterAnimField.setAccessible(true);
-                                    popEnterAnimField.set(op, 0);
-                                }
-
-
                                 Field fragmentField = Utils.getOpFragmentField(op);
                                 if (fragmentField != null) {
                                     fragmentField.setAccessible(true);
@@ -865,10 +872,11 @@ public abstract class QMUIFragment extends Fragment implements
             bubbleBackPressedEvent();
             return;
         }
+
         Activity activity = requireActivity();
         if (activity instanceof QMUIFragmentContainerProvider) {
             QMUIFragmentContainerProvider provider = (QMUIFragmentContainerProvider) activity;
-            if (provider.getContainerFragmentManager().getBackStackEntryCount() > 1) {
+            if (provider.getContainerFragmentManager().getBackStackEntryCount() > 1 || provider.getContainerFragmentManager().getPrimaryNavigationFragment() == this) {
                 bubbleBackPressedEvent();
             } else {
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
@@ -1024,7 +1032,7 @@ public abstract class QMUIFragment extends Fragment implements
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-                        onEnterAnimationStart(animation);
+                        checkAndCallOnEnterAnimationStart(animation);
                     }
 
                     @Override
@@ -1038,13 +1046,20 @@ public abstract class QMUIFragment extends Fragment implements
                     }
                 });
             } else {
-                onEnterAnimationStart(null);
+                checkAndCallOnEnterAnimationStart(null);
                 checkAndCallOnEnterAnimationEnd(null);
             }
         }
         return animation;
     }
 
+    private void checkAndCallOnEnterAnimationStart(@Nullable Animation animation) {
+        mCalled = false;
+        onEnterAnimationStart(animation);
+        if (!mCalled) {
+            throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationStart(Animation)");
+        }
+    }
 
     private void checkAndCallOnEnterAnimationEnd(@Nullable Animation animation) {
         mCalled = false;
@@ -1284,7 +1299,12 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     protected void onEnterAnimationStart(@Nullable Animation animation) {
+        if (mCalled) {
+            throw new IllegalAccessError("don't call #onEnterAnimationStart() directly");
+        }
+        mCalled = true;
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_STARTED;
+        isInEnterAnimationLiveData.setValue(true);
     }
 
     protected void onEnterAnimationEnd(@Nullable Animation animation) {
@@ -1293,6 +1313,7 @@ public abstract class QMUIFragment extends Fragment implements
         }
         mCalled = true;
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
+        isInEnterAnimationLiveData.setValue(false);
         if (mDelayRenderRunnableList != null) {
             ArrayList<Runnable> list = mDelayRenderRunnableList;
             mDelayRenderRunnableList = null;
@@ -1302,6 +1323,40 @@ public abstract class QMUIFragment extends Fragment implements
                 }
             }
         }
+    }
+
+    public LiveData<Boolean> getIsInEnterAnimationLiveData() {
+        return isInEnterAnimationLiveData;
+    }
+
+    protected <T> LiveData<T> enterAnimationAvoidTransform(final LiveData<T> origin){
+        return enterAnimationAvoidTransform(origin, isInEnterAnimationLiveData);
+    }
+
+    protected <T> LiveData<T> enterAnimationAvoidTransform(final LiveData<T> origin, LiveData<Boolean> enterAnimationLiveData){
+        final MediatorLiveData<T> result = new MediatorLiveData<T>();
+        result.addSource(enterAnimationLiveData, new Observer<Boolean>(){
+
+            boolean isAdded = false;
+            @Override
+            public void onChanged(Boolean isInEnterAnimation) {
+                if(isInEnterAnimation){
+                    isAdded = false;
+                    result.removeSource(origin);
+                }else {
+                    if(!isAdded){
+                        isAdded = true;
+                        result.addSource(origin, new Observer<T>() {
+                            @Override
+                            public void onChanged(T t) {
+                                result.setValue(t);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        return result;
     }
 
     @Override

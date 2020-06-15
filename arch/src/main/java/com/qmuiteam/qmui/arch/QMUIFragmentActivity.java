@@ -238,6 +238,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(transitionConfig.enter, transitionConfig.exit,
                         transitionConfig.popenter, transitionConfig.popout)
+                .setPrimaryNavigationFragment(null)
                 .replace(getContextViewId(), fragment, tagName);
         int index = transaction.commit();
         Utils.modifyOpForStartFragmentAndDestroyCurrent(fragmentManager, fragment, useNewTransitionConfigWhenPop, transitionConfig);
@@ -262,6 +263,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         return fragmentManager.beginTransaction()
                 .setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout)
                 .replace(getContextViewId(), fragment, tagName)
+                .setPrimaryNavigationFragment(null)
                 .addToBackStack(tagName)
                 .commit();
     }

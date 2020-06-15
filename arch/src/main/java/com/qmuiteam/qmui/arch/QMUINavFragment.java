@@ -102,20 +102,20 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
 
     @Override
     protected View onCreateView() {
-        setContainerView(new FragmentContainerView(getContext()));
-        return mContainerView;
+        return new FragmentContainerView(getContext());
     }
 
     @Override
-    protected void onViewCreated(@NonNull View rootView) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mContainerView = view.findViewById(getContextViewId());
         if(mContainerView == null){
-            throw new RuntimeException("must call #setContainerView() in onCreateView()");
+            throw new RuntimeException("must call #configFragmentContainerView() in onCreateView()");
         }
     }
 
-    protected void setContainerView(FragmentContainerView fragmentContainerView){
-        mContainerView = fragmentContainerView;
-        mContainerView.setId(getContextViewId());
+    protected void configFragmentContainerView(FragmentContainerView fragmentContainerView){
+        fragmentContainerView.setId(getContextViewId());
     }
 
     @Override
@@ -149,28 +149,28 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
         getChildFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                boolean enoughBackStackCount = getChildFragmentManager().getBackStackEntryCount() > 1;
-                QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
-                if(provider != null){
-                    provider.requestForHandlePopBack(isChildHandlePopBackRequested || enoughBackStackCount);
-                }
+                checkForRequestForHandlePopBack();
                 if(getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)){
-                    getParentFragmentManager()
-                            .beginTransaction()
-                            .setPrimaryNavigationFragment(enoughBackStackCount ? QMUINavFragment.this : null)
-                            .commit();
+                    checkForPrimaryNavigation();
                 }
             }
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void checkForPrimaryNavigation(){
         getParentFragmentManager()
                 .beginTransaction()
                 .setPrimaryNavigationFragment(getChildFragmentManager().getBackStackEntryCount() > 1 ? QMUINavFragment.this : null)
                 .commit();
+    }
+
+    @Override
+    protected void checkForRequestForHandlePopBack(){
+        boolean enoughBackStackCount = getChildFragmentManager().getBackStackEntryCount() > 1;
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        if(provider != null){
+            provider.requestForHandlePopBack(isChildHandlePopBackRequested || enoughBackStackCount);
+        }
     }
 
     @Override

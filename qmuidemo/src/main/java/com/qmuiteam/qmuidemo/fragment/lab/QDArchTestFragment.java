@@ -68,6 +68,8 @@ public class QDArchTestFragment extends BaseFragment {
     QMUIRoundButton mBtn1;
     @BindView(R.id.btn_2)
     QMUIRoundButton mBtn2;
+    @BindView(R.id.btn_3)
+    QMUIRoundButton mBtn3;
 
     private Holder mHolder = new Holder();
 
@@ -117,6 +119,15 @@ public class QDArchTestFragment extends BaseFragment {
             public void onClick(View v) {
                 QMUINavFragment fragment = QDArchNavFragment.getInstance(QDArchTestFragment.class, null);
                 startFragment(fragment);
+            }
+        });
+
+        mBtn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(getParentFragment() instanceof QMUIFragment){
+                    ((QMUIFragment)getParentFragment()).startFragment(newInstance(next));
+                }
             }
         });
         return view;
