@@ -17,7 +17,6 @@ package com.qmuiteam.qmuidemo.manager;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.Log;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.QDApplication;
