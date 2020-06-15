@@ -35,6 +35,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.link.ITouchableSpan;
@@ -45,10 +49,6 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import static android.view.View.MeasureSpec.AT_MOST;
 
@@ -1335,7 +1335,7 @@ public class QMUIQQFaceView extends View {
     }
 
     private void onDrawQQFace(Canvas canvas, int res, @Nullable Drawable specialDrawable, int widthStart, int widthEnd, boolean isFirst, boolean isLast) {
-        int size = res != -1 || specialDrawable == null ? mQQFaceSize : specialDrawable.getIntrinsicWidth() + (isFirst || isLast ? mSpecialDrawablePadding : mSpecialDrawablePadding * 2);
+        int size = res != 0 || specialDrawable == null ? mQQFaceSize : specialDrawable.getIntrinsicWidth() + (isFirst || isLast ? mSpecialDrawablePadding : mSpecialDrawablePadding * 2);
         if (mIsNeedEllipsize) {
             if (mEllipsize == TextUtils.TruncateAt.START) {
                 if (mCurrentDrawLine > mLines - mNeedDrawLine) {
