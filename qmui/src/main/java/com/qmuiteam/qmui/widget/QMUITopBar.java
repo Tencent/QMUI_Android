@@ -36,6 +36,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
+import androidx.collection.SimpleArrayMap;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
@@ -50,13 +53,10 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.Nullable;
-import androidx.collection.SimpleArrayMap;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A standard toolbar for use within application content.
@@ -479,18 +479,27 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         addView(view, layoutParams);
     }
 
+    public LayoutParams generateTopBarImageButtonLayoutParams(){
+        return generateTopBarImageButtonLayoutParams(-1, -1);
+    }
+
     /**
      * 生成一个 LayoutParams，当把 Button addView 到 TopBar 时，使用这个 LayouyParams
      */
-    public LayoutParams generateTopBarImageButtonLayoutParams() {
-        LayoutParams lp = new LayoutParams(mTopBarImageBtnWidth, mTopBarImageBtnHeight);
-        lp.topMargin = Math.max(0, (getTopBarHeight() - mTopBarImageBtnHeight) / 2);
+    public LayoutParams generateTopBarImageButtonLayoutParams(int iconWidth, int iconHeight) {
+        iconHeight = iconHeight > 0 ? iconHeight : mTopBarImageBtnHeight;
+        LayoutParams lp = new LayoutParams(iconWidth > 0 ? iconWidth : mTopBarImageBtnWidth, iconHeight);
+        lp.topMargin = Math.max(0, (getTopBarHeight() - iconHeight) / 2);
         return lp;
     }
 
 
     public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId) {
         return addRightImageButton(drawableResId, true, viewId);
+    }
+
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId) {
+        return addRightImageButton(drawableResId, followTintColor, viewId, -1, -1);
     }
 
     /**
@@ -501,14 +510,18 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId) {
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
         QMUIAlphaImageButton rightButton = generateTopBarImageButton(drawableResId, followTintColor);
-        this.addRightView(rightButton, viewId, generateTopBarImageButtonLayoutParams());
+        this.addRightView(rightButton, viewId, generateTopBarImageButtonLayoutParams(iconWidth, iconHeight));
         return rightButton;
     }
 
     public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId) {
         return addLeftImageButton(drawableResId, true, viewId);
+    }
+
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId) {
+        return addLeftImageButton(drawableResId, followTintColor, viewId, -1, -1);
     }
 
     /**
@@ -519,9 +532,9 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId) {
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
         QMUIAlphaImageButton leftButton = generateTopBarImageButton(drawableResId, followTintColor);
-        this.addLeftView(leftButton, viewId, generateTopBarImageButtonLayoutParams());
+        this.addLeftView(leftButton, viewId, generateTopBarImageButtonLayoutParams(iconWidth, iconHeight));
         return leftButton;
     }
 
