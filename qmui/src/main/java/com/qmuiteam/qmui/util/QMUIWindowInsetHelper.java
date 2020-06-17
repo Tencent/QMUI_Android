@@ -65,6 +65,7 @@ public class QMUIWindowInsetHelper {
                     @Override
                     public WindowInsetsCompat onApplyWindowInsets(View v,
                                                                   WindowInsetsCompat insets) {
+
                         // avoid dispatching multiple times
                         boolean needToDispatchNotchInsetChange = QMUINotchHelper.isNotchOfficialSupport() && sCurrentWindowInsetDepth == 0;
                         if (sCurrentWindowInsetDepth == 0) {
@@ -75,6 +76,7 @@ public class QMUIWindowInsetHelper {
                                 v.setTag(R.id.qmui_window_inset_layout_display_cutout, true);
                                 insets = insets.consumeDisplayCutout();
                             }else{
+                                insets = insets.consumeDisplayCutout();
                                 Object lastHasNotchInfo = v.getTag(R.id.qmui_window_inset_layout_display_cutout);
                                 if(lastHasNotchInfo != null && (Boolean)lastHasNotchInfo){
                                     needToDispatchNotchInsetChange = true;
@@ -82,12 +84,16 @@ public class QMUIWindowInsetHelper {
                                 }
                             }
                         }
-                        sCurrentWindowInsetDepth ++;
-                        if(v instanceof IWindowInsetLayout){
-                            IWindowInsetLayout windowInsetLayout = (IWindowInsetLayout) v;
-                            insets = windowInsetLayout.applySystemWindowInsets21(insets);
+
+                        if(!insets.isConsumed()){
+                            sCurrentWindowInsetDepth ++;
+                            if(v instanceof IWindowInsetLayout){
+                                IWindowInsetLayout windowInsetLayout = (IWindowInsetLayout) v;
+                                insets = windowInsetLayout.applySystemWindowInsets21(insets);
+                            }
+                            sCurrentWindowInsetDepth --;
                         }
-                        sCurrentWindowInsetDepth --;
+
                         if (needToDispatchNotchInsetChange) {
                             dispatchNotchInsetChange(v);
                         }
@@ -174,10 +180,14 @@ public class QMUIWindowInsetHelper {
                     insets.getSystemWindowInsetRight(),
                     showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
             computeInsets(child, childInsets);
-            WindowInsetsCompat childWindowInsets = new WindowInsetsCompat.Builder(insets)
-                    .setSystemWindowInsets(Insets.of(childInsets))
-                    .build();
-            ViewCompat.dispatchApplyWindowInsets(child, childWindowInsets);
+            if (!isHandleContainer(child)) {
+                child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
+            }else{
+                WindowInsetsCompat childWindowInsets = new WindowInsetsCompat.Builder(insets)
+                        .setSystemWindowInsets(Insets.of(childInsets))
+                        .build();
+                ViewCompat.dispatchApplyWindowInsets(child, childWindowInsets);
+            }
         }
         return insets.consumeSystemWindowInsets();
     }
