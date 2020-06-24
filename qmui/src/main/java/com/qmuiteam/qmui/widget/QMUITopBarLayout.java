@@ -24,6 +24,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
 
 import com.qmuiteam.qmui.R;
@@ -96,6 +98,16 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
 
     public QMUIQQFaceView setSubTitle(String subTitle) {
         return mTopBar.setSubTitle(subTitle);
+    }
+
+    @Nullable
+    public QMUIQQFaceView getTitleView(){
+        return mTopBar.getTitleView();
+    }
+
+    @Nullable
+    public QMUIQQFaceView getSubTitleView(){
+        return mTopBar.getSubTitleView();
     }
 
     public void setTitleGravity(int gravity) {
@@ -205,5 +217,9 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
     @Override
     public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
         return mDefaultSkinAttrs;
+    }
+
+    public void eachLeftRightView(@NonNull QMUITopBar.Action action){
+        mTopBar.eachLeftRightView(action);
     }
 }

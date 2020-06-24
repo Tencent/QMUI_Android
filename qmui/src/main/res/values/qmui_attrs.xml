@@ -132,6 +132,8 @@
             <enum name="center" value="17"/>
         </attr>
         <attr name="qmui_topbar_left_back_drawable_id" format="reference"/>
+        <attr name="qmui_topbar_left_back_width" format="dimension"/>
+        <attr name="qmui_topbar_clear_left_padding_when_add_left_back_view" format="boolean"/>
         <attr name="qmui_topbar_title_text_size" format="dimension"/>
         <attr name="qmui_topbar_subtitle_text_size" format="dimension"/>
         <attr name="qmui_topbar_title_color" format="color"/>

@@ -36,6 +36,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
 
@@ -81,6 +82,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     private List<View> mRightViewList;
     private int mTitleGravity;
     private int mLeftBackDrawableRes;
+    private int mLeftBackViewWidth;
+    private boolean mClearLeftPaddingWhenAddLeftBackView;
     private int mTitleTextSize;
     private Typeface mTitleTypeface;
     private Typeface mSubTitleTypeface;
@@ -137,6 +140,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     void init(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.QMUITopBar, defStyleAttr, 0);
         mLeftBackDrawableRes = array.getResourceId(R.styleable.QMUITopBar_qmui_topbar_left_back_drawable_id, R.drawable.qmui_icon_topbar_back);
+        mLeftBackViewWidth = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_left_back_width, -1);
+        mClearLeftPaddingWhenAddLeftBackView = array.getBoolean(R.styleable.QMUITopBar_qmui_topbar_clear_left_padding_when_add_left_back_view, false);
         mTitleGravity = array.getInt(R.styleable.QMUITopBar_qmui_topbar_title_gravity, Gravity.CENTER);
         mTitleTextSize = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 17));
         mTitleTextSizeWithSubTitle = array.getDimensionPixelSize(R.styleable.QMUITopBar_qmui_topbar_title_text_size, QMUIDisplayHelper.sp2px(context, 16));
@@ -222,7 +227,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param title TopBar 的标题
      */
     public QMUIQQFaceView setTitle(String title) {
-        QMUIQQFaceView titleView = getTitleView();
+        QMUIQQFaceView titleView = ensureTitleView();
         titleView.setText(title);
         if (QMUILangHelper.isNullOrEmpty(title)) {
             titleView.setVisibility(GONE);
@@ -239,13 +244,18 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         return mTitleView.getText();
     }
 
+    @Nullable
+    public QMUIQQFaceView getTitleView(){
+        return mTitleView;
+    }
+
     public void showTitleView(boolean toShow) {
         if (mTitleView != null) {
             mTitleView.setVisibility(toShow ? VISIBLE : GONE);
         }
     }
 
-    private QMUIQQFaceView getTitleView() {
+    private QMUIQQFaceView ensureTitleView() {
         if (mTitleView == null) {
             mTitleView = new QMUIQQFaceView(getContext());
             mTitleView.setGravity(Gravity.CENTER);
@@ -283,7 +293,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param subTitle TopBar 的副标题
      */
     public QMUIQQFaceView setSubTitle(String subTitle) {
-        QMUIQQFaceView subTitleView = getSubTitleView();
+        QMUIQQFaceView subTitleView = ensureSubTitleView();
         subTitleView.setText(subTitle);
         if (QMUILangHelper.isNullOrEmpty(subTitle)) {
             subTitleView.setVisibility(GONE);
@@ -304,7 +314,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
         return setSubTitle(getResources().getString(resId));
     }
 
-    private QMUIQQFaceView getSubTitleView() {
+    private QMUIQQFaceView ensureSubTitleView() {
         if (mSubTitleView == null) {
             mSubTitleView = new QMUIQQFaceView(getContext());
             mSubTitleView.setGravity(Gravity.CENTER);
@@ -321,6 +331,11 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             makeSureTitleContainerView().addView(mSubTitleView, titleLp);
         }
 
+        return mSubTitleView;
+    }
+
+    @Nullable
+    public QMUIQQFaceView getSubTitleView(){
         return mSubTitleView;
     }
 
@@ -658,6 +673,12 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @return 返回按钮
      */
     public QMUIAlphaImageButton addLeftBackImageButton() {
+        if(mClearLeftPaddingWhenAddLeftBackView){
+            QMUIViewHelper.setPaddingLeft(this, 0);
+        }
+        if(mLeftBackViewWidth > 0){
+            return addLeftImageButton(mLeftBackDrawableRes, true, R.id.qmui_topbar_item_left_back, mLeftBackViewWidth, -1);
+        }
         return addLeftImageButton(mLeftBackDrawableRes, R.id.qmui_topbar_item_left_back);
     }
 
@@ -827,5 +848,18 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     @Override
     public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
         return sDefaultSkinAttrs;
+    }
+
+    public void eachLeftRightView(@NonNull Action action){
+        for(int i = 0; i < mLeftViewList.size(); i++){
+            action.call(mLeftViewList.get(i), i, true);
+        }
+        for(int i = 0; i < mRightViewList.size(); i++){
+            action.call(mRightViewList.get(i), i, false);
+        }
+    }
+
+    public interface Action {
+        void call(View view, int index, boolean isLeftView);
     }
 }

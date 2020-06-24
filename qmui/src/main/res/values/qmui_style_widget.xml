@@ -106,6 +106,8 @@
         <item name="qmui_bottomDividerHeight">1px</item>
         <item name="qmui_bottomDividerColor">?attr/qmui_skin_support_topbar_separator_color</item>
         <item name="qmui_topbar_left_back_drawable_id">@drawable/qmui_icon_topbar_back</item>
+        <item name="qmui_topbar_clear_left_padding_when_add_left_back_view">false</item>
+        <item name="qmui_topbar_left_back_width">-1dp</item>
         <item name="qmui_topbar_title_gravity">center</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
