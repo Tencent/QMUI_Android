@@ -44,6 +44,8 @@
     <item name="qmui_skin_apply_listener" type="id" />
     <item name="qmui_skin_skip_for_maker" type="id"/>
     <item name="qmui_skin_adapter" type="id"/>
+    <item name="qmui_skin_intercept_dispatch" type="id"/>
+    <item name="qmui_skin_ignore_apply" type="id"/>
 
     <item name="qmui_click_timestamp" type="id"/>
     <item name="qmui_click_debounce_action" type="id"/>

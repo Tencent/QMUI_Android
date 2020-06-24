@@ -31,6 +31,14 @@ import android.widget.AdapterView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.SimpleArrayMap;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
@@ -63,20 +71,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.collection.SimpleArrayMap;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
 public final class QMUISkinManager {
     private static final String TAG = "QMUISkinManager";
     public static final int DEFAULT_SKIN = -1;
     private static final String[] EMPTY_ITEMS = new String[]{};
     private static ArrayMap<String, QMUISkinManager> sInstances = new ArrayMap<>();
     private static final String DEFAULT_NAME = "default";
+    public static final DispatchListenStrategySelector DEFAULT_DISPATCH_LISTEN_STRATEGY_SELECTOR = new DispatchListenStrategySelector() {
+        @NonNull
+        @Override
+        public DispatchListenStrategy select(@NonNull ViewGroup viewGroup) {
+            if(viewGroup instanceof RecyclerView ||
+                    viewGroup instanceof ViewPager ||
+                    viewGroup instanceof AdapterView ||
+                    viewGroup.getClass().isAnnotationPresent(QMUISkinListenWithHierarchyChange.class)){
+                return DispatchListenStrategy.LISTEN_ON_HIERARCHY_CHANGE;
+            }
+            return DispatchListenStrategy.LISTEN_ON_LAYOUT;
+        }
+    };
+    private static DispatchListenStrategySelector sDispatchListenStrategySelector = DEFAULT_DISPATCH_LISTEN_STRATEGY_SELECTOR;
+
+    public static void setDispatchListenStrategySelector(DispatchListenStrategySelector dispatchListenStrategySelector) {
+        if(dispatchListenStrategySelector == null){
+            sDispatchListenStrategySelector = DEFAULT_DISPATCH_LISTEN_STRATEGY_SELECTOR;
+        }else{
+            sDispatchListenStrategySelector = dispatchListenStrategySelector;
+        }
+    }
 
     @MainThread
     public static QMUISkinManager defaultInstance(Context context) {
@@ -279,10 +301,19 @@ public final class QMUISkinManager {
             }
         }
 
-        applyTheme(view, skinIndex, theme);
+        Object interceptTag = view.getTag(R.id.qmui_skin_intercept_dispatch);
+        if(interceptTag instanceof Boolean && ((Boolean)interceptTag)){
+            return;
+        }
+
+        Object ignoreApplyTag = view.getTag(R.id.qmui_skin_ignore_apply);
+        boolean ignoreApply = ignoreApplyTag instanceof Boolean && ((Boolean)ignoreApplyTag);
+        if(!ignoreApply){
+            applyTheme(view, skinIndex, theme);
+        }
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
-            if (useHierarchyChangeListener(viewGroup)) {
+            if (sDispatchListenStrategySelector.select(viewGroup) == DispatchListenStrategy.LISTEN_ON_HIERARCHY_CHANGE) {
                 viewGroup.setOnHierarchyChangeListener(mOnHierarchyChangeListener);
             } else {
                 viewGroup.addOnLayoutChangeListener(mOnLayoutChangeListener);
@@ -290,7 +321,7 @@ public final class QMUISkinManager {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 runDispatch(viewGroup.getChildAt(i), skinIndex, theme);
             }
-        } else if ((view instanceof TextView) || (view instanceof QMUIQQFaceView)) {
+        } else if (!ignoreApply && ((view instanceof TextView) || (view instanceof QMUIQQFaceView))) {
             CharSequence text;
             if (view instanceof TextView) {
                 text = ((TextView) view).getText();
@@ -307,13 +338,6 @@ public final class QMUISkinManager {
                 view.invalidate();
             }
         }
-    }
-
-    private boolean useHierarchyChangeListener(ViewGroup viewGroup) {
-        return viewGroup instanceof RecyclerView ||
-                viewGroup instanceof ViewPager ||
-                viewGroup instanceof AdapterView ||
-                viewGroup.getClass().isAnnotationPresent(QMUISkinListenWithHierarchyChange.class);
     }
 
     private void applyTheme(@NonNull View view, int skinIndex, Resources.Theme theme) {
@@ -670,5 +694,15 @@ public final class QMUISkinManager {
         public int hashCode() {
             return Objects.hash(managerName, index);
         }
+    }
+
+    public interface DispatchListenStrategySelector {
+        @NonNull
+        DispatchListenStrategy select(@NonNull ViewGroup viewGroup);
+    }
+
+    public enum DispatchListenStrategy {
+        LISTEN_ON_LAYOUT,
+        LISTEN_ON_HIERARCHY_CHANGE
     }
 }

@@ -127,6 +127,14 @@ public class QMUISkinHelper {
         return null;
     }
 
+    public static void setIgnoreSkinApply(@NonNull View view, boolean ignore){
+        view.setTag(R.id.qmui_skin_ignore_apply, ignore);
+    }
+
+    public static void setInterceptSkinDispatch(@NonNull View view, boolean intercept){
+        view.setTag(R.id.qmui_skin_intercept_dispatch, intercept);
+    }
+
     public static void warnRuleNotSupport(View view, String rule) {
         QMUILog.w("QMUISkinManager",
                 view.getClass().getSimpleName() + " does't support " + rule);
