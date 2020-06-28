@@ -666,6 +666,16 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         onDrawTab(canvas);
         super.draw(canvas);
     }
+    
+    @Override
+    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+        super.onInitializeAccessibilityNodeInfo(info);
+
+        // 给每个tab添加文本标签
+        // 使得TalkBack等屏幕阅读器focus 到 tab上时可将tab的文本通过TTS朗读出来
+        // 这样视力受损用户（如盲人、低、弱视力）就能和widget交互
+        info.setContentDescription(mTab.getText());
+    }
 
     protected void onDrawTab(Canvas canvas) {
         if (mTab == null) {
