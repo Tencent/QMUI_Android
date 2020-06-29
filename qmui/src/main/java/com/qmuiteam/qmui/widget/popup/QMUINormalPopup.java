@@ -28,6 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.AnimRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
@@ -36,15 +41,10 @@ import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.AnimRes;
-import androidx.annotation.IntDef;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-
-import org.jetbrains.annotations.NotNull;
 
 
 public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
@@ -76,14 +76,16 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     private boolean mShowArrow = true;
     private boolean mAddShadow = false;
     private int mRadius = NOT_SET;
-    private int mBorderColor = NOT_SET;
+    private int mBorderColor = Color.TRANSPARENT;
     private int mBorderUsedColor = Color.TRANSPARENT;
     private int mBorderColorAttr = R.attr.qmui_skin_support_popup_border_color;
+    private boolean mIsBorderColorSet = false;
     private int mBorderWidth = NOT_SET;
     private int mShadowElevation = NOT_SET;
     private float mShadowAlpha = 0f;
     private int mShadowInset = NOT_SET;
-    private int mBgColor = NOT_SET;
+    private int mBgColor = Color.TRANSPARENT;
+    private boolean mIsBgColorSet= false;
     private int mBgUsedColor = Color.TRANSPARENT;
     private int mBgColorAttr = R.attr.qmui_skin_support_popup_bg;
     private int mOffsetX = 0;
@@ -203,6 +205,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
     public T borderColor(int borderColor) {
         mBorderColor = borderColor;
+        mIsBorderColorSet = true;
         return (T) this;
     }
 
@@ -224,16 +227,23 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
     public T bgColor(int bgColor) {
         mBgColor = bgColor;
+        mIsBgColorSet = true;
         return (T) this;
     }
 
     public T borderColorAttr(int borderColorAttr) {
         mBorderColorAttr = borderColorAttr;
+        if(borderColorAttr != 0){
+            mIsBorderColorSet = false;
+        }
         return (T) this;
     }
 
     public T bgColorAttr(int bgColorAttr) {
         mBgColorAttr = bgColorAttr;
+        if(bgColorAttr != 0){
+            mIsBgColorSet = false;
+        }
         return (T) this;
     }
 
@@ -318,13 +328,13 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     private void decorateContentView(ShowInfo showInfo) {
         ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
-        if (mBorderColor != NOT_SET) {
+        if (mIsBorderColorSet) {
             mBorderUsedColor = mBorderColor;
         } else if (mBorderColorAttr != 0) {
             mBorderUsedColor = QMUIResHelper.getAttrColor(mContext, mBorderColorAttr);
             builder.border(mBorderColorAttr);
         }
-        if (mBgColor != NOT_SET) {
+        if (mIsBgColorSet) {
             mBgUsedColor = mBgColor;
         } else if (mBgColorAttr != 0) {
             mBgUsedColor = QMUIResHelper.getAttrColor(mContext, mBgColorAttr);
@@ -622,10 +632,10 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
         @Override
         public boolean intercept(int skinIndex, @NotNull Resources.Theme theme) {
-            if (mBorderColor == NOT_SET && mBorderColorAttr != 0) {
+            if (!mIsBorderColorSet && mBorderColorAttr != 0) {
                 mBorderUsedColor = QMUIResHelper.getAttrColor(theme, mBorderColorAttr);
             }
-            if (mBgColor == NOT_SET && mBgColorAttr != 0) {
+            if (!mIsBgColorSet && mBgColorAttr != 0) {
                 mBgUsedColor = QMUIResHelper.getAttrColor(theme, mBgColorAttr);
             }
             return false;
