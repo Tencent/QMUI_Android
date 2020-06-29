@@ -427,7 +427,11 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         if (mCurrentSelectedIndex == NO_POSITION) {
             QMUITab model = mTabAdapter.getItem(index);
             layoutIndicator(model, true);
-            listViews.get(index).setSelectFraction(1f);
+            
+            QMUITabView tabView = listViews.get(index);
+            tabView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
+            tabView.setSelectFraction(1f);
+            
             dispatchTabSelected(index);
             mCurrentSelectedIndex = index;
             mIsInSelectTab = false;
@@ -444,7 +448,9 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
             dispatchTabUnselected(prev);
             dispatchTabSelected(index);
             prevView.setSelectFraction(0f);
+            prevView.setSelected(false); // 标记未选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
             nowView.setSelectFraction(1f);
+            nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
             if (mMode == MODE_SCROLLABLE) {
                 int scrollX = getScrollX(),
                         w = getWidth(),
@@ -504,7 +510,9 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
             @Override
             public void onAnimationEnd(Animator animation) {
                 prevView.setSelectFraction(0f);
+                prevView.setSelected(false); // 标记未选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 nowView.setSelectFraction(1f);
+nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 mSelectAnimator = null;
                 // set current selected index first, dispatchTabSelected may call selectTab again.
                 mCurrentSelectedIndex = index;
@@ -520,7 +528,9 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
             public void onAnimationCancel(Animator animation) {
                 mSelectAnimator = null;
                 prevView.setSelectFraction(1f);
+                prevView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 nowView.setSelectFraction(0f);
+                nowView.setSelected(false); // 标记未选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 layoutIndicator(prevModel, true);
 
             }
