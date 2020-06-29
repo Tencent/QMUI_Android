@@ -838,7 +838,7 @@ public class QMUIRVItemSwipeAction extends RecyclerView.ItemDecoration
         for (int i = mRecoverAnimations.size() - 1; i >= 0; i--) {
             final RecoverAnimation anim = mRecoverAnimations.get(i);
             final View view = anim.mViewHolder.itemView;
-            if (hitTest(view, x, y, anim.mX, anim.mY)) {
+            if (hitTest(view, x, y, view.getX(), view.getY())) {
                 return view;
             }
         }

@@ -27,8 +27,15 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.SimpleArrayMap;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
@@ -42,12 +49,6 @@ import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.collection.SimpleArrayMap;
-import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 
 import org.jetbrains.annotations.NotNull;
 
