@@ -17,6 +17,7 @@
 package com.qmuiteam.qmuidemo.fragment.home;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,6 +151,7 @@ public class HomeFragment extends BaseFragment {
     private void initTabs() {
 
         QMUITabBuilder builder = mTabSegment.tabBuilder();
+        builder.setTypeface(null, Typeface.DEFAULT_BOLD);
         builder.setSelectedIconScale(1.2f)
                 .setTextSize(QMUIDisplayHelper.sp2px(getContext(), 13), QMUIDisplayHelper.sp2px(getContext(), 15))
                 .setDynamicChangeIconColor(false);

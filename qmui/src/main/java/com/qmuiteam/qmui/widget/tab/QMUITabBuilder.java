@@ -20,11 +20,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
-
-import androidx.annotation.Nullable;
 
 
 /**
@@ -116,6 +116,8 @@ public class QMUITabBuilder {
      */
     float selectedTabIconScale = 1f;
 
+    float typefaceUpdateAreaPercent = 0.75f;
+
     /**
      * signCount or redPoint
      */
@@ -177,10 +179,16 @@ public class QMUITabBuilder {
         this.selectedTabIconScale = other.selectedTabIconScale;
         this.iconTextGap = other.iconTextGap;
         this.allowIconDrawOutside = other.allowIconDrawOutside;
+        this.typefaceUpdateAreaPercent = other.typefaceUpdateAreaPercent;
     }
 
     public QMUITabBuilder setAllowIconDrawOutside(boolean allowIconDrawOutside) {
         this.allowIconDrawOutside = allowIconDrawOutside;
+        return this;
+    }
+
+    public QMUITabBuilder setTypefaceUpdateAreaPercent(float typefaceUpdateAreaPercent) {
+        this.typefaceUpdateAreaPercent = typefaceUpdateAreaPercent;
         return this;
     }
 
@@ -348,6 +356,7 @@ public class QMUITabBuilder {
         tab.signCountLeftMarginWithIconOrText = this.signCountLeftMarginWithIconOrText;
         tab.signCountBottomMarginWithIconOrText = this.signCountBottomMarginWithIconOrText;
         tab.iconTextGap = this.iconTextGap;
+        tab.typefaceUpdateAreaPercent = this.typefaceUpdateAreaPercent;
         return tab;
     }
 }

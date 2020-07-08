@@ -140,6 +140,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     public void bind(QMUITab tab) {
         mCollapsingTextHelper.setTextSize(tab.normalTextSize, tab.selectedTextSize, false);
         mCollapsingTextHelper.setTypeface(tab.normalTypeface, tab.selectedTypeface, false);
+        mCollapsingTextHelper.setTypefaceUpdateAreaPercent(tab.typefaceUpdateAreaPercent);
         int gravity = Gravity.LEFT | Gravity.TOP;
         mCollapsingTextHelper.setGravity(gravity, gravity, false);
         mCollapsingTextHelper.setText(tab.getText());

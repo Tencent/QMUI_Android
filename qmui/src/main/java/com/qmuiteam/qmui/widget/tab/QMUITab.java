@@ -20,14 +20,13 @@ import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class QMUITab {
     public static final int ICON_POSITION_LEFT = 0;
@@ -56,6 +55,7 @@ public class QMUITab {
     int selectedTextSize;
     Typeface normalTypeface;
     Typeface selectedTypeface;
+    float typefaceUpdateAreaPercent;
     int normalColor;
     int selectColor;
     int normalColorAttr;
@@ -109,6 +109,13 @@ public class QMUITab {
         rightSpaceWeight = rightWeight;
     }
 
+    public void setTypefaceUpdateAreaPercent(float typefaceUpdateAreaPercent) {
+        this.typefaceUpdateAreaPercent = typefaceUpdateAreaPercent;
+    }
+
+    public float getTypefaceUpdateAreaPercent() {
+        return typefaceUpdateAreaPercent;
+    }
 
     public int getGravity() {
         return gravity;

@@ -48,13 +48,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Interpolator;
 
-import com.qmuiteam.qmui.R;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.RequiresApi;
 import androidx.core.text.TextDirectionHeuristicsCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
+
+import com.qmuiteam.qmui.R;
 
 public final class QMUICollapsingTextHelper {
 
@@ -106,6 +106,7 @@ public final class QMUICollapsingTextHelper {
     private Typeface mCollapsedTypeface;
     private Typeface mExpandedTypeface;
     private Typeface mCurrentTypeface;
+    private float mTypefaceUpdateAreaPercent;
 
     private CharSequence mText;
     private CharSequence mTextToDraw;
@@ -387,6 +388,10 @@ public final class QMUICollapsingTextHelper {
         return false;
     }
 
+    public void setTypefaceUpdateAreaPercent(float typefaceUpdateAreaPercent) {
+        mTypefaceUpdateAreaPercent = typefaceUpdateAreaPercent;
+    }
+
     public final boolean isStateful() {
         return (mCollapsedTextColor != null && mCollapsedTextColor.isStateful())
                 || (mExpandedTextColor != null && mExpandedTextColor.isStateful());
@@ -627,12 +632,12 @@ public final class QMUICollapsingTextHelper {
         final float newTextSize;
         boolean updateDrawText = false;
 
-        if(mExpandedFraction == 1f){
+        if(mExpandedFraction >= 1f - mTypefaceUpdateAreaPercent){
             if (mCurrentTypeface != mCollapsedTypeface) {
                 mCurrentTypeface = mCollapsedTypeface;
                 updateDrawText = true;
             }
-        }else if(mExpandedFraction == 0f){
+        }else if(mExpandedFraction <= mTypefaceUpdateAreaPercent){
             if (mCurrentTypeface != mExpandedTypeface) {
                 mCurrentTypeface = mExpandedTypeface;
                 updateDrawText = true;
