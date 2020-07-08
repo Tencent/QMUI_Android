@@ -116,7 +116,7 @@ public class QMUITabBuilder {
      */
     float selectedTabIconScale = 1f;
 
-    float typefaceUpdateAreaPercent = 0.75f;
+    float typefaceUpdateAreaPercent = 0.25f;
 
     /**
      * signCount or redPoint
