@@ -37,6 +37,11 @@ public class QMUITabAdapter extends QMUIItemViewsAdapter<QMUITab, QMUITabView> i
     protected final void bind(QMUITab item, QMUITabView view, int position) {
         onBindTab(item, view, position);
         view.setCallback(this);
+        // reset
+        if (view.isSelected()) {
+            view.setSelected(false);
+            view.setSelectFraction(0f);
+        }
     }
 
     protected void onBindTab(QMUITab item, QMUITabView view, int position) {
