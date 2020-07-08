@@ -711,12 +711,8 @@ public class QMUIQQFaceView extends View {
             if (element.getType() == QMUIQQFaceCompiler.ElementType.DRAWABLE) {
                 if (mCurrentCalWidth + mQQFaceSize > widthEnd) {
                     gotoCalNextLine(widthStart);
-                    mCurrentCalWidth += mQQFaceSize;
-                } else if (mCurrentCalWidth + mQQFaceSize == widthEnd) {
-                    gotoCalNextLine(widthStart);
-                } else {
-                    mCurrentCalWidth += mQQFaceSize;
                 }
+                mCurrentCalWidth += mQQFaceSize;
                 if (widthEnd - widthStart < mQQFaceSize) {
                     // 一个表情的宽度都容不下
                     mJumpHandleMeasureAndDraw = true;
