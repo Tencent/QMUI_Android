@@ -31,6 +31,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
@@ -39,9 +42,6 @@ import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 
 import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATOR;
 
@@ -756,6 +756,12 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
                 listener.onScrollStateChange(dragState,
                         mViewMoveAction.getCurrentPercent(this, mContentView, mCurrentDragDirection));
             }
+        }
+    }
+
+    public void resetOffset(){
+        if(mViewOffsetHelper != null){
+            mViewOffsetHelper.setOffset(0, 0);
         }
     }
 
