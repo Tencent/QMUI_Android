@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
@@ -81,6 +82,7 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
         super(context);
         mWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         mWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+        mWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dimAmount(0.6f);
     }
 
@@ -181,7 +183,14 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
         return closeBtn;
     }
 
+    public boolean isShowing(){
+        return mWindow.isShowing();
+    }
+
     public void show(View parent) {
+        if(isShowing()){
+            return;
+        }
         if (mViews.isEmpty()) {
             throw new RuntimeException("you should call addView() to add content view");
         }
@@ -275,6 +284,11 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
         public boolean applySystemWindowInsets19(Rect insets) {
             super.applySystemWindowInsets19(insets);
             return true;
+        }
+
+        @Override
+        public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
+            return super.applySystemWindowInsets21(insets).consumeStableInsets();
         }
 
         @Override
