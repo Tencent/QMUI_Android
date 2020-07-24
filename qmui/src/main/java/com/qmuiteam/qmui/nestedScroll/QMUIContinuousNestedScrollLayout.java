@@ -25,14 +25,14 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implements
         QMUIContinuousNestedTopAreaBehavior.Callback, QMUIDraggableScrollBar.Callback {
@@ -331,8 +331,7 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
 
             int contentHeight = mBottomView.getContentHeight();
             if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
-                mTopAreaBehavior.setTopAndBottomOffset(
-                        getHeight() - contentHeight - ((View) mTopView).getHeight());
+                mTopAreaBehavior.setTopAndBottomOffset(Math.min(0, getHeight() - contentHeight - ((View) mTopView).getHeight()));
             } else {
                 mTopAreaBehavior.setTopAndBottomOffset(
                         getHeight() - ((View) mBottomView).getHeight() - ((View) mTopView).getHeight());
