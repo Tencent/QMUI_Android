@@ -25,13 +25,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.link.QMUILinkTouchMovementMethod;
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
-
-import androidx.annotation.ColorInt;
-import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * <p>
@@ -111,7 +111,8 @@ public class QMUISpanTouchFixTextView extends AppCompatTextView implements ISpan
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!(getText() instanceof Spannable)) {
+        if (!(getText() instanceof Spannable) || !(getMovementMethod() instanceof QMUILinkTouchMovementMethod)) {
+            mTouchSpanHit = false;
             return super.onTouchEvent(event);
         }
         mTouchSpanHit = true;
