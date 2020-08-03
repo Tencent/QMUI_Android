@@ -96,8 +96,9 @@ public class QMUIStatusBarHelper {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            int systemUiVisibility =  window.getDecorView().getSystemUiVisibility();
+            systemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            window.getDecorView().setSystemUiVisibility(systemUiVisibility);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && supportTransclentStatusBar6()) {
                 // android 6以后可以改状态栏字体颜色，因此可以自行设置为透明
                 // ZUK Z1是个另类，自家应用可以实现字体颜色变色，但没开放接口
@@ -233,26 +234,6 @@ public class QMUIStatusBarHelper {
         return true;
     }
 
-    @TargetApi(23)
-    private static int changeStatusBarModeRetainFlag(Window window, int out) {
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_FULLSCREEN);
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        out = retainSystemUiFlag(window, out, View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        return out;
-    }
-
-    public static int retainSystemUiFlag(Window window, int out, int type) {
-        int now = window.getDecorView().getSystemUiVisibility();
-        if ((now & type) == type) {
-            out |= type;
-        }
-        return out;
-    }
-
-
     /**
      * 设置状态栏字体图标为深色，Android 6
      *
@@ -263,8 +244,12 @@ public class QMUIStatusBarHelper {
     @TargetApi(23)
     private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
         View decorView = window.getDecorView();
-        int systemUi = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-        systemUi = changeStatusBarModeRetainFlag(window, systemUi);
+        int systemUi = decorView.getSystemUiVisibility();
+        if (light) {
+            systemUi |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        } else {
+            systemUi ^= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
         decorView.setSystemUiVisibility(systemUi);
         if (QMUIDeviceHelper.isMIUIV9()) {
             // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
