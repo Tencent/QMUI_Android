@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="QMUIAlphaButton">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaConstraintLayout">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaFrameLayout">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaImageButton">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaLinearLayout">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaRelativeLayout">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+
+    <declare-styleable name="QMUIAlphaTextView">
+        <attr name="qmui_alpha_pressed" />
+        <attr name="qmui_alpha_disabled" />
+    </declare-styleable>
+</resources>
