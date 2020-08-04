@@ -100,6 +100,9 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
                     R.styleable.QMUIRadiusImageView2_qmui_corner_radius, 0));
         }
         array.recycle();
+
+        mLayoutHelper.setBorderWidth(mBorderWidth);
+        mLayoutHelper.setBorderColor(mBorderColor);
     }
 
 
@@ -491,7 +494,7 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
 
     @Override
     public void setSelected(boolean selected) {
-        if(!mIsInOnTouchEvent){
+        if (!mIsInOnTouchEvent) {
             super.setSelected(selected);
         }
         if (mIsSelected != selected) {
@@ -544,7 +547,7 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
         if (!this.isClickable()) {
             this.setSelected(false);
             return super.onTouchEvent(event);
-        }else if(mIsTouchSelectModeEnabled){
+        } else if (mIsTouchSelectModeEnabled) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     this.setSelected(true);
