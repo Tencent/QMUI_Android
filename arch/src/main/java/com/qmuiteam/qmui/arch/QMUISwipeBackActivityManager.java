@@ -53,12 +53,18 @@ public class QMUISwipeBackActivityManager implements Application.ActivityLifecyc
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
+        if(mCurrentActivity == null){
+            mCurrentActivity = activity;
+        }
         mActivityStack.add(activity);
     }
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
         mActivityStack.remove(activity);
+        if(mActivityStack.isEmpty()){
+            mCurrentActivity = null;
+        }
     }
 
     @Override
