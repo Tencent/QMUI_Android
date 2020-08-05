@@ -292,7 +292,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      *
      * @param subTitle TopBar 的副标题
      */
-    public QMUIQQFaceView setSubTitle(String subTitle) {
+    public QMUIQQFaceView setSubTitle(CharSequence subTitle) {
         QMUIQQFaceView subTitleView = ensureSubTitleView();
         subTitleView.setText(subTitle);
         if (QMUILangHelper.isNullOrEmpty(subTitle)) {

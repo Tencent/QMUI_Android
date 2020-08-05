@@ -96,7 +96,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         return mTopBar.setSubTitle(resId);
     }
 
-    public QMUIQQFaceView setSubTitle(String subTitle) {
+    public QMUIQQFaceView setSubTitle(CharSequence subTitle) {
         return mTopBar.setSubTitle(subTitle);
     }
 
