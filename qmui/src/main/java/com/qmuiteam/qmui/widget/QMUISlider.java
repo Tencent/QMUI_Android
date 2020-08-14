@@ -167,6 +167,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
     public void setTickCount(int tickCount) {
         if (mTickCount != tickCount) {
             mTickCount = tickCount;
+            setCurrentProgress(QMUILangHelper.constrain(mCurrentProgress, 0, mTickCount));
+            mThumbView.render(mCurrentProgress, mTickCount);
             invalidate();
         }
     }
