@@ -23,9 +23,9 @@ import com.qmuiteam.qmui.type.TypeEnvironment;
 
 import java.util.List;
 
-public class EffectElement extends Element {
+public class IgnoreEffectElement extends Element {
 
-    public EffectElement(final List<Element> list) {
+    public IgnoreEffectElement(final List<Element> list) {
         super(' ', null, -1, -1, "");
         addEnvironmentUpdater(new EnvironmentUpdater() {
             @Override

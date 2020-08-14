@@ -240,6 +240,7 @@ public class Line {
             if (i > 0 && (el.getWordPart() == Element.WORD_PART_WHOLE
                     || el.getWordPart() == Element.WORD_PART_START)) {
                 x += addSpace;
+                mElements.get(i - 1).setNextGapWidth(addSpace);
             }
             el.setX((int) x);
             x += el.getMeasureWidth();

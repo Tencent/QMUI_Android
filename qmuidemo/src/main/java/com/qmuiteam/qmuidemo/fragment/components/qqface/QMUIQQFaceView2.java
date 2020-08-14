@@ -34,6 +34,9 @@ import com.qmuiteam.qmui.type.parser.TextParser;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmuidemo.QDQQFaceManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QMUIQQFaceView2 extends View {
 
     private TypeEnvironment mTypeEnvironment = new TypeEnvironment();
@@ -43,6 +46,7 @@ public class QMUIQQFaceView2 extends View {
             .setMoreText("更多", Color.RED, Typeface.DEFAULT_BOLD)
             .setMaxLines(10);
     private TextParser mTextParser = new EmojiTextParser(QDQQFaceManager.getInstance());
+    private List<TypeModel.EffectRemover> mEffectRemovers = new ArrayList<>();
 
     public QMUIQQFaceView2(Context context) {
         this(context, null);
@@ -67,7 +71,25 @@ public class QMUIQQFaceView2 extends View {
                 "如果你有尝试封装组件，那[大哭]么这些优秀的库往[大哭]往会给你思路的启迪。如果是两年前的我" +
                 "来写换肤框架，我写出来的框[大哭]架可能比现在差得很远。如果你阅[大哭]读本文，也期望能给你以" +
                 "启迪。");
+
         mLineLayout.setTypeModel(typeModel);
+
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mEffectRemovers.isEmpty()){
+                    for(TypeModel.EffectRemover remover: mEffectRemovers){
+                        remover.remove();
+                    }
+                    mEffectRemovers.clear();
+                    invalidate();
+                }else{
+                    addBgEffect();
+                    addTextColorEffect();
+                    addUnderLineEffect();
+                }
+            }
+        });
     }
 
     @Override
@@ -77,6 +99,33 @@ public class QMUIQQFaceView2 extends View {
         mTypeEnvironment.setMeasureLimit(widthSize, heightSize);
         mLineLayout.measureAndLayout();
         setMeasuredDimension(widthSize, mLineLayout.getContentHeight());
+    }
+
+    public void addBgEffect(){
+        TypeModel typeModel = mLineLayout.getTypeModel();
+        if(typeModel != null){
+            TypeModel.EffectRemover remover = typeModel.addBgEffect(10, 40, Color.YELLOW);
+            mEffectRemovers.add(remover);
+            invalidate();
+        }
+    }
+
+    public void addTextColorEffect(){
+        TypeModel typeModel = mLineLayout.getTypeModel();
+        if(typeModel != null){
+            TypeModel.EffectRemover remover = typeModel.addTextColorEffect(20, 50, Color.RED);
+            mEffectRemovers.add(remover);
+            invalidate();
+        }
+    }
+
+    public void addUnderLineEffect(){
+        TypeModel typeModel = mLineLayout.getTypeModel();
+        if(typeModel != null){
+            TypeModel.EffectRemover remover = typeModel.addUnderLineEffect(25, 60, Color.BLUE, QMUIDisplayHelper.dp2px(getContext(), 3));
+            mEffectRemovers.add(remover);
+            invalidate();
+        }
     }
 
     @Override

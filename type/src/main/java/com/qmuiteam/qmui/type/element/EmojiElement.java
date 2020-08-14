@@ -34,9 +34,11 @@ public class EmojiElement extends Element {
 
     @Override
     protected void onDraw(TypeEnvironment env, Canvas canvas) {
+        drawBg(env, canvas);
         canvas.save();
         canvas.translate(getX(), getY());
         mDrawable.draw(canvas);
         canvas.restore();
+        drawBorder(env, canvas);
     }
 }

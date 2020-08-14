@@ -123,6 +123,6 @@ public class EmojiTextParser implements TextParser {
             }
             map.put(tmp.getIndex(), tmp);
         }
-        return new TypeModel(map, first, last, null);
+        return new TypeModel(text, map, first, last, null);
     }
 }

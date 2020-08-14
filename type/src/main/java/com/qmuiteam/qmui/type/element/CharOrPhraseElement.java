@@ -17,10 +17,8 @@
 package com.qmuiteam.qmui.type.element;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.type.TypeEnvironment;
@@ -49,6 +47,8 @@ public class CharOrPhraseElement extends Element {
 
     @Override
     protected void onDraw(TypeEnvironment env, Canvas canvas) {
+        drawBg(env, canvas);
         canvas.drawText(toString(), getX(), getY() + getBaseLine(), env.getPaint());
+        drawBorder(env, canvas);
     }
 }

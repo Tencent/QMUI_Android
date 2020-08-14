@@ -21,6 +21,8 @@ import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.type.element.Element;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TypeModel {
@@ -31,10 +33,13 @@ public class TypeModel {
     @Nullable
     private Element mFirstEffect;
 
-    public TypeModel(@NonNull Map<Integer, Element> elementMap,
-                     Element firstElement,
-                     Element lastElement,
-                     @Nullable Element firstEffect) {
+    public TypeModel(
+            CharSequence origin,
+            @NonNull Map<Integer, Element> elementMap,
+             Element firstElement,
+             Element lastElement,
+             @Nullable Element firstEffect) {
+        mOrigin = origin;
         mElementMap = elementMap;
         mFirstElement = firstElement;
         mLastElement = lastElement;
@@ -46,22 +51,81 @@ public class TypeModel {
         return mFirstEffect;
     }
 
-    public void insertAfterElement(Element element, @NonNull Element toInsert) {
-        Element next = element.getNext();
-        element.setNext(toInsert);
-        toInsert.setNext(next);
-        if (next == null) {
-            mLastElement = toInsert;
-        }
+    public CharSequence getOrigin() {
+        return mOrigin;
     }
 
-    public void insertBeforeElement(Element element, @NonNull Element toInsert) {
-        Element prev = element.getPrev();
-        element.setPrev(toInsert);
-        toInsert.setPrev(prev);
-        if (prev == null) {
-            mFirstElement = toInsert;
+
+    public EffectRemover addBgEffect(int start, int end, final int bgColor){
+        List<Integer> types = new ArrayList<>();
+        types.add(TypeEnvironment.TYPE_BG_COLOR);
+        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
+            @Override
+            public void update(TypeEnvironment env) {
+                env.setBackgroundColor(bgColor);
+            }
+        });
+    }
+
+    public EffectRemover addTextColorEffect(int start, int end, final int textColor){
+        List<Integer> types = new ArrayList<>();
+        types.add(TypeEnvironment.TYPE_TEXT_COLOR);
+        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
+            @Override
+            public void update(TypeEnvironment env) {
+                env.setTextColor(textColor);
+            }
+        });
+    }
+
+    public EffectRemover addUnderLineEffect(int start, int end, final int underLineColor, final int underLineHeight){
+        List<Integer> types = new ArrayList<>();
+        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH);
+        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR);
+        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
+            @Override
+            public void update(TypeEnvironment env) {
+                env.setBorderBottom(underLineHeight, underLineColor);
+            }
+        });
+    }
+
+
+    public EffectRemover unsafeAddEffect(int start, int end, List<Integer> types, EnvironmentUpdater environmentUpdater){
+        Element elementStart = mElementMap.get(start);
+        Element elementEnd = mElementMap.get(end);
+        if(elementStart == null || elementEnd == null){
+            return null;
         }
+        for(Integer type: types){
+            elementStart.addSaveType(type);
+            elementEnd.addRestoreType(type);
+        }
+        elementStart.addEnvironmentUpdater(environmentUpdater);
+        if(mFirstEffect == null){
+            mFirstEffect = elementStart;
+        }else{
+            mFirstEffect.insetEffect(elementStart);
+        }
+        elementStart.insetEffect(elementEnd);
+        return new DefaultEffectRemove(this, start, end, types, environmentUpdater);
+    }
+
+    public boolean unsafeRemoveEffect(int start, int end, List<Integer> types, EnvironmentUpdater environmentUpdater){
+        Element elementStart = mElementMap.get(start);
+        Element elementEnd = mElementMap.get(end);
+        if(elementStart == null || elementEnd == null){
+            return false;
+        }
+        for(Integer type: types){
+            elementStart.removeSaveType(type);
+            elementEnd.removeStoreType(type);
+        }
+        elementStart.removeEnvironmentUpdater(environmentUpdater);
+
+        mFirstEffect = elementStart.removeFromEffectListIfNeeded(mFirstEffect);
+        mFirstEffect = elementEnd.removeFromEffectListIfNeeded(mFirstEffect);
+        return true;
     }
 
     public Element firstElement() {
@@ -70,5 +134,36 @@ public class TypeModel {
 
     public Element lastElement() {
         return mLastElement;
+    }
+
+    public interface EffectRemover {
+        void remove();
+    }
+
+    static class DefaultEffectRemove implements EffectRemover{
+
+        private final int mStart;
+        private final int mEnd;
+        private final List<Integer> mTypes;
+        private final EnvironmentUpdater mEnvironmentUpdater;
+        private final TypeModel mTypeModel;
+
+        public DefaultEffectRemove(
+                TypeModel typeModel,
+                int start,
+                int end,
+                List<Integer> types,
+                EnvironmentUpdater environmentUpdater) {
+            mTypeModel = typeModel;
+            mStart = start;
+            mEnd = end;
+            mTypes = types;
+            mEnvironmentUpdater = environmentUpdater;
+        }
+
+        @Override
+        public void remove() {
+            mTypeModel.unsafeRemoveEffect(mStart, mEnd, mTypes, mEnvironmentUpdater);
+        }
     }
 }

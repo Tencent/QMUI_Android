@@ -17,6 +17,8 @@
 package com.qmuiteam.qmui.type.element;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +42,7 @@ public abstract class Element {
     private final int mIndex;
     private final int mOriginIndex;
     private final String mDescription;
+    private Element mPrevEffect;
     private Element mNextEffect;
     private Element mPrev;
     private Element mNext;
@@ -58,6 +61,7 @@ public abstract class Element {
     private float mX;
     private float mY;
     private float mBaseLine;
+    private float mNextGapWidth;
 
     public Element(Character singleChar, @Nullable CharSequence text, int index, int originIndex) {
         this(singleChar, text, index, originIndex, null);
@@ -71,12 +75,72 @@ public abstract class Element {
         mDescription = description;
     }
 
-    public void insetNextEffect(Element element) {
-        Element origin = mNextEffect;
-        mNextEffect = element;
-        if (element != null) {
-            element.mNextEffect = origin;
+    public void insetEffect(Element element) {
+        if(element == this){
+            return;
         }
+        if(element.mIndex < mIndex){
+            Element prev = mPrevEffect;
+            Element next = this;
+            while (prev != null && element.mIndex <= prev.mIndex){
+                next = prev;
+                prev = prev.mPrevEffect;
+            }
+            if(prev == element){
+                return;
+            }
+            if(prev != null){
+                prev.mNextEffect = element;
+                element.mPrevEffect = prev;
+            }
+            element.mNextEffect = next;
+            next.mPrevEffect = element;
+        }else{
+            Element prev = this;
+            Element next = mNextEffect;
+            while (next != null && element.mIndex >= next.mIndex){
+                prev = next;
+                next = next.mNextEffect;
+            }
+            if(next == element){
+                return;
+            }
+            if(next != null){
+                element.mNextEffect = next;
+                next.mPrevEffect = element;
+            }
+            prev.mNextEffect = element;
+            element.mPrevEffect = prev;
+        }
+    }
+
+    public Element removeFromEffectListIfNeeded(Element head){
+        boolean noSaveType = mSaveType == null || mSaveType.isEmpty();
+        boolean noRestoreType = mRestoreType == null || mRestoreType.isEmpty();
+        if(noSaveType && noRestoreType){
+            Element prev = mPrevEffect;
+            Element next = mNextEffect;
+            if(prev != null){
+                prev.mNextEffect = next;
+                mPrevEffect = null;
+            }
+            if(next != null){
+                next.mPrevEffect = prev;
+                mNextEffect = null;
+            }
+            if(head == this){
+                return next;
+            }
+        }
+        return head;
+    }
+
+    public Element getNextEffect() {
+        return mNextEffect;
+    }
+
+    public Element getPrevEffect() {
+        return mPrevEffect;
     }
 
     public void setPrev(Element element) {
@@ -109,14 +173,14 @@ public abstract class Element {
         return mCanBreakWord;
     }
 
-    void addSaveType(int type) {
+    public void addSaveType(int type) {
         if (mSaveType == null) {
             mSaveType = new ArrayList<>();
         }
         mSaveType.add(type);
     }
 
-    void removeSaveType(int type) {
+    public void removeSaveType(int type) {
         if (mSaveType != null) {
             for (int i = 0; i < mSaveType.size(); i++) {
                 if (mSaveType.get(i) == type) {
@@ -127,14 +191,14 @@ public abstract class Element {
         }
     }
 
-    void addRestoreType(int type) {
+    public void addRestoreType(int type) {
         if (mRestoreType == null) {
             mRestoreType = new ArrayList<>();
         }
         mRestoreType.add(type);
     }
 
-    void removeStoreType(int type) {
+    public void removeStoreType(int type) {
         if (mRestoreType != null) {
             for (int i = 0; i < mRestoreType.size(); i++) {
                 if (mRestoreType.get(i) == type) {
@@ -149,20 +213,20 @@ public abstract class Element {
         return mEnvironmentUpdater != null && mEnvironmentUpdater.size() > 0;
     }
 
-    void addEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
+    public void addEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
         if (mEnvironmentUpdater == null) {
             mEnvironmentUpdater = new ArrayList<>();
         }
         mEnvironmentUpdater.add(environmentUpdater);
     }
 
-    void removeEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
+    public void removeEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
         if (mEnvironmentUpdater != null) {
             mEnvironmentUpdater.remove(environmentUpdater);
         }
     }
 
-    public void unsafeSingleEnvironmentUpdater(@Nullable List<Integer> changedTypes, @NonNull EnvironmentUpdater environmentUpdater) {
+    public void addSingleEnvironmentUpdater(@Nullable List<Integer> changedTypes, @NonNull EnvironmentUpdater environmentUpdater) {
         if (changedTypes != null) {
             for (Integer type : changedTypes) {
                 addRestoreType(type);
@@ -235,6 +299,10 @@ public abstract class Element {
         mY = y;
     }
 
+    public void setNextGapWidth(float nextGapWidth) {
+        mNextGapWidth = nextGapWidth;
+    }
+
     public float getBaseLine() {
         return mBaseLine;
     }
@@ -263,13 +331,13 @@ public abstract class Element {
         return mPrev;
     }
 
-    public void measure(TypeEnvironment env) {
+    public final void measure(TypeEnvironment env) {
         updateEnv(env);
         onMeasure(env);
         restoreEnv(env);
     }
 
-    public void draw(TypeEnvironment env, Canvas canvas) {
+    public final void draw(TypeEnvironment env, Canvas canvas) {
         updateEnv(env);
         if (mVisible == VISIBLE) {
             onDraw(env, canvas);
@@ -301,4 +369,40 @@ public abstract class Element {
     protected abstract void onMeasure(TypeEnvironment env);
 
     protected abstract void onDraw(TypeEnvironment env, Canvas canvas);
+
+    protected void drawBg(TypeEnvironment env, Canvas canvas){
+        if(env.getBackgroundColor() != Color.TRANSPARENT){
+            canvas.drawRect(mX, mY, getRightWithGap(), mY + mMeasureHeight, env.getBgPaint());
+        }
+    }
+
+    protected float getRightWithGap(){
+        return mX + mMeasureWidth + mNextGapWidth + 0.5f;
+    }
+
+    protected void drawBorder(TypeEnvironment env, Canvas canvas){
+        Paint paint = env.getBorderPaint();
+
+        if(env.getBorderLeftWidth() > 0){
+            paint.setColor(env.getBorderLeftColor());
+            canvas.drawRect(mX, mY, mX + env.getBorderLeftWidth(), mY + mMeasureHeight, paint);
+        }
+
+        if(env.getBorderTopWidth() > 0) {
+            paint.setColor(env.getBorderTopColor());
+            canvas.drawRect(mX, mY, getRightWithGap(), mY + env.getBorderTopWidth(), paint);
+        }
+
+        if(env.getBorderRightWidth() > 0){
+            paint.setColor(env.getBorderRightColor());
+            canvas.drawRect(mX + mMeasureWidth - env.getBorderRightWidth(), mY,
+                    mX + mMeasureWidth, mY + mMeasureHeight, paint);
+        }
+
+        if(env.getBorderBottomWidth() > 0){
+            paint.setColor(env.getBorderBottomColor());
+            canvas.drawRect(mX, mY + mMeasureHeight - env.getBorderBottomWidth(),
+                    getRightWithGap(), mY + mMeasureHeight, paint);
+        }
+    }
 }

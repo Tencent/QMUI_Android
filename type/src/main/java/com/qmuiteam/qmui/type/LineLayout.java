@@ -23,7 +23,7 @@ import android.text.TextUtils;
 
 import com.qmuiteam.qmui.type.element.BreakWordLineElement;
 import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
-import com.qmuiteam.qmui.type.element.EffectElement;
+import com.qmuiteam.qmui.type.element.IgnoreEffectElement;
 import com.qmuiteam.qmui.type.element.Element;
 import com.qmuiteam.qmui.type.element.NextParagraphElement;
 
@@ -94,6 +94,10 @@ public class LineLayout {
     public LineLayout setTypeModel(TypeModel typeModel) {
         mTypeModel = typeModel;
         return this;
+    }
+
+    public TypeModel getTypeModel() {
+        return mTypeModel;
     }
 
     public void measureAndLayout() {
@@ -183,7 +187,7 @@ public class LineLayout {
         Line lastLine = mLines.get(mLines.size() - 1);
         int limitWidth = lastLine.getWidthLimit();
         Element ellipseElement = new CharOrPhraseElement("...", -1, -1);
-        ellipseElement.unsafeSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
+        ellipseElement.addSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
             @Override
             public void update(TypeEnvironment env) {
                 env.clear();
@@ -201,7 +205,7 @@ public class LineLayout {
             changeTypes.add(TypeEnvironment.TYPE_TYPEFACE);
             changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR);
             changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH);
-            moreElement.unsafeSingleEnvironmentUpdater(changeTypes, new EnvironmentUpdater() {
+            moreElement.addSingleEnvironmentUpdater(changeTypes, new EnvironmentUpdater() {
                 @Override
                 public void update(TypeEnvironment env) {
                     if (mMoreTextColor != 0) {
@@ -250,7 +254,7 @@ public class LineLayout {
             mLines.remove(mLines.get(i));
         }
         Element ellipseElement = new CharOrPhraseElement("...", -1, -1);
-        ellipseElement.unsafeSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
+        ellipseElement.addSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
             @Override
             public void update(TypeEnvironment env) {
                 env.clear();
@@ -402,9 +406,9 @@ public class LineLayout {
                 effect = effect.getNext();
             }
             if (ellipseEffect.size() > 0) {
-                EffectElement effectElement = new EffectElement(ellipseEffect);
-                effectElement.move(mTypeEnvironment);
-                handleLine.add(effectElement);
+                IgnoreEffectElement ignoreEffectElement = new IgnoreEffectElement(ellipseEffect);
+                ignoreEffectElement.move(mTypeEnvironment);
+                handleLine.add(ignoreEffectElement);
             }
         }
         for (Element el : toAdd) {

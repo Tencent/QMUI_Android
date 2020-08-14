@@ -64,7 +64,7 @@ public class TypeEnvironment {
     private int mLastLineJustifyMaxWidth = (int) (Resources.getSystem().getDisplayMetrics().density * 36);
 
     private int mTextColor = Color.BLACK;
-    private int mBackgroundColor;
+    private int mBackgroundColor = Color.TRANSPARENT;
 
     private Paint mPaint = new Paint();
     private Paint mBgPaint = new Paint();
