@@ -27,7 +27,8 @@ import java.util.Map;
 public interface QMUISchemeIntentFactory {
     Intent factory(@NonNull Activity activity,
                    @NonNull Class<? extends Activity> activityClass,
-                   @Nullable Map<String, SchemeValue> scheme);
+                   @Nullable Map<String, SchemeValue> scheme,
+                   @NonNull String origin);
 
     boolean shouldBlockJump(@NonNull Activity activity,
                             @NonNull Class<? extends Activity> activityClass,

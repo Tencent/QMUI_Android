@@ -54,7 +54,7 @@ dependencies {
 
     //test
     testImplementation "junit:junit:$junitVersion"
-    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

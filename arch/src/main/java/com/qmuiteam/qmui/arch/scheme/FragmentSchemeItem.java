@@ -18,7 +18,6 @@ package com.qmuiteam.qmui.arch.scheme;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
@@ -28,9 +27,12 @@ import androidx.fragment.app.Fragment;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
+import com.qmuiteam.qmui.arch.annotation.FragmentContainerParam;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 class FragmentSchemeItem extends SchemeItem {
     private static HashMap<Class<? extends QMUISchemeFragmentFactory>, QMUISchemeFragmentFactory> sFactories;
@@ -66,7 +68,8 @@ class FragmentSchemeItem extends SchemeItem {
     @Override
     public boolean handle(@NonNull QMUISchemeHandler handler,
                           @NonNull Activity activity,
-                          @Nullable Map<String, SchemeValue> scheme) {
+                          @Nullable Map<String, SchemeValue> scheme,
+                          @NonNull String origin) {
         if (mActivityClsList.length == 0) {
             QMUILog.d(QMUISchemeHandler.TAG, "Can not start a new fragment because the host is't provided");
             return false;
@@ -98,10 +101,13 @@ class FragmentSchemeItem extends SchemeItem {
             return true;
         }
 
-        if (!isCurrentActivityCanStartFragment(activity) || isForceNewActivity(scheme)) {
-            Intent intent = factory.factory(activity, mActivityClsList, mFragmentCls, scheme);
+        if (!isCurrentActivityCanStartFragment(activity, scheme) || isForceNewActivity(scheme)) {
+            Intent intent = factory.factory(activity, mActivityClsList, mFragmentCls, scheme, origin);
             if (intent != null) {
                 activity.startActivity(intent);
+                if(shouldFinishCurrent(scheme)){
+                    activity.finish();
+                }
                 return true;
             }
             return false;
@@ -113,13 +119,18 @@ class FragmentSchemeItem extends SchemeItem {
                 && currentFragment != null
                 && currentFragment.getClass() == mFragmentCls
                 && currentFragment instanceof FragmentSchemeRefreshable){
-            ((FragmentSchemeRefreshable) currentFragment).refreshFromScheme(factory.factory(scheme));
+            ((FragmentSchemeRefreshable) currentFragment).refreshFromScheme(factory.factory(scheme, origin));
             return true;
         }
 
-        QMUIFragment fragment = factory.factory(mFragmentCls, scheme);
+        QMUIFragment fragment = factory.factory(mFragmentCls, scheme, origin);
         if(fragment != null){
-            int commitId = fragmentActivity.startFragment(fragment);
+            int commitId;
+            if(shouldFinishCurrent(scheme)){
+                commitId = fragmentActivity.startFragmentAndDestroyCurrent(fragment, true);
+            }else{
+                commitId = fragmentActivity.startFragment(fragment);
+            }
             if (commitId == -1) {
                 QMUILog.d(QMUISchemeHandler.TAG, "start fragment failed.");
                 return false;
@@ -129,7 +140,7 @@ class FragmentSchemeItem extends SchemeItem {
         return false;
     }
 
-    private boolean isCurrentActivityCanStartFragment(Activity activity) {
+    private boolean isCurrentActivityCanStartFragment(Activity activity, @Nullable Map<String, SchemeValue> scheme) {
         if (!(activity instanceof QMUIFragmentActivity)) {
             return false;
         }
@@ -140,8 +151,48 @@ class FragmentSchemeItem extends SchemeItem {
             return false;
         }
 
-        for (Class<? extends QMUIFragmentActivity> aClass : mActivityClsList) {
+        loop:for (Class<? extends QMUIFragmentActivity> aClass : mActivityClsList) {
             if (aClass.isAssignableFrom(activity.getClass())) {
+                FragmentContainerParam fragmentContainerParam = aClass.getAnnotation(FragmentContainerParam.class);
+                if(fragmentContainerParam == null){
+                    return true;
+                }
+                String[] required = fragmentContainerParam.required();
+                if(required.length == 0){
+                    return true;
+                }
+                if(scheme == null || scheme.isEmpty()){
+                    continue;
+                }
+                for (String s : required) {
+                    SchemeValue value = scheme.get(s);
+                    if (value == null || !activity.getIntent().hasExtra(s)) {
+                        continue loop;
+                    }
+                    if(value.type == Boolean.TYPE){
+                        if(activity.getIntent().getBooleanExtra(s, false) != (boolean)value.value){
+                            continue loop;
+                        }
+                    }else if(value.type == Integer.TYPE){
+                        if(activity.getIntent().getIntExtra(s, 0) != (int)value.value){
+                            continue loop;
+                        }
+                    }else if(value.type == Long.TYPE){
+                        if(activity.getIntent().getLongExtra(s, 0) != (long)value.value){
+                            continue loop;
+                        }
+                    }else if(value.type == Float.TYPE){
+                        if(activity.getIntent().getFloatExtra(s, 0) != (float)value.value){
+                            continue loop;
+                        }
+                    }else if(value.type == Double.TYPE){
+                        if(activity.getIntent().getDoubleExtra(s, 0) != (double)value.value){
+                            continue loop;
+                        }
+                    }else if(!Objects.equals( activity.getIntent().getStringExtra(s), value.value)){
+                        continue loop;
+                    }
+                }
                 return true;
             }
         }
@@ -155,15 +206,16 @@ class FragmentSchemeItem extends SchemeItem {
         if (scheme == null || scheme.isEmpty()) {
             return false;
         }
-        if (scheme.get(QMUISchemeHandler.ARG_FORCE_TO_NEW_ACTIVITY) != null) {
-            return true;
+
+        SchemeValue schemeValue = null;
+        if(!QMUILangHelper.isNullOrEmpty(mForceNewActivityKey)){
+            schemeValue = scheme.get(mForceNewActivityKey);
         }
 
-        if (mForceNewActivityKey != null) {
-            SchemeValue schemeValue = scheme.get(mForceNewActivityKey);
-            return schemeValue != null && schemeValue.type == Boolean.TYPE && ((Boolean) schemeValue.value);
+        if(schemeValue == null){
+            schemeValue = scheme.get(mForceNewActivityKey);
         }
 
-        return false;
+        return schemeValue != null && schemeValue.type == Boolean.TYPE && ((Boolean) schemeValue.value);
     }
 }

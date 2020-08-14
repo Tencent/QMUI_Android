@@ -32,16 +32,18 @@ public interface QMUISchemeFragmentFactory {
 
     @Nullable
     QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
-                         @Nullable Map<String, SchemeValue> scheme);
+                         @Nullable Map<String, SchemeValue> scheme,
+                         @NonNull String origin);
 
     @Nullable
-    Bundle factory(@Nullable Map<String, SchemeValue> scheme);
+    Bundle factory(@Nullable Map<String, SchemeValue> scheme, @NonNull String origin);
 
     @Nullable
     Intent factory(@NonNull Activity activity,
                    @NonNull Class<? extends QMUIFragmentActivity>[] activityClassList,
                    @NonNull Class<? extends QMUIFragment> fragmentCls,
-                   @Nullable Map<String, SchemeValue> scheme);
+                   @Nullable Map<String, SchemeValue> scheme,
+                   @NonNull String origin);
 
     boolean shouldBlockJump(@NonNull Activity activity,
                             @NonNull Class<? extends QMUIFragment> fragmentCls,

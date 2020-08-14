@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.QMUILog;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,9 +85,8 @@ public abstract class SchemeItem {
             try {
                 if (contains(mKeysForInt, name)) {
                     queryMap.put(name, new SchemeValue(value, Integer.valueOf(value), Integer.TYPE));
-                } else if (QMUISchemeHandler.ARG_FORCE_TO_NEW_ACTIVITY.equals(name) || contains(mKeysForBool, name)) {
-                    boolean isFalse = "0".equals(value) || "false".equals(value.toLowerCase());
-                    queryMap.put(name, new SchemeValue(value, !isFalse, Boolean.TYPE));
+                } else if (isBoolKey(name)) {
+                    queryMap.put(name, new SchemeValue(value, convertStringToBool(value), Boolean.TYPE));
                 } else if (contains(mKeysForLong, name)) {
                     queryMap.put(name, new SchemeValue(value, Long.valueOf(value), Long.TYPE));
                 } else if (contains(mKeysForFloat, name)) {
@@ -102,6 +102,24 @@ public abstract class SchemeItem {
             }
         }
         return queryMap;
+    }
+
+    protected boolean isBoolKey(String name){
+        return QMUISchemeHandler.ARG_FORCE_TO_NEW_ACTIVITY.equals(name) ||
+                QMUISchemeHandler.ARG_FINISH_CURRENT.equals(name) ||
+                contains(mKeysForBool, name);
+    }
+
+    protected boolean convertStringToBool(String text){
+        return !(QMUILangHelper.isNullOrEmpty(text) || "0".equals(text) || "false".equals(text.toLowerCase()));
+    }
+
+    protected boolean shouldFinishCurrent(@Nullable Map<String, SchemeValue> scheme){
+        if(scheme == null || scheme.isEmpty()){
+            return false;
+        }
+        SchemeValue schemeValue = scheme.get(QMUISchemeHandler.ARG_FINISH_CURRENT);
+        return schemeValue != null && schemeValue.type == Boolean.TYPE && (boolean)schemeValue.value;
     }
 
     @Nullable
@@ -175,5 +193,7 @@ public abstract class SchemeItem {
 
     public abstract boolean handle(@NonNull QMUISchemeHandler handler,
                                    @NonNull Activity activity,
-                                   @Nullable Map<String, SchemeValue> scheme);
+                                   @Nullable Map<String, SchemeValue> scheme,
+                                   @NonNull String origin
+    );
 }

@@ -16,7 +16,6 @@
 
 package com.qmuiteam.qmui.arch.annotation;
 
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,16 +23,33 @@ import java.lang.annotation.Target;
 
 
 /**
- * This annotation can be used when you want to revert to last Fragment(Activity) that
- * was visited before the app exited.
- * <p>
- * if annotated for subclass of QMUIFragment, such as FragmentA, it must be annotated
- * in the subclass of QMUIFragmentActivity, such as FragmentActivityA. FragmentActivityA
- * must be annotated by FirstFragments or DefaultFirstFragment and the value must contain
- * FragmentA.
+ * used for activity for different business.
+ *
+ *example:
+ *
+ * FragmentContainerParam(required = {"bookId"})
+ * class BookActivity extend QMUIFragmentActivity {
+ *
+ * }
+ *
+ * FragmentScheme(name = "bookDetail", activities = {QDMainActivity.class}, required={"bookId"})
+ * class BookDetailFragment extend QMUIFragment {
+ *
+ * }
+ *
+ * FragmentScheme(name = "bookRead", activities = {QDMainActivity.class}, required={"bookId"})
+ * class BookReadFragment extend QMUIFragment {
+ *
+ * }
+ *
+ * if bookId changed. QMUI will start up a new activity. so it's safe to put common book info
+ * in activityViewModel.
+ *
+ *
  */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface LatestVisitRecord {
-    boolean onlyForDebug() default false;
+public @interface FragmentContainerParam {
+    String[] required() default {};
 }

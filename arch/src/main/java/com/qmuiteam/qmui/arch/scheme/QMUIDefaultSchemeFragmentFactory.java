@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
+import com.qmuiteam.qmui.arch.annotation.FragmentContainerParam;
 
 import java.util.Map;
 
@@ -36,10 +37,11 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
     @Override
     @Nullable
     public QMUIFragment factory(@NonNull Class<? extends QMUIFragment> fragmentCls,
-                                @Nullable Map<String, SchemeValue> scheme) {
+                                @Nullable Map<String, SchemeValue> scheme,
+                                @NonNull String origin) {
         try {
             QMUIFragment fragment = fragmentCls.newInstance();
-            fragment.setArguments(factory(scheme));
+            fragment.setArguments(factory(scheme, origin));
             return fragment;
         } catch (Exception e) {
             QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
@@ -51,9 +53,10 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
 
     @Override
     @Nullable
-    public Bundle factory(@Nullable Map<String, SchemeValue> scheme) {
+    public Bundle factory(@Nullable Map<String, SchemeValue> scheme, @NonNull String origin) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(QMUISchemeHandler.ARG_FROM_SCHEME, true);
+        bundle.putString(QMUISchemeHandler.ARG_ORIGIN_SCHEME, origin);
         if (scheme != null && !scheme.isEmpty()) {
             for (Map.Entry<String, SchemeValue> item : scheme.entrySet()) {
                 String name = item.getKey();
@@ -81,14 +84,45 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
     public Intent factory(@NonNull Activity activity,
                           @NonNull Class<? extends QMUIFragmentActivity>[] activityClassList,
                           @NonNull Class<? extends QMUIFragment> fragmentCls,
-                          @Nullable Map<String, SchemeValue> scheme) {
-        Bundle bundle = factory(scheme);
+                          @Nullable Map<String, SchemeValue> scheme,
+                          @NonNull String origin) {
+        Bundle bundle = factory(scheme, origin);
         if (activityClassList.length == 0) {
             return null;
         }
-        Intent intent = QMUIFragmentActivity.intentOf(activity, activityClassList[0], fragmentCls, bundle);
-        intent.putExtra(ARG_FROM_SCHEME, true);
-        return intent;
+        loop:
+        for (Class<? extends QMUIFragmentActivity> target : activityClassList) {
+            Intent intent = QMUIFragmentActivity.intentOf(activity, target, fragmentCls, bundle);
+            intent.putExtra(ARG_FROM_SCHEME, true);
+            FragmentContainerParam fragmentContainerParam = target.getAnnotation(FragmentContainerParam.class);
+            if (fragmentContainerParam == null || fragmentContainerParam.required().length == 0) {
+                return intent;
+            }
+            if (scheme == null || scheme.isEmpty()) {
+                continue;
+            }
+            for (String arg : fragmentContainerParam.required()) {
+                SchemeValue value = scheme.get(arg);
+                if (value == null) {
+                    continue loop;
+                }
+                if (value.type == Boolean.TYPE) {
+                    intent.putExtra(arg, (boolean) value.value);
+                } else if (value.type == Integer.TYPE) {
+                    intent.putExtra(arg, (int) value.value);
+                } else if (value.type == Long.TYPE) {
+                    intent.putExtra(arg, (long) value.value);
+                } else if (value.type == Float.TYPE) {
+                    intent.putExtra(arg, (float) value.value);
+                } else if (value.type == Double.TYPE) {
+                    intent.putExtra(arg, (double) value.value);
+                } else{
+                    intent.putExtra(arg, value.origin);
+                }
+            }
+            return intent;
+        }
+        return null;
     }
 
     @Override

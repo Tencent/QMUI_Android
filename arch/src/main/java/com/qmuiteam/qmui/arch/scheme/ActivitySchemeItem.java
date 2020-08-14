@@ -54,7 +54,8 @@ class ActivitySchemeItem extends SchemeItem {
     @Override
     public boolean handle(@NonNull QMUISchemeHandler handler,
                           @NonNull Activity activity,
-                          @Nullable Map<String, SchemeValue> scheme) {
+                          @Nullable Map<String, SchemeValue> scheme,
+                          @NonNull String origin) {
         if (sFactories == null) {
             sFactories = new HashMap<>();
         }
@@ -79,12 +80,15 @@ class ActivitySchemeItem extends SchemeItem {
                 return true;
             }
 
-            Intent intent = factory.factory(activity, mActivityClass, scheme);
+            Intent intent = factory.factory(activity, mActivityClass, scheme, origin);
 
             if(isUseRefreshIfMatchedCurrent() && mActivityClass == activity.getClass() && activity instanceof ActivitySchemeRefreshable){
                 ((ActivitySchemeRefreshable) activity).refreshFromScheme(intent);
             }else{
                 activity.startActivity(intent);
+                if(shouldFinishCurrent(scheme)){
+                    activity.finish();
+                }
             }
             return true;
         }

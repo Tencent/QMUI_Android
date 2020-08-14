@@ -25,14 +25,17 @@ import androidx.annotation.Nullable;
 import java.util.Map;
 
 import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_FROM_SCHEME;
+import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_ORIGIN_SCHEME;
 
 public class QMUIDefaultSchemeIntentFactory implements QMUISchemeIntentFactory {
     @Override
     public Intent factory(@NonNull Activity activity,
                           @NonNull Class<? extends Activity> activityClass,
-                          @Nullable Map<String, SchemeValue> scheme) {
+                          @Nullable Map<String, SchemeValue> scheme,
+                          @NonNull String origin) {
         Intent intent = new Intent(activity, activityClass);
         intent.putExtra(ARG_FROM_SCHEME, true);
+        intent.putExtra(ARG_ORIGIN_SCHEME, origin);
         if (scheme != null && !scheme.isEmpty()) {
             for (Map.Entry<String, SchemeValue> item : scheme.entrySet()) {
                 String name = item.getKey();
