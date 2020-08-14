@@ -65,6 +65,8 @@ public class QMUITab {
     float selectedTabIconScale = 1f;
     QMUITabIcon tabIcon = null;
     boolean skinChangeWithTintColor;
+    boolean skinChangeNormalWithTintColor;
+    boolean skinChangeSelectedWithTintColor;
     int normalIconAttr;
     int selectedIconAttr;
     int contentWidth = 0;

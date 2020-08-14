@@ -75,6 +75,39 @@ public class QMUITabIcon extends Drawable implements Drawable.Callback {
         invalidateSelf();
     }
 
+    public void tintNormal(int normalColor){
+        DrawableCompat.setTint(mNormalIconDrawable, normalColor);
+        invalidateSelf();
+    }
+
+    public void tintSelected(int selectColor){
+        if (mSelectedIconDrawable != null) {
+            DrawableCompat.setTint(mSelectedIconDrawable, selectColor);
+            invalidateSelf();
+        }
+    }
+
+    public void srcNormal(@NonNull Drawable normalDrawable){
+        int normalAlpha = (int) (255 * (1 - mCurrentSelectFraction));
+        mNormalIconDrawable.setCallback(null);
+        mNormalIconDrawable = normalDrawable.mutate();
+        mNormalIconDrawable.setCallback(this);
+        mNormalIconDrawable.setAlpha(normalAlpha);
+        invalidateSelf();
+    }
+
+    public void srcSelected(@NonNull Drawable selectDrawable){
+        int selectedAlpha = (int) (255 * mCurrentSelectFraction);
+        if (mSelectedIconDrawable != null) {
+            mSelectedIconDrawable.setCallback(null);
+        }
+        mSelectedIconDrawable = selectDrawable.mutate();
+        mSelectedIconDrawable.setCallback(this);
+        mSelectedIconDrawable.setAlpha(selectedAlpha);
+        invalidateSelf();
+    }
+
+
     public void src(@NonNull Drawable normalDrawable, @NonNull Drawable selectDrawable) {
         int normalAlpha = (int) (255 * (1 - mCurrentSelectFraction));
         mNormalIconDrawable.setCallback(null);
