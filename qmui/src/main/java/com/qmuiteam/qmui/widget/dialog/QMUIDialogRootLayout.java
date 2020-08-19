@@ -59,6 +59,7 @@ public class QMUIDialogRootLayout extends ViewGroup {
         mMaxWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_max_width);
         mInsetHor = QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_inset_hor);
         mInsetVer = QMUIResHelper.getAttrDimen(context, R.attr.qmui_dialog_inset_ver);
+        setId(R.id.qmui_dialog_root_layout);
     }
 
     public void setMinWidth(int minWidth) {

@@ -17,6 +17,8 @@
 
 <resources>
     <!-- dialog -->
+    <item name="qmui_dialog_root_layout" type="id"/>
+    <item name="qmui_dialog_layout" type="id"/>
     <item name="qmui_dialog_title_id" type="id"/>
     <item name="qmui_dialog_operator_layout_id" type="id"/>
     <item name="qmui_dialog_content_id" type="id"/>

@@ -20,9 +20,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
-
 import androidx.annotation.Nullable;
+
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 
 /**
  * Created by cgspine on 2018/2/28.
@@ -43,6 +44,7 @@ public class QMUIDialogView extends QMUIConstraintLayout {
 
     public QMUIDialogView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setId(R.id.qmui_dialog_layout);
     }
 
     public void setOnDecorationListener(OnDecorationListener onDecorationListener) {
