@@ -129,9 +129,6 @@ public class QMUISchemeHandler {
             return false;
         }
         String action = elements[0];
-        if (!sSchemeMap.exists(this, action)) {
-            return false;
-        }
 
         Map<String, String> params;
         if (elements.length < 2) {
