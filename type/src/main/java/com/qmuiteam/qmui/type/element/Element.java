@@ -27,16 +27,38 @@ import com.qmuiteam.qmui.type.EnvironmentUpdater;
 import com.qmuiteam.qmui.type.TypeEnvironment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Element {
     public static final int VISIBLE = 0;
     public static final int INVISIBLE = 1;
     public static final int GONE = 2;
+
     public static final int WORD_PART_WHOLE = 0;
     public static final int WORD_PART_START = 1;
     public static final int WORD_PART_MIDDLE = 2;
     public static final int WORD_PART_END = 3;
+
+
+    public static final int LINE_BREAK_TYPE_NORMAL = 0;
+    public static final int LINE_BREAK_TYPE_NOT_START = 1;
+    public static final int LINE_BREAK_TYPE_NOT_END = 2;
+    public static final int LINE_BREAK_WORD_BREAK_ALLOWED = 3;
+
+    private static final char[] NOT_START_CHARS =new char[]{
+            ',', '.', ';', ']', '>', ')', '?', '"', '\'', '!', ':', '}', '」',
+            '，', '。', '；', '、', '】', '》', '）', '？', '”', '！', '：', '』',
+    };
+    private static final char[] NOT_END_CHARS = new char[]{
+            '(', '<', '[', '{', '“', '「', '『', '（', '《'
+    };
+
+    static {
+        Arrays.sort(NOT_START_CHARS);
+        Arrays.sort(NOT_END_CHARS);
+    }
+
     private final char mChar;
     private final CharSequence mText;
     private final int mIndex;
@@ -47,7 +69,7 @@ public abstract class Element {
     private Element mPrev;
     private Element mNext;
     private int mWordPart = WORD_PART_WHOLE;
-    private boolean mCanBreakWord = false;
+    private int mLineBreakType = LINE_BREAK_TYPE_NORMAL;
     private int mVisible = VISIBLE;
 
 
@@ -73,6 +95,11 @@ public abstract class Element {
         mIndex = index;
         mOriginIndex = originIndex;
         mDescription = description;
+        if(Arrays.binarySearch(NOT_START_CHARS, singleChar) >= 0){
+            mLineBreakType = LINE_BREAK_TYPE_NOT_START;
+        } else if(Arrays.binarySearch(NOT_END_CHARS, singleChar) >= 0){
+            mLineBreakType = LINE_BREAK_TYPE_NOT_END;
+        }
     }
 
     public void insetEffect(Element element) {
@@ -143,6 +170,14 @@ public abstract class Element {
         return mPrevEffect;
     }
 
+    public int getLineBreakType() {
+        return mLineBreakType;
+    }
+
+    public void setLineBreakType(int lineBreakType) {
+        mLineBreakType = lineBreakType;
+    }
+
     public void setPrev(Element element) {
         this.mPrev = element;
         if (element != null) {
@@ -163,14 +198,6 @@ public abstract class Element {
 
     public int getWordPart() {
         return mWordPart;
-    }
-
-    public void setCanBreakWord(boolean canBreakWord) {
-        this.mCanBreakWord = canBreakWord;
-    }
-
-    public boolean isCanBreakWord() {
-        return mCanBreakWord;
     }
 
     public void addSaveType(int type) {

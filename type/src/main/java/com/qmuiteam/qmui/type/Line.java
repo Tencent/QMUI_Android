@@ -124,42 +124,49 @@ public class Line {
         }
         int lastIndex = mElements.size() - 1;
         Element last = mElements.get(lastIndex);
-        if (last.getWordPart() == Element.WORD_PART_WHOLE || last.hasEnvironmentUpdater()) {
-            return null;
-        }
-        List<Element> back = new LinkedList<>();
-        back.add(last);
-        mElements.remove(lastIndex);
-        lastIndex--;
-        int min = Math.max(0, lastIndex - 20); // try 20 letter.
-        boolean find = false;
-        while (lastIndex > min) {
-            Element el = mElements.get(lastIndex);
+        Element next = last.getNext();
 
-            if (el.getWordPart() == Element.WORD_PART_WHOLE) {
-                find = true;
-                break;
-            } else if (el.isCanBreakWord()) {
-                BreakWordLineElement b = new BreakWordLineElement();
-                b.measure(environment);
-                add(b);
-                find = true;
-                break;
-            } else if (el.hasEnvironmentUpdater()) {
+        List<Element> back = new LinkedList<>();
+        if(last.getWordPart() == Element.WORD_PART_WHOLE){
+            if(last.getLineBreakType() == Element.LINE_BREAK_TYPE_NOT_END ||
+                    (next != null && next.getLineBreakType() == Element.LINE_BREAK_TYPE_NOT_START)){
+                mElements.remove(lastIndex);
+                back.add(last);
+            }
+        }else if(last.getWordPart() == Element.WORD_PART_END && (next != null && next.getLineBreakType() != Element.LINE_BREAK_TYPE_NOT_START)){
+            // do nothing
+        }else if(last.getWordPart() == Element.WORD_PART_START){
+            mElements.remove(lastIndex);
+            back.add(last);
+        }else{
+            back.add(last);
+            mElements.remove(lastIndex);
+            lastIndex--;
+            int min = Math.max(0, lastIndex - 30); // try 30 letter.
+            boolean find = false;
+            while (lastIndex > min) {
+                Element el = mElements.get(lastIndex);
+                if (el.getWordPart() == Element.WORD_PART_WHOLE || el.getWordPart() == Element.WORD_PART_END) {
+                    find = true;
+                    break;
+                } else if (el.getLineBreakType() == Element.LINE_BREAK_WORD_BREAK_ALLOWED) {
+                    // TODO what if environment had changed after break? the measure may be wrong
+                    BreakWordLineElement b = new BreakWordLineElement();
+                    b.measure(environment);
+                    add(b);
+                    find = true;
+                    break;
+                } else {
+                    back.add(0, el);
+                    mElements.remove(lastIndex);
+                    lastIndex--;
+                }
+            }
+            if (!find) {
                 // give up
                 mElements.addAll(back);
                 return null;
-            } else {
-                back.add(0, el);
-                mElements.remove(lastIndex);
-                lastIndex--;
             }
-        }
-
-        if (!find) {
-            // give up
-            mElements.addAll(back);
-            return null;
         }
 
         if (back.isEmpty()) {
