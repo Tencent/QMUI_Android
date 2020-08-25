@@ -451,7 +451,12 @@ public class QMUILayoutHelper implements IQMUILayout {
                     if (w == 0 || h == 0) {
                         return;
                     }
-                    int radius = getRealRadius();
+                    float radius = getRealRadius();
+                    int min = Math.min(w, h);
+                    if (radius * 2 > min) {
+                        // 解决 OnePlus 3T 8.0 上显示变形
+                        radius = min / 2F;
+                    }
                     if (mShouldUseRadiusArray) {
                         int left = 0, top = 0, right = w, bottom = h;
                         if (mHideRadiusSide == HIDE_RADIUS_SIDE_LEFT) {
