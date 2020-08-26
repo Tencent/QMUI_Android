@@ -78,7 +78,7 @@ public class QMUITextSizeSpan extends ReplacementSpan implements IQMUISkinHandle
     @Override
     public void handle(@NonNull View view, @NonNull QMUISkinManager manager, int skinIndex, @NonNull Resources.Theme theme) {
         if(view instanceof TextView){
-            mPaint.setColor(((TextView)view).getPaint().getColor());
+            mPaint.setColor(((TextView)view).getTextColors().getDefaultColor());
         }
     }
 }
