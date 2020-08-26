@@ -16,11 +16,18 @@
 
 package com.qmuiteam.qmui.span;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import androidx.annotation.NonNull;
 import android.text.style.ReplacementSpan;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.qmuiteam.qmui.skin.IQMUISkinHandlerSpan;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 /**
  * 支持调整字体大小的 span。{@link android.text.style.AbsoluteSizeSpan} 可以调整字体大小，但在中英文混排下由于 decent 的不同，
@@ -30,7 +37,7 @@ import android.text.style.ReplacementSpan;
  * @date 2016-12-02
  */
 
-public class QMUITextSizeSpan extends ReplacementSpan {
+public class QMUITextSizeSpan extends ReplacementSpan implements IQMUISkinHandlerSpan {
     private int mTextSize;
     private int mVerticalOffset;
     private Paint mPaint;
@@ -66,5 +73,12 @@ public class QMUITextSizeSpan extends ReplacementSpan {
                      int y, int bottom, @NonNull Paint paint) {
         int baseline = y + mVerticalOffset;
         canvas.drawText(text, start, end, x, baseline, mPaint);
+    }
+
+    @Override
+    public void handle(@NonNull View view, @NonNull QMUISkinManager manager, int skinIndex, @NonNull Resources.Theme theme) {
+        if(view instanceof TextView){
+            mPaint.setColor(((TextView)view).getPaint().getColor());
+        }
     }
 }
