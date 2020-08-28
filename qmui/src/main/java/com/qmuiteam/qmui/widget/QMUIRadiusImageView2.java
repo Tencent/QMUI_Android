@@ -26,13 +26,13 @@ import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import androidx.annotation.ColorInt;
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaViewHelper;
 import com.qmuiteam.qmui.layout.IQMUILayout;
 import com.qmuiteam.qmui.layout.QMUILayoutHelper;
-
-import androidx.annotation.ColorInt;
-import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * shown image in radius view, is different to {@link QMUIRadiusImageView}
@@ -543,11 +543,10 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mIsInOnTouchEvent = true;
         if (!this.isClickable()) {
-            this.setSelected(false);
             return super.onTouchEvent(event);
         } else if (mIsTouchSelectModeEnabled) {
+            mIsInOnTouchEvent = true;
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     this.setSelected(true);
@@ -559,8 +558,9 @@ public class QMUIRadiusImageView2 extends AppCompatImageView implements IQMUILay
                     this.setSelected(false);
                     break;
             }
+            mIsInOnTouchEvent = false;
         }
-        mIsInOnTouchEvent = false;
+
         return super.onTouchEvent(event);
     }
 
