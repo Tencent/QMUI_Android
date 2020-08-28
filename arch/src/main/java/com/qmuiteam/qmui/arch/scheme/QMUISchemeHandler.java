@@ -68,6 +68,7 @@ public class QMUISchemeHandler {
     private final Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory;
     private final Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory;
     private final Class<? extends QMUISchemeMatcher> mDefaultSchemeMatcher;
+    private final QMUISchemeHandleInterpolator mFallbackInterceptor;
 
     private String mLastHandledScheme = null;
     private long mLastSchemeHandledTime = 0;
@@ -84,6 +85,7 @@ public class QMUISchemeHandler {
         mDefaultIntentFactory = builder.mDefaultIntentFactory;
         mDefaultFragmentFactory = builder.mDefaultFragmentFactory;
         mDefaultSchemeMatcher = builder.mDefaultSchemeMatcher;
+        mFallbackInterceptor = builder.mFallbackInterceptor;
     }
 
     public String getPrefix() {
@@ -127,9 +129,6 @@ public class QMUISchemeHandler {
             return false;
         }
         String action = elements[0];
-        if (!sSchemeMap.exists(this, action)) {
-            return false;
-        }
 
         Map<String, String> params;
         if (elements.length < 2) {
@@ -153,6 +152,10 @@ public class QMUISchemeHandler {
             if (schemeItem != null) {
                 handled = schemeItem.handle(this, currentActivity, schemeItem.convertFrom(params), scheme);
             }
+        }
+
+        if(!handled && mFallbackInterceptor != null){
+            handled = mFallbackInterceptor.intercept(this, currentActivity, action, params, scheme);
         }
 
         if (handled) {
@@ -205,6 +208,7 @@ public class QMUISchemeHandler {
         private Class<? extends QMUISchemeIntentFactory> mDefaultIntentFactory = QMUIDefaultSchemeIntentFactory.class;
         private Class<? extends QMUISchemeFragmentFactory> mDefaultFragmentFactory = QMUIDefaultSchemeFragmentFactory.class;
         private Class<? extends QMUISchemeMatcher> mDefaultSchemeMatcher = QMUIDefaultSchemeMatcher.class;
+        private QMUISchemeHandleInterpolator mFallbackInterceptor = null;
 
         public Builder(@NonNull String prefix) {
             mPrefix = prefix;
@@ -220,6 +224,11 @@ public class QMUISchemeHandler {
 
         public Builder blockSameSchemeTimeout(long blockSameSchemeTimeout) {
             mBlockSameSchemeTimeout = blockSameSchemeTimeout;
+            return this;
+        }
+
+        public Builder setFallbackInterceptor(QMUISchemeHandleInterpolator fallbackInterceptor) {
+            mFallbackInterceptor = fallbackInterceptor;
             return this;
         }
 

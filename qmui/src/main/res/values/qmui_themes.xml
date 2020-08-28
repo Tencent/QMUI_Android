@@ -335,6 +335,7 @@
         <item name="qmui_bottom_sheet_background_dim_amount">0.6</item>
         <item name="qmui_bottom_sheet_cancel_btn_height">56dp</item>
         <item name="qmui_bottom_sheet_list_item_height">56dp</item>
+        <item name="qmui_bottom_sheet_list_item_separator_height">1px</item>
         <item name="qmui_bottom_sheet_list_item_icon_size">22dp</item>
         <item name="qmui_bottom_sheet_list_item_red_point_size">@dimen/qmui_tips_point_size</item>
         <item name="qmui_bottom_sheet_list_item_icon_margin_right">12dp</item>

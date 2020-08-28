@@ -287,6 +287,7 @@
     <attr name="qmui_bottom_sheet_background_dim_amount" format="float" />
     <attr name="qmui_bottom_sheet_cancel_btn_height" format="dimension"/>
     <attr name="qmui_bottom_sheet_list_item_height" format="dimension"/>
+    <attr name="qmui_bottom_sheet_list_item_separator_height" format="dimension"/>
     <attr name="qmui_bottom_sheet_list_item_icon_size" format="dimension" />
     <attr name="qmui_bottom_sheet_list_item_icon_margin_right" format="dimension" />
     <attr name="qmui_bottom_sheet_list_item_red_point_size" format="dimension"/>

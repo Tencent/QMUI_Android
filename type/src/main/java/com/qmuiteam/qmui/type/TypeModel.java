@@ -136,6 +136,11 @@ public class TypeModel {
         return mLastElement;
     }
 
+    @Nullable
+    public Element get(int pos){
+        return mElementMap.get(pos);
+    }
+
     public interface EffectRemover {
         void remove();
     }

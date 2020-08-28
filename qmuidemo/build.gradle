@@ -90,6 +90,7 @@ dependencies {
     api project(':lint')
     implementation project(':qmui')
     implementation project(':arch')
+    implementation project(':type')
     kapt project(':compiler')
     kapt project(':arch-compiler')
     implementation project(":skin-maker")

@@ -27,15 +27,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.ref.WeakReference;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
-import androidx.core.view.ViewCompat;
 
 public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     public static final float DIM_AMOUNT_NOT_EXIST = -1f;
@@ -83,6 +82,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
             return false;
         }
     };
+
 
 
     public QMUIBasePopup(Context context) {
