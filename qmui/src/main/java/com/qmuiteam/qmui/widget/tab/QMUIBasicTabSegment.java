@@ -268,6 +268,17 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
         }
     }
 
+    /**
+     * clear select info
+     */
+    public void resetSelect() {
+        mCurrentSelectedIndex = NO_POSITION;
+        if (mSelectAnimator != null) {
+            mSelectAnimator.cancel();
+            mSelectAnimator = null;
+        }
+    }
+
 
     /**
      * add a tab to QMUITabSegment
@@ -285,7 +296,10 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
      * notify dataChanged event to QMUITabSegment
      */
     public void notifyDataChanged() {
+        int current = mCurrentSelectedIndex;
+        resetSelect();
         mTabAdapter.setup();
+        selectTab(current);
     }
 
     public void addOnTabSelectedListener(@NonNull OnTabSelectedListener listener) {
