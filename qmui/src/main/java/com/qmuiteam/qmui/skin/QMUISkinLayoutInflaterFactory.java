@@ -75,10 +75,13 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                                 .createView(name, sSuccessClassNamePrefixMap.get(name), attrs);
                     }else{
                         for (String prefix : sClassPrefixList) {
-                            view = mOriginLayoutInflater.createView(name, prefix, attrs);
-                            if (view != null) {
-                                sSuccessClassNamePrefixMap.put(name, prefix);
-                                break;
+                            try {
+                                view = mOriginLayoutInflater.createView(name, prefix, attrs);
+                                if (view != null) {
+                                    sSuccessClassNamePrefixMap.put(name, prefix);
+                                    break;
+                                }
+                            } catch (Exception ignored) {
                             }
                         }
                     }

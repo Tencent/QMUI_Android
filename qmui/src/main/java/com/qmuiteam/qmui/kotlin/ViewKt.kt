@@ -1,5 +1,6 @@
 package com.qmuiteam.qmui.kotlin
 
+import android.os.SystemClock
 import android.view.View
 import com.qmuiteam.qmui.R
 import com.qmuiteam.qmui.skin.QMUISkinHelper
@@ -8,7 +9,7 @@ import com.qmuiteam.qmui.skin.QMUISkinValueBuilder
 fun throttleClick(wait: Long = 200, block: ((View) -> Unit)): View.OnClickListener {
 
     return View.OnClickListener { v ->
-        val current = System.currentTimeMillis()
+        val current = SystemClock.uptimeMillis()
         val lastClickTime = (v.getTag(R.id.qmui_click_timestamp) as? Long) ?: 0
         if (current - lastClickTime > wait) {
             v.setTag(R.id.qmui_click_timestamp, current)

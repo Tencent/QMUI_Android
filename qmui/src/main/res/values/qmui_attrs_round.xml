@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RoundWidget start -->
+
+    <!-- 圆角是否要自适应为 View 高度的一半 -->
+    <attr name="qmui_isRadiusAdjustBounds" format="boolean"/>
+    <!-- 同时指定四个方向的圆角大小 -->
+    <attr name="qmui_radius" format="dimension"/>
+    <!-- 指定左上方圆角的大小 -->
+    <attr name="qmui_radiusTopLeft" format="dimension"/>
+    <!-- 指定右上方圆角的大小 -->
+    <attr name="qmui_radiusTopRight" format="dimension"/>
+    <!-- 指定左下方圆角的大小 -->
+    <attr name="qmui_radiusBottomLeft" format="dimension"/>
+    <!-- 指定右下方圆角的大小 -->
+    <attr name="qmui_radiusBottomRight" format="dimension"/>
+
+    <attr name="QMUIButtonStyle" format="reference"/>
+
+    <declare-styleable name="QMUIRoundButton">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundFrameLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundLinearLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <declare-styleable name="QMUIRoundRelativeLayout">
+        <attr name="qmui_backgroundColor"/>
+        <attr name="qmui_borderColor"/>
+        <attr name="qmui_borderWidth"/>
+        <attr name="qmui_isRadiusAdjustBounds"/>
+        <attr name="qmui_radius"/>
+        <attr name="qmui_radiusTopLeft"/>
+        <attr name="qmui_radiusTopRight"/>
+        <attr name="qmui_radiusBottomLeft"/>
+        <attr name="qmui_radiusBottomRight"/>
+    </declare-styleable>
+
+    <!-- RoundWidget end -->
+</resources>
