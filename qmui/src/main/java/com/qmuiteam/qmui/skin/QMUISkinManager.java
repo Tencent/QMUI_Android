@@ -643,7 +643,9 @@ public final class QMUISkinManager {
         while (iterator.hasNext()) {
             Object item = iterator.next().get();
             if (item != null) {
-                return;
+                if(item == listener){
+                    return;
+                }
             } else {
                 iterator.remove();
             }

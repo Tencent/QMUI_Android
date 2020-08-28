@@ -16,18 +16,12 @@
 
 package com.qmuiteam.qmui.span;
 
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.style.ReplacementSpan;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-
-import com.qmuiteam.qmui.skin.IQMUISkinHandlerSpan;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 /**
  * 支持调整字体大小的 span。{@link android.text.style.AbsoluteSizeSpan} 可以调整字体大小，但在中英文混排下由于 decent 的不同，
@@ -37,7 +31,7 @@ import com.qmuiteam.qmui.skin.QMUISkinManager;
  * @date 2016-12-02
  */
 
-public class QMUITextSizeSpan extends ReplacementSpan implements IQMUISkinHandlerSpan {
+public class QMUITextSizeSpan extends ReplacementSpan {
     private int mTextSize;
     private int mVerticalOffset;
     private Paint mPaint;
@@ -51,13 +45,13 @@ public class QMUITextSizeSpan extends ReplacementSpan implements IQMUISkinHandle
         mTextSize = textSize;
         mVerticalOffset = verticalOffset;
         mTypeface = typeface;
+        mPaint = new Paint();
+        mPaint.setTextSize(mTextSize);
+        mPaint.setTypeface(mTypeface);
     }
 
     @Override
     public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        mPaint = new Paint(paint);
-        mPaint.setTextSize(mTextSize);
-        mPaint.setTypeface(mTypeface);
         if(mTextSize > paint.getTextSize() && fm != null){
             Paint.FontMetricsInt newFm = mPaint.getFontMetricsInt();
             fm.descent = newFm.descent;
@@ -71,14 +65,10 @@ public class QMUITextSizeSpan extends ReplacementSpan implements IQMUISkinHandle
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top,
                      int y, int bottom, @NonNull Paint paint) {
+        mPaint.setColor(paint.getColor());
+        mPaint.setStyle(paint.getStyle());
+        mPaint.setAntiAlias(paint.isAntiAlias());
         int baseline = y + mVerticalOffset;
         canvas.drawText(text, start, end, x, baseline, mPaint);
-    }
-
-    @Override
-    public void handle(@NonNull View view, @NonNull QMUISkinManager manager, int skinIndex, @NonNull Resources.Theme theme) {
-        if(view instanceof TextView){
-            mPaint.setColor(((TextView)view).getTextColors().getDefaultColor());
-        }
     }
 }
