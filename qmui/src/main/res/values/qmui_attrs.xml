@@ -205,7 +205,9 @@
     <declare-styleable name="QMUIProgressBar">
         <attr name="qmui_type" format="enum">
             <enum name="type_rect" value="0"/>
-            <enum name="type_circle" value="1"/>
+            <enum name="type_round_rect" value="1"/>
+            <enum name="type_circle" value="2"/>
+            <enum name="type_fill_circle" value="3"/>
         </attr>
         <attr name="qmui_progress_color" format="color"/>
         <attr name="qmui_background_color" format="color"/>
