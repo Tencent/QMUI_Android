@@ -21,12 +21,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntDef;
-import androidx.core.view.ViewCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
+import androidx.core.view.ViewCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,7 +49,8 @@ public class QMUIStatusBarHelper {
     public static float sVirtualDensity = -1;
     public static float sVirtualDensityDpi = -1;
     private static int sStatusBarHeight = -1;
-    private static @StatusBarType int mStatusBarType = STATUSBAR_TYPE_DEFAULT;
+    private static @StatusBarType
+    int mStatusBarType = STATUSBAR_TYPE_DEFAULT;
     private static Integer sTransparentValue;
 
     public static void translucent(Activity activity) {
@@ -96,7 +98,7 @@ public class QMUIStatusBarHelper {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int systemUiVisibility =  window.getDecorView().getSystemUiVisibility();
+            int systemUiVisibility = window.getDecorView().getSystemUiVisibility();
             systemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             window.getDecorView().setSystemUiVisibility(systemUiVisibility);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && supportTransclentStatusBar6()) {
@@ -126,6 +128,21 @@ public class QMUIStatusBarHelper {
 //                window.getDecorView().setSystemUiVisibility(transparentValue);
 //            }
         }
+    }
+
+    /**
+     * 如果原本存在某一个flag， 就将它迁移到 out
+     * @param window
+     * @param out
+     * @param type
+     * @return
+     */
+    public static int retainSystemUiFlag(Window window, int out, int type) {
+        int now = window.getDecorView().getSystemUiVisibility();
+        if ((now & type) == type) {
+            out |= type;
+        }
+        return out;
     }
 
     @TargetApi(28)
@@ -318,7 +335,7 @@ public class QMUIStatusBarHelper {
 
             // flyme 在 6.2.0.0A 支持了 Android 官方的实现方案，旧的方案失效
             // 高版本调用这个出现不可预期的 Bug,官方文档也没有给出完整的高低版本兼容方案
-            if(QMUIDeviceHelper.isFlymeLowerThan(7)){
+            if (QMUIDeviceHelper.isFlymeLowerThan(7)) {
                 try {
                     WindowManager.LayoutParams lp = window.getAttributes();
                     Field darkFlag = WindowManager.LayoutParams.class
@@ -340,7 +357,7 @@ public class QMUIStatusBarHelper {
                 } catch (Exception ignored) {
 
                 }
-            }else if(QMUIDeviceHelper.isFlyme()){
+            } else if (QMUIDeviceHelper.isFlyme()) {
                 result = true;
             }
         }
