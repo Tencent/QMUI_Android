@@ -82,7 +82,7 @@ public class QMUIProgressBar extends View {
     private RectF mArcOval = new RectF();
     private String mText = "";
     private int mStrokeWidth;
-    private int mCircleRadius;
+    private float mCircleRadius;
     private Point mCenterPoint;
     private OnProgressChangeListener mOnProgressChangeListener;
     private Runnable mNotifyProgressChangeAction = new Runnable() {
@@ -134,7 +134,7 @@ public class QMUIProgressBar extends View {
             mStrokeWidth = array.getDimensionPixelSize(R.styleable.QMUIProgressBar_qmui_stroke_width, DEFAULT_STROKE_WIDTH);
         }
         array.recycle();
-        configPaint(mTextColor, mTextSize, mRoundCap);
+        configPaint(mTextColor, mTextSize, mRoundCap, mStrokeWidth);
 
         setProgress(mValue);
     }
@@ -143,17 +143,28 @@ public class QMUIProgressBar extends View {
         mOnProgressChangeListener = onProgressChangeListener;
     }
 
+    public void setStrokeWidth(int strokeWidth) {
+        if(mStrokeWidth != strokeWidth){
+            mStrokeWidth = strokeWidth;
+            if(mWidth > 0){
+                configShape();
+            }
+            configPaint(mTextColor, mTextSize, mRoundCap, mStrokeWidth);
+            invalidate();
+        }
+    }
+
     private void configShape() {
         if (mType == TYPE_RECT || mType == TYPE_ROUND_RECT) {
             mBgRect = new RectF(getPaddingLeft(), getPaddingTop(), mWidth + getPaddingLeft(), mHeight + getPaddingTop());
             mProgressRect = new RectF();
         } else {
-            mCircleRadius = (Math.min(mWidth, mHeight) - mStrokeWidth) / 2;
+            mCircleRadius = (Math.min(mWidth, mHeight) - mStrokeWidth) / 2f - 0.5f;
             mCenterPoint = new Point(mWidth / 2, mHeight / 2);
         }
     }
 
-    private void configPaint(int textColor, int textSize, boolean isRoundCap) {
+    private void configPaint(int textColor, int textSize, boolean isRoundCap, int strokeWidth) {
         mPaint.setColor(mProgressColor);
         mBackgroundPaint.setColor(mBackgroundColor);
         if (mType == TYPE_RECT || mType == TYPE_ROUND_RECT) {
@@ -165,11 +176,11 @@ public class QMUIProgressBar extends View {
             mPaint.setAntiAlias(true);
             mPaint.setStrokeCap(Paint.Cap.BUTT);
             mBackgroundPaint.setStyle(Paint.Style.STROKE);
-            mBackgroundPaint.setStrokeWidth(mStrokeWidth);
+            mBackgroundPaint.setStrokeWidth(strokeWidth);
             mBackgroundPaint.setAntiAlias(true);
         } else {
             mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(mStrokeWidth);
+            mPaint.setStrokeWidth(strokeWidth);
             mPaint.setAntiAlias(true);
             if (isRoundCap) {
                 mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -177,7 +188,7 @@ public class QMUIProgressBar extends View {
                 mPaint.setStrokeCap(Paint.Cap.BUTT);
             }
             mBackgroundPaint.setStyle(Paint.Style.STROKE);
-            mBackgroundPaint.setStrokeWidth(mStrokeWidth);
+            mBackgroundPaint.setStrokeWidth(strokeWidth);
             mBackgroundPaint.setAntiAlias(true);
         }
         mTextPaint.setColor(textColor);
@@ -187,7 +198,7 @@ public class QMUIProgressBar extends View {
 
     public void setType(int type) {
         mType = type;
-        configPaint(mTextColor, mTextSize, mRoundCap);
+        configPaint(mTextColor, mTextSize, mRoundCap, mStrokeWidth);
         invalidate();
     }
 
