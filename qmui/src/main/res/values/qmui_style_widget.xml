@@ -319,7 +319,7 @@
     <style name="QMUI.TipNew">
         <item name="android:layout_width">37dp</item>
         <item name="android:layout_height">17dp</item>
-        <item name="android:background">@drawable/qmui_icon_tip_new</item>
+        <item name="android:src">@drawable/qmui_icon_tip_new</item>
     </style>
 
     <style name="QMUI.Slider">
