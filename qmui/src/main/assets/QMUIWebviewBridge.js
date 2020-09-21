@@ -34,6 +34,36 @@
         messagingIframe.src = QUEUE_HAS_MESSAGE;
     }
 
+    function isCmdSupport(cmd, callback){
+        if(isCmdSupport.__cache && isCmdSupport.__cache.indexOf(cmd) >= 0){
+            callback(true)
+            return
+        }
+        getSupportedCmdList(function(data){
+            if(data && data.length > 0){
+                if(!isCmdSupport.__cache){
+                    isCmdSupport.__cache = []
+                }
+                for(var i = 0; i < data.length; i++){
+                    isCmdSupport.__cache.push(data[i])
+                }
+            }
+            callback(isCmdSupport.__cache.indexOf(cmd) >= 0)
+        })
+
+    }
+
+    function getSupportedCmdList(callback){
+        if(getSupportedCmdList.__cache){
+            callback(getSupportedCmdList.__cache)
+            return
+        }
+        send({__cmd__: "getSupportedCmdList"}, function(data){
+            getSupportedCmdList.__cache = data
+            callback(data)
+        })
+    }
+
     function _fetchQueueFromNative(){
         var messageQueueString = JSON.stringify(sendingMessageQueue);
         sendingMessageQueue = [];
@@ -53,6 +83,8 @@
 
     var QMUIBridge = window.QMUIBridge = {
         send: send,
+        isCmdSupport: isCmdSupport,
+        getSupportedCmdList: getSupportedCmdList,
         _fetchQueueFromNative: _fetchQueueFromNative,
         _handleResponseFromNative: _handleResponseFromNative
     };

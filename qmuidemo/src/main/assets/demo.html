@@ -11,7 +11,8 @@
 <body>
 
 <div>
-    <input type="button" id="enter" value="发消息给Native" onclick="testClick();"/>
+    <input type="button" id="test1" value="发消息给Native" onclick="testClick();"/>
+    <input type="button" id="test2" value="原生不支持的指令" onclick="testClick1();"/>
 
     <div>
         <a href="qmui://tab?mode=2&name=你好">scheme 跳转到 Tab</a>
@@ -26,19 +27,60 @@
     var messageConsoleBox = document.getElementById("message_console");
 
     function testClick() {
-        var data = {id: 1, info: "来自 Webview 的消息"};
-        window.QMUIBridge.send(data, function (responseData) {
-            var text = document.createElement('p');
-            text.innerText = "code = " + responseData.code + "; message = " + responseData.message;
-            messageConsoleBox.appendChild(text);
-        });
 
+         window.QMUIBridge.isCmdSupport("test", function(support){
+            if(support){
+                var data = {cmd: "test", id: 1, info: "来自 Webview 的消息"};
+                window.QMUIBridge.send(data, function (responseData) {
+                    var text = document.createElement('p');
+                    text.innerText = "code = " + responseData.code + "; message = " + responseData.message;
+                    messageConsoleBox.appendChild(text);
+                });
+            }else{
+                var text = document.createElement('p');
+                text.innerText = "cmd (test) is not supported. "
+                messageConsoleBox.appendChild(text);
+            }
+         })
+
+    }
+
+    function testClick1() {
+        window.QMUIBridge.isCmdSupport("test2", function(support){
+            if(support){
+                var data = {cmd: "test2", id: 1, info: "来自 Webview 的消息"};
+                window.QMUIBridge.send(data, function (responseData) {
+                    var text = document.createElement('p');
+                    text.innerText = "code = " + responseData.code + "; message = " + responseData.message;
+                    messageConsoleBox.appendChild(text);
+                });
+            }else{
+                var text = document.createElement('p');
+                text.innerText = "cmd (test2) is not supported. "
+                messageConsoleBox.appendChild(text);
+            }
+         })
     }
 
     document.addEventListener('QMUIBridgeReady', function () {
         var text = document.createElement('p')
         text.innerText = "Bridge加载完成。"
         messageConsoleBox.appendChild(text)
+
+        window.QMUIBridge.getSupportedCmdList(function(data){
+            var text = document.createElement('p')
+            var cmdList = "原生支持的指令："
+            if(data && data.length){
+                for(var i = 0; i< data.length; i++){
+                    cmdList += data[i]
+                    if(i < data.length - 1){
+                        cmdList += ", "
+                    }
+                }
+            }
+            text.innerText = cmdList
+            messageConsoleBox.appendChild(text)
+        })
     }, false);
 </script>
 

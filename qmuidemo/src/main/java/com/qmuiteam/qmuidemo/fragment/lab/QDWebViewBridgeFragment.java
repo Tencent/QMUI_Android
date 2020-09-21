@@ -42,6 +42,9 @@ import com.qmuiteam.qmuidemo.manager.QDSchemeManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Widget(group = Group.Other, name = "Webview Bridge")
 public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
 
@@ -98,6 +101,14 @@ public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
     @Override
     protected QMUIWebViewClient getWebViewClient() {
         QMUIWebViewBridgeHandler handler = new QMUIWebViewBridgeHandler(mWebView) {
+
+            @Override
+            protected List<String> getSupportedCmdList() {
+                List<String> ret = new ArrayList<>();
+                ret.add("test");
+                return ret;
+            }
+
             @Override
             protected JSONObject handleMessage(String message) {
                 try {

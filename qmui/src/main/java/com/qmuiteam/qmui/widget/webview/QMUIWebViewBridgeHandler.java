@@ -4,15 +4,15 @@ import android.util.Pair;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public abstract class QMUIWebViewBridgeHandler {
     private static final String MESSAGE_JS_FETCH_SCRIPT = "QMUIBridge._fetchQueueFromNative()";
@@ -21,6 +21,8 @@ public abstract class QMUIWebViewBridgeHandler {
     private static final String MESSAGE_CALLBACK_ID = "callbackId";
     private static final String MESSAGE_DATA = "data";
     private static final String MESSAGE_RESPONSE_ID = "id";
+    private static final String MESSAGE_INNER_CMD_NAME = "__cmd__";
+    private static final String MESSAGE_CMD_GET_SUPPORTED_CMD_LIST = "getSupportedCmdList";
 
     private List<Pair<String, ValueCallback<String>>> mStartupMessageList = new ArrayList<>();
     private WebView mWebView;
@@ -40,7 +42,7 @@ public abstract class QMUIWebViewBridgeHandler {
     void onBridgeLoaded() {
         if (mStartupMessageList != null) {
             for (Pair<String, ValueCallback<String>> message : mStartupMessageList) {
-                mWebView.evaluateJavascript("", null);
+                mWebView.evaluateJavascript(message.first, message.second);
             }
             mStartupMessageList = null;
         }
@@ -58,15 +60,21 @@ public abstract class QMUIWebViewBridgeHandler {
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject message = array.getJSONObject(i);
                             String callbackId = message.getString(MESSAGE_CALLBACK_ID);
+                            String msgDataOrigin = message.getString(MESSAGE_DATA);
                             JSONObject response = new JSONObject();
-                            JSONObject responseData = handleMessage(message.getString(MESSAGE_DATA));
-                            if (callbackId != null) {
-                                response.put(MESSAGE_RESPONSE_ID, callbackId);
-                                response.put(MESSAGE_DATA, responseData);
-                                String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
-                                        MESSAGE_PARAM_HOLDER, escape(response.toString()));
-                                mWebView.evaluateJavascript(script, null);
+                            Object responseData;
+                            try{
+                                JSONObject msgData = new JSONObject(msgDataOrigin);
+                                String cmdName = msgData.getString(MESSAGE_INNER_CMD_NAME);
+                                responseData = handleInnerMessage(cmdName, msgData);
+                            }catch (Throwable e){
+                                responseData = handleMessage(msgDataOrigin);
                             }
+                            response.put(MESSAGE_RESPONSE_ID, callbackId);
+                            response.put(MESSAGE_DATA, responseData);
+                            String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
+                                    MESSAGE_PARAM_HOLDER, escape(response.toString()));
+                            mWebView.evaluateJavascript(script, null);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -76,7 +84,18 @@ public abstract class QMUIWebViewBridgeHandler {
         });
     }
 
-    protected abstract JSONObject handleMessage(String message);
+
+    private Object handleInnerMessage(String cmdName, JSONObject jsonObject){
+        if(MESSAGE_CMD_GET_SUPPORTED_CMD_LIST.equals(cmdName)){
+            return new JSONArray(getSupportedCmdList());
+        }else{
+            throw new RuntimeException("not a inner api message. fallback to custom message");
+        }
+    }
+
+    protected abstract List<String> getSupportedCmdList();
+
+    protected abstract Object handleMessage(String message);
 
     @Nullable
     public static String unescape(@Nullable String value) {

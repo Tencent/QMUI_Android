@@ -6,25 +6,34 @@ import android.os.Build;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 public class QMUIBridgeWebViewClient extends QMUIWebViewClient {
     public static final String QMUI_BRIDGE_HAS_MESSAGE = "qmui://__QUEUE_MESSAGE__";
     public static final String QMUI_BRIDGE_JS = "QMUIWebviewBridge.js";
 
     private QMUIWebViewBridgeHandler mWebViewBridgeHandler;
+    private boolean mNeedInjectLocalBridgeJs;
 
     public QMUIBridgeWebViewClient(boolean needDispatchSafeAreaInset,
                                    boolean disableVideoFullscreenBtnAlways,
                                    @NonNull QMUIWebViewBridgeHandler bridgeHandler) {
+        this(needDispatchSafeAreaInset, disableVideoFullscreenBtnAlways, true, bridgeHandler);
+    }
+
+    public QMUIBridgeWebViewClient(boolean needDispatchSafeAreaInset,
+                                   boolean disableVideoFullscreenBtnAlways,
+                                   boolean needInjectLocalBridgeJs,
+                                   @NonNull QMUIWebViewBridgeHandler bridgeHandler) {
         super(needDispatchSafeAreaInset, disableVideoFullscreenBtnAlways);
+        mNeedInjectLocalBridgeJs = needInjectLocalBridgeJs;
         mWebViewBridgeHandler = bridgeHandler;
     }
 
@@ -63,11 +72,16 @@ public class QMUIBridgeWebViewClient extends QMUIWebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        String bridgeScript = loadBridgeScript(view.getContext());
-        if (bridgeScript != null) {
-            view.evaluateJavascript(bridgeScript, null);
+        if(mNeedInjectLocalBridgeJs){
+            String bridgeScript = loadBridgeScript(view.getContext());
+            if (bridgeScript != null) {
+                view.evaluateJavascript(bridgeScript, null);
+                mWebViewBridgeHandler.onBridgeLoaded();
+            }
+        }else{
             mWebViewBridgeHandler.onBridgeLoaded();
         }
+
     }
 
     @Nullable
