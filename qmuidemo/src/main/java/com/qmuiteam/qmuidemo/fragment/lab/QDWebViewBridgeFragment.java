@@ -110,7 +110,7 @@ public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
             }
 
             @Override
-            protected JSONObject handleMessage(String message) {
+            protected void handleMessage(String message, MessageFinishCallback callback) {
                 try {
                     JSONObject json = new JSONObject(message);
                     String id = json.getString("id");
@@ -119,12 +119,13 @@ public class QDWebViewBridgeFragment extends QDWebExplorerFragment {
                     JSONObject result = new JSONObject();
                     result.put("code", 100);
                     result.put("message", "Native 的执行结果");
-                    return result;
+                    callback.finish(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    callback.finish(null);
                 }
-                return null;
             }
+
         };
         return new QMUIBridgeWebViewClient(needDispatchSafeAreaInset(), false, handler){
             @Override

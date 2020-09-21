@@ -61,20 +61,28 @@ public abstract class QMUIWebViewBridgeHandler {
                             JSONObject message = array.getJSONObject(i);
                             String callbackId = message.getString(MESSAGE_CALLBACK_ID);
                             String msgDataOrigin = message.getString(MESSAGE_DATA);
-                            JSONObject response = new JSONObject();
-                            Object responseData;
+                            MessageFinishCallback callback = new MessageFinishCallback(callbackId) {
+                                @Override
+                                public void finish(Object data) {
+                                    try{
+                                        JSONObject response = new JSONObject();
+                                        response.put(MESSAGE_RESPONSE_ID, getCallbackId());
+                                        response.put(MESSAGE_DATA, data);
+                                        String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
+                                                MESSAGE_PARAM_HOLDER, escape(response.toString()));
+                                        mWebView.evaluateJavascript(script, null);
+                                    }catch (Throwable ignore){
+
+                                    }
+                                }
+                            };
                             try{
                                 JSONObject msgData = new JSONObject(msgDataOrigin);
                                 String cmdName = msgData.getString(MESSAGE_INNER_CMD_NAME);
-                                responseData = handleInnerMessage(cmdName, msgData);
+                                handleInnerMessage(cmdName, msgData, callback);
                             }catch (Throwable e){
-                                responseData = handleMessage(msgDataOrigin);
+                                handleMessage(msgDataOrigin, callback);
                             }
-                            response.put(MESSAGE_RESPONSE_ID, callbackId);
-                            response.put(MESSAGE_DATA, responseData);
-                            String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
-                                    MESSAGE_PARAM_HOLDER, escape(response.toString()));
-                            mWebView.evaluateJavascript(script, null);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -85,9 +93,9 @@ public abstract class QMUIWebViewBridgeHandler {
     }
 
 
-    private Object handleInnerMessage(String cmdName, JSONObject jsonObject){
+    private void handleInnerMessage(String cmdName, JSONObject jsonObject, MessageFinishCallback callback){
         if(MESSAGE_CMD_GET_SUPPORTED_CMD_LIST.equals(cmdName)){
-            return new JSONArray(getSupportedCmdList());
+            callback.finish(new JSONArray(getSupportedCmdList()));
         }else{
             throw new RuntimeException("not a inner api message. fallback to custom message");
         }
@@ -95,7 +103,7 @@ public abstract class QMUIWebViewBridgeHandler {
 
     protected abstract List<String> getSupportedCmdList();
 
-    protected abstract Object handleMessage(String message);
+    protected abstract void handleMessage(String message, MessageFinishCallback callback);
 
     @Nullable
     public static String unescape(@Nullable String value) {
@@ -120,6 +128,22 @@ public abstract class QMUIWebViewBridgeHandler {
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"");
         return "\"" + ret + "\"";
+    }
+
+
+    public abstract class MessageFinishCallback{
+
+        private final String mCallbackId;
+
+        public MessageFinishCallback(String callbackId){
+            mCallbackId = callbackId;
+        }
+
+        public String getCallbackId() {
+            return mCallbackId;
+        }
+
+        public abstract void finish(Object data);
     }
 
 }
