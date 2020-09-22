@@ -20,7 +20,6 @@ public abstract class QMUIWebViewBridgeHandler {
     private static final String MESSAGE_PARAM_HOLDER = "$data$";
     private static final String MESSAGE_CALLBACK_ID = "callbackId";
     private static final String MESSAGE_DATA = "data";
-    private static final String MESSAGE_RESPONSE_ID = "id";
     private static final String MESSAGE_INNER_CMD_NAME = "__cmd__";
     private static final String MESSAGE_CMD_GET_SUPPORTED_CMD_LIST = "getSupportedCmdList";
 
@@ -66,7 +65,7 @@ public abstract class QMUIWebViewBridgeHandler {
                                 public void finish(Object data) {
                                     try{
                                         JSONObject response = new JSONObject();
-                                        response.put(MESSAGE_RESPONSE_ID, getCallbackId());
+                                        response.put(MESSAGE_CALLBACK_ID, getCallbackId());
                                         response.put(MESSAGE_DATA, data);
                                         String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
                                                 MESSAGE_PARAM_HOLDER, escape(response.toString()));

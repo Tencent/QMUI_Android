@@ -72,11 +72,11 @@
 
     function _handleResponseFromNative(responseStr){
         var response = JSON.parse(responseStr);
-        if(response.id){
-            var responseCallback = responseCallbacks[response.id];
+        if(response.callbackId){
+            var responseCallback = responseCallbacks[response.callbackId];
             if(responseCallback){
                 responseCallback(response.data);
-                delete responseCallbacks[response.id];
+                delete responseCallbacks[response.callbackId];
             }
         }
     }
