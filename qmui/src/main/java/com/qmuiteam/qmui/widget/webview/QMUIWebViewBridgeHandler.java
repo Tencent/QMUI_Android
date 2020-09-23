@@ -67,8 +67,7 @@ public abstract class QMUIWebViewBridgeHandler {
                                         JSONObject response = new JSONObject();
                                         response.put(MESSAGE_CALLBACK_ID, getCallbackId());
                                         response.put(MESSAGE_DATA, data);
-                                        String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(
-                                                MESSAGE_PARAM_HOLDER, escape(response.toString()));
+                                        String script = MESSAGE_JS_RESPONSE_SCRIPT.replace(MESSAGE_PARAM_HOLDER, response.toString());
                                         mWebView.evaluateJavascript(script, null);
                                     }catch (Throwable ignore){
 

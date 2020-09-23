@@ -70,9 +70,8 @@
         return messageQueueString;
     }
 
-    function _handleResponseFromNative(responseStr){
-        var response = JSON.parse(responseStr);
-        if(response.callbackId){
+    function _handleResponseFromNative(response){
+        if(response && response.callbackId){
             var responseCallback = responseCallbacks[response.callbackId];
             if(responseCallback){
                 responseCallback(response.data);
