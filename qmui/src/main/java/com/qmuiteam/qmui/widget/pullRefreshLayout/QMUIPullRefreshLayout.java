@@ -476,9 +476,9 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                 if (mIsDragging) {
                     float dy = (y - mLastMotionY) * mDragRate;
                     if (dy >= 0) {
-                        moveTargetView(dy, true);
+                        moveTargetView(dy);
                     } else {
-                        int move = moveTargetView(dy, true);
+                        int move = moveTargetView(dy);
                         float delta = Math.abs(dy) - Math.abs(move);
                         if (delta > 0) {
                             // 重新dispatch一次down事件，使得列表可以继续滚动
@@ -682,7 +682,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
                         mScrollFlag = FLAG_NEED_SCROLL_TO_REFRESH_POSITION;
                         invalidate();
                     }else{
-                        moveTargetViewTo(mTargetRefreshOffset, false, true);
+                        moveTargetViewTo(mTargetRefreshOffset, true);
                     }
                     onRefresh();
                 }
@@ -735,11 +735,11 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     public void reset() {
-        moveTargetViewTo(mTargetInitOffset, false);
         mIRefreshView.stop();
         mIsRefreshing = false;
         mScroller.forceFinished(true);
         mScrollFlag = 0;
+        moveTargetViewTo(mTargetInitOffset);
     }
 
     protected void startDragging(float x, float y) {
@@ -805,10 +805,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         if (dy > 0 && parentCanConsume > 0) {
             if (dy >= parentCanConsume) {
                 consumed[1] = parentCanConsume;
-                moveTargetViewTo(mTargetInitOffset, true);
+                moveTargetViewTo(mTargetInitOffset);
             } else {
                 consumed[1] = dy;
-                moveTargetView(-dy, true);
+                moveTargetView(-dy);
             }
         }
     }
@@ -818,7 +818,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         info("onNestedScroll: dxConsumed = " + dxConsumed + " ; dyConsumed = " + dyConsumed +
                 " ; dxUnconsumed = " + dxUnconsumed + " ; dyUnconsumed = " + dyUnconsumed);
         if (dyUnconsumed < 0 && !canChildScrollUp() && mScroller.isFinished() && mScrollFlag == 0) {
-            moveTargetView(-dyUnconsumed, true);
+            moveTargetView(-dyUnconsumed);
         }
     }
 
@@ -867,16 +867,16 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         return false;
     }
 
-    private int moveTargetView(float dy, boolean isDragging) {
+    private int moveTargetView(float dy) {
         int target = (int) (mTargetCurrentOffset + dy);
-        return moveTargetViewTo(target, isDragging);
+        return moveTargetViewTo(target);
     }
 
-    private int moveTargetViewTo(int target, boolean isDragging) {
-        return moveTargetViewTo(target, isDragging, false);
+    private int moveTargetViewTo(int target) {
+        return moveTargetViewTo(target, false);
     }
 
-    private int moveTargetViewTo(int target, boolean isDragging, boolean calculateAnyWay) {
+    private int moveTargetViewTo(int target, boolean calculateAnyWay) {
         target = calculateTargetOffset(target, mTargetInitOffset, mTargetRefreshOffset, mEnableOverPull);
         int offset = 0;
         if (target != mTargetCurrentOffset || calculateAnyWay) {
@@ -884,7 +884,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             ViewCompat.offsetTopAndBottom(mTargetView, offset);
             mTargetCurrentOffset = target;
             int total = mTargetRefreshOffset - mTargetInitOffset;
-            if (isDragging) {
+            if (!mIsRefreshing) {
                 mIRefreshView.onPull(Math.min(mTargetCurrentOffset - mTargetInitOffset, total), total,
                         mTargetCurrentOffset - mTargetRefreshOffset);
             }
@@ -979,7 +979,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             int offsetY = mScroller.getCurrY();
-            moveTargetViewTo(offsetY, false);
+            moveTargetViewTo(offsetY);
             if (offsetY <= 0 && hasFlag(FLAG_NEED_DELIVER_VELOCITY)) {
                 deliverVelocity();
                 mScroller.forceFinished(true);
@@ -996,13 +996,13 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             if (mTargetCurrentOffset != mTargetRefreshOffset) {
                 mScroller.startScroll(0, mTargetCurrentOffset, 0, mTargetRefreshOffset - mTargetCurrentOffset);
             } else {
-                moveTargetViewTo(mTargetRefreshOffset, false, true);
+                moveTargetViewTo(mTargetRefreshOffset, true);
             }
             invalidate();
         } else if (hasFlag(FLAG_NEED_DO_REFRESH)) {
             removeFlag(FLAG_NEED_DO_REFRESH);
             onRefresh();
-            moveTargetViewTo(mTargetRefreshOffset, false, true);
+            moveTargetViewTo(mTargetRefreshOffset, true);
         } else {
             deliverVelocity();
         }
