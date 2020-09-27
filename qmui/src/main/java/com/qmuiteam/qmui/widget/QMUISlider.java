@@ -56,6 +56,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
 
     private int mTickCount;
     private int mCurrentProgress = 0;
+    private boolean mIsProgressFirstSet = false;
     private boolean mClickToChangeProgress = false;
     private int mRecordProgress = PROGRESS_NOT_SET;
 
@@ -140,7 +141,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
     public void setCurrentProgress(int currentProgress) {
         if (!mIsMoving) {
             int progress = QMUILangHelper.constrain(currentProgress, 0, mTickCount);
-            if (mCurrentProgress != progress) {
+            if (mCurrentProgress != progress || !mIsProgressFirstSet) {
+                mIsProgressFirstSet = true;
                 safeSetCurrentProgress(progress);
                 if (mCallback != null) {
                     mCallback.onProgressChange(this, progress, mTickCount, false);
