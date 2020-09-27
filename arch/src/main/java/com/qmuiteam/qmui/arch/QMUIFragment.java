@@ -36,7 +36,6 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -125,7 +124,6 @@ public abstract class QMUIFragment extends Fragment implements
     private int mTargetRequestCode = NO_REQUEST_CODE;
 
     private View mBaseView;
-    private SwipeBackLayout mCacheSwipeBackLayout;
     private View mCacheRootView;
     private boolean isCreateForSwipeBack = false;
     private SwipeBackLayout.ListenerRemover mListenerRemover;
@@ -461,6 +459,7 @@ public abstract class QMUIFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
         if (mBaseView.getTag(R.id.qmui_arch_reused_layout) == null) {
             onViewCreated(mBaseView);
+            mBaseView.setTag(R.id.qmui_arch_reused_layout, true);
         }
         mLazyViewLifecycleOwner = new QMUIFragmentLazyLifecycleOwner(this);
         mLazyViewLifecycleOwner.setViewVisible(getUserVisibleHint());
@@ -476,7 +475,6 @@ public abstract class QMUIFragment extends Fragment implements
             if (rootView.getParent() != null) {
                 ((ViewGroup) rootView.getParent()).removeView(rootView);
             }
-            rootView.setTag(R.id.qmui_arch_reused_layout, true);
         }
         if (translucentFull()) {
             rootView.setFitsSystemWindows(false);
@@ -809,51 +807,22 @@ public abstract class QMUIFragment extends Fragment implements
         }
     };
 
-    private boolean canNotUseCacheViewInCreateView() {
-        return mCacheSwipeBackLayout.getParent() != null || ViewCompat.isAttachedToWindow(mCacheSwipeBackLayout);
-    }
-
     public boolean isInSwipeBack() {
         return mIsInSwipeBack;
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        SwipeBackLayout swipeBackLayout;
-        if (mCacheSwipeBackLayout == null) {
-            swipeBackLayout = newSwipeBackLayout();
-            mCacheSwipeBackLayout = swipeBackLayout;
-        } else {
-            if (canNotUseCacheViewInCreateView()) {
-                // try removeView first
-                container.removeView(mCacheSwipeBackLayout);
-            }
-
-            if (canNotUseCacheViewInCreateView()) {
-                // give up!!!
-                Log.i(TAG, "can not use cache swipeBackLayout, this may happen " +
-                        "if invoke popBackStack duration fragment transition");
-                mCacheSwipeBackLayout.clearSwipeListeners();
-                swipeBackLayout = newSwipeBackLayout();
-                mCacheSwipeBackLayout = swipeBackLayout;
-            } else {
-                swipeBackLayout = mCacheSwipeBackLayout;
-                mCacheRootView.setTag(R.id.qmui_arch_reused_layout, true);
-            }
-        }
-
-
+        SwipeBackLayout swipeBackLayout = newSwipeBackLayout();
         if (!isCreateForSwipeBack) {
             mBaseView = swipeBackLayout.getContentView();
             swipeBackLayout.setTag(R.id.qmui_arch_swipe_layout_in_back, null);
         }
 
         swipeBackLayout.setFitsSystemWindows(false);
-
         if (getActivity() != null) {
             QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
         }
-
         return swipeBackLayout;
     }
 
@@ -1372,7 +1341,6 @@ public abstract class QMUIFragment extends Fragment implements
 
         // help gc, sometimes user may hold fragment instance in somewhere,
         // then these objects can not be released in time.
-        mCacheSwipeBackLayout = null;
         mCacheRootView = null;
         mDelayRenderRunnableList = null;
         mCheckPostResumeRunnable = null;
