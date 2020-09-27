@@ -20,7 +20,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
@@ -230,37 +228,44 @@ public class QMUIFullScreenPopup extends QMUIBasePopup<QMUIFullScreenPopup> {
     }
 
     class RootView extends QMUIWindowInsetLayout2 implements IWindowInsetKeyboardConsumer {
-        private GestureDetectorCompat mGestureDetector;
         private int mLastKeyboardShowHeight = 0;
+        private boolean mShouldInvokeBlackClickWhenTouchUp = false;
 
         public RootView(Context context) {
             super(context);
-            mGestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-            });
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            if (mGestureDetector.onTouchEvent(event)) {
-                View childView = findChildViewUnder(event.getX(), event.getY());
-                boolean isBlank = childView == null;
-                if (!isBlank && (childView instanceof IBlankTouchDetector)) {
-                    MotionEvent e = MotionEvent.obtain(event);
-                    int offsetX = getScrollX() - childView.getLeft();
-                    int offsetY = getScrollY() - childView.getTop();
-                    e.offsetLocation(offsetX, offsetY);
-                    isBlank = ((IBlankTouchDetector) childView).isTouchInBlank(e);
-                    e.recycle();
-                }
-                if (isBlank && mOnBlankClickListener != null) {
+            int action = event.getActionMasked();
+            if(mOnBlankClickListener == null){
+                return true;
+            }
+            if(action == MotionEvent.ACTION_DOWN){
+                mShouldInvokeBlackClickWhenTouchUp = isTouchInBlack(event);
+            }else if(action == MotionEvent.ACTION_MOVE){
+                mShouldInvokeBlackClickWhenTouchUp = mShouldInvokeBlackClickWhenTouchUp && isTouchInBlack(event);
+            }else if(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL){
+                mShouldInvokeBlackClickWhenTouchUp =  mShouldInvokeBlackClickWhenTouchUp && isTouchInBlack(event);
+                if(mShouldInvokeBlackClickWhenTouchUp){
                     mOnBlankClickListener.onBlankClick(QMUIFullScreenPopup.this);
                 }
             }
             return true;
+        }
+
+        private boolean isTouchInBlack(MotionEvent event){
+            View childView = findChildViewUnder(event.getX(), event.getY());
+            boolean isBlank = childView == null;
+            if (!isBlank && (childView instanceof IBlankTouchDetector)) {
+                MotionEvent e = MotionEvent.obtain(event);
+                int offsetX = getScrollX() - childView.getLeft();
+                int offsetY = getScrollY() - childView.getTop();
+                e.offsetLocation(offsetX, offsetY);
+                isBlank = ((IBlankTouchDetector) childView).isTouchInBlank(e);
+                e.recycle();
+            }
+            return isBlank;
         }
 
 
