@@ -205,6 +205,13 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mListenerRemover != null) {
+            mListenerRemover.remove();
+            mListenerRemover = null;
+        }
+        if(mCacheRootView != null && mCacheRootView.getParent() instanceof ViewGroup){
+            ((ViewGroup) mCacheRootView.getParent()).removeView(mCacheRootView);
+        }
         mBaseView = null;
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     }
@@ -481,7 +488,7 @@ public abstract class QMUIFragment extends Fragment implements
         } else {
             rootView.setFitsSystemWindows(true);
         }
-        final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView,
+        SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView,
                 dragViewMoveAction(),
                 new SwipeBackLayout.Callback() {
                     @Override
@@ -500,6 +507,9 @@ public abstract class QMUIFragment extends Fragment implements
                                 swipeBackLayout, viewMoveAction, downX, downY, dx, dy, touchSlop);
                     }
                 });
+        if(mListenerRemover != null){
+            mListenerRemover.remove();
+        }
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
         swipeBackLayout.setOnKeyboardInsetHandler(this);
         if (isCreateForSwipeBack) {
@@ -1331,9 +1341,6 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mListenerRemover != null) {
-            mListenerRemover.remove();
-        }
         if (mSwipeBackgroundView != null) {
             mSwipeBackgroundView.unBind();
             mSwipeBackgroundView = null;
