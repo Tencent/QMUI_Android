@@ -265,7 +265,7 @@ public class QMUIStatusBarHelper {
         if (light) {
             systemUi |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         } else {
-            systemUi ^= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            systemUi &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         }
         decorView.setSystemUiVisibility(systemUi);
         if (QMUIDeviceHelper.isMIUIV9()) {
