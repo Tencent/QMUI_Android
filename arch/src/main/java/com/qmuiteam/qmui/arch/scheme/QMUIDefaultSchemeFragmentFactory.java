@@ -95,34 +95,51 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             Intent intent = QMUIFragmentActivity.intentOf(activity, target, fragmentCls, bundle);
             intent.putExtra(ARG_FROM_SCHEME, true);
             FragmentContainerParam fragmentContainerParam = target.getAnnotation(FragmentContainerParam.class);
-            if (fragmentContainerParam == null || fragmentContainerParam.required().length == 0) {
+            if (fragmentContainerParam == null) {
                 return intent;
             }
+
+            String[] required = fragmentContainerParam.required();
+            String[] optional = fragmentContainerParam.optional();
+
+            if(required.length == 0 && optional.length == 0){
+                return intent;
+            }
+
             if (scheme == null || scheme.isEmpty()) {
                 continue;
             }
-            for (String arg : fragmentContainerParam.required()) {
+            for (String arg : required) {
                 SchemeValue value = scheme.get(arg);
-                if (value == null) {
-                    continue loop;
-                }
-                if (value.type == Boolean.TYPE) {
-                    intent.putExtra(arg, (boolean) value.value);
-                } else if (value.type == Integer.TYPE) {
-                    intent.putExtra(arg, (int) value.value);
-                } else if (value.type == Long.TYPE) {
-                    intent.putExtra(arg, (long) value.value);
-                } else if (value.type == Float.TYPE) {
-                    intent.putExtra(arg, (float) value.value);
-                } else if (value.type == Double.TYPE) {
-                    intent.putExtra(arg, (double) value.value);
-                } else{
-                    intent.putExtra(arg, value.origin);
-                }
+                putSchemeValueToIntent(intent, arg, value);
+            }
+
+            for (String arg : optional) {
+                SchemeValue value = scheme.get(arg);
+                putSchemeValueToIntent(intent, arg, value);
             }
             return intent;
         }
         return null;
+    }
+
+    private void putSchemeValueToIntent(Intent intent, String arg, @Nullable SchemeValue value){
+        if (value == null) {
+            return;
+        }
+        if (value.type == Boolean.TYPE) {
+            intent.putExtra(arg, (boolean) value.value);
+        } else if (value.type == Integer.TYPE) {
+            intent.putExtra(arg, (int) value.value);
+        } else if (value.type == Long.TYPE) {
+            intent.putExtra(arg, (long) value.value);
+        } else if (value.type == Float.TYPE) {
+            intent.putExtra(arg, (float) value.value);
+        } else if (value.type == Double.TYPE) {
+            intent.putExtra(arg, (double) value.value);
+        } else{
+            intent.putExtra(arg, value.origin);
+        }
     }
 
     @Override
