@@ -18,7 +18,7 @@ public class QMUISkinRuleHintColorHandler extends QMUISkinRuleColorStateListHand
         } else if (view instanceof TextInputLayout) {
             ((TextInputLayout) view).setHintTextColor(colorStateList);
         }else if(view instanceof QMUISlider){
-            ((QMUISlider)view).setBarProgressColor(colorStateList.getDefaultColor());
+            ((QMUISlider)view).setRecordProgressColor(colorStateList.getDefaultColor());
         }else{
             QMUISkinHelper.warnRuleNotSupport(view, name);
         }
