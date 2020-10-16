@@ -38,10 +38,17 @@ public class QMUITabAdapter extends QMUIItemViewsAdapter<QMUITab, QMUITabView> i
         onBindTab(item, view, position);
         view.setCallback(this);
         // reset
-        if (view.isSelected()) {
+        if (view.getSelectFraction() != 0f || view.isSelected()) {
             view.setSelected(false);
             view.setSelectFraction(0f);
         }
+    }
+
+    @Override
+    protected void onViewRecycled(QMUITabView qmuiTabView) {
+        qmuiTabView.setSelected(false);
+        qmuiTabView.setSelectFraction(0f);
+        qmuiTabView.setCallback(null);
     }
 
     protected void onBindTab(QMUITab item, QMUITabView view, int position) {

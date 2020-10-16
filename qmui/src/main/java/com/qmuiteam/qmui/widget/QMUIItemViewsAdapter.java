@@ -19,13 +19,13 @@ package com.qmuiteam.qmui.widget;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.util.Pools;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.qmuiteam.qmui.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.core.util.Pools;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 一个带 cache 功能的“列表型数据-View”的适配器，适用于自定义 {@link View} 需要显示重复单元 {@link android.widget.ListView} 的情景，
@@ -60,6 +60,7 @@ public abstract class QMUIItemViewsAdapter<T, V extends View> {
             Object notCacheTag = view.getTag(R.id.qmui_view_can_not_cache_tag);
             if (notCacheTag == null || !(boolean) notCacheTag) {
                 try {
+                    onViewRecycled(view);
                     mCachePool.release(view);
                 } catch (Exception ignored) {
                 }
@@ -85,6 +86,10 @@ public abstract class QMUIItemViewsAdapter<T, V extends View> {
     }
 
     protected abstract V createView(ViewGroup parentView);
+
+    protected void onViewRecycled(V v){
+
+    }
 
     public QMUIItemViewsAdapter<T, V> addItem(T item) {
         mItemData.add(item);

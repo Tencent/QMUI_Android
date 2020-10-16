@@ -76,6 +76,8 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private float mSelectedTextLeft = 0;
     private float mSelectedTextTop = 0;
 
+    private float mSelectFraction = 0f;
+
     private QMUIRoundButton mSignCountView;
 
     public QMUITabView(@NonNull Context context) {
@@ -178,8 +180,14 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         requestLayout();
     }
 
+
+    public float getSelectFraction() {
+        return mSelectFraction;
+    }
+
     public void setSelectFraction(float fraction) {
         fraction = QMUILangHelper.constrain(fraction, 0f, 1f);
+        mSelectFraction = fraction;
         QMUITabIcon tabIcon = mTab.getTabIcon();
         if (tabIcon != null) {
             tabIcon.setSelectFraction(fraction,
