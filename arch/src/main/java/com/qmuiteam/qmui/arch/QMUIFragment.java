@@ -233,11 +233,18 @@ public abstract class QMUIFragment extends Fragment implements
         }
     }
 
+    protected boolean shouldCheckLatestVisitRecord(){
+        return getParentFragment() == null || (getParentFragment() instanceof QMUINavFragment);
+    }
+
     protected boolean shouldPerformLatestVisitRecord() {
         return true;
     }
 
     private void checkLatestVisitRecord() {
+        if(!shouldCheckLatestVisitRecord()){
+            return;
+        }
 
         Activity activity = getActivity();
         if (!(activity instanceof QMUIFragmentActivity)) {
