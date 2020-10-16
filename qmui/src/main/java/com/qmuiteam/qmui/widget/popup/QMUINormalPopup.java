@@ -659,24 +659,24 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
                     int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
                     l = Math.min(Math.max(l, mShowInfo.decorationLeft),
                             getWidth() - mShowInfo.decorationRight - mArrowWidth);
-                    int t = mShowInfo.decorationTop + mShowInfo.height - mBorderWidth - 1;
+                    int t = mShowInfo.decorationTop + mShowInfo.height - mBorderWidth;
                     canvas.translate(l, t);
                     mArrowPath.reset();
-                    mArrowPath.setLastPoint(0, 0);
+                    mArrowPath.setLastPoint(-mArrowWidth / 2f, -mArrowHeight);
                     mArrowPath.lineTo(mArrowWidth / 2f, mArrowHeight);
-                    mArrowPath.lineTo(mArrowWidth, 0);
+                    mArrowPath.lineTo(mArrowWidth * 3 /2f, -mArrowHeight);
                     mArrowPath.close();
                     canvas.drawPath(mArrowPath, mArrowPaint);
                     if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
-                        mArrowSaveRect.set(0f, 0, mArrowWidth, mArrowHeight);
+                        mArrowSaveRect.set(0f, -mBorderWidth, mArrowWidth, mArrowHeight + mBorderWidth);
                         int saveLayer = canvas.saveLayer(mArrowSaveRect, mArrowPaint, Canvas.ALL_SAVE_FLAG);
                         mArrowPaint.setStrokeWidth(mBorderWidth);
                         mArrowPaint.setColor(mBorderUsedColor);
                         mArrowPaint.setStyle(Paint.Style.STROKE);
-                        canvas.drawLine(0, 0, mArrowWidth / 2f, mArrowHeight, mArrowPaint);
-                        canvas.drawLine(mArrowWidth / 2f, mArrowHeight, mArrowWidth, 0, mArrowPaint);
+                        canvas.drawPath(mArrowPath, mArrowPaint);
                         mArrowPaint.setXfermode(mArrowAlignMode);
-                        canvas.drawRect(0f, -mBorderWidth, mArrowWidth, -mBorderWidth / 2f + 1f, mArrowPaint);
+                        mArrowPaint.setStyle(Paint.Style.FILL);
+                        canvas.drawRect(0f, -mBorderWidth, mArrowWidth, 0, mArrowPaint);
                         canvas.restoreToCount(saveLayer);
                     }
                     canvas.restore();
@@ -688,24 +688,24 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
                     int l = mShowInfo.anchorCenter - mShowInfo.x - mArrowWidth / 2;
                     l = Math.min(Math.max(l, mShowInfo.decorationLeft),
                             getWidth() - mShowInfo.decorationRight - mArrowWidth);
-                    int t = mShowInfo.decorationTop + mBorderWidth + 1;
+                    int t = mShowInfo.decorationTop + mBorderWidth;
                     canvas.translate(l, t);
                     mArrowPath.reset();
-                    mArrowPath.setLastPoint(0, 0);
+                    mArrowPath.setLastPoint(-mArrowWidth / 2f, mArrowHeight);
                     mArrowPath.lineTo(mArrowWidth / 2f, -mArrowHeight);
-                    mArrowPath.lineTo(mArrowWidth, 0);
+                    mArrowPath.lineTo(mArrowWidth * 3 / 2f, mArrowHeight);
                     mArrowPath.close();
                     canvas.drawPath(mArrowPath, mArrowPaint);
                     if (!mRemoveBorderWhenShadow || !shouldShowShadow()) {
-                        mArrowSaveRect.set(0, -mArrowHeight, mArrowWidth, 0);
+                        mArrowSaveRect.set(0, -mArrowHeight - mBorderWidth, mArrowWidth, mBorderWidth);
                         int saveLayer = canvas.saveLayer(mArrowSaveRect, mArrowPaint, Canvas.ALL_SAVE_FLAG);
                         mArrowPaint.setStrokeWidth(mBorderWidth);
                         mArrowPaint.setStyle(Paint.Style.STROKE);
                         mArrowPaint.setColor(mBorderUsedColor);
-                        canvas.drawLine(0, 0, mArrowWidth / 2f, -mArrowHeight, mArrowPaint);
-                        canvas.drawLine(mArrowWidth / 2f, -mArrowHeight, mArrowWidth, 0, mArrowPaint);
+                        canvas.drawPath(mArrowPath, mArrowPaint);
                         mArrowPaint.setXfermode(mArrowAlignMode);
-                        canvas.drawRect(0, mBorderWidth / 2f - 1f, mArrowWidth, mBorderWidth, mArrowPaint);
+                        mArrowPaint.setStyle(Paint.Style.FILL);
+                        canvas.drawRect(0, 0, mArrowWidth, mBorderWidth, mArrowPaint);
                         canvas.restoreToCount(saveLayer);
                     }
                     canvas.restore();
