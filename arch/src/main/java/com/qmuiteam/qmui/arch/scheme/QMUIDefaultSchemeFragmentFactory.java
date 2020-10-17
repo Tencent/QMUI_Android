@@ -90,8 +90,7 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
         if (activityClassList.length == 0) {
             return null;
         }
-        loop:
-        for (Class<? extends QMUIFragmentActivity> target : activityClassList) {
+        loop: for (Class<? extends QMUIFragmentActivity> target : activityClassList) {
             Intent intent = QMUIFragmentActivity.intentOf(activity, target, fragmentCls, bundle);
             intent.putExtra(ARG_FROM_SCHEME, true);
             FragmentContainerParam fragmentContainerParam = target.getAnnotation(FragmentContainerParam.class);
@@ -102,11 +101,13 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             String[] required = fragmentContainerParam.required();
             String[] optional = fragmentContainerParam.optional();
 
-            if(required.length == 0 && optional.length == 0){
+            if(required.length == 0){
+                putOptionalSchemeValuesToIntent(intent, scheme, optional);
                 return intent;
             }
 
             if (scheme == null || scheme.isEmpty()) {
+                // not matched.
                 continue;
             }
             for (String arg : required) {
@@ -116,17 +117,34 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
 
             for (String arg : optional) {
                 SchemeValue value = scheme.get(arg);
+                if(value == null){
+                    // not matched.
+                    continue loop;
+                }
                 putSchemeValueToIntent(intent, arg, value);
             }
+
+            putOptionalSchemeValuesToIntent(intent, scheme, optional);
             return intent;
         }
         return null;
     }
 
-    private void putSchemeValueToIntent(Intent intent, String arg, @Nullable SchemeValue value){
-        if (value == null) {
+    private void putOptionalSchemeValuesToIntent(Intent intent,
+                                                 @Nullable Map<String, SchemeValue> scheme,
+                                                 String[] optional){
+        if (scheme == null || scheme.isEmpty()) {
             return;
         }
+        for (String arg : optional) {
+            SchemeValue value = scheme.get(arg);
+            if(value != null){
+                putSchemeValueToIntent(intent, arg, value);
+            }
+        }
+    }
+
+    private void putSchemeValueToIntent(Intent intent, String arg, @NonNull SchemeValue value){
         if (value.type == Boolean.TYPE) {
             intent.putExtra(arg, (boolean) value.value);
         } else if (value.type == Integer.TYPE) {
