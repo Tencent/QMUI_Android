@@ -332,10 +332,10 @@ public class QMUIProgressBar extends View {
     private void drawCircle(Canvas canvas, boolean useCenter) {
         canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, mCircleRadius, mBackgroundPaint);
         float halfStroke = mStrokeWidth / 2f;
-        mArcOval.left = mCenterPoint.x - mCircleRadius - halfStroke;
-        mArcOval.right = mCenterPoint.x + mCircleRadius + halfStroke;
-        mArcOval.top = mCenterPoint.y - mCircleRadius - halfStroke;
-        mArcOval.bottom = mCenterPoint.y + mCircleRadius + halfStroke;
+        mArcOval.left = mCenterPoint.x - mCircleRadius;
+        mArcOval.right = mCenterPoint.x + mCircleRadius;
+        mArcOval.top = mCenterPoint.y - mCircleRadius;
+        mArcOval.bottom = mCenterPoint.y + mCircleRadius;
         if (mValue > 0) {
             canvas.drawArc(mArcOval, 270, 360f * mValue / mMaxValue, useCenter, mPaint);
         }
