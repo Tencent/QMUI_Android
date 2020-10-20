@@ -112,11 +112,6 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             }
             for (String arg : required) {
                 SchemeValue value = scheme.get(arg);
-                putSchemeValueToIntent(intent, arg, value);
-            }
-
-            for (String arg : optional) {
-                SchemeValue value = scheme.get(arg);
                 if(value == null){
                     // not matched.
                     continue loop;
