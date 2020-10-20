@@ -20,12 +20,13 @@ import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+
+import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 
 public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
 
@@ -78,7 +79,7 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
         }
         if (fragment != mCurrentPrimaryItem) {
             fragment.setMenuVisibility(false);
-            fragment.setUserVisibleHint(false);
+            mCurrentTransaction.setMaxLifecycle(fragment, Lifecycle.State.STARTED);
         }
     }
 
@@ -113,10 +114,10 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
-                mCurrentPrimaryItem.setUserVisibleHint(false);
+                mCurrentTransaction.setMaxLifecycle(mCurrentPrimaryItem, Lifecycle.State.STARTED);
             }
             fragment.setMenuVisibility(true);
-            fragment.setUserVisibleHint(true);
+            mCurrentTransaction.setMaxLifecycle(fragment, Lifecycle.State.RESUMED);
             mCurrentPrimaryItem = fragment;
         }
     }

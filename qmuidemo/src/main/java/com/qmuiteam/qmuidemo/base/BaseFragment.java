@@ -19,7 +19,11 @@ package com.qmuiteam.qmuidemo.base;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.SwipeBackLayout;
@@ -35,14 +39,13 @@ import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 /**
  * Created by cgspine on 2018/1/7.
  */
 
 public abstract class BaseFragment extends QMUIFragment {
+
+    private static final String TAG = "BaseFragment";
 
     private int mBindId = -1;
 
@@ -86,7 +89,26 @@ public abstract class BaseFragment extends QMUIFragment {
     public void onResume() {
         super.onResume();
         QDUpgradeManager.getInstance(getContext()).runUpgradeTipTaskIfExist(getActivity());
+        Log.i(TAG, getClass().getSimpleName() + " onResume");
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, getClass().getSimpleName() + " onStart");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, getClass().getSimpleName() + " onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, getClass().getSimpleName() + " onStop");
     }
 
     @Override

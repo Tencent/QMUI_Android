@@ -54,12 +54,6 @@ public class QDFitSystemWindowViewPagerFragment extends BaseFragment {
         return layout;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLazyViewLifecycleOwner().getLifecycle().addObserver(new QDLazyTestObserver("QDfSWViewPager"));
-    }
-
     private void initPagers() {
         QMUIFragmentPagerAdapter pagerAdapter = new QMUIFragmentPagerAdapter(getChildFragmentManager()) {
             @Override

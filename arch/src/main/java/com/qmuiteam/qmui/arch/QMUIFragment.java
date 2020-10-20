@@ -90,7 +90,6 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragment extends Fragment implements
-        QMUIFragmentLazyLifecycleOwner.Callback,
         LatestVisitArgumentCollector,
         FragmentSchemeRefreshable,
         SwipeBackLayout.OnKeyboardInsetHandler{
@@ -149,7 +148,6 @@ public abstract class QMUIFragment extends Fragment implements
             }
         }
     };
-    private QMUIFragmentLazyLifecycleOwner mLazyViewLifecycleOwner;
     private QMUIFragmentEffectRegistry mFragmentEffectRegistry;
 
     private OnBackPressedDispatcher mOnBackPressedDispatcher;
@@ -475,9 +473,6 @@ public abstract class QMUIFragment extends Fragment implements
             onViewCreated(mBaseView);
             mBaseView.setTag(R.id.qmui_arch_reused_layout, true);
         }
-        mLazyViewLifecycleOwner = new QMUIFragmentLazyLifecycleOwner(this);
-        mLazyViewLifecycleOwner.setViewVisible(getUserVisibleHint());
-        getViewLifecycleOwner().getLifecycle().addObserver(mLazyViewLifecycleOwner);
     }
 
     private SwipeBackLayout newSwipeBackLayout() {
@@ -1360,17 +1355,6 @@ public abstract class QMUIFragment extends Fragment implements
         mCheckPostResumeRunnable = null;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        notifyFragmentVisibleToUserChanged(isParentVisibleToUser() && isVisibleToUser);
-    }
-
-    @Override
-    public boolean isVisibleToUser() {
-        return getUserVisibleHint() && isParentVisibleToUser();
-    }
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
     }
@@ -1401,29 +1385,6 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void refreshFromScheme(@Nullable Bundle bundle) {
 
-    }
-
-    private void notifyFragmentVisibleToUserChanged(boolean isVisibleToUser) {
-        if (mLazyViewLifecycleOwner != null) {
-            mLazyViewLifecycleOwner.setViewVisible(isVisibleToUser);
-        }
-        if (isAdded()) {
-            List<Fragment> childFragments = getChildFragmentManager().getFragments();
-            for (Fragment fragment : childFragments) {
-                if (fragment instanceof QMUIFragment) {
-                    ((QMUIFragment) fragment).notifyFragmentVisibleToUserChanged(
-                            isVisibleToUser && fragment.getUserVisibleHint());
-                }
-            }
-        }
-    }
-
-    public LifecycleOwner getLazyViewLifecycleOwner() {
-        if (mLazyViewLifecycleOwner == null) {
-            throw new IllegalStateException("Can't access the QMUIFragment View's LifecycleOwner when "
-                    + "getView() is null i.e., before onViewCreated() or after onDestroyView()");
-        }
-        return mLazyViewLifecycleOwner;
     }
 
     /**

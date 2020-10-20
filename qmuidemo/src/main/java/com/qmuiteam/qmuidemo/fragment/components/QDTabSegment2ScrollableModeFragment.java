@@ -16,24 +16,12 @@
 
 package com.qmuiteam.qmuidemo.fragment.components;
 
-import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
-import com.qmuiteam.qmui.skin.SkinWriter;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -44,14 +32,10 @@ import com.qmuiteam.qmui.widget.tab.QMUITabSegment2;
 import com.qmuiteam.qmuidemo.R;
 import com.qmuiteam.qmuidemo.adaptor.QDRecyclerViewAdapter;
 import com.qmuiteam.qmuidemo.base.BaseFragment;
-import com.qmuiteam.qmuidemo.fragment.components.viewpager.QDLazyTestObserver;
 import com.qmuiteam.qmuidemo.lib.Group;
 import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.qmuiteam.qmuidemo.manager.QDDataManager;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,12 +68,6 @@ public class QDTabSegment2ScrollableModeFragment extends BaseFragment {
         initTabAndPager();
 
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLazyViewLifecycleOwner().getLifecycle().addObserver(new QDLazyTestObserver("QDTabSegment"));
     }
 
     private void initTopBar() {
