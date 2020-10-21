@@ -283,7 +283,7 @@ public class QMUIProgressBar extends View {
             mText = mQMUIProgressBarTextGenerator.generateText(this, mValue, mMaxValue);
         }
         if(((mType == TYPE_RECT || mType == TYPE_ROUND_RECT) && mBgRect == null) ||
-                (mType == TYPE_CIRCLE && mCenterPoint == null)){
+                ((mType == TYPE_CIRCLE || mType == TYPE_FILL_CIRCLE) && mCenterPoint == null)){
             // npe protect, sometimes measure may not be called by parent.
             configShape();
         }
@@ -331,7 +331,6 @@ public class QMUIProgressBar extends View {
 
     private void drawCircle(Canvas canvas, boolean useCenter) {
         canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, mCircleRadius, mBackgroundPaint);
-        float halfStroke = mStrokeWidth / 2f;
         mArcOval.left = mCenterPoint.x - mCircleRadius;
         mArcOval.right = mCenterPoint.x + mCircleRadius;
         mArcOval.top = mCenterPoint.y - mCircleRadius;
