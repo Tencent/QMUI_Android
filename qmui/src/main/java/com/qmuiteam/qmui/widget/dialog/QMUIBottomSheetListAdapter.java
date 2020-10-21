@@ -19,12 +19,12 @@ package com.qmuiteam.qmui.widget.dialog;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomSheetListAdapter.VH> {
 
@@ -124,14 +124,14 @@ public class QMUIBottomSheetListAdapter extends RecyclerView.Adapter<QMUIBottomS
         return mData.size() + (mHeaderView != null ? 1 : 0) + (mFooterView != null ? 1 : 0);
     }
 
-    static class VH extends RecyclerView.ViewHolder {
+    public static class VH extends RecyclerView.ViewHolder {
 
         public VH(@NonNull View itemView) {
             super(itemView);
         }
     }
 
-    interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onClick(VH vh, int dataPos, QMUIBottomSheetListItemModel model);
     }
 }

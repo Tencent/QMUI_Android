@@ -16,18 +16,20 @@
 
 package com.qmuiteam.qmui.widget.dialog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.Window;
-
-import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.core.view.LayoutInflaterCompat;
+
+import com.qmuiteam.qmui.skin.QMUISkinLayoutInflaterFactory;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
 
 public class QMUIBaseDialog extends AppCompatDialog {
     boolean cancelable = true;
@@ -111,5 +113,25 @@ public class QMUIBaseDialog extends AppCompatDialog {
             canceledOnTouchOutsideSet = true;
         }
         return canceledOnTouchOutside;
+    }
+
+    @Override
+    public void dismiss() {
+        Context context = getContext();
+        if(context instanceof ContextWrapper){
+            context = ((ContextWrapper)context).getBaseContext();
+        }
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isDestroyed() || activity.isFinishing()){
+                return;
+            }
+            super.dismiss();
+        }else{
+            try{
+                super.dismiss();
+            }catch (Throwable ignore){
+            }
+        }
     }
 }
