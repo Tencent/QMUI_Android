@@ -86,10 +86,14 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
     @SuppressLint("CommitTransaction")
     @Override
     protected void destroy(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        Fragment fragment = (Fragment) object;
         if (mCurrentTransaction == null) {
             mCurrentTransaction = mFragmentManager.beginTransaction();
         }
-        mCurrentTransaction.detach((Fragment) object);
+        mCurrentTransaction.detach(fragment);
+        if (fragment == mCurrentPrimaryItem) {
+            mCurrentPrimaryItem = null;
+        }
     }
 
     @Override
@@ -114,9 +118,15 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
+                if (mCurrentTransaction == null) {
+                    mCurrentTransaction = mFragmentManager.beginTransaction();
+                }
                 mCurrentTransaction.setMaxLifecycle(mCurrentPrimaryItem, Lifecycle.State.STARTED);
             }
             fragment.setMenuVisibility(true);
+            if (mCurrentTransaction == null) {
+                mCurrentTransaction = mFragmentManager.beginTransaction();
+            }
             mCurrentTransaction.setMaxLifecycle(fragment, Lifecycle.State.RESUMED);
             mCurrentPrimaryItem = fragment;
         }

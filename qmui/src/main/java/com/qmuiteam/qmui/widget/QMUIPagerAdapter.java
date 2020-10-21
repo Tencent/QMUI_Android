@@ -61,7 +61,6 @@ public abstract class QMUIPagerAdapter extends PagerAdapter {
     @Override
     public final void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         destroy(container, position, object);
-
     }
 
     /**
