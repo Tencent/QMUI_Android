@@ -19,19 +19,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.HashMap;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     private static final String TAG = "QMUISkin";
@@ -86,7 +88,17 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                         }
                     }
                 }else{
-                    view = mOriginLayoutInflater.cloneInContext(context).createView(name, null, attrs);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                        view = mOriginLayoutInflater.createView(context, name, null, attrs);
+                    }else{
+                        Field field = LayoutInflater.class.getDeclaredField("mConstructorArgs");
+                        field.setAccessible(true);
+                        Object[] mConstructorArgs = (Object[]) field.get(mOriginLayoutInflater);
+                        Object lastContext = mConstructorArgs[0];
+                        mConstructorArgs[0] = context;
+                        view = mOriginLayoutInflater.createView(name, null, attrs);
+                        mConstructorArgs[0] = lastContext;
+                    }
                 }
             }catch (ClassNotFoundException ignore){
 
