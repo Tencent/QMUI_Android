@@ -801,6 +801,7 @@ nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可
         public Container(Context context) {
             super(context);
             setClipChildren(false);
+            setWillNotDraw(false);
         }
 
         @Override
@@ -938,8 +939,8 @@ nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可
         }
 
         @Override
-        protected void dispatchDraw(Canvas canvas) {
-            super.dispatchDraw(canvas);
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
             if (mIndicator != null && (!mHideIndicatorWhenTabCountLessTwo || mTabAdapter.getSize() > 1)) {
                 mIndicator.draw(this, canvas, getPaddingTop(), getHeight() - getPaddingBottom());
             }
