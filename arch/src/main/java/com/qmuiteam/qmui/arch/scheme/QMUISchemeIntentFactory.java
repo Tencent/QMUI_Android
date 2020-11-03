@@ -30,6 +30,8 @@ public interface QMUISchemeIntentFactory {
                    @Nullable Map<String, SchemeValue> scheme,
                    @NonNull String origin);
 
+    void startActivity(@NonNull Activity activity, @NonNull Intent intent);
+
     boolean shouldBlockJump(@NonNull Activity activity,
                             @NonNull Class<? extends Activity> activityClass,
                             @Nullable Map<String, SchemeValue> scheme);

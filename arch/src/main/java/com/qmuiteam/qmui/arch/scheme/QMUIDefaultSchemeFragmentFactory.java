@@ -156,6 +156,21 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
     }
 
     @Override
+    public void startActivity(@NonNull Activity activity, @NonNull Intent intent) {
+        activity.startActivity(intent);
+    }
+
+    @Override
+    public int startFragmentAndDestroyCurrent(QMUIFragmentActivity activity, QMUIFragment fragment) {
+        return activity.startFragmentAndDestroyCurrent(fragment, true);
+    }
+
+    @Override
+    public int startFragment(QMUIFragmentActivity activity, QMUIFragment fragment) {
+        return activity.startFragment(fragment);
+    }
+
+    @Override
     public boolean shouldBlockJump(@NonNull Activity activity,
                                    @NonNull Class<? extends QMUIFragment> fragmentCls,
                                    @Nullable Map<String, SchemeValue> scheme) {

@@ -104,7 +104,7 @@ class FragmentSchemeItem extends SchemeItem {
         if (!isCurrentActivityCanStartFragment(activity, scheme) || isForceNewActivity(scheme)) {
             Intent intent = factory.factory(activity, mActivityClsList, mFragmentCls, scheme, origin);
             if (intent != null) {
-                activity.startActivity(intent);
+                factory.startActivity(activity, intent);
                 if(shouldFinishCurrent(scheme)){
                     activity.finish();
                 }
@@ -127,9 +127,9 @@ class FragmentSchemeItem extends SchemeItem {
         if(fragment != null){
             int commitId;
             if(shouldFinishCurrent(scheme)){
-                commitId = fragmentActivity.startFragmentAndDestroyCurrent(fragment, true);
+                commitId = factory.startFragmentAndDestroyCurrent(fragmentActivity, fragment);
             }else{
-                commitId = fragmentActivity.startFragment(fragment);
+                commitId = factory.startFragment(fragmentActivity, fragment);
             }
             if (commitId == -1) {
                 QMUILog.d(QMUISchemeHandler.TAG, "start fragment failed.");

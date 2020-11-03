@@ -59,6 +59,11 @@ public class QMUIDefaultSchemeIntentFactory implements QMUISchemeIntentFactory {
     }
 
     @Override
+    public void startActivity(@NonNull Activity activity, @NonNull Intent intent) {
+        activity.startActivity(intent);
+    }
+
+    @Override
     public boolean shouldBlockJump(@NonNull Activity activity,
                                    @NonNull Class<? extends Activity> activityClass,
                                    @Nullable Map<String, SchemeValue> scheme) {

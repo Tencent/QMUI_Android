@@ -45,6 +45,12 @@ public interface QMUISchemeFragmentFactory {
                    @Nullable Map<String, SchemeValue> scheme,
                    @NonNull String origin);
 
+    void startActivity(@NonNull Activity activity, @NonNull Intent intent);
+
+    int startFragmentAndDestroyCurrent(QMUIFragmentActivity activity, QMUIFragment fragment);
+
+    int startFragment(QMUIFragmentActivity activity, QMUIFragment fragment);
+
     boolean shouldBlockJump(@NonNull Activity activity,
                             @NonNull Class<? extends QMUIFragment> fragmentCls,
                             @Nullable Map<String, SchemeValue> scheme);

@@ -18,9 +18,9 @@ package com.qmuiteam.qmui.arch.scheme;
 import androidx.annotation.NonNull;
 
 public class SchemeValue {
-    final String origin;
-    final Object value;
-    final Class<?> type;
+    public final String origin;
+    public final Object value;
+    public final Class<?> type;
 
     public SchemeValue(@NonNull String origin, Object value, Class<?> type) {
         this.origin = origin;
