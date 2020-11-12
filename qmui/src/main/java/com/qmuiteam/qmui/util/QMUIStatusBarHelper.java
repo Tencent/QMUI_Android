@@ -459,17 +459,11 @@ public class QMUIStatusBarHelper {
                 t.printStackTrace();
             }
         }
-        if (QMUIDeviceHelper.isTablet(context)
-                && sStatusBarHeight > QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP)) {
-            //状态栏高度大于25dp的平板，状态栏通常在下方
-            sStatusBarHeight = 0;
-        } else {
-            if (sStatusBarHeight <= 0) {
-                if (sVirtualDensity == -1) {
-                    sStatusBarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
-                } else {
-                    sStatusBarHeight = (int) (STATUS_BAR_DEFAULT_HEIGHT_DP * sVirtualDensity + 0.5f);
-                }
+        if (sStatusBarHeight <= 0) {
+            if (sVirtualDensity == -1) {
+                sStatusBarHeight = QMUIDisplayHelper.dp2px(context, STATUS_BAR_DEFAULT_HEIGHT_DP);
+            } else {
+                sStatusBarHeight = (int) (STATUS_BAR_DEFAULT_HEIGHT_DP * sVirtualDensity + 0.5f);
             }
         }
     }
