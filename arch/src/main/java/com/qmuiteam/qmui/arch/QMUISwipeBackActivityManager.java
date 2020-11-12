@@ -97,6 +97,18 @@ public class QMUISwipeBackActivityManager implements Application.ActivityLifecyc
         return mCurrentActivity;
     }
 
+    public int getActivityCount(){
+        return mActivityStack.size();
+    }
+
+    @Nullable
+    public Activity getActivityInStack(int index){
+        if(index < 0 || index >= mActivityStack.size()){
+            return null;
+        }
+        return mActivityStack.get(index);
+    }
+
     /**
      *
      * refer to https://github.com/bingoogolapple/BGASwipeBackLayout-Android/
@@ -127,6 +139,6 @@ public class QMUISwipeBackActivityManager implements Application.ActivityLifecyc
     }
 
     public boolean canSwipeBack() {
-        return mActivityStack.size() > 1;
+        return mActivityStack.size() > 2 || (mActivityStack.size() == 2 && !mActivityStack.get(0).isFinishing());
     }
 }

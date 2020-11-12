@@ -862,7 +862,7 @@ public abstract class QMUIFragment extends Fragment implements
                 bubbleBackPressedEvent();
             } else {
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
-                if (QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+                if (needInterceptLastFragmentFinish()) {
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !sPopBackWhenSwipeFinished){
                         requireActivity().finishAfterTransition();
                     }else{
@@ -1414,6 +1414,14 @@ public abstract class QMUIFragment extends Fragment implements
     @SuppressWarnings("SameReturnValue")
     public Object onLastFragmentFinish() {
         return null;
+    }
+
+    /**
+     * if intercepted, onLastFragmentFinish will not be invoked.
+     * @return
+     */
+    protected boolean needInterceptLastFragmentFinish(){
+        return QMUISwipeBackActivityManager.getInstance().canSwipeBack();
     }
 
     /**
