@@ -125,6 +125,7 @@ public abstract class QMUIFragment extends Fragment implements
 
     private View mBaseView;
     private View mCacheRootView;
+    private SwipeBackLayout mCacheSwipeBackView;
     private boolean isCreateForSwipeBack = false;
     private SwipeBackLayout.ListenerRemover mListenerRemover;
     private SwipeBackgroundView mSwipeBackgroundView;
@@ -208,7 +209,7 @@ public abstract class QMUIFragment extends Fragment implements
             mListenerRemover.remove();
             mListenerRemover = null;
         }
-        if(mCacheRootView != null && mCacheRootView.getParent() instanceof ViewGroup){
+        if(getParentFragment() == null && mCacheRootView != null && mCacheRootView.getParent() instanceof ViewGroup){
             ((ViewGroup) mCacheRootView.getParent()).removeView(mCacheRootView);
         }
         mBaseView = null;
@@ -477,6 +478,14 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     private SwipeBackLayout newSwipeBackLayout() {
+        if(mCacheSwipeBackView != null && getParentFragment() != null){
+            if (mCacheSwipeBackView.getParent() != null) {
+                ((ViewGroup) mCacheSwipeBackView.getParent()).removeView(mCacheSwipeBackView);
+            }
+            if(mCacheSwipeBackView.getParent() == null){
+                return mCacheSwipeBackView;
+            }
+        }
         View rootView = mCacheRootView;
         if (rootView == null) {
             rootView = onCreateView();
@@ -517,6 +526,9 @@ public abstract class QMUIFragment extends Fragment implements
         swipeBackLayout.setOnKeyboardInsetHandler(this);
         if (isCreateForSwipeBack) {
             swipeBackLayout.setTag(R.id.fragment_container_view_tag, this);
+        }
+        if(getParentFragment() != null){
+            mCacheSwipeBackView = swipeBackLayout;
         }
         return swipeBackLayout;
     }
