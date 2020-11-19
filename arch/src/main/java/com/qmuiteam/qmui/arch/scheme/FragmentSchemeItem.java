@@ -210,10 +210,8 @@ class FragmentSchemeItem extends SchemeItem {
         SchemeValue schemeValue = null;
         if(!QMUILangHelper.isNullOrEmpty(mForceNewActivityKey)){
             schemeValue = scheme.get(mForceNewActivityKey);
-        }
-
-        if(schemeValue == null){
-            schemeValue = scheme.get(mForceNewActivityKey);
+        }else{
+            schemeValue = scheme.get(QMUISchemeHandler.ARG_FORCE_TO_NEW_ACTIVITY);
         }
 
         return schemeValue != null && schemeValue.type == Boolean.TYPE && ((Boolean) schemeValue.value);

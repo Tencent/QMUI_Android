@@ -20,6 +20,11 @@ package com.qmuiteam.qmui.arch.scheme;
 import android.net.Uri;
 import android.util.ArrayMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Map;
+
 public class QMUISchemeBuilder {
     private String mPrefix;
     private String mAction;
@@ -92,5 +97,14 @@ public class QMUISchemeBuilder {
             builder.append(mParams.valueAt(i));
         }
         return builder.toString();
+    }
+
+    public static QMUISchemeBuilder from(@NonNull String prefix, @NonNull String action, @Nullable String params, boolean encodeNewParams){
+        QMUISchemeBuilder builder = new QMUISchemeBuilder(prefix, action, encodeNewParams);
+        Map<String, String> paramsMap = QMUISchemeHandler.parseParams(params);
+        if(paramsMap != null && !paramsMap.isEmpty()){
+            builder.mParams.putAll(paramsMap);
+        }
+        return builder;
     }
 }

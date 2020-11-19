@@ -30,10 +30,10 @@ import java.util.Map;
 
 public class QMUISchemeHandler {
     static final String TAG = "QMUISchemeHandler";
-    public static String ARG_FROM_SCHEME = "__qmui_arg_from_scheme";
-    public static String ARG_ORIGIN_SCHEME = "__qmui_arg_origin_scheme";
-    public static String ARG_FORCE_TO_NEW_ACTIVITY = "__qmui_force_to_new_activity";
-    public static String ARG_FINISH_CURRENT = "__qmui_finish_current";
+    public final static String ARG_FROM_SCHEME = "__qmui_arg_from_scheme";
+    public final static String ARG_ORIGIN_SCHEME = "__qmui_arg_origin_scheme";
+    public final static String ARG_FORCE_TO_NEW_ACTIVITY = "__qmui_force_to_new_activity";
+    public final static String ARG_FINISH_CURRENT = "__qmui_finish_current";
 
     private static SchemeMap sSchemeMap;
 
@@ -167,7 +167,7 @@ public class QMUISchemeHandler {
     }
 
     @Nullable
-    public Map<String, String> parseParams(@Nullable String schemeParams) {
+    public static Map<String, String> parseParams(@Nullable String schemeParams) {
         if (schemeParams == null || schemeParams.isEmpty()) {
             return null;
         }
