@@ -1404,6 +1404,11 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     @Override
+    public boolean interceptSelfKeyboardInset() {
+        return false;
+    }
+
+    @Override
     public void refreshFromScheme(@Nullable Bundle bundle) {
 
     }

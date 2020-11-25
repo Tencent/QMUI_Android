@@ -25,12 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.arch.scheme.ActivitySchemeRefreshable;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
@@ -323,6 +323,11 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     @Override
     public boolean handleKeyboardInset(int inset) {
+        return false;
+    }
+
+    @Override
+    public boolean interceptSelfKeyboardInset() {
         return false;
     }
 

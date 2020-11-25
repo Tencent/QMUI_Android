@@ -244,6 +244,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
 
     @Override
     public void onHandleKeyboard(int keyboardInset) {
+        if(mOnKeyboardInsetHandler != null && mOnKeyboardInsetHandler.interceptSelfKeyboardInset()){
+            return;
+        }
         if(mOnKeyboardInsetHandler == null || !mOnKeyboardInsetHandler.handleKeyboardInset(keyboardInset)){
             QMUIViewHelper.setPaddingBottom(this, keyboardInset);
         }
@@ -862,6 +865,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
 
     public interface OnKeyboardInsetHandler {
         boolean handleKeyboardInset(int inset);
+        boolean interceptSelfKeyboardInset();
     }
 
     public static class ViewMoveAuto implements ViewMoveAction {
