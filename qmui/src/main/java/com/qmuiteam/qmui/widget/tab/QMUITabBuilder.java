@@ -182,6 +182,11 @@ public class QMUITabBuilder {
         this.iconTextGap = other.iconTextGap;
         this.allowIconDrawOutside = other.allowIconDrawOutside;
         this.typefaceUpdateAreaPercent = other.typefaceUpdateAreaPercent;
+        this.skinChangeNormalWithTintColor = other.skinChangeNormalWithTintColor;
+        this.skinChangeSelectedWithTintColor = other.skinChangeSelectedWithTintColor;
+        this.skinChangeWithTintColor = other.skinChangeWithTintColor;
+        this.normalColor = other.normalColor;
+        this.selectColor = other.selectColor;
     }
 
     public QMUITabBuilder setAllowIconDrawOutside(boolean allowIconDrawOutside) {

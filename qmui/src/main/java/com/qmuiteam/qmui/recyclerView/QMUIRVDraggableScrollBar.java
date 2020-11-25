@@ -478,7 +478,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
         invalidate();
     }
 
-    interface Callback {
+    public interface Callback {
         void onDragStarted();
 
         void onDragToPercent(float percent);
