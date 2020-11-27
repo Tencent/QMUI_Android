@@ -104,10 +104,10 @@ public class TypeModel {
         elementStart.addEnvironmentUpdater(environmentUpdater);
         if(mFirstEffect == null){
             mFirstEffect = elementStart;
-        }else{
-            mFirstEffect.insetEffect(elementStart);
+        } else {
+            mFirstEffect = elementStart.insertTo(mFirstElement);
         }
-        elementStart.insetEffect(elementEnd);
+        mFirstEffect = elementEnd.insertTo(mFirstElement);
         return new DefaultEffectRemove(this, start, end, types, environmentUpdater);
     }
 

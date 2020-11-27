@@ -102,43 +102,39 @@ public abstract class Element {
         }
     }
 
-    public void insetEffect(Element element) {
-        if(element == this){
-            return;
+    public Element insertTo(Element head){
+        if(head == null){
+            return this;
         }
-        if(element.mIndex < mIndex){
-            Element prev = mPrevEffect;
-            Element next = this;
-            while (prev != null && element.mIndex <= prev.mIndex){
-                next = prev;
-                prev = prev.mPrevEffect;
-            }
-            if(prev == element){
-                return;
-            }
-            if(prev != null){
-                prev.mNextEffect = element;
-                element.mPrevEffect = prev;
-            }
-            element.mNextEffect = next;
-            next.mPrevEffect = element;
-        }else{
-            Element prev = this;
-            Element next = mNextEffect;
-            while (next != null && element.mIndex >= next.mIndex){
-                prev = next;
-                next = next.mNextEffect;
-            }
-            if(next == element){
-                return;
-            }
-            if(next != null){
-                element.mNextEffect = next;
-                next.mPrevEffect = element;
-            }
-            prev.mNextEffect = element;
-            element.mPrevEffect = prev;
+        if(head == this){
+            return head;
         }
+        if(mIndex < head.mIndex){
+            head.setPrev(this);
+            this.setNext(head);
+            return this;
+        }
+        Element current = head;
+        Element next = head.mNext;
+        while (next != null){
+            if(next == this){
+                // already in list
+                return head;
+            }
+            if(next.mIndex > mIndex){
+                current.setNext(this);
+                next.setPrev(this);
+                this.setPrev(current);
+                this.setNext(next);
+                return head;
+            }
+            current = next;
+            next = next.mNext;
+        }
+        current.setNext(this);
+        this.setPrev(current);
+        this.setNext(null);
+        return head;
     }
 
     public Element removeFromEffectListIfNeeded(Element head){
