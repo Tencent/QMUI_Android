@@ -102,7 +102,9 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
 
     @Override
     protected View onCreateView() {
-        return new FragmentContainerView(getContext());
+        FragmentContainerView rootView = new FragmentContainerView(getContext());
+        rootView.setId(getContextViewId());
+        return rootView;
     }
 
     @Override
@@ -132,7 +134,7 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
     @Override
     public void requestForHandlePopBack(boolean toHandle) {
         isChildHandlePopBackRequested = toHandle;
-        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider(false);
         if(provider != null){
             provider.requestForHandlePopBack(toHandle || getChildFragmentManager().getBackStackEntryCount() > 1);
         }
@@ -167,10 +169,16 @@ public class QMUINavFragment extends QMUIFragment implements QMUIFragmentContain
     @Override
     protected void checkForRequestForHandlePopBack(){
         boolean enoughBackStackCount = getChildFragmentManager().getBackStackEntryCount() > 1;
-        QMUIFragmentContainerProvider provider = findFragmentContainerProvider();
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider(false);
         if(provider != null){
             provider.requestForHandlePopBack(isChildHandlePopBackRequested || enoughBackStackCount);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkForPrimaryNavigation();
     }
 
     @Override

@@ -28,6 +28,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
@@ -320,6 +321,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
             mInitialMotionX = mLastMotionX = x;
             mInitialMotionY = mLastMotionY = y;
             onSwipeBackBegin();
+            requestParentDisallowInterceptTouchEvent(true);
             setDragState(STATE_DRAGGING);
         }
         return mCurrentDragDirection;
@@ -360,6 +362,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
                 mInitialMotionY = mLastMotionY = y;
                 if (mDragState == STATE_SETTLING) {
                     if (isTouchInContentView(x, y)) {
+                        requestParentDisallowInterceptTouchEvent(true);
                         setDragState(STATE_DRAGGING);
                     }
                 }
@@ -375,6 +378,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
                     onScroll();
                 } else {
                     if (isTouchInContentView(x, y)) {
+                        requestParentDisallowInterceptTouchEvent(true);
                         setDragState(STATE_DRAGGING);
                     }
                 }
@@ -418,6 +422,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
                 mInitialMotionY = mLastMotionY = y;
                 if (mDragState == STATE_SETTLING) {
                     if (isTouchInContentView(x, y)) {
+                        requestParentDisallowInterceptTouchEvent(true);
                         setDragState(STATE_DRAGGING);
                     }
                 }
@@ -433,6 +438,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
                     onScroll();
                 } else {
                     if (isTouchInContentView(x, y)) {
+                        requestParentDisallowInterceptTouchEvent(true);
                         setDragState(STATE_DRAGGING);
                     }
                 }
@@ -460,6 +466,13 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
             }
         }
         return true;
+    }
+
+    private void requestParentDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        final ViewParent parent = getParent();
+        if (parent != null) {
+            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
     }
 
     private void releaseViewForPointerUp() {
