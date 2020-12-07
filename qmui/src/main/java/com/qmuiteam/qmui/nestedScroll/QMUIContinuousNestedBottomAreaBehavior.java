@@ -16,7 +16,9 @@
 
 package com.qmuiteam.qmui.nestedScroll;
 
+import android.content.Context;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,13 @@ public class QMUIContinuousNestedBottomAreaBehavior extends QMUIViewOffsetBehavi
 
     public void setTopInset(int topInset) {
         mTopInset = topInset;
+    }
+
+    public QMUIContinuousNestedBottomAreaBehavior() {
+    }
+
+    public QMUIContinuousNestedBottomAreaBehavior(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     @Override
