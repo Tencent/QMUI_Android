@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -32,19 +34,47 @@ import java.util.List;
 
 public class QMUIBottomSheetGridLineLayout extends LinearLayout {
 
+    private static ItemWidthCalculator DEFAULT_CALCULATOR = new ItemWidthCalculator() {
+        @Override
+        public int calculate(Context context, int width, int miniWidth, int itemCount, int paddingLeft, int paddingRight) {
+            final int parentSpacing = width - paddingLeft - paddingRight;
+            int itemWidth = miniWidth;
+            // there is no more space for the last one item. then stretch the item width
+            if (itemCount >= 3
+                    && parentSpacing - itemCount * itemWidth > 0
+                    && parentSpacing - itemCount * itemWidth < itemWidth) {
+                int count = parentSpacing / itemWidth;
+                itemWidth = parentSpacing / count;
+            }
+            // if there are more items. then show half of the first that is exceeded
+            // to tell user that there are more.
+            if (itemWidth * itemCount > parentSpacing) {
+                int count = (width - paddingLeft) / itemWidth;
+                itemWidth = (int) ((width - paddingLeft) / (count + .5f));
+            }
+            return itemWidth;
+        }
+    };
+
     private int maxItemCountInLines;
     private int miniItemWidth = -1;
     private List<Pair<View, LinearLayout.LayoutParams>> mFirstLineViews;
     private List<Pair<View, LinearLayout.LayoutParams>> mSecondLineViews;
     private int linePaddingHor;
     private int itemWidth;
+    private final ItemWidthCalculator mItemWidthCalculator;
+
 
     public QMUIBottomSheetGridLineLayout(QMUIBottomSheet bottomSheet,
+                                         @Nullable ItemWidthCalculator widthCalculator,
                                          List<Pair<View, LinearLayout.LayoutParams>> firstLineViews,
                                          List<Pair<View, LinearLayout.LayoutParams>> secondLineViews) {
         super(bottomSheet.getContext());
         setOrientation(VERTICAL);
         setGravity(Gravity.TOP);
+
+        mItemWidthCalculator = widthCalculator == null ? DEFAULT_CALCULATOR : widthCalculator;
+
         int paddingTop = QMUIResHelper.getAttrDimen(
                 bottomSheet.getContext(), R.attr.qmui_bottom_sheet_grid_padding_top);
         int paddingBottom = QMUIResHelper.getAttrDimen(
@@ -131,27 +161,14 @@ public class QMUIBottomSheetGridLineLayout extends LinearLayout {
         super.measureChild(child, parentWidthMeasureSpec, parentHeightMeasureSpec);
     }
 
-
     private int calculateItemWidth(int width, int calculateCount, int paddingLeft, int paddingRight) {
         if (miniItemWidth == -1) {
             miniItemWidth = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_bottom_sheet_grid_item_mini_width);
         }
+        return mItemWidthCalculator.calculate(getContext(), width, miniItemWidth, calculateCount, paddingLeft, paddingRight);
+    }
 
-        final int parentSpacing = width - paddingLeft - paddingRight;
-        int itemWidth = miniItemWidth;
-        // there is no more space for the last one item. then stretch the item width
-        if (calculateCount >= 3
-                && parentSpacing - calculateCount * itemWidth > 0
-                && parentSpacing - calculateCount * itemWidth < itemWidth) {
-            int count = parentSpacing / itemWidth;
-            itemWidth = parentSpacing / count;
-        }
-        // if there are more items. then show half of the first that is exceeded
-        // to tell user that there are more.
-        if (itemWidth * calculateCount > parentSpacing) {
-            int count = (width - paddingLeft) / itemWidth;
-            itemWidth = (int) ((width - paddingLeft) / (count + .5f));
-        }
-        return itemWidth;
+    public interface ItemWidthCalculator {
+        int calculate(Context context, int width, int miniWidth, int itemCount, int paddingLeft, int paddingRight);
     }
 }
