@@ -19,10 +19,11 @@ package com.qmuiteam.qmuidemo.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
+
+import androidx.core.content.ContextCompat;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.span.QMUIBlockSpaceSpan;
@@ -70,7 +71,11 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha10){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha11){
+            text.append("1. Feature: Added a new widget: QMUINavFragment.\n");
+            text.append("2. Remove LazyLifecycle, use maxLifecycle for replacement.\n");
+            text.append("3. Some bug fixes.\n");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha10){
             text.append("1. Feature: Added a new widget: QMUISchemeHandler.\n");
             text.append("2. Feature: Supported to remove section title if only one section in QMUIStickSectionAdapter.\n");
             text.append("3. Feature: Supported to add a QMUISkinApplyListener to View.\n");
