@@ -555,9 +555,10 @@ public abstract class QMUIFragment extends Fragment implements
                         // unbind mSwipeBackgroundView util onDestroy
                         if (getActivity() != null) {
                             sPopBackWhenSwipeFinished = true;
-                            popBackStack();
+                            // must call before popBackStack. mSwipeBackgroundView maybe released in popBackStack
                             int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
                                     R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
+                            popBackStack();
                             getActivity().overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
                             sPopBackWhenSwipeFinished = false;
                         }
