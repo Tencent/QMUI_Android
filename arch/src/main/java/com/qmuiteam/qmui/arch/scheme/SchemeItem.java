@@ -29,6 +29,7 @@ import java.util.Map;
 
 public abstract class SchemeItem {
     private static HashMap<Class<? extends QMUISchemeMatcher>, QMUISchemeMatcher> sSchemeMatchers;
+    private static HashMap<Class<? extends QMUISchemeValueConverter>, QMUISchemeValueConverter> sSchemeValueConverters;
 
     @Nullable
     private ArrayMap<String, String> mRequired;
@@ -45,6 +46,9 @@ public abstract class SchemeItem {
     @Nullable
     private Class<? extends QMUISchemeMatcher> mSchemeMatcherCls;
 
+    @Nullable
+    private Class<? extends QMUISchemeValueConverter> mSchemeValueConverterCls;
+
     private boolean mUseRefreshIfMatchedCurrent;
 
     public SchemeItem(@Nullable ArrayMap<String, String> required,
@@ -54,7 +58,8 @@ public abstract class SchemeItem {
                       @Nullable String[] keysForLong,
                       @Nullable String[] keysForFloat,
                       @Nullable String[] keysForDouble,
-                      @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls) {
+                      @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls,
+                      @Nullable Class<? extends QMUISchemeValueConverter> schemeValueConverterCls) {
         mRequired = required;
         mUseRefreshIfMatchedCurrent = useRefreshIfMatchedCurrent;
         mKeysForInt = keysForInt;
@@ -63,6 +68,7 @@ public abstract class SchemeItem {
         mKeysForFloat = keysForFloat;
         mKeysForDouble = keysForDouble;
         mSchemeMatcherCls = schemeMatcherCls;
+        mSchemeValueConverterCls = schemeValueConverterCls;
     }
 
     public boolean isUseRefreshIfMatchedCurrent() {
@@ -76,12 +82,36 @@ public abstract class SchemeItem {
         }
 
         Map<String, SchemeValue> queryMap = new HashMap<>();
+        if (sSchemeValueConverters == null) {
+            sSchemeValueConverters = new HashMap<>();
+        }
+
+
         for (Map.Entry<String, String> param : schemeParams.entrySet()) {
             String name = param.getKey();
             String value = param.getValue();
             if (name == null || name.isEmpty()) {
                 continue;
             }
+
+            if (mSchemeValueConverterCls != null) {
+                QMUISchemeValueConverter converter = sSchemeValueConverters.get(mSchemeValueConverterCls);
+                if(converter == null){
+                    try {
+                        converter = mSchemeValueConverterCls.newInstance();
+                        sSchemeValueConverters.put(mSchemeValueConverterCls, converter);
+                    } catch (Exception e) {
+                        QMUILog.printErrStackTrace(QMUISchemeHandler.TAG, e,
+                                "error to instance QMUISchemeValueConverter: %d", mSchemeValueConverterCls.getSimpleName());
+                    }
+                }
+                if(converter != null){
+                    value = converter.convert(name, value);
+                }
+            }
+
+
+
             try {
                 if (contains(mKeysForInt, name)) {
                     queryMap.put(name, new SchemeValue(value, Integer.valueOf(value), Integer.TYPE));

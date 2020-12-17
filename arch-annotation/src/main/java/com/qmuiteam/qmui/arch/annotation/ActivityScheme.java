@@ -33,4 +33,5 @@ public @interface ActivityScheme {
     String[] keysWithLongValue() default {};
     String[] keysWithFloatValue() default {};
     String[] keysWithDoubleValue() default {};
+    Class<?> valueConverter() default void.class;
 }

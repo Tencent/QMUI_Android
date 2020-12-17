@@ -16,7 +16,6 @@
 package com.qmuiteam.qmui.arch;
 
 import com.google.auto.service.AutoService;
-import com.google.common.collect.Lists;
 import com.qmuiteam.qmui.arch.annotation.ActivityScheme;
 import com.qmuiteam.qmui.arch.annotation.FragmentScheme;
 import com.squareup.javapoet.ClassName;
@@ -46,7 +45,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
@@ -55,6 +53,7 @@ public class SchemeProcessor extends BaseProcessor {
     private static String QMUISchemeIntentFactoryType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeIntentFactory";
     private static String QMUISchemeFragmentFactoryType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeFragmentFactory";
     private static String QMUISchemeMatcherType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeMatcher";
+    private static String QMUISchemeValueConverterType = "com.qmuiteam.qmui.arch.scheme.QMUISchemeValueConverter";
 
     private static ClassName SchemeMap = ClassName.get(
             "com.qmuiteam.qmui.arch.scheme", "SchemeMap");
@@ -166,6 +165,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
                     CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
+                    CodeBlock valueConverter = generateValueInterceptor(annotationMirror);
 
                     CodeBlock codeBlock = CodeBlock.builder()
                             .add("elements.add(")
@@ -189,6 +189,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(doubleParam)
                             /*---*/.add(",")
                             /*---*/.add(customMatcher)
+                            /*---*/.add(",")
+                            /*---*/.add(valueConverter)
                             /**/.add(")")
                             .add(")")
                             .build();
@@ -208,6 +210,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
                     CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
+                    CodeBlock valueConverter = generateValueInterceptor(annotationMirror);
 
                     CodeBlock codeBlock = CodeBlock.builder()
                             .add("elements.add(")
@@ -237,6 +240,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(doubleParam)
                             /*---*/.add(",")
                             /*---*/.add(customMatcher)
+                            /*---*/.add(",")
+                            /*---*/.add(valueConverter)
                             /**/.add(")")
                             .add(")")
                             .build();
@@ -349,6 +354,19 @@ public class SchemeProcessor extends BaseProcessor {
         }
         TypeMirror typeMirror = (TypeMirror) customFactory.getValue();
         if (!isSubtypeOfType(typeMirror, QMUISchemeMatcherType)) {
+            throw new IllegalStateException("customMatcher must implement interface QMUISchemeMatcher.");
+        }
+
+        return CodeBlock.of("$T.class", typeMirror);
+    }
+
+    private CodeBlock generateValueInterceptor(AnnotationMirror annotationMirror){
+        AnnotationValue valueConverter = getAnnotationValue(annotationMirror, "valueConverter");
+        if (valueConverter == null) {
+            return CodeBlock.of("null");
+        }
+        TypeMirror typeMirror = (TypeMirror) valueConverter.getValue();
+        if (!isSubtypeOfType(typeMirror, QMUISchemeValueConverterType)) {
             throw new IllegalStateException("customMatcher must implement interface QMUISchemeMatcher.");
         }
 
