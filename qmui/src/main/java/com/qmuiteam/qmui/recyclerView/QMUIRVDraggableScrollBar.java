@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qmuiteam.qmui.R;
@@ -44,6 +45,7 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
     private int[] STATE_NORMAL = new int[]{};
     private static final long DEFAULT_KEE_SHOW_DURATION = 800L;
     private static final long DEFAULT_TRANSITION_DURATION = 100L;
+    private static final int MIN_COUNT_FOR_PERCENT_CALCULATE = 1000;
 
     RecyclerView mRecyclerView;
     QMUIStickySectionLayout mStickySectionLayout;
@@ -345,13 +347,19 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
             }
         } else {
-            int range = getScrollRange(recyclerView);
-            int offset = getCurrentOffset(recyclerView);
-            int delta = (int) (range * mPercent - offset);
-            if (mIsVerticalScroll) {
-                recyclerView.scrollBy(0, delta);
-            } else {
-                recyclerView.scrollBy(delta, 0);
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if(adapter != null && adapter.getItemCount() > MIN_COUNT_FOR_PERCENT_CALCULATE && layoutManager instanceof LinearLayoutManager){
+                ((LinearLayoutManager)layoutManager).scrollToPositionWithOffset((int) (adapter.getItemCount() * mPercent), 0);
+            }else{
+                int range = getScrollRange(recyclerView);
+                int offset = getCurrentOffset(recyclerView);
+                int delta = (int) (range * mPercent - offset);
+                if (mIsVerticalScroll) {
+                    recyclerView.scrollBy(0, delta);
+                } else {
+                    recyclerView.scrollBy(delta, 0);
+                }
             }
         }
         invalidate();
@@ -451,6 +459,12 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
     }
 
     private float calculatePercent(@NonNull RecyclerView recyclerView) {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if(adapter != null && adapter.getItemCount() > MIN_COUNT_FOR_PERCENT_CALCULATE && layoutManager instanceof LinearLayoutManager){
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
+            return linearLayoutManager.findFirstCompletelyVisibleItemPosition() * 1f / adapter.getItemCount();
+        }
         return QMUILangHelper.constrain(getCurrentOffset(recyclerView) * 1f / getScrollRange(recyclerView), 0f, 1f);
     }
 
