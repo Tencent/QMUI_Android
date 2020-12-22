@@ -246,6 +246,10 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         mAutoScrollToRefreshMinOffset = autoScrollToRefreshMinOffset;
     }
 
+    public boolean isRefreshing() {
+        return mIsRefreshing;
+    }
+
     /**
      * 覆盖该方法以实现自己的 RefreshView。
      *
