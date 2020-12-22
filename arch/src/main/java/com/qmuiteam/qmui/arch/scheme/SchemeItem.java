@@ -106,7 +106,7 @@ public abstract class SchemeItem {
                     }
                 }
                 if(converter != null){
-                    value = converter.convert(name, value);
+                    value = converter.convert(name, value, schemeParams);
                 }
             }
 

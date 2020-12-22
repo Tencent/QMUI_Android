@@ -16,7 +16,10 @@
 package com.qmuiteam.qmui.arch.scheme;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Map;
 
 public interface QMUISchemeValueConverter {
-    @NonNull String convert(@NonNull String key, @NonNull String originValue);
+    @NonNull String convert(@NonNull String key, @NonNull String originValue, @Nullable Map<String, String> schemeParams);
 }

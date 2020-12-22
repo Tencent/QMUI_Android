@@ -17,10 +17,13 @@
 package com.qmuiteam.qmui.arch.scheme;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Map;
 
 public class QMUIDefaultSchemeValueConverter implements QMUISchemeValueConverter {
     @Override
-    public @NonNull String convert(@NonNull String key, @NonNull String originValue) {
+    public @NonNull String convert(@NonNull String key, @NonNull String originValue, @Nullable Map<String, String> schemeParams) {
         return originValue;
     }
 }
