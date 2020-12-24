@@ -553,13 +553,14 @@ public abstract class QMUIFragment extends Fragment implements
                         mSwipeBackgroundView = null;
                     } else if (scrollPercent >= 1.0F) {
                         // unbind mSwipeBackgroundView util onDestroy
-                        if (getActivity() != null) {
+                        Activity activity = getActivity();
+                        if (activity != null) {
                             sPopBackWhenSwipeFinished = true;
                             // must call before popBackStack. mSwipeBackgroundView maybe released in popBackStack
                             int exitAnim = mSwipeBackgroundView.hasChildWindow() ?
                                     R.anim.swipe_back_exit_still : R.anim.swipe_back_exit;
                             popBackStack();
-                            getActivity().overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
+                            activity.overridePendingTransition(R.anim.swipe_back_enter, exitAnim);
                             sPopBackWhenSwipeFinished = false;
                         }
                     }
@@ -868,7 +869,7 @@ public abstract class QMUIFragment extends Fragment implements
             return;
         }
 
-        Activity activity = requireActivity();
+        FragmentActivity activity = requireActivity();
         if (activity instanceof QMUIFragmentContainerProvider) {
             QMUIFragmentContainerProvider provider = (QMUIFragmentContainerProvider) activity;
             if (provider.getContainerFragmentManager().getBackStackEntryCount() > 1 || provider.getContainerFragmentManager().getPrimaryNavigationFragment() == this) {
@@ -877,11 +878,11 @@ public abstract class QMUIFragment extends Fragment implements
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
                 if (needInterceptLastFragmentFinish()) {
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !sPopBackWhenSwipeFinished){
-                        requireActivity().finishAfterTransition();
+                        activity.finishAfterTransition();
                     }else{
-                        requireActivity().finish();
+                        activity.finish();
                     }
-                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
                     return;
                 }
                 Object toExec = onLastFragmentFinish();
@@ -892,18 +893,18 @@ public abstract class QMUIFragment extends Fragment implements
                     } else if (toExec instanceof Intent) {
                         Intent intent = (Intent) toExec;
                         startActivity(intent);
-                        requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
-                        requireActivity().finish();
+                        activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                        activity.finish();
                     } else {
-                        onHandleSpecLastFragmentFinish(requireActivity(), transitionConfig, toExec);
+                        onHandleSpecLastFragmentFinish(activity, transitionConfig, toExec);
                     }
                 } else {
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !sPopBackWhenSwipeFinished){
-                        requireActivity().finishAfterTransition();
+                        activity.finishAfterTransition();
                     }else{
-                        requireActivity().finish();
+                        activity.finish();
                     }
-                    requireActivity().overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
                 }
             }
         } else {
