@@ -20,6 +20,9 @@ import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.util.LruCache;
 
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.span.QMUITouchableSpan;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
@@ -29,9 +32,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 
 /**
  * {@link QMUIQQFaceView} 的内容解析器，将文本内容解析成 {@link QMUIQQFaceView} 想要的数据格式。
@@ -142,7 +142,9 @@ public class QMUIQQFaceCompiler {
             return elementList;
         }
         elementList = realCompile(text, start, end, spans, spanInfo);
-        mCache.put(text, elementList);
+        if(!hasClickableSpans){
+            mCache.put(text, elementList);
+        }
         return elementList;
     }
 
