@@ -18,20 +18,29 @@ package com.qmuiteam.qmui.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
-import androidx.annotation.Nullable;
+import android.os.StatFs;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.QMUILog;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,11 +59,29 @@ public class QMUIDeviceHelper {
     private final static String ZUKZ1 = "zuk z1";
     private final static String ESSENTIAL = "essential";
     private final static String MEIZUBOARD[] = {"m9", "M9", "mx", "MX"};
+    private final static String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
+    private final static String CPU_FILE_PATH_0 = "/sys/devices/system/cpu/";
+    private final static String CPU_FILE_PATH_1 = "/sys/devices/system/cpu/possible";
+    private final static String CPU_FILE_PATH_2 = "/sys/devices/system/cpu/present";
+    private static FileFilter CPU_FILTER = new FileFilter() {
+
+        @Override
+        public boolean accept(File pathname) {
+            return Pattern.matches("cpu[0-9]", pathname.getName());
+        }
+    };
+
     private static String sMiuiVersionName;
     private static String sFlymeVersionName;
     private static boolean sIsTabletChecked = false;
     private static boolean sIsTabletValue = false;
     private static final String BRAND = Build.BRAND.toLowerCase();
+    private static long sTotalMemory = -1;
+    private static long sInnerStorageSize = -1;
+    private static long sExtraStorageSize = -1;
+    private static double sBatteryCapacity = -1;
+    private static int sCpuCoreCount = -1;
+
 
     static {
         Properties properties = new Properties();
@@ -136,14 +163,14 @@ public class QMUIDeviceHelper {
         return "v9".equals(sMiuiVersionName);
     }
 
-    public static boolean isFlymeLowerThan(int majorVersion){
+    public static boolean isFlymeLowerThan(int majorVersion) {
         return isFlymeLowerThan(majorVersion, 0, 0);
     }
 
     public static boolean isFlymeLowerThan(int majorVersion, int minorVersion, int patchVersion) {
         boolean isLower = false;
         if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
-            try{
+            try {
                 Pattern pattern = Pattern.compile("(\\d+\\.){2}\\d");
                 Matcher matcher = pattern.matcher(sFlymeVersionName);
                 if (matcher.find()) {
@@ -156,20 +183,20 @@ public class QMUIDeviceHelper {
                             }
                         }
 
-                        if(version.length >= 2 && minorVersion > 0){
+                        if (version.length >= 2 && minorVersion > 0) {
                             if (Integer.parseInt(version[1]) < majorVersion) {
                                 isLower = true;
                             }
                         }
 
-                        if(version.length >= 3 && patchVersion > 0){
+                        if (version.length >= 3 && patchVersion > 0) {
                             if (Integer.parseInt(version[2]) < majorVersion) {
                                 isLower = true;
                             }
                         }
                     }
                 }
-            }catch (Throwable ignore){
+            } catch (Throwable ignore) {
 
             }
         }
@@ -201,7 +228,7 @@ public class QMUIDeviceHelper {
         return BRAND.contains("huawei") || BRAND.contains("honor");
     }
 
-    public static boolean isEssentialPhone(){
+    public static boolean isEssentialPhone() {
         return BRAND.contains("essential");
     }
 
@@ -233,6 +260,103 @@ public class QMUIDeviceHelper {
         return false;
     }
 
+    public static long getTotalMemory(Context context) {
+        if (sTotalMemory != -1) {
+            return sTotalMemory;
+        }
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            activityManager.getMemoryInfo(memoryInfo);
+            sTotalMemory = memoryInfo.totalMem;
+        }
+        return sTotalMemory;
+    }
+
+    public static long getInnerStorageSize() {
+        if (sInnerStorageSize != -1) {
+            return sInnerStorageSize;
+        }
+        File dataDir = Environment.getDataDirectory();
+        if (dataDir == null) {
+            return 0;
+        }
+        sInnerStorageSize = dataDir.getTotalSpace();
+        return sInnerStorageSize;
+    }
+
+
+    public static boolean hasExtraStorage() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+
+    public static long getExtraStorageSize() {
+        if (sExtraStorageSize != -1) {
+            return sExtraStorageSize;
+        }
+        if (!hasExtraStorage()) {
+            return 0;
+        }
+        File path = Environment.getExternalStorageDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSizeLong();
+        long availableBlocks = stat.getBlockCountLong();
+        sExtraStorageSize = blockSize * availableBlocks;
+        return sExtraStorageSize;
+    }
+
+    public static long getTotalStorageSize() {
+        return getInnerStorageSize() + getExtraStorageSize();
+    }
+
+    private static int getNumOfCores() {
+        if (sCpuCoreCount != -1) {
+            return sCpuCoreCount;
+        }
+        int cores;
+        try {
+            cores = getCoresFromFile(CPU_FILE_PATH_1);
+            if (cores == 0) {
+                cores = getCoresFromFile(CPU_FILE_PATH_2);
+            }
+            if (cores == 0) {
+                cores = getCoresFromCPUFiles(CPU_FILE_PATH_0);
+            }
+        } catch (Exception e) {
+            cores = 0;
+        }
+        if (cores == 0) {
+            cores = 1;
+        }
+        sCpuCoreCount = cores;
+        return cores;
+    }
+
+    private static int getCoresFromCPUFiles(String path) {
+        File[] list = new File(path).listFiles(CPU_FILTER);
+        return null == list ? 0 : list.length;
+    }
+
+    private static int getCoresFromFile(String file) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            BufferedReader buf = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String fileContents = buf.readLine();
+            buf.close();
+            if (fileContents == null || !fileContents.matches("0-[\\d]+$")) {
+                return 0;
+            }
+            String num = fileContents.substring(2);
+            return Integer.parseInt(num) + 1;
+        } catch (IOException e) {
+            return 0;
+        } finally {
+            QMUILangHelper.close(is);
+        }
+    }
+
     /**
      * 判断悬浮窗权限（目前主要用户魅族与小米的检测）。
      */
@@ -250,6 +374,23 @@ public class QMUIDeviceHelper {
         }
     }
 
+    public static double getBatteryCapacity(Context context) {
+        if (sBatteryCapacity != -1) {
+            return sBatteryCapacity;
+        }
+        double ret;
+        try {
+            Class<?> cls = Class.forName(POWER_PROFILE_CLASS);
+            Object instance = cls.getConstructor(Context.class).newInstance(context);
+            Method method = cls.getMethod("getBatteryCapacity");
+            ret = (double) method.invoke(instance);
+        } catch (Exception ignore) {
+            ret = -1;
+        }
+        sBatteryCapacity = ret;
+        return sBatteryCapacity;
+    }
+
     @TargetApi(19)
     private static boolean checkOp(Context context, int op) {
         final int version = Build.VERSION.SDK_INT;
@@ -257,8 +398,7 @@ public class QMUIDeviceHelper {
             AppOpsManager manager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
             try {
                 Method method = manager.getClass().getDeclaredMethod("checkOp", int.class, int.class, String.class);
-                int property = (Integer) method.invoke(manager, op,
-                        Binder.getCallingUid(), context.getPackageName());
+                int property = (Integer) method.invoke(manager, op, Binder.getCallingUid(), context.getPackageName());
                 return AppOpsManager.MODE_ALLOWED == property;
             } catch (Exception e) {
                 e.printStackTrace();
