@@ -142,7 +142,7 @@ public class QMUIQQFaceCompiler {
             return elementList;
         }
         elementList = realCompile(text, start, end, spans, spanInfo);
-        if(!hasClickableSpans){
+        if(!hasClickableSpans && !inSpan){
             mCache.put(text, elementList);
         }
         return elementList;
