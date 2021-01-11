@@ -84,6 +84,7 @@ public abstract class Element {
     private float mY;
     private float mBaseLine;
     private float mNextGapWidth;
+    private String mToStringCache;
 
     public Element(Character singleChar, @Nullable CharSequence text, int index, int originIndex) {
         this(singleChar, text, index, originIndex, null);
@@ -289,7 +290,11 @@ public abstract class Element {
     @NonNull
     @Override
     public String toString() {
-        return mText != null ? mText.toString() : String.valueOf(mChar);
+        if(mToStringCache != null){
+            return mToStringCache;
+        }
+        mToStringCache = mText != null ? mText.toString() : String.valueOf(mChar);
+        return mToStringCache;
     }
 
     public int getLength() {
