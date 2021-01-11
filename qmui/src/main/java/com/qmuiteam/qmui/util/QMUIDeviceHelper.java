@@ -310,7 +310,8 @@ public class QMUIDeviceHelper {
         return getInnerStorageSize() + getExtraStorageSize();
     }
 
-    private static int getNumOfCores() {
+    // From Matrix
+    public static int getCpuCoreCount() {
         if (sCpuCoreCount != -1) {
             return sCpuCoreCount;
         }
