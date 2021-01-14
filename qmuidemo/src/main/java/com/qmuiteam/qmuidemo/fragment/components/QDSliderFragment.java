@@ -111,4 +111,9 @@ public class QDSliderFragment extends BaseFragment implements QMUISlider.Callbac
     public void onTouchUp(QMUISlider slider, int progress, int tickCount) {
 
     }
+
+    @Override
+    public void onLongTouch(QMUISlider slider, int progress, int tickCount) {
+
+    }
 }

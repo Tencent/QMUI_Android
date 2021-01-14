@@ -58,6 +58,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
     private int mCurrentProgress = 0;
     private boolean mIsProgressFirstSet = false;
     private boolean mClickToChangeProgress = false;
+    private boolean mLongTouchToChangeProgress = false;
     private int mRecordProgress = PROGRESS_NOT_SET;
 
     private int mDownTouchX = 0;
@@ -66,6 +67,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
     private boolean mIsMoving = false;
     private int mTouchSlop;
     private RectF mTempRect = new RectF();
+    private LongPressAction mLongPressAction = new LongPressAction();
 
     private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
 
@@ -233,6 +235,9 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             mIsThumbTouched = isThumbTouched(event.getX(), event.getY());
             if (mIsThumbTouched) {
                 mThumbView.setPress(true);
+            }else if(mLongTouchToChangeProgress){
+                removeCallbacks(mLongPressAction);
+                postOnAnimationDelayed(mLongPressAction, 300);
             }
 
             if (mCallback != null) {
@@ -240,6 +245,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             }
 
         } else if (action == MotionEvent.ACTION_MOVE) {
+            removeCallbacks(mLongPressAction);
             int x = (int) event.getX();
             int dx = x - mLastTouchX;
             mLastTouchX = x;
@@ -280,6 +286,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             }
         } else if (action == MotionEvent.ACTION_UP ||
                 action == MotionEvent.ACTION_CANCEL) {
+            removeCallbacks(mLongPressAction);
             mLastTouchX = -1;
             QMUIViewHelper.safeRequestDisallowInterceptTouchEvent(this, false);
             if (mIsMoving) {
@@ -312,6 +319,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             if (mCallback != null) {
                 mCallback.onTouchUp(this, mCurrentProgress, mTickCount);
             }
+        } else {
+            removeCallbacks(mLongPressAction);
         }
 
         return true;
@@ -340,6 +349,18 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
 
     public void setClickToChangeProgress(boolean clickToChangeProgress) {
         mClickToChangeProgress = clickToChangeProgress;
+    }
+
+    public void setLongTouchToChangeProgress(boolean longTouchToChangeProgress) {
+        mLongTouchToChangeProgress = longTouchToChangeProgress;
+    }
+
+    public boolean isLongTouchToChangeProgress() {
+        return mLongTouchToChangeProgress;
+    }
+
+    public boolean isClickToChangeProgress() {
+        return mClickToChangeProgress;
     }
 
     @Override
@@ -522,6 +543,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         void onStartMoving(QMUISlider slider, int progress, int tickCount);
 
         void onStopMoving(QMUISlider slider, int progress, int tickCount);
+
+        void onLongTouch(QMUISlider slider, int progress, int tickCount);
     }
 
     public static class DefaultCallback implements Callback {
@@ -548,6 +571,11 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
 
         @Override
         public void onStopMoving(QMUISlider slider, int progress, int tickCount) {
+
+        }
+
+        @Override
+        public void onLongTouch(QMUISlider slider, int progress, int tickCount) {
 
         }
     }
@@ -609,6 +637,22 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         @Override
         public SimpleArrayMap<String, Integer> getDefaultSkinAttrs() {
             return sDefaultSkinAttrs;
+        }
+    }
+
+    class LongPressAction implements Runnable {
+
+        @Override
+        public void run() {
+            mIsMoving = true;
+            int oldProgress = mCurrentProgress;
+            checkTouch(mLastTouchX, getMaxThumbOffset());
+            if (mIsThumbTouched) {
+                mThumbView.setPress(true);
+            }
+            if (mCallback != null && oldProgress != mCurrentProgress) {
+                mCallback.onLongTouch(QMUISlider.this, mCurrentProgress, mTickCount);
+            }
         }
     }
 }
