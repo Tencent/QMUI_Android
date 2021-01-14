@@ -647,9 +647,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             mIsMoving = true;
             int oldProgress = mCurrentProgress;
             checkTouch(mLastTouchX, getMaxThumbOffset());
-            if (mIsThumbTouched) {
-                mThumbView.setPress(true);
-            }
+            mIsThumbTouched = true;
+            mThumbView.setPress(true);
             if (mCallback != null && oldProgress != mCurrentProgress) {
                 mCallback.onLongTouch(QMUISlider.this, mCurrentProgress, mTickCount);
             }
