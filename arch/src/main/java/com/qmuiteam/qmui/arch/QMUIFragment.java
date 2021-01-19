@@ -483,6 +483,7 @@ public abstract class QMUIFragment extends Fragment implements
                 ((ViewGroup) mCacheSwipeBackView.getParent()).removeView(mCacheSwipeBackView);
             }
             if(mCacheSwipeBackView.getParent() == null){
+                initSwipeBackLayout(mCacheSwipeBackView);
                 return mCacheSwipeBackView;
             }
         }
@@ -519,6 +520,14 @@ public abstract class QMUIFragment extends Fragment implements
                                 swipeBackLayout, viewMoveAction, downX, downY, dx, dy, touchSlop);
                     }
                 });
+        initSwipeBackLayout(swipeBackLayout);
+        if(getParentFragment() != null){
+            mCacheSwipeBackView = swipeBackLayout;
+        }
+        return swipeBackLayout;
+    }
+
+    private void initSwipeBackLayout(SwipeBackLayout swipeBackLayout){
         if(mListenerRemover != null){
             mListenerRemover.remove();
         }
@@ -527,10 +536,6 @@ public abstract class QMUIFragment extends Fragment implements
         if (isCreateForSwipeBack) {
             swipeBackLayout.setTag(R.id.fragment_container_view_tag, this);
         }
-        if(getParentFragment() != null){
-            mCacheSwipeBackView = swipeBackLayout;
-        }
-        return swipeBackLayout;
     }
 
     private SwipeBackLayout.SwipeListener mSwipeListener = new SwipeBackLayout.SwipeListener() {
