@@ -277,7 +277,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
                                     0,
                                     maxOffset)
                     );
-                    calculateByThumbPosition();
+                    calculateByThumbPosition(maxOffset);
                 }
                 if (mCallback != null && oldProgress != mCurrentProgress) {
                     mCallback.onProgressChange(this, mCurrentProgress, mTickCount, true);
@@ -339,7 +339,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             mThumbViewOffsetHelper.setLeftAndRightOffset(maxOffset);
             safeSetCurrentProgress(mTickCount);
         } else {
-            float percent = (float) moveX / (getWidth() - getPaddingLeft() - getPaddingLeft() - 2 * mThumbView.getLeftRightMargin());
+            float percent = (float) moveX / (getWidth() - getPaddingLeft() - getPaddingRight() - 2 * mThumbView.getLeftRightMargin());
             int target = (int) (mTickCount * percent + 0.5f);
             mThumbViewOffsetHelper.setLeftAndRightOffset((int) (target * step));
             safeSetCurrentProgress(target);
@@ -467,10 +467,9 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         mConstraintThumbInMoving = constraintThumbInMoving;
     }
 
-    private void calculateByThumbPosition() {
+    private void calculateByThumbPosition(int maxOffset) {
         View thumbView = convertThumbToView();
-        float percent = mThumbViewOffsetHelper.getLeftAndRightOffset() * 1f /
-                (getWidth() - getPaddingLeft() - getPaddingRight() - thumbView.getWidth());
+        float percent = mThumbViewOffsetHelper.getLeftAndRightOffset() * 1f / maxOffset;
         safeSetCurrentProgress(QMUILangHelper.constrain(
                 (int) (mTickCount * percent + 0.5f),
                 0,
