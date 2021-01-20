@@ -13,11 +13,10 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.parser
 
-package com.qmuiteam.qmui.type.parser;
+import com.qmuiteam.qmui.type.TypeModel
 
-import com.qmuiteam.qmui.type.TypeModel;
-
-public interface TextParser {
-    TypeModel parse(CharSequence text);
+interface TextParser {
+    fun parse(text: CharSequence?): TypeModel?
 }

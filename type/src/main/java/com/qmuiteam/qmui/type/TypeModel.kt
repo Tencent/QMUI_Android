@@ -13,162 +13,110 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type
 
-package com.qmuiteam.qmui.type;
+import com.qmuiteam.qmui.type.element.Element
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+class TypeModel(
+        val origin: CharSequence,
+        private val mElementMap: Map<Int, Element>,
+        private val mFirstElement: Element,
+        private val mLastElement: Element) {
 
-import com.qmuiteam.qmui.type.element.Element;
+    var firstEffect: Element? = null
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-public class TypeModel {
-    private CharSequence mOrigin;
-    private final Map<Integer, Element> mElementMap;
-    private Element mFirstElement;
-    private Element mLastElement;
-    @Nullable
-    private Element mFirstEffect;
-
-    public TypeModel(
-            CharSequence origin,
-            @NonNull Map<Integer, Element> elementMap,
-             Element firstElement,
-             Element lastElement,
-             @Nullable Element firstEffect) {
-        mOrigin = origin;
-        mElementMap = elementMap;
-        mFirstElement = firstElement;
-        mLastElement = lastElement;
-        mFirstEffect = firstEffect;
-    }
-
-    @Nullable
-    public Element getFirstEffect() {
-        return mFirstEffect;
-    }
-
-    public CharSequence getOrigin() {
-        return mOrigin;
-    }
-
-
-    public EffectRemover addBgEffect(int start, int end, final int bgColor){
-        List<Integer> types = new ArrayList<>();
-        types.add(TypeEnvironment.TYPE_BG_COLOR);
-        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                env.setBackgroundColor(bgColor);
+    fun addBgEffect(start: Int, end: Int, bgColor: Int): EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_BG_COLOR)
+        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.backgroundColor = bgColor
             }
-        });
+        })
     }
 
-    public EffectRemover addTextColorEffect(int start, int end, final int textColor){
-        List<Integer> types = new ArrayList<>();
-        types.add(TypeEnvironment.TYPE_TEXT_COLOR);
-        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                env.setTextColor(textColor);
+    fun addTextColorEffect(start: Int, end: Int, textColor: Int): EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_TEXT_COLOR)
+        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.textColor = textColor
             }
-        });
+        })
     }
 
-    public EffectRemover addUnderLineEffect(int start, int end, final int underLineColor, final int underLineHeight){
-        List<Integer> types = new ArrayList<>();
-        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH);
-        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR);
-        return unsafeAddEffect(start, end, types, new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                env.setBorderBottom(underLineHeight, underLineColor);
+    fun addUnderLineEffect(start: Int, end: Int, underLineColor: Int, underLineHeight: Int): EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH)
+        types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR)
+        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.setBorderBottom(underLineHeight, underLineColor)
             }
-        });
+        })
     }
 
-
-    public EffectRemover unsafeAddEffect(int start, int end, List<Integer> types, EnvironmentUpdater environmentUpdater){
-        Element elementStart = mElementMap.get(start);
-        Element elementEnd = mElementMap.get(end);
-        if(elementStart == null || elementEnd == null){
-            return null;
+    fun unsafeAddEffect(start: Int, end: Int, types: List<Int>, environmentUpdater: EnvironmentUpdater): EffectRemover? {
+        val elementStart = mElementMap[start]
+        val elementEnd = mElementMap[end]
+        if (elementStart == null || elementEnd == null) {
+            return null
         }
-        for(Integer type: types){
-            elementStart.addSaveType(type);
-            elementEnd.addRestoreType(type);
+        for (type in types) {
+            elementStart.addSaveType(type)
+            elementEnd.addRestoreType(type)
         }
-        elementStart.addEnvironmentUpdater(environmentUpdater);
-        if(mFirstEffect == null){
-            mFirstEffect = elementStart;
+        elementStart.addEnvironmentUpdater(environmentUpdater)
+        firstEffect = if (firstEffect == null) {
+            elementStart
         } else {
-            mFirstEffect = elementStart.insertTo(mFirstElement);
+            elementStart.insertEffectTo(firstEffect!!)
         }
-        mFirstEffect = elementEnd.insertTo(mFirstElement);
-        return new DefaultEffectRemove(this, start, end, types, environmentUpdater);
+        firstEffect = elementEnd.insertEffectTo(firstEffect!!)
+        return DefaultEffectRemove(this, start, end, types, environmentUpdater)
     }
 
-    public boolean unsafeRemoveEffect(int start, int end, List<Integer> types, EnvironmentUpdater environmentUpdater){
-        Element elementStart = mElementMap.get(start);
-        Element elementEnd = mElementMap.get(end);
-        if(elementStart == null || elementEnd == null){
-            return false;
+    fun unsafeRemoveEffect(start: Int, end: Int, types: List<Int>, environmentUpdater: EnvironmentUpdater): Boolean {
+        val elementStart = mElementMap[start]
+        val elementEnd = mElementMap[end]
+        if (elementStart == null || elementEnd == null) {
+            return false
         }
-        for(Integer type: types){
-            elementStart.removeSaveType(type);
-            elementEnd.removeStoreType(type);
+        for (type in types) {
+            elementStart.removeSaveType(type)
+            elementEnd.removeStoreType(type)
         }
-        elementStart.removeEnvironmentUpdater(environmentUpdater);
-
-        mFirstEffect = elementStart.removeFromEffectListIfNeeded(mFirstEffect);
-        mFirstEffect = elementEnd.removeFromEffectListIfNeeded(mFirstEffect);
-        return true;
+        elementStart.removeEnvironmentUpdater(environmentUpdater)
+        firstEffect = elementStart.removeFromEffectListIfNeeded(firstEffect)
+        firstEffect = elementEnd.removeFromEffectListIfNeeded(firstEffect)
+        return true
     }
 
-    public Element firstElement() {
-        return mFirstElement;
+    fun firstElement(): Element {
+        return mFirstElement
     }
 
-    public Element lastElement() {
-        return mLastElement;
+    fun lastElement(): Element {
+        return mLastElement
     }
 
-    @Nullable
-    public Element get(int pos){
-        return mElementMap.get(pos);
+    operator fun get(pos: Int): Element? {
+        return mElementMap[pos]
     }
 
-    public interface EffectRemover {
-        void remove();
+    interface EffectRemover {
+        fun remove()
     }
+}
 
-    static class DefaultEffectRemove implements EffectRemover{
-
-        private final int mStart;
-        private final int mEnd;
-        private final List<Integer> mTypes;
-        private final EnvironmentUpdater mEnvironmentUpdater;
-        private final TypeModel mTypeModel;
-
-        public DefaultEffectRemove(
-                TypeModel typeModel,
-                int start,
-                int end,
-                List<Integer> types,
-                EnvironmentUpdater environmentUpdater) {
-            mTypeModel = typeModel;
-            mStart = start;
-            mEnd = end;
-            mTypes = types;
-            mEnvironmentUpdater = environmentUpdater;
-        }
-
-        @Override
-        public void remove() {
-            mTypeModel.unsafeRemoveEffect(mStart, mEnd, mTypes, mEnvironmentUpdater);
-        }
+class DefaultEffectRemove(
+        private val typeModel: TypeModel,
+        private val start: Int,
+        private val end: Int,
+        private val types: List<Int>,
+        private val environmentUpdater: EnvironmentUpdater) : TypeModel.EffectRemover {
+    override fun remove() {
+        typeModel.unsafeRemoveEffect(start, end, types, environmentUpdater)
     }
 }

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 version = QMUI_TYPE_VERSION
 
@@ -25,7 +26,8 @@ android {
 
 dependencies {
     api "androidx.annotation:annotation:$annotationVersion"
-    api "androidx.core:core:$appcompatVersion"
+    api "androidx.core:core-ktx:$appcompatVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 // deploy

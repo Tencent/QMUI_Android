@@ -13,459 +13,425 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type
 
-package com.qmuiteam.qmui.type;
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
+import android.text.TextUtils.TruncateAt
+import com.qmuiteam.qmui.type.element.*
+import java.util.*
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.text.TextUtils;
+class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
+    private var mMaxLines = Int.MAX_VALUE
+    private var mEllipsize: TruncateAt? = null
+    private var mCalculateWholeLines = true
+    private val mLines: MutableList<Line> = ArrayList()
+    private var mDropLastIfSpace = true
+    private var mMoreText: String? = null
+    private var mMoreTextColor = 0
+    private var mMoreTextTypeface: Typeface? = null
+    private var mMoreUnderlineColor = Color.TRANSPARENT
+    private var mMoreBgColor = 0
+    private var mMoreUnderlineHeight = 0
+    private var mTotalLineCount = 0
 
-import com.qmuiteam.qmui.type.element.BreakWordLineElement;
-import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
-import com.qmuiteam.qmui.type.element.IgnoreEffectElement;
-import com.qmuiteam.qmui.type.element.Element;
-import com.qmuiteam.qmui.type.element.NextParagraphElement;
+    var typeModel: TypeModel? = null
+        private set
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
-public class LineLayout {
-    private int mMaxLines = Integer.MAX_VALUE;
-    private TextUtils.TruncateAt mEllipsize;
-    private boolean mCalculateWholeLines = true;
-    private TypeEnvironment mTypeEnvironment;
-    private TypeModel mTypeModel;
-    private List<Line> mLines = new ArrayList<>();
-    private boolean mDropLastIfSpace = true;
-    private String mMoreText = null;
-    private int mMoreTextColor = 0;
-    private Typeface mMoreTextTypeface = null;
-    private int mMoreUnderlineColor = Color.TRANSPARENT;
-    private int mMoreBgColor = 0;
-    private int mMoreUnderlineHeight = 0;
-    private int mTotalLineCount = 0;
-
-    public LineLayout(TypeEnvironment environment) {
-        mTypeEnvironment = environment;
+    fun setMaxLines(maxLines: Int): LineLayout {
+        mMaxLines = maxLines
+        return this
     }
 
-    public LineLayout setMaxLines(int maxLines) {
-        mMaxLines = maxLines;
-        return this;
+    fun setEllipsize(ellipsize: TruncateAt?): LineLayout {
+        mEllipsize = ellipsize
+        return this
     }
 
-    public LineLayout setEllipsize(TextUtils.TruncateAt ellipsize) {
-        mEllipsize = ellipsize;
-        return this;
+    fun setCalculateWholeLines(calculateWholeLines: Boolean): LineLayout {
+        mCalculateWholeLines = calculateWholeLines
+        return this
     }
 
-    public LineLayout setCalculateWholeLines(boolean calculateWholeLines) {
-        mCalculateWholeLines = calculateWholeLines;
-        return this;
+    fun setDropLastIfSpace(dropLastIfSpace: Boolean): LineLayout {
+        mDropLastIfSpace = dropLastIfSpace
+        return this
     }
 
-    public LineLayout setDropLastIfSpace(boolean dropLastIfSpace) {
-        mDropLastIfSpace = dropLastIfSpace;
-        return this;
+    fun setMoreText(text: String?, color: Int, typeface: Typeface?): LineLayout {
+        mMoreText = text
+        mMoreTextColor = color
+        mMoreTextTypeface = typeface
+        return this
     }
 
-    public LineLayout setMoreText(String text, int color, Typeface typeface) {
-        mMoreText = text;
-        mMoreTextColor = color;
-        mMoreTextTypeface = typeface;
-        return this;
+    fun setMoreBackgroundColor(color: Int): LineLayout {
+        mMoreBgColor = color
+        return this
     }
 
-    public LineLayout setMoreBackgroundColor(int color) {
-        mMoreBgColor = color;
-        return this;
+    fun setUnderline(height: Int, color: Int): LineLayout {
+        mMoreUnderlineHeight = height
+        mMoreUnderlineColor = color
+        return this
     }
 
-    public LineLayout setUnderline(int height, int color) {
-        mMoreUnderlineHeight = height;
-        mMoreUnderlineColor = color;
-        return this;
+    fun setTypeModel(typeModel: TypeModel?): LineLayout {
+        this.typeModel = typeModel
+        return this
     }
 
-    public LineLayout setTypeModel(TypeModel typeModel) {
-        mTypeModel = typeModel;
-        return this;
-    }
-
-    public TypeModel getTypeModel() {
-        return mTypeModel;
-    }
-
-    public void measureAndLayout() {
-        mTypeEnvironment.clear();
-        release();
-        if (mTypeModel == null) {
-            return;
+    fun measureAndLayout() {
+        mTypeEnvironment.clear()
+        release()
+        if (typeModel == null) {
+            return
         }
-        Element element = mTypeModel.firstElement();
-        if (element == null) {
-            return;
-        }
-        Line line = Line.acquire();
-        int y = 0;
-        line.init(0, y, mTypeEnvironment.getWidthLimit());
+        var element: Element? = typeModel!!.firstElement() ?: return
+        var line = Line.acquire()
+        var y = 0
+        line.init(0, y, mTypeEnvironment.widthLimit)
         while (element != null) {
-            element.measure(mTypeEnvironment);
-            if (element instanceof NextParagraphElement) {
-                line.add(element);
-                line.layout(mTypeEnvironment, mDropLastIfSpace, false);
-                mLines.add(line);
+            element.measure(mTypeEnvironment)
+            if (element is NextParagraphElement) {
+                line.add(element)
+                line.layout(mTypeEnvironment, mDropLastIfSpace, false)
+                mLines.add(line)
                 if (canInterrupt()) {
-                    return;
+                    return
                 }
-                y += line.getContentHeight() + mTypeEnvironment.getParagraphSpace();
-                line = createNewLine(y);
-            } else if (line.getContentWidth() + element.getMeasureWidth() > mTypeEnvironment.getWidthLimit()) {
-                if (mLines.size() == 0 && line.getSize() == 0) {
+                y += line.contentHeight + mTypeEnvironment.paragraphSpace
+                line = createNewLine(y)
+            } else if (line.contentWidth + element.measureWidth > mTypeEnvironment.widthLimit) {
+                if (mLines.size == 0 && line.size == 0) {
                     // the width is too small.
-                    line.release();
-                    return;
+                    line.release()
+                    return
                 }
-                List<Element> back = line.handleWordBreak(mTypeEnvironment);
-                line.layout(mTypeEnvironment, mDropLastIfSpace, false);
-                mLines.add(line);
+                val back = line.handleWordBreak(mTypeEnvironment)
+                line.layout(mTypeEnvironment, mDropLastIfSpace, false)
+                mLines.add(line)
                 if (canInterrupt()) {
-                    handleEllipse(true);
-                    return;
+                    handleEllipse(true)
+                    return
                 }
-                y += line.getContentHeight() + mTypeEnvironment.getLineSpace();
-                line = createNewLine(y);
+                y += line.contentHeight + mTypeEnvironment.lineSpace
+                line = createNewLine(y)
                 if (back != null && !back.isEmpty()) {
-                    for (Element el : back) {
-                        line.add(el);
+                    for (el in back) {
+                        line.add(el)
                     }
                 }
-                line.add(element);
+                line.add(element)
             } else {
-                line.add(element);
+                line.add(element)
             }
-            element = element.getNext();
+            element = element.next
         }
-        if (line.getSize() > 0) {
-            line.layout(mTypeEnvironment, mDropLastIfSpace, true);
-            mLines.add(line);
+        if (line.size > 0) {
+            line.layout(mTypeEnvironment, mDropLastIfSpace, true)
+            mLines.add(line)
         } else {
-            line.release();
+            line.release()
         }
-        mTotalLineCount = mLines.size();
-        handleEllipse(false);
+        mTotalLineCount = mLines.size
+        handleEllipse(false)
     }
 
-    private Line createNewLine(int y) {
-        Line line = Line.acquire();
-        line.init(0, y, mTypeEnvironment.getWidthLimit());
-        return line;
+    private fun createNewLine(y: Int): Line {
+        val line = Line.acquire()
+        line.init(0, y, mTypeEnvironment.widthLimit)
+        return line
     }
 
-    private void handleEllipse(boolean fromInterrupt) {
-        if (mLines.isEmpty() || mLines.size() < mMaxLines || (mLines.size() == mMaxLines && !fromInterrupt)) {
-            return;
+    private fun handleEllipse(fromInterrupt: Boolean) {
+        if (mLines.isEmpty() || mLines.size < mMaxLines || mLines.size == mMaxLines && !fromInterrupt) {
+            return
         }
-
-        if (mEllipsize == TextUtils.TruncateAt.END) {
-            handleEllipseEnd();
-        } else if (mEllipsize == TextUtils.TruncateAt.START) {
-            handleEllipseStart();
-        } else if (mEllipsize == TextUtils.TruncateAt.MIDDLE) {
-            handleEllipseMiddle();
+        if (mEllipsize == TruncateAt.END) {
+            handleEllipseEnd()
+        } else if (mEllipsize == TruncateAt.START) {
+            handleEllipseStart()
+        } else if (mEllipsize == TruncateAt.MIDDLE) {
+            handleEllipseMiddle()
         }
     }
 
-    private void handleEllipseEnd() {
-        for (int i = mLines.size() - 1; i >= mMaxLines; i--) {
-            mLines.remove(mLines.get(i));
+    private fun handleEllipseEnd() {
+        for (i in mLines.size - 1 downTo mMaxLines) {
+            mLines.remove(mLines[i])
         }
-        Line lastLine = mLines.get(mLines.size() - 1);
-        int limitWidth = lastLine.getWidthLimit();
-        Element ellipseElement = new CharOrPhraseElement("...", -1, -1);
-        ellipseElement.addSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                env.clear();
+        val lastLine = mLines[mLines.size - 1]
+        var limitWidth = lastLine.widthLimit
+        val ellipseElement: Element = TextElement("...", -1, -1)
+        ellipseElement.addSingleEnvironmentUpdater(null, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.clear()
             }
-        });
-        ellipseElement.measure(mTypeEnvironment);
-        limitWidth -= ellipseElement.getMeasureWidth();
-
-        Element moreElement = null;
-        if (mMoreText != null && !mMoreText.isEmpty()) {
-            moreElement = new CharOrPhraseElement(mMoreText, -1, -1);
-            List<Integer> changeTypes = new ArrayList<>();
-            changeTypes.add(TypeEnvironment.TYPE_TEXT_COLOR);
-            changeTypes.add(TypeEnvironment.TYPE_BG_COLOR);
-            changeTypes.add(TypeEnvironment.TYPE_TYPEFACE);
-            changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR);
-            changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH);
-            moreElement.addSingleEnvironmentUpdater(changeTypes, new EnvironmentUpdater() {
-                @Override
-                public void update(TypeEnvironment env) {
+        })
+        ellipseElement.measure(mTypeEnvironment)
+        limitWidth = (limitWidth - ellipseElement.measureWidth).toInt()
+        var moreElement: Element? = null
+        if (mMoreText != null && !mMoreText!!.isEmpty()) {
+            moreElement = TextElement(mMoreText!!, -1, -1)
+            val changeTypes: MutableList<Int> = ArrayList()
+            changeTypes.add(TypeEnvironment.TYPE_TEXT_COLOR)
+            changeTypes.add(TypeEnvironment.TYPE_BG_COLOR)
+            changeTypes.add(TypeEnvironment.TYPE_TYPEFACE)
+            changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR)
+            changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH)
+            moreElement.addSingleEnvironmentUpdater(changeTypes, object : EnvironmentUpdater {
+                override fun update(env: TypeEnvironment) {
                     if (mMoreTextColor != 0) {
-                        env.setTextColor(mMoreTextColor);
+                        env.textColor = mMoreTextColor
                     }
                     if (mMoreBgColor != 0) {
-                        env.setBackgroundColor(mMoreBgColor);
+                        env.backgroundColor = mMoreBgColor
                     }
                     if (mMoreTextTypeface != null) {
-                        env.setTypeface(mMoreTextTypeface);
+                        env.typeface = mMoreTextTypeface
                     }
-
                     if (mMoreUnderlineHeight > 0) {
-                        env.setBorderBottom(mMoreUnderlineHeight, mMoreUnderlineColor);
+                        env.setBorderBottom(mMoreUnderlineHeight, mMoreUnderlineColor)
                     }
                 }
-            });
-            moreElement.measure(mTypeEnvironment);
-            limitWidth -= moreElement.getMeasureWidth();
+            })
+            moreElement.measure(mTypeEnvironment)
+            limitWidth = (limitWidth - moreElement.measureWidth).toInt()
         }
-
-        int contentWidth = lastLine.getContentWidth();
+        val contentWidth = lastLine.contentWidth
         if (contentWidth < limitWidth) {
-            lastLine.restoreVisibleChange();
+            lastLine.restoreVisibleChange()
         } else {
-            List<Element> elements = lastLine.popAll();
-            for (Element el : elements) {
-                if (el.getMeasureWidth() <= limitWidth) {
-                    lastLine.add(el);
-                    limitWidth -= el.getMeasureWidth();
+            val elements = lastLine.popAll()
+            for (el in elements) {
+                if (el.measureWidth <= limitWidth) {
+                    lastLine.add(el)
+                    limitWidth -= (limitWidth - el.measureWidth).toInt()
                 } else {
-                    break;
+                    break
                 }
             }
         }
-        lastLine.add(ellipseElement);
+        lastLine.add(ellipseElement)
         if (moreElement != null) {
-            lastLine.add(moreElement);
+            lastLine.add(moreElement)
         }
-        lastLine.layout(mTypeEnvironment, mDropLastIfSpace, true);
+        lastLine.layout(mTypeEnvironment, mDropLastIfSpace, true)
     }
 
-    private void handleEllipseStart() {
-        mTypeEnvironment.clear();
-        for (int i = mLines.size() - 1; i >= mMaxLines; i--) {
-            mLines.remove(mLines.get(i));
+    private fun handleEllipseStart() {
+        mTypeEnvironment.clear()
+        for (i in mLines.size - 1 downTo mMaxLines) {
+            mLines.remove(mLines[i])
         }
-        Element ellipseElement = new CharOrPhraseElement("...", -1, -1);
-        ellipseElement.addSingleEnvironmentUpdater(null, new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                env.clear();
+        val ellipseElement: Element = TextElement("...", -1, -1)
+        ellipseElement.addSingleEnvironmentUpdater(null, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.clear()
             }
-        });
-        ellipseElement.measure(mTypeEnvironment);
-        Queue<Element> elements = new LinkedList<>();
-        elements.add(ellipseElement);
-        for (int i = 0; i < mLines.size(); i++) {
-            Line line = mLines.get(i);
-            int limitWidth = line.getWidthLimit();
-            elements.addAll(line.popAll());
+        })
+        ellipseElement.measure(mTypeEnvironment)
+        val elements: Queue<Element> = LinkedList()
+        elements.add(ellipseElement)
+        for (i in mLines.indices) {
+            val line = mLines[i]
+            val limitWidth = line.widthLimit
+            elements.addAll(line.popAll())
             while (!elements.isEmpty()) {
-                Element el = elements.peek();
+                val el = elements.peek()
                 if (el != null) {
-                    if (el instanceof NextParagraphElement) {
-                        elements.poll();
-                        line.add(el);
-                        el.move(mTypeEnvironment);
-                        break;
+                    if (el is NextParagraphElement) {
+                        elements.poll()
+                        line.add(el)
+                        el.move(mTypeEnvironment)
+                        break
                     }
-
-                    if (el instanceof BreakWordLineElement) {
-                        elements.poll();
-                        continue;
+                    if (el is BreakWordLineElement) {
+                        elements.poll()
+                        continue
                     }
-                    if (line.getContentWidth() + el.getMeasureWidth() <= limitWidth) {
-                        elements.poll();
-                        line.add(el);
-                        el.move(mTypeEnvironment);
-
+                    if (line.contentWidth + el.measureWidth <= limitWidth) {
+                        elements.poll()
+                        line.add(el)
+                        el.move(mTypeEnvironment)
                     } else {
-                        break;
+                        break
                     }
                 } else {
-                    elements.poll();
+                    elements.poll()
                 }
             }
-            line.handleWordBreak(mTypeEnvironment);
-            line.layout(mTypeEnvironment, mDropLastIfSpace, false);
+            line.handleWordBreak(mTypeEnvironment)
+            line.layout(mTypeEnvironment, mDropLastIfSpace, false)
             if (elements.isEmpty()) {
-                return;
+                return
             }
         }
     }
 
-    private void handleEllipseMiddle() {
-        mTypeEnvironment.clear();
-        List<Line> lines = new ArrayList<>(mLines);
-        mLines.clear();
-        Element ellipseElement = new CharOrPhraseElement("...", -1, -1);
-        ellipseElement.measure(mTypeEnvironment);
-        int ellipseLine = mMaxLines % 2 == 0 ? mMaxLines / 2 : (mMaxLines + 1) / 2;
-
-        for (int i = 0; i < ellipseLine; i++) {
-            mLines.add(lines.get(i));
+    private fun handleEllipseMiddle() {
+        mTypeEnvironment.clear()
+        val lines: List<Line> = ArrayList(mLines)
+        mLines.clear()
+        val ellipseElement: Element = TextElement("...", -1, -1)
+        ellipseElement.measure(mTypeEnvironment)
+        val ellipseLine = if (mMaxLines % 2 == 0) mMaxLines / 2 else (mMaxLines + 1) / 2
+        for (i in 0 until ellipseLine) {
+            mLines.add(lines[i])
         }
-        Line handleLine = lines.get(ellipseLine - 1);
-        int limitWidth = handleLine.getWidthLimit();
-        Deque<Element> unHandled = new LinkedList<>(handleLine.popAll());
+        val handleLine = lines[ellipseLine - 1]
+        val limitWidth = handleLine.widthLimit
+        val unHandled: Deque<Element> = LinkedList(handleLine.popAll())
         while (!unHandled.isEmpty()) {
-            Element el = unHandled.peek();
+            val el = unHandled.peek()
             if (el != null) {
-                if (handleLine.getContentWidth() + el.getMeasureWidth() <= limitWidth / 2f - ellipseElement.getMeasureWidth() / 2) {
-                    unHandled.poll();
-                    handleLine.add(el);
-                    el.move(mTypeEnvironment);
+                if (handleLine.contentWidth + el.measureWidth <= limitWidth / 2f - ellipseElement.measureWidth / 2) {
+                    unHandled.poll()
+                    handleLine.add(el)
+                    el.move(mTypeEnvironment)
                 } else {
-                    break;
+                    break
                 }
             } else {
-                unHandled.poll();
+                unHandled.poll()
             }
         }
-        ellipseElement.measure(mTypeEnvironment);
-        handleLine.add(ellipseElement);
-
-        int nextFullShowLine = lines.size() - mMaxLines + ellipseLine;
-        int startLine = lines.size() - 1;
+        ellipseElement.measure(mTypeEnvironment)
+        handleLine.add(ellipseElement)
+        val nextFullShowLine = lines.size - mMaxLines + ellipseLine
+        var startLine = lines.size - 1
         // find the latest paragraph end line.
-        for (int i = lines.size() - 2; i > nextFullShowLine; i--) {
-            if (lines.get(i).isMiddleParagraphEndLine()) {
-                startLine = i;
+        for (i in lines.size - 2 downTo nextFullShowLine + 1) {
+            if (lines[i].isMiddleParagraphEndLine) {
+                startLine = i
             }
         }
-        for (int i = ellipseLine; i <= startLine; i++) {
-            unHandled.addAll(lines.get(i).popAll());
+        for (i in ellipseLine..startLine) {
+            unHandled.addAll(lines[i].popAll())
         }
-
-        for (int i = startLine; i >= nextFullShowLine; i--) {
-            Line line = lines.get(i);
+        for (i in startLine downTo nextFullShowLine) {
+            val line = lines[i]
             while (!unHandled.isEmpty()) {
-                Element element = unHandled.peekLast();
+                val element = unHandled.peekLast()
                 if (element != null) {
-                    if (element instanceof NextParagraphElement) {
-                        unHandled.pollLast();
-                        continue;
+                    if (element is NextParagraphElement) {
+                        unHandled.pollLast()
+                        continue
                     }
-                    if (element instanceof BreakWordLineElement) {
-                        unHandled.pollLast();
-                        continue;
+                    if (element is BreakWordLineElement) {
+                        unHandled.pollLast()
+                        continue
                     }
-                    if (line.getContentWidth() + element.getMeasureWidth() <= line.getWidthLimit()) {
-                        unHandled.pollLast();
-                        line.addFirst(element);
+                    if (line.contentWidth + element.measureWidth <= line.widthLimit) {
+                        unHandled.pollLast()
+                        line.addFirst(element)
                     } else {
-                        break;
+                        break
                     }
                 } else {
-                    unHandled.pollLast();
+                    unHandled.pollLast()
                 }
             }
         }
-
-        List<Element> toAdd = new LinkedList<>();
-        int toAddWidth = 0;
+        val toAdd = LinkedList<Element>()
+        var toAddWidth = 0
         while (!unHandled.isEmpty()) {
-            Element element = unHandled.peekLast();
+            val element = unHandled.peekLast()
             if (element != null) {
-                if (element instanceof NextParagraphElement) {
-                    unHandled.pollLast();
-                    continue;
+                if (element is NextParagraphElement) {
+                    unHandled.pollLast()
+                    continue
                 }
-                if (element instanceof BreakWordLineElement) {
-                    unHandled.pollLast();
-                    continue;
+                if (element is BreakWordLineElement) {
+                    unHandled.pollLast()
+                    continue
                 }
-                if (handleLine.getContentWidth() + toAddWidth + element.getMeasureWidth() <= handleLine.getWidthLimit()) {
-                    unHandled.pollLast();
-                    toAdd.add(0, element);
-                    toAddWidth += element.getMeasureWidth();
+                if (handleLine.contentWidth + toAddWidth + element.measureWidth <= handleLine.widthLimit) {
+                    unHandled.pollLast()
+                    toAdd.add(0, element)
+                    toAddWidth = (toAddWidth + element.measureWidth).toInt()
                 } else {
-                    break;
+                    break
                 }
             } else {
-                unHandled.pollLast();
+                unHandled.pollLast()
             }
         }
-
-        Element firstUnHandle = unHandled.peekFirst();
-        Element lastUnHandle = unHandled.peekLast();
-        Element effect = mTypeModel.getFirstEffect();
+        val firstUnHandle = unHandled.peekFirst()
+        val lastUnHandle = unHandled.peekLast()
+        var effect = typeModel!!.firstEffect
         if (firstUnHandle != null && lastUnHandle != null) {
-            List<Element> ellipseEffect = new ArrayList<>();
-            while (effect != null && effect.getIndex() <= lastUnHandle.getIndex()) {
-                if (effect.getIndex() >= firstUnHandle.getIndex()) {
-                    ellipseEffect.add(effect);
+            val ellipseEffect: MutableList<Element> = ArrayList()
+            while (effect != null && effect.index <= lastUnHandle.index) {
+                if (effect.index >= firstUnHandle.index) {
+                    ellipseEffect.add(effect)
                 }
-                effect = effect.getNext();
+                effect = effect.next
             }
-            if (ellipseEffect.size() > 0) {
-                IgnoreEffectElement ignoreEffectElement = new IgnoreEffectElement(ellipseEffect);
-                ignoreEffectElement.move(mTypeEnvironment);
-                handleLine.add(ignoreEffectElement);
+            if (ellipseEffect.size > 0) {
+                val ignoreEffectElement = IgnoreEffectElement(ellipseEffect)
+                ignoreEffectElement.move(mTypeEnvironment)
+                handleLine.add(ignoreEffectElement)
             }
         }
-        for (Element el : toAdd) {
-            el.move(mTypeEnvironment);
-            handleLine.add(el);
+        for (el in toAdd) {
+            el.move(mTypeEnvironment)
+            handleLine.add(el)
         }
-        handleLine.handleWordBreak(mTypeEnvironment);
-        handleLine.layout(mTypeEnvironment, mDropLastIfSpace, ellipseLine == lines.size());
-        int lastEnd = handleLine.getY() + handleLine.getContentHeight();
-        for (int i = nextFullShowLine; i < lines.size(); i++) {
-            Line line = lines.get(i);
-            Line prev = lines.get(i - 1);
-            if (prev.isMiddleParagraphEndLine()) {
-                line.setY(lastEnd + mTypeEnvironment.getParagraphSpace());
+        handleLine.handleWordBreak(mTypeEnvironment)
+        handleLine.layout(mTypeEnvironment, mDropLastIfSpace, ellipseLine == lines.size)
+        var lastEnd = handleLine.y + handleLine.contentHeight
+        for (i in nextFullShowLine until lines.size) {
+            val line = lines[i]
+            val prev = lines[i - 1]
+            if (prev.isMiddleParagraphEndLine) {
+                line.y = lastEnd + mTypeEnvironment.paragraphSpace
             } else {
-                line.setY(lastEnd + mTypeEnvironment.getLineSpace());
+                line.y = lastEnd + mTypeEnvironment.lineSpace
             }
-            lastEnd = line.getY() + line.getContentHeight();
-            line.move(mTypeEnvironment);
-            line.handleWordBreak(mTypeEnvironment);
-            line.layout(mTypeEnvironment, mDropLastIfSpace, i == lines.size() - 1);
-            mLines.add(line);
+            lastEnd = line.y + line.contentHeight
+            line.move(mTypeEnvironment)
+            line.handleWordBreak(mTypeEnvironment)
+            line.layout(mTypeEnvironment, mDropLastIfSpace, i == lines.size - 1)
+            mLines.add(line)
         }
     }
 
-    public int getMaxLayoutWidth() {
-        int maxWidth = 0;
-        for (Line line : mLines) {
-            maxWidth = Math.max(maxWidth, line.getLayoutWidth());
+    val maxLayoutWidth: Int
+        get() {
+            var maxWidth = 0
+            for (line in mLines) {
+                maxWidth = Math.max(maxWidth, line.layoutWidth)
+            }
+            return maxWidth
         }
-        return maxWidth;
+    val contentHeight: Int
+        get() {
+            if (mLines.isEmpty()) {
+                return 0
+            }
+            val last = mLines[mLines.size - 1]
+            return last.y + last.contentHeight
+        }
+
+    fun draw(canvas: Canvas) {
+        mTypeEnvironment.clear()
+        for (line in mLines) {
+            line.draw(mTypeEnvironment, canvas)
+        }
     }
 
-    public int getContentHeight() {
-        if (mLines.isEmpty()) {
-            return 0;
-        }
-        Line last = mLines.get(mLines.size() - 1);
-        return last.getY() + last.getContentHeight();
+    private fun canInterrupt(): Boolean {
+        return mLines.size == mMaxLines && !mCalculateWholeLines &&
+                (mEllipsize == null || mEllipsize == TruncateAt.END)
     }
 
-    public void draw(Canvas canvas) {
-        mTypeEnvironment.clear();
-        for (Line line : mLines) {
-            line.draw(mTypeEnvironment, canvas);
+    fun release() {
+        for (line in mLines) {
+            line.release()
         }
-    }
-
-    private boolean canInterrupt() {
-        return mLines.size() == mMaxLines && !mCalculateWholeLines &&
-                (mEllipsize == null || mEllipsize == TextUtils.TruncateAt.END);
-    }
-
-    public void release() {
-        for (Line line : mLines) {
-            line.release();
-        }
-        mLines.clear();
+        mLines.clear()
     }
 }

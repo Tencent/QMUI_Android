@@ -13,424 +13,291 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.element
 
-package com.qmuiteam.qmui.type.element;
+import android.graphics.Canvas
+import android.graphics.Color
+import com.qmuiteam.qmui.type.EnvironmentUpdater
+import com.qmuiteam.qmui.type.TypeEnvironment
+import java.util.*
+import kotlin.collections.ArrayList
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
+    companion object {
+        const val VISIBLE = 0
+        const val GONE = 1
+        const val WORD_PART_WHOLE = 0
+        const val WORD_PART_START = 1
+        const val WORD_PART_MIDDLE = 2
+        const val WORD_PART_END = 3
+        const val LINE_BREAK_TYPE_NORMAL = 0
+        const val LINE_BREAK_TYPE_NOT_START = 1
+        const val LINE_BREAK_TYPE_NOT_END = 2
+        const val LINE_BREAK_WORD_BREAK_ALLOWED = 3
+        private val NOT_START_CHARS = charArrayOf(
+                ',', '.', ';', ']', '>', ')', '?', '"', '\'', '!', ':', '}', '」',
+                '，', '。', '；', '、', '】', '》', '）', '？', '”', '！', '：', '』')
+        private val NOT_END_CHARS = charArrayOf(
+                '(', '<', '[', '{', '“', '「', '『', '（', '《'
+        )
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.qmuiteam.qmui.type.EnvironmentUpdater;
-import com.qmuiteam.qmui.type.TypeEnvironment;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public abstract class Element {
-    public static final int VISIBLE = 0;
-    public static final int INVISIBLE = 1;
-    public static final int GONE = 2;
-
-    public static final int WORD_PART_WHOLE = 0;
-    public static final int WORD_PART_START = 1;
-    public static final int WORD_PART_MIDDLE = 2;
-    public static final int WORD_PART_END = 3;
-
-
-    public static final int LINE_BREAK_TYPE_NORMAL = 0;
-    public static final int LINE_BREAK_TYPE_NOT_START = 1;
-    public static final int LINE_BREAK_TYPE_NOT_END = 2;
-    public static final int LINE_BREAK_WORD_BREAK_ALLOWED = 3;
-
-    private static final char[] NOT_START_CHARS =new char[]{
-            ',', '.', ';', ']', '>', ')', '?', '"', '\'', '!', ':', '}', '」',
-            '，', '。', '；', '、', '】', '》', '）', '？', '”', '！', '：', '』',
-    };
-    private static final char[] NOT_END_CHARS = new char[]{
-            '(', '<', '[', '{', '“', '「', '『', '（', '《'
-    };
-
-    static {
-        Arrays.sort(NOT_START_CHARS);
-        Arrays.sort(NOT_END_CHARS);
-    }
-
-    private final char mChar;
-    private final CharSequence mText;
-    private final int mIndex;
-    private final int mOriginIndex;
-    private final String mDescription;
-    private Element mPrevEffect;
-    private Element mNextEffect;
-    private Element mPrev;
-    private Element mNext;
-    private int mWordPart = WORD_PART_WHOLE;
-    private int mLineBreakType = LINE_BREAK_TYPE_NORMAL;
-    private int mVisible = VISIBLE;
-
-
-    private List<Integer> mSaveType;
-    private List<Integer> mRestoreType;
-    @Nullable
-    private List<EnvironmentUpdater> mEnvironmentUpdater;
-
-    private float mMeasureWidth;
-    private float mMeasureHeight;
-    private float mX;
-    private float mY;
-    private float mBaseLine;
-    private float mNextGapWidth;
-    private String mToStringCache;
-
-    public Element(Character singleChar, @Nullable CharSequence text, int index, int originIndex) {
-        this(singleChar, text, index, originIndex, null);
-    }
-
-    public Element(char singleChar, @Nullable CharSequence text, int index, int originIndex, @Nullable String description) {
-        mChar = singleChar;
-        mText = text;
-        mIndex = index;
-        mOriginIndex = originIndex;
-        mDescription = description;
-        if(Arrays.binarySearch(NOT_START_CHARS, singleChar) >= 0){
-            mLineBreakType = LINE_BREAK_TYPE_NOT_START;
-        } else if(Arrays.binarySearch(NOT_END_CHARS, singleChar) >= 0){
-            mLineBreakType = LINE_BREAK_TYPE_NOT_END;
+        init {
+            Arrays.sort(NOT_START_CHARS)
+            Arrays.sort(NOT_END_CHARS)
         }
     }
 
-    public Element insertTo(Element head){
-        if(head == null){
-            return this;
+    var prevEffect: Element? = null
+        private set
+    var nextEffect: Element? = null
+        private set
+
+    var wordPart = WORD_PART_WHOLE
+    var lineBreakType = LINE_BREAK_TYPE_NORMAL
+    var visible = VISIBLE
+
+
+    var measureWidth = 0f
+        private set
+    var measureHeight = 0f
+        private set
+    var x = 0f
+    var y = 0f
+    var baseLine = 0f
+    var nextGapWidth = 0f
+
+    private var saveTypeList: MutableList<Int>? = null
+    private var restoreTypeList: MutableList<Int>? = null
+    private var environmentUpdaterList: MutableList<EnvironmentUpdater>? = null
+
+    val length: Int = text.length
+
+    private var _prev: Element? = null
+    private var _next: Element? = null
+
+    var next: Element?
+        get() = _next
+        set(element) {
+            _next = element
+            if (element != null) {
+                element._prev = this
+            }
         }
-        if(head == this){
-            return head;
+    var prev: Element?
+        get() = _prev
+        set(element) {
+            _prev = element
+            if (element != null) {
+                element._next = this
+            }
         }
-        if(mIndex < head.mIndex){
-            head.setPrev(this);
-            this.setNext(head);
-            return this;
+
+    private val rightWithGap: Float
+        get() = x + measureWidth + nextGapWidth + 0.5f
+
+    init {
+        if(text.length == 1){
+            if (Arrays.binarySearch(NOT_START_CHARS, text[0]) >= 0) {
+                lineBreakType = LINE_BREAK_TYPE_NOT_START
+            } else if (Arrays.binarySearch(NOT_END_CHARS, text[0]) >= 0) {
+                lineBreakType = LINE_BREAK_TYPE_NOT_END
+            }
         }
-        Element current = head;
-        Element next = head.mNext;
-        while (next != null){
-            if(next == this){
+    }
+
+    fun insertEffectTo(head: Element): Element {
+        if (head === this) {
+            return head
+        }
+        if (index < head.index) {
+            head.prevEffect = this
+            nextEffect = head
+            return this
+        }
+        var current: Element = head
+        var next = head.nextEffect
+        while (next != null) {
+            if (next === this) {
                 // already in list
-                return head;
+                return head
             }
-            if(next.mIndex > mIndex){
-                current.setNext(this);
-                next.setPrev(this);
-                this.setPrev(current);
-                this.setNext(next);
-                return head;
+            if (next.index > index) {
+                current.nextEffect = this
+                next.prevEffect = this
+                prevEffect = current
+                nextEffect = next
+                return head
             }
-            current = next;
-            next = next.mNext;
+            current = next
+            next = next.nextEffect
         }
-        current.setNext(this);
-        this.setPrev(current);
-        this.setNext(null);
-        return head;
+        current.nextEffect = this
+        prevEffect = current
+        nextEffect = null
+        return head
     }
 
-    public Element removeFromEffectListIfNeeded(Element head){
-        boolean noSaveType = mSaveType == null || mSaveType.isEmpty();
-        boolean noRestoreType = mRestoreType == null || mRestoreType.isEmpty();
-        if(noSaveType && noRestoreType){
-            Element prev = mPrevEffect;
-            Element next = mNextEffect;
-            if(prev != null){
-                prev.mNextEffect = next;
-                mPrevEffect = null;
+    fun removeFromEffectListIfNeeded(head: Element?): Element? {
+        if(head == null){
+            return null
+        }
+        val noSaveType = saveTypeList.isNullOrEmpty()
+        val noRestoreType = restoreTypeList.isNullOrEmpty()
+        if (noSaveType && noRestoreType) {
+            val prev = prevEffect
+            val next = nextEffect
+            if (prev != null) {
+                prev.nextEffect = next
+                prevEffect = null
             }
-            if(next != null){
-                next.mPrevEffect = prev;
-                mNextEffect = null;
+            if (next != null) {
+                next.prevEffect = prev
+                nextEffect = null
             }
-            if(head == this){
-                return next;
+            if (head === this) {
+                return next
             }
         }
-        return head;
+        return head
     }
 
-    public Element getNextEffect() {
-        return mNextEffect;
+    fun addSaveType(type: Int) {
+        val list = saveTypeList ?:  ArrayList<Int>().also { saveTypeList = it}
+        list.add(type)
     }
 
-    public Element getPrevEffect() {
-        return mPrevEffect;
-    }
-
-    public int getLineBreakType() {
-        return mLineBreakType;
-    }
-
-    public void setLineBreakType(int lineBreakType) {
-        mLineBreakType = lineBreakType;
-    }
-
-    public void setPrev(Element element) {
-        this.mPrev = element;
-        if (element != null) {
-            element.mNext = this;
-        }
-    }
-
-    public void setNext(Element element) {
-        this.mNext = element;
-        if (element != null) {
-            element.mPrev = this;
-        }
-    }
-
-    public void setWordPart(int wordPart) {
-        this.mWordPart = wordPart;
-    }
-
-    public int getWordPart() {
-        return mWordPart;
-    }
-
-    public void addSaveType(int type) {
-        if (mSaveType == null) {
-            mSaveType = new ArrayList<>();
-        }
-        mSaveType.add(type);
-    }
-
-    public void removeSaveType(int type) {
-        if (mSaveType != null) {
-            for (int i = 0; i < mSaveType.size(); i++) {
-                if (mSaveType.get(i) == type) {
-                    mSaveType.remove(i);
-                    break;
-                }
+    fun removeSaveType(type: Int) {
+        val list = saveTypeList ?: return
+        for (i in list.indices) {
+            if (list[i] == type) {
+                list.removeAt(i)
+                break
             }
         }
     }
 
-    public void addRestoreType(int type) {
-        if (mRestoreType == null) {
-            mRestoreType = new ArrayList<>();
-        }
-        mRestoreType.add(type);
+    fun addRestoreType(type: Int) {
+        val list = restoreTypeList ?:  ArrayList<Int>().also { restoreTypeList = it}
+        list.add(type)
     }
 
-    public void removeStoreType(int type) {
-        if (mRestoreType != null) {
-            for (int i = 0; i < mRestoreType.size(); i++) {
-                if (mRestoreType.get(i) == type) {
-                    mRestoreType.remove(i);
-                    break;
-                }
+    fun removeStoreType(type: Int) {
+        val list = restoreTypeList ?: return
+        for (i in list.indices) {
+            if (list[i] == type) {
+                list.removeAt(i)
+                break
             }
         }
     }
 
-    public boolean hasEnvironmentUpdater() {
-        return mEnvironmentUpdater != null && mEnvironmentUpdater.size() > 0;
+    fun hasEnvironmentUpdater(): Boolean {
+        return (environmentUpdaterList?.size ?: 0) > 0
     }
 
-    public void addEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
-        if (mEnvironmentUpdater == null) {
-            mEnvironmentUpdater = new ArrayList<>();
-        }
-        mEnvironmentUpdater.add(environmentUpdater);
+    fun hasSaveType(): Boolean {
+        return !saveTypeList.isNullOrEmpty()
     }
 
-    public void removeEnvironmentUpdater(@NonNull EnvironmentUpdater environmentUpdater) {
-        if (mEnvironmentUpdater != null) {
-            mEnvironmentUpdater.remove(environmentUpdater);
-        }
+    fun hasRestoreType(): Boolean {
+        return !restoreTypeList.isNullOrEmpty()
     }
 
-    public void addSingleEnvironmentUpdater(@Nullable List<Integer> changedTypes, @NonNull EnvironmentUpdater environmentUpdater) {
+    fun addEnvironmentUpdater(environmentUpdater: EnvironmentUpdater) {
+        val list = environmentUpdaterList ?: ArrayList<EnvironmentUpdater>().also { environmentUpdaterList = it }
+        list.add(environmentUpdater)
+    }
+
+    fun removeEnvironmentUpdater(environmentUpdater: EnvironmentUpdater) {
+        val list = environmentUpdaterList ?: return
+        list.remove(environmentUpdater)
+    }
+
+    fun addSingleEnvironmentUpdater(changedTypes: List<Int>?, environmentUpdater: EnvironmentUpdater) {
         if (changedTypes != null) {
-            for (Integer type : changedTypes) {
-                addRestoreType(type);
-                addSaveType(type);
+            for (type in changedTypes) {
+                addSaveType(type)
+                addRestoreType(type)
             }
         }
-        addEnvironmentUpdater(environmentUpdater);
+        addEnvironmentUpdater(environmentUpdater)
     }
 
-    public void move(TypeEnvironment environment) {
+    fun move(environment: TypeEnvironment) {
         if (hasEnvironmentUpdater()) {
-            updateEnv(environment);
-            restoreEnv(environment);
+            updateEnv(environment)
+            restoreEnv(environment)
         }
     }
 
-    public int getIndex() {
-        return mIndex;
+    override fun toString(): String {
+        return text.toString()
     }
 
-    public int getOriginIndex() {
-        return mOriginIndex;
+
+    protected fun setMeasureDimen(measureWidth: Float, measureHeight: Float, baseline: Float) {
+        this.measureWidth = measureWidth
+        this.measureHeight = measureHeight
+        baseLine = baseline
     }
 
-    public CharSequence getText() {
-        return mText;
+
+    fun measure(env: TypeEnvironment) {
+        updateEnv(env)
+        onMeasure(env)
+        restoreEnv(env)
     }
 
-    public char getChar() {
-        return mChar;
-    }
-
-    public boolean isSingleChar() {
-        return mText == null;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        if(mToStringCache != null){
-            return mToStringCache;
+    fun draw(env: TypeEnvironment, canvas: Canvas) {
+        updateEnv(env)
+        if (visible == VISIBLE) {
+            onDraw(env, canvas)
         }
-        mToStringCache = mText != null ? mText.toString() : String.valueOf(mChar);
-        return mToStringCache;
+        restoreEnv(env)
     }
 
-    public int getLength() {
-        return mText != null ? mText.length() : 1;
-    }
-
-    public String getDescription() {
-        return mDescription != null ? mDescription : toString();
-    }
-
-    protected void setMeasureDimen(float measureWidth, float measureHeight, float baseline) {
-        mMeasureWidth = measureWidth;
-        mMeasureHeight = measureHeight;
-        mBaseLine = baseline;
-    }
-
-    public void setVisible(int visible) {
-        mVisible = visible;
-    }
-
-    public int getVisible() {
-        return mVisible;
-    }
-
-    public void setX(float x) {
-        mX = x;
-    }
-
-    public void setY(float y) {
-        mY = y;
-    }
-
-    public void setNextGapWidth(float nextGapWidth) {
-        mNextGapWidth = nextGapWidth;
-    }
-
-    public float getBaseLine() {
-        return mBaseLine;
-    }
-
-    public float getMeasureWidth() {
-        return mMeasureWidth;
-    }
-
-    public float getMeasureHeight() {
-        return mMeasureHeight;
-    }
-
-    public float getX() {
-        return mX;
-    }
-
-    public float getY() {
-        return mY;
-    }
-
-    public Element getNext() {
-        return mNext;
-    }
-
-    public Element getPrev() {
-        return mPrev;
-    }
-
-    public final void measure(TypeEnvironment env) {
-        updateEnv(env);
-        onMeasure(env);
-        restoreEnv(env);
-    }
-
-    public final void draw(TypeEnvironment env, Canvas canvas) {
-        updateEnv(env);
-        if (mVisible == VISIBLE) {
-            onDraw(env, canvas);
+    fun updateEnv(env: TypeEnvironment) {
+        saveTypeList?.forEach {
+            env.save(it)
         }
-        restoreEnv(env);
+//        environmentUpdaterList?.forEach {
+//            it.update(env)
+//        }
     }
 
-    void updateEnv(TypeEnvironment env) {
-        if (mSaveType != null) {
-            for (Integer type : mSaveType) {
-                env.save(type);
-            }
-        }
-        if (mEnvironmentUpdater != null) {
-            for (EnvironmentUpdater updater : mEnvironmentUpdater) {
-                updater.update(env);
-            }
+    fun restoreEnv(env: TypeEnvironment) {
+        restoreTypeList?.forEach {
+            env.restore(it)
         }
     }
 
-    void restoreEnv(TypeEnvironment env) {
-        if (mRestoreType != null) {
-            for (Integer type : mRestoreType) {
-                env.restore(type);
-            }
+    protected abstract fun onMeasure(env: TypeEnvironment)
+    protected abstract fun onDraw(env: TypeEnvironment, canvas: Canvas)
+    protected fun drawBg(env: TypeEnvironment, canvas: Canvas) {
+        if (env.backgroundColor != Color.TRANSPARENT) {
+            canvas.drawRect(x, y, rightWithGap, y + measureHeight, env.bgPaint)
         }
     }
 
-    protected abstract void onMeasure(TypeEnvironment env);
-
-    protected abstract void onDraw(TypeEnvironment env, Canvas canvas);
-
-    protected void drawBg(TypeEnvironment env, Canvas canvas){
-        if(env.getBackgroundColor() != Color.TRANSPARENT){
-            canvas.drawRect(mX, mY, getRightWithGap(), mY + mMeasureHeight, env.getBgPaint());
+    protected fun drawBorder(env: TypeEnvironment, canvas: Canvas) {
+        val paint = env.borderPaint
+        if (env.borderLeftWidth > 0) {
+            paint.color = env.borderLeftColor
+            canvas.drawRect(x, y, x + env.borderLeftWidth, y + measureHeight, paint)
         }
-    }
-
-    protected float getRightWithGap(){
-        return mX + mMeasureWidth + mNextGapWidth + 0.5f;
-    }
-
-    protected void drawBorder(TypeEnvironment env, Canvas canvas){
-        Paint paint = env.getBorderPaint();
-
-        if(env.getBorderLeftWidth() > 0){
-            paint.setColor(env.getBorderLeftColor());
-            canvas.drawRect(mX, mY, mX + env.getBorderLeftWidth(), mY + mMeasureHeight, paint);
+        if (env.borderTopWidth > 0) {
+            paint.color = env.borderTopColor
+            canvas.drawRect(x, y, rightWithGap, y + env.borderTopWidth, paint)
         }
-
-        if(env.getBorderTopWidth() > 0) {
-            paint.setColor(env.getBorderTopColor());
-            canvas.drawRect(mX, mY, getRightWithGap(), mY + env.getBorderTopWidth(), paint);
+        if (env.borderRightWidth > 0) {
+            paint.color = env.borderRightColor
+            canvas.drawRect(x + measureWidth - env.borderRightWidth, y,
+                    x + measureWidth, y + measureHeight, paint)
         }
-
-        if(env.getBorderRightWidth() > 0){
-            paint.setColor(env.getBorderRightColor());
-            canvas.drawRect(mX + mMeasureWidth - env.getBorderRightWidth(), mY,
-                    mX + mMeasureWidth, mY + mMeasureHeight, paint);
-        }
-
-        if(env.getBorderBottomWidth() > 0){
-            paint.setColor(env.getBorderBottomColor());
-            canvas.drawRect(mX, mY + mMeasureHeight - env.getBorderBottomWidth(),
-                    getRightWithGap(), mY + mMeasureHeight, paint);
+        if (env.borderBottomWidth > 0) {
+            paint.color = env.borderBottomColor
+            canvas.drawRect(x, y + measureHeight - env.borderBottomWidth,
+                    rightWithGap, y + measureHeight, paint)
         }
     }
 }

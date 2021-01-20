@@ -13,13 +13,10 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.element
 
-package com.qmuiteam.qmui.type.element;
-
-public class BreakWordLineElement extends CharOrPhraseElement {
-
-    public BreakWordLineElement() {
-        super('-', -1, -1);
-        setWordPart(WORD_PART_MIDDLE);
+class BreakWordLineElement : TextElement("-", -1, -1) {
+    init {
+        wordPart = WORD_PART_MIDDLE
     }
 }

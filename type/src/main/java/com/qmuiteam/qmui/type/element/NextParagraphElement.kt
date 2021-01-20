@@ -13,38 +13,16 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.element
 
-package com.qmuiteam.qmui.type.element;
+import android.graphics.Canvas
+import com.qmuiteam.qmui.type.TypeEnvironment
 
-import android.graphics.Canvas;
+class NextParagraphElement(text: CharSequence, index: Int, start: Int) : Element(text, index, start) {
 
-import androidx.annotation.Nullable;
-
-import com.qmuiteam.qmui.type.TypeEnvironment;
-
-public class NextParagraphElement extends Element {
-
-    public NextParagraphElement(int index, int originIndex) {
-        this('\n', null, index, originIndex, "\n");
+    override fun onMeasure(env: TypeEnvironment) {
+        setMeasureDimen(0f, 0f, 0f)
     }
 
-    public NextParagraphElement(char singleChar, @Nullable String text, int index, int originIndex) {
-        super(singleChar, null, index, originIndex);
-    }
-
-    public NextParagraphElement(char singleChar, @Nullable CharSequence text, int index, int originIndex, @Nullable String description) {
-        super(singleChar, text, index, originIndex, description);
-    }
-
-
-
-    @Override
-    protected void onMeasure(TypeEnvironment env) {
-        setMeasureDimen(0, 0, 0);
-    }
-
-    @Override
-    protected void onDraw(TypeEnvironment env, Canvas canvas) {
-
-    }
+    override fun onDraw(env: TypeEnvironment, canvas: Canvas) {}
 }

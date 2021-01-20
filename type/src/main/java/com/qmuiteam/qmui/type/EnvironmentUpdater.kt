@@ -13,9 +13,8 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type
 
-package com.qmuiteam.qmui.type;
-
-public interface EnvironmentUpdater {
-    void update(TypeEnvironment env);
+interface EnvironmentUpdater {
+    fun update(env: TypeEnvironment)
 }

@@ -13,26 +13,13 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.parser
 
-package com.qmuiteam.qmui.type.parser;
+import android.graphics.drawable.Drawable
 
-import android.graphics.drawable.Drawable;
-
-import androidx.annotation.Nullable;
-
-public interface EmojiResourceProvider {
-
-    @Nullable
-    Drawable queryForDrawable(CharSequence text);
-
-    @Nullable
-    Drawable queryForDrawable(char c);
-
-    @Nullable
-    Drawable queryForDrawable(int codePoint);
-
-    @Nullable
-    Drawable queryForDrawable(int firstCodePoint, int secondCodePint);
-
-
+interface EmojiResourceProvider {
+    fun queryForDrawable(text: CharSequence): Drawable?
+    fun queryForDrawable(c: Char): Drawable?
+    fun queryForDrawable(codePoint: Int): Drawable?
+    fun queryForDrawable(firstCodePoint: Int, secondCodePint: Int): Drawable?
 }

@@ -13,52 +13,53 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.parser
 
-package com.qmuiteam.qmui.type.parser;
+import com.qmuiteam.qmui.type.TypeModel
+import com.qmuiteam.qmui.type.element.Element
+import com.qmuiteam.qmui.type.element.NextParagraphElement
+import com.qmuiteam.qmui.type.element.TextElement
+import com.qmuiteam.qmui.type.parser.ParserHelper.handleWordPart
+import java.util.*
 
-import com.qmuiteam.qmui.type.TypeModel;
-import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
-import com.qmuiteam.qmui.type.element.Element;
-import com.qmuiteam.qmui.type.element.NextParagraphElement;
-
-import java.util.HashMap;
-
-public class PlainTextParser implements TextParser {
-    @Override
-    public TypeModel parse(CharSequence text) {
-        if (text.length() == 0) {
-            return null;
+class PlainTextParser : TextParser {
+    override fun parse(text: CharSequence?): TypeModel? {
+        if (text == null || text.isEmpty()) {
+            return null
         }
-        HashMap<Integer, Element> map = new HashMap<>(text.length());
-        Element first = null, last = null, tmp;
-        int index = 0;
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+        val size = text.length
+        val map = HashMap<Int, Element>(size)
+        var first: Element? = null
+        var last: Element? = null
+        var tmp: Element
+        var index = 0
+        var i = 0
+        while (i < size) {
+            val c = text[i]
             if (c == '\n') {
-                tmp = new NextParagraphElement(c, null, index, i);
+                tmp = NextParagraphElement(text.subSequence(i, i+1), index, i)
             } else if (c == '\r') {
-                if (i + 1 < text.length() && text.charAt(i + 1) == '\n') {
-                    tmp = new NextParagraphElement('\u0000', "\r\n", index, i);
-                    i++;
+                if (i + 1 < text.length && text[i + 1] == '\n') {
+                    tmp = NextParagraphElement(text.subSequence(i, i+2), index, i)
+                    i++
                 } else {
-                    tmp = new NextParagraphElement(c, null, index, i);
+                    tmp = NextParagraphElement(text.subSequence(i, i+1), index, i)
                 }
             } else {
-                tmp = new CharOrPhraseElement(c, index, i);
+                tmp = TextElement(text.subSequence(i, i+1), index, i)
             }
-
-            ParserHelper.handleWordPart(c, last, tmp);
-
-            index++;
+            handleWordPart(c, last, tmp)
+            index++
             if (first == null) {
-                first = tmp;
-                last = tmp;
+                first = tmp
+                last = tmp
             } else {
-                last.setNext(tmp);
-                last = tmp;
+                last!!.next = tmp
+                last = tmp
             }
-            map.put(tmp.getIndex(), tmp);
+            map[tmp.index] = tmp
+            i++
         }
-        return new TypeModel(text, map, first, last, null);
+        return TypeModel(text, map, first!!, last!!)
     }
 }

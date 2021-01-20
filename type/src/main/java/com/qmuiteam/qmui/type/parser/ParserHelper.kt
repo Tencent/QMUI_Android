@@ -13,31 +13,28 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.parser
 
-package com.qmuiteam.qmui.type.parser;
+import com.qmuiteam.qmui.type.element.Element
 
-import com.qmuiteam.qmui.type.element.Element;
+object ParserHelper {
 
-public class ParserHelper {
-
-    public static boolean isEnglishLetterOrNumber(char c){
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
+    fun isEnglishLetterOrNumber(c: Char): Boolean {
+        return c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9'
     }
 
-    public static void handleWordPart(char c, Element prev, Element curr){
-        if(ParserHelper.isEnglishLetterOrNumber(c)){
-            if(prev == null ||
-                    prev.getWordPart() == Element.WORD_PART_WHOLE ||
-                    prev.getWordPart() == Element.WORD_PART_END){
-                curr.setWordPart(Element.WORD_PART_START);
-            }else{
-                curr.setWordPart(Element.WORD_PART_MIDDLE);
+    fun handleWordPart(c: Char, prev: Element?, curr: Element) {
+        if (isEnglishLetterOrNumber(c)) {
+            if (prev == null || prev.wordPart == Element.WORD_PART_WHOLE || prev.wordPart == Element.WORD_PART_END) {
+                curr.wordPart = Element.WORD_PART_START
+            } else {
+                curr.wordPart = Element.WORD_PART_MIDDLE
             }
-        }else{
-            if(prev != null && prev.getWordPart() == Element.WORD_PART_MIDDLE){
-                prev.setWordPart(Element.WORD_PART_END);
+        } else {
+            if (prev != null && prev.wordPart == Element.WORD_PART_MIDDLE) {
+                prev.wordPart = Element.WORD_PART_END
             }
-            curr.setWordPart(Element.WORD_PART_WHOLE);
+            curr.wordPart = Element.WORD_PART_WHOLE
         }
     }
 }

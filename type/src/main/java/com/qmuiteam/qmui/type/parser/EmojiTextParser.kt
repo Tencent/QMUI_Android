@@ -13,116 +13,101 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.parser
 
-package com.qmuiteam.qmui.type.parser;
+import com.qmuiteam.qmui.type.TypeModel
+import com.qmuiteam.qmui.type.element.*
+import java.util.*
 
-import android.graphics.drawable.Drawable;
+class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextParser {
 
-import com.qmuiteam.qmui.type.TypeModel;
-import com.qmuiteam.qmui.type.element.CharOrPhraseElement;
-import com.qmuiteam.qmui.type.element.DrawableElement;
-import com.qmuiteam.qmui.type.element.Element;
-import com.qmuiteam.qmui.type.element.EmojiElement;
-import com.qmuiteam.qmui.type.element.NextParagraphElement;
-
-import java.util.HashMap;
-
-public class EmojiTextParser implements TextParser {
-
-    private final EmojiResourceProvider mEmojiProvider;
-
-    public EmojiTextParser(EmojiResourceProvider provider) {
-        mEmojiProvider = provider;
-    }
-
-    @Override
-    public TypeModel parse(CharSequence text) {
-        int size = text.length();
-        if (size == 0) {
-            return null;
+    override fun parse(text: CharSequence?): TypeModel? {
+        if(text == null || text.isEmpty()){
+            return null
         }
-        HashMap<Integer, Element> map = new HashMap<>(text.length());
-        Element first = null, last = null, tmp = null;
-        int index = 0;
-        for (int i = 0; i < size; i++) {
-            char c = text.charAt(i);
+
+        val size = text.length
+        val map = HashMap<Int, Element>(size)
+        var first: Element? = null
+        var last: Element? = null
+        var tmp: Element? = null
+        var index = 0
+        var i = 0
+        while (i < size) {
+            val c = text[i]
             if (c == '\n') {
-                tmp = new NextParagraphElement(c, null, index, i);
+                tmp = NextParagraphElement(text.subSequence(i, i + 1), index, i)
             } else if (c == '\r') {
-                if (i + 1 < text.length() && text.charAt(i + 1) == '\n') {
-                    tmp = new NextParagraphElement('\u0000', "\r\n", index, i);
-                    i++;
+                if (i + 1 < text.length && text[i + 1] == '\n') {
+                    tmp = NextParagraphElement(text.subSequence(i, i + 2), index, i)
+                    i++
                 } else {
-                    tmp = new NextParagraphElement(c, null, index, i);
+                    tmp = NextParagraphElement(text.subSequence(i, i + 1), index, i)
                 }
             } else if (c == '[') {
-                int j = i + 1;
-                boolean find = false;
-                int end = Math.min(i + 30, size);
+                var j = i + 1
+                var find = false
+                val end = Math.min(i + 30, size)
                 while (j < end) {
-                    if (text.charAt(j) == ']') {
-                        CharSequence sub = text.subSequence(i, j + 1);
-                        Drawable emoji = mEmojiProvider.queryForDrawable(sub);
+                    if (text[j] == ']') {
+                        val sub = text.subSequence(i, j + 1)
+                        val emoji = emojiProvider.queryForDrawable(sub)
                         if (emoji != null) {
-                            tmp = new EmojiElement(emoji, '\u0000', sub, index, i);
-                            i = j;
-                            find = true;
-                            break;
+                            tmp = EmojiElement(emoji, text.subSequence(i, j + 1), index, i)
+                            i = j
+                            find = true
+                            break
                         }
                     }
-                    j++;
+                    j++
                 }
                 if (!find) {
-                    tmp = new CharOrPhraseElement(c, index, i);
+                    tmp = TextElement(text.subSequence(i, i + 1), index, i)
                 }
             } else {
-                boolean handled = false;
-                Drawable emoji = mEmojiProvider.queryForDrawable(c);
+                var handled = false
+                var emoji = emojiProvider.queryForDrawable(c)
                 if (emoji != null) {
-                    handled = true;
-                    tmp = new DrawableElement(emoji, c, null, index, i);
+                    handled = true
+                    tmp = DrawableElement(emoji, text.subSequence(i, i + 1), index, i)
                 }
-
                 if (!handled) {
-                    int unicode = Character.codePointAt(text, i);
-                    int codeCount = Character.charCount(unicode);
-                    emoji = mEmojiProvider.queryForDrawable(unicode);
+                    val unicode = Character.codePointAt(text, i)
+                    val codeCount = Character.charCount(unicode)
+                    emoji = emojiProvider.queryForDrawable(unicode)
                     if (emoji != null) {
-                        handled = true;
-                        tmp = new DrawableElement(emoji, c, text.subSequence(i, i + codeCount), index, i);
-                        i += codeCount - 1;
+                        handled = true
+                        tmp = DrawableElement(emoji, text.subSequence(i, i + codeCount), index, i)
+                        i += codeCount - 1
                     }
-
-                    int nextStart = i + codeCount;
+                    val nextStart = i + codeCount
                     if (!handled && nextStart < size) {
-                        int nextUnicode = Character.codePointAt(text, nextStart);
-                        emoji = mEmojiProvider.queryForDrawable(unicode, nextUnicode);
+                        val nextUnicode = Character.codePointAt(text, nextStart)
+                        emoji = emojiProvider.queryForDrawable(unicode, nextUnicode)
                         if (emoji != null) {
-                            handled = true;
-                            int nextCodeCount = Character.charCount(nextUnicode);
-                            tmp = new DrawableElement(emoji, c, text.subSequence(i, nextStart + nextCodeCount), index, i);
-                            i = nextStart + nextCodeCount - 1;
+                            handled = true
+                            val nextCodeCount = Character.charCount(nextUnicode)
+                            tmp = DrawableElement(emoji, text.subSequence(i, nextStart + nextCodeCount), index, i)
+                            i = nextStart + nextCodeCount - 1
                         }
                     }
                 }
-
                 if (!handled) {
-                    tmp = new CharOrPhraseElement(c, index, i);
+                    tmp = TextElement(text.subSequence(i, i + 1), index, i)
                 }
             }
-
-            ParserHelper.handleWordPart(c, last, tmp);
-
-            index++;
+            ParserHelper.handleWordPart(c, last, tmp!!)
+            index++
             if (first == null) {
-                first = tmp;
-                last = tmp;
+                first = tmp
+                last = tmp
             } else {
-                last.setNext(tmp);
-                last = tmp;
+                last!!.next = tmp
+                last = tmp
             }
-            map.put(tmp.getIndex(), tmp);
+            map[tmp.index] = tmp
+            i++
         }
-        return new TypeModel(text, map, first, last, null);
+        return TypeModel(text, map, first!!, last!!)
     }
 }

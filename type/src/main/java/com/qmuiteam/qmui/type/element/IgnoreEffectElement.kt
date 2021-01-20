@@ -13,37 +13,29 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type.element
 
-package com.qmuiteam.qmui.type.element;
+import android.graphics.Canvas
+import com.qmuiteam.qmui.type.EnvironmentUpdater
+import com.qmuiteam.qmui.type.TypeEnvironment
 
-import android.graphics.Canvas;
+class IgnoreEffectElement(list: List<Element>) : Element("", -1, -1) {
 
-import com.qmuiteam.qmui.type.EnvironmentUpdater;
-import com.qmuiteam.qmui.type.TypeEnvironment;
-
-import java.util.List;
-
-public class IgnoreEffectElement extends Element {
-
-    public IgnoreEffectElement(final List<Element> list) {
-        super(' ', null, -1, -1, "");
-        addEnvironmentUpdater(new EnvironmentUpdater() {
-            @Override
-            public void update(TypeEnvironment env) {
-                for (Element element : list) {
-                    element.move(env);
+    init {
+        addEnvironmentUpdater(object: EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                for (element in list) {
+                    element.move(env)
                 }
             }
-        });
+
+        })
     }
 
-    @Override
-    protected void onMeasure(TypeEnvironment env) {
-        setMeasureDimen(0, 0, 0);
+    override fun onMeasure(env: TypeEnvironment) {
+        setMeasureDimen(0f, 0f, 0f)
     }
 
-    @Override
-    protected void onDraw(TypeEnvironment env, Canvas canvas) {
+    override fun onDraw(env: TypeEnvironment, canvas: Canvas) {}
 
-    }
 }

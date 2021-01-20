@@ -13,334 +13,247 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.type
 
-package com.qmuiteam.qmui.type;
+import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.util.Log
+import android.util.SparseArray
+import java.util.*
 
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.util.Log;
-import android.util.SparseArray;
+class TypeEnvironment {
+    companion object {
+        private const val TAG = "TypeEnvironment"
+        const val TYPE_TEXT_COLOR = -1
+        const val TYPE_BG_COLOR = -2
+        const val TYPE_TYPEFACE = -3
+        const val TYPE_TEXT_SIZE = -4
+        const val TYPE_ALIGNMENT = -5
+        const val TYPE_LINE_SPACE = -6
+        const val TYPE_PARAGRAPH_SPACE = -7
+        const val TYPE_BORDER_TOP_WIDTH = -8
+        const val TYPE_BORDER_TOP_COLOR = -9
+        const val TYPE_BORDER_RIGHT_WIDTH = -10
+        const val TYPE_BORDER_RIGHT_COLOR = -11
+        const val TYPE_BORDER_BOTTOM_WIDTH = -12
+        const val TYPE_BORDER_BOTTOM_COLOR = -13
+        const val TYPE_BORDER_LEFT_WIDTH = -14
+        const val TYPE_BORDER_LEFT_COLOR = -15
+        const val TYPE_BORDER_PAINT = -16
 
-import com.qmuiteam.qmui.type.element.Element;
-
-import java.util.Stack;
-
-public class TypeEnvironment {
-    private static final String TAG = "TypeEnvironment";
-    public static final int TYPE_TEXT_COLOR = -1;
-    public static final int TYPE_BG_COLOR = -2;
-    public static final int TYPE_TYPEFACE = -3;
-    public static final int TYPE_TEXT_SIZE = -4;
-    public static final int TYPE_ALIGNMENT = -5;
-    public static final int TYPE_LINE_SPACE = -6;
-    public static final int TYPE_PARAGRAPH_SPACE = -7;
-    public static final int TYPE_BORDER_TOP_WIDTH = -8;
-    public static final int TYPE_BORDER_TOP_COLOR = -9;
-    public static final int TYPE_BORDER_RIGHT_WIDTH = -10;
-    public static final int TYPE_BORDER_RIGHT_COLOR = -11;
-    public static final int TYPE_BORDER_BOTTOM_WIDTH = -12;
-    public static final int TYPE_BORDER_BOTTOM_COLOR = -13;
-    public static final int TYPE_BORDER_LEFT_WIDTH = -14;
-    public static final int TYPE_BORDER_LEFT_COLOR = -15;
-    public static final int TYPE_BORDER_PAINT = -16;
-
-    public enum Alignment {
-        LEFT,
-        RIGHT,
-        CENTER,
-        JUSTIFY
+        val DEFAULT_LAST_LINE_JUSTIFY_MAX_WIDTH = (Resources.getSystem().displayMetrics.density * 36).toInt()
     }
 
-    private int mWidthLimit;
-    private int mHeightLimit;
-
-    private Typeface mTypeface;
-    private float mTextSize;
-    private int mLineSpace;
-    private int mParagraphSpace;
-    private Alignment mAlignment = Alignment.JUSTIFY;
-    private int mLastLineJustifyMaxWidth = (int) (Resources.getSystem().getDisplayMetrics().density * 36);
-
-    private int mTextColor = Color.BLACK;
-    private int mBackgroundColor = Color.TRANSPARENT;
-
-    private Paint mPaint = new Paint();
-    private Paint mBgPaint = new Paint();
-
-    private SparseArray<Object> mCustomProp = new SparseArray<>();
-
-    private SparseArray<Stack<Object>> mStack = new SparseArray<>();
-    private Element mLastRunElement = null;
-
-
-    public TypeEnvironment() {
-        mPaint.setAntiAlias(true);
-        mBgPaint.setAntiAlias(true);
+    enum class Alignment {
+        LEFT, RIGHT, CENTER, JUSTIFY
     }
 
+    var widthLimit = 0
+        private set
+    var heightLimit = 0
+        private set
 
-    public void setMeasureLimit(int widthLimit, int heightLimit) {
-        mWidthLimit = widthLimit;
-        mHeightLimit = heightLimit;
+
+    var alignment: Alignment = Alignment.JUSTIFY
+
+    var lastLineJustifyMaxWidth = DEFAULT_LAST_LINE_JUSTIFY_MAX_WIDTH
+
+    val paint = Paint().apply {
+        isAntiAlias = true
     }
-
-    public int getWidthLimit() {
-        return mWidthLimit;
+    val bgPaint = Paint().apply {
+        isAntiAlias = true
     }
+    private val mCustomProp: SparseArray<Any?> = SparseArray()
+    private val mStack = SparseArray<Stack<Any?>>()
 
-    public int getHeightLimit() {
-        return mHeightLimit;
-    }
 
-    public void setLastLineJustifyMaxWidth(int lastLineJustifyMaxWidth) {
-        mLastLineJustifyMaxWidth = lastLineJustifyMaxWidth;
-    }
+    var lineSpace = 0
 
-    public int getLastLineJustifyMaxWidth() {
-        return mLastLineJustifyMaxWidth;
-    }
+    var paragraphSpace: Int = 0
+        get() = field.coerceAtLeast(lineSpace)
 
-    public void setTypeface(Typeface typeface) {
-        mTypeface = typeface;
-        mPaint.setTypeface(typeface);
-    }
-
-    public void setTextColor(int textColor) {
-        mTextColor = textColor;
-        mPaint.setColor(textColor);
-    }
-
-    public void setTextSize(float textSize) {
-        mTextSize = textSize;
-        mPaint.setTextSize(textSize);
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        mBackgroundColor = backgroundColor;
-        mBgPaint.setColor(backgroundColor);
-    }
-
-    public void setAlignment(Alignment alignment) {
-        mAlignment = alignment;
-    }
-
-    public void setLineSpace(int lineSpace) {
-        mLineSpace = lineSpace;
-    }
-
-    public void setParagraphSpace(int paragraphSpace) {
-        mParagraphSpace = paragraphSpace;
-    }
-
-    public int getParagraphSpace() {
-        return Math.max(mParagraphSpace, mLineSpace);
-    }
-
-    public Alignment getAlignment() {
-        return mAlignment;
-    }
-
-    public int getLineSpace() {
-        return mLineSpace;
-    }
-
-    public float getTextSize() {
-        return mTextSize;
-    }
-
-    public int getTextColor() {
-        return mTextColor;
-    }
-
-    public int getBackgroundColor() {
-        return mBackgroundColor;
-    }
-
-    public Paint getBgPaint() {
-        return mBgPaint;
-    }
-
-    public Paint getPaint() {
-        return mPaint;
-    }
-
-    public void setCustomProp(int type, Object value) {
-        mCustomProp.put(type, value);
-    }
-
-    public void setBorderTop(int width, int color) {
-        setCustomProp(TYPE_BORDER_TOP_WIDTH, width);
-        setCustomProp(TYPE_BORDER_TOP_COLOR, color);
-    }
-
-    public int getBorderTopWidth() {
-        return getIntCustomProp(TYPE_BORDER_TOP_WIDTH);
-    }
-
-    public int getBorderTopColor() {
-        return getIntCustomProp(TYPE_BORDER_TOP_COLOR);
-    }
-
-    public void setBorderRight(int width, int color) {
-        setCustomProp(TYPE_BORDER_RIGHT_WIDTH, width);
-        setCustomProp(TYPE_BORDER_RIGHT_COLOR, color);
-    }
-
-    public int getBorderRightWidth() {
-        return getIntCustomProp(TYPE_BORDER_RIGHT_WIDTH);
-    }
-
-    public int getBorderRightColor() {
-        return getIntCustomProp(TYPE_BORDER_RIGHT_COLOR);
-    }
-
-    public void setBorderBottom(int width, int color) {
-        setCustomProp(TYPE_BORDER_BOTTOM_WIDTH, width);
-        setCustomProp(TYPE_BORDER_BOTTOM_COLOR, color);
-    }
-
-    public int getBorderBottomWidth() {
-        return getIntCustomProp(TYPE_BORDER_BOTTOM_WIDTH);
-    }
-
-    public int getBorderBottomColor() {
-        return getIntCustomProp(TYPE_BORDER_BOTTOM_COLOR);
-    }
-
-    public void setBorderLeft(int width, int color) {
-        setCustomProp(TYPE_BORDER_LEFT_WIDTH, width);
-        setCustomProp(TYPE_BORDER_LEFT_COLOR, color);
-    }
-
-    public int getBorderLeftWidth() {
-        return getIntCustomProp(TYPE_BORDER_LEFT_WIDTH);
-    }
-
-    public int getBorderLeftColor() {
-        return getIntCustomProp(TYPE_BORDER_LEFT_COLOR);
-    }
-
-    public Paint getBorderPaint() {
-        Object obj = getCustomProp(TYPE_BORDER_PAINT);
-        Paint paint;
-        if (obj == null) {
-            paint = new Paint();
-            paint.setAntiAlias(true);
-            setCustomProp(TYPE_BORDER_PAINT, paint);
-        } else {
-            paint = (Paint) obj;
-        }
-        return paint;
-    }
-
-    public Object getCustomProp(int type) {
-        return mCustomProp.get(type);
-    }
-
-    public int getIntCustomProp(int type) {
-        Object obj = mCustomProp.get(type);
-        if (!(obj instanceof Integer)) {
-            return 0;
-        }
-        return (int) obj;
-    }
-
-    public TypeEnvironment snapshot() {
-        TypeEnvironment env = new TypeEnvironment();
-        env.setMeasureLimit(mWidthLimit, mHeightLimit);
-        env.setAlignment(mAlignment);
-        env.setLineSpace(mLineSpace);
-        env.setParagraphSpace(mParagraphSpace);
-        env.setTextSize(mTextSize);
-        env.setTypeface(mTypeface);
-
-        env.setTextColor(mTextColor);
-        env.setBackgroundColor(mBackgroundColor);
-        for(int i =0; i< mStack.size(); i++){
-            env.mStack.put(mStack.keyAt(i), (Stack<Object>) mStack.valueAt(i).clone());
+    var typeface: Typeface? = null
+        set(value) {
+            field = value
+            paint.typeface = value
         }
 
+    var textSize: Float = 0f
+        set(value) {
+            field = value
+            paint.textSize = value
+        }
+    var textColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            paint.color = value
+        }
+    var backgroundColor: Int = Color.TRANSPARENT
+        set(value) {
+            field = value
+            bgPaint.color = value
+        }
+
+    fun setCustomProp(type: Int, value: Any?) {
+        mCustomProp!!.put(type, value)
+    }
+
+    fun setBorderTop(width: Int, color: Int) {
+        setCustomProp(TYPE_BORDER_TOP_WIDTH, width)
+        setCustomProp(TYPE_BORDER_TOP_COLOR, color)
+    }
+
+    val borderTopWidth: Int
+        get() = getIntCustomProp(TYPE_BORDER_TOP_WIDTH)
+    val borderTopColor: Int
+        get() = getIntCustomProp(TYPE_BORDER_TOP_COLOR)
+
+    fun setBorderRight(width: Int, color: Int) {
+        setCustomProp(TYPE_BORDER_RIGHT_WIDTH, width)
+        setCustomProp(TYPE_BORDER_RIGHT_COLOR, color)
+    }
+
+    val borderRightWidth: Int
+        get() = getIntCustomProp(TYPE_BORDER_RIGHT_WIDTH)
+    val borderRightColor: Int
+        get() = getIntCustomProp(TYPE_BORDER_RIGHT_COLOR)
+
+    fun setBorderBottom(width: Int, color: Int) {
+        setCustomProp(TYPE_BORDER_BOTTOM_WIDTH, width)
+        setCustomProp(TYPE_BORDER_BOTTOM_COLOR, color)
+    }
+
+    val borderBottomWidth: Int
+        get() = getIntCustomProp(TYPE_BORDER_BOTTOM_WIDTH)
+    val borderBottomColor: Int
+        get() = getIntCustomProp(TYPE_BORDER_BOTTOM_COLOR)
+
+    fun setBorderLeft(width: Int, color: Int) {
+        setCustomProp(TYPE_BORDER_LEFT_WIDTH, width)
+        setCustomProp(TYPE_BORDER_LEFT_COLOR, color)
+    }
+
+    val borderLeftWidth: Int
+        get() = getIntCustomProp(TYPE_BORDER_LEFT_WIDTH)
+    val borderLeftColor: Int
+        get() = getIntCustomProp(TYPE_BORDER_LEFT_COLOR)
+    val borderPaint: Paint
+        get() {
+            val obj = getCustomProp(TYPE_BORDER_PAINT)
+            val paint: Paint
+            if (obj == null) {
+                paint = Paint()
+                paint.isAntiAlias = true
+                setCustomProp(TYPE_BORDER_PAINT, paint)
+            } else {
+                paint = obj as Paint
+            }
+            return paint
+        }
+
+    fun getCustomProp(type: Int): Any? {
+        return mCustomProp!![type]
+    }
+
+    fun getIntCustomProp(type: Int): Int {
+        val obj = mCustomProp!![type]
+        return if (obj !is Int) {
+            0
+        } else obj
+    }
+
+    fun setMeasureLimit(widthLimit: Int, heightLimit: Int) {
+        this.widthLimit = widthLimit
+        this.heightLimit = heightLimit
+    }
+
+    fun snapshot(): TypeEnvironment {
+        val env = TypeEnvironment()
+        env.setMeasureLimit(widthLimit, heightLimit)
+        env.alignment = alignment
+        env.lineSpace = lineSpace
+        env.paragraphSpace = paragraphSpace
+        env.textSize = textSize
+        env.typeface = typeface
+        env.textColor = textColor
+        env.backgroundColor = backgroundColor
+        for (i in 0 until mStack.size()) {
+            env.mStack.put(mStack.keyAt(i), mStack.valueAt(i).clone() as Stack<Any?>)
+        }
         if (mCustomProp != null) {
-            for (int i = 0; i < mCustomProp.size(); i++) {
-                env.setCustomProp(mCustomProp.keyAt(i), mCustomProp.valueAt(i));
+            for (i in 0 until mCustomProp.size()) {
+                env.setCustomProp(mCustomProp.keyAt(i), mCustomProp.valueAt(i))
             }
         }
-        return env;
+        return env
     }
 
-    void setLastRunElement(Element lastRunElement) {
-        mLastRunElement = lastRunElement;
-    }
-
-    Element getLastRunElement() {
-        return mLastRunElement;
-    }
-
-    public void save(int type) {
-        Stack<Object> stack = mStack.get(type);
+    fun save(type: Int) {
+        var stack = mStack[type]
         if (stack == null) {
-            stack = new Stack<>();
-            mStack.put(type, stack);
+            stack = Stack()
+            mStack.put(type, stack)
         }
         if (type == TYPE_TEXT_COLOR) {
-            stack.push(mTextColor);
+            stack.push(textColor)
         } else if (type == TYPE_BG_COLOR) {
-            stack.push(mBackgroundColor);
+            stack.push(backgroundColor)
         } else if (type == TYPE_TYPEFACE) {
-            stack.push(mTypeface);
+            stack.push(typeface)
         } else if (type == TYPE_TEXT_SIZE) {
-            stack.push(mTextSize);
+            stack.push(textSize)
         } else if (type == TYPE_ALIGNMENT) {
-            stack.push(mAlignment);
+            stack.push(alignment)
         } else if (type == TYPE_LINE_SPACE) {
-            stack.push(mLineSpace);
+            stack.push(lineSpace)
         } else if (type == TYPE_PARAGRAPH_SPACE) {
-            stack.push(mParagraphSpace);
+            stack.push(paragraphSpace)
         } else {
-            stack.push(mCustomProp.get(type));
+            stack.push(mCustomProp[type])
         }
     }
 
-    public void restore(int type) {
-        Stack<Object> stack = mStack.get(type);
+    fun restore(type: Int) {
+        val stack = mStack[type]
         if (stack == null || stack.isEmpty()) {
-            Log.d(TAG, "restore (type = " + type + ")with a empty stack.");
-            return;
+            Log.d(TAG, "restore (type = $type)with a empty stack.")
+            return
         }
-        Object v = stack.pop();
-        restore(type, v);
+        val v = stack.pop()
+        restore(type, v)
     }
 
-    private void restore(int type, Object v){
+    private fun restore(type: Int, v: Any?) {
         if (type == TYPE_TEXT_COLOR) {
-            setTextColor((Integer) v);
+            textColor = v as Int
         } else if (type == TYPE_BG_COLOR) {
-            setBackgroundColor((Integer) v);
+            backgroundColor = v as Int
         } else if (type == TYPE_TYPEFACE) {
-            setTypeface((Typeface) v);
+            typeface = v as? Typeface
         } else if (type == TYPE_TEXT_SIZE) {
-            setTextSize((Float) v);
+            textSize = v as Float
         } else if (type == TYPE_ALIGNMENT) {
-            setAlignment((Alignment) v);
+            alignment = v as Alignment
         } else if (type == TYPE_LINE_SPACE) {
-            setLineSpace((Integer) v);
+            lineSpace = v as Int
         } else if (type == TYPE_PARAGRAPH_SPACE) {
-            setParagraphSpace((Integer) v);
+            paragraphSpace = v as Int
         } else {
-            setCustomProp(type, v);
+            setCustomProp(type, v)
         }
     }
 
-    public void clear() {
-        for (int i = 0; i < mStack.size(); i++) {
-            Stack<Object> stack = mStack.valueAt(i);
-            if (stack != null && stack.size() > 0) {
-                while (stack.size() > 1){
-                    stack.pop();
+    fun clear() {
+        for (i in 0 until mStack.size()) {
+            val stack = mStack.valueAt(i)
+            if (stack != null && stack.size > 0) {
+                while (stack.size > 1) {
+                    stack.pop()
                 }
-                restore(mStack.keyAt(i), stack.pop());
+                restore(mStack.keyAt(i), stack.pop())
             }
         }
     }
