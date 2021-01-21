@@ -23,6 +23,13 @@ import com.qmuiteam.qmui.type.parser.ParserHelper.handleWordPart
 import java.util.*
 
 class PlainTextParser : TextParser {
+
+    companion object {
+        val instance by lazy {
+            PlainTextParser()
+        }
+    }
+
     override fun parse(text: CharSequence?): TypeModel? {
         if (text == null || text.isEmpty()) {
             return null

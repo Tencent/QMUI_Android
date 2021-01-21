@@ -22,102 +22,64 @@ import android.text.TextUtils.TruncateAt
 import com.qmuiteam.qmui.type.element.*
 import java.util.*
 
-class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
-    private var mMaxLines = Int.MAX_VALUE
-    private var mEllipsize: TruncateAt? = null
-    private var mCalculateWholeLines = true
-    private val mLines: MutableList<Line> = ArrayList()
-    private var mDropLastIfSpace = true
-    private var mMoreText: String? = null
-    private var mMoreTextColor = 0
-    private var mMoreTextTypeface: Typeface? = null
-    private var mMoreUnderlineColor = Color.TRANSPARENT
-    private var mMoreBgColor = 0
-    private var mMoreUnderlineHeight = 0
-    private var mTotalLineCount = 0
-
+class LineLayout {
+    var maxLines = Int.MAX_VALUE
+    var ellipsize: TruncateAt? = null
+    var calculateWholeLines = false
+    var dropLastIfSpace = true
+    var moreText: String? = null
+    var moreTextColor = 0
+    var moreTextTypeface: Typeface? = null
+    var moreUnderlineColor = Color.TRANSPARENT
+    var moreBgColor = 0
+    var moreUnderlineHeight = 0
     var typeModel: TypeModel? = null
+
+
+    private val mLines: MutableList<Line> = ArrayList()
+
+
+    var totalLineCount = 0
         private set
 
-    fun setMaxLines(maxLines: Int): LineLayout {
-        mMaxLines = maxLines
-        return this
-    }
 
-    fun setEllipsize(ellipsize: TruncateAt?): LineLayout {
-        mEllipsize = ellipsize
-        return this
-    }
 
-    fun setCalculateWholeLines(calculateWholeLines: Boolean): LineLayout {
-        mCalculateWholeLines = calculateWholeLines
-        return this
-    }
-
-    fun setDropLastIfSpace(dropLastIfSpace: Boolean): LineLayout {
-        mDropLastIfSpace = dropLastIfSpace
-        return this
-    }
-
-    fun setMoreText(text: String?, color: Int, typeface: Typeface?): LineLayout {
-        mMoreText = text
-        mMoreTextColor = color
-        mMoreTextTypeface = typeface
-        return this
-    }
-
-    fun setMoreBackgroundColor(color: Int): LineLayout {
-        mMoreBgColor = color
-        return this
-    }
-
-    fun setUnderline(height: Int, color: Int): LineLayout {
-        mMoreUnderlineHeight = height
-        mMoreUnderlineColor = color
-        return this
-    }
-
-    fun setTypeModel(typeModel: TypeModel?): LineLayout {
-        this.typeModel = typeModel
-        return this
-    }
-
-    fun measureAndLayout() {
-        mTypeEnvironment.clear()
+    fun measureAndLayout(env: TypeEnvironment) {
+        env.clear()
         release()
         if (typeModel == null) {
             return
         }
-        var element: Element? = typeModel!!.firstElement() ?: return
+        var element: Element? = typeModel!!.firstElement()
         var line = Line.acquire()
         var y = 0
-        line.init(0, y, mTypeEnvironment.widthLimit)
+        line.init(0, y, env.widthLimit)
         while (element != null) {
-            element.measure(mTypeEnvironment)
+            element.measure(env)
             if (element is NextParagraphElement) {
                 line.add(element)
-                line.layout(mTypeEnvironment, mDropLastIfSpace, false)
+                line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
                 if (canInterrupt()) {
                     return
                 }
-                y += line.contentHeight + mTypeEnvironment.paragraphSpace
-                line = createNewLine(y)
-            } else if (line.contentWidth + element.measureWidth > mTypeEnvironment.widthLimit) {
+                y += line.contentHeight + env.paragraphSpace
+                line = createNewLine(env, y)
+            } else if (line.contentWidth + element.measureWidth > env.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
                     // the width is too small.
                     line.release()
                     return
                 }
-                val back = line.handleWordBreak(mTypeEnvironment)
-                line.layout(mTypeEnvironment, mDropLastIfSpace, false)
+                val back = line.handleWordBreak(env)
+                line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
                 if (canInterrupt()) {
-                    handleEllipse(true)
+                    handleEllipse(env,true)
                     return
                 }
-                y += line.contentHeight + mTypeEnvironment.lineSpace
-                line = createNewLine(y)
+                y += line.contentHeight + env.lineSpace
+                line = createNewLine(env, y)
                 if (back != null && !back.isEmpty()) {
                     for (el in back) {
                         line.add(el)
@@ -130,37 +92,39 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
             element = element.next
         }
         if (line.size > 0) {
-            line.layout(mTypeEnvironment, mDropLastIfSpace, true)
+            line.layout(env, dropLastIfSpace, true)
             mLines.add(line)
         } else {
             line.release()
         }
-        mTotalLineCount = mLines.size
-        handleEllipse(false)
+        totalLineCount = mLines.size
+        handleEllipse(env,false)
     }
 
-    private fun createNewLine(y: Int): Line {
+    private fun createNewLine(env: TypeEnvironment, y: Int): Line {
         val line = Line.acquire()
-        line.init(0, y, mTypeEnvironment.widthLimit)
+        line.init(0, y, env.widthLimit)
         return line
     }
 
-    private fun handleEllipse(fromInterrupt: Boolean) {
-        if (mLines.isEmpty() || mLines.size < mMaxLines || mLines.size == mMaxLines && !fromInterrupt) {
+    private fun handleEllipse(env: TypeEnvironment, fromInterrupt: Boolean) {
+        if (mLines.isEmpty() || mLines.size < maxLines || mLines.size == maxLines && !fromInterrupt) {
             return
         }
-        if (mEllipsize == TruncateAt.END) {
-            handleEllipseEnd()
-        } else if (mEllipsize == TruncateAt.START) {
-            handleEllipseStart()
-        } else if (mEllipsize == TruncateAt.MIDDLE) {
-            handleEllipseMiddle()
+        if (ellipsize == TruncateAt.END) {
+            handleEllipseEnd(env)
+        } else if (ellipsize == TruncateAt.START) {
+            handleEllipseStart(env)
+        } else if (ellipsize == TruncateAt.MIDDLE) {
+            handleEllipseMiddle(env)
         }
     }
 
-    private fun handleEllipseEnd() {
-        for (i in mLines.size - 1 downTo mMaxLines) {
-            mLines.remove(mLines[i])
+    private fun handleEllipseEnd(env: TypeEnvironment) {
+        for (i in mLines.size - 1 downTo maxLines) {
+            val line = mLines[i]
+            mLines.remove(line)
+            line.release()
         }
         val lastLine = mLines[mLines.size - 1]
         var limitWidth = lastLine.widthLimit
@@ -170,11 +134,11 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                 env.clear()
             }
         })
-        ellipseElement.measure(mTypeEnvironment)
+        ellipseElement.measure(env)
         limitWidth = (limitWidth - ellipseElement.measureWidth).toInt()
         var moreElement: Element? = null
-        if (mMoreText != null && !mMoreText!!.isEmpty()) {
-            moreElement = TextElement(mMoreText!!, -1, -1)
+        if (moreText != null && !moreText!!.isEmpty()) {
+            moreElement = TextElement(moreText!!, -1, -1)
             val changeTypes: MutableList<Int> = ArrayList()
             changeTypes.add(TypeEnvironment.TYPE_TEXT_COLOR)
             changeTypes.add(TypeEnvironment.TYPE_BG_COLOR)
@@ -183,21 +147,21 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
             changeTypes.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH)
             moreElement.addSingleEnvironmentUpdater(changeTypes, object : EnvironmentUpdater {
                 override fun update(env: TypeEnvironment) {
-                    if (mMoreTextColor != 0) {
-                        env.textColor = mMoreTextColor
+                    if (moreTextColor != 0) {
+                        env.textColor = moreTextColor
                     }
-                    if (mMoreBgColor != 0) {
-                        env.backgroundColor = mMoreBgColor
+                    if (moreBgColor != 0) {
+                        env.backgroundColor = moreBgColor
                     }
-                    if (mMoreTextTypeface != null) {
-                        env.typeface = mMoreTextTypeface
+                    if (moreTextTypeface != null) {
+                        env.typeface = moreTextTypeface
                     }
-                    if (mMoreUnderlineHeight > 0) {
-                        env.setBorderBottom(mMoreUnderlineHeight, mMoreUnderlineColor)
+                    if (moreUnderlineHeight > 0) {
+                        env.setBorderBottom(moreUnderlineHeight, moreUnderlineColor)
                     }
                 }
             })
-            moreElement.measure(mTypeEnvironment)
+            moreElement.measure(env)
             limitWidth = (limitWidth - moreElement.measureWidth).toInt()
         }
         val contentWidth = lastLine.contentWidth
@@ -208,7 +172,7 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
             for (el in elements) {
                 if (el.measureWidth <= limitWidth) {
                     lastLine.add(el)
-                    limitWidth -= (limitWidth - el.measureWidth).toInt()
+                    limitWidth = (limitWidth - el.measureWidth).toInt()
                 } else {
                     break
                 }
@@ -218,12 +182,12 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
         if (moreElement != null) {
             lastLine.add(moreElement)
         }
-        lastLine.layout(mTypeEnvironment, mDropLastIfSpace, true)
+        lastLine.layout(env, dropLastIfSpace, true)
     }
 
-    private fun handleEllipseStart() {
-        mTypeEnvironment.clear()
-        for (i in mLines.size - 1 downTo mMaxLines) {
+    private fun handleEllipseStart(env: TypeEnvironment) {
+        env.clear()
+        for (i in mLines.size - 1 downTo maxLines) {
             mLines.remove(mLines[i])
         }
         val ellipseElement: Element = TextElement("...", -1, -1)
@@ -232,7 +196,7 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                 env.clear()
             }
         })
-        ellipseElement.measure(mTypeEnvironment)
+        ellipseElement.measure(env)
         val elements: Queue<Element> = LinkedList()
         elements.add(ellipseElement)
         for (i in mLines.indices) {
@@ -245,7 +209,7 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                     if (el is NextParagraphElement) {
                         elements.poll()
                         line.add(el)
-                        el.move(mTypeEnvironment)
+                        el.move(env)
                         break
                     }
                     if (el is BreakWordLineElement) {
@@ -255,7 +219,7 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                     if (line.contentWidth + el.measureWidth <= limitWidth) {
                         elements.poll()
                         line.add(el)
-                        el.move(mTypeEnvironment)
+                        el.move(env)
                     } else {
                         break
                     }
@@ -263,21 +227,21 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                     elements.poll()
                 }
             }
-            line.handleWordBreak(mTypeEnvironment)
-            line.layout(mTypeEnvironment, mDropLastIfSpace, false)
+            line.handleWordBreak(env)
+            line.layout(env, dropLastIfSpace, false)
             if (elements.isEmpty()) {
                 return
             }
         }
     }
 
-    private fun handleEllipseMiddle() {
-        mTypeEnvironment.clear()
+    private fun handleEllipseMiddle(env: TypeEnvironment) {
+        env.clear()
         val lines: List<Line> = ArrayList(mLines)
         mLines.clear()
         val ellipseElement: Element = TextElement("...", -1, -1)
-        ellipseElement.measure(mTypeEnvironment)
-        val ellipseLine = if (mMaxLines % 2 == 0) mMaxLines / 2 else (mMaxLines + 1) / 2
+        ellipseElement.measure(env)
+        val ellipseLine = if (maxLines % 2 == 0) maxLines / 2 else (maxLines + 1) / 2
         for (i in 0 until ellipseLine) {
             mLines.add(lines[i])
         }
@@ -290,7 +254,7 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                 if (handleLine.contentWidth + el.measureWidth <= limitWidth / 2f - ellipseElement.measureWidth / 2) {
                     unHandled.poll()
                     handleLine.add(el)
-                    el.move(mTypeEnvironment)
+                    el.move(env)
                 } else {
                     break
                 }
@@ -298,9 +262,9 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
                 unHandled.poll()
             }
         }
-        ellipseElement.measure(mTypeEnvironment)
+        ellipseElement.measure(env)
         handleLine.add(ellipseElement)
-        val nextFullShowLine = lines.size - mMaxLines + ellipseLine
+        val nextFullShowLine = lines.size - maxLines + ellipseLine
         var startLine = lines.size - 1
         // find the latest paragraph end line.
         for (i in lines.size - 2 downTo nextFullShowLine + 1) {
@@ -372,29 +336,29 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
             }
             if (ellipseEffect.size > 0) {
                 val ignoreEffectElement = IgnoreEffectElement(ellipseEffect)
-                ignoreEffectElement.move(mTypeEnvironment)
+                ignoreEffectElement.move(env)
                 handleLine.add(ignoreEffectElement)
             }
         }
         for (el in toAdd) {
-            el.move(mTypeEnvironment)
+            el.move(env)
             handleLine.add(el)
         }
-        handleLine.handleWordBreak(mTypeEnvironment)
-        handleLine.layout(mTypeEnvironment, mDropLastIfSpace, ellipseLine == lines.size)
+        handleLine.handleWordBreak(env)
+        handleLine.layout(env, dropLastIfSpace, ellipseLine == lines.size)
         var lastEnd = handleLine.y + handleLine.contentHeight
         for (i in nextFullShowLine until lines.size) {
             val line = lines[i]
             val prev = lines[i - 1]
             if (prev.isMiddleParagraphEndLine) {
-                line.y = lastEnd + mTypeEnvironment.paragraphSpace
+                line.y = lastEnd + env.paragraphSpace
             } else {
-                line.y = lastEnd + mTypeEnvironment.lineSpace
+                line.y = lastEnd + env.lineSpace
             }
             lastEnd = line.y + line.contentHeight
-            line.move(mTypeEnvironment)
-            line.handleWordBreak(mTypeEnvironment)
-            line.layout(mTypeEnvironment, mDropLastIfSpace, i == lines.size - 1)
+            line.move(env)
+            line.handleWordBreak(env)
+            line.layout(env, dropLastIfSpace, i == lines.size - 1)
             mLines.add(line)
         }
     }
@@ -416,16 +380,16 @@ class LineLayout(private val mTypeEnvironment: TypeEnvironment) {
             return last.y + last.contentHeight
         }
 
-    fun draw(canvas: Canvas) {
-        mTypeEnvironment.clear()
+    fun draw(canvas: Canvas, env: TypeEnvironment) {
+        env.clear()
         for (line in mLines) {
-            line.draw(mTypeEnvironment, canvas)
+            line.draw(env, canvas)
         }
     }
 
     private fun canInterrupt(): Boolean {
-        return mLines.size == mMaxLines && !mCalculateWholeLines &&
-                (mEllipsize == null || mEllipsize == TruncateAt.END)
+        return mLines.size == maxLines && !calculateWholeLines &&
+                (ellipsize == null || ellipsize == TruncateAt.END)
     }
 
     fun release() {

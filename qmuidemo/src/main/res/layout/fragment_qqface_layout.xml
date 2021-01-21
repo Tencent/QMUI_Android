@@ -46,14 +46,35 @@
             android:orientation="vertical"
             android:padding="25dp">
 
-            <com.qmuiteam.qmuidemo.fragment.components.qqface.QMUIQQFaceView2
-                android:id="@+id/test_view"
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="单行滚动"/>
+
+            <com.qmuiteam.qmui.type.view.MarqueeTypeView
+                android:id="@+id/marquee1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.qmuiteam.qmui.type.view.MarqueeTypeView
+                android:id="@+id/marquee2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
+                android:text="新排版, 两端对齐"
+                android:layout_marginTop="20dp"/>
+
+            <com.qmuiteam.qmui.type.view.LineTypeView
+                android:id="@+id/line_type_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
                 style="@style/QDCommonTitle"
-                android:text="单行表情，末尾省略"/>
+                android:text="单行表情，末尾省略"
+                android:layout_marginTop="20dp"/>
             <com.qmuiteam.qmui.qqface.QMUIQQFaceView
                 android:id="@+id/qqface1"
                 android:layout_width="wrap_content"

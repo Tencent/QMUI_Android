@@ -15,6 +15,7 @@
  */
 package com.qmuiteam.qmui.type
 
+import android.graphics.Typeface
 import com.qmuiteam.qmui.type.element.Element
 import java.util.*
 
@@ -25,6 +26,26 @@ class TypeModel(
         private val mLastElement: Element) {
 
     var firstEffect: Element? = null
+
+    fun addTypefaceEffect(start: Int, end: Int, typeface: Typeface): EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_TYPEFACE)
+        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.typeface = typeface
+            }
+        })
+    }
+
+    fun addTextSizeEffect(start: Int, end: Int, textSize: Float): EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_TEXT_SIZE)
+        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
+            override fun update(env: TypeEnvironment) {
+                env.textSize = textSize
+            }
+        })
+    }
 
     fun addBgEffect(start: Int, end: Int, bgColor: Int): EffectRemover? {
         val types: MutableList<Int> = ArrayList()

@@ -29,7 +29,6 @@ import android.os.Build;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -883,9 +882,6 @@ public class QMUIQQFaceView extends View {
                 break;
         }
         setMeasuredDimension(width, height);
-        Log.v(TAG, "mLines = " + mLines + " ; width = " + width + " ; height = "
-                + height + " ; maxLine = " + maxLine + "; measure time = "
-                + (System.currentTimeMillis() - start));
     }
 
     @Override
@@ -894,15 +890,12 @@ public class QMUIQQFaceView extends View {
             return;
         }
         pickTextPaintColor();
-
-        long start = System.currentTimeMillis();
         List<QMUIQQFaceCompiler.Element> elements = mElementList.getElements();
         mCurrentDrawBaseLine = getPaddingTop() + mFirstBaseLine;
         mCurrentDrawLine = 1;
         setStartDrawUsedWidth(getPaddingLeft(), getWidth() - getPaddingLeft() - getPaddingRight());
         mIsExecutedMiddleEllipsize = false;
         drawElements(canvas, elements, getWidth() - getPaddingLeft() - getPaddingRight());
-        Log.v(TAG, "onDraw spend time = " + (System.currentTimeMillis() - start));
     }
 
     private void pickTextPaintColor() {

@@ -260,9 +260,9 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
         saveTypeList?.forEach {
             env.save(it)
         }
-//        environmentUpdaterList?.forEach {
-//            it.update(env)
-//        }
+        environmentUpdaterList?.forEach {
+            it.update(env)
+        }
     }
 
     fun restoreEnv(env: TypeEnvironment) {

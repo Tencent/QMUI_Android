@@ -62,6 +62,7 @@ class TypeEnvironment {
 
     val paint = Paint().apply {
         isAntiAlias = true
+        textSize = Resources.getSystem().displayMetrics.scaledDensity * 14f
     }
     val bgPaint = Paint().apply {
         isAntiAlias = true
@@ -81,7 +82,7 @@ class TypeEnvironment {
             paint.typeface = value
         }
 
-    var textSize: Float = 0f
+    var textSize: Float = paint.textSize
         set(value) {
             field = value
             paint.textSize = value
@@ -98,7 +99,7 @@ class TypeEnvironment {
         }
 
     fun setCustomProp(type: Int, value: Any?) {
-        mCustomProp!!.put(type, value)
+        mCustomProp.put(type, value)
     }
 
     fun setBorderTop(width: Int, color: Int) {
@@ -256,5 +257,15 @@ class TypeEnvironment {
                 restore(mStack.keyAt(i), stack.pop())
             }
         }
+    }
+
+    fun isRunning(): Boolean{
+        for (i in 0 until mStack.size()) {
+            val stack = mStack.valueAt(i)
+            if(stack.size > 0){
+                return true
+            }
+        }
+        return false
     }
 }
