@@ -218,7 +218,7 @@ class MarqueeTypeView : BaseTypeView {
         }
 
         inline fun drawFade(canvas: Canvas, action: (Canvas) -> Unit) = canvas.apply {
-            if(fadeWidth <= 0 || contentWidth < width){
+            if(fadeWidth <= 0 || contentWidth <= width){
                 action(this)
             }else{
                 val layerId = saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
