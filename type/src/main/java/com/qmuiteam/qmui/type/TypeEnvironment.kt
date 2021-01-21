@@ -156,11 +156,11 @@ class TypeEnvironment {
         }
 
     fun getCustomProp(type: Int): Any? {
-        return mCustomProp!![type]
+        return mCustomProp[type]
     }
 
     fun getIntCustomProp(type: Int): Int {
-        val obj = mCustomProp!![type]
+        val obj = mCustomProp[type]
         return if (obj !is Int) {
             0
         } else obj
@@ -184,10 +184,8 @@ class TypeEnvironment {
         for (i in 0 until mStack.size()) {
             env.mStack.put(mStack.keyAt(i), mStack.valueAt(i).clone() as Stack<Any?>)
         }
-        if (mCustomProp != null) {
-            for (i in 0 until mCustomProp.size()) {
-                env.setCustomProp(mCustomProp.keyAt(i), mCustomProp.valueAt(i))
-            }
+        for (i in 0 until mCustomProp.size()) {
+            env.setCustomProp(mCustomProp.keyAt(i), mCustomProp.valueAt(i))
         }
         return env
     }

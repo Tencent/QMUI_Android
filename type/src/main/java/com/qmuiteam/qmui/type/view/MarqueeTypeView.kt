@@ -43,8 +43,9 @@ class MarqueeTypeView : BaseTypeView {
             }
         }
 
+    var keepTime: Long = 2000
     var gap: Float = resources.displayMetrics.density * 50
-    var moveSpeedPerMs: Float = resources.displayMetrics.density / 32
+    var moveSpeedPerMs: Float = resources.displayMetrics.density / 36
     var lastDrawTime = -2L
 
     private var elementMaxHeight: Float = 0f
@@ -168,18 +169,27 @@ class MarqueeTypeView : BaseTypeView {
             return
         }
         if (lastDrawTime == -1L) {
-            lastDrawTime = SystemClock.elapsedRealtime()
+            lastDrawTime = SystemClock.elapsedRealtime() + if(startX == 0f) keepTime else 0
         } else {
             val newTime = SystemClock.elapsedRealtime()
-            startX -= moveSpeedPerMs * (newTime - lastDrawTime)
-            lastDrawTime = newTime
-            if (startX + contentWidth < 0) {
-                startX += contentWidth + gap
-            }
-            // if drop many many frames. this condition can be matched, so recover to normal state.
-            if (startX + contentWidth < 0) {
-                startX = 0f
-            }
+            if(lastDrawTime < newTime){
+                startX -= moveSpeedPerMs * (newTime - lastDrawTime)
+                if(startX >= 0f && startX < resources.displayMetrics.density * 1.5){
+                    // allow 1.5dp error
+                    startX = 0f
+                    lastDrawTime = newTime + keepTime
+                }else{
+                    lastDrawTime = newTime
+                }
+
+                if (startX + contentWidth < 0) {
+                    startX += contentWidth + gap
+                }
+                // if drop many many frames. this condition can be matched, so recover to normal state.
+                if (startX + contentWidth < 0) {
+                    startX = 0f
+                }
+            } // else is keep time
         }
         postInvalidateOnAnimation()
     }
