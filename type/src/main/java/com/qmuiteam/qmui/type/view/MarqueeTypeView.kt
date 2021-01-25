@@ -22,6 +22,8 @@ class MarqueeTypeView : BaseTypeView {
         set(value) {
             if (field != value) {
                 field = value
+                reset()
+                contentWidth = -1f
                 typeModel = value.parse(text)
                 requestLayout()
                 if (isAttachedToWindow) {
@@ -35,6 +37,7 @@ class MarqueeTypeView : BaseTypeView {
             if (field != value) {
                 field = value
                 reset()
+                contentWidth = -1f
                 typeModel = textParser.parse(value)
                 requestLayout()
                 if (isAttachedToWindow) {
@@ -49,7 +52,7 @@ class MarqueeTypeView : BaseTypeView {
     var lastDrawTime = -2L
 
     private var elementMaxHeight: Float = 0f
-    private var contentWidth: Float = 0f
+    private var contentWidth: Float = -1f
     private var fadeHelper: FadeHelper? = null
     private var startX: Float = 0f
 
@@ -112,6 +115,7 @@ class MarqueeTypeView : BaseTypeView {
 
     fun start() {
         lastDrawTime = -1
+        invalidate()
     }
 
     fun stop() {
@@ -134,7 +138,7 @@ class MarqueeTypeView : BaseTypeView {
 
 
     private fun drawContent(canvas: Canvas){
-        if (contentWidth <= width) {
+        if (contentWidth >0 && contentWidth <= width) {
             lastDrawTime = -2
             startX = 0f
         }
