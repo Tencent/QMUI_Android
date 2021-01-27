@@ -21,7 +21,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.arch.scheme.QMUISchemeHandleInterpolator;
@@ -52,7 +51,7 @@ public class QDSchemeManager {
                     public boolean intercept(@NonNull QMUISchemeHandler schemeHandler,
                                              @NonNull Activity activity,
                                              @NonNull String action,
-                                             @Nullable Map<String, String> params,
+                                             @NonNull Map<String, String> params,
                                              @NonNull String origin) {
                         // Log the scheme.
                         Log.i(TAG, "handle scheme: " + origin);

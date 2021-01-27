@@ -23,6 +23,7 @@ import android.util.ArrayMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class QMUISchemeBuilder {
@@ -101,8 +102,9 @@ public class QMUISchemeBuilder {
 
     public static QMUISchemeBuilder from(@NonNull String prefix, @NonNull String action, @Nullable String params, boolean encodeNewParams){
         QMUISchemeBuilder builder = new QMUISchemeBuilder(prefix, action, encodeNewParams);
-        Map<String, String> paramsMap = QMUISchemeHandler.parseParams(params);
-        if(paramsMap != null && !paramsMap.isEmpty()){
+        Map<String, String> paramsMap = new HashMap<>();
+        QMUISchemeHandler.parseParams(params, paramsMap);
+        if(!paramsMap.isEmpty()){
             builder.mParams.putAll(paramsMap);
         }
         return builder;

@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -30,9 +29,9 @@ public class QMUISchemeParamValueDecoder implements QMUISchemeHandleInterpolator
     public boolean intercept(@NonNull QMUISchemeHandler schemeHandler,
                              @NonNull Activity activity,
                              @NonNull String action,
-                             @Nullable Map<String, String> params,
+                             @NonNull Map<String, String> params,
                              @NonNull String origin) {
-        if (params != null) {
+        if (!params.isEmpty()) {
             for (String key : params.keySet()) {
                 String oldValue = params.get(key);
                 if (oldValue != null && oldValue.length() > 0) {
