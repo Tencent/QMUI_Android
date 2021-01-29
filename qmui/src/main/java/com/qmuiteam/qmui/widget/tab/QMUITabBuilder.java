@@ -131,13 +131,15 @@ public class QMUITabBuilder {
      */
     private int signCountDigits = 2;
     /**
-     * the margin left of signCount(redPoint) view
+     * the horizontal offset of signCount(redPoint) view
      */
-    private int signCountLeftMarginWithIconOrText;
+    private int signCountHorizontalOffset;
     /**
-     * the margin top of signCount(redPoint) view
+     * the vertical offset of signCount(redPoint) view
      */
-    private int signCountBottomMarginWithIconOrText;
+    private int signCountVerticalOffset;
+
+    private int signCountVerticalAlign = QMUITab.SIGN_COUNT_VERTICAL_ALIGN_BOTTOM_TO_CONTENT_TOP;
 
     /**
      * the gap between icon and text
@@ -153,8 +155,8 @@ public class QMUITabBuilder {
     QMUITabBuilder(Context context) {
         iconTextGap = QMUIDisplayHelper.dp2px(context, 2);
         normalTextSize = selectTextSize = QMUIDisplayHelper.dp2px(context, 12);
-        signCountLeftMarginWithIconOrText = QMUIDisplayHelper.dp2px(context, 3);
-        signCountBottomMarginWithIconOrText = signCountLeftMarginWithIconOrText;
+        signCountHorizontalOffset = QMUIDisplayHelper.dp2px(context, 3);
+        signCountVerticalOffset = signCountHorizontalOffset;
     }
 
     QMUITabBuilder(QMUITabBuilder other) {
@@ -172,8 +174,9 @@ public class QMUITabBuilder {
         this.text = other.text;
         this.signCount = other.signCount;
         this.signCountDigits = other.signCountDigits;
-        this.signCountLeftMarginWithIconOrText = other.signCountLeftMarginWithIconOrText;
-        this.signCountBottomMarginWithIconOrText = other.signCountBottomMarginWithIconOrText;
+        this.signCountHorizontalOffset = other.signCountHorizontalOffset;
+        this.signCountVerticalOffset = other.signCountVerticalOffset;
+        this.signCountVerticalAlign = other.signCountVerticalAlign;
         this.normalTypeface = other.normalTypeface;
         this.selectedTypeface = other.selectedTypeface;
         this.normalTabIconWidth = other.normalTabIconWidth;
@@ -269,10 +272,22 @@ public class QMUITabBuilder {
     }
 
     public QMUITabBuilder setSignCountMarginInfo(int digit,
-                                                 int leftMarginWithIconOrText, int bottomMarginWithIconOrText) {
+                                                 int horizontalOffset,
+                                                 int verticalOffset){
+        return setSignCountMarginInfo(digit, horizontalOffset,
+                QMUITab.SIGN_COUNT_VERTICAL_ALIGN_BOTTOM_TO_CONTENT_TOP,
+                verticalOffset);
+    }
+
+    public QMUITabBuilder setSignCountMarginInfo(int digit,
+                                                 int horizontalOffset,
+                                                 int verticalAlign,
+                                                 int verticalOffset
+    ) {
         this.signCountDigits = digit;
-        this.signCountLeftMarginWithIconOrText = leftMarginWithIconOrText;
-        this.signCountBottomMarginWithIconOrText = bottomMarginWithIconOrText;
+        this.signCountHorizontalOffset = horizontalOffset;
+        this.signCountVerticalOffset = verticalOffset;
+        this.signCountVerticalAlign = verticalAlign;
         return this;
     }
 
@@ -379,8 +394,9 @@ public class QMUITabBuilder {
         tab.selectColor = this.selectColor;
         tab.signCount = this.signCount;
         tab.signCountDigits = this.signCountDigits;
-        tab.signCountLeftMarginWithIconOrText = this.signCountLeftMarginWithIconOrText;
-        tab.signCountBottomMarginWithIconOrText = this.signCountBottomMarginWithIconOrText;
+        tab.signCountHorizontalOffset = this.signCountHorizontalOffset;
+        tab.signCountVerticalAlign = this.signCountVerticalAlign;
+        tab.signCountVerticalOffset = this.signCountVerticalOffset;
         tab.iconTextGap = this.iconTextGap;
         tab.typefaceUpdateAreaPercent = this.typefaceUpdateAreaPercent;
         return tab;

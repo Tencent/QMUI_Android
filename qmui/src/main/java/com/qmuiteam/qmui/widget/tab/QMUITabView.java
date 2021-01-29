@@ -330,7 +330,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
             if(mSignCountView != null && mSignCountView.getVisibility() != View.GONE){
                 mSignCountView.measure(0, 0);
                 widthSize = Math.max(widthSize,
-                        widthSize + mSignCountView.getMeasuredWidth() + mTab.signCountLeftMarginWithIconOrText);
+                        widthSize + mSignCountView.getMeasuredWidth() + mTab.signCountHorizontalOffset);
             }
             useWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
         }
@@ -395,23 +395,26 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
 
     private Point calculateSignCountLayoutPosition() {
         QMUITabIcon icon = mTab.getTabIcon();
-        int left, bottom;
+        int anchorLeft, anchorTop;
         int iconPosition = mTab.getIconPosition();
         if (icon == null || iconPosition == QMUITab.ICON_POSITION_BOTTOM ||
                 iconPosition == QMUITab.ICON_POSITION_LEFT) {
-            left = (int) (mCurrentTextLeft + mCurrentTextWidth);
-            bottom = (int) (mCurrentTextTop);
+            anchorLeft = (int) (mCurrentTextLeft + mCurrentTextWidth);
+            anchorTop = (int) (mCurrentTextTop);
         } else {
-            left = (int) (mCurrentIconLeft + mCurrentIconWidth);
-            bottom = (int) (mCurrentIconTop);
+            anchorLeft = (int) (mCurrentIconLeft + mCurrentIconWidth);
+            anchorTop = (int) (mCurrentIconTop);
         }
-        Point point = new Point(left, bottom);
-        int verticalOffset = mTab.signCountBottomMarginWithIconOrText;
-        if(verticalOffset == QMUITab.SIGN_COUNT_VIEW_LAYOUT_VERTICAL_CENTER && mSignCountView != null){
+        Point point = new Point(anchorLeft, anchorTop);
+        int verticalAlign = mTab.signCountVerticalAlign;
+        int verticalOffset = mTab.signCountVerticalOffset;
+        if(verticalAlign == QMUITab.SIGN_COUNT_VERTICAL_ALIGN_TOP_TO_CONTENT_TOP){
+            point.offset(mTab.signCountHorizontalOffset, verticalOffset + mSignCountView.getMeasuredHeight());
+        }else if(verticalAlign == QMUITab.SIGN_COUNT_VERTICAL_ALIGN_MIDDLE_TO_CONTENT){
             point.y = getMeasuredHeight() - (getMeasuredHeight() - mSignCountView.getMeasuredHeight()) / 2;
-            point.offset(mTab.signCountLeftMarginWithIconOrText, 0);
-        }else{
-            point.offset(mTab.signCountLeftMarginWithIconOrText, verticalOffset);
+            point.offset(mTab.signCountHorizontalOffset, verticalOffset);
+        }else {
+            point.offset(mTab.signCountHorizontalOffset, verticalOffset);
         }
 
 
