@@ -245,12 +245,12 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
             }
 
         } else if (action == MotionEvent.ACTION_MOVE) {
-            removeCallbacks(mLongPressAction);
             int x = (int) event.getX();
             int dx = x - mLastTouchX;
             mLastTouchX = x;
             if (!mIsMoving && mIsThumbTouched) {
                 if (Math.abs(mLastTouchX - mDownTouchX) > mTouchSlop) {
+                    removeCallbacks(mLongPressAction);
                     mIsMoving = true;
                     if (mCallback != null) {
                         mCallback.onStartMoving(this, mCurrentProgress, mTickCount);
