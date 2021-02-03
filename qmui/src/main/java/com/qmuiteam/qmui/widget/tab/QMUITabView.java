@@ -160,6 +160,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
                         QMUILangHelper.formatNumberToLimitedDigits(mTab.signCount, mTab.signCountDigits));
                 mSignCountView.setMinWidth(QMUIResHelper.getAttrDimen(getContext(),
                         R.attr.qmui_tab_sign_count_view_min_size_with_text));
+                signCountLp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 signCountLp.height = QMUIResHelper.getAttrDimen(getContext(),
                         R.attr.qmui_tab_sign_count_view_min_size_with_text);
             } else {
