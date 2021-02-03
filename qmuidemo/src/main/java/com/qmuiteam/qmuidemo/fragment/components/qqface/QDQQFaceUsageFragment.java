@@ -117,7 +117,7 @@ public class QDQQFaceUsageFragment extends BaseFragment {
             lineLayout.setMoreUnderlineHeight(QMUIDisplayHelper.dp2px(getContext(), 2));
             lineLayout.setMoreTextColor(Color.RED);
             lineLayout.setMoreUnderlineColor(Color.BLUE);
-            mLineType1.setLineSpace(QMUIDisplayHelper.dp2px(getContext(), 5));
+            mLineType1.setLineHeight(QMUIDisplayHelper.dp2px(getContext(), 36));
             mLineType1.setTextColor(Color.BLACK);
             mLineType1.setTextSize(QMUIDisplayHelper.sp2px(getContext(), 15));
             mLineType1.setTextParser(textParser);

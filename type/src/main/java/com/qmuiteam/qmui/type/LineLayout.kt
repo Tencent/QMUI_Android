@@ -63,7 +63,7 @@ class LineLayout {
                 if (canInterrupt()) {
                     return
                 }
-                y += line.contentHeight + env.paragraphSpace
+                y += (line.contentHeight + env.paragraphSpace).coerceAtLeast(env.lineHeight)
                 line = createNewLine(env, y)
             } else if (line.contentWidth + element.measureWidth > env.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
@@ -78,7 +78,12 @@ class LineLayout {
                     handleEllipse(env,true)
                     return
                 }
-                y += line.contentHeight + env.lineSpace
+                y += if(env.lineHeight != -1){
+                    env.lineHeight.coerceAtLeast(line.contentHeight)
+                }else{
+                    line.contentHeight + env.lineSpace
+                }
+
                 line = createNewLine(env, y)
                 if (back != null && !back.isEmpty()) {
                     for (el in back) {
@@ -351,9 +356,9 @@ class LineLayout {
             val line = lines[i]
             val prev = lines[i - 1]
             if (prev.isMiddleParagraphEndLine) {
-                line.y = lastEnd + env.paragraphSpace
+                line.y = lastEnd + env.paragraphSpace.coerceAtLeast(env.lineHeight - handleLine.contentHeight)
             } else {
-                line.y = lastEnd + env.lineSpace
+                line.y = lastEnd + env.lineSpace.coerceAtLeast(env.lineHeight - handleLine.contentHeight)
             }
             lastEnd = line.y + line.contentHeight
             line.move(env)

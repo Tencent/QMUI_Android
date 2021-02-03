@@ -67,6 +67,16 @@ open class BaseTypeView(context: Context,
             }
         }
 
+    var lineHeight: Int
+        get() = environment.lineHeight
+        set(value){
+            throwIfRunning("setLineHeight")
+            if(environment.lineHeight != value){
+                environment.lineHeight = value
+                requestLayout()
+            }
+        }
+
     var paragraphSpace: Int
         get() = environment.paragraphSpace
         set(value){

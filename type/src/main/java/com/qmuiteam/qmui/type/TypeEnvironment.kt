@@ -42,6 +42,7 @@ class TypeEnvironment {
         const val TYPE_BORDER_LEFT_WIDTH = -14
         const val TYPE_BORDER_LEFT_COLOR = -15
         const val TYPE_BORDER_PAINT = -16
+        const val TYPE_LINE_HEIGHT = -17
 
         val DEFAULT_LAST_LINE_JUSTIFY_MAX_WIDTH = (Resources.getSystem().displayMetrics.density * 36).toInt()
     }
@@ -72,6 +73,8 @@ class TypeEnvironment {
 
 
     var lineSpace = 0
+
+    var lineHeight = -1
 
     var paragraphSpace: Int = 0
         get() = field.coerceAtLeast(lineSpace)
@@ -176,6 +179,7 @@ class TypeEnvironment {
         env.setMeasureLimit(widthLimit, heightLimit)
         env.alignment = alignment
         env.lineSpace = lineSpace
+        env.lineHeight = lineHeight
         env.paragraphSpace = paragraphSpace
         env.textSize = textSize
         env.typeface = typeface
@@ -210,7 +214,9 @@ class TypeEnvironment {
             stack.push(lineSpace)
         } else if (type == TYPE_PARAGRAPH_SPACE) {
             stack.push(paragraphSpace)
-        } else {
+        } else if(type == TYPE_LINE_HEIGHT){
+            stack.push(lineHeight)
+        } else{
             stack.push(mCustomProp[type])
         }
     }
@@ -240,6 +246,8 @@ class TypeEnvironment {
             lineSpace = v as Int
         } else if (type == TYPE_PARAGRAPH_SPACE) {
             paragraphSpace = v as Int
+        }else if (type == TYPE_LINE_HEIGHT) {
+            lineHeight = v as Int
         } else {
             setCustomProp(type, v)
         }
