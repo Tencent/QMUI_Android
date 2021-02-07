@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.webkit.WebView;
 import android.widget.OverScroller;
 
 import androidx.annotation.NonNull;
@@ -112,6 +113,14 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 final int yDiff = Math.abs(y - lastMotionY);
                 if (yDiff > touchSlop) {
                     isBeingDragged = true;
+                    if(child instanceof WebView){
+                        // dispatch cancel event not work in webView sometimes.
+                        MotionEvent cancelEvent = MotionEvent.obtain(ev);
+                        cancelEvent.offsetLocation(-child.getLeft(), -child.getTop());
+                        cancelEvent.setAction(MotionEvent.ACTION_MOVE);
+                        child.dispatchTouchEvent(cancelEvent);
+                        cancelEvent.recycle();
+                    }
                     lastMotionY = y;
                     if (mCallback != null) {
                         mCallback.onTopBehaviorTouchBegin();
