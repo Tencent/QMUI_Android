@@ -113,7 +113,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                 final int yDiff = Math.abs(y - lastMotionY);
                 if (yDiff > touchSlop) {
                     isBeingDragged = true;
-                    if(child instanceof WebView){
+                    if(child instanceof WebView || child instanceof QMUIContinuousNestedTopDelegateLayout){
                         // dispatch cancel event not work in webView sometimes.
                         MotionEvent cancelEvent = MotionEvent.obtain(ev);
                         cancelEvent.offsetLocation(-child.getLeft(), -child.getTop());
