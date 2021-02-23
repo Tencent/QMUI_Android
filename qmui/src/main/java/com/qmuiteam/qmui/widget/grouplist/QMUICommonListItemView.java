@@ -28,6 +28,11 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
@@ -37,12 +42,6 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Placeholder;
 
 /**
  * 作为通用列表 {@link QMUIGroupListView} 里的 item 使用，也可以单独使用。
@@ -139,8 +138,6 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     protected CheckBox mSwitch;
     private ImageView mRedDot;
     private ImageView mNewTipView;
-    private Placeholder mAfterTitleHolder;
-    private Placeholder mBeforeAccessoryHolder;
     private boolean mDisableSwitchSelf = false;
 
     private int mTipShown = TIP_SHOW_NOTHING;
@@ -173,11 +170,6 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         mRedDot = findViewById(R.id.group_list_item_tips_dot);
         mNewTipView = findViewById(R.id.group_list_item_tips_new);
         mDetailTextView = findViewById(R.id.group_list_item_detailTextView);
-        mAfterTitleHolder = findViewById(R.id.group_list_item_holder_after_title);
-        mBeforeAccessoryHolder = findViewById(R.id.group_list_item_holder_before_accessory);
-
-        mAfterTitleHolder.setEmptyVisibility(View.GONE);
-        mBeforeAccessoryHolder.setEmptyVisibility(View.GONE);
         mTextView.setTextColor(initTitleColor);
         mDetailTextView.setTextColor(initDetailColor);
         mAccessoryView = findViewById(R.id.group_list_item_accessoryView);
@@ -203,27 +195,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
     }
 
     public void setTipPosition(@QMUICommonListItemTipPosition int tipPosition) {
-        mTipPosition = tipPosition;
-        if (mRedDot.getVisibility() == View.VISIBLE) {
-            if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mRedDot.getId());
-                mBeforeAccessoryHolder.setContentId(View.NO_ID);
-            } else {
-                mBeforeAccessoryHolder.setContentId(mRedDot.getId());
-                mAfterTitleHolder.setContentId(View.NO_ID);
-            }
-            mNewTipView.setVisibility(View.GONE);
-        } else if (mNewTipView.getVisibility() == View.VISIBLE) {
-            if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mNewTipView.getId());
-                mBeforeAccessoryHolder.setContentId(View.NO_ID);
-            } else {
-                mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
-                mAfterTitleHolder.setContentId(View.NO_ID);
-            }
-            mRedDot.setVisibility(View.GONE);
+        if(mTipPosition != tipPosition){
+            mTipPosition = tipPosition;
+            updateLayoutParams();
         }
-        checkDetailLeftMargin();
     }
 
     public CharSequence getText() {
@@ -245,12 +220,15 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * @param isShow 是否显示小红点
      */
     public void showRedDot(boolean isShow) {
+        int oldTipShown = mTipShown;
         if(isShow){
             mTipShown = TIP_SHOW_RED_POINT;
         }else if(mTipShown == TIP_SHOW_RED_POINT){
             mTipShown = TIP_SHOW_NOTHING;
         }
-        updateTipShown();
+        if(oldTipShown != mTipShown){
+            updateLayoutParams();
+        }
     }
 
     /**
@@ -259,54 +237,17 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * @param isShow 是否显示更新提示
      */
     public void showNewTip(boolean isShow) {
+        int oldTipShown = mTipShown;
         if(isShow){
             mTipShown = TIP_SHOW_NEW;
         }else if(mTipShown == TIP_SHOW_NEW){
             mTipShown = TIP_SHOW_NOTHING;
         }
-        updateTipShown();
-    }
-
-    private void updateTipShown(){
-        if(mTipShown == TIP_SHOW_RED_POINT){
-            if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mRedDot.getId());
-                mBeforeAccessoryHolder.setContentId(View.NO_ID);
-            } else {
-                mBeforeAccessoryHolder.setContentId(mRedDot.getId());
-                mAfterTitleHolder.setContentId(View.NO_ID);
-            }
-        }else if(mTipShown == TIP_SHOW_NEW){
-            if (mTipPosition == TIP_POSITION_LEFT) {
-                mAfterTitleHolder.setContentId(mNewTipView.getId());
-                mBeforeAccessoryHolder.setContentId(View.NO_ID);
-            } else {
-                mBeforeAccessoryHolder.setContentId(mNewTipView.getId());
-                mAfterTitleHolder.setContentId(View.NO_ID);
-            }
-        }else{
-            mAfterTitleHolder.setContentId(View.NO_ID);
-            mBeforeAccessoryHolder.setContentId(View.NO_ID);
-        }
-        mNewTipView.setVisibility(mTipShown == TIP_SHOW_NEW ? View.VISIBLE : View.GONE);
-        mRedDot.setVisibility(mTipShown == TIP_SHOW_RED_POINT ? View.VISIBLE : View.GONE);
-        checkDetailLeftMargin();
-    }
-
-    private void checkDetailLeftMargin() {
-        LayoutParams detailLp = (LayoutParams) mDetailTextView.getLayoutParams();
-        if (mOrientation == VERTICAL) {
-            detailLp.leftMargin = 0;
-        } else {
-            if (mNewTipView.getVisibility() == View.GONE || mTipPosition == TIP_POSITION_LEFT) {
-                detailLp.leftMargin = QMUIResHelper.getAttrDimen(
-                        getContext(), R.attr.qmui_common_list_item_detail_h_margin_with_title);
-            } else {
-                detailLp.leftMargin = QMUIResHelper.getAttrDimen(
-                        getContext(), R.attr.qmui_common_list_item_detail_h_margin_with_title_large);
-            }
+        if(oldTipShown != mTipShown){
+            updateLayoutParams();
         }
     }
+
 
     public CharSequence getDetailText() {
         return mDetailTextView.getText();
@@ -331,49 +272,185 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
             return;
         }
         mOrientation = orientation;
+        updateLayoutParams();
+    }
 
+    private void updateLayoutParams(){
+        mNewTipView.setVisibility(mTipShown == TIP_SHOW_NEW ? View.VISIBLE : View.GONE);
+        mRedDot.setVisibility(mTipShown == TIP_SHOW_RED_POINT ? View.VISIBLE : View.GONE);
         LayoutParams titleLp = (LayoutParams) mTextView.getLayoutParams();
         LayoutParams detailLp = (LayoutParams) mDetailTextView.getLayoutParams();
-        if (orientation == VERTICAL) {
+        LayoutParams newTipLp = (LayoutParams) mNewTipView.getLayoutParams();
+        LayoutParams redDotLp = (LayoutParams) mRedDot.getLayoutParams();
+        if (mOrientation == VERTICAL) {
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_title_v_text_size));
             mDetailTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_detail_v_text_size));
-            titleLp.horizontalChainStyle = LayoutParams.UNSET;
             titleLp.verticalChainStyle = LayoutParams.CHAIN_PACKED;
             titleLp.bottomToBottom = LayoutParams.UNSET;
             titleLp.bottomToTop = mDetailTextView.getId();
 
             detailLp.horizontalChainStyle = LayoutParams.UNSET;
             detailLp.verticalChainStyle = LayoutParams.CHAIN_PACKED;
-            detailLp.leftToRight = LayoutParams.UNSET;
             detailLp.leftToLeft = mTextView.getId();
+            detailLp.leftToRight = LayoutParams.UNSET;
             detailLp.horizontalBias = 0f;
             detailLp.topToTop = LayoutParams.UNSET;
             detailLp.topToBottom = mTextView.getId();
             detailLp.leftMargin = 0;
             detailLp.topMargin = QMUIResHelper.getAttrDimen(
                     getContext(), R.attr.qmui_common_list_item_detail_v_margin_with_title);
+
+            if(mTipShown == TIP_SHOW_NEW){
+                if(mTipPosition == TIP_POSITION_LEFT){
+                    updateTipLeftVerRelatedLayoutParam(mNewTipView, newTipLp, titleLp, detailLp);
+                }else{
+                    updateTipRightVerRelatedLayoutParam(mNewTipView, newTipLp, titleLp, detailLp);
+                }
+            }else if(mTipShown == TIP_SHOW_RED_POINT){
+                if(mTipPosition == TIP_POSITION_LEFT){
+                    updateTipLeftVerRelatedLayoutParam(mRedDot, redDotLp, titleLp, detailLp);
+                }else{
+                    updateTipRightVerRelatedLayoutParam(mRedDot, redDotLp, titleLp, detailLp);
+                }
+            }else{
+                int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+                titleLp.horizontalChainStyle = LayoutParams.UNSET;
+                titleLp.rightToLeft = mAccessoryView.getId();
+                titleLp.rightMargin = accessoryLeftMargin;
+                titleLp.goneRightMargin = 0;
+                detailLp.leftToRight = mAccessoryView.getId();
+                detailLp.rightMargin = accessoryLeftMargin;
+                detailLp.goneRightMargin = 0;
+            }
         } else {
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_title_h_text_size));
             mDetailTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_detail_h_text_size));
-            titleLp.horizontalChainStyle = LayoutParams.CHAIN_SPREAD_INSIDE;
             titleLp.verticalChainStyle = LayoutParams.UNSET;
             titleLp.bottomToBottom = LayoutParams.PARENT_ID;
             titleLp.bottomToTop = LayoutParams.UNSET;
 
-            detailLp.horizontalChainStyle = LayoutParams.CHAIN_SPREAD_INSIDE;
             detailLp.verticalChainStyle = LayoutParams.UNSET;
-            detailLp.leftToRight = mTextView.getId();
             detailLp.leftToLeft = LayoutParams.UNSET;
-            detailLp.horizontalBias = 0f;
             detailLp.topToTop = LayoutParams.PARENT_ID;
             detailLp.topToBottom = LayoutParams.UNSET;
             detailLp.topMargin = 0;
-            checkDetailLeftMargin();
+            detailLp.leftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_detail_h_margin_with_title);
+
+            if(mTipShown == TIP_SHOW_NEW){
+                if(mTipPosition == TIP_POSITION_LEFT){
+                    updateTipLeftHorRelatedLayoutParam(mNewTipView, newTipLp, titleLp, detailLp);
+                }else{
+                    updateTipRightHorRelatedLayoutParam(mNewTipView, newTipLp, titleLp, detailLp);
+                }
+            }else if(mTipShown == TIP_SHOW_RED_POINT){
+                if(mTipPosition == TIP_POSITION_LEFT){
+                    updateTipLeftHorRelatedLayoutParam(mRedDot, redDotLp, titleLp, detailLp);
+                }else{
+                    updateTipRightHorRelatedLayoutParam(mRedDot, redDotLp, titleLp, detailLp);
+                }
+            }else{
+                int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+                titleLp.horizontalChainStyle = LayoutParams.UNSET;
+                titleLp.rightToLeft = mAccessoryView.getId();
+                titleLp.rightMargin = accessoryLeftMargin;
+                titleLp.goneRightMargin = 0;
+                detailLp.leftToRight = mTextView.getId();
+                detailLp.rightToLeft = mAccessoryView.getId();
+                detailLp.rightMargin = accessoryLeftMargin;
+                detailLp.goneRightMargin = 0;
+            }
         }
+    }
+
+    private void updateTipLeftVerRelatedLayoutParam(View tipView,
+                                                    ConstraintLayout.LayoutParams tipLp,
+                                                    ConstraintLayout.LayoutParams titleLp,
+                                                    ConstraintLayout.LayoutParams detailLp){
+        int titleRightMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_holder_margin_with_title);
+        int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+        titleLp.horizontalChainStyle = LayoutParams.CHAIN_PACKED;
+        titleLp.horizontalBias = 0f;
+        titleLp.rightToLeft = tipView.getId();
+        titleLp.rightMargin = titleRightMargin;
+        tipLp.leftToRight = mTextView.getId();
+        tipLp.rightToLeft = mAccessoryView.getId();
+        tipLp.rightMargin = accessoryLeftMargin;
+        tipLp.topToTop = mTextView.getId();
+        tipLp.bottomToBottom = mTextView.getId();
+        tipLp.goneRightMargin = 0;
+        detailLp.rightToLeft = mAccessoryView.getId();
+        detailLp.rightMargin = accessoryLeftMargin;
+        detailLp.goneRightMargin = 0;
+    }
+
+    private void updateTipRightVerRelatedLayoutParam(View tipView,
+                                                     ConstraintLayout.LayoutParams tipLp,
+                                                     ConstraintLayout.LayoutParams titleLp,
+                                                     ConstraintLayout.LayoutParams detailLp){
+        int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+
+        tipLp.leftToRight = LayoutParams.UNSET;
+        tipLp.rightToLeft = mAccessoryView.getId();
+        tipLp.rightMargin = accessoryLeftMargin;
+        tipLp.goneRightMargin = 0;
+        tipLp.topToTop = LayoutParams.PARENT_ID;
+        tipLp.bottomToBottom = LayoutParams.PARENT_ID;
+
+        titleLp.horizontalChainStyle = LayoutParams.UNSET;
+        titleLp.rightToLeft = tipView.getId();
+        titleLp.rightMargin = accessoryLeftMargin;
+
+        detailLp.rightToLeft = tipView.getId();
+        detailLp.rightMargin = accessoryLeftMargin;
+    }
+
+    private void updateTipLeftHorRelatedLayoutParam(View tipView,
+                                                    ConstraintLayout.LayoutParams tipLp,
+                                                    ConstraintLayout.LayoutParams titleLp,
+                                                    ConstraintLayout.LayoutParams detailLp){
+        int titleRightMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_holder_margin_with_title);
+        int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+        titleLp.horizontalChainStyle = LayoutParams.CHAIN_PACKED;
+        titleLp.horizontalBias = 0f;
+        titleLp.rightToLeft = tipView.getId();
+        titleLp.rightMargin = titleRightMargin;
+        tipLp.leftToRight = mTextView.getId();
+        tipLp.rightToLeft = mAccessoryView.getId();
+        tipLp.rightMargin = accessoryLeftMargin;
+        tipLp.topToTop = mTextView.getId();
+        tipLp.bottomToBottom = mTextView.getId();
+        tipLp.goneRightMargin = 0;
+        detailLp.leftToRight = tipView.getId();
+        detailLp.rightToLeft = mAccessoryView.getId();
+        detailLp.rightMargin = accessoryLeftMargin;
+        detailLp.goneRightMargin = 0;
+    }
+
+    private void updateTipRightHorRelatedLayoutParam(View tipView,
+                                                     ConstraintLayout.LayoutParams tipLp,
+                                                     ConstraintLayout.LayoutParams titleLp,
+                                                     ConstraintLayout.LayoutParams detailLp){
+        int accessoryLeftMargin = QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_common_list_item_accessory_margin_left);
+
+        tipLp.leftToRight = LayoutParams.UNSET;
+        tipLp.rightToLeft = mAccessoryView.getId();
+        tipLp.rightMargin = accessoryLeftMargin;
+        tipLp.goneRightMargin = 0;
+        tipLp.topToTop = LayoutParams.PARENT_ID;
+        tipLp.bottomToBottom = LayoutParams.PARENT_ID;
+
+        titleLp.horizontalChainStyle = LayoutParams.UNSET;
+        titleLp.rightToLeft = tipView.getId();
+        titleLp.rightMargin = accessoryLeftMargin;
+        titleLp.horizontalBias = 0f;
+
+        detailLp.leftToRight = mTextView.getId();
+        detailLp.rightToLeft = tipView.getId();
+        detailLp.rightMargin = accessoryLeftMargin;
     }
 
     public int getAccessoryType() {

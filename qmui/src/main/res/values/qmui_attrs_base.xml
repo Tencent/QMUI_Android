@@ -64,7 +64,6 @@
     <attr name="qmui_common_list_item_detail_h_text_size" format="dimension" />
     <attr name="qmui_common_list_item_detail_line_space" format="dimension" />
     <attr name="qmui_common_list_item_detail_h_margin_with_title" format="dimension" />
-    <attr name="qmui_common_list_item_detail_h_margin_with_title_large" format="dimension" />
     <attr name="qmui_common_list_item_detail_v_margin_with_title" format="dimension" />
     <attr name="qmui_common_list_item_holder_margin_with_title" format="dimension"/>
 

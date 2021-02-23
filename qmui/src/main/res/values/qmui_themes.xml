@@ -182,7 +182,6 @@
         <item name="qmui_common_list_item_detail_h_text_size">14sp</item>
         <item name="qmui_common_list_item_detail_line_space">5dp</item>
         <item name="qmui_common_list_item_detail_h_margin_with_title">20dp</item>
-        <item name="qmui_common_list_item_detail_h_margin_with_title_large">52dp</item>
         <item name="qmui_common_list_item_detail_v_margin_with_title">4dp</item>
         <item name="qmui_common_list_item_holder_margin_with_title">8dp</item>
         <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
