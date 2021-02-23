@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @author cginechen
@@ -94,8 +95,9 @@ public class QMUILangHelper {
         }
     }
 
+    @Deprecated
     public static boolean objectEquals(Object a, Object b) {
-        return (a == b) || (a != null && a.equals(b));
+        return Objects.equals(a, b);
     }
 
     public static int constrain(int amount, int low, int high) {

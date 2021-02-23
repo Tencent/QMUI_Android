@@ -45,7 +45,6 @@ public class QDVerticalTextViewFragment extends BaseFragment {
     @BindView(R.id.verticalTextView_editText)
     EditText mEditText;
 
-
     @Override
     protected View onCreateView() {
         View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_verticaltextview, null);
@@ -53,7 +52,6 @@ public class QDVerticalTextViewFragment extends BaseFragment {
 
         initTopBar();
         initVerticalTextView();
-
         return rootView;
     }
 

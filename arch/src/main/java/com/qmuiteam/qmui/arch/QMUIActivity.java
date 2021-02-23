@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.qmuiteam.qmui.arch.scheme.ActivitySchemeRefreshable;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -42,7 +43,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
 import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
 
-public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRefreshable, SwipeBackLayout.OnKeyboardInsetHandler {
+public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRefreshable {
     private static final String TAG = "QMUIActivity";
     private SwipeBackLayout.ListenerRemover mListenerRemover;
     private SwipeBackgroundView mSwipeBackgroundView;
@@ -138,7 +139,12 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
     @Override
     public void setContentView(int layoutResID) {
         SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(this, layoutResID, dragViewMoveAction(), mSwipeCallback);
-        swipeBackLayout.setOnKeyboardInsetHandler(this);
+        swipeBackLayout.setOnInsetsHandler(new SwipeBackLayout.OnInsetsHandler() {
+            @Override
+            public int getInsetsType() {
+                return getRootViewInsetsType();
+            }
+        });
         if (translucentFull()) {
             swipeBackLayout.getContentView().setFitsSystemWindows(false);
         } else {
@@ -160,7 +166,12 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
             view.setFitsSystemWindows(true);
         }
         final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(view, dragViewMoveAction(), mSwipeCallback);
-        swipeBackLayout.setOnKeyboardInsetHandler(this);
+        swipeBackLayout.setOnInsetsHandler(new SwipeBackLayout.OnInsetsHandler() {
+            @Override
+            public int getInsetsType() {
+                return getRootViewInsetsType();
+            }
+        });
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
         return swipeBackLayout;
     }
@@ -321,14 +332,9 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
         return null;
     }
 
-    @Override
-    public boolean handleKeyboardInset(int inset) {
-        return false;
-    }
-
-    @Override
-    public boolean interceptSelfKeyboardInset() {
-        return false;
+    @WindowInsetsCompat.Type.InsetsType
+    public int getRootViewInsetsType() {
+        return WindowInsetsCompat.Type.ime();
     }
 
     @Override

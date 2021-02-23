@@ -80,11 +80,6 @@ public class QDCollapsingTopBarLayoutFragment extends BaseFragment {
         return rootView;
     }
 
-    @Override
-    protected boolean translucentFull() {
-        return true;
-    }
-
     private void initTopBar() {
         mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override

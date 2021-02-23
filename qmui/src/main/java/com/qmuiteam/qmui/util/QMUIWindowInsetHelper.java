@@ -16,31 +16,23 @@
 
 package com.qmuiteam.qmui.util;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.graphics.Rect;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.graphics.Insets;
-import androidx.core.view.DisplayCutoutCompat;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.widget.INotchInsetConsumer;
-import com.qmuiteam.qmui.widget.IWindowInsetKeyboardConsumer;
-import com.qmuiteam.qmui.widget.IWindowInsetLayout;
-
-import java.util.ArrayList;
 
 /**
  * @author cginechen
@@ -49,258 +41,262 @@ import java.util.ArrayList;
 
 public class QMUIWindowInsetHelper {
 
-    private static ArrayList<Class<? extends ViewGroup>> sCustomHandlerContainerList = new ArrayList<>();
-    private static int sCurrentWindowInsetDepth = 0;
-
-    public static void apply(@NonNull final ViewGroup viewGroup){
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            // need to override fitSystemWindows().
-            return;
+    public final static InsetHandler consumeInsetWithPaddingHandler = new InsetHandler() {
+        @Override
+        public void handleInset(View view, Insets insets) {
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom);
         }
-        if(!(viewGroup instanceof IWindowInsetLayout)){
-            throw new IllegalStateException(viewGroup.getClass().getSimpleName() + " must implement IWindowInsetLayout");
+    };
+
+    public final static InsetHandler consumeInsetWithPaddingIgnoreBottomHandler = new InsetHandler() {
+        @Override
+        public void handleInset(View view, Insets insets) {
+            view.setPadding(insets.left, insets.top, insets.right, 0);
         }
-        ViewCompat.setOnApplyWindowInsetsListener(viewGroup,
-                new OnApplyWindowInsetsListener() {
-                    @Override
-                    public WindowInsetsCompat onApplyWindowInsets(View v,
-                                                                  WindowInsetsCompat insets) {
+    };
 
-                        // avoid dispatching multiple times
-                        boolean needToDispatchNotchInsetChange = QMUINotchHelper.isNotchOfficialSupport() && sCurrentWindowInsetDepth == 0;
-                        if (sCurrentWindowInsetDepth == 0) {
-                            // always consume display cutout!!
-                            DisplayCutoutCompat displayCutout = insets.getDisplayCutout();
-                            if (displayCutout != null) {
-                                needToDispatchNotchInsetChange = true;
-                                v.setTag(R.id.qmui_window_inset_layout_display_cutout, true);
-                                insets = insets.consumeDisplayCutout();
-                            }else{
-                                insets = insets.consumeDisplayCutout();
-                                Object lastHasNotchInfo = v.getTag(R.id.qmui_window_inset_layout_display_cutout);
-                                if(lastHasNotchInfo != null && (Boolean)lastHasNotchInfo){
-                                    needToDispatchNotchInsetChange = true;
-                                    v.setTag(R.id.qmui_window_inset_layout_display_cutout, false);
-                                }
-                            }
-                        }
+    public final static InsetHandler consumeInsetWithPaddingIgnoreTopHandler = new InsetHandler() {
+        @Override
+        public void handleInset(View view, Insets insets) {
+            view.setPadding(insets.left, 0, insets.right, insets.bottom);
+        }
+    };
 
-                        if(!insets.isConsumed()){
-                            sCurrentWindowInsetDepth ++;
-                            if(v instanceof IWindowInsetLayout){
-                                IWindowInsetLayout windowInsetLayout = (IWindowInsetLayout) v;
-                                insets = windowInsetLayout.applySystemWindowInsets21(insets);
-                            }
-                            sCurrentWindowInsetDepth --;
-                        }
+    public final static InsetHandler consumeInsetWithPaddingWithGravityHandler = new InsetHandler() {
+        @Override
+        public void handleInset(View view, Insets insets) {
+            Insets toUsed = adapterInsetsWithGravity(view, insets);
+            view.setPadding(toUsed.left, toUsed.top, toUsed.right, toUsed.bottom);
+        }
+    };
 
-                        if (needToDispatchNotchInsetChange) {
-                            dispatchNotchInsetChange(v);
-                        }
-                        return insets;
-                    }
-                });
+    private final static OnApplyWindowInsetsListener sStopDispatchListener = new OnApplyWindowInsetsListener() {
+        @Override
+        public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+            return WindowInsetsCompat.CONSUMED;
+        }
+    };
+
+    private final static OnApplyWindowInsetsListener sOverrideWithNothingHandleListener = new OnApplyWindowInsetsListener() {
+        @Override
+        public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+            return insets;
+        }
+    };
+
+    public static void handleWindowInsets(View v, @WindowInsetsCompat.Type.InsetsType final int insetsType){
+        handleWindowInsets(v, insetsType, false);
     }
 
-    public static boolean defaultApplySystemWindowInsets19(ViewGroup viewGroup, Rect insets) {
-        boolean consumed = false;
-        if (insets.bottom >= QMUIDisplayHelper.dp2px(viewGroup.getContext(), QMUIWindowHelper.KEYBOARD_HEIGHT_BOUNDARY_DP)
-                && shouldInterceptKeyboardInset(viewGroup)) {
-            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(insets.bottom);
-            }else{
-                QMUIViewHelper.setPaddingBottom(viewGroup, insets.bottom);
+    public static void handleWindowInsets(View v, @WindowInsetsCompat.Type.InsetsType final int insetsType, boolean jumpSelfHandleIfMatchLast){
+        handleWindowInsets(v, insetsType, jumpSelfHandleIfMatchLast, false);
+    }
+
+    public static void handleWindowInsets(View v, @WindowInsetsCompat.Type.InsetsType final int insetsType, boolean jumpSelfHandleIfMatchLast, boolean ignoreVisibility){
+        handleWindowInsets(v, insetsType, consumeInsetWithPaddingWithGravityHandler, jumpSelfHandleIfMatchLast, ignoreVisibility, false);
+    }
+
+    public static void handleWindowInsets(View v, @WindowInsetsCompat.Type.InsetsType final int insetsType,
+                                          boolean jumpSelfHandleIfMatchLast,
+                                          boolean ignoreVisibility,
+                                          boolean stopDispatch){
+        handleWindowInsets(v, insetsType, consumeInsetWithPaddingWithGravityHandler, jumpSelfHandleIfMatchLast, ignoreVisibility, stopDispatch);
+    }
+
+    /**
+     *
+     * @param v the view to handle window insets.
+     * @param insetsType the insets type
+     * @param insetHandler insetHandler
+     * @param jumpSelfHandleIfMatchLast if same as last, we do not dispatch window insets to v but return the last result directly.
+     * @param stopDispatch it's dangerous to use this. if View.sBrokenInsetsDispatch is true, it will stop dispatching to siblings and children,
+     *                     if View.sBrokenInsetsDispatch is false, it will only stop dispatching to children. But View.sBrokenInsetsDispatch is
+     *                     not public.
+     */
+    public static void handleWindowInsets(View v,
+                                          @WindowInsetsCompat.Type.InsetsType final int insetsType,
+                                          @NonNull final InsetHandler insetHandler,
+                                          boolean jumpSelfHandleIfMatchLast,
+                                          final boolean ignoreVisibility,
+                                          final boolean stopDispatch
+    ){
+        setOnApplyWindowInsetsListener(v, new androidx.core.view.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                if(v.getFitsSystemWindows()){
+                    Insets toUsed = ignoreVisibility ? insets.getInsetsIgnoringVisibility(insetsType) : insets.getInsets(insetsType);
+                    insetHandler.handleInset(v, toUsed);
+                    if(stopDispatch){
+                        return WindowInsetsCompat.CONSUMED;
+                    }
+                }
+                return insets;
             }
-            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, QMUIKeyboardHelper.KEYBOARD_CONSUMER);
-            insets.bottom = 0;
-        } else {
-            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
-            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(0);
-            }else{
-                QMUIViewHelper.setPaddingBottom(viewGroup, 0);
-            }
+        }, jumpSelfHandleIfMatchLast);
+    }
+
+    /**
+     * it's dangerous to use this. if View.sBrokenInsetsDispatch is true, it will stop dispatching to siblings and children,
+     * if View.sBrokenInsetsDispatch is false, it will only stop dispatching to children. But View.sBrokenInsetsDispatch is
+     * not public.
+     * @param v the view to stop
+     */
+    public static void stopDispatchWindowInsets(View v){
+        setOnApplyWindowInsetsListener(v, sStopDispatchListener, true);
+    }
+
+    public static void overrideWithDoNotHandleWindowInsets(View v){
+        setOnApplyWindowInsetsListener(v, sOverrideWithNothingHandleListener, false);
+    }
+
+    // copy from ViewCompat 1.5.0-beta01,  fix the re dispatch problem.
+    public static void setOnApplyWindowInsetsListener(final @NonNull View v,
+                                               final @Nullable OnApplyWindowInsetsListener listener,
+                                               final boolean reuseIfInputIsSame
+    ) {
+        // For backward compatibility of WindowInsetsAnimation, we use an
+        // OnApplyWindowInsetsListener. We use the view tags to keep track of both listeners
+        if (Build.VERSION.SDK_INT < 30) {
+            v.setTag(R.id.tag_on_apply_window_listener, listener);
         }
 
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            View child = viewGroup.getChildAt(i);
-            if (jumpDispatch(child)) {
-                continue;
+        if (listener == null) {
+            // If the listener is null, we need to make sure our compat listener, if any, is
+            // set in-lieu of the listener being removed.
+            View.OnApplyWindowInsetsListener compatInsetsAnimationCallback =
+                    (View.OnApplyWindowInsetsListener) v.getTag(
+                            R.id.tag_window_insets_animation_callback);
+            v.setOnApplyWindowInsetsListener(compatInsetsAnimationCallback);
+            return;
+        }
+
+        v.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            WindowInsetsCompat mLastInsets = null;
+            WindowInsets mReturnedInsets = null;
+
+            @Override
+            public WindowInsets onApplyWindowInsets(final View view,
+                                                    final WindowInsets insets) {
+                WindowInsetsCompat compatInsets = WindowInsetsCompat.toWindowInsetsCompat(
+                        insets, view);
+                // On API < 30,  we request dispatch again until the input is same with last.
+                boolean needRequestApplyInsetsAgain = true;
+                if (Build.VERSION.SDK_INT < 30) {
+                    callCompatInsetAnimationCallback(insets, v);
+
+                    if (compatInsets.equals(mLastInsets)) {
+                        needRequestApplyInsetsAgain = false;
+                        if (reuseIfInputIsSame) {
+                            // We got the same insets we just return the previously computed insets.
+                            return mReturnedInsets;
+                        }
+                    }
+                    mLastInsets = compatInsets;
+                }
+                compatInsets = listener.onApplyWindowInsets(view, compatInsets);
+
+                if (Build.VERSION.SDK_INT >= 30) {
+                    return compatInsets.toWindowInsets();
+                }
+
+                // On API < 30, the visibleInsets, used to built WindowInsetsCompat, are
+                // updated after the insets dispatch so we don't have the updated visible
+                // insets at that point. As a workaround, we re-apply the insets so we know
+                // that we'll have the right value the next time it's called.
+                if(needRequestApplyInsetsAgain){
+                    ViewCompat.requestApplyInsets(view);
+                }
+
+                // Keep a copy in case the insets haven't changed on the next call so we don't
+                // need to call the listener again.
+                mReturnedInsets = compatInsets.toWindowInsets();
+                return mReturnedInsets;
+            }
+        });
+    }
+
+    /**
+     * The backport of {@link WindowInsetsAnimationCompat.Callback} on API < 30 relies on
+     * onApplyWindowInsetsListener, so if this callback is set, we'll call it in this method
+     */
+    private static void callCompatInsetAnimationCallback(final @NonNull WindowInsets insets,
+                                                 final @NonNull View v) {
+        // In case a WindowInsetsAnimationCompat.Callback is set, make sure to
+        // call its compat listener.
+        View.OnApplyWindowInsetsListener insetsAnimationCallback =
+                (View.OnApplyWindowInsetsListener) v.getTag(
+                        R.id.tag_window_insets_animation_callback);
+        if (insetsAnimationCallback != null) {
+            insetsAnimationCallback.onApplyWindowInsets(v, insets);
+        }
+    }
+
+    public static Insets adapterInsetsWithGravity(View view, Insets insets){
+        int left = insets.left;
+        int right = insets.right;
+        int top = insets.top;
+        int bottom = insets.bottom;
+
+        ViewGroup.LayoutParams lp = view.getLayoutParams();
+        if(lp instanceof ConstraintLayout.LayoutParams){
+            ConstraintLayout.LayoutParams constraintLp = (ConstraintLayout.LayoutParams) lp;
+            if (constraintLp.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                if(constraintLp.leftToLeft == ConstraintLayout.LayoutParams.PARENT_ID){
+                    right = 0;
+                }else if(constraintLp.rightToRight == ConstraintLayout.LayoutParams.PARENT_ID){
+                    left = 0;
+                }
             }
 
-            Rect childInsets = new Rect(insets);
-            computeInsets(child, childInsets);
+            if (constraintLp.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                if(constraintLp.topToTop == ConstraintLayout.LayoutParams.PARENT_ID){
+                    bottom = 0;
+                }else if(constraintLp.bottomToBottom == ConstraintLayout.LayoutParams.PARENT_ID){
+                    top = 0;
+                }
+            }
+        }else{
+            int gravity = -1;
+            if (lp instanceof FrameLayout.LayoutParams) {
+                gravity = ((FrameLayout.LayoutParams) lp).gravity;
+            }
+            /**
+             * 因为该方法执行时机早于 FrameLayout.layoutChildren，
+             * 而在 {FrameLayout#layoutChildren} 中当 gravity == -1 时会设置默认值为 Gravity.TOP | Gravity.LEFT，
+             * 所以这里也要同样设置
+             */
+            if (gravity == -1) {
+                gravity = Gravity.TOP | Gravity.LEFT;
+            }
 
-            if (!isHandleContainer(child)) {
-                child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-            } else {
-                if (child instanceof IWindowInsetLayout) {
-                    boolean output = ((IWindowInsetLayout) child).applySystemWindowInsets19(childInsets);
-                    consumed = consumed || output;
-                } else {
-                    boolean output = defaultApplySystemWindowInsets19((ViewGroup) child, childInsets);
-                    consumed = consumed || output;
+            if (lp.width != ViewGroup.LayoutParams.MATCH_PARENT) {
+                int horizontalGravity = gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
+                switch (horizontalGravity) {
+                    case Gravity.LEFT:
+                        right = 0;
+                        break;
+                    case Gravity.RIGHT:
+                        left = 0;
+                        break;
+                }
+            }
+
+            if (lp.height != ViewGroup.LayoutParams.MATCH_PARENT) {
+                int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
+                switch (verticalGravity) {
+                    case Gravity.TOP:
+                        bottom = 0;
+                        break;
+                    case Gravity.BOTTOM:
+                        top = 0;
+                        break;
                 }
             }
         }
-
-        return consumed;
+        return Insets.of(left, top, right, bottom);
     }
 
-    @TargetApi(21)
-    public static WindowInsetsCompat defaultApplySystemWindowInsets21(ViewGroup viewGroup, WindowInsetsCompat insets) {
-        boolean showKeyboard = false;
-        if (insets.getSystemWindowInsetBottom() >= QMUIDisplayHelper.dp2px(viewGroup.getContext(), QMUIWindowHelper.KEYBOARD_HEIGHT_BOUNDARY_DP) &&
-                shouldInterceptKeyboardInset(viewGroup)) {
-            showKeyboard = true;
-            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(insets.getSystemWindowInsetBottom());
-            }else{
-                QMUIViewHelper.setPaddingBottom(viewGroup, insets.getSystemWindowInsetBottom());
-            }
-            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, QMUIKeyboardHelper.KEYBOARD_CONSUMER);
-        } else {
-            if(viewGroup instanceof IWindowInsetKeyboardConsumer){
-                ((IWindowInsetKeyboardConsumer)viewGroup).onHandleKeyboard(0);
-            }else{
-                QMUIViewHelper.setPaddingBottom(viewGroup, 0);
-            }
-            viewGroup.setTag(R.id.qmui_window_inset_keyboard_area_consumer, null);
-        }
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            View child = viewGroup.getChildAt(i);
-
-            if (jumpDispatch(child)) {
-                continue;
-            }
-
-            Rect childInsets = new Rect(
-                    insets.getSystemWindowInsetLeft(),
-                    insets.getSystemWindowInsetTop(),
-                    insets.getSystemWindowInsetRight(),
-                    showKeyboard ? 0 : insets.getSystemWindowInsetBottom());
-            computeInsets(child, childInsets);
-            if (!isHandleContainer(child)) {
-                child.setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-            }else{
-                WindowInsetsCompat childWindowInsets = new WindowInsetsCompat.Builder(insets)
-                        .setSystemWindowInsets(Insets.of(childInsets))
-                        .build();
-                ViewCompat.dispatchApplyWindowInsets(child, childWindowInsets);
-            }
-        }
-        return insets.consumeSystemWindowInsets();
-    }
-
-
-    private static void dispatchNotchInsetChange(View view) {
-        if (view instanceof INotchInsetConsumer) {
-            boolean stop = ((INotchInsetConsumer) view).notifyInsetMaybeChanged();
-            if (stop) {
-                return;
-            }
-        }
-        if (view instanceof ViewGroup && view.getClass().getAnnotation(InterceptNotchInsetDispatch.class) == null) {
-            ViewGroup viewGroup = (ViewGroup) view;
-            int childCount = viewGroup.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                dispatchNotchInsetChange(viewGroup.getChildAt(i));
-            }
-        }
-    }
-
-    private static boolean shouldInterceptKeyboardInset(ViewGroup viewGroup){
-        return viewGroup.getClass().getAnnotation(DoNotInterceptKeyboardInset.class) == null;
-    }
-
-    public static boolean jumpDispatch(View child) {
-        return !child.getFitsSystemWindows() && !isHandleContainer(child);
-    }
-
-    public static boolean isHandleContainer(View child) {
-        boolean ret = child instanceof IWindowInsetLayout ||
-                child instanceof CoordinatorLayout ||
-                child instanceof DrawerLayout;
-        if (ret) {
-            return true;
-        }
-        for (Class<? extends View> clz : sCustomHandlerContainerList) {
-            if (clz.isInstance(child)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void addHandleContainer(Class<? extends ViewGroup> clazz) {
-        sCustomHandlerContainerList.add(clazz);
-    }
-
-    public static void computeInsets(View view, Rect insets) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if(lp instanceof ConstraintLayout.LayoutParams){
-            computeInsetsWithConstraint(insets, (ConstraintLayout.LayoutParams) lp);
-        }else{
-            computeInsetsWithGravity(insets, lp);
-        }
-    }
-
-    @SuppressLint("RtlHardcoded")
-    public static void computeInsetsWithGravity(Rect insets, ViewGroup.LayoutParams lp) {
-        int gravity = -1;
-        if (lp instanceof FrameLayout.LayoutParams) {
-            gravity = ((FrameLayout.LayoutParams) lp).gravity;
-        }
-
-        /**
-         * 因为该方法执行时机早于 FrameLayout.layoutChildren，
-         * 而在 {FrameLayout#layoutChildren} 中当 gravity == -1 时会设置默认值为 Gravity.TOP | Gravity.LEFT，
-         * 所以这里也要同样设置
-         */
-        if (gravity == -1) {
-            gravity = Gravity.TOP | Gravity.LEFT;
-        }
-
-        if (lp.width != ViewGroup.LayoutParams.MATCH_PARENT) {
-            int horizontalGravity = gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
-            switch (horizontalGravity) {
-                case Gravity.LEFT:
-                    insets.right = 0;
-                    break;
-                case Gravity.RIGHT:
-                    insets.left = 0;
-                    break;
-            }
-        }
-
-        if (lp.height != ViewGroup.LayoutParams.MATCH_PARENT) {
-            int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
-            switch (verticalGravity) {
-                case Gravity.TOP:
-                    insets.bottom = 0;
-                    break;
-                case Gravity.BOTTOM:
-                    insets.top = 0;
-                    break;
-            }
-        }
-    }
-
-    public static void computeInsetsWithConstraint(Rect insets, ConstraintLayout.LayoutParams lp){
-        if (lp.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            if(lp.leftToLeft == ConstraintLayout.LayoutParams.PARENT_ID){
-                insets.right = 0;
-            }else if(lp.rightToRight == ConstraintLayout.LayoutParams.PARENT_ID){
-                insets.left = 0;
-            }
-        }
-
-        if (lp.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            if(lp.topToTop == ConstraintLayout.LayoutParams.PARENT_ID){
-                insets.bottom = 0;
-            }else if(lp.bottomToBottom == ConstraintLayout.LayoutParams.PARENT_ID){
-                insets.top = 0;
-            }
-        }
+    public interface InsetHandler{
+        void handleInset(View view, Insets insets);
     }
 }

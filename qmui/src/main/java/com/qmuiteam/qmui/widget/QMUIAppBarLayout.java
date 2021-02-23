@@ -17,29 +17,12 @@
 package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-import java.lang.reflect.Field;
-
-/**
- * add support for API 19 when use with {@link CoordinatorLayout}
- * and {@link QMUICollapsingTopBarLayout}
- * <p>
- * notice: we use reflection to change the field value in AppBarLayout. use it only if you need to
- * set fitSystemWindows for StatusBar
- *
- * @author cginechen
- * @date 2017-09-20
- */
-
-public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout {
+@Deprecated
+public class QMUIAppBarLayout extends AppBarLayout {
 
     public QMUIAppBarLayout(Context context) {
         super(context);
@@ -49,45 +32,4 @@ public class QMUIAppBarLayout extends AppBarLayout implements IWindowInsetLayout
         super(context, attrs);
     }
 
-
-    private Field mLastInsetField = null;
-
-    @Override
-    public boolean applySystemWindowInsets19(final Rect insets) {
-        if (ViewCompat.getFitsSystemWindows(this)) {
-            if(mLastInsetField == null){
-                try {
-                    // support 28 change the name
-                    mLastInsetField = AppBarLayout.class.getDeclaredField("lastInsets");
-                } catch (NoSuchFieldException e) {
-                    try {
-                        mLastInsetField = AppBarLayout.class.getDeclaredField("mLastInsets");
-                    } catch (NoSuchFieldException ignored) {
-
-                    }
-                }
-            }
-            if (mLastInsetField != null) {
-                mLastInsetField.setAccessible(true);
-                try {
-                    mLastInsetField.set(this, new WindowInsetsCompat(null) {
-                        @Override
-                        public int getSystemWindowInsetTop() {
-                            return insets.top;
-                        }
-                    });
-                } catch (IllegalAccessException ignored) {
-
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
-        // will not run here.
-        return insets;
-    }
 }

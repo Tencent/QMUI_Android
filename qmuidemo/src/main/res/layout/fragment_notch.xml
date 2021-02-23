@@ -15,7 +15,7 @@
  limitations under the License.
 -->
 
-<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.qmuiteam.qmui.layout.QMUIFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -61,4 +61,4 @@
             android:textSize="12sp"/>
     </FrameLayout>
 
-</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
+</com.qmuiteam.qmui.layout.QMUIFrameLayout>

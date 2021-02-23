@@ -19,27 +19,27 @@ package com.qmuiteam.qmui.widget.webview;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.WindowInsets;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUINotchHelper;
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-import com.qmuiteam.qmui.widget.IWindowInsetLayout;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QMUIWebView extends WebView implements IWindowInsetLayout {
+public class QMUIWebView extends WebView {
 
     private static final String TAG = "QMUIWebView";
     private static boolean sIsReflectionOccurError = false;
@@ -75,7 +75,21 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
         removeJavascriptInterface("searchBoxJavaBridge_");
         removeJavascriptInterface("accessibility");
         removeJavascriptInterface("accessibilityTraversal");
-        QMUIWindowInsetHelper.apply(this);
+        QMUIWindowInsetHelper.handleWindowInsets(this, WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout(), new QMUIWindowInsetHelper.InsetHandler() {
+            @Override
+            public void handleInset(View view, Insets insets) {
+                if (mNeedDispatchSafeAreaInset) {
+                    float density = QMUIDisplayHelper.getDensity(getContext());
+                    Rect rect = new Rect(
+                            (int) (insets.left / density + getExtraInsetLeft(density)),
+                            (int) (insets.top / density + getExtraInsetTop(density)),
+                            (int) (insets.right / density + getExtraInsetRight(density)),
+                            (int) (insets.bottom / density + getExtraInsetBottom(density))
+                    );
+                    setStyleDisplayCutoutSafeArea(rect);
+                }
+            }
+        }, true, false, false);
     }
 
     @Override
@@ -154,31 +168,6 @@ public class QMUIWebView extends WebView implements IWindowInsetLayout {
 
     boolean isNotSupportChangeCssEnv() {
         return sIsReflectionOccurError;
-    }
-
-    @Override
-    public boolean applySystemWindowInsets19(Rect insets) {
-        return false;
-    }
-
-    @Override
-    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
-        if (!mNeedDispatchSafeAreaInset) {
-            return insets;
-        }
-        float density = QMUIDisplayHelper.getDensity(getContext());
-        int left = insets.getSystemWindowInsetLeft();
-        int top = insets.getSystemWindowInsetTop();
-        int right = insets.getSystemWindowInsetRight();
-        int bottom = insets.getSystemWindowInsetBottom();
-        Rect rect = new Rect(
-                (int) (left / density + getExtraInsetLeft(density)),
-                (int) (top / density + getExtraInsetTop(density)),
-                (int) (right / density + getExtraInsetRight(density)),
-                (int) (bottom / density + getExtraInsetBottom(density))
-        );
-        setStyleDisplayCutoutSafeArea(rect);
-        return insets.consumeSystemWindowInsets();
     }
 
     protected int getExtraInsetTop(float density) {

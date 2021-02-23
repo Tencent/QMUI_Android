@@ -16,24 +16,19 @@
 
 package com.qmuiteam.qmui.widget.webview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-
-import com.qmuiteam.qmui.util.QMUINotchHelper;
-import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.WindowInsetsCompat;
 
-public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
+
+public class QMUIWebViewContainer extends QMUIFrameLayout {
 
     private QMUIWebView mWebView;
     private QMUIWebView.OnScrollChangeListener mOnScrollChangeListener;
@@ -59,6 +54,7 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
             }
         });
         addView(mWebView, getWebViewLayoutParams());
+        QMUIWindowInsetHelper.handleWindowInsets(this, WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
     }
 
     protected FrameLayout.LayoutParams getWebViewLayoutParams() {
@@ -84,40 +80,5 @@ public class QMUIWebViewContainer extends QMUIWindowInsetLayout {
 
     public void setCustomOnScrollChangeListener(QMUIWebView.OnScrollChangeListener onScrollChangeListener) {
         mOnScrollChangeListener = onScrollChangeListener;
-    }
-
-    @Override
-    @TargetApi(19)
-    public boolean applySystemWindowInsets19(Rect insets) {
-        if (getFitsSystemWindows()) {
-            Rect childInsets = new Rect(insets);
-            QMUIWindowInsetHelper.computeInsets(this, childInsets);
-            setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-            return true;
-        }
-        return super.applySystemWindowInsets19(insets);
-    }
-
-
-    @Override
-    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
-        if (getFitsSystemWindows()) {
-            int insetLeft = insets.getSystemWindowInsetLeft();
-            int insetRight = insets.getSystemWindowInsetRight();
-            int insetTop = insets.getSystemWindowInsetTop();
-            int insetBottom = insets.getSystemWindowInsetBottom();
-
-            if (QMUINotchHelper.needFixLandscapeNotchAreaFitSystemWindow(this) &&
-                    getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                insetLeft = Math.max(insetLeft, QMUINotchHelper.getSafeInsetLeft(this));
-                insetRight = Math.max(insetRight, QMUINotchHelper.getSafeInsetRight(this));
-            }
-
-            Rect childInsets = new Rect(insetLeft, insetTop, insetRight, insetBottom);
-            QMUIWindowInsetHelper.computeInsets(this, childInsets);
-            setPadding(childInsets.left, childInsets.top, childInsets.right, childInsets.bottom);
-            return insets.consumeSystemWindowInsets();
-        }
-        return super.applySystemWindowInsets21(insets);
     }
 }

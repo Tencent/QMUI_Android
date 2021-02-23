@@ -18,28 +18,25 @@ package com.qmuiteam.qmui.widget;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
 /**
  * @author cginechen
  * @date 2017-09-13
  */
 
-public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
+public class QMUIViewPager extends ViewPager {
     private static final int DEFAULT_INFINITE_RATIO = 100;
 
     private boolean mIsSwipeable = true;
@@ -53,11 +50,8 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
 
     public QMUIViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        QMUIWindowInsetHelper.apply(this);
+        QMUIWindowInsetHelper.overrideWithDoNotHandleWindowInsets(this);
     }
-
-
-
 
     public void setSwipeable(boolean enable) {
         mIsSwipeable = enable;
@@ -82,13 +76,12 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
                 getAdapter().notifyDataSetChanged();
             }
         }
-
     }
 
     @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        super.addView(child, index, params);
-        ViewCompat.requestApplyInsets(this);
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+        ViewCompat.requestApplyInsets(child);
     }
 
     @Override
@@ -118,25 +111,6 @@ public class QMUIViewPager extends ViewPager implements IWindowInsetLayout {
 
     public boolean isInMeasure() {
         return mIsInMeasure;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    protected boolean fitSystemWindows(Rect insets) {
-        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
-            return applySystemWindowInsets19(insets);
-        }
-        return super.fitSystemWindows(insets);
-    }
-
-    @Override
-    public boolean applySystemWindowInsets19(Rect insets) {
-        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets19(this, insets);
-    }
-
-    @Override
-    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
-        return QMUIWindowInsetHelper.defaultApplySystemWindowInsets21(this, insets);
     }
 
     @Override

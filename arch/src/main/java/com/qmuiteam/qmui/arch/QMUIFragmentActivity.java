@@ -19,7 +19,6 @@ package com.qmuiteam.qmui.arch;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -38,10 +37,7 @@ import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
-import com.qmuiteam.qmui.util.DoNotInterceptKeyboardInset;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
-import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
-import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 
 /**
  * the container activity for {@link QMUIFragment}.
@@ -55,10 +51,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     private RootView mRootView;
     private boolean mIsFirstFragmentAdded = false;
     private boolean isChildHandlePopBackRequested = false;
-
-    static {
-        QMUIWindowInsetHelper.addHandleContainer(FragmentContainerView.class);
-    }
 
     @Override
     public int getContextViewId() {
@@ -336,17 +328,11 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         return intent;
     }
 
-    public static abstract class RootView extends QMUIWindowInsetLayout {
+    public static abstract class RootView extends FrameLayout {
 
 
         public RootView(Context context, int fragmentContainerId) {
             super(context);
-        }
-
-        @Override
-        public boolean applySystemWindowInsets19(Rect insets) {
-            super.applySystemWindowInsets19(insets);
-            return true;
         }
 
         public abstract FragmentContainerView getFragmentContainerView();
@@ -363,7 +349,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     }
 
     @SuppressLint("ViewConstructor")
-    @DoNotInterceptKeyboardInset
     public static class DefaultRootView extends RootView {
         private FragmentContainerView mFragmentContainerView;
 

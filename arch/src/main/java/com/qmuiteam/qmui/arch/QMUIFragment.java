@@ -37,6 +37,7 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -66,7 +67,6 @@ import com.qmuiteam.qmui.arch.scheme.FragmentSchemeRefreshable;
 import com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 
 import java.lang.reflect.Field;
@@ -92,8 +92,7 @@ import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
  */
 public abstract class QMUIFragment extends Fragment implements
         LatestVisitArgumentCollector,
-        FragmentSchemeRefreshable,
-        SwipeBackLayout.OnKeyboardInsetHandler{
+        FragmentSchemeRefreshable{
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
@@ -532,7 +531,12 @@ public abstract class QMUIFragment extends Fragment implements
             mListenerRemover.remove();
         }
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
-        swipeBackLayout.setOnKeyboardInsetHandler(this);
+        swipeBackLayout.setOnInsetsHandler(new SwipeBackLayout.OnInsetsHandler() {
+            @Override
+            public int getInsetsType() {
+                return getRootViewInsetsType();
+            }
+        });
         if (isCreateForSwipeBack) {
             swipeBackLayout.setTag(R.id.fragment_container_view_tag, this);
         }
@@ -852,12 +856,8 @@ public abstract class QMUIFragment extends Fragment implements
         }
 
         swipeBackLayout.setFitsSystemWindows(false);
-        if (getActivity() != null) {
-            QMUIViewHelper.requestApplyInsets(getActivity().getWindow());
-        }
         return swipeBackLayout;
     }
-
 
     private void bubbleBackPressedEvent() {
         // disable this and go with FragmentManager's backPressesCallback
@@ -1391,28 +1391,10 @@ public abstract class QMUIFragment extends Fragment implements
         return false;
     }
 
-    /**
-     * @return true if parentFragments is visible to user
-     */
-    private boolean isParentVisibleToUser() {
-        Fragment parentFragment = getParentFragment();
-        while (parentFragment != null) {
-            if (!parentFragment.getUserVisibleHint()) {
-                return false;
-            }
-            parentFragment = parentFragment.getParentFragment();
-        }
-        return true;
-    }
 
-    @Override
-    public boolean handleKeyboardInset(int inset) {
-        return false;
-    }
-
-    @Override
-    public boolean interceptSelfKeyboardInset() {
-        return false;
+    @WindowInsetsCompat.Type.InsetsType
+    public int getRootViewInsetsType() {
+        return getParentFragment() == null ? WindowInsetsCompat.Type.ime() : 0;
     }
 
     @Override

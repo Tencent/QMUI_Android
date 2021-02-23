@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
@@ -34,6 +35,7 @@ import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
 /**
  * 这是一个对 {@link QMUITopBar} 的代理类，需要它的原因是：
@@ -66,10 +68,15 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         mTopBar = new QMUITopBar(context, attrs, defStyleAttr);
         mTopBar.setBackground(null);
         mTopBar.setVisibility(View.VISIBLE);
+        // reset these field because mTopBar will set same value with QMUITopBarLayout from attrs
+        mTopBar.setFitsSystemWindows(false);
+        mTopBar.setId(View.generateViewId());
         mTopBar.updateBottomDivider(0, 0, 0, 0);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, mTopBar.getTopBarHeight());
         addView(mTopBar, lp);
+        QMUIWindowInsetHelper.handleWindowInsets(this,
+                WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout(), true);
     }
 
     public QMUITopBar getTopBar() {

@@ -117,6 +117,11 @@ public abstract class BaseFragment extends QMUIFragment {
 
     }
 
+    @Override
+    protected boolean translucentFull() {
+        return true;
+    }
+
     protected void goToWebExplorer(@NonNull String url, @Nullable String title) {
         Intent intent = QDMainActivity.createWebExplorerIntent(getContext(), url, title);
         startActivity(intent);

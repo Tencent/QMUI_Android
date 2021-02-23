@@ -19,7 +19,6 @@ package com.qmuiteam.qmui.arch;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -33,13 +32,13 @@ import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
-import com.qmuiteam.qmui.widget.IWindowInsetKeyboardConsumer;
-import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ import static com.qmuiteam.qmui.QMUIInterpolatorStaticHolder.QUNITIC_INTERPOLATO
  */
 
 
-public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowInsetKeyboardConsumer {
+public class SwipeBackLayout extends FrameLayout {
 
     private static final int MIN_FLING_VELOCITY = 400; // dips per second
     private static final int DEFAULT_SCRIM_COLOR = 0x99000000;
@@ -88,7 +87,7 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
     private View mContentView;
     private List<SwipeListener> mListeners;
     private Callback mCallback;
-    private OnKeyboardInsetHandler mOnKeyboardInsetHandler;
+    private OnInsetsHandler mOnInsetsHandler;
 
     private Drawable mShadowLeft;
     private Drawable mShadowRight;
@@ -151,6 +150,19 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
         mMaxVelocity = vc.getScaledMaximumFlingVelocity();
         mMinVelocity = minVel;
         mScroller = new OverScroller(context, QUNITIC_INTERPOLATOR);
+        QMUIWindowInsetHelper.setOnApplyWindowInsetsListener(this, new androidx.core.view.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                int insetsType = mOnInsetsHandler != null ? mOnInsetsHandler.getInsetsType() : 0;
+                if(insetsType != 0){
+                    Insets toUsed = insets.getInsetsIgnoringVisibility(insetsType);
+                    v.setPadding(toUsed.left, toUsed.top, toUsed.right, toUsed.bottom);
+                }else{
+                    v.setPadding(0, 0, 0, 0);
+                }
+                return insets;
+            }
+        }, false);
     }
 
     public void setEnableSwipeBack(boolean enableSwipeBack) {
@@ -239,18 +251,8 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
         mListeners = null;
     }
 
-    public void setOnKeyboardInsetHandler(OnKeyboardInsetHandler onKeyboardInsetHandler) {
-        mOnKeyboardInsetHandler = onKeyboardInsetHandler;
-    }
-
-    @Override
-    public void onHandleKeyboard(int keyboardInset) {
-        if(mOnKeyboardInsetHandler != null && mOnKeyboardInsetHandler.interceptSelfKeyboardInset()){
-            return;
-        }
-        if(mOnKeyboardInsetHandler == null || !mOnKeyboardInsetHandler.handleKeyboardInset(keyboardInset)){
-            QMUIViewHelper.setPaddingBottom(this, keyboardInset);
-        }
+    public void setOnInsetsHandler(OnInsetsHandler insetsHandler) {
+        mOnInsetsHandler = insetsHandler;
     }
 
     /**
@@ -658,12 +660,6 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
     }
 
     @Override
-    public boolean applySystemWindowInsets19(Rect insets) {
-        super.applySystemWindowInsets19(insets);
-        return true;
-    }
-
-    @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         final boolean drawContent = child == mContentView;
 
@@ -876,9 +872,9 @@ public class SwipeBackLayout extends QMUIWindowInsetLayout implements IWindowIns
         void onScrollOverThreshold();
     }
 
-    public interface OnKeyboardInsetHandler {
-        boolean handleKeyboardInset(int inset);
-        boolean interceptSelfKeyboardInset();
+    public interface OnInsetsHandler {
+        @WindowInsetsCompat.Type.InsetsType
+        int getInsetsType();
     }
 
     public static class ViewMoveAuto implements ViewMoveAction {

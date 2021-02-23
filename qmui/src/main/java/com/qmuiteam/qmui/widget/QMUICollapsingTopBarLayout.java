@@ -61,6 +61,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StyleRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -77,12 +78,14 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.util.QMUIViewOffsetHelper;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -93,7 +96,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @date 2017-09-02
  */
 
-public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowInsetLayout, IQMUISkinDispatchInterceptor {
+public class QMUICollapsingTopBarLayout extends FrameLayout implements IQMUISkinDispatchInterceptor {
 
     private static final int DEFAULT_SCRIM_ANIMATION_DURATION = 600;
 
@@ -125,7 +128,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
     int mCurrentOffset;
 
-    Object mLastInsets;
+    Insets mLastInsets;
 
     private int mContentScrimSkinAttr = 0;
     private int mStatusBarScrimSkinAttr = 0;
@@ -216,13 +219,28 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
         setWillNotDraw(false);
 
-        ViewCompat.setOnApplyWindowInsetsListener(this,
-                new androidx.core.view.OnApplyWindowInsetsListener() {
+        QMUIWindowInsetHelper.handleWindowInsets(this,
+                WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout(),
+                new QMUIWindowInsetHelper.InsetHandler() {
                     @Override
-                    public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                        return applySystemWindowInsets21(insets);
+                    public void handleInset(View view, Insets insets) {
+                        Insets newInsets = null;
+                        if (ViewCompat.getFitsSystemWindows(view)) {
+                            // If we're set to fit system windows, keep the insets
+                            newInsets = insets;
+                        }
+
+                        // If our insets have changed, keep them and invalidate the scroll ranges...
+                        if (!Objects.equals(mLastInsets, insets)) {
+                            mLastInsets = newInsets;
+                            requestLayout();
+                        }
                     }
-                });
+                },
+                true,
+                false,
+                false
+        );
     }
 
     public void followTopBarCommonSkin() {
@@ -303,11 +321,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
 
     private int getWindowInsetTop() {
         if (mLastInsets != null) {
-            if (mLastInsets instanceof WindowInsetsCompat) {
-                return ((WindowInsetsCompat) mLastInsets).getSystemWindowInsetTop();
-            } else if (mLastInsets instanceof Rect) {
-                return ((Rect) mLastInsets).top;
-            }
+            return mLastInsets.top;
         }
         return 0;
     }
@@ -1108,46 +1122,6 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IWindowIn
         return new QMUICollapsingTopBarLayout.LayoutParams(p);
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    protected boolean fitSystemWindows(Rect insets) {
-        return applySystemWindowInsets19(insets);
-    }
-
-    @Override
-    public boolean applySystemWindowInsets19(Rect insets) {
-        Rect newInsets = null;
-        if (ViewCompat.getFitsSystemWindows(this)) {
-            // If we're set to fit system windows, keep the insets
-            newInsets = insets;
-        }
-
-        // If our insets have changed, keep them and invalidate the scroll ranges...
-        if (!QMUILangHelper.objectEquals(mLastInsets, newInsets)) {
-            mLastInsets = newInsets;
-            requestLayout();
-        }
-
-        // Consume the insets. This is done so that child views with fitSystemWindows=true do not
-        // get the default padding functionality from View
-        return true;
-    }
-
-    @Override
-    public WindowInsetsCompat applySystemWindowInsets21(WindowInsetsCompat insets) {
-        Object newInsets = null;
-        if (ViewCompat.getFitsSystemWindows(this)) {
-            // If we're set to fit system windows, keep the insets
-            newInsets = insets;
-        }
-
-        // If our insets have changed, keep them and invalidate the scroll ranges...
-        if (!QMUILangHelper.objectEquals(mLastInsets, newInsets)) {
-            mLastInsets = newInsets;
-            requestLayout();
-        }
-        return insets.consumeSystemWindowInsets();
-    }
 
     public static class LayoutParams extends FrameLayout.LayoutParams {
 

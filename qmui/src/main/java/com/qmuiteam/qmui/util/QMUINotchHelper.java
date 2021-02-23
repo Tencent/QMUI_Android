@@ -31,9 +31,11 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 
-import java.lang.reflect.Method;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import java.lang.reflect.Method;
 
 public class QMUINotchHelper {
 
@@ -274,15 +276,12 @@ public class QMUINotchHelper {
         if(view == null){
             return;
         }
-        WindowInsets rootWindowInsets = view.getRootWindowInsets();
+        WindowInsetsCompat rootWindowInsets = ViewCompat.getRootWindowInsets(view);
         if(rootWindowInsets == null){
             return;
         }
-        DisplayCutout displayCutout = rootWindowInsets.getDisplayCutout();
-        if(displayCutout != null){
-            out.set(displayCutout.getSafeInsetLeft(), displayCutout.getSafeInsetTop(),
-                    displayCutout.getSafeInsetRight(), displayCutout.getSafeInsetBottom());
-        }
+        Insets cutoutInsets = rootWindowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        out.set(cutoutInsets.left, cutoutInsets.top, cutoutInsets.right, cutoutInsets.bottom);
     }
 
     private static Rect get3rdSafeInsetRect(Context context){

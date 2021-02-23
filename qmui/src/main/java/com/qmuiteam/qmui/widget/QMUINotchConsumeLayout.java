@@ -19,11 +19,15 @@ package com.qmuiteam.qmui.widget;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
 
-import com.qmuiteam.qmui.util.QMUINotchHelper;
+import androidx.core.view.WindowInsetsCompat;
 
-public class QMUINotchConsumeLayout extends FrameLayout implements INotchInsetConsumer {
+import com.qmuiteam.qmui.util.QMUINotchHelper;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
+
+public class QMUINotchConsumeLayout extends FrameLayout {
     public QMUINotchConsumeLayout(Context context) {
         this(context, null);
     }
@@ -34,7 +38,13 @@ public class QMUINotchConsumeLayout extends FrameLayout implements INotchInsetCo
 
     public QMUINotchConsumeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setFitsSystemWindows(false);
+        QMUIWindowInsetHelper.setOnApplyWindowInsetsListener(this, new androidx.core.view.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                notifyInsetMaybeChanged();
+                return insets;
+            }
+        }, true);
     }
 
     @Override
@@ -53,7 +63,6 @@ public class QMUINotchConsumeLayout extends FrameLayout implements INotchInsetCo
         }
     }
 
-    @Override
     public boolean notifyInsetMaybeChanged() {
         setPadding(
                 QMUINotchHelper.getSafeInsetLeft(this),
