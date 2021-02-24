@@ -49,6 +49,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
 import androidx.annotation.ColorInt;
@@ -239,7 +240,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IQMUISkin
                 },
                 true,
                 false,
-                false
+                true
         );
     }
 
@@ -406,6 +407,13 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IQMUISkin
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         ensureToolbar();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
+        super.dispatchApplyWindowInsets(insets);
+        // stop dispatch, but prevent stop parent sibling.
+        return insets;
     }
 
     @Override

@@ -18,7 +18,6 @@ import com.qmuiteam.qmui.arch.QMUINavFragment;
 import com.qmuiteam.qmui.arch.SwipeBackLayout;
 import com.qmuiteam.qmui.arch.record.RecordArgumentEditor;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.widget.QMUIWindowInsetLayout;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
 
 public class QDArchNavFragment extends QMUINavFragment {
@@ -45,7 +44,7 @@ public class QDArchNavFragment extends QMUINavFragment {
 
     @Override
     protected View onCreateView() {
-        QMUIWindowInsetLayout root = new QMUIWindowInsetLayout(getContext());
+        FrameLayout root = new FrameLayout(getContext());
         FragmentContainerView fragmentContainerView = new FragmentContainerView(getContext());
         TextView tipView = new TextView(getContext());
         tipView.setText("Nav");
@@ -57,6 +56,11 @@ public class QDArchNavFragment extends QMUINavFragment {
         root.addView(tipView, lp);
         configFragmentContainerView(fragmentContainerView);
         return root;
+    }
+
+    @Override
+    protected boolean translucentFull() {
+        return true;
     }
 
     @Override
