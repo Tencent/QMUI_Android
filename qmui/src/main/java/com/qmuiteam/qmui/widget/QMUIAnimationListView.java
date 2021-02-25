@@ -21,15 +21,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
-import android.os.Build;
 import android.os.Looper;
 import android.os.SystemClock;
-import androidx.collection.LongSparseArray;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -41,6 +37,9 @@ import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import androidx.collection.LongSparseArray;
+import androidx.core.view.ViewCompat;
 
 import com.qmuiteam.qmui.QMUILog;
 
@@ -116,7 +115,6 @@ public class QMUIAnimationListView extends ListView {
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public QMUIAnimationListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();

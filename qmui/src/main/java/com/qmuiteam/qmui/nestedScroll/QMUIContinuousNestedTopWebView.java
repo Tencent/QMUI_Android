@@ -17,14 +17,13 @@
 package com.qmuiteam.qmui.nestedScroll;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
-
-import androidx.annotation.NonNull;
 
 public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUIContinuousNestedTopView {
 
@@ -106,10 +105,6 @@ public class QMUIContinuousNestedTopWebView extends QMUIWebView implements IQMUI
     }
 
     private void exec(final String jsCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            evaluateJavascript(jsCode, null);
-        } else {
-            loadUrl(jsCode);
-        }
+        evaluateJavascript(jsCode, null);
     }
 }

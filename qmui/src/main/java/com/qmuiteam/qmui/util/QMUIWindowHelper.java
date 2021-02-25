@@ -22,12 +22,12 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.BuildConfig;
 
 import java.lang.reflect.Field;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * @author cginechen
@@ -50,11 +50,7 @@ public class QMUIWindowHelper {
      */
 
     public static void setWindowType(WindowManager.LayoutParams layoutParams) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-        } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-        }
+        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
     }
 
 

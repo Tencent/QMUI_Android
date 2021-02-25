@@ -25,7 +25,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -701,9 +700,7 @@ public class QMUIQQFaceView extends View {
             if (mJumpHandleMeasureAndDraw) {
                 break;
             }
-            if (mCurrentCalLine > mMaxLine && mEllipsize == TextUtils.TruncateAt.END
-                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                // 针对4.x的手机，如果超过最大行数，就打断测量，但这样存在的问题是getLines获取不到真实的行数
+            if (mCurrentCalLine > mMaxLine && mEllipsize == TextUtils.TruncateAt.END) {
                 break;
             }
             element = elements.get(i);

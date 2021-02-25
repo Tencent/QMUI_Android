@@ -17,7 +17,6 @@
 package com.qmuiteam.qmuidemo.fragment.util;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -160,15 +159,10 @@ public class QDNotchHelperFragment extends BaseFragment {
             }
             View decorView = window.getDecorView();
             int systemUi = decorView.getSystemUiVisibility();
-            systemUi |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                systemUi |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                systemUi |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            }
+            systemUi |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             decorView.setSystemUiVisibility(systemUi);
             QMUIDisplayHelper.setFullScreen(getActivity());
             QMUIViewHelper.fadeOut(mTopBar, 300, null, true);
@@ -186,14 +180,9 @@ public class QDNotchHelperFragment extends BaseFragment {
             }
             final View decorView = window.getDecorView();
             int systemUi = decorView.getSystemUiVisibility();
-            systemUi &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                systemUi &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
-                systemUi |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                systemUi &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            }
+            systemUi &= ~(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            systemUi |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
             decorView.setSystemUiVisibility(systemUi);
             QMUIDisplayHelper.cancelFullScreen(getActivity());
             QMUIViewHelper.fadeIn(mTopBar, 300, null, true);

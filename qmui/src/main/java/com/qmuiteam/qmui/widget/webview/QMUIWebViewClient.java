@@ -17,15 +17,15 @@
 package com.qmuiteam.qmui.widget.webview;
 
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class QMUIWebViewClient extends WebViewClient {
 
@@ -117,30 +117,15 @@ public class QMUIWebViewClient extends WebViewClient {
     }
 
     private void runJsCode(WebView webView, @NonNull String jsCode, @Nullable final Runnable finishAction) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            if (finishAction == null) {
-                webView.evaluateJavascript(jsCode, null);
-            } else {
-                webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        finishAction.run();
-                    }
-                });
-            }
-
+        if (finishAction == null) {
+            webView.evaluateJavascript(jsCode, null);
         } else {
-            // Usually, there is no chance to come here.
-            webView.loadUrl("javascript:" + jsCode);
-            if (finishAction != null) {
-                webView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finishAction.run();
-                    }
-                }, 250);
-            }
-
+            webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    finishAction.run();
+                }
+            });
         }
     }
 }

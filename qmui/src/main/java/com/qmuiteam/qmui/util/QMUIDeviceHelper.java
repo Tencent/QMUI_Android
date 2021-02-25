@@ -17,7 +17,6 @@
 package com.qmuiteam.qmui.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.content.Context;
@@ -363,16 +362,7 @@ public class QMUIDeviceHelper {
      */
     public static boolean isFloatWindowOpAllowed(Context context) {
         final int version = Build.VERSION.SDK_INT;
-        if (version >= 19) {
-            return checkOp(context, 24);  // 24 是AppOpsManager.OP_SYSTEM_ALERT_WINDOW 的值，该值无法直接访问
-        } else {
-            try {
-                return (context.getApplicationInfo().flags & 1 << 27) == 1 << 27;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
+        return checkOp(context, 24);  // 24 是AppOpsManager.OP_SYSTEM_ALERT_WINDOW 的值，该值无法直接访问
     }
 
     public static double getBatteryCapacity(Context context) {
@@ -392,18 +382,15 @@ public class QMUIDeviceHelper {
         return sBatteryCapacity;
     }
 
-    @TargetApi(19)
+
     private static boolean checkOp(Context context, int op) {
-        final int version = Build.VERSION.SDK_INT;
-        if (version >= Build.VERSION_CODES.KITKAT) {
-            AppOpsManager manager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-            try {
-                Method method = manager.getClass().getDeclaredMethod("checkOp", int.class, int.class, String.class);
-                int property = (Integer) method.invoke(manager, op, Binder.getCallingUid(), context.getPackageName());
-                return AppOpsManager.MODE_ALLOWED == property;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        AppOpsManager manager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        try {
+            Method method = manager.getClass().getDeclaredMethod("checkOp", int.class, int.class, String.class);
+            int property = (Integer) method.invoke(manager, op, Binder.getCallingUid(), context.getPackageName());
+            return AppOpsManager.MODE_ALLOWED == property;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }

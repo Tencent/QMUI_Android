@@ -23,7 +23,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -885,7 +884,7 @@ public abstract class QMUIFragment extends Fragment implements
             } else {
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
                 if (needInterceptLastFragmentFinish()) {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !sPopBackWhenSwipeFinished){
+                    if(!sPopBackWhenSwipeFinished){
                         activity.finishAfterTransition();
                     }else{
                         activity.finish();
@@ -907,7 +906,7 @@ public abstract class QMUIFragment extends Fragment implements
                         onHandleSpecLastFragmentFinish(activity, transitionConfig, toExec);
                     }
                 } else {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !sPopBackWhenSwipeFinished){
+                    if(!sPopBackWhenSwipeFinished){
                         activity.finishAfterTransition();
                     }else{
                         activity.finish();

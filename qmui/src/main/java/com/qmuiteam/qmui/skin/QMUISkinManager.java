@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Trace;
 import android.text.Spanned;
 import android.util.ArrayMap;
@@ -267,7 +266,7 @@ public final class QMUISkinManager {
         if (view == null) {
             return;
         }
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (BuildConfig.DEBUG) {
             Trace.beginSection("QMUISkin::dispatch");
         }
         SkinItem skinItem = mSkins.get(skinIndex);
@@ -281,7 +280,7 @@ public final class QMUISkinManager {
             theme = skinItem.getTheme();
         }
         runDispatch(view, skinIndex, theme);
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (BuildConfig.DEBUG) {
             Trace.endSection();
         }
     }

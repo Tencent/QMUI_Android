@@ -622,20 +622,6 @@ public class QMUIViewHelper {
     }
 
     /**
-     * 判断是否需要对 LineSpacingExtra 进行额外的兼容处理
-     * 安卓 5.0 以下版本中，LineSpacingExtra 在最后一行也会产生作用，因此会多出一个 LineSpacingExtra 的空白，可以通过该方法判断后进行兼容处理
-     * if (QMUIViewHelper.getISLastLineSpacingExtraError()) {
-     * textView.bottomMargin = -3dp;
-     * } else {
-     * textView.bottomMargin = 0;
-     * }
-     */
-    public static boolean getIsLastLineSpacingExtraError() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
-    }
-
-
-    /**
      * requestDisallowInterceptTouchEvent 的安全方法。存在它的原因是 QMUIPullRefreshLayout 会拦截这个事件
      *
      * @param view

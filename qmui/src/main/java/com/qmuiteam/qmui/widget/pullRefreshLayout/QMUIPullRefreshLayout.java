@@ -18,7 +18,6 @@ package com.qmuiteam.qmui.widget.pullRefreshLayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -716,11 +715,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
             ((RecyclerView) targetView).scrollToPosition(0);
         } else if (targetView instanceof AbsListView) {
             AbsListView listView = (AbsListView) targetView;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                listView.setSelectionFromTop(0, 0);
-            } else {
-                listView.setSelection(0);
-            }
+            listView.setSelectionFromTop(0, 0);
         } else {
             targetView.scrollTo(0, 0);
         }

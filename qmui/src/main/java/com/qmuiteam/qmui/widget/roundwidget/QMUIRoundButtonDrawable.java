@@ -19,12 +19,11 @@ package com.qmuiteam.qmui.widget.roundwidget;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.R;
 
@@ -51,18 +50,7 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
      * 设置按钮的背景色(只支持纯色,不支持 Bitmap 或 Drawable)
      */
     public void setBgData(@Nullable ColorStateList colors) {
-        if (hasNativeStateListAPI()) {
-            super.setColor(colors);
-        } else {
-            mFillColors = colors;
-            final int currentColor;
-            if (colors == null) {
-                currentColor = Color.TRANSPARENT;
-            } else {
-                currentColor = colors.getColorForState(getState(), 0);
-            }
-            setColor(currentColor);
-        }
+        super.setColor(colors);
     }
 
     /**
@@ -71,17 +59,7 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
     public void setStrokeData(int width, @Nullable ColorStateList colors) {
         mStrokeWidth = width;
         mStrokeColors = colors;
-        if (hasNativeStateListAPI()) {
-            super.setStroke(width, colors);
-        } else {
-            final int currentColor;
-            if (colors == null) {
-                currentColor = Color.TRANSPARENT;
-            } else {
-                currentColor = colors.getColorForState(getState(), 0);
-            }
-            setStroke(width, currentColor);
-        }
+        super.setStroke(width, colors);
     }
 
     public int getStrokeWidth(){
@@ -90,10 +68,6 @@ public class QMUIRoundButtonDrawable extends GradientDrawable {
 
     public void setStrokeColors(@Nullable ColorStateList colors){
         setStrokeData(mStrokeWidth, colors);
-    }
-
-    private boolean hasNativeStateListAPI() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     /**

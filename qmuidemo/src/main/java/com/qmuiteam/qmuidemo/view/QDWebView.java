@@ -60,10 +60,7 @@ public class QDWebView extends QMUIWebView {
         webSettings.setDomStorageEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setTextZoom(100);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-        }
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
         String screen = QMUIDisplayHelper.getScreenWidth(context) + "x" + QMUIDisplayHelper.getScreenHeight(context);
         String userAgent = "QMUIDemo/" + QMUIPackageHelper.getAppVersion(context)
@@ -75,17 +72,13 @@ public class QDWebView extends QMUIWebView {
         }
 
         // 开启调试
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (BuildConfig.DEBUG) {
             setWebContentsDebuggingEnabled(true);
         }
     }
 
     public void exec(final String jsCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            evaluateJavascript(jsCode, null);
-        } else {
-            loadUrl(jsCode);
-        }
+        evaluateJavascript(jsCode, null);
     }
 
     @Override

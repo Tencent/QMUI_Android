@@ -10,7 +10,6 @@ import com.qmuiteam.qmui.type.TypeModel
 import com.qmuiteam.qmui.type.parser.PlainTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class MarqueeTypeView : BaseTypeView {
 
     constructor(context: Context): super(context)
