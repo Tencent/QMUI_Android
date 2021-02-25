@@ -98,11 +98,15 @@ public abstract class QMUIFragment extends Fragment implements
 
     public static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             R.animator.slide_in_right, R.animator.slide_out_left,
-            R.animator.slide_in_left, R.animator.slide_out_right);
+            R.animator.slide_in_left, R.animator.slide_out_right,
+            R.anim.slide_in_left, R.anim.slide_out_right
+    );
 
     public static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
             R.animator.scale_enter, R.animator.slide_still,
-            R.animator.slide_still, R.animator.scale_exit);
+            R.animator.slide_still, R.animator.scale_exit,
+            R.anim.slide_still, R.anim.scale_exit
+    );
 
 
     public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
@@ -224,7 +228,6 @@ public abstract class QMUIFragment extends Fragment implements
         if (mBaseView != null && mPostResumeRunnableList != null && !mPostResumeRunnableList.isEmpty()) {
             mBaseView.post(mCheckPostResumeRunnable);
         }
-        Log.i("cgine", "onResume");
     }
 
     protected void checkForRequestForHandlePopBack(){
@@ -889,7 +892,7 @@ public abstract class QMUIFragment extends Fragment implements
                     }else{
                         activity.finish();
                     }
-                    activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    activity.overridePendingTransition(transitionConfig.popenterAnimation, transitionConfig.popoutAnimation);
                     return;
                 }
                 Object toExec = onLastFragmentFinish();
@@ -900,7 +903,7 @@ public abstract class QMUIFragment extends Fragment implements
                     } else if (toExec instanceof Intent) {
                         Intent intent = (Intent) toExec;
                         startActivity(intent);
-                        activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                        activity.overridePendingTransition(transitionConfig.popenterAnimation, transitionConfig.popoutAnimation);
                         activity.finish();
                     } else {
                         onHandleSpecLastFragmentFinish(activity, transitionConfig, toExec);
@@ -911,7 +914,7 @@ public abstract class QMUIFragment extends Fragment implements
                     }else{
                         activity.finish();
                     }
-                    activity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+                    activity.overridePendingTransition(transitionConfig.popenterAnimation, transitionConfig.popoutAnimation);
                 }
             }
         } else {
@@ -931,7 +934,7 @@ public abstract class QMUIFragment extends Fragment implements
                                                   QMUIFragment.TransitionConfig transitionConfig,
                                                   Object toExec) {
         fragmentActivity.finish();
-        fragmentActivity.overridePendingTransition(transitionConfig.popenter, transitionConfig.popout);
+        fragmentActivity.overridePendingTransition(transitionConfig.popenterAnimation, transitionConfig.popoutAnimation);
     }
 
     /**
@@ -1042,7 +1045,6 @@ public abstract class QMUIFragment extends Fragment implements
 
     private void checkAndCallOnEnterAnimationStart(@Nullable Animator animation) {
         mCalled = false;
-        Log.i("cgine", "animation start");
         onEnterAnimationStart(animation);
         if (!mCalled) {
             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationStart(Animation)");
@@ -1051,29 +1053,10 @@ public abstract class QMUIFragment extends Fragment implements
 
     private void checkAndCallOnEnterAnimationEnd(@Nullable Animator animation) {
         mCalled = false;
-        Log.i("cgine", "animation end");
         onEnterAnimationEnd(animation);
         if (!mCalled) {
             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationEnd(Animation)");
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.i("cgine", "onStart");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("cgine", "onPause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i("cgine", "onStop");
     }
 
     /**
@@ -1464,16 +1447,22 @@ public abstract class QMUIFragment extends Fragment implements
         public final int exit;
         public final int popenter;
         public final int popout;
+        public final int popenterAnimation;
+        public final int popoutAnimation;
 
-        public TransitionConfig(int enter, int popout) {
-            this(enter, 0, 0, popout);
-        }
-
-        public TransitionConfig(int enter, int exit, int popenter, int popout) {
+        public TransitionConfig(
+                int enter, int exit,
+                int popenter, int popout,
+                int popenterAnimation, int popoutAnimation
+        ) {
             this.enter = enter;
             this.exit = exit;
             this.popenter = popenter;
             this.popout = popout;
+
+            // only use for pop activity if only one fragment exist.
+            this.popenterAnimation = popenterAnimation;
+            this.popoutAnimation = popoutAnimation;
         }
     }
 }
