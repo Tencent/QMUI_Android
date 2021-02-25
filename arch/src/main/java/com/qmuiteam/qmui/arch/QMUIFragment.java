@@ -16,6 +16,9 @@
 
 package com.qmuiteam.qmui.arch;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -27,9 +30,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import androidx.activity.OnBackPressedCallback;
@@ -97,12 +98,12 @@ public abstract class QMUIFragment extends Fragment implements
     private static final String TAG = QMUIFragment.class.getSimpleName();
 
     public static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
-            R.anim.slide_in_right, R.anim.slide_out_left,
-            R.anim.slide_in_left, R.anim.slide_out_right);
+            R.animator.slide_in_right, R.animator.slide_out_left,
+            R.animator.slide_in_left, R.animator.slide_out_right);
 
     public static final TransitionConfig SCALE_TRANSITION_CONFIG = new TransitionConfig(
-            R.anim.scale_enter, R.anim.slide_still,
-            R.anim.slide_still, R.anim.scale_exit);
+            R.animator.scale_enter, R.animator.slide_still,
+            R.animator.slide_still, R.animator.scale_exit);
 
 
     public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
@@ -217,12 +218,14 @@ public abstract class QMUIFragment extends Fragment implements
 
     @Override
     public void onResume() {
+        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
         checkLatestVisitRecord();
         checkForRequestForHandlePopBack();
         super.onResume();
         if (mBaseView != null && mPostResumeRunnableList != null && !mPostResumeRunnableList.isEmpty()) {
             mBaseView.post(mCheckPostResumeRunnable);
         }
+        Log.i("cgine", "onResume");
     }
 
     protected void checkForRequestForHandlePopBack(){
@@ -1010,74 +1013,69 @@ public abstract class QMUIFragment extends Fragment implements
         return true;
     }
 
+    @Nullable
     @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        if (!enter) {
-            // This is a workaround for the bug where child value disappear when
-            // the parent is removed (as all children are first removed from the parent)
-            // See https://code.google.com/p/android/issues/detail?id=55228
-            Fragment rootParentFragment = null;
-            Fragment parentFragment = getParentFragment();
-            while (parentFragment != null) {
-                rootParentFragment = parentFragment;
-                parentFragment = parentFragment.getParentFragment();
-            }
-            if (rootParentFragment != null && rootParentFragment.isRemoving()) {
-                Animation doNothingAnim = new AlphaAnimation(1, 1);
-                int duration = getResources().getInteger(R.integer.qmui_anim_duration);
-                doNothingAnim.setDuration(duration);
-                return doNothingAnim;
-            }
-
-        }
-        Animation animation = null;
-        if (enter) {
-            try {
-                animation = AnimationUtils.loadAnimation(getContext(), nextAnim);
-            } catch (Throwable ignored) {
-
-            }
-            if (animation != null) {
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        checkAndCallOnEnterAnimationStart(animation);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        checkAndCallOnEnterAnimationEnd(animation);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-            } else {
-                checkAndCallOnEnterAnimationStart(null);
-                checkAndCallOnEnterAnimationEnd(null);
-            }
-        }
-        return animation;
+    public final Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        return null;
     }
 
-    private void checkAndCallOnEnterAnimationStart(@Nullable Animation animation) {
+    @Nullable
+    @Override
+    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
+        if(enter && nextAnim != 0){
+            Animator animator = AnimatorInflater.loadAnimator(getContext(), nextAnim);
+            animator.addListener(new AnimatorListenerAdapter() {
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    checkAndCallOnEnterAnimationStart(animation);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    checkAndCallOnEnterAnimationEnd(animation);
+                }
+            });
+            return animator;
+        }
+        return super.onCreateAnimator(transit, enter, nextAnim);
+    }
+
+    private void checkAndCallOnEnterAnimationStart(@Nullable Animator animation) {
         mCalled = false;
+        Log.i("cgine", "animation start");
         onEnterAnimationStart(animation);
         if (!mCalled) {
             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationStart(Animation)");
         }
     }
 
-    private void checkAndCallOnEnterAnimationEnd(@Nullable Animation animation) {
+    private void checkAndCallOnEnterAnimationEnd(@Nullable Animator animation) {
         mCalled = false;
+        Log.i("cgine", "animation end");
         onEnterAnimationEnd(animation);
         if (!mCalled) {
             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.onEnterAnimationEnd(Animation)");
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i("cgine", "onStart");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("cgine", "onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i("cgine", "onStop");
+    }
 
     /**
      * onCreateView
@@ -1307,7 +1305,11 @@ public abstract class QMUIFragment extends Fragment implements
         }
     }
 
-    protected void onEnterAnimationStart(@Nullable Animation animation) {
+    /**
+     * may not be call.
+     * @param animation
+     */
+    protected void onEnterAnimationStart(@Nullable Animator animation) {
         if (mCalled) {
             throw new IllegalAccessError("don't call #onEnterAnimationStart() directly");
         }
@@ -1316,7 +1318,11 @@ public abstract class QMUIFragment extends Fragment implements
         isInEnterAnimationLiveData.setValue(true);
     }
 
-    protected void onEnterAnimationEnd(@Nullable Animation animation) {
+    /**
+     * may not be call.
+     * @param animation
+     */
+    protected void onEnterAnimationEnd(@Nullable Animator animation) {
         if (mCalled) {
             throw new IllegalAccessError("don't call #onEnterAnimationEnd() directly");
         }

@@ -814,6 +814,26 @@ public class SwipeBackLayout extends FrameLayout {
         }
     }
 
+    public float getXFraction() {
+        int width = getWidth();
+        return (width == 0) ? 0 : getX() / (float) width;
+    }
+
+    public void setXFraction(float xFraction) {
+        int width = getWidth();
+        setX((width > 0) ? (xFraction * width) : 0);
+    }
+
+    public float getYFraction() {
+        int height = getHeight();
+        return (height == 0) ? 0 : getY() / (float) height;
+    }
+
+    public void setYFraction(float yFraction) {
+        int height = getHeight();
+        setY((height > 0) ? (yFraction * height) : 0);
+    }
+
     public interface Callback {
         int getDragDirection(SwipeBackLayout swipeBackLayout, ViewMoveAction moveAction,
                              float downX, float downY, float dx, float dy, float touchSlop);
