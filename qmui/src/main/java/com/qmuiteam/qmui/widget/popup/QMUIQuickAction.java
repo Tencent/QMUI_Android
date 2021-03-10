@@ -18,6 +18,7 @@ package com.qmuiteam.qmui.widget.popup;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -25,18 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
-import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinManager;
-import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
-import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.widget.QMUIRadiusImageView2;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +36,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.layout.QMUIConstraintLayout;
+import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView2;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
 
@@ -109,9 +109,15 @@ public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
 
     @Override
     public QMUIQuickAction show(@NonNull View anchor) {
-        view(createContentView());
         return super.show(anchor);
     }
+
+    @Override
+    public QMUIQuickAction show(@NonNull View anchor, int anchorAreaLeft, int anchorAreaTop, int anchorAreaRight, int anchorAreaBottom) {
+        view(createContentView());
+        return super.show(anchor, anchorAreaLeft, anchorAreaTop, anchorAreaRight, anchorAreaBottom);
+    }
+
 
     private ConstraintLayout createContentView() {
         ConstraintLayout wrapper = new ConstraintLayout(mContext);
@@ -174,10 +180,10 @@ public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
         builder.tintColor(R.attr.qmui_skin_support_quick_action_more_tint_color);
         int bgColor = getBgColor();
         int bgColorAttr = getBgColorAttr();
-        if (bgColor != NOT_SET) {
-            arrowView.setBackgroundColor(bgColor);
-        } else if (bgColorAttr != 0) {
+        if (bgColorAttr != 0) {
             builder.background(bgColorAttr);
+        }else if (bgColor != Color.TRANSPARENT) {
+            arrowView.setBackgroundColor(bgColor);
         }
         QMUISkinHelper.setSkinValue(arrowView, builder);
         arrowView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
