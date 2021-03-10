@@ -155,7 +155,7 @@ public class SwipeBackLayout extends FrameLayout {
             public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
                 int insetsType = mOnInsetsHandler != null ? mOnInsetsHandler.getInsetsType() : 0;
                 if(insetsType != 0){
-                    Insets toUsed = insets.getInsetsIgnoringVisibility(insetsType);
+                    Insets toUsed = insets.getInsets(insetsType);
                     v.setPadding(toUsed.left, toUsed.top, toUsed.right, toUsed.bottom);
                 }else{
                     v.setPadding(0, 0, 0, 0);

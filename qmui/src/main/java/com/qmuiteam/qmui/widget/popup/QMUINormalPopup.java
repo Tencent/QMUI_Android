@@ -252,13 +252,13 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
     class ShowInfo {
         private int[] anchorRootLocation = new int[2];
-        private int[] anchorLocation = new int[2];
+        private Rect anchorFrame = new Rect();
         Rect visibleWindowFrame = new Rect();
         int width;
         int height;
         int x;
         int y;
-        View anchor;
+        int anchorHeight;
         int anchorCenter;
         int direction = mPreferredDirection;
         int contentWidthMeasureSpec;
@@ -268,13 +268,22 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         int decorationTop = 0;
         int decorationBottom = 0;
 
-        ShowInfo(View anchor) {
-            this.anchor = anchor;
+        ShowInfo(View anchor, int anchorAreaLeft, int anchorAreaTop, int anchorAreaRight, int anchorAreaBottom) {
+            this.anchorHeight = anchorAreaBottom - anchorAreaTop;
             // for muti window
             anchor.getRootView().getLocationOnScreen(anchorRootLocation);
+            int[] anchorLocation = new int[2];
             anchor.getLocationOnScreen(anchorLocation);
-            anchorCenter = anchorLocation[0] + anchor.getWidth() / 2;
+            this.anchorCenter = anchorLocation[0] + (anchorAreaLeft + anchorAreaRight) / 2;
             anchor.getWindowVisibleDisplayFrame(visibleWindowFrame);
+            anchorFrame.left = anchorLocation [0] + anchorAreaLeft;
+            anchorFrame.top = anchorLocation[1] + anchorAreaTop;
+            anchorFrame.right = anchorLocation [0] + anchorAreaRight;
+            anchorFrame.bottom = anchorLocation [1] + anchorAreaBottom;
+        }
+
+        ShowInfo(View anchor){
+            this(anchor, 0, 0, anchor.getWidth(), anchor.getHeight());
         }
 
 
@@ -312,10 +321,14 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     }
 
     public T show(@NonNull View anchor) {
+        return show(anchor, 0, 0, anchor.getWidth(), anchor.getHeight());
+    }
+
+    public T show(@NonNull View anchor, int anchorAreaLeft, int anchorAreaTop, int anchorAreaRight, int anchorAreaBottom){
         if (mContentView == null) {
             throw new RuntimeException("you should call view() to set your content view");
         }
-        ShowInfo showInfo = new ShowInfo(anchor);
+        ShowInfo showInfo = new ShowInfo(anchor, anchorAreaLeft, anchorAreaTop, anchorAreaRight, anchorAreaBottom);
         calculateWindowSize(showInfo);
         calculateXY(showInfo);
         adjustShowInfo(showInfo);
@@ -326,7 +339,6 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         showAtLocation(anchor, showInfo.getWindowX(), showInfo.getWindowY());
         return (T) this;
     }
-
 
     private void decorateContentView(ShowInfo showInfo) {
         ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
@@ -448,14 +460,14 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
             showInfo.y = showInfo.visibleWindowFrame.top + (showInfo.getVisibleHeight() - showInfo.height) / 2;
             showInfo.direction = DIRECTION_CENTER_IN_SCREEN;
         } else if (currentDirection == DIRECTION_TOP) {
-            showInfo.y = showInfo.anchorLocation[1] - showInfo.height - mOffsetYIfTop;
+            showInfo.y = showInfo.anchorFrame.top - showInfo.height - mOffsetYIfTop;
             if (showInfo.y < mEdgeProtectionTop + showInfo.visibleWindowFrame.top) {
                 handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
             } else {
                 showInfo.direction = DIRECTION_TOP;
             }
         } else if (currentDirection == DIRECTION_BOTTOM) {
-            showInfo.y = showInfo.anchorLocation[1] + showInfo.anchor.getHeight() + mOffsetYIfBottom;
+            showInfo.y = showInfo.anchorFrame.top + showInfo.anchorHeight + mOffsetYIfBottom;
             if (showInfo.y > showInfo.visibleWindowFrame.bottom - mEdgeProtectionBottom - showInfo.height) {
                 handleDirection(showInfo, nextDirection, DIRECTION_CENTER_IN_SCREEN);
             } else {
