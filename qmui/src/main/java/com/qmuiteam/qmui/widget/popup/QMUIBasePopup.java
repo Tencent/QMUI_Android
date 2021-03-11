@@ -47,7 +47,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     private float mDimAmount = DIM_AMOUNT_NOT_EXIST;
     private int mDimAmountAttr = 0;
     private PopupWindow.OnDismissListener mDismissListener;
-    private boolean mDismissIfOutsideTouch = true;
     private QMUISkinManager mSkinManager;
     private QMUISkinManager.OnSkinChangeListener mOnSkinChangeListener = new QMUISkinManager.OnSkinChangeListener() {
         @Override
@@ -89,10 +88,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         mContext = context;
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mWindow = new PopupWindow(context);
-        initWindow();
-    }
-
-    private void initWindow() {
         mWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mWindow.setFocusable(true);
         mWindow.setTouchable(true);
@@ -105,7 +100,7 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
                 }
             }
         });
-        dismissIfOutsideTouch(mDismissIfOutsideTouch);
+        dismissIfOutsideTouch(true);
     }
 
     protected void onSkinChange(int oldSkin, int newSkin){
@@ -131,8 +126,17 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         return (T) this;
     }
 
+    public T setTouchable(boolean touchable){
+        mWindow.setTouchable(true);
+        return (T) this;
+    }
+
+    public T  setFocusable(boolean focusable){
+        mWindow.setFocusable(focusable);
+        return (T) this;
+    }
+
     public T dismissIfOutsideTouch(boolean dismissIfOutsideTouch) {
-        mDismissIfOutsideTouch = dismissIfOutsideTouch;
         mWindow.setOutsideTouchable(dismissIfOutsideTouch);
         if (dismissIfOutsideTouch) {
             mWindow.setTouchInterceptor(mOutsideTouchDismissListener);
