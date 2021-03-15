@@ -221,7 +221,10 @@ public abstract class QMUIFragment extends Fragment implements
 
     @Override
     public void onResume() {
-        mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
+        if(mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END){
+            mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
+            notifyDelayRenderRunnableList();
+        }
         checkLatestVisitRecord();
         checkForRequestForHandlePopBack();
         super.onResume();
@@ -1311,6 +1314,10 @@ public abstract class QMUIFragment extends Fragment implements
         mCalled = true;
         mEnterAnimationStatus = ANIMATION_ENTER_STATUS_END;
         isInEnterAnimationLiveData.setValue(false);
+        notifyDelayRenderRunnableList();
+    }
+
+    private void notifyDelayRenderRunnableList(){
         if (mDelayRenderRunnableList != null) {
             ArrayList<Runnable> list = mDelayRenderRunnableList;
             mDelayRenderRunnableList = null;
