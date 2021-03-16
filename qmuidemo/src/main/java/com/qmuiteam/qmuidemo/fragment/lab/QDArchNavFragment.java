@@ -59,11 +59,6 @@ public class QDArchNavFragment extends QMUINavFragment {
     }
 
     @Override
-    protected boolean translucentFull() {
-        return true;
-    }
-
-    @Override
     public void onCollectLatestVisitArgument(RecordArgumentEditor editor) {
         editor.putString("nav_test", "nav_test");
     }

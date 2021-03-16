@@ -503,11 +503,6 @@ public abstract class QMUIFragment extends Fragment implements
                 ((ViewGroup) rootView.getParent()).removeView(rootView);
             }
         }
-        if (translucentFull()) {
-            rootView.setFitsSystemWindows(false);
-        } else {
-            rootView.setFitsSystemWindows(true);
-        }
         SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(rootView,
                 dragViewMoveAction(),
                 new SwipeBackLayout.Callback() {
@@ -1395,15 +1390,6 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void refreshFromScheme(@Nullable Bundle bundle) {
 
-    }
-
-    /**
-     * Immersive processing
-     *
-     * @return if true, the area under status bar belongs to content; otherwise it belongs to padding
-     */
-    protected boolean translucentFull() {
-        return false;
     }
 
     /**

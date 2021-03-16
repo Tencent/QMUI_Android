@@ -114,12 +114,6 @@ public abstract class BaseFragment extends QMUIFragment {
     @Override
     public Object onLastFragmentFinish() {
         return new HomeFragment();
-
-    }
-
-    @Override
-    protected boolean translucentFull() {
-        return true;
     }
 
     protected void goToWebExplorer(@NonNull String url, @Nullable String title) {

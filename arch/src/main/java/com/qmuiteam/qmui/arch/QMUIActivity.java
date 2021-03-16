@@ -145,11 +145,6 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
                 return getRootViewInsetsType();
             }
         });
-        if (translucentFull()) {
-            swipeBackLayout.getContentView().setFitsSystemWindows(false);
-        } else {
-            swipeBackLayout.getContentView().setFitsSystemWindows(true);
-        }
         mListenerRemover = swipeBackLayout.addSwipeListener(mSwipeListener);
         super.setContentView(swipeBackLayout);
     }
@@ -160,11 +155,6 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
     }
 
     private View newSwipeBackLayout(View view) {
-        if (translucentFull()) {
-            view.setFitsSystemWindows(false);
-        } else {
-            view.setFitsSystemWindows(true);
-        }
         final SwipeBackLayout swipeBackLayout = SwipeBackLayout.wrap(view, dragViewMoveAction(), mSwipeCallback);
         swipeBackLayout.setOnInsetsHandler(new SwipeBackLayout.OnInsetsHandler() {
             @Override
@@ -302,15 +292,6 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     protected SwipeBackLayout.ViewMoveAction dragViewMoveAction() {
         return SwipeBackLayout.MOVE_VIEW_AUTO;
-    }
-
-    /**
-     * Immersive processing
-     *
-     * @return if true, the area under status bar belongs to content; otherwise it belongs to padding
-     */
-    protected boolean translucentFull() {
-        return false;
     }
 
     /**
