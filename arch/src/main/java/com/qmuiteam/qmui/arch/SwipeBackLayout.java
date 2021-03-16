@@ -816,21 +816,45 @@ public class SwipeBackLayout extends FrameLayout {
 
     public float getXFraction() {
         int width = getWidth();
+        if(width == 0){
+            ViewParent parent = getParent();
+            if(parent instanceof ViewGroup){
+                width = ((ViewGroup)parent).getWidth();
+            }
+        }
         return (width == 0) ? 0 : getX() / (float) width;
     }
 
     public void setXFraction(float xFraction) {
         int width = getWidth();
+        if(width == 0){
+            ViewParent parent = getParent();
+            if(parent instanceof ViewGroup){
+                width = ((ViewGroup)parent).getWidth();
+            }
+        }
         setX((width > 0) ? (xFraction * width) : 0);
     }
 
     public float getYFraction() {
         int height = getHeight();
+        if(height == 0){
+            ViewParent parent = getParent();
+            if(parent instanceof ViewGroup){
+                height = ((ViewGroup)parent).getHeight();
+            }
+        }
         return (height == 0) ? 0 : getY() / (float) height;
     }
 
     public void setYFraction(float yFraction) {
         int height = getHeight();
+        if(height == 0){
+            ViewParent parent = getParent();
+            if(parent instanceof ViewGroup){
+                height = ((ViewGroup)parent).getHeight();
+            }
+        }
         setY((height > 0) ? (yFraction * height) : 0);
     }
 
