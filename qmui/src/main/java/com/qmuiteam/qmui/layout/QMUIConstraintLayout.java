@@ -20,10 +20,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import com.qmuiteam.qmui.alpha.QMUIAlphaConstraintLayout;
-import com.qmuiteam.qmui.alpha.QMUIAlphaLinearLayout;
-
 import androidx.annotation.ColorInt;
+
+import com.qmuiteam.qmui.alpha.QMUIAlphaConstraintLayout;
 
 /**
  * @author cginechen
@@ -130,13 +129,17 @@ public class QMUIConstraintLayout extends QMUIAlphaConstraintLayout implements I
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        widthMeasureSpec = mLayoutHelper.getMeasuredWidthSpec(widthMeasureSpec);
-        heightMeasureSpec = mLayoutHelper.getMeasuredHeightSpec(heightMeasureSpec);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int minW = mLayoutHelper.handleMiniWidth(widthMeasureSpec, getMeasuredWidth());
-        int minH = mLayoutHelper.handleMiniHeight(heightMeasureSpec, getMeasuredHeight());
-        if (widthMeasureSpec != minW || heightMeasureSpec != minH) {
-            super.onMeasure(minW, minH);
+        try{
+            widthMeasureSpec = mLayoutHelper.getMeasuredWidthSpec(widthMeasureSpec);
+            heightMeasureSpec = mLayoutHelper.getMeasuredHeightSpec(heightMeasureSpec);
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            int minW = mLayoutHelper.handleMiniWidth(widthMeasureSpec, getMeasuredWidth());
+            int minH = mLayoutHelper.handleMiniHeight(heightMeasureSpec, getMeasuredHeight());
+            if (widthMeasureSpec != minW || heightMeasureSpec != minH) {
+                super.onMeasure(minW, minH);
+            }
+        }catch (Throwable ignore){
+            // un reasonable crash
         }
     }
 
@@ -288,9 +291,14 @@ public class QMUIConstraintLayout extends QMUIAlphaConstraintLayout implements I
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
-        mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());
-        mLayoutHelper.dispatchRoundBorderDraw(canvas);
+        try {
+            super.dispatchDraw(canvas);
+            mLayoutHelper.drawDividers(canvas, getWidth(), getHeight());
+            mLayoutHelper.dispatchRoundBorderDraw(canvas);
+        }catch (Throwable ignore){
+            // unreasonable crash
+        }
+
     }
 
     @Override
@@ -317,4 +325,5 @@ public class QMUIConstraintLayout extends QMUIAlphaConstraintLayout implements I
     public boolean hasBottomSeparator() {
         return mLayoutHelper.hasBottomSeparator();
     }
+
 }
