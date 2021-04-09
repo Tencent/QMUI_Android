@@ -29,13 +29,13 @@ class DrawableElement(
     }
 
     override fun onMeasure(env: TypeEnvironment) {
-        setMeasureDimen(drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat(), 0f)
+        setMeasureDimen(drawable.intrinsicWidth, drawable.intrinsicHeight, 0)
     }
 
     override fun onDraw(env: TypeEnvironment, canvas: Canvas) {
         drawBg(env, canvas)
         canvas.save()
-        canvas.translate(x, y)
+        canvas.translate(x.toFloat(), y.toFloat())
         drawable.draw(canvas)
         canvas.restore()
         drawBorder(env, canvas)

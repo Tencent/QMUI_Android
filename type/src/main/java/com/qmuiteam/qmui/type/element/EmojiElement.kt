@@ -25,13 +25,13 @@ class EmojiElement(val drawable: Drawable, text: CharSequence, index: Int, start
         val paint = env.paint
         val size = (paint.fontMetrics.descent - paint.fontMetrics.ascent).toInt()
         drawable.setBounds(0, 0, size, size)
-        setMeasureDimen(size.toFloat(), size.toFloat(), 0f)
+        setMeasureDimen(size, size, 0)
     }
 
     override fun onDraw(env: TypeEnvironment, canvas: Canvas) {
         drawBg(env, canvas)
         canvas.save()
-        canvas.translate(x, y)
+        canvas.translate(x.toFloat(), y.toFloat())
         drawable.draw(canvas)
         canvas.restore()
         drawBorder(env, canvas)

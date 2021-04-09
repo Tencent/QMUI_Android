@@ -62,14 +62,14 @@ class Line private constructor() {
 
     fun add(element: Element) {
         mElements.add(element)
-        contentWidth = (contentWidth + element.measureWidth).toInt()
-        contentHeight = contentHeight.toFloat().coerceAtLeast(element.measureHeight).toInt()
+        contentWidth += element.measureWidth
+        contentHeight = contentHeight.coerceAtLeast(element.measureHeight)
     }
 
     fun addFirst(element: Element) {
         mElements.add(0, element)
-        contentWidth = (contentWidth + element.measureWidth).toInt()
-        contentHeight = contentHeight.toFloat().coerceAtLeast(element.measureHeight).toInt()
+        contentWidth += element.measureWidth
+        contentHeight = contentHeight.coerceAtLeast(element.measureHeight)
     }
 
     fun first(): Element? {
@@ -185,14 +185,14 @@ class Line private constructor() {
         hideLastIfSpaceIfNeeded(dropLastIfSpace)
         layoutWidth = contentWidth
         val alignment = env.alignment
-        var start = x.toFloat()
-        var addSpace = 0f
+        var start = x
+        var addSpace = 0
         if (alignment === TypeEnvironment.Alignment.RIGHT) {
-            start = (x + widthLimit - contentWidth).toFloat()
+            start = x + widthLimit - contentWidth
         } else if (alignment === TypeEnvironment.Alignment.CENTER) {
-            start = x + (widthLimit - contentWidth) / 2f
+            start = x + (widthLimit - contentWidth) / 2
         } else if (alignment === TypeEnvironment.Alignment.JUSTIFY) {
-            val remain = (widthLimit - contentWidth).toFloat()
+            val remain = widthLimit - contentWidth
             if (!(isEnd || isMiddleParagraphEndLine) || remain < env.lastLineJustifyMaxWidth) {
                 val gapCount = calculateGapCount()
                 if (gapCount > 0) {
@@ -211,7 +211,7 @@ class Line private constructor() {
             }
             el.x = x
             x += el.measureWidth
-            el.y = y + (contentHeight - el.measureHeight) / 2f
+            el.y = y + (contentHeight - el.measureHeight) / 2
         }
     }
 

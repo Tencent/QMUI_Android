@@ -33,7 +33,7 @@ class IgnoreEffectElement(list: List<Element>) : Element("", -1, -1) {
     }
 
     override fun onMeasure(env: TypeEnvironment) {
-        setMeasureDimen(0f, 0f, 0f)
+        setMeasureDimen(0, 0, 0)
     }
 
     override fun onDraw(env: TypeEnvironment, canvas: Canvas) {}

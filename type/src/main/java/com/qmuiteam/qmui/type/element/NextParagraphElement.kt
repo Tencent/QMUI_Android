@@ -21,7 +21,7 @@ import com.qmuiteam.qmui.type.TypeEnvironment
 class NextParagraphElement(text: CharSequence, index: Int, start: Int) : Element(text, index, start) {
 
     override fun onMeasure(env: TypeEnvironment) {
-        setMeasureDimen(0f, 0f, 0f)
+        setMeasureDimen(0, 0, 0)
     }
 
     override fun onDraw(env: TypeEnvironment, canvas: Canvas) {}

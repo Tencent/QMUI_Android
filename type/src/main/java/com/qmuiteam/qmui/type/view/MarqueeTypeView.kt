@@ -2,10 +2,8 @@ package com.qmuiteam.qmui.type.view
 
 import android.content.Context
 import android.graphics.*
-import android.os.Build
 import android.os.SystemClock
 import android.util.AttributeSet
-import androidx.annotation.RequiresApi
 import com.qmuiteam.qmui.type.TypeModel
 import com.qmuiteam.qmui.type.parser.PlainTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
@@ -22,7 +20,7 @@ class MarqueeTypeView : BaseTypeView {
             if (field != value) {
                 field = value
                 reset()
-                contentWidth = -1f
+                contentWidth = -1
                 typeModel = value.parse(text)
                 requestLayout()
                 if (isAttachedToWindow) {
@@ -36,7 +34,7 @@ class MarqueeTypeView : BaseTypeView {
             if (field != value) {
                 field = value
                 reset()
-                contentWidth = -1f
+                contentWidth = -1
                 typeModel = textParser.parse(value)
                 requestLayout()
                 if (isAttachedToWindow) {
@@ -50,8 +48,8 @@ class MarqueeTypeView : BaseTypeView {
     var moveSpeedPerMs: Float = resources.displayMetrics.density / 36
     var lastDrawTime = -2L
 
-    private var elementMaxHeight: Float = 0f
-    private var contentWidth: Float = -1f
+    private var elementMaxHeight = 0
+    private var contentWidth = -1
     private var fadeHelper: FadeHelper? = null
     private var startX: Float = 0f
 
@@ -87,9 +85,9 @@ class MarqueeTypeView : BaseTypeView {
 
 
     private fun measureAndLayoutModel() {
-        elementMaxHeight = 0f
+        elementMaxHeight = 0
         var current = typeModel?.firstElement()
-        var x = 0f
+        var x = 0
         while (current != null) {
             current.measure(environment)
             current.x = x

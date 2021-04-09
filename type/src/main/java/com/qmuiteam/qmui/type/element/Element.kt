@@ -57,14 +57,14 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
     var visible = VISIBLE
 
 
-    var measureWidth = 0f
+    var measureWidth = 0
         private set
-    var measureHeight = 0f
+    var measureHeight = 0
         private set
-    var x = 0f
-    var y = 0f
-    var baseLine = 0f
-    var nextGapWidth = 0f
+    var x = 0
+    var y = 0
+    var baseLine = 0
+    var nextGapWidth = 0
 
     private var saveTypeList: MutableList<Int>? = null
     private var restoreTypeList: MutableList<Int>? = null
@@ -92,8 +92,8 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
             }
         }
 
-    private val rightWithGap: Float
-        get() = x + measureWidth + nextGapWidth + 0.5f
+    private val rightWithGap: Int
+        get() = x + measureWidth + nextGapWidth
 
     init {
         if(text.length == 1){
@@ -235,7 +235,7 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
     }
 
 
-    protected fun setMeasureDimen(measureWidth: Float, measureHeight: Float, baseline: Float) {
+    protected fun setMeasureDimen(measureWidth: Int, measureHeight: Int, baseline: Int) {
         this.measureWidth = measureWidth
         this.measureHeight = measureHeight
         baseLine = baseline
@@ -275,7 +275,7 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
     protected abstract fun onDraw(env: TypeEnvironment, canvas: Canvas)
     protected fun drawBg(env: TypeEnvironment, canvas: Canvas) {
         if (env.backgroundColor != Color.TRANSPARENT) {
-            canvas.drawRect(x, y, rightWithGap, y + measureHeight, env.bgPaint)
+            canvas.drawRect(x.toFloat(), y.toFloat(), rightWithGap.toFloat(), (y + measureHeight).toFloat(), env.bgPaint)
         }
     }
 
@@ -283,21 +283,21 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
         val paint = env.borderPaint
         if (env.borderLeftWidth > 0) {
             paint.color = env.borderLeftColor
-            canvas.drawRect(x, y, x + env.borderLeftWidth, y + measureHeight, paint)
+            canvas.drawRect(x.toFloat(), y.toFloat(), (x + env.borderLeftWidth).toFloat(), (y + measureHeight).toFloat(), paint)
         }
         if (env.borderTopWidth > 0) {
             paint.color = env.borderTopColor
-            canvas.drawRect(x, y, rightWithGap, y + env.borderTopWidth, paint)
+            canvas.drawRect(x.toFloat(), y.toFloat(), rightWithGap.toFloat(), (y + env.borderTopWidth).toFloat(), paint)
         }
         if (env.borderRightWidth > 0) {
             paint.color = env.borderRightColor
-            canvas.drawRect(x + measureWidth - env.borderRightWidth, y,
-                    x + measureWidth, y + measureHeight, paint)
+            canvas.drawRect((x + measureWidth - env.borderRightWidth).toFloat(), y.toFloat(),
+                    (x + measureWidth).toFloat(), (y + measureHeight).toFloat(), paint)
         }
         if (env.borderBottomWidth > 0) {
             paint.color = env.borderBottomColor
-            canvas.drawRect(x, y + measureHeight - env.borderBottomWidth,
-                    rightWithGap, y + measureHeight, paint)
+            canvas.drawRect(x.toFloat(), (y + measureHeight - env.borderBottomWidth).toFloat(),
+                    rightWithGap.toFloat(), (y + measureHeight).toFloat(), paint)
         }
     }
 }

@@ -35,6 +35,7 @@ import com.qmuiteam.qmui.type.parser.EmojiTextParser;
 import com.qmuiteam.qmui.type.parser.TextParser;
 import com.qmuiteam.qmui.type.view.LineTypeView;
 import com.qmuiteam.qmui.type.view.MarqueeTypeView;
+import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmuidemo.QDQQFaceManager;
@@ -117,11 +118,12 @@ public class QDQQFaceUsageFragment extends BaseFragment {
         lineLayout.setMoreUnderlineColor(Color.BLUE);
         mLineType1.setLineHeight(QMUIDisplayHelper.dp2px(getContext(), 36));
         mLineType1.setTextColor(Color.BLACK);
-        mLineType1.setTextSize(QMUIDisplayHelper.sp2px(getContext(), 15));
+        mLineType1.setTextSize(QMUIDisplayHelper.sp2px(getContext(), 33));
         mLineType1.setTextParser(textParser);
         mLineType1.setText("QMUI Android 的设计[微笑]目的是用于辅助快速搭建一个具备基本设计还原[微笑]效果的 Android 项目，" +
                 "同时利用自身[微笑]提供的丰富控件及兼容处理，让开[微笑]发者能专注于业务需求而无需耗费[微笑]精力在基础代[微笑]码的设计上。" +
                 "不管是新项目的创建，或是已有项[微笑]目的维护，均可使开[微笑]发效率和项目[微笑]质量得到大幅度提升。");
+        mLineType1.addBgEffect(10, 30, QMUIColorHelper.setColorAlpha(Color.RED, 0.5f));
 
         mQQFace1.setText("这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示");
         mQQFace2.setText("这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +
