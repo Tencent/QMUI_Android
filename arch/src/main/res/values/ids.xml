@@ -16,6 +16,7 @@
 -->
 
 <resources>
+    <item name="qmui_activity_root_id" type="id"/>
     <item name="qmui_activity_fragment_container_id" type="id"/>
     <item name="qmui_nav_fragment_container_id" type="id"/>
 

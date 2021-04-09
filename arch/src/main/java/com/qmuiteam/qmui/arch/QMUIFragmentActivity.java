@@ -333,6 +333,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
 
         public RootView(Context context, int fragmentContainerId) {
             super(context);
+            setId(R.id.qmui_activity_root_id);
         }
 
         public abstract FragmentContainerView getFragmentContainerView();
