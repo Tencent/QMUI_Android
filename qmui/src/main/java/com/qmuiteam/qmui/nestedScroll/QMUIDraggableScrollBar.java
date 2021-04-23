@@ -39,14 +39,14 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.qmuiteam.qmui.R;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUILangHelper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+
+import com.qmuiteam.qmui.R;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUILangHelper;
 
 public class QMUIDraggableScrollBar extends View {
 
@@ -71,6 +71,7 @@ public class QMUIDraggableScrollBar extends View {
     private float mDragInnerTop = 0;
     private int mAdjustDistanceProtection = QMUIDisplayHelper.dp2px(getContext(), 20);
     private int mAdjustMaxDistanceOnce = QMUIDisplayHelper.dp2px(getContext(), 4);
+    private boolean mAdjustDistanceWithAnimation = true;
     private boolean enableFadeInAndOut = true;
 
     public QMUIDraggableScrollBar(Context context) {
@@ -88,6 +89,10 @@ public class QMUIDraggableScrollBar extends View {
 
     public void setCallback(Callback callback) {
         mCallback = callback;
+    }
+
+    public void setAdjustDistanceWithAnimation(boolean adjustDistanceWithAnimation) {
+        mAdjustDistanceWithAnimation = adjustDistanceWithAnimation;
     }
 
     public void setKeepShownTime(int keepShownTime) {
@@ -237,7 +242,7 @@ public class QMUIDraggableScrollBar extends View {
         int totalWidth = getWidth();
         int top = getScrollBarTopMargin() + (int) ((totalHeight - drawableHeight) * mPercent);
         int left = totalWidth - drawableWidth;
-        if (!mIsInDragging && mDrawableDrawTop > 0) {
+        if (!mIsInDragging && mDrawableDrawTop > 0 && mAdjustDistanceWithAnimation) {
             int moveDistance = top - mDrawableDrawTop;
             if (moveDistance > mAdjustMaxDistanceOnce && moveDistance < mAdjustDistanceProtection) {
                 top = mDrawableDrawTop + mAdjustMaxDistanceOnce;

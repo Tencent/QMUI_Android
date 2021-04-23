@@ -48,6 +48,7 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     private Callback mCallback;
     private boolean isInTouch = false;
     private boolean isInFlingOrScroll = false;
+    private boolean replaceCancelActionWithMoveActionForWebView = true;
 
     public QMUIContinuousNestedTopAreaBehavior(Context context) {
         this(context, null);
@@ -57,6 +58,10 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     public QMUIContinuousNestedTopAreaBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mViewFlinger = new ViewFlinger(context);
+    }
+
+    public void setReplaceCancelActionWithMoveActionForWebView(boolean replaceCancelActionWithMoveActionForWebView) {
+        this.replaceCancelActionWithMoveActionForWebView = replaceCancelActionWithMoveActionForWebView;
     }
 
     public void setCallback(Callback callback) {
@@ -117,7 +122,11 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
                         // dispatch cancel event not work in webView sometimes.
                         MotionEvent cancelEvent = MotionEvent.obtain(ev);
                         cancelEvent.offsetLocation(-child.getLeft(), -child.getTop());
-                        cancelEvent.setAction(MotionEvent.ACTION_MOVE);
+                        if(replaceCancelActionWithMoveActionForWebView){
+                            cancelEvent.setAction(MotionEvent.ACTION_MOVE);
+                        }else{
+                            cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+                        }
                         child.dispatchTouchEvent(cancelEvent);
                         cancelEvent.recycle();
                     }
