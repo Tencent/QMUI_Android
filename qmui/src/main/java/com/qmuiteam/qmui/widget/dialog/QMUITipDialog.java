@@ -19,7 +19,6 @@ package com.qmuiteam.qmui.widget.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -28,6 +27,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
@@ -39,11 +43,6 @@ import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * 提供一个浮层展示在屏幕中间, 一般使用 {@link QMUITipDialog.Builder} 或 {@link QMUITipDialog.CustomBuilder} 生成。
@@ -200,6 +199,7 @@ public class QMUITipDialog extends QMUIBaseDialog {
             if (mTipWord != null && mTipWord.length() > 0) {
                 TextView tipView = new QMUISpanTouchFixTextView(dialogContext);
                 tipView.setEllipsize(TextUtils.TruncateAt.END);
+                tipView.setId(R.id.qmui_tip_content_id);
                 tipView.setGravity(Gravity.CENTER);
                 tipView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         QMUIResHelper.getAttrDimen(dialogContext, R.attr.qmui_tip_dialog_text_size));
