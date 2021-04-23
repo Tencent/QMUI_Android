@@ -94,6 +94,12 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         mWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
+                removeOldAttachStateChangeListener();
+                mAttachedViewRf = null;
+                if(mSkinManager != null){
+                    mSkinManager.unRegister(mWindow);
+                    mSkinManager.removeSkinChangeListener(mOnSkinChangeListener);
+                }
                 QMUIBasePopup.this.onDismiss();
                 if (mDismissListener != null) {
                     mDismissListener.onDismiss();
@@ -225,12 +231,6 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
     }
 
     public final void dismiss() {
-        removeOldAttachStateChangeListener();
-        mAttachedViewRf = null;
-        if(mSkinManager != null){
-            mSkinManager.unRegister(mWindow);
-            mSkinManager.removeSkinChangeListener(mOnSkinChangeListener);
-        }
         mWindow.dismiss();
     }
 }
