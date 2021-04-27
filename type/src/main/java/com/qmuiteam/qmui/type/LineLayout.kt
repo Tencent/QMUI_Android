@@ -61,6 +61,7 @@ class LineLayout {
                 line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
                 if (canInterrupt()) {
+                    handleEllipse(env,true)
                     return
                 }
                 y += (line.contentHeight + env.paragraphSpace).coerceAtLeast(env.lineHeight)
@@ -188,6 +189,9 @@ class LineLayout {
             lastLine.add(moreElement)
         }
         lastLine.layout(env, dropLastIfSpace, true)
+        if (moreElement != null) {
+            moreElement.x = lastLine.widthLimit - moreElement.measureWidth
+        }
     }
 
     private fun handleEllipseStart(env: TypeEnvironment) {
