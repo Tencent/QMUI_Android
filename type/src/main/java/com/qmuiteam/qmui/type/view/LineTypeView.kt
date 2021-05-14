@@ -49,13 +49,13 @@ open class LineTypeView : BaseTypeView {
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-        environment.setMeasureLimit(widthSize, heightSize)
+        environment.setMeasureLimit(widthSize - paddingLeft - paddingRight, heightSize - paddingTop - paddingBottom)
         lineLayout.measureAndLayout(environment)
         val usedWidth = if (widthMode == MeasureSpec.AT_MOST) {
-            lineLayout.maxLayoutWidth
+            lineLayout.maxLayoutWidth + paddingLeft + paddingRight
         } else widthSize
         val usedHeight = if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
-            lineLayout.contentHeight
+            lineLayout.contentHeight + paddingTop + paddingBottom
         } else heightSize
         setMeasuredDimension(usedWidth, usedHeight)
     }
@@ -74,6 +74,15 @@ open class LineTypeView : BaseTypeView {
         set(value) {
             if (lineLayout.ellipsize != value) {
                 lineLayout.ellipsize = value
+                requestLayout()
+            }
+        }
+
+    var maxLines: Int
+        get() = lineLayout.maxLines
+        set(value) {
+            if (lineLayout.maxLines != value) {
+                lineLayout.maxLines = value
                 requestLayout()
             }
         }
@@ -115,7 +124,9 @@ open class LineTypeView : BaseTypeView {
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+        canvas.save()
+        canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
         lineLayout.draw(canvas, environment)
+        canvas.restore()
     }
 }

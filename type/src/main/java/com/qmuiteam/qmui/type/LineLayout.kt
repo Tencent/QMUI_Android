@@ -35,14 +35,10 @@ class LineLayout {
     var moreUnderlineHeight = 0
     var typeModel: TypeModel? = null
 
-
     private val mLines: MutableList<Line> = ArrayList()
-
 
     var totalLineCount = 0
         private set
-
-
 
     fun measureAndLayout(env: TypeEnvironment) {
         env.clear()
@@ -114,7 +110,7 @@ class LineLayout {
     }
 
     private fun handleEllipse(env: TypeEnvironment, fromInterrupt: Boolean) {
-        if (mLines.isEmpty() || mLines.size < maxLines || mLines.size == maxLines && !fromInterrupt) {
+        if (mLines.isEmpty() || mLines.size < maxLines || (mLines.size == maxLines && !fromInterrupt)) {
             return
         }
         if (ellipsize == TruncateAt.END) {
