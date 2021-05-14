@@ -129,17 +129,13 @@ public class QMUIConstraintLayout extends QMUIAlphaConstraintLayout implements I
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        try{
-            widthMeasureSpec = mLayoutHelper.getMeasuredWidthSpec(widthMeasureSpec);
-            heightMeasureSpec = mLayoutHelper.getMeasuredHeightSpec(heightMeasureSpec);
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            int minW = mLayoutHelper.handleMiniWidth(widthMeasureSpec, getMeasuredWidth());
-            int minH = mLayoutHelper.handleMiniHeight(heightMeasureSpec, getMeasuredHeight());
-            if (widthMeasureSpec != minW || heightMeasureSpec != minH) {
-                super.onMeasure(minW, minH);
-            }
-        }catch (Throwable ignore){
-            // un reasonable crash
+        widthMeasureSpec = mLayoutHelper.getMeasuredWidthSpec(widthMeasureSpec);
+        heightMeasureSpec = mLayoutHelper.getMeasuredHeightSpec(heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int minW = mLayoutHelper.handleMiniWidth(widthMeasureSpec, getMeasuredWidth());
+        int minH = mLayoutHelper.handleMiniHeight(heightMeasureSpec, getMeasuredHeight());
+        if (widthMeasureSpec != minW || heightMeasureSpec != minH) {
+            super.onMeasure(minW, minH);
         }
     }
 
