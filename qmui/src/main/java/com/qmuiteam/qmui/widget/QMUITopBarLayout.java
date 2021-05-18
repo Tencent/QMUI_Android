@@ -36,6 +36,7 @@ import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 /**
  * 这是一个对 {@link QMUITopBar} 的代理类，需要它的原因是：
@@ -96,11 +97,11 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         mTopBar.showTitleView(toShow);
     }
 
-    public QMUIQQFaceView setSubTitle(int resId) {
+    public QMUISpanTouchFixTextView setSubTitle(int resId) {
         return mTopBar.setSubTitle(resId);
     }
 
-    public QMUIQQFaceView setSubTitle(CharSequence subTitle) {
+    public QMUISpanTouchFixTextView setSubTitle(CharSequence subTitle) {
         return mTopBar.setSubTitle(subTitle);
     }
 
@@ -110,7 +111,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
     }
 
     @Nullable
-    public QMUIQQFaceView getSubTitleView(){
+    public QMUISpanTouchFixTextView getSubTitleView(){
         return mTopBar.getSubTitleView();
     }
 

@@ -53,6 +53,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +77,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     private View mCenterView; // 中间的 View
     private LinearLayout mTitleContainerView; // 包裹 title 和 subTitle 的容器
     private QMUIQQFaceView mTitleView; // 显示 title 文字的 TextView
-    private QMUIQQFaceView mSubTitleView; // 显示 subTitle 文字的 TextView
+    private QMUISpanTouchFixTextView mSubTitleView; // 显示 subTitle 文字的 TextView
 
     private List<View> mLeftViewList;
     private List<View> mRightViewList;
@@ -292,8 +293,8 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      *
      * @param subTitle TopBar 的副标题
      */
-    public QMUIQQFaceView setSubTitle(CharSequence subTitle) {
-        QMUIQQFaceView subTitleView = ensureSubTitleView();
+    public QMUISpanTouchFixTextView setSubTitle(CharSequence subTitle) {
+        QMUISpanTouchFixTextView subTitleView = ensureSubTitleView();
         subTitleView.setText(subTitle);
         if (QMUILangHelper.isNullOrEmpty(subTitle)) {
             subTitleView.setVisibility(GONE);
@@ -310,18 +311,18 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      *
      * @param resId TopBar 的副标题 resId
      */
-    public QMUIQQFaceView setSubTitle(int resId) {
+    public QMUISpanTouchFixTextView setSubTitle(int resId) {
         return setSubTitle(getResources().getString(resId));
     }
 
-    private QMUIQQFaceView ensureSubTitleView() {
+    private QMUISpanTouchFixTextView ensureSubTitleView() {
         if (mSubTitleView == null) {
-            mSubTitleView = new QMUIQQFaceView(getContext());
+            mSubTitleView = new QMUISpanTouchFixTextView(getContext());
             mSubTitleView.setGravity(Gravity.CENTER);
             mSubTitleView.setSingleLine(true);
             mSubTitleView.setTypeface(mSubTitleTypeface);
             mSubTitleView.setEllipsize(mEllipsize);
-            mSubTitleView.setTextSize(mSubTitleTextSize);
+            mSubTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubTitleTextSize);
             mSubTitleView.setTextColor(mSubTitleTextColor);
             QMUISkinSimpleDefaultAttrProvider provider = new QMUISkinSimpleDefaultAttrProvider();
             provider.setDefaultSkinAttr(QMUISkinValueBuilder.TEXT_COLOR, R.attr.qmui_skin_support_topbar_subtitle_color);
@@ -335,7 +336,7 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
     @Nullable
-    public QMUIQQFaceView getSubTitleView(){
+    public QMUISpanTouchFixTextView getSubTitleView(){
         return mSubTitleView;
     }
 
