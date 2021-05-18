@@ -44,16 +44,19 @@ class PlainTextParser : TextParser {
         while (i < size) {
             val c = text[i]
             if (c == '\n') {
-                tmp = NextParagraphElement(text.subSequence(i, i+1), index, i)
+                tmp = NextParagraphElement(text.subSequence(i, i + 1), index, i)
             } else if (c == '\r') {
                 if (i + 1 < text.length && text[i + 1] == '\n') {
-                    tmp = NextParagraphElement(text.subSequence(i, i+2), index, i)
+                    tmp = NextParagraphElement(text.subSequence(i, i + 2), index, i)
                     i++
                 } else {
-                    tmp = NextParagraphElement(text.subSequence(i, i+1), index, i)
+                    tmp = NextParagraphElement(text.subSequence(i, i + 1), index, i)
                 }
             } else {
-                tmp = TextElement(text.subSequence(i, i+1), index, i)
+                val unicode = Character.codePointAt(text, i)
+                val charCount = Character.charCount(unicode)
+                tmp = TextElement(text.subSequence(i, i + charCount), index, i)
+                i += charCount - 1
             }
             handleWordPart(c, last, tmp)
             index++

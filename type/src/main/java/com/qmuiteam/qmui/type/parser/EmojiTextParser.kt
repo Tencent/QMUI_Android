@@ -62,7 +62,10 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                     j++
                 }
                 if (!find) {
-                    tmp = TextElement(text.subSequence(i, i + 1), index, i)
+                    val unicode = Character.codePointAt(text, i)
+                    val charCount = Character.charCount(unicode)
+                    tmp = TextElement(text.subSequence(i, i + charCount), index, i)
+                    i += charCount - 1
                 }
             } else {
                 var handled = false
@@ -93,7 +96,10 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                     }
                 }
                 if (!handled) {
-                    tmp = TextElement(text.subSequence(i, i + 1), index, i)
+                    val unicode = Character.codePointAt(text, i)
+                    val charCount = Character.charCount(unicode)
+                    tmp = TextElement(text.subSequence(i, i + charCount), index, i)
+                    i += charCount - 1
                 }
             }
             ParserHelper.handleWordPart(c, last, tmp!!)
