@@ -16,7 +16,10 @@
 package com.qmuiteam.qmui.type.parser
 
 import com.qmuiteam.qmui.type.TypeModel
-import com.qmuiteam.qmui.type.element.*
+import com.qmuiteam.qmui.type.element.Element
+import com.qmuiteam.qmui.type.element.EmojiElement
+import com.qmuiteam.qmui.type.element.NextParagraphElement
+import com.qmuiteam.qmui.type.element.TextElement
 import java.util.*
 
 class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextParser {
@@ -72,7 +75,7 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                 var emoji = emojiProvider.queryForDrawable(c)
                 if (emoji != null) {
                     handled = true
-                    tmp = DrawableElement(emoji, text.subSequence(i, i + 1), index, i)
+                    tmp = EmojiElement(emoji, text.subSequence(i, i + 1), index, i)
                 }
                 if (!handled) {
                     val unicode = Character.codePointAt(text, i)
@@ -80,7 +83,7 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                     emoji = emojiProvider.queryForDrawable(unicode)
                     if (emoji != null) {
                         handled = true
-                        tmp = DrawableElement(emoji, text.subSequence(i, i + codeCount), index, i)
+                        tmp = EmojiElement(emoji, text.subSequence(i, i + codeCount), index, i)
                         i += codeCount - 1
                     }
                     val nextStart = i + codeCount
@@ -90,7 +93,7 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                         if (emoji != null) {
                             handled = true
                             val nextCodeCount = Character.charCount(nextUnicode)
-                            tmp = DrawableElement(emoji, text.subSequence(i, nextStart + nextCodeCount), index, i)
+                            tmp = EmojiElement(emoji, text.subSequence(i, nextStart + nextCodeCount), index, i)
                             i = nextStart + nextCodeCount - 1
                         }
                     }
