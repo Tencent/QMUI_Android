@@ -511,7 +511,7 @@ public abstract class QMUIFragment extends Fragment implements
 
                         mCalled = false;
                         boolean canHandle = canHandleSwipeBack();
-                        if (!mCalled) {
+                        if (canHandle && !mCalled) {
                             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.shouldPreventSwipeBack()");
                         }
 
