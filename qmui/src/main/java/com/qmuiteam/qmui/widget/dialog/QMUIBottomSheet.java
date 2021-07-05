@@ -204,15 +204,19 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
             mOnBottomSheetShowListener.onShow();
         }
         if (mBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-            mRootView.postOnAnimation(new Runnable() {
-                @Override
-                public void run() {
-                    mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-            });
+            setToExpandWhenShow();
         }
         mAnimateToCancel = false;
         mAnimateToDismiss = false;
+    }
+
+    protected void setToExpandWhenShow(){
+        mRootView.postOnAnimation(new Runnable() {
+            @Override
+            public void run() {
+                mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
     }
 
     public interface OnBottomSheetShowListener {
