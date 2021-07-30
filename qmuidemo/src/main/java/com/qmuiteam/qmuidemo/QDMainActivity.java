@@ -16,6 +16,9 @@
 
 package com.qmuiteam.qmuidemo;
 
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
+import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +36,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -42,7 +44,6 @@ import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -53,7 +54,6 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView2;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopups;
-import com.qmuiteam.qmuidemo.base.BaseFragment;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
@@ -72,9 +72,6 @@ import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_TITLE;
-import static com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment.EXTRA_URL;
 
 @FirstFragments(
         value = {
@@ -126,16 +123,7 @@ public class QDMainActivity extends BaseFragmentActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    private void renderSkinMakerBtn() {
-        Fragment baseFragment = getCurrentFragment();
-        if (baseFragment instanceof BaseFragment) {
-            if (QDApplication.openSkinMake) {
-                ((BaseFragment) baseFragment).openSkinMaker();
-            } else {
-                QMUISkinMaker.getInstance().unBindAll();
-            }
-        }
-    }
+
 
     @Override
     protected void onStart() {
@@ -148,7 +136,6 @@ public class QDMainActivity extends BaseFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        renderSkinMakerBtn();
     }
 
     @Override
@@ -161,9 +148,7 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     private void showGlobalActionPopup(View v) {
         String[] listItems = new String[]{
-                "Change Skin",
-                QDApplication.openSkinMake ? "Close SkinMaker(Developing)" : "Open SkinMaker(Developing)",
-                "Export SkinMaker Result"
+                "Change Skin"
         };
         List<String> data = new ArrayList<>();
 
@@ -186,11 +171,6 @@ public class QDMainActivity extends BaseFragmentActivity {
                             .setSkinManager(QMUISkinManager.defaultInstance(QDMainActivity.this))
                             .create()
                             .show();
-                } else if (i == 1) {
-                    QDApplication.openSkinMake = !QDApplication.openSkinMake;
-                    renderSkinMakerBtn();
-                } else if (i == 2) {
-                    QMUISkinMaker.getInstance().export(QDMainActivity.this);
                 }
                 if (mGlobalAction != null) {
                     mGlobalAction.dismiss();

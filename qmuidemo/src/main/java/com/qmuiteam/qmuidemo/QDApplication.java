@@ -27,7 +27,6 @@ import androidx.annotation.NonNull;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
-import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
 import com.squareup.leakcanary.LeakCanary;
@@ -37,8 +36,6 @@ import com.squareup.leakcanary.LeakCanary;
  * Created by cgine on 16/3/22.
  */
 public class QDApplication extends Application {
-
-    public static boolean openSkinMake = false;
 
     @SuppressLint("StaticFieldLeak")
     private static Context context;
@@ -87,9 +84,6 @@ public class QDApplication extends Application {
         QMUISwipeBackActivityManager.init(this);
         QMUIQQFaceCompiler.setDefaultQQFaceManager(QDQQFaceManager.getInstance());
         QDSkinManager.install(this);
-        QMUISkinMaker.init(context,
-                new String[]{"com.qmuiteam.qmuidemo"},
-                new String[]{"app_skin_"}, R.attr.class);
     }
 
     @Override

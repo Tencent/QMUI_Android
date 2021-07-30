@@ -1,5 +1,4 @@
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 
 Properties properties = new Properties()
 File projectPropertiesFile = rootProject.file("gradle/deploy.properties")
@@ -129,20 +128,6 @@ publishing {
                 password properties.getProperty("maven.password")
             }
         }
-    }
-}
-
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-    publications = ['mavenjava']
-    pkg {
-        repo = 'qmuirepo'
-        name = project.name
-        websiteUrl =POM_SITE_URL
-        vcsUrl = POM_GIT_URL
-        licenses = ["MIT"]
-        publish = true
     }
 }
 

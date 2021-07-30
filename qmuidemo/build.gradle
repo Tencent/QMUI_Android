@@ -64,14 +64,6 @@ android {
     }
 }
 
-
-//apply plugin: 'com.qmuiteam.qmui.skinMaker'
-//skinMaker{
-//    file rootProject.file('qmuidemo-skin-code-generator-source')
-//}
-
-
-
 // 加@aar与不加@aar的区别：
 // http://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar
 dependencies {
@@ -92,14 +84,13 @@ dependencies {
     implementation project(':type')
     kapt project(':compiler')
     kapt project(':arch-compiler')
-    implementation project(":skin-maker")
 
     //leak
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     //test
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
     //    androidTestImplementation 'com.android.support.test:rules:1.0.2' // Set this dependency to use JUnit 4 rules
     //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2' // Set this dependency to build and run Espresso tests
