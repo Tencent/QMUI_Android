@@ -71,7 +71,10 @@ public class UpgradeTipTask implements UpgradeTask {
 
     public CharSequence getUpgradeWord(final Activity activity) {
         SpannableStringBuilder text = new SpannableStringBuilder();
-        if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha11){
+        if(mNewVersion == QDUpgradeManager.VERSION_2_0_1){
+            text.append("1. Published to MavenCentral.\n");
+            text.append("2. Updated dep versions.\n");
+        }else if(mNewVersion == QDUpgradeManager.VERSION_2_0_0_alpha11){
             text.append("1. Feature: Added a new widget: QMUINavFragment.\n");
             text.append("2. Remove LazyLifecycle, use maxLifecycle for replacement.\n");
             text.append("3. Some bug fixes.\n");
