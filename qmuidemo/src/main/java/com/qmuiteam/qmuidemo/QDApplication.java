@@ -29,7 +29,6 @@ import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager;
-import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Demo 的 Application 入口。
@@ -48,11 +47,6 @@ public class QDApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
-
         QMUILog.setDelegete(new QMUILog.QMUILogDelegate() {
             @Override
             public void e(String tag, String msg, Object... obj) {
