@@ -36,6 +36,6 @@ allprojects {
         butterknifeVersion = '10.1.0'
         constraintLayoutVersion = "2.1.0"
         mmkvVersion = '1.0.23'
-        junitVersion='4.13.1'
+        junitVersion='4.13.2'
     }
 }

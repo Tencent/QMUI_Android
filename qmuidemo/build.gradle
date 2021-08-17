@@ -74,11 +74,9 @@ dependencies {
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    implementation 'com.qmuiteam:qmuilint:1.0.1'
 //    implementation 'com.qmuiteam:arch:0.3.1'
 //    implementation 'com.qmuiteam:qmui:1.2.0'
     implementation project(':lib')
-    api project(':lint')
     implementation project(':qmui')
     implementation project(':arch')
     implementation project(':type')

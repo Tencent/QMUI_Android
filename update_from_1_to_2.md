@@ -6,6 +6,7 @@
 2. minSdkVersion 升级到 API 19
 3. 提供换肤(Dark Mode)支持
 4. `QMUI.Compat` 主题改名为 `QMUI`，并移除旧的 `QMUI` 主题
+5. 移除 lint 模块，不再维护
 
 ## 组件变更
 
