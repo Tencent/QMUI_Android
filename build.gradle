@@ -34,7 +34,7 @@ allprojects {
         materialVersion='1.4.0'
         annotationVersion='1.2.0'
         butterknifeVersion = '10.1.0'
-        constraintLayoutVersion = "2.0.4"
+        constraintLayoutVersion = "2.1.0"
         mmkvVersion = '1.0.23'
         junitVersion='4.13.1'
     }
