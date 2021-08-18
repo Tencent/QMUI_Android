@@ -440,8 +440,11 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
     }
 
     public int getOffsetRange() {
-        if (mTopView == null || mBottomView == null) {
+        if (mTopView == null && mBottomView == null) {
             return 0;
+        }
+        if(mBottomView == null){
+            return Math.max(0, ((View) mTopView).getHeight() - getHeight());
         }
         int contentHeight = mBottomView.getContentHeight();
         if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
