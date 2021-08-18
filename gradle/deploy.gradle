@@ -1,4 +1,5 @@
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 Properties properties = new Properties()
 File projectPropertiesFile = rootProject.file("gradle/deploy.properties")
@@ -39,6 +40,8 @@ if(isAndroidLib){
 }
 
 def pomConfig = {
+    name "${project.group}:${project.name}"
+    url 'https://github.com/Tencent/QMUI_Android'
     licenses {
         license {
             name properties.getProperty("license.name")
@@ -59,10 +62,15 @@ def pomConfig = {
     }
 }
 
+signing {
+    sign publishing.publications
+}
+
 publishing {
     publications {
         mavenjava(MavenPublication) {
             groupId project.group
+            artifactId project.name
             version project.version
             if(isAndroidLib){
                 artifact file("$buildDir/outputs/aar/${project.name}-release.aar")
@@ -70,6 +78,9 @@ publishing {
                 artifact androidJavadocJar
                 pom.withXml {
                     def root = asNode()
+
+                    root.appendNode('description', 'qmui android library')
+
                     final dependenciesNode = root.appendNode('dependencies')
 
                     ext.addDependency = { dep, String scope ->
@@ -114,6 +125,7 @@ publishing {
 
                 pom.withXml {
                     def root = asNode()
+                    root.appendNode('description', 'qmui android library')
                     root.children().last() + pomConfig
                 }
             }
