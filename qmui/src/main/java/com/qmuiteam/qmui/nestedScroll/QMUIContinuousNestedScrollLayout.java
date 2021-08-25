@@ -446,6 +446,9 @@ public class QMUIContinuousNestedScrollLayout extends CoordinatorLayout implemen
         if(mBottomView == null){
             return Math.max(0, ((View) mTopView).getHeight() - getHeight());
         }
+        if(mTopView == null){
+            return 0;
+        }
         int contentHeight = mBottomView.getContentHeight();
         if (contentHeight != IQMUIContinuousNestedBottomView.HEIGHT_IS_ENOUGH_TO_SCROLL) {
             return Math.max(0, ((View) mTopView).getHeight() + contentHeight - getHeight());
