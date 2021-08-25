@@ -44,6 +44,8 @@ public abstract class SchemeItem {
     @Nullable
     private String[] mKeysForDouble;
     @Nullable
+    private String[] mDefaultParams;
+    @Nullable
     private Class<? extends QMUISchemeMatcher> mSchemeMatcherCls;
 
     @Nullable
@@ -58,6 +60,7 @@ public abstract class SchemeItem {
                       @Nullable String[] keysForLong,
                       @Nullable String[] keysForFloat,
                       @Nullable String[] keysForDouble,
+                      @Nullable String[] defaultParams,
                       @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls,
                       @Nullable Class<? extends QMUISchemeValueConverter> schemeValueConverterCls) {
         mRequired = required;
@@ -68,6 +71,7 @@ public abstract class SchemeItem {
         mKeysForFloat = keysForFloat;
         mKeysForDouble = keysForDouble;
         mSchemeMatcherCls = schemeMatcherCls;
+        mDefaultParams = defaultParams;
         mSchemeValueConverterCls = schemeValueConverterCls;
     }
 
@@ -77,7 +81,23 @@ public abstract class SchemeItem {
 
     @Nullable
     public Map<String, SchemeValue> convertFrom(@Nullable Map<String, String> schemeParams) {
-        if (schemeParams == null || schemeParams.isEmpty()) {
+        Map<String, String> originMap = new HashMap<>();
+        if(mDefaultParams != null){
+            for (String item : mDefaultParams) {
+                if (item != null && !item.isEmpty()) {
+                    String[] pair = item.split("=");
+                    if (pair.length == 2) {
+                        originMap.put(pair[0], pair[1]);
+                    }
+                }
+            }
+        }
+
+        if (schemeParams != null) {
+            originMap.putAll(schemeParams);
+        }
+
+        if(originMap.isEmpty()){
             return null;
         }
 
@@ -86,8 +106,7 @@ public abstract class SchemeItem {
             sSchemeValueConverters = new HashMap<>();
         }
 
-
-        for (Map.Entry<String, String> param : schemeParams.entrySet()) {
+        for (Map.Entry<String, String> param : originMap.entrySet()) {
             String name = param.getKey();
             String value = param.getValue();
             if (name == null || name.isEmpty()) {
@@ -106,11 +125,9 @@ public abstract class SchemeItem {
                     }
                 }
                 if(converter != null){
-                    value = converter.convert(name, value, schemeParams);
+                    value = converter.convert(name, value, originMap);
                 }
             }
-
-
 
             try {
                 if (contains(mKeysForInt, name)) {

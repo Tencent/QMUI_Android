@@ -45,10 +45,11 @@ class ActivitySchemeItem extends SchemeItem {
                               @Nullable String[] keysForLong,
                               @Nullable String[] keysForFloat,
                               @Nullable String[] keysForDouble,
+                              @Nullable String[] defaultParams,
                               @Nullable Class<? extends QMUISchemeMatcher> schemeMatcherCls,
                               @Nullable Class<? extends QMUISchemeValueConverter> schemeValueConverterCls) {
         super(required, useRefreshIfMatchedCurrent, keysForInt, keysForBool,
-                keysForLong, keysForFloat, keysForDouble, schemeMatcherCls, schemeValueConverterCls);
+                keysForLong, keysForFloat, keysForDouble, defaultParams, schemeMatcherCls, schemeValueConverterCls);
         mActivityClass = activityClass;
         mIntentFactoryCls = intentFactoryCls;
     }

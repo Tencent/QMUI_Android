@@ -36,5 +36,6 @@ public @interface FragmentScheme {
     String[] keysWithLongValue() default {};
     String[] keysWithFloatValue() default {};
     String[] keysWithDoubleValue() default {};
+    String[] defaultParams() default {};
     Class<?> valueConverter() default void.class;
 }

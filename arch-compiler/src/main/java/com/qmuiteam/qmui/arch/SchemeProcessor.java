@@ -164,6 +164,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock longParam = generateTypedParams(annotation.keysWithLongValue());
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
+                    CodeBlock defaultParam = generateTypedParams(annotation.defaultParams());
                     CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
                     CodeBlock valueConverter = generateValueInterceptor(annotationMirror);
 
@@ -188,6 +189,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(",")
                             /*---*/.add(doubleParam)
                             /*---*/.add(",")
+                            /*---*/.add(defaultParam)
+                            /*---*/.add(",")
                             /*---*/.add(customMatcher)
                             /*---*/.add(",")
                             /*---*/.add(valueConverter)
@@ -209,6 +212,7 @@ public class SchemeProcessor extends BaseProcessor {
                     CodeBlock longParam = generateTypedParams(annotation.keysWithLongValue());
                     CodeBlock floatParam = generateTypedParams(annotation.keysWithFloatValue());
                     CodeBlock doubleParam = generateTypedParams(annotation.keysWithDoubleValue());
+                    CodeBlock defaultParam = generateTypedParams(annotation.defaultParams());
                     CodeBlock customMatcher = generateCustomMatcher(annotationMirror);
                     CodeBlock valueConverter = generateValueInterceptor(annotationMirror);
 
@@ -238,6 +242,8 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(floatParam)
                             /*---*/.add(",")
                             /*---*/.add(doubleParam)
+                            /*---*/.add(",")
+                            /*---*/.add(defaultParam)
                             /*---*/.add(",")
                             /*---*/.add(customMatcher)
                             /*---*/.add(",")
