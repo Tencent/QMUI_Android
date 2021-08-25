@@ -16,6 +16,8 @@
 
 package com.qmuiteam.qmui.widget.dialog;
 
+import static com.qmuiteam.qmui.layout.IQMUILayout.HIDE_RADIUS_SIDE_BOTTOM;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -23,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,8 +50,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.qmuiteam.qmui.layout.IQMUILayout.HIDE_RADIUS_SIDE_BOTTOM;
 
 /**
  * QMUIBottomSheet 在 {@link Dialog} 的基础上重新定制了 {@link #show()} 和 {@link #hide()} 时的动画效果, 使 {@link Dialog} 在界面底部升起和降下。
@@ -496,11 +497,17 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
         private ItemViewFactory mItemViewFactory = DEFAULT_ITEM_VIEW_FACTORY;
         private OnSheetItemClickListener mOnSheetItemClickListener;
         private QMUIBottomSheetGridLineLayout.ItemWidthCalculator mItemWidthCalculator = null;
+        private int mLineGravity = Gravity.CENTER_VERTICAL;
 
         public BottomGridSheetBuilder(Context context) {
             super(context);
             mFirstLineItems = new ArrayList<>();
             mSecondLineItems = new ArrayList<>();
+        }
+
+        public BottomGridSheetBuilder setLineGravity(int gravity){
+            mLineGravity = gravity;
+            return this;
         }
 
         public BottomGridSheetBuilder addItem(@NonNull QMUIBottomSheetGridItemModel model, @Style int style) {
@@ -590,7 +597,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
                             new LinearLayout.LayoutParams(wrapContent, wrapContent)));
                 }
             }
-            return new QMUIBottomSheetGridLineLayout(mDialog, mItemWidthCalculator, firstLines, secondLines);
+            return new QMUIBottomSheetGridLineLayout(mDialog, mItemWidthCalculator, mLineGravity, firstLines, secondLines);
         }
 
         public interface OnSheetItemClickListener {

@@ -63,16 +63,19 @@ public class QMUIBottomSheetGridLineLayout extends LinearLayout {
     private int linePaddingHor;
     private int itemWidth;
     private final ItemWidthCalculator mItemWidthCalculator;
+    private final int mLineGravity;
 
 
     public QMUIBottomSheetGridLineLayout(QMUIBottomSheet bottomSheet,
                                          @Nullable ItemWidthCalculator widthCalculator,
+                                         int lineGravity,
                                          List<Pair<View, LinearLayout.LayoutParams>> firstLineViews,
                                          List<Pair<View, LinearLayout.LayoutParams>> secondLineViews) {
         super(bottomSheet.getContext());
         setOrientation(VERTICAL);
         setGravity(Gravity.TOP);
 
+        mLineGravity = lineGravity;
         mItemWidthCalculator = widthCalculator == null ? DEFAULT_CALCULATOR : widthCalculator;
 
         int paddingTop = QMUIResHelper.getAttrDimen(
@@ -142,7 +145,7 @@ public class QMUIBottomSheetGridLineLayout extends LinearLayout {
 
         LinearLayout linear = new LinearLayout(context);
         linear.setOrientation(LinearLayout.HORIZONTAL);
-        linear.setGravity(Gravity.CENTER_VERTICAL);
+        linear.setGravity(mLineGravity);
         linear.setPadding(linePaddingHor, 0, linePaddingHor, 0);
         scroller.addView(linear, new HorizontalScrollView.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
