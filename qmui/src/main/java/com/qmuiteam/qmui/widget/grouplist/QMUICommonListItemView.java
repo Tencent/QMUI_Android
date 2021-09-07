@@ -364,6 +364,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
                 detailLp.goneRightMargin = 0;
             }
         }
+        mTextView.setLayoutParams(titleLp);
+        mDetailTextView.setLayoutParams(detailLp);
+        mNewTipView.setLayoutParams(newTipLp);
+        mRedDot.setLayoutParams(redDotLp);
     }
 
     private void updateTipLeftVerRelatedLayoutParam(View tipView,
