@@ -16,6 +16,16 @@
 
 package com.qmuiteam.qmui.arch;
 
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_NONE;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_BOTTOM;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
+
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
@@ -73,16 +83,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_NONE;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_BOTTOM;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
 
 /**
  * With the use of {@link QMUIFragmentActivity}, {@link QMUIFragment} brings more features,
@@ -376,6 +376,10 @@ public abstract class QMUIFragment extends Fragment implements
             }
         }
 
+        if(provider.getContainerFragmentManager().isDestroyed()){
+            return -1;
+        }
+
         QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
         String tagName = fragment.getClass().getSimpleName();
         FragmentManager fragmentManager = provider.getContainerFragmentManager();
@@ -449,6 +453,9 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     private int startFragment(QMUIFragment fragment, QMUIFragmentContainerProvider provider) {
+        if(provider.getContainerFragmentManager().isDestroyed()){
+            return -1;
+        }
         QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
         String tagName = fragment.getClass().getSimpleName();
         return provider.getContainerFragmentManager()

@@ -221,6 +221,9 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
 
     public int startFragmentAndDestroyCurrent(QMUIFragment fragment, final boolean useNewTransitionConfigWhenPop) {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragmentManager.isDestroyed()){
+            return -1;
+        }
         if (fragmentManager.isStateSaved()) {
             QMUILog.d(TAG, "startFragment can not be invoked after onSaveInstanceState");
             return -1;
@@ -246,6 +249,9 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     public int startFragment(QMUIFragment fragment) {
         Log.i(TAG, "startFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragmentManager.isDestroyed()){
+            return -1;
+        }
         if (fragmentManager.isStateSaved()) {
             QMUILog.d(TAG, "startFragment can not be invoked after onSaveInstanceState");
             return -1;
