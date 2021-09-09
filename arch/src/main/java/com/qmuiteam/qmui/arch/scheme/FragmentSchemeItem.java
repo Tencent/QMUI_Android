@@ -107,7 +107,7 @@ class FragmentSchemeItem extends SchemeItem {
         if (!isCurrentActivityCanStartFragment(activity, scheme) || isForceNewActivity(scheme)) {
             Intent intent = factory.factory(activity, mActivityClsList, mFragmentCls, scheme, origin);
             if (intent != null) {
-                factory.startActivity(activity, intent);
+                factory.startActivity(activity, intent, scheme);
                 if(shouldFinishCurrent(scheme)){
                     activity.finish();
                 }

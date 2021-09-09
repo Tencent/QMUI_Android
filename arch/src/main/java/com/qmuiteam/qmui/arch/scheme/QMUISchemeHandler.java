@@ -34,6 +34,8 @@ public class QMUISchemeHandler {
     public final static String ARG_ORIGIN_SCHEME = "__qmui_arg_origin_scheme";
     public final static String ARG_FORCE_TO_NEW_ACTIVITY = "__qmui_force_to_new_activity";
     public final static String ARG_FINISH_CURRENT = "__qmui_finish_current";
+    public final static String ARG_TRANSITION_ENTER = "__qmui_transition_enter";
+    public final static String ARG_TRANSITION_EXIT = "__qmui_transition_exit";
 
     private static SchemeMap sSchemeMap;
 

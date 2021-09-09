@@ -16,6 +16,8 @@
 
 package com.qmuiteam.qmui.arch.scheme;
 
+import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_FROM_SCHEME;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +31,6 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.arch.annotation.FragmentContainerParam;
 
 import java.util.Map;
-
-import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_FROM_SCHEME;
 
 public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFactory {
 
@@ -90,7 +90,8 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
         if (activityClassList.length == 0) {
             return null;
         }
-        loop: for (Class<? extends QMUIFragmentActivity> target : activityClassList) {
+        loop:
+        for (Class<? extends QMUIFragmentActivity> target : activityClassList) {
             Intent intent = QMUIFragmentActivity.intentOf(activity, target, fragmentCls, bundle);
             intent.putExtra(ARG_FROM_SCHEME, true);
             FragmentContainerParam fragmentContainerParam = target.getAnnotation(FragmentContainerParam.class);
@@ -101,7 +102,7 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             String[] required = fragmentContainerParam.required();
             String[] optional = fragmentContainerParam.optional();
 
-            if(required.length == 0){
+            if (required.length == 0) {
                 putOptionalSchemeValuesToIntent(intent, scheme, optional);
                 return intent;
             }
@@ -112,7 +113,7 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             }
             for (String arg : required) {
                 SchemeValue value = scheme.get(arg);
-                if(value == null){
+                if (value == null) {
                     // not matched.
                     continue loop;
                 }
@@ -127,19 +128,19 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
 
     private void putOptionalSchemeValuesToIntent(Intent intent,
                                                  @Nullable Map<String, SchemeValue> scheme,
-                                                 String[] optional){
+                                                 String[] optional) {
         if (scheme == null || scheme.isEmpty()) {
             return;
         }
         for (String arg : optional) {
             SchemeValue value = scheme.get(arg);
-            if(value != null){
+            if (value != null) {
                 putSchemeValueToIntent(intent, arg, value);
             }
         }
     }
 
-    private void putSchemeValueToIntent(Intent intent, String arg, @NonNull SchemeValue value){
+    private void putSchemeValueToIntent(Intent intent, String arg, @NonNull SchemeValue value) {
         if (value.type == Boolean.TYPE) {
             intent.putExtra(arg, (boolean) value.value);
         } else if (value.type == Integer.TYPE) {
@@ -150,14 +151,33 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             intent.putExtra(arg, (float) value.value);
         } else if (value.type == Double.TYPE) {
             intent.putExtra(arg, (double) value.value);
-        } else{
+        } else {
             intent.putExtra(arg, value.origin);
         }
     }
 
     @Override
-    public void startActivity(@NonNull Activity activity, @NonNull Intent intent) {
+    public void startActivity(@NonNull Activity activity,
+                              @NonNull Intent intent,
+                              @Nullable Map<String, SchemeValue> scheme) {
         activity.startActivity(intent);
+        if (scheme != null) {
+            SchemeValue enter = scheme.get(QMUISchemeHandler.ARG_TRANSITION_ENTER);
+            if (enter == null) {
+                return;
+            }
+            SchemeValue exit = scheme.get(QMUISchemeHandler.ARG_TRANSITION_EXIT);
+            if (exit == null) {
+                return;
+            }
+            try {
+                activity.overridePendingTransition(
+                        Integer.parseInt(enter.origin),
+                        Integer.parseInt(exit.origin)
+                );
+            } catch (Throwable ignore) {
+            }
+        }
     }
 
     @Override

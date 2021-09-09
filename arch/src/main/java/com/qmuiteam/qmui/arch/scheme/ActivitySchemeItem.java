@@ -88,7 +88,7 @@ class ActivitySchemeItem extends SchemeItem {
             if(isUseRefreshIfMatchedCurrent() && mActivityClass == activity.getClass() && activity instanceof ActivitySchemeRefreshable){
                 ((ActivitySchemeRefreshable) activity).refreshFromScheme(intent);
             }else{
-                factory.startActivity(activity, intent);
+                factory.startActivity(activity, intent, scheme);
                 if(shouldFinishCurrent(scheme)){
                     activity.finish();
                 }

@@ -16,6 +16,9 @@
 
 package com.qmuiteam.qmui.arch.scheme;
 
+import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_FROM_SCHEME;
+import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_ORIGIN_SCHEME;
+
 import android.app.Activity;
 import android.content.Intent;
 
@@ -23,9 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Map;
-
-import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_FROM_SCHEME;
-import static com.qmuiteam.qmui.arch.scheme.QMUISchemeHandler.ARG_ORIGIN_SCHEME;
 
 public class QMUIDefaultSchemeIntentFactory implements QMUISchemeIntentFactory {
     @Override
@@ -59,8 +59,27 @@ public class QMUIDefaultSchemeIntentFactory implements QMUISchemeIntentFactory {
     }
 
     @Override
-    public void startActivity(@NonNull Activity activity, @NonNull Intent intent) {
+    public void startActivity(@NonNull Activity activity,
+                              @NonNull Intent intent,
+                              @Nullable Map<String, SchemeValue> scheme) {
         activity.startActivity(intent);
+        if (scheme != null) {
+            SchemeValue enter = scheme.get(QMUISchemeHandler.ARG_TRANSITION_ENTER);
+            if (enter == null) {
+                return;
+            }
+            SchemeValue exit = scheme.get(QMUISchemeHandler.ARG_TRANSITION_EXIT);
+            if (exit == null) {
+                return;
+            }
+            try {
+                activity.overridePendingTransition(
+                        Integer.parseInt(enter.origin),
+                        Integer.parseInt(exit.origin)
+                );
+            } catch (Throwable ignore) {
+            }
+        }
     }
 
     @Override

@@ -45,7 +45,9 @@ public interface QMUISchemeFragmentFactory {
                    @Nullable Map<String, SchemeValue> scheme,
                    @NonNull String origin);
 
-    void startActivity(@NonNull Activity activity, @NonNull Intent intent);
+    void startActivity(@NonNull Activity activity,
+                       @NonNull Intent intent,
+                       @Nullable Map<String, SchemeValue> scheme);
 
     int startFragmentAndDestroyCurrent(QMUIFragmentActivity activity, QMUIFragment fragment);
 

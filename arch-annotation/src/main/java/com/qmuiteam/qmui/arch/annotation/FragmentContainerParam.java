@@ -32,12 +32,12 @@ import java.lang.annotation.Target;
  *
  * }
  *
- * FragmentScheme(name = "bookDetail", activities = {QDMainActivity.class}, required={"bookId"})
+ * FragmentScheme(name = "bookDetail", activities = {BookActivity.class}, required={"bookId"})
  * class BookDetailFragment extend QMUIFragment {
  *
  * }
  *
- * FragmentScheme(name = "bookRead", activities = {QDMainActivity.class}, required={"bookId"})
+ * FragmentScheme(name = "bookRead", activities = {BookActivity.class}, required={"bookId"})
  * class BookReadFragment extend QMUIFragment {
  *
  * }
