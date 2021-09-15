@@ -20,6 +20,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Looper;
 import android.os.Trace;
 import android.text.Spanned;
 import android.util.ArrayMap;
@@ -40,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.qmuiteam.qmui.BuildConfig;
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
@@ -64,6 +66,8 @@ import com.qmuiteam.qmui.skin.handler.QMUISkinRuleUnderlineHandler;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,6 +111,18 @@ public final class QMUISkinManager {
 
     @MainThread
     public static QMUISkinManager of(String name, Resources resources, String packageName) {
+        if(Looper.getMainLooper().getThread() != Thread.currentThread()){
+            if(QMUIConfig.DEBUG){
+                throw new RuntimeException("must call on main thread.");
+            }else{
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                Throwable ex = new RuntimeException("must call on main thread.");
+                ex.printStackTrace(pw);
+                pw.flush();
+                QMUILog.e(TAG, sw.toString());
+            }
+        }
         QMUISkinManager instance = sInstances.get(name);
         if (instance == null) {
             instance = new QMUISkinManager(name, resources, packageName);
