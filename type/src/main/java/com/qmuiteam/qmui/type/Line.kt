@@ -54,6 +54,10 @@ class Line private constructor() {
     val size: Int
         get() = mElements.size
 
+    fun get(i: Int): Element? {
+        return mElements.getOrNull(i)
+    }
+
     fun init(x: Int, y: Int, widthLimit: Int) {
         this.x = x
         this.y = y

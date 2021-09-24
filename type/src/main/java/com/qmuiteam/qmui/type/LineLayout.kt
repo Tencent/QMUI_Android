@@ -42,6 +42,15 @@ class LineLayout {
     var totalLineCount = 0
         private set
 
+    val lineCount: Int
+        get() {
+            return mLines.size
+        }
+
+    fun getLine(i: Int): Line? {
+        return mLines.getOrNull(i)
+    }
+
     fun measureAndLayout(env: TypeEnvironment, exactlyHeight: Boolean) {
         exactlyHeightMaxLine = Int.MAX_VALUE
         env.clear()
@@ -156,10 +165,10 @@ class LineLayout {
             }
         })
         ellipseElement.measure(env)
-        limitWidth = (limitWidth - ellipseElement.measureWidth).toInt()
+        limitWidth -= ellipseElement.measureWidth
         var moreElement: Element? = null
         if (moreText != null && !moreText!!.isEmpty()) {
-            moreElement = TextElement(moreText!!, -1, -1)
+            moreElement = MoreTextElement(moreText!!, -1, -1)
             val changeTypes: MutableList<Int> = ArrayList()
             changeTypes.add(TypeEnvironment.TYPE_TEXT_COLOR)
             changeTypes.add(TypeEnvironment.TYPE_BG_COLOR)

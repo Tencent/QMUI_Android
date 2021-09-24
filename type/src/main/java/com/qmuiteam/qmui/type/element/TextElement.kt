@@ -33,3 +33,5 @@ open class TextElement(text: CharSequence, index: Int, start: Int) : Element(tex
         drawBorder(env, canvas)
     }
 }
+
+class MoreTextElement(text: CharSequence, index: Int, start: Int): TextElement(text, index, start)
