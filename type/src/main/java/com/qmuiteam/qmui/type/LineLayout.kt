@@ -35,12 +35,15 @@ class LineLayout {
     var moreUnderlineHeight = 0
     var typeModel: TypeModel? = null
 
+    private var exactlyHeightMaxLine = Int.MAX_VALUE
+
     private val mLines: MutableList<Line> = ArrayList()
 
     var totalLineCount = 0
         private set
 
-    fun measureAndLayout(env: TypeEnvironment) {
+    fun measureAndLayout(env: TypeEnvironment, exactlyHeight: Boolean) {
+        exactlyHeightMaxLine = Int.MAX_VALUE
         env.clear()
         release()
         if (typeModel == null) {
@@ -56,11 +59,13 @@ class LineLayout {
                 line.add(element)
                 line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
+                y += line.contentHeight.coerceAtLeast(env.lineHeight)
+                checkExactlyHeightMaxLine(env, y, exactlyHeight)
                 if (canInterrupt()) {
                     handleEllipse(env,true)
                     return
                 }
-                y += (line.contentHeight + env.paragraphSpace).coerceAtLeast(env.lineHeight)
+                y += env.paragraphSpace
                 line = createNewLine(env, y)
             } else if (line.contentWidth + element.measureWidth > env.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
@@ -71,18 +76,22 @@ class LineLayout {
                 val back = line.handleWordBreak(env)
                 line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
+                if(env.lineHeight != -1){
+                    y += env.lineHeight.coerceAtLeast(line.contentHeight)
+                    checkExactlyHeightMaxLine(env, y, exactlyHeight)
+                }else{
+                    y += line.contentHeight
+                    checkExactlyHeightMaxLine(env, y, exactlyHeight)
+                    y += env.lineSpace
+                }
+
                 if (canInterrupt()) {
                     handleEllipse(env,true)
                     return
                 }
-                y += if(env.lineHeight != -1){
-                    env.lineHeight.coerceAtLeast(line.contentHeight)
-                }else{
-                    line.contentHeight + env.lineSpace
-                }
 
                 line = createNewLine(env, y)
-                if (back != null && !back.isEmpty()) {
+                if (back != null && back.isNotEmpty()) {
                     for (el in back) {
                         line.add(el)
                     }
@@ -103,6 +112,16 @@ class LineLayout {
         handleEllipse(env,false)
     }
 
+    private fun checkExactlyHeightMaxLine(env: TypeEnvironment, y: Int, exactlyHeight: Boolean){
+        if(exactlyHeight && exactlyHeightMaxLine == Int.MAX_VALUE){
+            if(y > env.heightLimit){
+                exactlyHeightMaxLine = mLines.size - 1
+            }else if(y == env.heightLimit){
+                exactlyHeightMaxLine = mLines.size
+            }
+        }
+    }
+
     private fun createNewLine(env: TypeEnvironment, y: Int): Line {
         val line = Line.acquire()
         line.init(0, y, env.widthLimit)
@@ -110,7 +129,7 @@ class LineLayout {
     }
 
     private fun handleEllipse(env: TypeEnvironment, fromInterrupt: Boolean) {
-        if (mLines.isEmpty() || mLines.size < maxLines || (mLines.size == maxLines && !fromInterrupt)) {
+        if (mLines.isEmpty() || mLines.size < getUsedMaxLine() || (mLines.size == getUsedMaxLine() && !fromInterrupt)) {
             return
         }
         if (ellipsize == TruncateAt.END) {
@@ -123,7 +142,7 @@ class LineLayout {
     }
 
     private fun handleEllipseEnd(env: TypeEnvironment) {
-        for (i in mLines.size - 1 downTo maxLines) {
+        for (i in mLines.size - 1 downTo getUsedMaxLine()) {
             val line = mLines[i]
             mLines.remove(line)
             line.release()
@@ -164,7 +183,7 @@ class LineLayout {
                 }
             })
             moreElement.measure(env)
-            limitWidth = (limitWidth - moreElement.measureWidth).toInt()
+            limitWidth -= moreElement.measureWidth
         }
         val contentWidth = lastLine.contentWidth
         if (contentWidth < limitWidth) {
@@ -174,7 +193,7 @@ class LineLayout {
             for (el in elements) {
                 if (el.measureWidth <= limitWidth) {
                     lastLine.add(el)
-                    limitWidth = (limitWidth - el.measureWidth).toInt()
+                    limitWidth -= el.measureWidth
                 } else {
                     break
                 }
@@ -192,9 +211,17 @@ class LineLayout {
 
     private fun handleEllipseStart(env: TypeEnvironment) {
         env.clear()
-        for (i in mLines.size - 1 downTo maxLines) {
-            mLines.remove(mLines[i])
+        val tmpList = mutableListOf<Line>()
+        var tmpY = -1
+        val startIndex = mLines.size - getUsedMaxLine()
+        val minus = mLines[startIndex].y
+        for(i in startIndex until mLines.size){
+            mLines[i].y -= minus
+            tmpY += mLines[i].contentHeight
+            tmpList.add(mLines[i])
         }
+        mLines.clear()
+        mLines.addAll(tmpList)
         val ellipseElement: Element = TextElement("...", -1, -1)
         ellipseElement.addSingleEnvironmentUpdater(null, object : EnvironmentUpdater {
             override fun update(env: TypeEnvironment) {
@@ -246,6 +273,7 @@ class LineLayout {
         mLines.clear()
         val ellipseElement: Element = TextElement("...", -1, -1)
         ellipseElement.measure(env)
+        val maxLines = getUsedMaxLine()
         val ellipseLine = if (maxLines % 2 == 0) maxLines / 2 else (maxLines + 1) / 2
         for (i in 0 until ellipseLine) {
             mLines.add(lines[i])
@@ -393,8 +421,11 @@ class LineLayout {
     }
 
     private fun canInterrupt(): Boolean {
-        return mLines.size == maxLines && !calculateWholeLines &&
-                (ellipsize == null || ellipsize == TruncateAt.END)
+        return mLines.size == getUsedMaxLine() && !calculateWholeLines && (ellipsize == null || ellipsize == TruncateAt.END)
+    }
+
+    private fun getUsedMaxLine(): Int {
+        return maxLines.coerceAtMost(exactlyHeightMaxLine)
     }
 
     fun release() {

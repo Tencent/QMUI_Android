@@ -50,7 +50,7 @@ open class LineTypeView : BaseTypeView {
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         environment.setMeasureLimit(widthSize - paddingLeft - paddingRight, heightSize - paddingTop - paddingBottom)
-        lineLayout.measureAndLayout(environment)
+        lineLayout.measureAndLayout(environment, heightMode == MeasureSpec.EXACTLY)
         val usedWidth = if (widthMode == MeasureSpec.AT_MOST) {
             lineLayout.maxLayoutWidth + paddingLeft + paddingRight
         } else widthSize
