@@ -39,13 +39,39 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class QMUIFragmentEffectRegistry extends ViewModel {
 
+    class PendingRegister<T extends Effect> implements QMUIFragmentEffectRegistration{
+        final LifecycleOwner lifecycleOwner;
+        final QMUIFragmentEffectHandler<T> effectHandler;
+        private QMUIFragmentEffectRegistration registration;
+
+
+        public PendingRegister(LifecycleOwner lifecycleOwner, QMUIFragmentEffectHandler<T> effectHandler){
+            this.lifecycleOwner = lifecycleOwner;
+            this.effectHandler = effectHandler;
+        }
+
+        public void doRegister(){
+            if(lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.DESTROYED)){
+                return;
+            }
+            registration = register(lifecycleOwner, effectHandler);
+        }
+
+        @Override
+        public void unregister() {
+            if(registration != null){
+                registration.unregister();
+            }
+        }
+    }
+
     private static final String TAG = "FragmentEffectRegistry";
 
     private final AtomicInteger mNextRc = new AtomicInteger(0);
 
     private final transient Map<Integer, EffectHandlerWrapper> mKeyToHandler = new HashMap<>();
     private transient boolean mNotifyEffectRunning = false;
-    private transient List<Effect> mPendingEffectList = new ArrayList<>();
+    private transient List<PendingRegister> mPendingRegister = new ArrayList<>();
 
 
     /**
@@ -62,6 +88,11 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
     public <T extends Effect> QMUIFragmentEffectRegistration register(
             @NonNull final LifecycleOwner lifecycleOwner,
             @NonNull final QMUIFragmentEffectHandler<T> effectHandler) {
+        if(mNotifyEffectRunning){
+            PendingRegister<T> pendingRegister = new PendingRegister<>(lifecycleOwner, effectHandler);
+            mPendingRegister.add(pendingRegister);
+            return pendingRegister;
+        }
         final int rc = mNextRc.getAndIncrement();
         Lifecycle lifecycle = lifecycleOwner.getLifecycle();
         mKeyToHandler.put(rc, new EffectHandlerWrapper<T>(effectHandler, lifecycle));
@@ -105,43 +136,21 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
      * @param effect
      */
     public <T extends Effect> void notifyEffect(T effect) {
-        if (mNotifyEffectRunning) {
-            mPendingEffectList.add(effect);
-            return;
-        }
         mNotifyEffectRunning = true;
-        mPendingEffectList = new ArrayList<>();
         for (Integer key : mKeyToHandler.keySet()) {
             EffectHandlerWrapper wrapper = mKeyToHandler.get(key);
             if (wrapper != null && wrapper.shouldHandleEffect(effect)) {
                 wrapper.pushOrHandleEffect(effect);
             }
         }
-        handlePendingEffectList(0);
         mNotifyEffectRunning = false;
-    }
-
-
-    private void handlePendingEffectList(int deep) {
-        if (mPendingEffectList.isEmpty()) {
-            return;
-        }
-        if (deep > 4) {
-            throw new RuntimeException("dead loop when notify effect.");
-        }
-        List<Effect> toHandle = mPendingEffectList;
-        mPendingEffectList = new ArrayList<>();
-        for (Integer key : mKeyToHandler.keySet()) {
-            EffectHandlerWrapper wrapper = mKeyToHandler.get(key);
-            if (wrapper != null) {
-                for (Effect effect : toHandle) {
-                    if (wrapper.shouldHandleEffect(effect)) {
-                        wrapper.pushOrHandleEffect(effect);
-                    }
-                }
+        if(!mPendingRegister.isEmpty()){
+            List<PendingRegister> list = mPendingRegister;
+            mPendingRegister = new ArrayList<>();
+            for(PendingRegister register: list){
+                register.doRegister();
             }
         }
-        handlePendingEffectList(deep + 1);
     }
 
     private static class EffectHandlerWrapper<T extends Effect> implements LifecycleEventObserver {

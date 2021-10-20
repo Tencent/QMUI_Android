@@ -62,6 +62,10 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         return getSupportFragmentManager();
     }
 
+    public RootView getRootView() {
+        return mRootView;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
