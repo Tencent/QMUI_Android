@@ -38,12 +38,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIPriorityLinearLayout;
+import com.qmuiteam.qmui.util.QMUIWindowInsetHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -138,6 +140,24 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
     protected void onSetCancelable(boolean cancelable) {
         super.onSetCancelable(cancelable);
         mBehavior.setHideable(cancelable);
+    }
+
+    public void setFitNav(boolean fitNav) {
+        if(fitNav){
+            mRootView.setFitsSystemWindows(true);
+            QMUIWindowInsetHelper.handleWindowInsets(mRootView,
+                    WindowInsetsCompat.Type.navigationBars(),
+                    getInsetHandler(),
+                    true, true, false);
+        }else{
+            mRootView.setFitsSystemWindows(false);
+            QMUIWindowInsetHelper.setOnApplyWindowInsetsListener(mRootView, null, true);
+        }
+        mRootView.requestApplyInsets();
+    }
+
+    protected QMUIWindowInsetHelper.InsetHandler getInsetHandler(){
+        return QMUIWindowInsetHelper.consumeInsetWithPaddingHandler;
     }
 
     @Override
@@ -405,6 +425,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
             mContentFooterViews.add(view);
             return this;
         }
+
 
         @Nullable
         @Override

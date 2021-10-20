@@ -20,8 +20,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIButton;
@@ -31,9 +32,6 @@ import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBuilder> {
     private Context mContext;
@@ -46,6 +44,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     private boolean mAllowDrag = false;
     private QMUISkinManager mSkinManager;
     private QMUIBottomSheetBehavior.DownDragDecisionMaker mDownDragDecisionMaker = null;
+    private boolean fitNav = true;
 
     public QMUIBottomSheetBaseBuilder(Context context) {
         mContext = context;
@@ -70,6 +69,12 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     @SuppressWarnings("unchecked")
     public T setSkinManager(@Nullable QMUISkinManager skinManager) {
         mSkinManager = skinManager;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setFitNav(boolean fitNav) {
+        this.fitNav = fitNav;
         return (T) this;
     }
 
@@ -140,6 +145,8 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
             mDialog.setRadius(mRadius);
         }
         mDialog.setSkinManager(mSkinManager);
+        mDialog.setFitNav(fitNav);
+
         QMUIBottomSheetBehavior behavior = mDialog.getBehavior();
         behavior.setAllowDrag(mAllowDrag);
         behavior.setDownDragDecisionMaker(mDownDragDecisionMaker);
