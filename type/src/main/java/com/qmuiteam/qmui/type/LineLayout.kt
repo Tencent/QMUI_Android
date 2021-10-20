@@ -138,7 +138,7 @@ class LineLayout {
     }
 
     private fun handleEllipse(env: TypeEnvironment, fromInterrupt: Boolean) {
-        if (mLines.isEmpty() || mLines.size < getUsedMaxLine() || (mLines.size == getUsedMaxLine() && !fromInterrupt)) {
+        if (mLines.isEmpty() || mLines.size <= getUsedMaxLine() || (mLines.size == getUsedMaxLine() && !fromInterrupt)) {
             return
         }
         if (ellipsize == TruncateAt.END) {
@@ -151,11 +151,17 @@ class LineLayout {
     }
 
     private fun handleEllipseEnd(env: TypeEnvironment) {
-        for (i in mLines.size - 1 downTo getUsedMaxLine()) {
-            val line = mLines[i]
+        val maxSize = getUsedMaxLine()
+        while (mLines.size > maxSize){
+            val line = mLines[mLines.size - 1]
             mLines.remove(line)
             line.release()
         }
+
+        if(mLines.isEmpty()){
+            return
+        }
+
         val lastLine = mLines[mLines.size - 1]
         var limitWidth = lastLine.widthLimit
         val ellipseElement: Element = TextElement("...", -1, -1)
