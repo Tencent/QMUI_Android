@@ -273,6 +273,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
      */
     public void resetSelect() {
         mCurrentSelectedIndex = NO_POSITION;
+        mPendingSelectedIndex = NO_POSITION;
         if (mSelectAnimator != null) {
             mSelectAnimator.cancel();
             mSelectAnimator = null;
@@ -297,10 +298,14 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
      */
     public void notifyDataChanged() {
         int current = mCurrentSelectedIndex;
+        if(mPendingSelectedIndex != NO_POSITION){
+            current = mPendingSelectedIndex;
+        }
         resetSelect();
         mTabAdapter.setup();
         selectTab(current);
     }
+
 
     public void addOnTabSelectedListener(@NonNull OnTabSelectedListener listener) {
         if (!mSelectedListeners.contains(listener)) {
@@ -526,7 +531,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
                 prevView.setSelectFraction(0f);
                 prevView.setSelected(false); // 标记未选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 nowView.setSelectFraction(1f);
-nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
+                nowView.setSelected(true); // 标记选中，使得TalkBack等屏幕阅读器可向用户报告tab状态
                 mSelectAnimator = null;
                 // set current selected index first, dispatchTabSelected may call selectTab again.
                 mCurrentSelectedIndex = index;

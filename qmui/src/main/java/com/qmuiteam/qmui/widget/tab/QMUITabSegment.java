@@ -72,6 +72,10 @@ public class QMUITabSegment extends QMUIBasicTabSegment {
         populateFromPagerAdapter(false);
     }
 
+    public void notifyDataRefreshed(){
+        super.notifyDataChanged();
+    }
+
     public void setupWithViewPager(@Nullable ViewPager viewPager) {
         setupWithViewPager(viewPager, true);
     }
