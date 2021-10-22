@@ -74,7 +74,7 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
                 ViewGroup.LayoutParams.MATCH_PARENT, mTopBar.getTopBarHeight());
         addView(mTopBar, lp);
         QMUIWindowInsetHelper.handleWindowInsets(this,
-                WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout(), true);
+                WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout(), true, true);
     }
 
     public QMUITopBar getTopBar() {

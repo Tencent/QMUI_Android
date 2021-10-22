@@ -28,6 +28,8 @@ import android.view.WindowManager;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -246,14 +248,10 @@ public class QMUIStatusBarHelper {
      */
     @TargetApi(23)
     private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
-        View decorView = window.getDecorView();
-        int systemUi = decorView.getSystemUiVisibility();
-        if (light) {
-            systemUi |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-        } else {
-            systemUi &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(window, window.getDecorView());
+        if(insetsController != null){
+            insetsController.setAppearanceLightStatusBars(light);
         }
-        decorView.setSystemUiVisibility(systemUi);
         if (QMUIDeviceHelper.isMIUIV9()) {
             // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
             // https://github.com/Tencent/QMUI_Android/issues/160
