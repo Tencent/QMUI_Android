@@ -28,6 +28,8 @@ import android.view.WindowManager;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -260,14 +262,22 @@ public class QMUIStatusBarHelper {
      */
     @TargetApi(23)
     private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
-        View decorView = window.getDecorView();
-        int systemUi = decorView.getSystemUiVisibility();
-        if (light) {
-            systemUi |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-        } else {
-            systemUi &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R){
+            WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(window, window.getDecorView());
+            if(insetsController != null){
+                insetsController.setAppearanceLightStatusBars(light);
+            }
+        }else{
+            // 经过测试，小米 Android 11 用  WindowInsetsControllerCompat 不起作用， 我还能说什么呢。。。
+            View decorView = window.getDecorView();
+            int systemUi = decorView.getSystemUiVisibility();
+            if (light) {
+                systemUi |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            } else {
+                systemUi &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+            decorView.setSystemUiVisibility(systemUi);
         }
-        decorView.setSystemUiVisibility(systemUi);
         if (QMUIDeviceHelper.isMIUIV9()) {
             // MIUI 9 低于 6.0 版本依旧只能回退到以前的方案
             // https://github.com/Tencent/QMUI_Android/issues/160
