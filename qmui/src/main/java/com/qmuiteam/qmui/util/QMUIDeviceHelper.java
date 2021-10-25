@@ -26,6 +26,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -232,6 +233,9 @@ public class QMUIDeviceHelper {
         return BRAND.contains("essential");
     }
 
+    public static boolean isMiuiFullDisplay(Context context){
+        return isMIUI() && Settings.Global.getInt(context.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
+    }
 
     /**
      * 判断是否为 ZUK Z1 和 ZTK C2016。
