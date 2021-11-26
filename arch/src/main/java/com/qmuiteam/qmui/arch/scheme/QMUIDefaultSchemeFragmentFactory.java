@@ -161,23 +161,6 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
                               @NonNull Intent intent,
                               @Nullable Map<String, SchemeValue> scheme) {
         activity.startActivity(intent);
-        if (scheme != null) {
-            SchemeValue enter = scheme.get(QMUISchemeHandler.ARG_TRANSITION_ENTER);
-            if (enter == null) {
-                return;
-            }
-            SchemeValue exit = scheme.get(QMUISchemeHandler.ARG_TRANSITION_EXIT);
-            if (exit == null) {
-                return;
-            }
-            try {
-                activity.overridePendingTransition(
-                        Integer.parseInt(enter.origin),
-                        Integer.parseInt(exit.origin)
-                );
-            } catch (Throwable ignore) {
-            }
-        }
     }
 
     @Override
