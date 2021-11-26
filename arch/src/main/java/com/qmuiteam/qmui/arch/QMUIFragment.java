@@ -16,6 +16,16 @@
 
 package com.qmuiteam.qmui.arch;
 
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_NONE;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_BOTTOM;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
+import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -73,16 +83,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_BOTTOM_TO_TOP;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_LEFT_TO_RIGHT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_NONE;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_RIGHT_TO_LEFT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.DRAG_DIRECTION_TOP_TO_BOTTOM;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_BOTTOM;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_LEFT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_RIGHT;
-import static com.qmuiteam.qmui.arch.SwipeBackLayout.EDGE_TOP;
 
 /**
  * With the use of {@link QMUIFragmentActivity}, {@link QMUIFragment} brings more features,
@@ -1190,10 +1190,6 @@ public abstract class QMUIFragment extends Fragment implements
 
     protected boolean canHandleSwipeBack(){
         mCalled = true;
-        // 1. can not swipe back if enter animation is not finished
-        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END) {
-            return false;
-        }
 
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(false);
         if (provider == null) {
@@ -1201,25 +1197,31 @@ public abstract class QMUIFragment extends Fragment implements
         }
         FragmentManager fragmentManager = provider.getContainerFragmentManager();
 
-        // 3. is not managed by QMUIFragmentContainerProvider
+        // 1. is not managed by QMUIFragmentContainerProvider
         if (fragmentManager == null || fragmentManager != getParentFragmentManager()) {
             return false;
         }
 
-        // 4. should handle by child
+        // 2. should handle by child
         if(provider.isChildHandlePopBackRequested()){
             return false;
         }
 
-        // 5. can not swipe back if the view is null
+        // 3. can not swipe back if the view is null
         View view = getView();
         if (view == null) {
             return false;
         }
 
-        // 6. can not swipe back if the backStack entry count is less than 2
-        if (fragmentManager.getBackStackEntryCount() <= 1 &&
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount()
+        // 4. can not swipe back if the backStack entry count is less than 2
+        if (backStackEntryCount <= 1 &&
                 !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+            return false;
+        }
+
+        // 5. can not swipe back if enter animation is not finished
+        if (mEnterAnimationStatus != ANIMATION_ENTER_STATUS_END && backStackEntryCount > 1) {
             return false;
         }
 
