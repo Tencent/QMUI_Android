@@ -1213,7 +1213,7 @@ public abstract class QMUIFragment extends Fragment implements
             return false;
         }
 
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount()
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         // 4. can not swipe back if the backStack entry count is less than 2
         if (backStackEntryCount <= 1 &&
                 !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {

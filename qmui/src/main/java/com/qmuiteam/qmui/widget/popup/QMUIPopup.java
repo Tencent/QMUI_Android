@@ -32,4 +32,9 @@ public class QMUIPopup extends QMUINormalPopup<QMUIPopup> {
     public QMUIPopup show(@NonNull View anchor) {
         return super.show(anchor);
     }
+
+    @Override
+    public QMUIPopup show(@NonNull View anchor, int anchorAreaLeft, int anchorAreaTop, int anchorAreaRight, int anchorAreaBottom) {
+        return super.show(anchor, anchorAreaLeft, anchorAreaTop, anchorAreaRight, anchorAreaBottom);
+    }
 }
