@@ -134,6 +134,8 @@ public abstract class QMUIFragment extends Fragment implements
     private SwipeBackgroundView mSwipeBackgroundView;
     private boolean mIsInSwipeBack = false;
 
+    private boolean mFinishActivityIfOnBackPressed = false;
+
     private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     private MutableLiveData<Boolean> isInEnterAnimationLiveData = new MutableLiveData<>(false);
     private boolean mCalled = true;
@@ -673,7 +675,7 @@ public abstract class QMUIFragment extends Fragment implements
             onDragStart();
             FragmentManager fragmentManager = provider.getContainerFragmentManager();
             int backStackCount = fragmentManager.getBackStackEntryCount();
-            if (backStackCount > 1) {
+            if (backStackCount > 1 && !mFinishActivityIfOnBackPressed) {
                 Utils.findAndModifyOpInBackStackRecord(fragmentManager, -1, new Utils.OpHandler() {
                     @Override
                     public boolean handle(Object op) {
@@ -887,7 +889,7 @@ public abstract class QMUIFragment extends Fragment implements
         FragmentActivity activity = requireActivity();
         if (activity instanceof QMUIFragmentContainerProvider) {
             QMUIFragmentContainerProvider provider = (QMUIFragmentContainerProvider) activity;
-            if (provider.getContainerFragmentManager().getBackStackEntryCount() > 1 || provider.getContainerFragmentManager().getPrimaryNavigationFragment() == this) {
+            if ((provider.getContainerFragmentManager().getBackStackEntryCount() > 1 && !mFinishActivityIfOnBackPressed) || provider.getContainerFragmentManager().getPrimaryNavigationFragment() == this) {
                 bubbleBackPressedEvent();
             } else {
                 QMUIFragment.TransitionConfig transitionConfig = onFetchTransitionConfig();
@@ -1203,12 +1205,16 @@ public abstract class QMUIFragment extends Fragment implements
         }
 
         // 6. can not swipe back if the backStack entry count is less than 2
-        if (fragmentManager.getBackStackEntryCount() <= 1 &&
+        if ((fragmentManager.getBackStackEntryCount() <= 1 || mFinishActivityIfOnBackPressed) &&
                 !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
             return false;
         }
 
         return true;
+    }
+
+    public void setFinishActivityIfOnBackPressed(boolean finishActivityIfOnBackPressed) {
+        mFinishActivityIfOnBackPressed = finishActivityIfOnBackPressed;
     }
 
     protected int getDragDirection(@NonNull SwipeBackLayout swipeBackLayout,
