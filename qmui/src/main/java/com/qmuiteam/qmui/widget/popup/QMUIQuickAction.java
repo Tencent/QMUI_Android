@@ -57,8 +57,13 @@ public class QMUIQuickAction extends QMUINormalPopup<QMUIQuickAction> {
     private int mMoreArrowWidth;
     private int mPaddingHor;
 
-    public QMUIQuickAction(Context context, int width, int height) {
-        super(context, width, height);
+
+    public QMUIQuickAction(Context context, int width, int height){
+        this(context, width, height, true);
+    }
+
+    public QMUIQuickAction(Context context, int width, int height, boolean forceMeasureIfNeeded) {
+        super(context, width, height, forceMeasureIfNeeded);
         mActionHeight = height;
         mMoreArrowWidth = QMUIResHelper.getAttrDimen(context, R.attr.qmui_quick_action_more_arrow_width);
         mPaddingHor = QMUIResHelper.getAttrDimen(context, R.attr.qmui_quick_action_padding_hor);
