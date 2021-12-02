@@ -1,3 +1,0 @@
-include ':qmuidemo', ':qmui', ':lib', ':compiler', ':arch', ':arch-compiler',
-        ':arch-annotation'
-include ':type'
