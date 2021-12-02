@@ -25,7 +25,11 @@ import androidx.annotation.NonNull;
 public class QMUIPopup extends QMUINormalPopup<QMUIPopup> {
 
     public QMUIPopup(Context context, int width, int height) {
-        super(context, width, height);
+        this(context, width, height, true);
+    }
+
+    public QMUIPopup(Context context, int width, int height, boolean forceMeasureIfNeeded) {
+        super(context, width, height, forceMeasureIfNeeded);
     }
 
     @Override

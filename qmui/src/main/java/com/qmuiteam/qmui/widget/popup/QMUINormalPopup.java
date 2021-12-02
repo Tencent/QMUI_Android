@@ -29,12 +29,14 @@ import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.layout.QMUIFrameLayout;
@@ -100,12 +102,21 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     private int mArrowWidth = NOT_SET;
     private int mArrowHeight = NOT_SET;
     private boolean mRemoveBorderWhenShadow = false;
+    private DecorRootView mDecorRootView;
     private View mContentView;
+    private boolean mForceMeasureIfNeeded;
 
-    public QMUINormalPopup(Context context, int width, int height) {
+    public QMUINormalPopup(Context context, int width, int height){
+        this(context, width, height, true);
+    }
+
+    public QMUINormalPopup(Context context, int width, int height, boolean forceMeasureIfNeeded) {
         super(context);
         mInitWidth = width;
         mInitHeight = height;
+        mDecorRootView = new DecorRootView(context);
+        mWindow.setContentView(mDecorRootView);
+        mForceMeasureIfNeeded = forceMeasureIfNeeded;
     }
 
     public T arrow(boolean showArrow) {
@@ -199,6 +210,29 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
     public T view(@LayoutRes int contentViewResId) {
         return view(LayoutInflater.from(mContext).inflate(contentViewResId, null));
+    }
+
+    @NonNull
+    public View getDecorRootView(){
+        return mDecorRootView;
+    }
+
+    public View getWindowContentChildView(){
+        View self = mDecorRootView;
+        ViewParent parent = mDecorRootView.getParent();
+        while (parent instanceof View){
+            if(((View) parent).getId() == android.R.id.content){
+                return self;
+            }
+            self = (View)parent;
+            parent = self.getParent();
+        }
+        return self;
+    }
+
+    @Nullable
+    public View getContentView(){
+        return mContentView;
     }
 
     public T borderWidth(int borderWidth) {
@@ -328,11 +362,12 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         if (mContentView == null) {
             throw new RuntimeException("you should call view() to set your content view");
         }
+        decorateContentView();
         ShowInfo showInfo = new ShowInfo(anchor, anchorAreaLeft, anchorAreaTop, anchorAreaRight, anchorAreaBottom);
         calculateWindowSize(showInfo);
         calculateXY(showInfo);
         adjustShowInfo(showInfo);
-        decorateContentView(showInfo);
+        mDecorRootView.setShowInfo(showInfo);
         setAnimationStyle(showInfo.anchorProportion(), showInfo.direction);
         mWindow.setWidth(showInfo.windowWidth());
         mWindow.setHeight(showInfo.windowHeight());
@@ -340,7 +375,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         return (T) this;
     }
 
-    private void decorateContentView(ShowInfo showInfo) {
+    private void decorateContentView() {
         ContentView contentView = ContentView.wrap(mContentView, mInitWidth, mInitHeight);
         QMUISkinValueBuilder builder = QMUISkinValueBuilder.acquire();
         if (mIsBorderColorSet) {
@@ -375,10 +410,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         } else {
             contentView.setRadius(mRadius);
         }
-
-        DecorRootView decorRootView = new DecorRootView(mContext, showInfo);
-        decorRootView.setContentView(contentView);
-        mWindow.setContentView(decorRootView);
+        mDecorRootView.setContentView(contentView);
     }
 
     private void adjustShowInfo(ShowInfo showInfo) {
@@ -519,7 +551,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
             }
         }
 
-        if (needMeasureForWidth || needMeasureForHeight) {
+        if (mForceMeasureIfNeeded && (needMeasureForWidth || needMeasureForHeight)) {
             mContentView.measure(
                     showInfo.contentWidthMeasureSpec, showInfo.contentHeightMeasureSpec);
             if (needMeasureForWidth) {
@@ -596,14 +628,17 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
             }
         };
 
-        private DecorRootView(Context context, ShowInfo showInfo) {
+        private DecorRootView(Context context) {
             super(context);
-            mShowInfo = showInfo;
             mArrowPaint = new Paint();
             mArrowPaint.setAntiAlias(true);
             mArrowPath = new Path();
         }
 
+        public void setShowInfo(ShowInfo showInfo) {
+            mShowInfo = showInfo;
+            requestFocus();
+        }
 
         public void setContentView(View contentView) {
             if (mContentView != null) {
@@ -619,6 +654,10 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             removeCallbacks(mUpdateWindowAction);
+            if(mShowInfo == null){
+                setMeasuredDimension(0, 0);
+                return;
+            }
             if (mContentView != null) {
                 mContentView.measure(mShowInfo.contentWidthMeasureSpec, mShowInfo.contentHeightMeasureSpec);
                 int measuredWidth = mContentView.getMeasuredWidth();
@@ -634,7 +673,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
 
         @Override
         protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-            if (mContentView != null) {
+            if (mContentView != null && mShowInfo != null) {
                 mContentView.layout(mShowInfo.decorationLeft, mShowInfo.decorationTop,
                         mShowInfo.width + mShowInfo.decorationLeft,
                         mShowInfo.height + mShowInfo.decorationTop);
@@ -661,6 +700,9 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         @Override
         protected void dispatchDraw(Canvas canvas) {
             super.dispatchDraw(canvas);
+            if(mShowInfo == null){
+                return;
+            }
             if (mShowArrow) {
                 if (mShowInfo.direction == DIRECTION_TOP) {
                     canvas.save();
