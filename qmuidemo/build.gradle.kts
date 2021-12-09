@@ -59,6 +59,7 @@ android {
             }
         }
     }
+    namespace = "com.qmuiteam.qmuidemo"
 }
 
 dependencies {
