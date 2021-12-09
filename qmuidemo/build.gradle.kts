@@ -22,18 +22,18 @@ val gitVersion = runCommand(project, "git rev-list HEAD --count").toIntOrNull() 
 
 
 android {
+    val propFile = project.file("release.properties")
     signingConfigs {
         val properties = Properties()
-        val propFile = project.file("release.properties")
         if (propFile.exists()) {
             properties.load(propFile.inputStream())
-        }
-        getByName("release"){
-            keyAlias = properties.getProperty("RELEASE_KEY_ALIAS")
-            keyPassword = properties.getProperty("RELEASE_KEY_PASSWORD")
-            storeFile = file("qmuidemo.keystore")
-            storePassword = properties.getProperty("RELEASE_STORE_PASSWORD")
-            enableV2Signing = false
+            getByName("release"){
+                keyAlias = properties.getProperty("RELEASE_KEY_ALIAS")
+                keyPassword = properties.getProperty("RELEASE_KEY_PASSWORD")
+                storeFile = file("qmuidemo.keystore")
+                storePassword = properties.getProperty("RELEASE_STORE_PASSWORD")
+                enableV2Signing = false
+            }
         }
     }
 
@@ -51,10 +51,12 @@ android {
         versionName = Dep.QMUI.qmuiVer
     }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+        if (propFile.exists()){
+            getByName("release") {
+                isMinifyEnabled = true
+                proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 }

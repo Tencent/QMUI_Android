@@ -11,5 +11,6 @@ java {
 dependencies {
     implementation(project(":lib"))
     implementation(Dep.CodeGen.javapoet)
+    implementation(Dep.CodeGen.autoService)
     annotationProcessor(Dep.CodeGen.autoService)
 }

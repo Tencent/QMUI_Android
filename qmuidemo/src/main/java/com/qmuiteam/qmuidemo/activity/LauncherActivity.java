@@ -40,7 +40,8 @@ import com.qmuiteam.qmuidemo.QDMainActivity;
 public class LauncherActivity extends Activity {
 
     private static final int PERMISSIONS_REQUEST_CODE = 10;
-    private static final String[] PERMISSIONS_REQUIRED = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String[] PERMISSIONS_REQUIRED = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
