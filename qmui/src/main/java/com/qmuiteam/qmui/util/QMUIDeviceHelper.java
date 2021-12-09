@@ -57,7 +57,6 @@ public class QMUIDeviceHelper {
     private final static String FLYME = "flyme";
     private final static String ZTEC2016 = "zte c2016";
     private final static String ZUKZ1 = "zuk z1";
-    private final static String ESSENTIAL = "essential";
     private final static String MEIZUBOARD[] = {"m9", "M9", "mx", "MX"};
     private final static String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
     private final static String CPU_FILE_PATH_0 = "/sys/devices/system/cpu/";
@@ -81,9 +80,13 @@ public class QMUIDeviceHelper {
     private static long sExtraStorageSize = -1;
     private static double sBatteryCapacity = -1;
     private static int sCpuCoreCount = -1;
+    private static boolean isInfoReaded = false;
 
-
-    static {
+    private static void checkReadInfo(){
+        if(isInfoReaded){
+            return;
+        }
+        isInfoReaded = true;
         Properties properties = new Properties();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -132,34 +135,47 @@ public class QMUIDeviceHelper {
     /**
      * 判断是否是flyme系统
      */
+    private static OnceReadValue<Void, Boolean> isFlymeValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            checkReadInfo();
+            return !TextUtils.isEmpty(sFlymeVersionName) && sFlymeVersionName.contains(FLYME);
+        }
+    };
     public static boolean isFlyme() {
-        return !TextUtils.isEmpty(sFlymeVersionName) && sFlymeVersionName.contains(FLYME);
+        return isFlymeValue.get(null);
     }
 
     /**
      * 判断是否是MIUI系统
      */
     public static boolean isMIUI() {
+        checkReadInfo();
         return !TextUtils.isEmpty(sMiuiVersionName);
     }
 
     public static boolean isMIUIV5() {
+        checkReadInfo();
         return "v5".equals(sMiuiVersionName);
     }
 
     public static boolean isMIUIV6() {
+        checkReadInfo();
         return "v6".equals(sMiuiVersionName);
     }
 
     public static boolean isMIUIV7() {
+        checkReadInfo();
         return "v7".equals(sMiuiVersionName);
     }
 
     public static boolean isMIUIV8() {
+        checkReadInfo();
         return "v8".equals(sMiuiVersionName);
     }
 
     public static boolean isMIUIV9() {
+        checkReadInfo();
         return "v9".equals(sMiuiVersionName);
     }
 
@@ -168,6 +184,7 @@ public class QMUIDeviceHelper {
     }
 
     public static boolean isFlymeLowerThan(int majorVersion, int minorVersion, int patchVersion) {
+        checkReadInfo();
         boolean isLower = false;
         if (sFlymeVersionName != null && !sFlymeVersionName.equals("")) {
             try {
@@ -204,53 +221,109 @@ public class QMUIDeviceHelper {
     }
 
 
+    private static OnceReadValue<Void, Boolean> isMeizuValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            checkReadInfo();
+            return isPhone(MEIZUBOARD) || isFlyme();
+        }
+    };
     public static boolean isMeizu() {
-        return isPhone(MEIZUBOARD) || isFlyme();
+        return isMeizuValue.get(null);
     }
 
     /**
      * 判断是否为小米
      * https://dev.mi.com/doc/?p=254
      */
+    private static OnceReadValue<Void, Boolean> isXiaomiValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            return Build.MANUFACTURER.toLowerCase().equals("xiaomi");
+        }
+    };
     public static boolean isXiaomi() {
-        return Build.MANUFACTURER.toLowerCase().equals("xiaomi");
+        return isXiaomiValue.get(null);
     }
 
+    private static OnceReadValue<Void, Boolean> isVivoValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            return BRAND.contains("vivo") || BRAND.contains("bbk");
+        }
+    };
     public static boolean isVivo() {
-        return BRAND.contains("vivo") || BRAND.contains("bbk");
+        return isVivoValue.get(null);
     }
 
+    private static OnceReadValue<Void, Boolean> isOppoValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            return BRAND.contains("oppo");
+        }
+    };
     public static boolean isOppo() {
-        return BRAND.contains("oppo");
+        return isOppoValue.get(null);
     }
 
+    private static OnceReadValue<Void, Boolean> isHuaweiValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            return BRAND.contains("huawei") || BRAND.contains("honor");
+        }
+    };
     public static boolean isHuawei() {
-        return BRAND.contains("huawei") || BRAND.contains("honor");
+        return isHuaweiValue.get(null);
     }
 
+    private static OnceReadValue<Void, Boolean> isEssentialPhoneValue = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            return BRAND.contains("essential");
+        }
+    };
     public static boolean isEssentialPhone() {
-        return BRAND.contains("essential");
+        return isEssentialPhoneValue.get(null);
     }
 
+    private static OnceReadValue<Context, Boolean> isMiuiFullDisplayValue = new OnceReadValue<Context, Boolean>() {
+        @Override
+        protected Boolean read(Context param) {
+            return isMIUI() && Settings.Global.getInt(param.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
+        }
+    };
     public static boolean isMiuiFullDisplay(Context context){
-        return isMIUI() && Settings.Global.getInt(context.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
+        return isMiuiFullDisplayValue.get(context);
     }
 
     /**
      * 判断是否为 ZUK Z1 和 ZTK C2016。
      * 两台设备的系统虽然为 android 6.0，但不支持状态栏icon颜色改变，因此经常需要对它们进行额外判断。
      */
+    private static OnceReadValue<Void, Boolean> isZUKZ1Value = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            final String board = android.os.Build.MODEL;
+            return board != null && board.toLowerCase().contains(ZUKZ1);
+        }
+    };
     public static boolean isZUKZ1() {
-        final String board = android.os.Build.MODEL;
-        return board != null && board.toLowerCase().contains(ZUKZ1);
+        return isZUKZ1Value.get(null);
     }
 
+    private static OnceReadValue<Void, Boolean> isZTKC2016Value = new OnceReadValue<Void, Boolean>() {
+        @Override
+        protected Boolean read(Void param) {
+            final String board = android.os.Build.MODEL;
+            return board != null && board.toLowerCase().contains(ZTEC2016);
+        }
+    };
     public static boolean isZTKC2016() {
-        final String board = android.os.Build.MODEL;
-        return board != null && board.toLowerCase().contains(ZTEC2016);
+        return isZTKC2016Value.get(null);
     }
 
     private static boolean isPhone(String[] boards) {
+        checkReadInfo();
         final String board = android.os.Build.BOARD;
         if (board == null) {
             return false;
