@@ -47,7 +47,7 @@ public class QDApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        QMUILog.setDelegete(new QMUILog.QMUILogDelegate() {
+        QMUILog.setDelegate(new QMUILog.QMUILogDelegate() {
             @Override
             public void e(String tag, String msg, Object... obj) {
                 Log.e(tag, msg);

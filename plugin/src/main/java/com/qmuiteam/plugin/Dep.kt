@@ -20,12 +20,12 @@ object Dep {
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.4.0"
-        val annotation = "androidx.annotation:annotation:1.3.0"
-        val coreKtx = "androidx.core:core-ktx:1.7.0"
-        val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
-        val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-        val fragment = "androidx.fragment:fragment:1.3.6"
+        const val appcompat = "androidx.appcompat:appcompat:1.4.0"
+        const val annotation = "androidx.annotation:annotation:1.3.0"
+        const val coreKtx = "androidx.core:core-ktx:1.7.0"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
+        const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+        const val fragment = "androidx.fragment:fragment:1.3.6"
     }
 
     object MaterialDesign {

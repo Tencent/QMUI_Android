@@ -19,6 +19,8 @@ package com.qmuiteam.qmuidemo.model;
 
 import com.qmuiteam.qmui.widget.section.QMUISection;
 
+import java.util.Objects;
+
 public class SectionItem implements QMUISection.Model<SectionItem> {
     private final String text;
 
@@ -37,7 +39,7 @@ public class SectionItem implements QMUISection.Model<SectionItem> {
 
     @Override
     public boolean isSameItem(SectionItem other) {
-        return text == other.text || (text != null && text.equals(other.text));
+        return Objects.equals(text, other.text);
     }
 
     @Override
