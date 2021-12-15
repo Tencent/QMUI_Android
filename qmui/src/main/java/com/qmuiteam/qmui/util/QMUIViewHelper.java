@@ -24,7 +24,6 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -35,17 +34,10 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.ViewStub;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -53,6 +45,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
@@ -639,56 +636,6 @@ public class QMUIViewHelper {
             }
             viewParent.requestDisallowInterceptTouchEvent(value);
         }
-    }
-
-    /**
-     * 把 ViewStub inflate 之后在其中根据 id 找 View
-     *
-     * @param parentView     包含 ViewStub 的 View
-     * @param viewStubId     要从哪个 ViewStub 来 inflate
-     * @param inflatedViewId 最终要找到的 View 的 id
-     * @return id 为 inflatedViewId 的 View
-     */
-    public static View findViewFromViewStub(View parentView, int viewStubId, int inflatedViewId) {
-        if (null == parentView) {
-            return null;
-        }
-        View view = parentView.findViewById(inflatedViewId);
-        if (null == view) {
-            ViewStub vs = (ViewStub) parentView.findViewById(viewStubId);
-            if (null == vs) {
-                return null;
-            }
-            view = vs.inflate();
-            if (null != view) {
-                view = view.findViewById(inflatedViewId);
-            }
-        }
-        return view;
-    }
-
-    /**
-     * inflate ViewStub 并返回对应的 View。
-     */
-    public static View findViewFromViewStub(View parentView, int viewStubId, int inflatedViewId, int inflateLayoutResId) {
-        if (null == parentView) {
-            return null;
-        }
-        View view = parentView.findViewById(inflatedViewId);
-        if (null == view) {
-            ViewStub vs = (ViewStub) parentView.findViewById(viewStubId);
-            if (null == vs) {
-                return null;
-            }
-            if (vs.getLayoutResource() < 1 && inflateLayoutResId > 0) {
-                vs.setLayoutResource(inflateLayoutResId);
-            }
-            view = vs.inflate();
-            if (null != view) {
-                view = view.findViewById(inflatedViewId);
-            }
-        }
-        return view;
     }
 
     public static void safeSetImageViewSelected(ImageView imageView, boolean selected) {
