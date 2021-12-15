@@ -17,6 +17,7 @@
 package com.qmuiteam.qmuidemo.compiler;
 
 import com.google.auto.service.AutoService;
+import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -25,7 +26,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
-import com.qmuiteam.qmuidemo.lib.annotation.Widget;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;

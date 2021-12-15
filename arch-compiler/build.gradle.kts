@@ -9,6 +9,7 @@ version = Dep.QMUI.archVer
 dependencies {
     implementation(project(":arch-annotation"))
     implementation(Dep.CodeGen.javapoet)
+    implementation(Dep.CodeGen.autoService)
     annotationProcessor(Dep.CodeGen.autoService)
 }
 

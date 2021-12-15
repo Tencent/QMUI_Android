@@ -28,7 +28,7 @@ android {
         if (propFile.exists()) {
             properties.load(propFile.inputStream())
         }
-        getByName("release"){
+        create("release"){
             keyAlias = properties.getProperty("RELEASE_KEY_ALIAS")
             keyPassword = properties.getProperty("RELEASE_KEY_PASSWORD")
             storeFile = file("qmuidemo.keystore")
