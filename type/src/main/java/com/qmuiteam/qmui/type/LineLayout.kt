@@ -34,6 +34,7 @@ class LineLayout {
     var moreBgColor = 0
     var moreUnderlineHeight = 0
     var typeModel: TypeModel? = null
+    var shouldHandleWordBreak: Boolean = true
 
     private var exactlyHeightMaxLine = Int.MAX_VALUE
 
@@ -82,7 +83,7 @@ class LineLayout {
                     line.release()
                     return
                 }
-                val back = line.handleWordBreak(env)
+                val back = line.handleWordBreak(env, shouldHandleWordBreak)
                 line.layout(env, dropLastIfSpace, false)
                 mLines.add(line)
                 if(env.lineHeight != -1){
@@ -138,7 +139,7 @@ class LineLayout {
     }
 
     private fun handleEllipse(env: TypeEnvironment, fromInterrupt: Boolean) {
-        if (mLines.isEmpty() || mLines.size <= getUsedMaxLine() || (mLines.size == getUsedMaxLine() && !fromInterrupt)) {
+        if (mLines.isEmpty() || mLines.size < getUsedMaxLine() || (mLines.size == getUsedMaxLine() && !fromInterrupt)) {
             return
         }
         if (ellipsize == TruncateAt.END) {
@@ -274,7 +275,7 @@ class LineLayout {
                     elements.poll()
                 }
             }
-            line.handleWordBreak(env)
+            line.handleWordBreak(env, shouldHandleWordBreak)
             line.layout(env, dropLastIfSpace, false)
             if (elements.isEmpty()) {
                 return
@@ -392,7 +393,7 @@ class LineLayout {
             el.move(env)
             handleLine.add(el)
         }
-        handleLine.handleWordBreak(env)
+        handleLine.handleWordBreak(env, shouldHandleWordBreak)
         handleLine.layout(env, dropLastIfSpace, ellipseLine == lines.size)
         var lastEnd = handleLine.y + handleLine.contentHeight
         for (i in nextFullShowLine until lines.size) {
@@ -405,7 +406,7 @@ class LineLayout {
             }
             lastEnd = line.y + line.contentHeight
             line.move(env)
-            line.handleWordBreak(env)
+            line.handleWordBreak(env, shouldHandleWordBreak)
             line.layout(env, dropLastIfSpace, i == lines.size - 1)
             mLines.add(line)
         }
@@ -415,7 +416,7 @@ class LineLayout {
         get() {
             var maxWidth = 0
             for (line in mLines) {
-                maxWidth = Math.max(maxWidth, line.layoutWidth)
+                maxWidth = line.layoutWidth.coerceAtLeast(maxWidth)
             }
             return maxWidth
         }

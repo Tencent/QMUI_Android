@@ -86,8 +86,8 @@ class Line private constructor() {
         }
     }
 
-    fun handleWordBreak(environment: TypeEnvironment?): List<Element>? {
-        if (mElements.size == 0) {
+    fun handleWordBreak(environment: TypeEnvironment?, shouldHandleWordBreak: Boolean): List<Element>? {
+        if (mElements.size == 0 || !shouldHandleWordBreak) {
             return null
         }
         var lastIndex = mElements.size - 1
