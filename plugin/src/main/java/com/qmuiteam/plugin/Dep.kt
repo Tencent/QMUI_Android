@@ -6,7 +6,6 @@ object Dep {
 
     val javaVersion = JavaVersion.VERSION_11
     const val kotlinJvmTarget = "11"
-    const val kotlinVer = "1.5.31"
     const val compileSdk = 31
     const val minSdk = 21
     const val targetSdk = 31
@@ -17,6 +16,7 @@ object Dep {
         const val qmuiVer = "2.0.1"
         const val archVer = "2.0.1"
         const val typeVer = "0.0.14"
+        const val composeVer = "0.0.1"
     }
 
     object AndroidX {
@@ -26,6 +26,20 @@ object Dep {
         val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
         val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
         val fragment = "androidx.fragment:fragment:1.4.0"
+    }
+
+    object Compose {
+        val version = "1.1.0-rc01"
+        val animation = "androidx.compose.animation:animation:$version"
+        val ui = "androidx.compose.ui:ui:$version"
+        val material = "androidx.compose.material:material:$version"
+        val compiler = "androidx.compose.compiler:compiler:$version"
+    }
+
+    object Flipper {
+        private const val version = "0.96.1"
+        const val soLoader = "com.facebook.soloader:soloader:0.10.1"
+        const val flipper = "com.facebook.flipper:flipper:$version"
     }
 
     object MaterialDesign {

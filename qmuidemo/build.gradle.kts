@@ -43,6 +43,14 @@ android {
         targetCompatibility = Dep.javaVersion
     }
 
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Dep.Compose.version
+    }
+
     defaultConfig {
         applicationId = "com.qmuiteam.qmuidemo"
         minSdk = Dep.minSdk
@@ -70,6 +78,9 @@ dependencies {
     implementation(project(":qmui"))
     implementation(project(":arch"))
     implementation(project(":type"))
+    implementation(project(":compose"))
+    implementation(Dep.Flipper.soLoader)
+    implementation(Dep.Flipper.flipper)
     kapt(project(":compiler"))
     kapt(project(":arch-compiler"))
 }

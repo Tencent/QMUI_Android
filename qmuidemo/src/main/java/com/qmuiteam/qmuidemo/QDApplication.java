@@ -24,6 +24,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.flipper.android.AndroidFlipperClient;
+import com.facebook.flipper.core.FlipperClient;
+import com.facebook.flipper.plugins.inspector.DescriptorMapping;
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
+import com.facebook.soloader.SoLoader;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler;
@@ -78,6 +83,11 @@ public class QDApplication extends Application {
         QMUISwipeBackActivityManager.init(this);
         QMUIQQFaceCompiler.setDefaultQQFaceManager(QDQQFaceManager.getInstance());
         QDSkinManager.install(this);
+
+        SoLoader.init(this, false);
+        FlipperClient client = AndroidFlipperClient.getInstance(this);
+        client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+        client.start();
     }
 
     @Override

@@ -6,6 +6,7 @@ include(":arch")
 include(":arch-compiler")
 include(":arch-annotation")
 include(":type")
+include(":compose")
 
 includeBuild("./plugin")
 
