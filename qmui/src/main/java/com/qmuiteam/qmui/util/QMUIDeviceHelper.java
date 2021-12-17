@@ -296,32 +296,6 @@ public class QMUIDeviceHelper {
         return isMiuiFullDisplayValue.get(context);
     }
 
-    /**
-     * 判断是否为 ZUK Z1 和 ZTK C2016。
-     * 两台设备的系统虽然为 android 6.0，但不支持状态栏icon颜色改变，因此经常需要对它们进行额外判断。
-     */
-    private static OnceReadValue<Void, Boolean> isZUKZ1Value = new OnceReadValue<Void, Boolean>() {
-        @Override
-        protected Boolean read(Void param) {
-            final String board = android.os.Build.MODEL;
-            return board != null && board.toLowerCase().contains(ZUKZ1);
-        }
-    };
-    public static boolean isZUKZ1() {
-        return isZUKZ1Value.get(null);
-    }
-
-    private static OnceReadValue<Void, Boolean> isZTKC2016Value = new OnceReadValue<Void, Boolean>() {
-        @Override
-        protected Boolean read(Void param) {
-            final String board = android.os.Build.MODEL;
-            return board != null && board.toLowerCase().contains(ZTEC2016);
-        }
-    };
-    public static boolean isZTKC2016() {
-        return isZTKC2016Value.get(null);
-    }
-
     private static boolean isPhone(String[] boards) {
         checkReadInfo();
         final String board = android.os.Build.BOARD;
