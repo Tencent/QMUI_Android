@@ -103,9 +103,8 @@ public class QMUIStatusBarHelper {
         int systemUiVisibility = window.getDecorView().getSystemUiVisibility();
         systemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         window.getDecorView().setSystemUiVisibility(systemUiVisibility);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && supportTransclentStatusBar6()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // android 6以后可以改状态栏字体颜色，因此可以自行设置为透明
-            // ZUK Z1是个另类，自家应用可以实现字体颜色变色，但没开放接口
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
@@ -179,10 +178,6 @@ public class QMUIStatusBarHelper {
      */
     public static boolean setStatusBarLightMode(Activity activity) {
         if (activity == null) return false;
-        // 无语系列：ZTK C2016只能时间和电池图标变色。。。。
-        if (QMUIDeviceHelper.isZTKC2016()) {
-            return false;
-        }
 
         if (mStatusBarType != STATUSBAR_TYPE_DEFAULT) {
             return setStatusBarLightMode(activity, mStatusBarType);
@@ -412,13 +407,6 @@ public class QMUIStatusBarHelper {
             }
         }
         return sTransparentValue;
-    }
-
-    /**
-     * 检测 Android 6.0 是否可以启用 window.setStatusBarColor(Color.TRANSPARENT)。
-     */
-    public static boolean supportTransclentStatusBar6() {
-        return !(QMUIDeviceHelper.isZUKZ1() || QMUIDeviceHelper.isZTKC2016());
     }
 
     /**
