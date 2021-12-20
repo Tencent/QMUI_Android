@@ -2,13 +2,18 @@ package com.qmuiteam.qmui.util;
 
 public abstract class OnceReadValue<P, T> {
 
-    private boolean isRead = false;
+    private volatile boolean isRead = false;
     private T cacheValue;
 
     public T get(P param){
-        if(!isRead){
-            isRead = true;
-            cacheValue = read(param);
+        if(isRead){
+            return cacheValue;
+        }
+        synchronized (this){
+            if(!isRead){
+                cacheValue = read(param);
+                isRead = true;
+            }
         }
         return cacheValue;
     }
