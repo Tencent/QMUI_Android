@@ -154,6 +154,7 @@ internal class AnimateModalImpl(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
     maskCancellable: Boolean = true,
+    val durationMillis: Int = 300,
     val content: @Composable AnimatedVisibilityScope.(modal: QMUIModal) -> Unit
 ) : QMUIModalPresent(rootLayout, onBackPressedDispatcher, mask, systemCancellable, maskCancellable) {
 
@@ -161,8 +162,8 @@ internal class AnimateModalImpl(
     override fun ModalContent(visible: Boolean, dismissFinishAction: () -> Unit) {
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(300), 0f),
-            exit = fadeOut(tween(300), 0f)
+            enter = fadeIn(tween(durationMillis), 0f),
+            exit = fadeOut(tween(durationMillis), 0f)
         ) {
             var modifier = Modifier
                 .fillMaxSize()
