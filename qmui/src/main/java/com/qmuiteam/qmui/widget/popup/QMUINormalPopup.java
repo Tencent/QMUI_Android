@@ -459,7 +459,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
             }
             if (showInfo.direction == DIRECTION_BOTTOM) {
                 if (shouldShowShadow()) {
-                    showInfo.y += mArrowHeight;
+                    showInfo.y += Math.min(mShadowInset, mArrowHeight);
                 }
                 showInfo.decorationTop = Math.max(showInfo.decorationTop, mArrowHeight);
             } else if (showInfo.direction == DIRECTION_TOP) {
