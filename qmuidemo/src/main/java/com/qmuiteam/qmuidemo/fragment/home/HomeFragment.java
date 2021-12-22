@@ -69,7 +69,7 @@ public class HomeFragment extends BaseFragment {
         }
 
         @Override
-        public int getCount() {
+        public int PageCount() {
             return mPages.size();
         }
 
@@ -206,7 +206,7 @@ public class HomeFragment extends BaseFragment {
     enum Pager {
         COMPONENT, UTIL, LAB;
 
-        public static Pager getPagerFromPositon(int position) {
+        public static Pager getPagerFromPosition(int position) {
             switch (position) {
                 case 0:
                     return COMPONENT;
