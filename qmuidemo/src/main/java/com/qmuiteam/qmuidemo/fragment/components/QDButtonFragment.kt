@@ -17,14 +17,8 @@ package com.qmuiteam.qmuidemo.fragment.components
 
 import android.view.LayoutInflater
 import android.view.View
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Modifier
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.qmuiteam.compose.modal.QMUIDialogMessageContent
-import com.qmuiteam.compose.modal.QMUIDialogTitle
-import com.qmuiteam.compose.modal.qmuiDialog
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmui.arch.effect.MapEffect
 import com.qmuiteam.qmui.kotlin.onClick
@@ -64,15 +58,6 @@ class QDButtonFragment : BaseFragment() {
 
     private fun initTopBar() {
         mTopBar.addLeftBackImageButton().onClick { popBackStack() }
-        mTopBar.addRightTextButton("test", View.generateViewId()).onClick {
-            it.qmuiDialog {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    QMUIDialogTitle(text = "这是标题")
-                    QMUIDialogMessageContent(text = "这是一点点有意思的内容")
-                }
-
-            }.show()
-        }
         mTopBar.setTitle(mQDItemDescription.name)
 
 

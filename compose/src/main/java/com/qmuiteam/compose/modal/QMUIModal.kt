@@ -17,10 +17,18 @@ val DefaultMaskColor = Color.Black.copy(alpha = 0.5f)
 
 private class ModalHolder(var current: QMUIModal? = null)
 
+class QMUIModalAction(
+    val text: String,
+    val enabled: Boolean,
+    val color: Color,
+    val onClick: (QMUIModal) -> Unit
+)
+
 @Composable
 fun QMUIModal(
     isVisible: Boolean,
     mask: Color = DefaultMaskColor,
+    durationMillis: Int = 300,
     systemCancellable: Boolean = true,
     maskCancellable: Boolean = true,
     doOnShow: QMUIModal.Action? = null,
@@ -33,7 +41,7 @@ fun QMUIModal(
     }
     if (isVisible) {
         if (modalHolder.current == null) {
-            val modal = LocalView.current.qmuiModal(mask, systemCancellable, maskCancellable, modalHostProvider, content)
+            val modal = LocalView.current.qmuiModal(mask, systemCancellable, maskCancellable, durationMillis, modalHostProvider, content)
             doOnShow?.let { modal.doOnShow(it) }
             doOnDismiss?.let { modal.doOnDismiss(it) }
             modalHolder.current = modal
@@ -84,6 +92,7 @@ fun View.qmuiModal(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
     maskCancellable: Boolean = true,
+    durationMillis: Int = 300,
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
     content: @Composable AnimatedVisibilityScope.(QMUIModal) -> Unit
 ): QMUIModal {
@@ -91,7 +100,10 @@ fun View.qmuiModal(
         throw RuntimeException("View is not attached to window")
     }
     val modalHost = modalHostProvider.provide(this)
-    return AnimateModalImpl(modalHost.first, modalHost.second, mask, systemCancellable, maskCancellable, content)
+    return AnimateModalImpl(
+        modalHost.first,
+        modalHost.second,
+        mask, systemCancellable, maskCancellable, durationMillis, content)
 }
 
 fun View.qmuiStillModal(
