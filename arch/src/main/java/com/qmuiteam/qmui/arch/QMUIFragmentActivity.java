@@ -39,6 +39,8 @@ import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
 import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 
+import java.util.ArrayList;
+
 /**
  * the container activity for {@link QMUIFragment}.
  * Created by cgspine on 15/9/14.
@@ -116,8 +118,53 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
                     mIsFirstFragmentAdded = true;
                 }
             }
+            if(!mIsFirstFragmentAdded){
+                mIsFirstFragmentAdded = instantiationMutiFragment(intent);
+            }
             Log.i(TAG, "the time it takes to inject first fragment from annotation is " + (System.currentTimeMillis() - start));
         }
+    }
+
+    protected boolean instantiationMutiFragment(Intent intent){
+        return false;
+    }
+
+    protected boolean initMutiFragment(QMUIFragment... fragments){
+        if(fragments.length == 0){
+            return false;
+        }
+        if(fragments.length == 1){
+            QMUIFragment fragment = fragments[0];
+            String tagName = fragment.getClass().getSimpleName();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(getContextViewId(), fragment, tagName)
+                    .addToBackStack(tagName)
+                    .commit();
+            return true;
+        }
+        ArrayList<FragmentTransaction> transactions = new ArrayList<>();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        for (int i=0; i<fragments.length;i++) {
+            QMUIFragment fragment = fragments[i];
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            QMUIFragment.TransitionConfig transitionConfig = fragments[0].onFetchTransitionConfig();
+            fragment.mIsMutiStarted = true;
+            String tagName = fragment.getClass().getSimpleName();
+            if(i==0){
+                transaction.add(getContextViewId(), fragment, tagName);
+            }else{
+                transaction.setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
+                transaction.replace(getContextViewId(), fragment, tagName);
+            }
+            transaction.addToBackStack(tagName);
+            transaction.setReorderingAllowed(true);
+            transactions.add(transaction);
+        }
+        for(FragmentTransaction transaction: transactions){
+            transaction.commit();
+        }
+        return true;
     }
 
     protected void performTranslucent() {

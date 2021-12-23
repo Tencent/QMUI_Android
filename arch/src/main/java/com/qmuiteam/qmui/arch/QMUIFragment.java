@@ -95,6 +95,7 @@ public abstract class QMUIFragment extends Fragment implements
         FragmentSchemeRefreshable{
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
+    private static final String QMUI_IS_MUTI_STARTED_KEY = "qmui_is_muti_started";
 
     public static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             R.animator.slide_in_right, R.animator.slide_out_left,
@@ -135,6 +136,7 @@ public abstract class QMUIFragment extends Fragment implements
     private boolean mIsInSwipeBack = false;
 
     private boolean mFinishActivityIfOnBackPressed = false;
+    boolean mIsMutiStarted = false;
 
     private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     private MutableLiveData<Boolean> isInEnterAnimationLiveData = new MutableLiveData<>(false);
@@ -205,6 +207,12 @@ public abstract class QMUIFragment extends Fragment implements
 
     public boolean isAttachedToActivity() {
         return !isRemoving() && mBaseView != null;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(QMUI_IS_MUTI_STARTED_KEY, mIsMutiStarted);
     }
 
     @Override
@@ -419,6 +427,49 @@ public abstract class QMUIFragment extends Fragment implements
         return startFragment(fragment, provider);
     }
 
+
+    public int startFragment(QMUIFragment... fragments){
+        if (!checkStateLoss("startFragment")) {
+            return -1;
+        }
+        if(fragments.length == 0){
+            return -1;
+        }
+        QMUIFragmentContainerProvider provider = findFragmentContainerProvider(true);
+        if (provider == null) {
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException("Can not find the fragment container provider.");
+            } else {
+                Log.d(TAG, "Can not find the fragment container provider.");
+                return -1;
+            }
+        }
+        if(provider.getContainerFragmentManager().isDestroyed()){
+            return -1;
+        }
+        if(fragments.length == 1){
+            return startFragment(fragments[0], provider);
+        }
+        ArrayList<FragmentTransaction> transactions = new ArrayList<>();
+        for (QMUIFragment fragment : fragments) {
+            FragmentTransaction transaction = provider.getContainerFragmentManager()
+                    .beginTransaction()
+                    .setPrimaryNavigationFragment(null);
+            TransitionConfig transitionConfig = fragments[0].onFetchTransitionConfig();
+            fragment.mIsMutiStarted = true;
+            String tagName = fragment.getClass().getSimpleName();
+            transaction.setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
+            transaction.replace(provider.getContextViewId(), fragment, tagName);
+            transaction.addToBackStack(tagName);
+            transactions.add(transaction);
+            transaction.setReorderingAllowed(true);
+        }
+        for(FragmentTransaction transaction: transactions){
+            transaction.commit();
+        }
+        return 0;
+    }
+
     /**
      * simulate the behavior of startActivityForResult/onActivityResult:
      * 1. Jump fragment1 to fragment2 via startActivityForResult(fragment2, requestCode)
@@ -485,6 +536,14 @@ public abstract class QMUIFragment extends Fragment implements
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null){
+            mIsMutiStarted = savedInstanceState.getBoolean(QMUI_IS_MUTI_STARTED_KEY, false);
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (mBaseView.getTag(R.id.qmui_arch_reused_layout) == null) {
@@ -519,6 +578,9 @@ public abstract class QMUIFragment extends Fragment implements
                     public int getDragDirection(SwipeBackLayout swipeBackLayout, SwipeBackLayout.ViewMoveAction viewMoveAction, float downX, float downY, float dx, float dy, float touchSlop) {
 
                         mCalled = false;
+                        if(mIsMutiStarted){
+                            return DRAG_DIRECTION_NONE;
+                        }
                         boolean canHandle = canHandleSwipeBack();
                         if (canHandle && !mCalled) {
                             throw new RuntimeException(getClass().getSimpleName() + " did not call through to super.shouldPreventSwipeBack()");
