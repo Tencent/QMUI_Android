@@ -133,13 +133,13 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         for (int i=0; i<fragments.length;i++) {
             QMUIFragment fragment = fragments[i];
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            QMUIFragment.TransitionConfig transitionConfig = fragments[0].onFetchTransitionConfig();
             fragment.mIsMutiStarted = true;
             String tagName = fragment.getClass().getSimpleName();
             if(i==0){
                 transaction.add(getContextViewId(), fragment, tagName);
             }else{
-                transaction.setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
+                QMUIFragment.TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
+                transaction.setCustomAnimations(0, 0, transitionConfig.popenter, transitionConfig.popout);
                 transaction.replace(getContextViewId(), fragment, tagName);
             }
             transaction.addToBackStack(tagName);

@@ -451,14 +451,15 @@ public abstract class QMUIFragment extends Fragment implements
             return startFragment(fragments[0], provider);
         }
         ArrayList<FragmentTransaction> transactions = new ArrayList<>();
+        TransitionConfig lastTransitionConfig = fragments[fragments.length - 1].onFetchTransitionConfig();
         for (QMUIFragment fragment : fragments) {
             FragmentTransaction transaction = provider.getContainerFragmentManager()
                     .beginTransaction()
                     .setPrimaryNavigationFragment(null);
-            TransitionConfig transitionConfig = fragments[0].onFetchTransitionConfig();
+            TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
             fragment.mIsMutiStarted = true;
             String tagName = fragment.getClass().getSimpleName();
-            transaction.setCustomAnimations(transitionConfig.enter, transitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
+            transaction.setCustomAnimations(transitionConfig.enter, lastTransitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
             transaction.replace(provider.getContextViewId(), fragment, tagName);
             transaction.addToBackStack(tagName);
             transactions.add(transaction);
