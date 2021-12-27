@@ -69,13 +69,13 @@ public class HomeFragment extends BaseFragment {
         }
 
         @Override
-        public int PageCount() {
+        public int getCount() {
             return mPages.size();
         }
 
         @Override
         public Object instantiateItem(final ViewGroup container, int position) {
-            HomeController page = mPages.get(Pager.getPagerFromPositon(position));
+            HomeController page = mPages.get(Pager.getPagerFromPosition(position));
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             container.addView(page, params);
             return page;
