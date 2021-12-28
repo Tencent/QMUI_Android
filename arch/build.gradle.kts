@@ -1,6 +1,4 @@
 import com.qmuiteam.plugin.Dep
-import java.io.FileInputStream
-import java.util.*
 
 plugins {
     id("com.android.library")

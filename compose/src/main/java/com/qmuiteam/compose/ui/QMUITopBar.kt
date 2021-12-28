@@ -4,32 +4,31 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.InspectorValueInfo
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.zIndex
 import androidx.core.view.WindowInsetsCompat
 import com.qmuiteam.compose.R
 import com.qmuiteam.compose.helper.OnePx
 import com.qmuiteam.compose.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.provider.dp
-
-val qmuiTopBarHeight = 48.dp
 
 fun interface QMUITopBarItem {
     @Composable
@@ -167,14 +166,53 @@ open class QMUITopBarTextItem(
 }
 
 @Composable
+fun QMUITopBarWithLazyScrollState(
+    scrollState: LazyListState,
+    title: CharSequence,
+    subTitle: CharSequence = "",
+    alignTitleCenter: Boolean = true,
+    height: Dp = qmuiTopBarHeight,
+    zIndex: Float = qmuiTopBarZIndex,
+    backgroundColor: Color = qmuiPrimaryColor,
+    changeWithBackground: Boolean = false,
+    scrollAlphaChangeMaxOffset: Dp = qmuiScrollAlphaChangeMaxOffset,
+    shadowElevation: Dp = 16.dp,
+    shadowAlpha: Float = 0.6f,
+    separatorHeight: Dp = OnePx(),
+    separatorColor: Color = qmuiSeparatorColor,
+    paddingStart: Dp = 4.dp,
+    paddingEnd: Dp = 4.dp,
+    titleBoxPaddingHor: Dp = 8.dp,
+    leftItems: List<QMUITopBarItem> = emptyList(),
+    rightItems: List<QMUITopBarItem> = emptyList(),
+    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() }
+){
+    val percent = with(LocalDensity.current){
+        if(scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset.toDp() > scrollAlphaChangeMaxOffset){
+            1f
+        } else scrollState.firstVisibleItemScrollOffset.toDp() / scrollAlphaChangeMaxOffset
+    }
+    QMUITopBar(
+        title, subTitle,
+        alignTitleCenter, height, zIndex,
+        if(changeWithBackground) backgroundColor.copy(backgroundColor.alpha * percent) else backgroundColor,
+        shadowElevation, shadowAlpha * percent,
+        separatorHeight, separatorColor.copy(separatorColor.alpha * percent),
+        paddingStart, paddingEnd,
+        titleBoxPaddingHor, leftItems, rightItems, titleLayout
+    )
+}
+
+@Composable
 fun QMUITopBar(
     title: CharSequence,
     subTitle: CharSequence = "",
     alignTitleCenter: Boolean = true,
     height: Dp = qmuiTopBarHeight,
+    zIndex: Float = qmuiTopBarZIndex,
     backgroundColor: Color = qmuiPrimaryColor,
     shadowElevation: Dp = 16.dp,
-    shadowShape: Shape = RectangleShape,
+    shadowAlpha: Float = 0.4f,
     separatorHeight: Dp = OnePx(),
     separatorColor: Color = qmuiSeparatorColor,
     paddingStart: Dp = 4.dp,
@@ -187,35 +225,47 @@ fun QMUITopBar(
     val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
         WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
     ).dp()
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(shadowElevation, shadowShape)
-            .background(backgroundColor)
-            .padding(top = insets.top)
-            .height(height)
-    ) {
-        QMUITopBarContent(
-            title,
-            subTitle,
-            alignTitleCenter,
-            height,
-            paddingStart,
-            paddingEnd,
-            titleBoxPaddingHor,
-            leftItems,
-            rightItems,
-            titleLayout
-        )
-        if(separatorHeight > 0.dp && separatorColor != Color.Transparent){
-            Box(modifier = Modifier
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(IntrinsicSize.Max)
+        .zIndex(zIndex)
+    ){
+        Box(modifier = Modifier.fillMaxSize().graphicsLayer {
+            this.alpha = shadowAlpha
+            this.shadowElevation = shadowElevation.toPx()
+            this.shape =  RectangleShape
+            this.clip = shadowElevation > 0.dp
+        })
+        Box(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(separatorHeight)
-                .align(Alignment.BottomStart)
-                .background(separatorColor)
+                .background(backgroundColor)
+                .padding(top = insets.top)
+                .height(height)
+        ) {
+            QMUITopBarContent(
+                title,
+                subTitle,
+                alignTitleCenter,
+                height,
+                paddingStart,
+                paddingEnd,
+                titleBoxPaddingHor,
+                leftItems,
+                rightItems,
+                titleLayout
             )
+            if(separatorHeight > 0.dp && separatorColor != Color.Transparent){
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(separatorHeight)
+                    .align(Alignment.BottomStart)
+                    .background(separatorColor)
+                )
+            }
         }
     }
+
 }
 
 @Composable

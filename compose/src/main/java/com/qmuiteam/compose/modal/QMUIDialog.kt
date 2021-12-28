@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qmuiteam.compose.ui.qmuiCommonHorSpace
+import com.qmuiteam.compose.ui.qmuiPrimaryColor
 
 val DefaultDialogPaddingHor = 20.dp
 
@@ -33,7 +34,7 @@ fun QMUIDialog(
     horEdge: Dp = qmuiCommonHorSpace,
     verEdge: Dp = 20.dp,
     widthLimit: Dp = 360.dp,
-    radius: Dp = 12.dp,
+    radius: Dp = 2.dp,
     background: Color = Color.White,
     content: @Composable (QMUIModal) -> Unit
 ) {
@@ -157,7 +158,7 @@ fun QMUIDialogMsgContent(
 fun QMUIDialogAction(
     text: String,
     fontSize: TextUnit = 14.sp,
-    color: Color = Color.Blue,
+    color: Color = qmuiPrimaryColor,
     fontWeight: FontWeight? = FontWeight.Bold,
     fontFamily: FontFamily? = null,
     paddingVer:Dp = 9.dp,
