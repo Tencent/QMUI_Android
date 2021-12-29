@@ -5,6 +5,9 @@ import androidx.compose.ui.unit.dp
 
 val qmuiPrimaryColor = Color(0xFF00A8E1)
 val qmuiSeparatorColor = Color(0xFFCCCCCC)
+val qmuiIndicationColor = Color(0xFF777777)
+val qmuiTextMainColor = Color.Black
+val qmuiTextDescColor = Color(0xFF666666)
 
 
 

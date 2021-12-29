@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,9 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.qmuiteam.compose.modal.QMUIDialogMsg
 import com.qmuiteam.compose.modal.QMUIModalAction
 import com.qmuiteam.compose.modal.qmuiDialog
-import com.qmuiteam.compose.ui.QMUITopBar
-import com.qmuiteam.compose.ui.QMUITopBarBackIconItem
-import com.qmuiteam.compose.ui.QMUITopBarTextItem
+import com.qmuiteam.compose.ui.*
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import com.qmuiteam.qmuidemo.R
@@ -32,7 +32,9 @@ class QDDialogFragment(): ComposeBaseFragment() {
     @Composable
     override fun PageContent() {
         Column(modifier = Modifier.fillMaxSize()) {
-            QMUITopBar(
+            val scrollState = rememberLazyListState()
+            QMUITopBarWithLazyScrollState(
+                scrollState = scrollState,
                 title = "QMUIDialog",
                 leftItems = arrayListOf(
                     QMUITopBarBackIconItem{
@@ -47,36 +49,61 @@ class QDDialogFragment(): ComposeBaseFragment() {
             )
             val view = LocalView.current
             LazyColumn(
+                state = scrollState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .background(Color.White)
             ){
                 item {
-                    Text(
-                        text = "消息类型对话框",
-                        modifier = Modifier.fillMaxWidth()
-                            .height(48.dp)
-                            .padding(horizontal = 16.dp)
-                            .clickable {
-                                view.qmuiDialog { modal ->
-                                    QMUIDialogMsg(modal,
-                                        "这是标题",
-                                        "这是一丢丢有趣但是没啥用的内容",
-                                        listOf(
-                                            QMUIModalAction("取 消", true, Color.Blue){
-                                                it.dismiss()
-                                            },
-                                            QMUIModalAction("确 定", true, Color.Blue){
-                                                Toast.makeText(view.context, "确定拉!!!", Toast.LENGTH_SHORT).show()
-                                                it.dismiss()
-                                            }
-                                        )
+                    QMUIItem(
+                        title = "消息类型对话框",
+                        onDrawOver = {
+                            drawBottomSeparator(insetStart = qmuiCommonHorSpace, insetEnd = qmuiCommonHorSpace)
+                        }
+                    ){
+                        view.qmuiDialog { modal ->
+                                QMUIDialogMsg(modal,
+                                    "这是标题",
+                                    "这是一丢丢有趣但是没啥用的内容",
+                                    listOf(
+                                        QMUIModalAction("取 消") {
+                                            it.dismiss()
+                                        },
+                                        QMUIModalAction("确 定") {
+                                            Toast
+                                                .makeText(view.context, "确定啦!!!", Toast.LENGTH_SHORT)
+                                                .show()
+                                            it.dismiss()
+                                        }
                                     )
-                                }.show()
-                            },
-                        fontSize = 15.sp
-                    )
+                                )
+                            }.show()
+                    }
+                }
+
+                item {
+                    QMUIItem(
+                        title = "列表类型对话框"
+                    ){
+                        view.qmuiDialog { modal ->
+                            QMUIDialogMsg(modal,
+                                "这是标题",
+                                "这是一丢丢有趣但是没啥用的内容",
+                                listOf(
+                                    QMUIModalAction("取 消") {
+                                        it.dismiss()
+                                    },
+                                    QMUIModalAction("确 定") {
+                                        Toast
+                                            .makeText(view.context, "确定啦!!!", Toast.LENGTH_SHORT)
+                                            .show()
+                                        it.dismiss()
+                                    }
+                                )
+                            )
+                        }.show()
+                    }
                 }
             }
         }

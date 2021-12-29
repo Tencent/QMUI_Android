@@ -12,6 +12,7 @@ import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
+import com.qmuiteam.compose.ui.qmuiPrimaryColor
 
 val DefaultMaskColor = Color.Black.copy(alpha = 0.5f)
 
@@ -19,8 +20,8 @@ private class ModalHolder(var current: QMUIModal? = null)
 
 class QMUIModalAction(
     val text: String,
-    val enabled: Boolean,
-    val color: Color,
+    val enabled: Boolean = true,
+    val color: Color = qmuiPrimaryColor,
     val onClick: (QMUIModal) -> Unit
 )
 
