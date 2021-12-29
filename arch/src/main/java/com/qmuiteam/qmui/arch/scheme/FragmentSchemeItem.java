@@ -161,7 +161,8 @@ class FragmentSchemeItem extends SchemeItem {
                     return true;
                 }
                 String[] required = fragmentContainerParam.required();
-                if(required.length == 0){
+                String[] any = fragmentContainerParam.any();
+                if(required.length == 0 && any.length == 0){
                     return true;
                 }
                 if(scheme == null || scheme.isEmpty()){
@@ -194,6 +195,37 @@ class FragmentSchemeItem extends SchemeItem {
                         }
                     }else if(!Objects.equals( activity.getIntent().getStringExtra(s), value.value)){
                         continue loop;
+                    }
+                }
+                for (String s : any) {
+                    if(activity.getIntent().hasExtra(s)){
+                        SchemeValue value = scheme.get(s);
+                        if(value == null){
+                            continue loop;
+                        }
+                        if(value.type == Boolean.TYPE){
+                            if(activity.getIntent().getBooleanExtra(s, false) != (boolean)value.value){
+                                continue loop;
+                            }
+                        }else if(value.type == Integer.TYPE){
+                            if(activity.getIntent().getIntExtra(s, 0) != (int)value.value){
+                                continue loop;
+                            }
+                        }else if(value.type == Long.TYPE){
+                            if(activity.getIntent().getLongExtra(s, 0) != (long)value.value){
+                                continue loop;
+                            }
+                        }else if(value.type == Float.TYPE){
+                            if(activity.getIntent().getFloatExtra(s, 0) != (float)value.value){
+                                continue loop;
+                            }
+                        }else if(value.type == Double.TYPE){
+                            if(activity.getIntent().getDoubleExtra(s, 0) != (double)value.value){
+                                continue loop;
+                            }
+                        }else if(!Objects.equals( activity.getIntent().getStringExtra(s), value.value)){
+                            continue loop;
+                        }
                     }
                 }
                 return true;

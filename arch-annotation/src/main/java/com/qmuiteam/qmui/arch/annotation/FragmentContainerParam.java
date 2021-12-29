@@ -52,5 +52,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface FragmentContainerParam {
     String[] required() default {};
+    String[] any() default {};
     String[] optional() default {};
 }

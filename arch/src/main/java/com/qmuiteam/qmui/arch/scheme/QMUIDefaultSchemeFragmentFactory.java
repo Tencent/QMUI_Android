@@ -100,9 +100,10 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
             }
 
             String[] required = fragmentContainerParam.required();
+            String[] any = fragmentContainerParam.any();
             String[] optional = fragmentContainerParam.optional();
 
-            if (required.length == 0) {
+            if (required.length == 0 && any.length == 0) {
                 putOptionalSchemeValuesToIntent(intent, scheme, optional);
                 return intent;
             }
@@ -111,13 +112,28 @@ public class QMUIDefaultSchemeFragmentFactory implements QMUISchemeFragmentFacto
                 // not matched.
                 continue;
             }
-            for (String arg : required) {
-                SchemeValue value = scheme.get(arg);
-                if (value == null) {
-                    // not matched.
-                    continue loop;
+            if(required.length > 0){
+                for (String arg : required) {
+                    SchemeValue value = scheme.get(arg);
+                    if (value == null) {
+                        // not matched.
+                        continue loop;
+                    }
                 }
-                putSchemeValueToIntent(intent, arg, value);
+            }
+
+            if(any.length > 0){
+                boolean hasAny = false;
+                for(String arg: any){
+                    SchemeValue value = scheme.get(arg);
+                    if (value != null) {
+                        putSchemeValueToIntent(intent, arg, value);
+                        hasAny = true;
+                    }
+                }
+                if(!hasAny){
+                    continue;
+                }
             }
 
             putOptionalSchemeValuesToIntent(intent, scheme, optional);
