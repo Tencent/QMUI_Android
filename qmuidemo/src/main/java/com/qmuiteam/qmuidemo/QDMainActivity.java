@@ -41,7 +41,6 @@ import androidx.fragment.app.FragmentContainerView;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
-import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -56,38 +55,13 @@ import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopups;
 import com.qmuiteam.qmuidemo.base.BaseFragmentActivity;
 import com.qmuiteam.qmuidemo.fragment.QDWebExplorerFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDPopupFragment;
-import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFixModeFragment;
-import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullHorizontalTestFragment;
-import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullRefreshAndLoadMoreTestFragment;
-import com.qmuiteam.qmuidemo.fragment.components.pullLayout.QDPullVerticalTestFragment;
-import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeMutiActionFragment;
 import com.qmuiteam.qmuidemo.fragment.home.HomeFragment;
-import com.qmuiteam.qmuidemo.fragment.lab.QDArchSurfaceTestFragment;
-import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
-import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScroll1Fragment;
-import com.qmuiteam.qmuidemo.fragment.util.QDNotchHelperFragment;
 import com.qmuiteam.qmuidemo.manager.QDSkinManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@FirstFragments(
-        value = {
-                HomeFragment.class,
-                QDArchTestFragment.class,
-                QDArchSurfaceTestFragment.class,
-                QDNotchHelperFragment.class,
-                QDWebExplorerFragment.class,
-                QDContinuousNestedScroll1Fragment.class,
-                QDTabSegmentFixModeFragment.class,
-                QDPullVerticalTestFragment.class,
-                QDPullHorizontalTestFragment.class,
-                QDPullRefreshAndLoadMoreTestFragment.class,
-                QDRVSwipeMutiActionFragment.class,
-                QDPopupFragment.class
-        })
 @DefaultFirstFragment(HomeFragment.class)
 @LatestVisitRecord
 public class QDMainActivity extends BaseFragmentActivity {
@@ -122,7 +96,6 @@ public class QDMainActivity extends BaseFragmentActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
 
 
     @Override

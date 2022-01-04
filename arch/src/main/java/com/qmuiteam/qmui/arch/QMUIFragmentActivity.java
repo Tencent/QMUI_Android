@@ -35,8 +35,6 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
-import com.qmuiteam.qmui.arch.first.FirstFragmentFinder;
-import com.qmuiteam.qmui.arch.first.FirstFragmentFinders;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 
 import java.util.ArrayList;
@@ -46,7 +44,6 @@ import java.util.ArrayList;
  * Created by cgspine on 15/9/14.
  */
 public abstract class QMUIFragmentActivity extends InnerBaseActivity implements QMUIFragmentContainerProvider {
-    public static final String QMUI_INTENT_DST_FRAGMENT = "qmui_intent_dst_fragment";
     public static final String QMUI_INTENT_DST_FRAGMENT_NAME = "qmui_intent_dst_fragment_name";
     public static final String QMUI_INTENT_FRAGMENT_ARG = "qmui_intent_fragment_arg";
     private static final String TAG = "QMUIFragmentActivity";
@@ -80,29 +77,17 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
             Intent intent = getIntent();
             Class<? extends QMUIFragment> firstFragmentClass = null;
 
-            // 1. try get first fragment from annotation @FirstFragments.
-            int dstFragment = intent.getIntExtra(QMUI_INTENT_DST_FRAGMENT, -1);
-            if (dstFragment != -1) {
-                FirstFragmentFinder finder = FirstFragmentFinders.getInstance().get(getClass());
-                if (finder != null) {
-                    firstFragmentClass = finder.getFragmentClassById(dstFragment);
-                }
-
-            }
-
-            // 2. try get first fragment from fragment class name
-            if (firstFragmentClass == null) {
-                String fragmentClassName = intent.getStringExtra(QMUI_INTENT_DST_FRAGMENT_NAME);
-                if (fragmentClassName != null) {
-                    try {
-                        firstFragmentClass = (Class<? extends QMUIFragment>) Class.forName(fragmentClassName);
-                    } catch (ClassNotFoundException e) {
-                        QMUILog.d(TAG, "Can not find " + fragmentClassName);
-                    }
+            // 1. try get first fragment from fragment class name
+            String fragmentClassName = intent.getStringExtra(QMUI_INTENT_DST_FRAGMENT_NAME);
+            if (fragmentClassName != null) {
+                try {
+                    firstFragmentClass = (Class<? extends QMUIFragment>) Class.forName(fragmentClassName);
+                } catch (ClassNotFoundException e) {
+                    QMUILog.d(TAG, "Can not find " + fragmentClassName);
                 }
             }
 
-            // 3. try get fragment from annotation @DefaultFirstFragment
+            // 2. try get fragment from annotation @DefaultFirstFragment
             if (firstFragmentClass == null) {
                 firstFragmentClass = getDefaultFirstFragment();
             }
@@ -360,12 +345,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
                                   @NonNull Class<? extends QMUIFragment> firstFragment,
                                   @Nullable Bundle fragmentArgs) {
         Intent intent = new Intent(context, targetActivity);
-        FirstFragmentFinder finder = FirstFragmentFinders.getInstance().get(targetActivity);
-        int dstId = FirstFragmentFinder.NO_ID;
-        if (finder != null) {
-            dstId = finder.getIdByFragmentClass(firstFragment);
-        }
-        intent.putExtra(QMUI_INTENT_DST_FRAGMENT, dstId);
         intent.putExtra(QMUI_INTENT_DST_FRAGMENT_NAME, firstFragment.getName());
         if (fragmentArgs != null) {
             intent.putExtra(QMUI_INTENT_FRAGMENT_ARG, fragmentArgs);
