@@ -229,8 +229,6 @@ public class SchemeProcessor extends BaseProcessor {
                             /*---*/.add(",")
                             /*---*/.add("$L", annotation.forceNewActivity())
                             /*---*/.add(",")
-                            /*---*/.add("$S", annotation.forceNewActivityKey())
-                            /*---*/.add(",")
                             /*---*/.add("required")
                             /*---*/.add(",")
                             /*---*/.add(intParam)

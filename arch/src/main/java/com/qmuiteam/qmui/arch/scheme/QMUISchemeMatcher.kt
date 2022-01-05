@@ -13,13 +13,14 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.arch.scheme
 
-package com.qmuiteam.qmui.arch.scheme;
+interface QMUISchemeMatcher {
+    fun match(schemeItem: SchemeItem, params: Map<String, String?>?): Boolean
+}
 
-import android.content.Intent;
-
-import androidx.annotation.Nullable;
-
-public interface ActivitySchemeRefreshable {
-    void refreshFromScheme(@Nullable Intent intent);
+open class QMUIDefaultSchemeMatcher : QMUISchemeMatcher {
+    override fun match(schemeItem: SchemeItem, params: Map<String, String?>?): Boolean {
+        return schemeItem.matchRequiredParam(params)
+    }
 }

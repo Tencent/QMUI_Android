@@ -117,6 +117,11 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
             if(!QMUISwipeBackActivityManager.getInstance().canSwipeBack()){
                 return SwipeBackLayout.DRAG_DIRECTION_NONE;
             }
+
+            if(getIntent().getIntExtra(QMUIFragmentActivity.QMUI_MUTI_START_INDEX, 0) > 0){
+                return SwipeBackLayout.DRAG_DIRECTION_NONE;
+            }
+
             return QMUIActivity.this.getDragDirection(swipeBackLayout,moveAction,downX, downY, dx, dy, touchSlop);
         }
     };

@@ -13,13 +13,20 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.arch.scheme
 
-package com.qmuiteam.qmui.arch.scheme;
+class SchemeValue(
+    val origin: String,
+    val value: Any,
+    val type: Class<*>
+)
 
-import android.os.Bundle;
+interface QMUISchemeValueConverter {
+    fun convert(key: String, originValue: String, schemeParams: Map<String, String?>?): String
+}
 
-import androidx.annotation.Nullable;
-
-public interface FragmentSchemeRefreshable {
-    void refreshFromScheme(@Nullable Bundle bundle);
+class QMUIDefaultSchemeValueConverter : QMUISchemeValueConverter {
+    override fun convert(key: String, originValue: String, schemeParams: Map<String, String?>?): String {
+        return originValue
+    }
 }

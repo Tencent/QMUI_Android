@@ -13,14 +13,9 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.arch.scheme
 
-package com.qmuiteam.qmui.arch.scheme;
-
-import java.util.Map;
-
-public interface SchemeMap {
-
-    SchemeItem findScheme(QMUISchemeHandler handler, String schemeAction, Map<String, String> params);
-
-    boolean exists(QMUISchemeHandler handler, String schemeAction);
+interface SchemeMap {
+    fun findScheme(handler: QMUISchemeHandler, schemeAction: String, params: Map<String, String?>?): SchemeItem?
+    fun exists(handler: QMUISchemeHandler, schemeAction: String): Boolean
 }

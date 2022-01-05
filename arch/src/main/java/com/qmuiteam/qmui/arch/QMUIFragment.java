@@ -95,7 +95,7 @@ public abstract class QMUIFragment extends Fragment implements
         FragmentSchemeRefreshable{
     static final String SWIPE_BACK_VIEW = "swipe_back_view";
     private static final String TAG = QMUIFragment.class.getSimpleName();
-    private static final String QMUI_IS_MUTI_STARTED_KEY = "qmui_is_muti_started";
+    private static final String QMUI_DISABLE_SWIPE_BACK_KEY = "qmui_disable_swipe_back";
 
     public static final TransitionConfig SLIDE_TRANSITION_CONFIG = new TransitionConfig(
             R.animator.slide_in_right, R.animator.slide_out_left,
@@ -136,7 +136,7 @@ public abstract class QMUIFragment extends Fragment implements
     private boolean mIsInSwipeBack = false;
 
     private boolean mFinishActivityIfOnBackPressed = false;
-    boolean mIsMutiStarted = false;
+    boolean mDisableSwipeBackByMutiStarted = false;
 
     private int mEnterAnimationStatus = ANIMATION_ENTER_STATUS_NOT_START;
     private MutableLiveData<Boolean> isInEnterAnimationLiveData = new MutableLiveData<>(false);
@@ -212,7 +212,7 @@ public abstract class QMUIFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(QMUI_IS_MUTI_STARTED_KEY, mIsMutiStarted);
+        outState.putBoolean(QMUI_DISABLE_SWIPE_BACK_KEY, mDisableSwipeBackByMutiStarted);
     }
 
     @Override
@@ -452,12 +452,16 @@ public abstract class QMUIFragment extends Fragment implements
         }
         ArrayList<FragmentTransaction> transactions = new ArrayList<>();
         TransitionConfig lastTransitionConfig = fragments[fragments.length - 1].onFetchTransitionConfig();
+        boolean disableSwipeBack = false;
         for (QMUIFragment fragment : fragments) {
             FragmentTransaction transaction = provider.getContainerFragmentManager()
                     .beginTransaction()
                     .setPrimaryNavigationFragment(null);
             TransitionConfig transitionConfig = fragment.onFetchTransitionConfig();
-            fragment.mIsMutiStarted = true;
+            if(disableSwipeBack){
+                fragment.mDisableSwipeBackByMutiStarted = true;
+            }
+            disableSwipeBack = true;
             String tagName = fragment.getClass().getSimpleName();
             transaction.setCustomAnimations(transitionConfig.enter, lastTransitionConfig.exit, transitionConfig.popenter, transitionConfig.popout);
             transaction.replace(provider.getContextViewId(), fragment, tagName);
@@ -540,7 +544,7 @@ public abstract class QMUIFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null){
-            mIsMutiStarted = savedInstanceState.getBoolean(QMUI_IS_MUTI_STARTED_KEY, false);
+            mDisableSwipeBackByMutiStarted = savedInstanceState.getBoolean(QMUI_DISABLE_SWIPE_BACK_KEY, false);
         }
     }
 
@@ -579,7 +583,7 @@ public abstract class QMUIFragment extends Fragment implements
                     public int getDragDirection(SwipeBackLayout swipeBackLayout, SwipeBackLayout.ViewMoveAction viewMoveAction, float downX, float downY, float dx, float dy, float touchSlop) {
 
                         mCalled = false;
-                        if(mIsMutiStarted){
+                        if(mDisableSwipeBackByMutiStarted){
                             return DRAG_DIRECTION_NONE;
                         }
                         boolean canHandle = canHandleSwipeBack();

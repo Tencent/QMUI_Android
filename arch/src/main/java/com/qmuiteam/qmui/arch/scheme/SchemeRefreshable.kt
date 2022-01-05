@@ -13,19 +13,15 @@
  * either express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.qmuiteam.qmui.arch.scheme
 
-package com.qmuiteam.qmui.arch.scheme;
+import android.content.Intent
+import android.os.Bundle
 
-import android.app.Activity;
+interface ActivitySchemeRefreshable {
+    fun refreshFromScheme(intent: Intent?)
+}
 
-import androidx.annotation.NonNull;
-
-import java.util.Map;
-
-public interface QMUISchemeHandleInterpolator {
-    boolean intercept(@NonNull QMUISchemeHandler schemeHandler,
-                      @NonNull Activity activity,
-                      @NonNull String action,
-                      @NonNull Map<String, String> params,
-                      @NonNull String origin);
+interface FragmentSchemeRefreshable {
+    fun refreshFromScheme(bundle: Bundle?)
 }
