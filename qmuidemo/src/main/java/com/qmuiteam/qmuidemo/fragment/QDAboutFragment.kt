@@ -73,22 +73,13 @@ class QDAboutFragment : BaseFragment() {
                 startFragment(fragment)
             }
             .addItemView(mAboutGroupListView!!.createItemView(resources.getString(R.string.about_item_github))) {
-//                val url = "https://github.com/Tencent/QMUI_Android"
-//                val bundle = Bundle()
-//                bundle.putString(QDWebExplorerFragment.EXTRA_URL, url)
-//                bundle.putString(QDWebExplorerFragment.EXTRA_TITLE, resources.getString(R.string.about_item_github))
-//                val fragment: QMUIFragment = QDWebExplorerFragment()
-//                fragment.arguments = bundle
-//                startFragment(fragment)
-                QDSchemeManager.instance.handleMuti(arrayListOf(
-                    "qmui://slider?mode=5",
-                    "qmui://tab?mode=3",
-                    "qmui://tab?mode=2",
-                    "qmui://arch?aa=1&bb=3",
-                    "qmui://slider?mode=6",
-                    "qmui://tab?mode=3",
-                    "qmui://tab?mode=2",
-                ))
+                val url = "https://github.com/Tencent/QMUI_Android"
+                val bundle = Bundle()
+                bundle.putString(QDWebExplorerFragment.EXTRA_URL, url)
+                bundle.putString(QDWebExplorerFragment.EXTRA_TITLE, resources.getString(R.string.about_item_github))
+                val fragment: QMUIFragment = QDWebExplorerFragment()
+                fragment.arguments = bundle
+                startFragment(fragment)
             }
             .addTo(mAboutGroupListView)
         val dateFormat = SimpleDateFormat("yyyy", Locale.CHINA)
