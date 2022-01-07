@@ -21,11 +21,17 @@ import android.graphics.Canvas
 import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import androidx.annotation.ColorInt
 import com.qmuiteam.qmui.type.LineLayout
+import com.qmuiteam.qmui.type.TypeEnvironment
 import com.qmuiteam.qmui.type.TypeModel
 import com.qmuiteam.qmui.type.parser.PlainTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
+import java.util.*
+
+private const val TAG = "LineTypeView"
 
 open class LineTypeView : BaseTypeView {
 
@@ -40,9 +46,12 @@ open class LineTypeView : BaseTypeView {
             }
         }
 
-    constructor(context: Context): super(context)
-    constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): super(context, attrs, defStyleAttr)
+    private val touchSpanList = arrayListOf<TouchSpan>()
+    private var currentTouchSpan: TouchSpan? = null
+
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
@@ -64,6 +73,8 @@ open class LineTypeView : BaseTypeView {
         set(value) {
             if (field != value) {
                 field = value
+                touchSpanList.clear()
+                currentTouchSpan = null
                 lineLayout.typeModel = textParser.parse(value)
                 requestLayout()
             }
@@ -87,6 +98,36 @@ open class LineTypeView : BaseTypeView {
             }
         }
 
+    fun addClickEffect(
+        start: Int, end: Int,
+        textColorGetter: (isPressed: Boolean) -> Int,
+        bgColorGetter: (isPressed: Boolean) -> Int,
+        onClick: (start: Int, end: Int) -> Unit
+    ): TypeModel.EffectRemover? {
+        val types: MutableList<Int> = ArrayList()
+        types.add(TypeEnvironment.TYPE_BG_COLOR)
+        types.add(TypeEnvironment.TYPE_TEXT_COLOR)
+        return unsafeAddClickEffect(start, end, types, { env, touchSpan ->
+            env.textColor = textColorGetter.invoke(touchSpan.isPressed)
+            env.backgroundColor = bgColorGetter.invoke(touchSpan.isPressed)
+        }, onClick)
+    }
+
+    fun unsafeAddClickEffect(
+        start: Int, end: Int,
+        types: List<Int>, updater: (TypeEnvironment, touchSpan: TouchSpan) -> Unit, onClick: (Int, Int) -> Unit
+    ): TypeModel.EffectRemover? {
+        val typeModel = lineLayout.typeModel ?: return null
+        val touchSpan = TouchSpan(start, end, onClick)
+        val remover = typeModel.unsafeAddEffect(start, end, types) {
+            updater.invoke(it, touchSpan)
+        }
+        touchSpanList.add(touchSpan)
+        return TypeModel.EffectRemover {
+            remover?.remove()
+            touchSpanList.remove(touchSpan)
+        }
+    }
 
     fun addBgEffect(start: Int, end: Int, @ColorInt color: Int): TypeModel.EffectRemover? {
         val typeModel = lineLayout.typeModel ?: return null
@@ -128,5 +169,100 @@ open class LineTypeView : BaseTypeView {
         canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
         lineLayout.draw(canvas, environment)
         canvas.restore()
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val typeModel = lineLayout.typeModel ?: return super.onTouchEvent(event)
+        if (touchSpanList.isEmpty()) {
+            return super.onTouchEvent(event)
+        }
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val current = currentTouchSpan
+                if (current != null) {
+                    Log.i(TAG, "the currentTouchSpan is not null when touch down.")
+                    current.isPressed = false
+                }
+                val touchSpan = findCurrentTouchSpan(typeModel, event.x, event.y)
+                if (touchSpan != null) {
+                    touchSpan.isPressed = true
+                    currentTouchSpan = touchSpan
+                    invalidate()
+                    return true
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val current = currentTouchSpan
+                if (current != null) {
+                    if (!isSpanTouched(typeModel, current, event.x, event.y)) {
+                        current.isPressed = false
+                        val touchSpan = findCurrentTouchSpan(typeModel, event.x, event.y)
+                        if (touchSpan != null) {
+                            touchSpan.isPressed = true
+                            currentTouchSpan = touchSpan
+                        } else {
+                            currentTouchSpan = null
+                        }
+                        invalidate()
+                    }
+                    return true
+                } else {
+                    val touchSpan = findCurrentTouchSpan(typeModel, event.x, event.y)
+                    if (touchSpan != null) {
+                        touchSpan.isPressed = true
+                        currentTouchSpan = touchSpan
+                        invalidate()
+                        return true
+                    }
+                }
+            }
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
+                val current = currentTouchSpan
+                if (current != null) {
+                    currentTouchSpan = null
+                    current.isPressed = false
+                    if (event.action == MotionEvent.ACTION_UP) {
+                        current.onClick.invoke(current.start, current.end)
+                    }
+                    invalidate()
+                    return true
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    private fun findCurrentTouchSpan(typeModel: TypeModel, x: Float, y: Float): TouchSpan? {
+        for (i in 0 until touchSpanList.size) {
+            val touchSpan = touchSpanList[i]
+            if (isSpanTouched(typeModel, touchSpan, x, y)) {
+                return touchSpan
+            }
+        }
+        return null
+    }
+
+    private fun isSpanTouched(typeModel: TypeModel, touchSpan: TouchSpan, x: Float, y: Float): Boolean {
+        val start = typeModel[touchSpan.start] ?: return false
+        val end = typeModel[touchSpan.end] ?: return false
+        if (start.y + paddingTop > y || end.y + paddingTop + end.measureHeight < y) {
+            return false
+        } else if (start.y == end.y) { // in one line
+            return !(start.x + paddingLeft > x || end.x + paddingLeft < x)
+        } else {
+            // in muti line
+            if (x < start.x + paddingLeft && y < start.y + start.measureHeight + paddingTop) {
+                return false
+            } else if (x > end.x + end.measureWidth + paddingLeft && y > end.y) {
+                return false
+            }
+            return true
+        }
+    }
+
+    class TouchSpan(val start: Int, val end: Int, val onClick: (Int, Int) -> Unit) {
+        var isPressed: Boolean = false
+            internal set
     }
 }

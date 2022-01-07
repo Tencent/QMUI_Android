@@ -17,6 +17,7 @@ package com.qmuiteam.qmui.type
 
 import android.graphics.Typeface
 import com.qmuiteam.qmui.type.element.Element
+import java.lang.RuntimeException
 import java.util.*
 
 class TypeModel(
@@ -79,6 +80,9 @@ class TypeModel(
     }
 
     fun unsafeAddEffect(start: Int, end: Int, types: List<Int>, environmentUpdater: EnvironmentUpdater): EffectRemover? {
+        if(start > end){
+            throw RuntimeException("unsafeAddEffect: start($start) is bigger than end($end)")
+        }
         val elementStart = mElementMap[start]
         val elementEnd = mElementMap[end]
         if (elementStart == null || elementEnd == null) {
@@ -126,7 +130,7 @@ class TypeModel(
         return mElementMap[pos]
     }
 
-    interface EffectRemover {
+    fun interface EffectRemover {
         fun remove()
     }
 }
