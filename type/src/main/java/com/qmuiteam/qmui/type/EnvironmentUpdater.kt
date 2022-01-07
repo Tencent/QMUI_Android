@@ -15,6 +15,6 @@
  */
 package com.qmuiteam.qmui.type
 
-interface EnvironmentUpdater {
+fun interface EnvironmentUpdater {
     fun update(env: TypeEnvironment)
 }
