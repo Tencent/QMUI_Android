@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-class SwipeBackgroundView extends View {
+public class SwipeBackgroundView extends View {
 
     private ArrayList<ViewInfo> mViewWeakReference;
     private boolean mDoRotate = false;
@@ -188,7 +188,9 @@ class SwipeBackgroundView extends View {
                 if (isMain || lp == null) {
                     view.draw(canvas);
                 } else {
-                    canvas.drawColor(QMUIColorHelper.setColorAlpha(Color.BLACK, lp.dimAmount));
+                    if((lp.flags & WindowManager.LayoutParams.FLAG_DIM_BEHIND) != 0){
+                        canvas.drawColor(QMUIColorHelper.setColorAlpha(Color.BLACK, lp.dimAmount));
+                    }
                     view.getLocationOnScreen(tempLocations);
                     canvas.translate(tempLocations[0], tempLocations[1]);
                     view.draw(canvas);
