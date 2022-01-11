@@ -16,10 +16,9 @@
 package com.qmuiteam.qmui.arch.scheme
 
 import com.qmuiteam.qmui.QMUILog
-import com.qmuiteam.qmui.arch.*
-import java.lang.RuntimeException
-import java.util.ArrayList
-import java.util.HashMap
+import com.qmuiteam.qmui.arch.QMUIFragmentActivity
+import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager
+import java.util.*
 
 class QMUISchemeHandler private constructor(builder: Builder) {
     companion object {
@@ -36,7 +35,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
                 sSchemeMap = cls.newInstance() as SchemeMap
             } catch (e: ClassNotFoundException) {
                 sSchemeMap = object : SchemeMap {
-                    override fun findScheme(handler: QMUISchemeHandler, schemeAction: String, params: Map<String, String?>?): SchemeItem? {
+                    override fun findScheme(handler: QMUISchemeHandler, schemeAction: String, params: Map<String, String>?): SchemeItem? {
                         return null
                     }
 
@@ -69,7 +68,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
     private var lastSchemeHandledTime: Long = 0
 
 
-    fun getSchemeItem(action: String, params: Map<String, String?>?): SchemeItem? {
+    fun getSchemeItem(action: String, params: Map<String, String>?): SchemeItem? {
         return sSchemeMap?.findScheme(this, action, params)
     }
 
@@ -100,7 +99,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
             if (elements.isEmpty() || action == null || action.isEmpty()) {
                 return false
             }
-            val params: MutableMap<String, String?> = HashMap()
+            val params = mutableMapOf<String, String>()
             if (elements.size > 1) {
                 parseParamsToMap(elements[1], params)
             }
@@ -134,27 +133,29 @@ class QMUISchemeHandler private constructor(builder: Builder) {
             if (!failed) {
                 val fragmentList = handleContext.fragmentList
                 val buildingIntent = handleContext.buildingIntent
-                if(handleContext.intentList.isEmpty() && buildingIntent == null){
+                if (handleContext.intentList.isEmpty() && buildingIntent == null) {
                     val fragments = fragmentList.mapNotNull {
                         it.factory.factory(it.fragmentClass, it.arg)
                     }
-                    if(fragments.size == fragmentList.size){
-                        if(handleContext.shouldFinishCurrent){
-                            if(fragmentList.size == 1){
+                    if (fragments.size == fragmentList.size) {
+                        if (handleContext.shouldFinishCurrent) {
+                            if (fragmentList.size == 1) {
                                 fragmentList.last().factory.startFragmentAndDestroyCurrent(
-                                    handleContext.activity as QMUIFragmentActivity, fragments[0], schemeInfoList[0])
+                                    handleContext.activity as QMUIFragmentActivity, fragments[0], schemeInfoList[0]
+                                )
                                 handled = true
-                            }else{
+                            } else {
                                 QMUILog.e(TAG, "startFragmentAndDestroyCurrent not support muti fragments")
                             }
-                        }else{
-                            val commitId = fragmentList.last().factory.startFragment(handleContext.activity as QMUIFragmentActivity, fragments, schemeInfoList)
+                        } else {
+                            val commitId =
+                                fragmentList.last().factory.startFragment(handleContext.activity as QMUIFragmentActivity, fragments, schemeInfoList)
                             handled = commitId >= 0
                         }
                     }
-                }else{
+                } else {
                     handled = handleContext.startActivities(schemeInfoList)
-                    if(handled && handleContext.shouldFinishCurrent){
+                    if (handled && handleContext.shouldFinishCurrent) {
                         handleContext.activity.finish()
                     }
                 }
@@ -178,6 +179,10 @@ class QMUISchemeHandler private constructor(builder: Builder) {
         var defaultFragmentFactory: Class<out QMUISchemeFragmentFactory> = QMUIDefaultSchemeFragmentFactory::class.java
         var defaultSchemeMatcher: Class<out QMUISchemeMatcher> = QMUIDefaultSchemeMatcher::class.java
         var fallbackInterceptor: QMUISchemeHandlerInterceptor? = null
+
+        fun addInterceptor(interceptor: QMUISchemeHandlerInterceptor) {
+            interceptorList.add(interceptor)
+        }
 
         fun build(): QMUISchemeHandler {
             return QMUISchemeHandler(this)

@@ -16,6 +16,6 @@
 package com.qmuiteam.qmui.arch.scheme
 
 interface SchemeMap {
-    fun findScheme(handler: QMUISchemeHandler, schemeAction: String, params: Map<String, String?>?): SchemeItem?
+    fun findScheme(handler: QMUISchemeHandler, schemeAction: String, params: Map<String, String>?): SchemeItem?
     fun exists(handler: QMUISchemeHandler, schemeAction: String): Boolean
 }

@@ -40,7 +40,7 @@ interface QMUISchemeIntentFactory {
 }
 
 
-class QMUIDefaultSchemeIntentFactory : QMUISchemeIntentFactory {
+open class QMUIDefaultSchemeIntentFactory : QMUISchemeIntentFactory {
     override fun factory(
         activity: Activity,
         activityClass: Class<out Activity>,

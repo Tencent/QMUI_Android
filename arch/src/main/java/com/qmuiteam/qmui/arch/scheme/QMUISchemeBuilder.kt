@@ -28,7 +28,7 @@ class QMUISchemeBuilder(
     companion object {
         fun from(prefix: String, action: String, params: String?, encodeNewParams: Boolean): QMUISchemeBuilder {
             val builder = QMUISchemeBuilder(prefix, action, encodeNewParams)
-            val paramsMap = HashMap<String, String?>()
+            val paramsMap = HashMap<String, String>()
             parseParamsToMap(params, paramsMap)
             if (paramsMap.isNotEmpty()) {
                 builder.params.putAll(paramsMap)
@@ -37,7 +37,7 @@ class QMUISchemeBuilder(
         }
     }
 
-    private val params: ArrayMap<String, String> = ArrayMap()
+    private val params = ArrayMap<String, String>()
 
     fun param(name: String, value: String): QMUISchemeBuilder {
         if (encodeParams) {

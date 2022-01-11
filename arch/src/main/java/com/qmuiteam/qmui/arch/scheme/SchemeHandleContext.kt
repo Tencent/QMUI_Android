@@ -71,6 +71,8 @@ class SchemeHandleContext(val activity: Activity) {
         if (fragmentList.isNotEmpty()) {
             val intent = buildingIntent ?: Intent(activity, buildingActivityClass).apply {
                 putExtras(activity.intent)
+            }.let {
+                fragmentList.first().factory.proxy(it)
             }
             val fragmentListArg = arrayListOf<Bundle>()
             fragmentList.forEach {
@@ -95,7 +97,7 @@ class SchemeHandleContext(val activity: Activity) {
         for (target in activityClsList) {
             val intent = buildIntentForFragment(target, params)
             if (intent != null) {
-                buildingIntent = intent
+                buildingIntent = fragmentAndArg.factory.proxy(intent)
                 buildingActivityClass = target
                 pushFragment(fragmentAndArg)
                 return true

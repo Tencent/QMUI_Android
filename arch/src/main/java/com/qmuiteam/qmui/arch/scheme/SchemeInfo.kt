@@ -2,12 +2,12 @@ package com.qmuiteam.qmui.arch.scheme
 
 class SchemeInfo(
     val action: String,
-    val params: MutableMap<String, String?>,
+    val params: MutableMap<String, String>,
     val origin: String
 )
 
 
-fun parseParamsToMap(schemeParams: String?, queryMap: MutableMap<String, String?>) {
+fun parseParamsToMap(schemeParams: String?, queryMap: MutableMap<String, String>) {
     if (schemeParams == null || schemeParams.isEmpty()) {
         return
     }

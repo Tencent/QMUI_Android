@@ -18,7 +18,8 @@ package com.qmuiteam.qmui.arch.scheme
 import android.app.Activity
 import android.net.Uri
 
-interface QMUISchemeHandlerInterceptor {
+fun interface QMUISchemeHandlerInterceptor {
+
     fun intercept(
         schemeHandler: QMUISchemeHandler,
         activity: Activity,
@@ -34,13 +35,9 @@ class QMUISchemeParamValueDecoder : QMUISchemeHandlerInterceptor {
         schemes: List<SchemeInfo>
     ): Boolean {
         for (scheme in schemes) {
-            val params = scheme.params
-            if (params.isNotEmpty()) {
-                for (key in params.keys) {
-                    val oldValue = params[key]
-                    if (oldValue != null && oldValue.isNotEmpty()) {
-                        params[key] = Uri.decode(oldValue)
-                    }
+            for ((key, value) in scheme.params) {
+                if (value.isNotBlank()) {
+                    scheme.params[key] = Uri.decode(value)
                 }
             }
         }

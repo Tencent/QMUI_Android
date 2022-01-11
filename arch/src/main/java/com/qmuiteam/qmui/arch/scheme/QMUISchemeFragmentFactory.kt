@@ -26,6 +26,7 @@ import com.qmuiteam.qmui.arch.R
 interface QMUISchemeFragmentFactory {
     fun factory(fragmentCls: Class<out QMUIFragment>, bundle: Bundle?): QMUIFragment?
     fun factory(scheme: Map<String, SchemeValue>?, origin: String): Bundle?
+    fun proxy(intent: Intent): Intent
 
     fun startActivities(activity: Activity, intent: List<Intent>, schemeInfo: List<SchemeInfo>)
     fun startFragmentAndDestroyCurrent(activity: QMUIFragmentActivity, fragment: QMUIFragment, schemeInfo: SchemeInfo): Int
@@ -38,7 +39,7 @@ interface QMUISchemeFragmentFactory {
 }
 
 
-class QMUIDefaultSchemeFragmentFactory : QMUISchemeFragmentFactory {
+open class QMUIDefaultSchemeFragmentFactory : QMUISchemeFragmentFactory {
     override fun factory(
         fragmentCls: Class<out QMUIFragment>,
         bundle: Bundle?
@@ -73,6 +74,10 @@ class QMUIDefaultSchemeFragmentFactory : QMUISchemeFragmentFactory {
             }
         }
         return bundle
+    }
+
+    override fun proxy(intent: Intent): Intent {
+        return intent
     }
 
     override fun startActivities(activity: Activity, intent: List<Intent>, schemeInfo: List<SchemeInfo>) {

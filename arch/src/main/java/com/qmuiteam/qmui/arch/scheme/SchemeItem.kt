@@ -39,8 +39,8 @@ abstract class SchemeItem(
     private val schemeValueConverterCls: Class<out QMUISchemeValueConverter>?
 ) {
 
-    fun convertFrom(schemeParams: Map<String, String?>?): Map<String, SchemeValue>? {
-        val originMap = mutableMapOf<String, String?>()
+    fun convertFrom(schemeParams: Map<String, String>?): Map<String, SchemeValue>? {
+        val originMap = mutableMapOf<String, String>()
         if (defaultParams != null) {
             for (item in defaultParams) {
                 if (item.isNotEmpty()) {
@@ -59,7 +59,7 @@ abstract class SchemeItem(
         }
         val queryMap = mutableMapOf<String, SchemeValue>()
         for ((name, value) in originMap) {
-            if (name.isEmpty() || value == null) {
+            if (name.isEmpty()) {
                 continue
             }
             var usedValue = value
@@ -133,12 +133,12 @@ abstract class SchemeItem(
         var matcher = schemeMatchers[schemeMatcherCls]
         if (matcher == null) {
             try {
-                matcher = schemeMatcherCls!!.newInstance()
+                matcher = schemeMatcherCls.newInstance()
                 schemeMatchers[schemeMatcherCls] = matcher
             } catch (e: Exception) {
                 QMUILog.printErrStackTrace(
                     QMUISchemeHandler.TAG, e,
-                    "error to instance QMUISchemeMatcher: %d", schemeMatcherCls!!.simpleName
+                    "error to instance QMUISchemeMatcher: %d", schemeMatcherCls.simpleName
                 )
             }
         }
