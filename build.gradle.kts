@@ -26,18 +26,4 @@ allprojects {
         google()
         mavenLocal()
     }
-
-//    ext {
-//        minSdkVersion = 21
-//        targetSdkVersion = 30
-//        compileSdkVersion = 30
-//        coreVersion='1.6.0'
-//        appcompatVersion= '1.3.1'
-//        materialVersion='1.4.0'
-//        annotationVersion='1.2.0'
-//        butterknifeVersion = '10.1.0'
-//        constraintLayoutVersion = "2.1.0"
-//        mmkvVersion = '1.0.23'
-//        junitVersion='4.13.2'
-//    }
 }

@@ -25,6 +25,7 @@ object Dep {
         val coreKtx = "androidx.core:core-ktx:1.7.0"
         val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
         val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+        val activity = "androidx.activity:activity-ktx:1.4.0"
         val fragment = "androidx.fragment:fragment:1.4.0"
     }
 
