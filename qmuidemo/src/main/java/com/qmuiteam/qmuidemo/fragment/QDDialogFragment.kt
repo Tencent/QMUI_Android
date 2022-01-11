@@ -58,7 +58,7 @@ class QDDialogFragment(): ComposeBaseFragment() {
                 item {
                     QMUIItem(
                         title = "消息类型对话框",
-                        onDrawOver = {
+                        drawBehind = {
                             drawBottomSeparator(insetStart = qmuiCommonHorSpace, insetEnd = qmuiCommonHorSpace)
                         }
                     ){

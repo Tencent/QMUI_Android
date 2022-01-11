@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -93,16 +94,15 @@ fun QMUIItem(
     paddingVer: Dp = 12.dp,
     gapBetweenTitleAndDetail: Dp = 4.dp,
     accessory: QMUIItemAccessory? = null,
-    onDrawOver: (DrawScope.() -> Unit)? = null,
+    drawBehind: (DrawScope.() -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .defaultMinSize(minHeight = minHeight)
         .background(background)
-        .drawWithContent {
-            drawContent()
-            onDrawOver?.invoke(this)
+        .drawBehind {
+            drawBehind?.invoke(this)
         }
         .clickable(
             enabled = onClick != null,
