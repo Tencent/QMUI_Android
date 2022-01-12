@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.InspectorInfo
@@ -89,7 +87,7 @@ open class QMUITopBarBackIconItem(
     enable: Boolean = true,
     onClick: () -> Unit
 ) : QMUITopBarIconItem(
-    R.drawable.qmui_icon_topbar_back,
+    R.drawable.ic_qmui_topbar_back,
     "返回",
     tint,
     pressAlpha,

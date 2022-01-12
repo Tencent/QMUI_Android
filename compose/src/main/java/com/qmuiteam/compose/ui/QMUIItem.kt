@@ -12,10 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -24,53 +21,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-interface QMUIItemAccessory {
-    @Composable
-    fun Compose()
-}
-
-class QMUIItemAccessoryChevron(val tint: Color) : QMUIItemAccessory {
-    @Composable
-    override fun Compose() {
-
-    }
-}
-
-fun DrawScope.drawTopSeparator(color: Color = qmuiSeparatorColor, insetStart: Dp = 0.dp, insetEnd: Dp = 0.dp) {
-    drawLine(
-        color = color,
-        start = Offset(insetStart.toPx(), 0f),
-        end = Offset(size.width - insetEnd.toPx(), 0f),
-        cap = StrokeCap.Square
-    )
-}
-
-fun DrawScope.drawBottomSeparator(color: Color = qmuiSeparatorColor, insetStart: Dp = 0.dp, insetEnd: Dp = 0.dp) {
-    drawLine(
-        color = color,
-        start = Offset(insetStart.toPx(), size.height),
-        end = Offset(size.width - insetEnd.toPx(), size.height),
-        cap = StrokeCap.Square
-    )
-}
-
-fun DrawScope.drawLeftSeparator(color: Color = qmuiSeparatorColor, insetStart: Dp = 0.dp, insetEnd: Dp = 0.dp) {
-    drawLine(
-        color = color,
-        start = Offset(0f, insetStart.toPx()),
-        end = Offset(0f, size.height - insetEnd.toPx()),
-        cap = StrokeCap.Square
-    )
-}
-
-fun DrawScope.drawRightSeparator(color: Color = qmuiSeparatorColor, insetStart: Dp = 0.dp, insetEnd: Dp = 0.dp) {
-    drawLine(
-        color = color,
-        start = Offset(size.width, insetStart.toPx()),
-        end = Offset(size.width, size.height - insetEnd.toPx()),
-        cap = StrokeCap.Square
-    )
-}
 
 @Composable
 fun QMUIItem(
@@ -93,7 +43,7 @@ fun QMUIItem(
     paddingHor: Dp = qmuiCommonHorSpace,
     paddingVer: Dp = 12.dp,
     gapBetweenTitleAndDetail: Dp = 4.dp,
-    accessory: QMUIItemAccessory? = null,
+    accessory: @Composable (RowScope.() -> Unit)? = null,
     drawBehind: (DrawScope.() -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
@@ -139,6 +89,6 @@ fun QMUIItem(
             }
 
         }
-        accessory?.Compose()
+        accessory?.invoke(this)
     }
 }

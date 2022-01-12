@@ -6,6 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +27,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qmuiteam.compose.ui.qmuiCommonHorSpace
+import com.qmuiteam.compose.ui.qmuiDialogVerEdgeProtectionMargin
 import com.qmuiteam.compose.ui.qmuiPrimaryColor
 
 val DefaultDialogPaddingHor = 20.dp
@@ -32,7 +37,7 @@ val DefaultDialogPaddingHor = 20.dp
 fun QMUIDialog(
     modal: QMUIModal,
     horEdge: Dp = qmuiCommonHorSpace,
-    verEdge: Dp = 20.dp,
+    verEdge: Dp = qmuiDialogVerEdgeProtectionMargin,
     widthLimit: Dp = 360.dp,
     radius: Dp = 2.dp,
     background: Color = Color.White,
@@ -90,6 +95,25 @@ fun QMUIDialogMsg(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun QMUIDialogList(
+    modal: QMUIModal,
+    maxHeight: Dp = Dp.Unspecified,
+    state: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(vertical = 8.dp),
+    children: LazyListScope.() -> Unit
+) {
+    LazyColumn(
+        state = state,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(0.dp, maxHeight),
+        contentPadding = contentPadding
+    ) {
+        children()
     }
 }
 
@@ -161,7 +185,7 @@ fun QMUIDialogAction(
     color: Color = qmuiPrimaryColor,
     fontWeight: FontWeight? = FontWeight.Bold,
     fontFamily: FontFamily? = null,
-    paddingVer:Dp = 9.dp,
+    paddingVer: Dp = 9.dp,
     paddingHor: Dp = 14.dp,
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -194,8 +218,8 @@ fun View.qmuiDialog(
     maskCancellable: Boolean = true,
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
     animationDurationMillis: Int = 300,
-    horEdge: Dp = 20.dp,
-    verEdge: Dp = 20.dp,
+    horEdge: Dp = qmuiCommonHorSpace,
+    verEdge: Dp = qmuiDialogVerEdgeProtectionMargin,
     widthLimit: Dp = 360.dp,
     radius: Dp = 12.dp,
     background: Color = Color.White,
