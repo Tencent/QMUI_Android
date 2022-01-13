@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import com.qmuiteam.compose.ex.drawBottomSeparator
 import com.qmuiteam.compose.modal.QMUIDialogList
 import com.qmuiteam.compose.modal.QMUIDialogMsg
 import com.qmuiteam.compose.modal.QMUIModalAction
