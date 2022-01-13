@@ -17,6 +17,7 @@ object Dep {
         const val archVer = "2.0.1"
         const val typeVer = "0.0.14"
         const val composeVer = "0.0.1"
+        const val photoVer = "0.0.1"
     }
 
     object AndroidX {
