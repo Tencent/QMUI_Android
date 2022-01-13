@@ -63,19 +63,36 @@ class LineLayout {
         var line = Line.acquire()
         var y = 0
         line.init(0, y, env.widthLimit)
+
+        fun addLineAndHandleMaxLineAndNextY(line: Line, isParagraphEndLine: Boolean){
+            mLines.add(line)
+            if(env.lineHeight != -1){
+                y += env.lineHeight.coerceAtLeast(line.contentHeight)
+                checkExactlyHeightMaxLine(env, y, exactlyHeight)
+                if(isParagraphEndLine){
+                    y += env.paragraphSpace
+                }
+            }else{
+                y += line.contentHeight
+                checkExactlyHeightMaxLine(env, y, exactlyHeight)
+                y += if(isParagraphEndLine){
+                    env.paragraphSpace
+                }else{
+                    env.lineSpace
+                }
+            }
+        }
+
         while (element != null) {
             element.measure(env)
             if (element is NextParagraphElement) {
                 line.add(element)
                 line.layout(env, dropLastIfSpace, false)
-                mLines.add(line)
-                y += line.contentHeight.coerceAtLeast(env.lineHeight)
-                checkExactlyHeightMaxLine(env, y, exactlyHeight)
+                addLineAndHandleMaxLineAndNextY(line, true)
                 if (canInterrupt()) {
                     handleEllipse(env,true)
                     return
                 }
-                y += env.paragraphSpace
                 line = createNewLine(env, y)
             } else if (line.contentWidth + element.measureWidth > env.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
@@ -85,15 +102,7 @@ class LineLayout {
                 }
                 val back = line.handleWordBreak(env, shouldHandleWordBreak)
                 line.layout(env, dropLastIfSpace, false)
-                mLines.add(line)
-                if(env.lineHeight != -1){
-                    y += env.lineHeight.coerceAtLeast(line.contentHeight)
-                    checkExactlyHeightMaxLine(env, y, exactlyHeight)
-                }else{
-                    y += line.contentHeight
-                    checkExactlyHeightMaxLine(env, y, exactlyHeight)
-                    y += env.lineSpace
-                }
+                addLineAndHandleMaxLineAndNextY(line, false)
 
                 if (canInterrupt()) {
                     handleEllipse(env,true)
@@ -114,7 +123,7 @@ class LineLayout {
         }
         if (line.size > 0) {
             line.layout(env, dropLastIfSpace, true)
-            mLines.add(line)
+            addLineAndHandleMaxLineAndNextY(line, false)
         } else {
             line.release()
         }
