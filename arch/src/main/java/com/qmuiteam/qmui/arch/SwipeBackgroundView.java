@@ -41,12 +41,11 @@ public class SwipeBackgroundView extends View {
     private ArrayList<ViewInfo> mViewWeakReference;
     private boolean mDoRotate = false;
 
-    public SwipeBackgroundView(Context context) {
+    public SwipeBackgroundView(Context context, boolean forceDisableHardwareAccelerated) {
         super(context);
-    }
-
-    public SwipeBackgroundView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        if(forceDisableHardwareAccelerated){
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     public void bind(Activity activity, Activity swipeActivity, boolean restoreForSubWindow) {

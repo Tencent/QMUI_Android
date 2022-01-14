@@ -797,7 +797,7 @@ public abstract class QMUIFragment extends Fragment implements
                     if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
                         mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
                     } else {
-                        mSwipeBackgroundView = new SwipeBackgroundView(getContext());
+                        mSwipeBackgroundView = new SwipeBackgroundView(getContext(), forceDisableHardwareAcceleratedForSwipeBackground());
                         decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     }
@@ -924,6 +924,10 @@ public abstract class QMUIFragment extends Fragment implements
 
     public boolean isInSwipeBack() {
         return mIsInSwipeBack;
+    }
+
+    protected boolean forceDisableHardwareAcceleratedForSwipeBackground(){
+        return false;
     }
 
     @Override

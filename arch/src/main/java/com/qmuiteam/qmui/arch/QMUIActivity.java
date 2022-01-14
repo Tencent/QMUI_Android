@@ -92,7 +92,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
                 if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
                     mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
                 } else {
-                    mSwipeBackgroundView = new SwipeBackgroundView(QMUIActivity.this);
+                    mSwipeBackgroundView = new SwipeBackgroundView(QMUIActivity.this, forceDisableHardwareAcceleratedForSwipeBackground());
                     decorView.addView(mSwipeBackgroundView, 0, new FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 }
@@ -199,6 +199,10 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     public boolean isInSwipeBack() {
         return mIsInSwipeBack;
+    }
+
+    protected boolean forceDisableHardwareAcceleratedForSwipeBackground(){
+        return false;
     }
 
     /**
