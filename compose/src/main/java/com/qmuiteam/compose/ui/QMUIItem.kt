@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 fun QMUIItem(
     title: String,
     detail: String = "",
+    alpha: Float = 1f,
     background: Color = Color.Transparent,
     indication: Indication = rememberRipple(color = qmuiIndicationColor),
     titleFontSize: TextUnit = 16.sp,
@@ -50,6 +52,7 @@ fun QMUIItem(
     Row(modifier = Modifier
         .fillMaxWidth()
         .defaultMinSize(minHeight = minHeight)
+        .alpha(alpha)
         .background(background)
         .drawBehind {
             drawBehind?.invoke(this)
