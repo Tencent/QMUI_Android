@@ -36,6 +36,9 @@ object Dep {
         val ui = "androidx.compose.ui:ui:$version"
         val material = "androidx.compose.material:material:$version"
         val compiler = "androidx.compose.compiler:compiler:$version"
+        val activity = "androidx.activity:activity-compose:1.4.0"
+
+        val pager = "com.google.accompanist:accompanist-pager:0.24.0-alpha"
     }
 
     object Flipper {

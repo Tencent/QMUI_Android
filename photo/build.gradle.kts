@@ -46,8 +46,11 @@ dependencies {
     api(Dep.AndroidX.annotation)
     api(Dep.AndroidX.coreKtx)
     api(Dep.AndroidX.appcompat)
+    api(Dep.AndroidX.activity)
     api(Dep.Compose.ui)
     api(Dep.Compose.animation)
     api(Dep.Compose.material)
     api(Dep.Compose.compiler)
+    api(Dep.Compose.activity)
+    api(Dep.Compose.pager)
 }
