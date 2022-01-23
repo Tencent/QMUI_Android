@@ -61,4 +61,8 @@ object Dep {
         const val butterknife = "com.jakewharton:butterknife:$ver"
         const val compiler = "com.jakewharton:butterknife-compiler:$ver"
     }
+
+    object Coil {
+        const val compose = "io.coil-kt:coil-compose:2.0.0-alpha06"
+    }
 }

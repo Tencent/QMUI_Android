@@ -72,6 +72,13 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
 
+        <activity
+            android:name="com.qmuiteam.photo.activity.QMUIPhotoViewerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+
+        </activity>
+
     </application>
 
 </manifest>

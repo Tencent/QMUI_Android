@@ -16,54 +16,53 @@
 package com.qmuiteam.photo.data
 
 import android.graphics.Bitmap
-import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.IntSize
 
 class PhotoViewerData(
-    val list: List<PhotoProvider>,
+    val list: List<QMUIPhotoTransition>,
     val index: Int,
     val background: Bitmap?
 )
 
-interface Photo {
+interface QMUIPhoto {
 
     @Composable
-    fun Compose()
+    fun Compose(
+        contentScale: ContentScale,
+        isContainerFixed: Boolean,
+        isLongImage: Boolean,
+        onSuccess: ((Drawable) -> Unit)?,
+        onError: ((Throwable) -> Unit)?
+    )
 }
 
-interface PhotoProvider {
-    suspend fun thumbnail(): Photo?
-    suspend fun photo(): Photo?
-    fun transitionStart(): Rect?
-    fun transitionEnd(): Rect?
+interface QMUIPhotoProvider {
+    fun thumbnail(): QMUIPhoto?
+    fun photo(): QMUIPhoto?
+    fun ratio(): Float = -1f
 
-    // used to recover PhotoProvider from arguments if activity recreate.
     fun meta(): Bundle?
-    fun recoverCls(): Class<in PhotoProviderRecover>?
+    fun recoverCls(): Class<in PhotoTransitionProviderRecover>?
 }
 
-class LossPhotoProvider private constructor(): PhotoProvider {
+class QMUIPhotoTransition(
+    val photoProvider: QMUIPhotoProvider,
+    var offsetInWindow: Offset?,
+    var size: IntSize?,
+    var photo: Drawable?
+)
 
-    companion object {
-        val instance by lazy {
-            LossPhotoProvider()
-        }
-    }
-
-    override suspend fun thumbnail(): Photo? {
+val lossPhotoProvider = object: QMUIPhotoProvider {
+    override fun thumbnail(): QMUIPhoto? {
         return null
     }
 
-    override suspend fun photo(): Photo? {
-        return null
-    }
-
-    override fun transitionStart(): Rect? {
-        return null
-    }
-
-    override fun transitionEnd(): Rect? {
+    override fun photo(): QMUIPhoto? {
         return null
     }
 
@@ -71,14 +70,16 @@ class LossPhotoProvider private constructor(): PhotoProvider {
         return null
     }
 
-    override fun recoverCls(): Class<in PhotoProviderRecover>? {
+    override fun recoverCls(): Class<in PhotoTransitionProviderRecover>? {
         return null
     }
-
 }
 
-interface PhotoProviderRecover {
-    fun recover(bundle: Bundle): PhotoProvider?
+val lossPhotoTransition = QMUIPhotoTransition(lossPhotoProvider, null, null, null)
+
+
+interface PhotoTransitionProviderRecover {
+    fun recover(bundle: Bundle): QMUIPhotoTransition?
 }
 
 

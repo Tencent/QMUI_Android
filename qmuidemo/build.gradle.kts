@@ -79,8 +79,11 @@ dependencies {
     implementation(project(":arch"))
     implementation(project(":type"))
     implementation(project(":compose"))
+    implementation(project(":photo"))
     implementation(Dep.Flipper.soLoader)
     implementation(Dep.Flipper.flipper)
     kapt(project(":compiler"))
     kapt(project(":arch-compiler"))
+
+    implementation(Dep.Coil.compose)
 }

@@ -24,6 +24,7 @@ fun View.asBitmap(): Bitmap? {
         canvas.setBitmap(null)
         bm
     } catch (e: Throwable) {
+        e.printStackTrace()
         null
     }
 }
