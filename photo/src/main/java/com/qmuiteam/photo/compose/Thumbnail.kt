@@ -35,7 +35,7 @@ class QMUIPhotoThumbnailConfig(
     val averageIfTwoImage: Boolean = true,
     val horGap: Dp = 5.dp,
     val verGap: Dp = 5.dp,
-    val alphaWhenPressed: Float = 0.5f
+    val alphaWhenPressed: Float = 1f
 )
 
 val qmuiDefaultPhotoThumbnailConfig = QMUIPhotoThumbnailConfig()

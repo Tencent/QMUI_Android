@@ -22,27 +22,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.transformable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
@@ -52,8 +43,8 @@ import androidx.lifecycle.ViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.qmuiteam.photo.compose.GesturePhoto
 import com.qmuiteam.photo.data.*
-import com.qmuiteam.photo.data.PhotoTransitionDelivery
 import com.qmuiteam.photo.util.asBitmap
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
@@ -66,8 +57,6 @@ class PhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
 
     val enterIndex = state.get<Int>(PHOTO_CURRENT_INDEX) ?: 0
     val data: PhotoViewerData?
-
-    var isEnterTransitionFinished: Boolean = false
 
     private val transitionDeliverKey = state.get<Long>(PHOTO_TRANSITION_DELIVERY_KEY) ?: -1
 
@@ -187,147 +176,31 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             count = list.size,
             state = pagerState
         ) { page ->
-            PhotoPager(list[page], page == index && !viewModel.isEnterTransitionFinished)
-        }
-    }
-
-    @Composable
-    protected open fun PhotoPager(
-        photoTransition: QMUIPhotoTransition,
-        animateEnterTarget: Boolean,
-    ) {
-        var transitionStartOffset = photoTransition.offsetInWindow
-        var transitionStartSize = photoTransition.size
-        val transitionStartPhoto = photoTransition.photo
-        val radio = photoTransition.photoProvider.ratio()
-        val transitionDurationMs = 1000
-        PhotoBackgroundWithTransition(animateEnterTarget, transitionDurationMs)
-        if(transitionStartOffset == null ||
-            transitionStartSize == null ||
-            transitionStartPhoto == null ||
-            radio <= 0f
-        ){
-            PhotoContentWithAlphaTransition(photoTransition, animateEnterTarget, transitionDurationMs)
-        }else{
+            val item = list[page]
+            val transitionStartOffset = item.offsetInWindow
+            val transitionStartSize = item.size?.toSize()
+            val initRect = if (transitionStartOffset != null && transitionStartSize != null) {
+                Rect(transitionStartOffset, transitionStartSize)
+            } else null
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val targetViewRatio = constraints.maxWidth * 1f / constraints.maxHeight
-                val targetWidth = if(radio >= targetViewRatio){
-                    constraints.maxWidth.toFloat()
-                } else {
-                    constraints.maxHeight * radio
+                GesturePhoto(
+                    containerWidth = maxWidth,
+                    containerHeight = maxHeight,
+                    imageRatio = item.photoProvider.ratio(),
+                    isLongImage = item.photoProvider.isLongImage(),
+                    initRect = initRect,
+                    transitionEnter = page == index
+                ) {
+                    PhotoContent(photoTransition = item)
                 }
-                val targetHeight = if(radio >= targetViewRatio){
-                    constraints.maxWidth / radio
-                }else{
-                    constraints.maxHeight.toFloat()
-                }
-                val targetLeft = (constraints.maxWidth - targetWidth) / 2f
-                val targetTop = (constraints.maxHeight - targetHeight) / 2f
-                PhotoContentWithRectTransition(
-                    photoTransition = photoTransition,
-                    initRect = Rect(transitionStartOffset, transitionStartSize.toSize()),
-                    targetRect = Rect(
-                        targetLeft,
-                        targetTop,
-                        targetLeft + targetWidth,
-                        targetTop + targetHeight
-                    ),
-                    transitionDurationMs = transitionDurationMs
-                )
             }
-        }
-    }
-
-
-    @Composable
-    protected open fun PhotoBackgroundWithTransition(
-        animateEnterTarget: Boolean,
-        transitionDurationMs: Int
-    ){
-        val alphaTransitionState = remember {
-            MutableTransitionState(if(animateEnterTarget) 0f else 1f)
-        }
-        alphaTransitionState.targetState = 1f
-        val transition = updateTransition(transitionState = alphaTransitionState, label = "")
-        val alpha = transition.animateFloat(
-            transitionSpec = { tween(durationMillis = transitionDurationMs) },
-            label = ""
-        ) {
-            it
-        }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .alpha(alpha.value)
-        )
-    }
-
-    @Composable
-    protected open fun PhotoContentWithRectTransition(
-        photoTransition: QMUIPhotoTransition,
-        initRect: Rect,
-        targetRect: Rect,
-        transitionDurationMs: Int
-    ){
-        val alphaTransitionState = remember {
-            MutableTransitionState(initRect)
-        }
-        alphaTransitionState.targetState = targetRect
-        val transition = updateTransition(transitionState = alphaTransitionState, label = "")
-        val rect = transition.animateRect(
-            transitionSpec = { tween(durationMillis = transitionDurationMs) },
-            label = ""
-        ) {
-            it
-        }
-        val left = with(LocalDensity.current){
-            rect.value.left.toDp()
-        }
-        val top = with(LocalDensity.current){
-            rect.value.top.toDp()
-        }
-        val width = with(LocalDensity.current){
-            rect.value.width.toDp()
-        }
-        val height = with(LocalDensity.current){
-            rect.value.height.toDp()
-        }
-        Box(
-            modifier = Modifier.offset(left, top).width(width).height(height)
-        ){
-            PhotoContent(photoTransition)
-        }
-    }
-
-    @Composable
-    protected open fun PhotoContentWithAlphaTransition(
-        photoTransition: QMUIPhotoTransition,
-        animateEnterTarget: Boolean,
-        transitionDurationMs: Int
-    ){
-        val alphaTransitionState = remember {
-            MutableTransitionState(if(animateEnterTarget) 0f else 1f)
-        }
-        alphaTransitionState.targetState = 1f
-        val transition = updateTransition(transitionState = alphaTransitionState, label = "")
-        val alpha = transition.animateFloat(
-            transitionSpec = { tween(durationMillis = transitionDurationMs) },
-            label = ""
-        ) {
-            it
-        }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .alpha(alpha.value)
-        ){
-            PhotoContent(photoTransition)
         }
     }
 
     @Composable
     protected open fun PhotoContent(
         photoTransition: QMUIPhotoTransition
-    ){
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
             var isPhotoLoadSuccess by remember {
                 mutableStateOf(false)
@@ -339,14 +212,24 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                 onSuccess = { isPhotoLoadSuccess = true },
                 onError = null
             )
-            if(!isPhotoLoadSuccess){
-                photoTransition.photoProvider.thumbnail()?.Compose(
-                    contentScale = ContentScale.Fit,
-                    isContainerFixed = true,
-                    isLongImage = false,
-                    onSuccess = null,
-                    onError = null
-                )
+            if (!isPhotoLoadSuccess) {
+                val transitionPhoto = photoTransition.photo
+                if (transitionPhoto != null) {
+                    Image(
+                        painter = BitmapPainter(transitionPhoto.toBitmap().asImageBitmap()),
+                        contentDescription = "",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    photoTransition.photoProvider.thumbnail()?.Compose(
+                        contentScale = ContentScale.Fit,
+                        isContainerFixed = true,
+                        isLongImage = false,
+                        onSuccess = null,
+                        onError = null
+                    )
+                }
             }
         }
     }

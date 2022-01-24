@@ -45,6 +45,7 @@ interface QMUIPhotoProvider {
     fun thumbnail(): QMUIPhoto?
     fun photo(): QMUIPhoto?
     fun ratio(): Float = -1f
+    fun isLongImage(): Boolean = false
 
     fun meta(): Bundle?
     fun recoverCls(): Class<in PhotoTransitionProviderRecover>?
