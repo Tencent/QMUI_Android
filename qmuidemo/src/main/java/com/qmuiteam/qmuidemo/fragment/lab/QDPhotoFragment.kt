@@ -17,9 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
@@ -46,6 +47,7 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 
 @Widget(name = "QMUI Photo", iconRes = R.mipmap.icon_grid_in_progress)
@@ -416,42 +418,75 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
         onError: ((Throwable) -> Unit)?
     ) {
         var images by remember {
-            mutableStateOf(emptyList<Bitmap>())
+            mutableStateOf(emptyList<BitmapRegion>())
         }
         val context = LocalContext.current
-        LaunchedEffect("") {
-            launch {
+        LaunchedEffect(key1 = ""){
+            val result = withContext(Dispatchers.IO){
                 val request = ImageRequest.Builder(context)
                     .data(url)
                     .setParameter("isLongImage", true)
                     .build()
-                val result = context.imageLoader.execute(request)
-                if (result is SuccessResult) {
-                    (result.drawable as? LongImageDrawableHolder)?.bms?.let {
-                        images = it
-                    }
-                    onSuccess?.invoke(result.drawable)
-                } else if (result is ErrorResult) {
-                    onError?.invoke(result.throwable)
+                context.imageLoader.execute(request)
+            }
+            if (result is SuccessResult) {
+                (result.drawable as? LongImageDrawableHolder)?.bms?.let {
+                    images = it
                 }
+                onSuccess?.invoke(result.drawable)
+            } else if (result is ErrorResult) {
+                onError?.invoke(result.throwable)
+            }
+        }
+        DisposableEffect("") {
+            object: DisposableEffectResult {
+                override fun dispose() {
+                    images.forEach {
+                        it.loader.release()
+                    }
+                }
+
             }
         }
         if (images.isNotEmpty()) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(images) { image ->
-                    Image(
-                        painter = BitmapPainter(image.asImageBitmap()),
-                        contentDescription = "",
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    )
+                    BoxWithConstraints() {
+                        val width = constraints.maxWidth
+                        val height = width * image.height / image.width
+                        val heightDp = with(LocalDensity.current) {
+                            height.toDp()
+                        }
+                        LongImageItem(image, maxWidth, heightDp)
+                    }
                 }
             }
         }
     }
+}
 
+
+@Composable
+fun LongImageItem(bmRegion: BitmapRegion, w: Dp, h: Dp) {
+    var bitmap by remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    LaunchedEffect(key1 = bmRegion) {
+        withContext(Dispatchers.IO) {
+            bitmap = bmRegion.loader.load()
+        }
+    }
+    Box(modifier = Modifier.size(w, h)) {
+        val bm = bitmap
+        if (bm != null) {
+            Image(
+                painter = BitmapPainter(bm.asImageBitmap()),
+                contentDescription = "",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }
 
 class CoilPhotoProvider(val url: String, val ratio: Float) : QMUIPhotoProvider {
@@ -504,37 +539,37 @@ class LongImageDecoder(
     private val isThumb = options.parameters["isThumb"] == true
 
     override suspend fun decode(): DecodeResult = parallelismLock.withPermit {
-        runInterruptible { BitmapFactory.Options().decode() }
+        runInterruptible { decode(BitmapFactory.Options()) }
     }
 
 
-    private fun BitmapFactory.Options.decode(): DecodeResult {
+    private fun decode(bmOptions: BitmapFactory.Options): DecodeResult {
         val bufferedSource = source.source()
 
         // Read the image's dimensions.
-        inJustDecodeBounds = true
-        BitmapFactory.decodeStream(bufferedSource.peek().inputStream(), null, this)
-        inJustDecodeBounds = false
+        bmOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeStream(bufferedSource.peek().inputStream(), null, bmOptions)
+        bmOptions.inJustDecodeBounds = false
 
 
 
-        inPreferredConfig = Bitmap.Config.ARGB_8888
-        inPremultiplied = options.premultipliedAlpha
+        bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888
+        bmOptions.inPremultiplied = options.premultipliedAlpha
 
         if (Build.VERSION.SDK_INT >= 26 && options.colorSpace != null) {
-            inPreferredColorSpace = options.colorSpace
+            bmOptions.inPreferredColorSpace = options.colorSpace
         }
 
         // Always create immutable bitmaps as they have performance benefits.
-        inMutable = false
+        bmOptions.inMutable = false
 
-        if (outWidth > 0 && outHeight > 0) {
+        if (bmOptions.outWidth > 0 && bmOptions.outHeight > 0) {
             val (width, height) = options.size
-            val dstWidth = width.pxOrElse { outWidth }
-            val dstHeight = height.pxOrElse { outHeight }
-            inSampleSize = DecodeUtils.calculateInSampleSize(
-                srcWidth = outWidth,
-                srcHeight = outHeight,
+            val dstWidth = width.pxOrElse { bmOptions.outWidth }
+            val dstHeight = height.pxOrElse { bmOptions.outHeight }
+            bmOptions.inSampleSize = DecodeUtils.calculateInSampleSize(
+                srcWidth = bmOptions.outWidth,
+                srcHeight = bmOptions.outHeight,
                 dstWidth = dstWidth,
                 dstHeight = dstHeight,
                 scale = options.scale
@@ -542,8 +577,8 @@ class LongImageDecoder(
 
             // Calculate the image's density scaling multiple.
             var scale = DecodeUtils.computeSizeMultiplier(
-                srcWidth = outWidth / inSampleSize.toDouble(),
-                srcHeight = outHeight / inSampleSize.toDouble(),
+                srcWidth = bmOptions.outWidth / bmOptions.inSampleSize.toDouble(),
+                srcHeight = bmOptions.outHeight / bmOptions.inSampleSize.toDouble(),
                 dstWidth = dstWidth.toDouble(),
                 dstHeight = dstHeight.toDouble(),
                 scale = options.scale
@@ -554,61 +589,120 @@ class LongImageDecoder(
                 scale = scale.coerceAtMost(1.0)
             }
 
-            inScaled = scale != 1.0
-            if (inScaled) {
+            bmOptions.inScaled = scale != 1.0
+            if (bmOptions.inScaled) {
                 if (scale > 1) {
                     // Upscale
-                    inDensity = (Int.MAX_VALUE / scale).roundToInt()
-                    inTargetDensity = Int.MAX_VALUE
+                    bmOptions.inDensity = (Int.MAX_VALUE / scale).roundToInt()
+                    bmOptions.inTargetDensity = Int.MAX_VALUE
                 } else {
                     // Downscale
-                    inDensity = Int.MAX_VALUE
-                    inTargetDensity = (Int.MAX_VALUE * scale).roundToInt()
+                    bmOptions.inDensity = Int.MAX_VALUE
+                    bmOptions.inTargetDensity = (Int.MAX_VALUE * scale).roundToInt()
                 }
             }
         } else {
             // This occurs if there was an error decoding the image's size.
-            inSampleSize = 1
-            inScaled = false
+            bmOptions.inSampleSize = 1
+            bmOptions.inScaled = false
         }
 
         val regionDecoder = BitmapRegionDecoder.newInstance(bufferedSource.inputStream(), false)
         checkNotNull(regionDecoder) {
             "BitmapRegionDecoder newInstance failed."
         }
-        val w = regionDecoder.width
-        val h = regionDecoder.height
-        if (isThumb) {
-            val outBitmap = regionDecoder.decodeRegion(Rect(0, 0, w, w * 3), this)
 
-            // Fix the incorrect density created by overloading inDensity/inTargetDensity.
-            outBitmap.density = options.context.resources.displayMetrics.densityDpi
-
-            return DecodeResult(
-                drawable = BitmapDrawable(options.context.resources, outBitmap),
-                isSampled = inSampleSize > 1 || inScaled
-            )
-        } else {
-            val ret = arrayListOf<Bitmap>()
-            var start = 0
-            while (start < h) {
-                val end = (start + w * 3).coerceAtMost(h)
-                val outBitmap = regionDecoder.decodeRegion(Rect(0, start, w, end), this)
-
+        try {
+            val w = regionDecoder.width
+            val h = regionDecoder.height
+            if (isThumb) {
+                val outBitmap = regionDecoder.decodeRegion(Rect(0, 0, w, w * 3), bmOptions)
                 // Fix the incorrect density created by overloading inDensity/inTargetDensity.
                 outBitmap.density = options.context.resources.displayMetrics.densityDpi
-                ret.add(outBitmap)
-                start = end
+
+                regionDecoder.recycle()
+                return DecodeResult(
+                    drawable = BitmapDrawable(options.context.resources, outBitmap),
+                    isSampled = bmOptions.inSampleSize > 1 || bmOptions.inScaled
+                )
+            } else {
+                val ret = arrayListOf<BitmapRegion>()
+                val lazyLoadCount = AtomicInteger(0)
+                var top = 0
+                var i = 0
+                while (top < h) {
+                    val bottom = (top + w * 3).coerceAtMost(h)
+                    if (i < 3) {
+                        val bm = regionDecoder.decodeRegion(Rect(0, top, w, bottom), bmOptions)
+                        bm.density = options.context.resources.displayMetrics.densityDpi
+                        ret.add(BitmapRegion(bm.width, bm.height, object : BitmapRegionLoader {
+                            override fun load(): Bitmap {
+                                return bm
+                            }
+
+                            override fun release() {
+
+                            }
+                        }))
+                    } else {
+                        lazyLoadCount.getAndIncrement()
+                        val finalTop = top
+                        ret.add(BitmapRegion(w, bottom - top, object : BitmapRegionLoader {
+
+                            @Volatile
+                            var isReleased = false
+
+
+                            override fun load(): Bitmap? {
+                                if(isReleased){
+                                    return null
+                                }
+                                synchronized(this) {
+                                    if(isReleased){
+                                        return null
+                                    }
+                                    val bm = regionDecoder.decodeRegion(Rect(0, finalTop, w, bottom), bmOptions)
+                                    bm.density = options.context.resources.displayMetrics.densityDpi
+                                    return bm
+                                }
+                            }
+
+                            override fun release() {
+                                if (isReleased) {
+                                    return
+                                }
+                                synchronized(this) {
+                                    if (isReleased) {
+                                        return
+                                    }
+                                    if (lazyLoadCount.decrementAndGet() == 0) {
+                                        regionDecoder.recycle()
+                                    }
+                                    isReleased = true
+                                }
+                            }
+                        }))
+                    }
+                    top = bottom
+                    i++
+                }
+
+                if (lazyLoadCount.get() == 0) {
+                    regionDecoder.recycle()
+                }
+                return DecodeResult(
+                    drawable = LongImageDrawableHolder(ret, w, h),
+                    isSampled = bmOptions.inSampleSize > 1 || bmOptions.inScaled
+                )
             }
-            return DecodeResult(
-                drawable = LongImageDrawableHolder(ret, w, h),
-                isSampled = inSampleSize > 1 || inScaled
-            )
+        }catch (e: Throwable){
+            regionDecoder.recycle()
+            throw e
         }
     }
 }
 
-class LongImageDrawableHolder(val bms: List<Bitmap>, val w: Int, val h: Int) : Drawable() {
+class LongImageDrawableHolder(val bms: List<BitmapRegion>, val w: Int, val h: Int) : Drawable() {
 
     override fun getIntrinsicHeight(): Int {
         return h
@@ -633,5 +727,11 @@ class LongImageDrawableHolder(val bms: List<Bitmap>, val w: Int, val h: Int) : D
     override fun getOpacity(): Int {
         return PixelFormat.OPAQUE
     }
+}
 
+class BitmapRegion(val width: Int, val height: Int, val loader: BitmapRegionLoader)
+
+interface BitmapRegionLoader {
+    fun load(): Bitmap?
+    fun release()
 }
