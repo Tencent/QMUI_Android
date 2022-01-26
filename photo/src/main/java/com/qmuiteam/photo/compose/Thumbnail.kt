@@ -1,6 +1,9 @@
 package com.qmuiteam.photo.compose
 
+import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.WindowManager
+import android.view.WindowMetrics
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
@@ -16,22 +19,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.qmuiteam.photo.activity.QMUIPhotoViewerActivity
 import com.qmuiteam.photo.data.QMUIPhoto
 import com.qmuiteam.photo.data.QMUIPhotoProvider
 import com.qmuiteam.photo.data.QMUIPhotoTransition
+import com.qmuiteam.photo.util.getWindowSize
+
+const val SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO = -1F
 
 class QMUIPhotoThumbnailConfig(
     val singleSquireImageWidthRatio: Float = 0.5f,
     val singleWideImageMaxWidthRatio: Float = 0.667f,
     val singleHighImageDefaultWidthRatio: Float = 0.5f,
-    val singleHighImageMaxHeight: Dp = 320.dp,
+    val singleHighImageMiniHeightRatio: Float = SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO,
     val singleLongImageWidthRatio: Float = 0.5f,
-    val isLongImageIfRatioLessThan: Float = 0.2f,
-    val longImageShowTopRatio: Float = 0.25f,
     val averageIfTwoImage: Boolean = true,
     val horGap: Dp = 5.dp,
     val verGap: Dp = 5.dp,
@@ -47,7 +53,6 @@ private fun QMUIPhotoThumbnailItem(
     height: Dp,
     alphaWhenPressed: Float,
     isContainerFixed: Boolean,
-    isLongImage: Boolean,
     onLayout: (offset: Offset, size: IntSize) -> Unit,
     onPhotoLoaded: (Drawable) -> Unit,
     click: (() -> Unit)?,
@@ -75,7 +80,6 @@ private fun QMUIPhotoThumbnailItem(
         thumb?.Compose(
             contentScale = ContentScale.Crop,
             isContainerFixed = isContainerFixed,
-            isLongImage = isLongImage,
             onSuccess = {
                 onPhotoLoaded(it)
             },
@@ -112,6 +116,7 @@ fun QMUIPhotoThumbnail(
             QMUIPhotoTransition(images[it], null, null, null)
         }
     }
+    val context = LocalContext.current
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         if (images.size == 1) {
             val image = images[0]
@@ -126,7 +131,6 @@ fun QMUIPhotoThumbnail(
                             Dp.Unspecified,
                             config.alphaWhenPressed,
                             isContainerFixed = false,
-                            isLongImage = false,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -149,7 +153,6 @@ fun QMUIPhotoThumbnail(
                             wh,
                             config.alphaWhenPressed,
                             isContainerFixed = true,
-                            isLongImage = false,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -173,7 +176,6 @@ fun QMUIPhotoThumbnail(
                             height,
                             config.alphaWhenPressed,
                             isContainerFixed = true,
-                            isLongImage = false,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -188,16 +190,21 @@ fun QMUIPhotoThumbnail(
                             } else null
                         )
                     }
-                    ratio <= config.isLongImageIfRatioLessThan -> {
+                    image.isLongImage() -> {
                         val width = maxWidth * config.singleLongImageWidthRatio
-                        val height = width / config.longImageShowTopRatio
+                        val heightRatio = if(config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO){
+                            val windowSize = getWindowSize(context)
+                           windowSize.width * 1f / windowSize.height
+                        } else {
+                            config.singleHighImageMiniHeightRatio
+                        }
+                        val height = width / heightRatio
                         QMUIPhotoThumbnailItem(
                             thumb,
                             width,
                             height,
                             config.alphaWhenPressed,
                             isContainerFixed = true,
-                            isLongImage = true,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -215,8 +222,14 @@ fun QMUIPhotoThumbnail(
                     else -> {
                         var width = maxWidth * config.singleHighImageDefaultWidthRatio
                         var height = width / ratio
-                        if (height > config.singleHighImageMaxHeight) {
-                            height = config.singleHighImageMaxHeight
+                        val heightMiniRatio = if(config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO){
+                            val windowSize = getWindowSize(context)
+                            windowSize.width * 1f / windowSize.height
+                        } else {
+                            config.singleHighImageMiniHeightRatio
+                        }
+                        if (ratio < heightMiniRatio) {
+                            height = width * heightMiniRatio
                             width = height * ratio
                         }
                         QMUIPhotoThumbnailItem(
@@ -225,7 +238,6 @@ fun QMUIPhotoThumbnail(
                             height,
                             config.alphaWhenPressed,
                             isContainerFixed = true,
-                            isLongImage = false,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -288,15 +300,12 @@ fun RowImages(
                 Spacer(modifier = Modifier.width(config.horGap))
             }
             val image = images[i]
-            val ratio = image.ratio()
-            val isLongImage = ratio > 0f && ratio < config.isLongImageIfRatioLessThan
             QMUIPhotoThumbnailItem(
                 image.thumbnail(),
                 wh,
                 wh,
                 config.alphaWhenPressed,
                 isContainerFixed = true,
-                isLongImage = isLongImage,
                 onLayout = { offset, size ->
                     renderInfo[i].offsetInWindow = offset
                     renderInfo[i].size = size

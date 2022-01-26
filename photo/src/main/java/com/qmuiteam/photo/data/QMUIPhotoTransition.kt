@@ -20,8 +20,10 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.toSize
 
 class PhotoViewerData(
     val list: List<QMUIPhotoTransition>,
@@ -35,7 +37,6 @@ interface QMUIPhoto {
     fun Compose(
         contentScale: ContentScale,
         isContainerFixed: Boolean,
-        isLongImage: Boolean,
         onSuccess: ((Drawable) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     )
@@ -56,9 +57,49 @@ class QMUIPhotoTransition(
     var offsetInWindow: Offset?,
     var size: IntSize?,
     var photo: Drawable?
-)
+) {
+    fun photoRect(): Rect? {
+        val offset = offsetInWindow
+        val size = size?.toSize()
+        if (offset == null || size == null || size.width == 0f || size.height == 0f) {
+            return null
+        }
+        return Rect(offset, size)
+//        var ratio = photoProvider.ratio()
+//        if (ratio <= 0) {
+//            ratio = photo?.let { it.intrinsicWidth.toFloat() / it.intrinsicHeight } ?: -1f
+//        }
+//
+//        if (ratio <= 0f) {
+//            return null
+//        }
+//        val sizeRatio = size.width / size.height
+//        if (sizeRatio == ratio) {
+//            return Rect(offset, size)
+//        }
+//        if (ratio > sizeRatio) {
+//            val width = size.height * ratio
+//            val x = offset.x - (width - size.width) / 2
+//            return Rect(
+//                x,
+//                offset.y,
+//                x + width,
+//                offset.y + size.height
+//            )
+//        } else {
+//            val height = size.width / ratio
+//            val y = offset.y - (height - size.height) / 2
+//            return Rect(
+//                offset.x,
+//                y,
+//                offset.x + size.width,
+//                y + height
+//            )
+//        }
+    }
+}
 
-val lossPhotoProvider = object: QMUIPhotoProvider {
+val lossPhotoProvider = object : QMUIPhotoProvider {
     override fun thumbnail(): QMUIPhoto? {
         return null
     }

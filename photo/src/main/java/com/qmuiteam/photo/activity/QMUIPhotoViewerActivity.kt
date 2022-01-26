@@ -18,23 +18,27 @@ package com.qmuiteam.photo.activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -43,9 +47,12 @@ import androidx.lifecycle.ViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.qmuiteam.photo.R
 import com.qmuiteam.photo.compose.GesturePhoto
+import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.util.asBitmap
+import java.nio.channels.FileLock
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
 private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_delivery"
@@ -141,6 +148,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             window.navigationBarColor = android.graphics.Color.TRANSPARENT
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 window.navigationBarDividerColor = android.graphics.Color.TRANSPARENT
+                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
         }
 
@@ -177,11 +185,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             state = pagerState
         ) { page ->
             val item = list[page]
-            val transitionStartOffset = item.offsetInWindow
-            val transitionStartSize = item.size?.toSize()
-            val initRect = if (transitionStartOffset != null && transitionStartSize != null) {
-                Rect(transitionStartOffset, transitionStartSize)
-            } else null
+            val initRect = item.photoRect()
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 GesturePhoto(
                     containerWidth = maxWidth,
@@ -189,7 +193,19 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     imageRatio = item.photoProvider.ratio(),
                     isLongImage = item.photoProvider.isLongImage(),
                     initRect = initRect,
-                    transitionEnter = page == index
+                    transitionEnter = page == index,
+                    onBeginPullExit = {
+                        true
+                    },
+                    onExit = {
+                        if (it) {
+                            finish()
+                            overridePendingTransition(0, 0)
+                        } else {
+                            finish()
+                            overridePendingTransition(0, R.anim.scale_exit)
+                        }
+                    }
                 ) {
                     PhotoContent(photoTransition = item)
                 }
@@ -208,7 +224,6 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             photoTransition.photoProvider.photo()?.Compose(
                 contentScale = ContentScale.Fit,
                 isContainerFixed = true,
-                isLongImage = false,
                 onSuccess = { isPhotoLoadSuccess = true },
                 onError = null
             )
@@ -218,19 +233,28 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     Image(
                         painter = BitmapPainter(transitionPhoto.toBitmap().asImageBitmap()),
                         contentDescription = "",
-                        contentScale = ContentScale.Fit,
+                        alignment = if (photoTransition.photoProvider.isLongImage()) Alignment.TopCenter else Alignment.Center,
+                        contentScale = if (photoTransition.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Fit,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     photoTransition.photoProvider.thumbnail()?.Compose(
-                        contentScale = ContentScale.Fit,
+                        contentScale = if (photoTransition.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Fit,
                         isContainerFixed = true,
-                        isLongImage = false,
                         onSuccess = null,
                         onError = null
                     )
                 }
+                Loading()
             }
         }
     }
+
+    @Composable
+    protected open fun BoxScope.Loading(){
+        Box(modifier = Modifier.align(Alignment.Center)){
+            QMUIPhotoLoading(size = 48.dp)
+        }
+    }
 }
+

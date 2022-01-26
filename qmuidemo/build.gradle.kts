@@ -43,6 +43,11 @@ android {
         targetCompatibility = Dep.javaVersion
     }
 
+    kotlinOptions {
+        jvmTarget = Dep.kotlinJvmTarget
+        freeCompilerArgs += "-Xjvm-default=all"
+    }
+
     buildFeatures {
         compose = true
     }

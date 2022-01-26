@@ -3,9 +3,7 @@ package com.qmuiteam.photo.compose
 import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,11 +16,19 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChangeConsumed
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 
 @Composable
@@ -33,8 +39,11 @@ fun GesturePhoto(
     isLongImage: Boolean,
     initRect: Rect? = null,
     transitionEnter: Boolean = false,
-    transitionDurationMs: Int = 1000,
-    onPress: (() -> Unit)? = null,
+    transitionExit: Boolean = true,
+    transitionDurationMs: Int = 360,
+    maxScale: Float = 4f,
+    onBeginPullExit: ()-> Boolean,
+    onExit: (afterTransition: Boolean) -> Unit,
     content: @Composable () -> Unit
 ) {
     val layoutRatio = containerWidth / containerHeight
@@ -76,38 +85,48 @@ fun GesturePhoto(
     val imageWidthPx = with(LocalDensity.current) { imageWidth.toPx() }
     val imageHeightPx = with(LocalDensity.current) { imageHeight.toPx() }
 
+    var transitionTargetState by remember(containerWidth, containerHeight) { mutableStateOf(true) }
     val transitionState = remember(containerWidth, containerHeight) {
-        val canTransitionEnter = initRect != null && transitionEnter
-        MutableTransitionState(!canTransitionEnter)
+        MutableTransitionState(!transitionEnter)
     }
 
-    val scaleHandler: (Offset, Float) -> Unit = remember(containerWidth, containerHeight) {
-        { center, scale ->
+    val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale) {
+        lambda@{ center, scaleParam, edgeProtection ->
+            var scale = scaleParam
+            if (photoTargetScale * scaleParam > maxScale) {
+                scale = maxScale / photoTargetScale
+            }
+            if (scale == 1f) {
+                return@lambda
+            }
             var targetLeft = center.x + ((photoTargetTranslateX - center.x) * scale)
             var targetTop = center.y + ((photoTargetTranslateY - center.y) * scale)
             val targetWidth = imageWidthPx * photoTargetScale * scale
             val targetHeight = imageHeightPx * photoTargetScale * scale
-            when {
-                containerWidthPx > targetWidth -> {
-                    targetLeft = (containerWidthPx - targetWidth) / 2
-                }
-                targetLeft > 0 -> {
-                    targetLeft = 0f
-                }
-                targetLeft + targetWidth < containerWidthPx -> {
-                    targetLeft = containerWidthPx - targetWidth
-                }
-            }
 
-            when {
-                containerHeightPx > targetHeight -> {
-                    targetTop = (containerHeightPx - targetHeight) / 2
+            if(edgeProtection){
+                when {
+                    containerWidthPx > targetWidth -> {
+                        targetLeft = (containerWidthPx - targetWidth) / 2
+                    }
+                    targetLeft > 0 -> {
+                        targetLeft = 0f
+                    }
+                    targetLeft + targetWidth < containerWidthPx -> {
+                        targetLeft = containerWidthPx - targetWidth
+                    }
                 }
-                targetTop > 0 -> {
-                    targetTop = 0f
-                }
-                targetTop + targetHeight < containerHeightPx -> {
-                    targetTop = containerHeightPx - targetHeight
+
+                when {
+                    containerHeightPx > targetHeight -> {
+                        targetTop = (containerHeightPx - targetHeight) / 2
+                    }
+                    targetTop > 0 -> {
+                        targetTop = 0f
+                    }
+                    targetTop + targetHeight < containerHeightPx -> {
+                        targetTop = containerHeightPx - targetHeight
+                    }
                 }
             }
             photoTargetTranslateX = targetLeft
@@ -116,25 +135,44 @@ fun GesturePhoto(
         }
     }
 
-    transitionState.targetState = true
+    val reset: () -> Unit = remember(containerWidth, containerHeight) {
+        {
+            backgroundTargetAlpha = 1f
+            photoTargetScale = 1f
+            photoTargetTranslateX = photoTargetNormalTranslateX
+            photoTargetTranslateY = photoTargetNormalTranslateY
+        }
+    }
+
+    transitionState.targetState = transitionTargetState
     val transition = updateTransition(transitionState = transitionState, label = "PhotoPager")
+
+    val nestedScrollConnection = remember {
+        GestureNestScrollConnection()
+    }
+
     Box(
         modifier = Modifier
             .width(containerWidth)
             .height(containerHeight)
     ) {
-        PhotoBackgroundWithTransition(backgroundTargetAlpha, transition, transitionDurationMs){
+        PhotoBackgroundWithTransition(backgroundTargetAlpha, transition, transitionDurationMs) {
             PhotoBackground(alpha = it)
         }
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput("${containerWidth}_${containerHeight}") {
+                .nestedScroll(nestedScrollConnection)
+                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onExit}_${onBeginPullExit}") {
                     coroutineScope {
                         launch {
                             detectTapGestures(
-                                onPress = {
-                                    onPress?.invoke()
+                                onTap = {
+                                    if (transitionExit) {
+                                        transitionTargetState = false
+                                    } else {
+                                        onExit(false)
+                                    }
                                 },
                                 onDoubleTap = {
                                     if (photoTargetScale == 1f) {
@@ -143,21 +181,145 @@ fun GesturePhoto(
                                         if (alignScale > 1.25 && alignScale < scale) {
                                             scale = alignScale
                                         }
-                                        scaleHandler.invoke(it, scale)
+                                        scaleHandler.invoke(it, scale, true)
                                     } else {
-                                        photoTargetScale = 1f
-                                        photoTargetTranslateX = photoTargetNormalTranslateX
-                                        photoTargetTranslateY = photoTargetNormalTranslateY
+                                        reset()
                                     }
                                 }
                             )
                         }
 
-//                        launch {
-//                            detectTransformGestures(true) { centroid: Offset, pan: Offset, zoom: Float, _: Float ->
-//                                scaleHandler.invoke(centroid, zoom)
-//                            }
-//                        }
+                        launch {
+                            forEachGesture {
+                                awaitPointerEventScope {
+                                    var zoom = 1f
+                                    var pan = Offset.Zero
+                                    val touchSlop = viewConfiguration.touchSlop
+                                    var isZooming = false
+                                    var isPanning = false
+                                    var isExitPanning = false
+                                    awaitFirstDown(requireUnconsumed = false)
+                                    nestedScrollConnection.canConsumeEvent = false
+                                    nestedScrollConnection.isIntercepted = false
+                                    do {
+                                        val event = awaitPointerEvent()
+                                        if(isZooming || isExitPanning){
+                                            nestedScrollConnection.isIntercepted = true
+                                        }
+                                        val needHandle = !nestedScrollConnection.canConsumeEvent && event.changes.any { it.positionChangeConsumed() }
+                                        if (!needHandle) {
+                                            val zoomChange = event.calculateZoom()
+                                            val panChange = event.calculatePan()
+
+                                            if (!isZooming && !isPanning) {
+                                                zoom *= zoomChange
+                                                pan += panChange
+
+                                                val centroidSize = event.calculateCentroidSize(useCurrent = false)
+                                                val zoomMotion = abs(1 - zoom) * centroidSize
+                                                val panMotion = pan.getDistance()
+
+                                                if (zoomMotion > touchSlop) {
+                                                    isZooming = true
+                                                } else if (panMotion > touchSlop) {
+                                                    isPanning = true
+                                                }
+                                            }
+
+                                            if (isZooming) {
+                                                val centroid = event.calculateCentroid(useCurrent = false)
+                                                if (zoomChange != 1f) {
+                                                    scaleHandler(centroid, zoomChange, true)
+                                                }
+                                                event.changes.forEach {
+                                                    if (it.positionChanged()) {
+                                                        it.consumeAllChanges()
+                                                    }
+                                                }
+                                            } else if (isPanning) {
+                                                if (!isExitPanning) {
+                                                    var xConsumed = false
+                                                    var yConsumed = false
+                                                    if (panChange != Offset.Zero) {
+                                                        if (panChange.x > 0) {
+                                                            if (photoTargetTranslateX < 0) {
+                                                                photoTargetTranslateX = (photoTargetTranslateX + panChange.x).coerceAtMost(0f)
+                                                                xConsumed = true
+                                                            }
+                                                        }
+                                                        if (panChange.x < 0) {
+                                                            val w = imageWidthPx * photoTargetScale
+                                                            if (photoTargetTranslateX + w > containerWidthPx) {
+                                                                photoTargetTranslateX =
+                                                                    (photoTargetTranslateX + panChange.x).coerceAtLeast(containerWidthPx - w)
+                                                                xConsumed = true
+                                                            }
+                                                        }
+
+                                                        if (panChange.y > 0) {
+                                                            if (photoTargetTranslateY < 0) {
+                                                                photoTargetTranslateY = (photoTargetTranslateY + panChange.y).coerceAtMost(0f)
+                                                                yConsumed = true
+                                                            } else if (!xConsumed && panChange.y > panChange.x.absoluteValue) {
+                                                                isExitPanning = photoTargetScale == 1f && onBeginPullExit()
+                                                            }
+                                                        }
+
+                                                        if (panChange.y < 0) {
+                                                            val h = imageHeightPx * photoTargetScale
+                                                            if (photoTargetTranslateY + h > containerHeightPx) {
+                                                                photoTargetTranslateY =
+                                                                    (photoTargetTranslateY + panChange.y).coerceAtLeast(containerHeightPx - h)
+                                                                yConsumed = true
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (xConsumed || yConsumed) {
+                                                        event.changes.forEach {
+                                                            if (it.positionChanged()) {
+                                                                it.consumeAllChanges()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                if (isExitPanning) {
+                                                    val center = event.calculateCentroid(useCurrent = true)
+                                                    val scaleChange = 1 - panChange.y / containerHeightPx / 2
+                                                    val finalScale = (photoTargetScale * scaleChange)
+                                                        .coerceAtLeast(0.5f)
+                                                        .coerceAtMost(1f)
+                                                    backgroundTargetAlpha = finalScale
+                                                    photoTargetTranslateX += panChange.x
+                                                    photoTargetTranslateY += panChange.y
+                                                    scaleHandler(center, finalScale / photoTargetScale, false)
+                                                    event.changes.forEach {
+                                                        if (it.positionChanged()) {
+                                                            it.consumeAllChanges()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } while (event.changes.any { it.pressed })
+
+                                    if (isZooming) {
+                                        if (photoTargetScale < 1f) {
+                                            reset()
+                                        }
+                                    }
+
+                                    if (isExitPanning) {
+                                        if (photoTargetScale > 0.9f) {
+                                            reset()
+                                        } else {
+                                            transitionTargetState = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
         ) {
@@ -188,6 +350,11 @@ fun GesturePhoto(
             }
         }
     }
+
+
+    if (!transitionState.currentState && !transitionState.targetState) {
+        onExit(true)
+    }
 }
 
 @Composable
@@ -197,22 +364,13 @@ fun PhotoBackgroundWithTransition(
     transitionDurationMs: Int,
     content: @Composable (alpha: Float) -> Unit
 ) {
-    if (transition.currentState) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(backgroundTargetAlpha)
-                .background(Color.Black)
-        )
-    } else {
-        val alpha = transition.animateFloat(
-            transitionSpec = { tween(durationMillis = transitionDurationMs) },
-            label = "PhotoBackgroundWithTransition"
-        ) {
-            if (it) backgroundTargetAlpha else 0f
-        }
-        content(alpha.value)
+    val alpha = transition.animateFloat(
+        transitionSpec = { tween(durationMillis = transitionDurationMs) },
+        label = "PhotoBackgroundWithTransition"
+    ) {
+        if (it) backgroundTargetAlpha else 0f
     }
+    content(alpha.value)
 }
 
 @Composable
@@ -290,5 +448,25 @@ fun PhotoTransformContent(
             }
     ) {
         content()
+    }
+}
+
+internal class GestureNestScrollConnection: NestedScrollConnection{
+
+    var isIntercepted: Boolean = false
+    var canConsumeEvent: Boolean = false
+
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        if(isIntercepted){
+            return available
+        }
+        return super.onPreScroll(available, source)
+    }
+
+    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+        if(available.y > 0){
+            canConsumeEvent = true
+        }
+        return available
     }
 }
