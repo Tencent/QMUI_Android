@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 
 class PhotoViewerData(
-    val list: List<QMUIPhotoTransition>,
+    val list: List<QMUIPhotoTransitionInfo>,
     val index: Int,
     val background: Bitmap?
 )
@@ -52,7 +52,7 @@ interface QMUIPhotoProvider {
     fun recoverCls(): Class<in PhotoTransitionProviderRecover>?
 }
 
-class QMUIPhotoTransition(
+class QMUIPhotoTransitionInfo(
     val photoProvider: QMUIPhotoProvider,
     var offsetInWindow: Offset?,
     var size: IntSize?,
@@ -65,37 +65,6 @@ class QMUIPhotoTransition(
             return null
         }
         return Rect(offset, size)
-//        var ratio = photoProvider.ratio()
-//        if (ratio <= 0) {
-//            ratio = photo?.let { it.intrinsicWidth.toFloat() / it.intrinsicHeight } ?: -1f
-//        }
-//
-//        if (ratio <= 0f) {
-//            return null
-//        }
-//        val sizeRatio = size.width / size.height
-//        if (sizeRatio == ratio) {
-//            return Rect(offset, size)
-//        }
-//        if (ratio > sizeRatio) {
-//            val width = size.height * ratio
-//            val x = offset.x - (width - size.width) / 2
-//            return Rect(
-//                x,
-//                offset.y,
-//                x + width,
-//                offset.y + size.height
-//            )
-//        } else {
-//            val height = size.width / ratio
-//            val y = offset.y - (height - size.height) / 2
-//            return Rect(
-//                offset.x,
-//                y,
-//                offset.x + size.width,
-//                y + height
-//            )
-//        }
     }
 }
 
@@ -117,11 +86,11 @@ val lossPhotoProvider = object : QMUIPhotoProvider {
     }
 }
 
-val lossPhotoTransition = QMUIPhotoTransition(lossPhotoProvider, null, null, null)
+val lossPhotoTransitionInfo = QMUIPhotoTransitionInfo(lossPhotoProvider, null, null, null)
 
 
 interface PhotoTransitionProviderRecover {
-    fun recover(bundle: Bundle): QMUIPhotoTransition?
+    fun recover(bundle: Bundle): QMUIPhotoTransitionInfo?
 }
 
 

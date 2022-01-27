@@ -1,6 +1,5 @@
 package com.qmuiteam.photo.compose
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.*
@@ -32,7 +31,7 @@ import kotlin.math.absoluteValue
 
 
 @Composable
-fun GesturePhoto(
+fun QMUIGesturePhoto(
     containerWidth: Dp,
     containerHeight: Dp,
     imageRatio: Float,
@@ -42,9 +41,9 @@ fun GesturePhoto(
     transitionExit: Boolean = true,
     transitionDurationMs: Int = 360,
     maxScale: Float = 4f,
-    onBeginPullExit: ()-> Boolean,
+    onBeginPullExit: () -> Boolean,
     onExit: (afterTransition: Boolean) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (transition: Transition<Boolean>) -> Unit
 ) {
     val layoutRatio = containerWidth / containerHeight
     val imageWidth: Dp
@@ -104,7 +103,7 @@ fun GesturePhoto(
             val targetWidth = imageWidthPx * photoTargetScale * scale
             val targetHeight = imageHeightPx * photoTargetScale * scale
 
-            if(edgeProtection){
+            if (edgeProtection) {
                 when {
                     containerWidthPx > targetWidth -> {
                         targetLeft = (containerWidthPx - targetWidth) / 2
@@ -203,7 +202,7 @@ fun GesturePhoto(
                                     nestedScrollConnection.isIntercepted = false
                                     do {
                                         val event = awaitPointerEvent()
-                                        if(isZooming || isExitPanning){
+                                        if (isZooming || isExitPanning) {
                                             nestedScrollConnection.isIntercepted = true
                                         }
                                         val needHandle = !nestedScrollConnection.canConsumeEvent && event.changes.any { it.positionChangeConsumed() }
@@ -326,13 +325,19 @@ fun GesturePhoto(
 
             if (initRect == null || initRect == Rect.Zero) {
                 PhotoContentWithAlphaTransition(
-                    scale = photoTargetScale,
-                    translateX = photoTargetTranslateX,
-                    translateY = photoTargetTranslateY,
                     transition = transition,
                     transitionDurationMs = transitionDurationMs
-                ) { alpha, scale, translateX, translateY ->
-                    PhotoTransformContent(imageWidth, imageHeight, alpha, scale, translateX, translateY, content)
+                ) { alpha ->
+                    PhotoTransformContent(
+                        alpha,
+                        imageWidthPx,
+                        imageHeightPx,
+                        photoTargetScale,
+                        photoTargetTranslateX,
+                        photoTargetTranslateY
+                    ) {
+                        content(transition)
+                    }
                 }
             } else {
                 PhotoContentWithRectTransition(
@@ -344,8 +349,10 @@ fun GesturePhoto(
                     translateY = photoTargetTranslateY,
                     transition = transition,
                     transitionDurationMs = transitionDurationMs
-                ) { scale, translateX, translateY ->
-                    PhotoTransformContent(imageWidth, imageHeight, 1f, scale, translateX, translateY, content)
+                ) { w, h, scale, translateX, translateY ->
+                    PhotoTransformContent(1f, w, h, scale, translateX, translateY) {
+                        content(transition)
+                    }
                 }
             }
         }
@@ -375,12 +382,9 @@ fun PhotoBackgroundWithTransition(
 
 @Composable
 fun PhotoContentWithAlphaTransition(
-    scale: Float,
-    translateX: Float,
-    translateY: Float,
     transition: Transition<Boolean>,
     transitionDurationMs: Int,
-    content: @Composable (alpha: Float, scale: Float, translateX: Float, translateY: Float) -> Unit
+    content: @Composable (alpha: Float) -> Unit
 ) {
     val alpha = transition.animateFloat(
         transitionSpec = { tween(durationMillis = transitionDurationMs) },
@@ -388,7 +392,7 @@ fun PhotoContentWithAlphaTransition(
     ) {
         if (it) 1f else 0f
     }
-    content(alpha.value, scale, translateX, translateY)
+    content(alpha.value)
 }
 
 @Composable
@@ -401,7 +405,7 @@ fun PhotoContentWithRectTransition(
     translateY: Float,
     transition: Transition<Boolean>,
     transitionDurationMs: Int,
-    content: @Composable (scale: Float, translateX: Float, translateY: Float) -> Unit
+    content: @Composable (w: Float, h: Float, scale: Float, translateX: Float, translateY: Float) -> Unit
 ) {
     val rect = transition.animateRect(
         transitionSpec = { tween(durationMillis = transitionDurationMs) },
@@ -409,7 +413,11 @@ fun PhotoContentWithRectTransition(
     ) {
         if (it) Rect(translateX, translateY, translateX + imageWidth * scale, translateY + imageHeight * scale) else initRect
     }
-    content(rect.value.width / imageWidth, rect.value.left, rect.value.top)
+    if (transition.currentState && transition.targetState) {
+        content(imageWidth, imageHeight, rect.value.width / imageWidth, rect.value.left, rect.value.top)
+    } else {
+        content(rect.value.width, rect.value.height, 1f, rect.value.left, rect.value.top)
+    }
 }
 
 @Composable
@@ -426,45 +434,47 @@ fun PhotoBackground(
 
 @Composable
 fun PhotoTransformContent(
-    imageWidth: Dp,
-    imageHeight: Dp,
     alpha: Float,
+    width: Float,
+    height: Float,
     scale: Float,
     translateX: Float,
     translateY: Float,
     content: @Composable () -> Unit
 ) {
+    val widthDp = with(LocalDensity.current) { width.toDp() }
+    val heightDp = with(LocalDensity.current) { height.toDp() }
     Box(
         modifier = Modifier
-            .width(imageWidth)
-            .height(imageHeight)
+            .width(widthDp)
+            .height(heightDp)
             .graphicsLayer {
                 this.transformOrigin = TransformOrigin(0f, 0f)
-                this.scaleX = scale
-                this.scaleY = scale
                 this.translationX = translateX
                 this.translationY = translateY
                 this.alpha = alpha
+                this.scaleX = scale
+                this.scaleY = scale
             }
     ) {
         content()
     }
 }
 
-internal class GestureNestScrollConnection: NestedScrollConnection{
+internal class GestureNestScrollConnection : NestedScrollConnection {
 
     var isIntercepted: Boolean = false
     var canConsumeEvent: Boolean = false
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        if(isIntercepted){
+        if (isIntercepted) {
             return available
         }
         return super.onPreScroll(available, source)
     }
 
     override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-        if(available.y > 0){
+        if (available.y > 0) {
             canConsumeEvent = true
         }
         return available

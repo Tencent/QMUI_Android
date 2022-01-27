@@ -1,11 +1,7 @@
 package com.qmuiteam.photo.compose
 
-import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.WindowManager
-import android.view.WindowMetrics
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -19,15 +15,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import com.qmuiteam.photo.activity.QMUIPhotoViewerActivity
 import com.qmuiteam.photo.data.QMUIPhoto
 import com.qmuiteam.photo.data.QMUIPhotoProvider
-import com.qmuiteam.photo.data.QMUIPhotoTransition
+import com.qmuiteam.photo.data.QMUIPhotoTransitionInfo
 import com.qmuiteam.photo.util.getWindowSize
 
 const val SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO = -1F
@@ -106,14 +100,14 @@ fun QMUIPhotoThumbnailWithViewer(
 fun QMUIPhotoThumbnail(
     images: List<QMUIPhotoProvider>,
     config: QMUIPhotoThumbnailConfig = remember { qmuiDefaultPhotoThumbnailConfig },
-    onClick: ((images: List<QMUIPhotoTransition>, index: Int) -> Unit)? = null
+    onClick: ((images: List<QMUIPhotoTransitionInfo>, index: Int) -> Unit)? = null
 ) {
     if (images.size < 0) {
         return
     }
     val renderInfo = remember {
         Array(images.size) {
-            QMUIPhotoTransition(images[it], null, null, null)
+            QMUIPhotoTransitionInfo(images[it], null, null, null)
         }
     }
     val context = LocalContext.current
@@ -282,12 +276,12 @@ fun QMUIPhotoThumbnail(
 @Composable
 fun RowImages(
     images: List<QMUIPhotoProvider>,
-    renderInfo: Array<QMUIPhotoTransition>,
+    renderInfo: Array<QMUIPhotoTransitionInfo>,
     config: QMUIPhotoThumbnailConfig,
     containerWidth: Dp,
     rowCount: Int,
     startIndex: Int,
-    onClick: ((images: List<QMUIPhotoTransition>, index: Int) -> Unit)?
+    onClick: ((images: List<QMUIPhotoTransitionInfo>, index: Int) -> Unit)?
 ) {
     val wh = (containerWidth - config.horGap * (rowCount - 1)) / rowCount
     Row(

@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -283,6 +284,53 @@ class QDPhotoFragment : ComposeBaseFragment() {
     }
 }
 
+@Composable
+fun NetworkImage(
+    url: String,
+    contentScale: ContentScale,
+    alignment: Alignment,
+    isContainerFixed: Boolean,
+    onSuccess: ((Drawable) -> Unit)?,
+    onError: ((Throwable) -> Unit)?
+){
+    var bitmap by remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    val context = LocalContext.current
+    LaunchedEffect(key1 = url){
+        val result = withContext(Dispatchers.IO) {
+            val request = ImageRequest.Builder(context)
+                .data(url)
+                .allowHardware(false)
+                .build()
+            context.imageLoader.execute(request)
+        }
+        if(result is SuccessResult){
+            bitmap = result.drawable.toBitmap()
+            onSuccess?.invoke(result.drawable)
+        }else if(result is ErrorResult) {
+            onError?.invoke(result.throwable)
+        }
+    }
+
+    val bm = bitmap
+    if(bm != null){
+        Image(
+            painter = BitmapPainter(bm.asImageBitmap()),
+            contentDescription = "",
+            contentScale = contentScale,
+            alignment = alignment,
+            modifier = Modifier.let {
+                if (isContainerFixed) {
+                    it.fillMaxSize()
+                } else {
+                    it
+                }
+            }
+        )
+    }
+}
+
 
 class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     @Composable
@@ -295,26 +343,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
         if (isLongImage) {
             LongImage(onSuccess, onError)
         } else {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(url)
-                    .allowHardware(false)
-                    .listener(onError = { _, result ->
-                        onError?.invoke(result.throwable)
-                    }) { _, result ->
-                        onSuccess?.invoke(result.drawable)
-                    }.build(),
-                contentDescription = "",
-                contentScale = contentScale,
-                alignment = Alignment.Center,
-                modifier = Modifier.let {
-                    if (isContainerFixed) {
-                        it.fillMaxSize()
-                    } else {
-                        it
-                    }
-                }
-            )
+            NetworkImage(url, contentScale, Alignment.Center, isContainerFixed, onSuccess, onError)
         }
 
     }
@@ -388,26 +417,7 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
         if (isLongImage) {
             LongImage(onSuccess, onError)
         } else {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(url)
-                    .allowHardware(false)
-                    .listener(onError = { _, result ->
-                        onError?.invoke(result.throwable)
-                    }) { _, result ->
-                        onSuccess?.invoke(result.drawable)
-                    }.build(),
-                contentDescription = "",
-                contentScale = contentScale,
-                alignment = Alignment.Center,
-                modifier = Modifier.let {
-                    if (isContainerFixed) {
-                        it.fillMaxSize()
-                    } else {
-                        it
-                    }
-                }
-            )
+            NetworkImage(url, contentScale, Alignment.Center, isContainerFixed, onSuccess, onError)
         }
     }
 

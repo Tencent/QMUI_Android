@@ -16,15 +16,21 @@
 package com.qmuiteam.photo.activity
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,7 +48,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.qmuiteam.photo.R
-import com.qmuiteam.photo.compose.GesturePhoto
+import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.util.asBitmap
@@ -67,22 +73,22 @@ class PhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
         } else {
             val count = state.get<Int>(PHOTO_COUNT) ?: 0
             if (count > 0) {
-                val list = arrayListOf<QMUIPhotoTransition>()
+                val list = arrayListOf<QMUIPhotoTransitionInfo>()
                 for (i in 0 until count) {
                     try {
                         val meta = state.get<Bundle>("${PHOTO_META_KEY_PREFIX}${i}")
                         val clsName =
                             state.get<String>("${PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX}${i}")
                         if (meta == null || clsName.isNullOrBlank()) {
-                            list.add(lossPhotoTransition)
+                            list.add(lossPhotoTransitionInfo)
                         } else {
                             val cls = Class.forName(clsName)
                             val recover = cls.newInstance() as PhotoTransitionProviderRecover
-                            list.add(recover.recover(meta) ?: lossPhotoTransition)
+                            list.add(recover.recover(meta) ?: lossPhotoTransitionInfo)
                         }
 
                     } catch (e: Throwable) {
-                        list.add(lossPhotoTransition)
+                        list.add(lossPhotoTransitionInfo)
                     }
                 }
                 PhotoViewerData(list, enterIndex, null)
@@ -105,7 +111,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         fun intentOf(
             activity: ComponentActivity,
             cls: Class<in QMUIPhotoViewerActivity>,
-            list: List<QMUIPhotoTransition>,
+            list: List<QMUIPhotoTransitionInfo>,
             index: Int
         ): Intent {
             val data = PhotoViewerData(list, index, activity.window.decorView.asBitmap())
@@ -171,7 +177,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalPagerApi::class)
     @Composable
-    protected open fun PhotoViewer(list: List<QMUIPhotoTransition>, index: Int) {
+    protected open fun PhotoViewer(list: List<QMUIPhotoTransitionInfo>, index: Int) {
         val pagerState = rememberPagerState(index)
         HorizontalPager(
             count = list.size,
@@ -180,7 +186,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             val item = list[page]
             val initRect = item.photoRect()
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                GesturePhoto(
+                QMUIGesturePhoto(
                     containerWidth = maxWidth,
                     containerHeight = maxHeight,
                     imageRatio = item.photoProvider.ratio(),
@@ -200,7 +206,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                         }
                     }
                 ) {
-                    PhotoContent(photoTransition = item)
+                    PhotoContent(transition = it, photoTransitionInfo = item)
                 }
             }
         }
@@ -208,44 +214,73 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
     @Composable
     protected open fun PhotoContent(
-        photoTransition: QMUIPhotoTransition
+        transition: Transition<Boolean>,
+        photoTransitionInfo: QMUIPhotoTransitionInfo
     ) {
+
+
+        val thumb = remember(photoTransitionInfo) { photoTransitionInfo.photoProvider.thumbnail() }
+
+        var isPhotoLoadSuccess by remember {
+            mutableStateOf(false)
+        }
+
         Box(modifier = Modifier.fillMaxSize()) {
-            var isPhotoLoadSuccess by remember {
-                mutableStateOf(false)
-            }
-            photoTransition.photoProvider.photo()?.Compose(
-                contentScale = ContentScale.Fit,
-                isContainerFixed = true,
-                onSuccess = { isPhotoLoadSuccess = true },
-                onError = null
-            )
-            if (!isPhotoLoadSuccess) {
-                val transitionPhoto = photoTransition.photo
+            PhotoItem(photoTransitionInfo, onSuccess = {
+                isPhotoLoadSuccess = true
+            })
+
+            if (!isPhotoLoadSuccess || !transition.currentState || !transition.targetState) {
+                val transitionPhoto = photoTransitionInfo.photo
                 if (transitionPhoto != null) {
                     Image(
                         painter = BitmapPainter(transitionPhoto.toBitmap().asImageBitmap()),
                         contentDescription = "",
-                        alignment = if (photoTransition.photoProvider.isLongImage()) Alignment.TopCenter else Alignment.Center,
-                        contentScale = if (photoTransition.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Fit,
+                        alignment = if (photoTransitionInfo.photoProvider.isLongImage()) Alignment.TopCenter else Alignment.Center,
+                        contentScale = if (photoTransitionInfo.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    photoTransition.photoProvider.thumbnail()?.Compose(
-                        contentScale = if (photoTransition.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Fit,
+                    thumb?.Compose(
+                        contentScale = if (photoTransitionInfo.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Crop,
                         isContainerFixed = true,
                         onSuccess = null,
                         onError = null
                     )
                 }
+            }
+
+            if (!isPhotoLoadSuccess) {
                 Loading()
             }
         }
     }
 
     @Composable
-    protected open fun BoxScope.Loading(){
-        Box(modifier = Modifier.align(Alignment.Center)){
+    private fun PhotoItem(
+        photoTransitionInfo: QMUIPhotoTransitionInfo,
+        onSuccess: ((Drawable) -> Unit)?,
+        onError: ((Throwable) -> Unit)? = null
+    ) {
+
+        val photo = remember(photoTransitionInfo) {
+            val composer: @Composable () -> Unit = {
+                photoTransitionInfo.photoProvider.photo()?.Compose(
+                    contentScale = ContentScale.Fit,
+                    isContainerFixed = true,
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+            composer
+
+        }
+        photo()
+    }
+
+    @Composable
+    protected open fun BoxScope.Loading() {
+        Box(modifier = Modifier.align(Alignment.Center)) {
             QMUIPhotoLoading(size = 48.dp)
         }
     }
