@@ -17,7 +17,7 @@ package com.qmuiteam.photo.data
 
 import androidx.annotation.MainThread
 
-internal object PhotoTransitionDelivery {
+internal object QMUIPhotoTransitionDelivery {
     private val dataMap = mutableMapOf<Long, PhotoViewerData>()
 
     @MainThread

@@ -23,19 +23,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -52,7 +46,6 @@ import com.qmuiteam.photo.compose.GesturePhoto
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.util.asBitmap
-import java.nio.channels.FileLock
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
 private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_delivery"
@@ -68,7 +61,7 @@ class PhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
     private val transitionDeliverKey = state.get<Long>(PHOTO_TRANSITION_DELIVERY_KEY) ?: -1
 
     init {
-        val transitionDeliverData = PhotoTransitionDelivery.getAndRemove(transitionDeliverKey)
+        val transitionDeliverData = QMUIPhotoTransitionDelivery.getAndRemove(transitionDeliverKey)
         data = if (transitionDeliverData != null) {
             transitionDeliverData
         } else {
@@ -101,7 +94,7 @@ class PhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        PhotoTransitionDelivery.remove(transitionDeliverKey)
+        QMUIPhotoTransitionDelivery.remove(transitionDeliverKey)
     }
 }
 
@@ -117,7 +110,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         ): Intent {
             val data = PhotoViewerData(list, index, activity.window.decorView.asBitmap())
             val intent = Intent(activity, cls)
-            intent.putExtra(PHOTO_TRANSITION_DELIVERY_KEY, PhotoTransitionDelivery.put(data))
+            intent.putExtra(PHOTO_TRANSITION_DELIVERY_KEY, QMUIPhotoTransitionDelivery.put(data))
             intent.putExtra(PHOTO_CURRENT_INDEX, index)
             intent.putExtra(PHOTO_COUNT, list.size)
             list.forEachIndexed { i, transition ->
