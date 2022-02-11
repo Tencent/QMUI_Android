@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +75,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                     .background(Color.White),
                 contentPadding = PaddingValues(start = 44.dp)
             ) {
+
                 item {
                     Box(
                         modifier = Modifier
@@ -81,7 +83,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/9979/31y68oGufDGL3zQ6TT.jpg",
@@ -101,7 +103,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/9136/1yn0KLFwy6Vb0nE6Sg.png",
@@ -119,7 +121,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "file:///android_asset/test.png",
@@ -137,7 +139,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/8779/6WY7guGLeGfp0KK6Sb.jpeg",
@@ -155,7 +157,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/8779/6WY7guGLeGfp0KK6Sb.jpeg",
@@ -177,7 +179,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/8779/6WY7guGLeGfp0KK6Sb.jpeg",
@@ -203,7 +205,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/8779/6WY7guGLeGfp0KK6Sb.jpeg",
@@ -237,7 +239,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             .padding(horizontal = 20.dp, vertical = 20.dp)
                     ) {
                         QMUIPhotoThumbnailWithViewer(
-                            requireActivity(),
+                            activity = requireActivity(),
                             images = listOf(
                                 CoilPhotoProvider(
                                     "https://weread-picture-1258476243.file.myqcloud.com/8779/6WY7guGLeGfp0KK6Sb.jpeg",
@@ -281,53 +283,6 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun NetworkImage(
-    url: String,
-    contentScale: ContentScale,
-    alignment: Alignment,
-    isContainerFixed: Boolean,
-    onSuccess: ((Drawable) -> Unit)?,
-    onError: ((Throwable) -> Unit)?
-){
-    var bitmap by remember {
-        mutableStateOf<Bitmap?>(null)
-    }
-    val context = LocalContext.current
-    LaunchedEffect(key1 = url){
-        val result = withContext(Dispatchers.IO) {
-            val request = ImageRequest.Builder(context)
-                .data(url)
-                .allowHardware(false)
-                .build()
-            context.imageLoader.execute(request)
-        }
-        if(result is SuccessResult){
-            bitmap = result.drawable.toBitmap()
-            onSuccess?.invoke(result.drawable)
-        }else if(result is ErrorResult) {
-            onError?.invoke(result.throwable)
-        }
-    }
-
-    val bm = bitmap
-    if(bm != null){
-        Image(
-            painter = BitmapPainter(bm.asImageBitmap()),
-            contentDescription = "",
-            contentScale = contentScale,
-            alignment = alignment,
-            modifier = Modifier.let {
-                if (isContainerFixed) {
-                    it.fillMaxSize()
-                } else {
-                    it
-                }
-            }
-        )
     }
 }
 
@@ -336,14 +291,37 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     @Composable
     override fun Compose(
         contentScale: ContentScale,
-        isContainerFixed: Boolean,
+        isContainerDimenExactly: Boolean,
         onSuccess: ((Drawable) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         if (isLongImage) {
             LongImage(onSuccess, onError)
         } else {
-            NetworkImage(url, contentScale, Alignment.Center, isContainerFixed, onSuccess, onError)
+            val context = LocalContext.current
+            val model = remember(context, url, onSuccess, onError) {
+                ImageRequest.Builder(context)
+                    .data(url)
+                    .allowHardware(false)
+                    .listener(onError = { _, result ->
+                        onError?.invoke(result.throwable)
+                    }) { _, result ->
+                        onSuccess?.invoke(result.drawable)
+                    }.build()
+            }
+            AsyncImage(
+                model = model,
+                contentDescription = "",
+                contentScale = contentScale,
+                alignment = Alignment.Center,
+                modifier = Modifier.let {
+                    if (isContainerDimenExactly) {
+                        it.fillMaxSize()
+                    } else {
+                        it.size(300.dp)
+                    }
+                }
+            )
         }
 
     }
@@ -410,14 +388,37 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     @Composable
     override fun Compose(
         contentScale: ContentScale,
-        isContainerFixed: Boolean,
+        isContainerDimenExactly: Boolean,
         onSuccess: ((Drawable) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         if (isLongImage) {
             LongImage(onSuccess, onError)
         } else {
-            NetworkImage(url, contentScale, Alignment.Center, isContainerFixed, onSuccess, onError)
+            val context = LocalContext.current
+            val model = remember(context, url, onSuccess, onError) {
+                ImageRequest.Builder(context)
+                    .data(url)
+                    .allowHardware(false)
+                    .listener(onError = { _, result ->
+                        onError?.invoke(result.throwable)
+                    }) { _, result ->
+                        onSuccess?.invoke(result.drawable)
+                    }.build()
+            }
+            AsyncImage(
+                model = model,
+                contentDescription = "",
+                contentScale = contentScale,
+                alignment = Alignment.Center,
+                modifier = Modifier.let {
+                    if (isContainerDimenExactly) {
+                        it.fillMaxSize()
+                    } else {
+                        it
+                    }
+                }
+            )
         }
     }
 
@@ -503,7 +504,7 @@ class CoilPhotoProvider(val url: String, val ratio: Float) : QMUIPhotoProvider {
     }
 
     override fun isLongImage(): Boolean {
-        return ratio < 0.2f
+        return ratio > 0 && ratio < 0.2f
     }
 
     override fun meta(): Bundle? {

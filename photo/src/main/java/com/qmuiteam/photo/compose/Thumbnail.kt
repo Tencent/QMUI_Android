@@ -1,6 +1,7 @@
 package com.qmuiteam.photo.compose
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,7 +47,7 @@ private fun QMUIPhotoThumbnailItem(
     width: Dp,
     height: Dp,
     alphaWhenPressed: Float,
-    isContainerFixed: Boolean,
+    isContainerDimenExactly: Boolean,
     onLayout: (offset: Offset, size: IntSize) -> Unit,
     onPhotoLoaded: (Drawable) -> Unit,
     click: (() -> Unit)?,
@@ -57,6 +58,7 @@ private fun QMUIPhotoThumbnailItem(
         .width(width)
         .height(height)
         .let {
+
             if (click != null) {
                 it
                     .clickable(interactionSource, null) {
@@ -73,7 +75,7 @@ private fun QMUIPhotoThumbnailItem(
     ) {
         thumb?.Compose(
             contentScale = ContentScale.Crop,
-            isContainerFixed = isContainerFixed,
+            isContainerDimenExactly = isContainerDimenExactly,
             onSuccess = {
                 onPhotoLoaded(it)
             },
@@ -85,12 +87,13 @@ private fun QMUIPhotoThumbnailItem(
 
 @Composable
 fun QMUIPhotoThumbnailWithViewer(
+    targetActivity: Class<out QMUIPhotoViewerActivity> = QMUIPhotoViewerActivity::class.java,
     activity: ComponentActivity,
     images: List<QMUIPhotoProvider>,
     config: QMUIPhotoThumbnailConfig = remember { qmuiDefaultPhotoThumbnailConfig }
 ){
     QMUIPhotoThumbnail(images, config){ list, index ->
-        val intent = QMUIPhotoViewerActivity.intentOf(activity, QMUIPhotoViewerActivity::class.java, list, index)
+        val intent = QMUIPhotoViewerActivity.intentOf(activity, targetActivity, list, index)
         activity.startActivity(intent)
         activity.overridePendingTransition(0, 0)
     }
@@ -124,7 +127,7 @@ fun QMUIPhotoThumbnail(
                             Dp.Unspecified,
                             Dp.Unspecified,
                             config.alphaWhenPressed,
-                            isContainerFixed = false,
+                            isContainerDimenExactly = false,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -146,7 +149,7 @@ fun QMUIPhotoThumbnail(
                             wh,
                             wh,
                             config.alphaWhenPressed,
-                            isContainerFixed = true,
+                            isContainerDimenExactly = true,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -169,7 +172,7 @@ fun QMUIPhotoThumbnail(
                             width,
                             height,
                             config.alphaWhenPressed,
-                            isContainerFixed = true,
+                            isContainerDimenExactly = true,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -198,7 +201,7 @@ fun QMUIPhotoThumbnail(
                             width,
                             height,
                             config.alphaWhenPressed,
-                            isContainerFixed = true,
+                            isContainerDimenExactly = true,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -231,7 +234,7 @@ fun QMUIPhotoThumbnail(
                             width,
                             height,
                             config.alphaWhenPressed,
-                            isContainerFixed = true,
+                            isContainerDimenExactly = true,
                             onLayout = { offset, size ->
                                 renderInfo[0].offsetInWindow = offset
                                 renderInfo[0].size = size
@@ -299,7 +302,7 @@ fun RowImages(
                 wh,
                 wh,
                 config.alphaWhenPressed,
-                isContainerFixed = true,
+                isContainerDimenExactly = true,
                 onLayout = { offset, size ->
                     renderInfo[i].offsetInWindow = offset
                     renderInfo[i].size = size

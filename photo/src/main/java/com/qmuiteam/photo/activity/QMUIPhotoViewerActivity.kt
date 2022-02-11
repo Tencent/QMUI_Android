@@ -19,7 +19,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,10 +34,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -110,7 +112,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
         fun intentOf(
             activity: ComponentActivity,
-            cls: Class<in QMUIPhotoViewerActivity>,
+            cls: Class<out QMUIPhotoViewerActivity>,
             list: List<QMUIPhotoTransitionInfo>,
             index: Int
         ): Intent {
@@ -167,9 +169,8 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                             alignment = Alignment.TopCenter,
                             modifier = Modifier.fillMaxSize()
                         )
-                        PhotoViewer(list = data.list, index = data.index)
                     }
-
+                    PhotoViewer(list = data.list, index = data.index)
                 }
             }
         }
@@ -185,11 +186,19 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         ) { page ->
             val item = list[page]
             val initRect = item.photoRect()
+            var ratio = item.photoProvider.ratio()
+            if(ratio <= 0f){
+                item.photo?.let {
+                    if(it.intrinsicWidth > 0 && it.intrinsicHeight > 0){
+                        ratio = it.intrinsicHeight.toFloat() / it.intrinsicWidth
+                    }
+                }
+            }
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 QMUIGesturePhoto(
                     containerWidth = maxWidth,
                     containerHeight = maxHeight,
-                    imageRatio = item.photoProvider.ratio(),
+                    imageRatio = ratio,
                     isLongImage = item.photoProvider.isLongImage(),
                     initRect = initRect,
                     transitionEnter = page == index,
@@ -221,37 +230,53 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
         val thumb = remember(photoTransitionInfo) { photoTransitionInfo.photoProvider.thumbnail() }
 
-        var isPhotoLoadSuccess by remember {
-            mutableStateOf(false)
+        var loadStatus by remember {
+            mutableStateOf(PhotoLoadStatus.loading)
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            PhotoItem(photoTransitionInfo, onSuccess = {
-                isPhotoLoadSuccess = true
-            })
+            PhotoItem(photoTransitionInfo,
+                onSuccess = {
+                    loadStatus = PhotoLoadStatus.success
+                },
+                onError = {
+                    loadStatus = PhotoLoadStatus.failed
+                }
+            )
 
-            if (!isPhotoLoadSuccess || !transition.currentState || !transition.targetState) {
+            if (loadStatus != PhotoLoadStatus.success || !transition.currentState || !transition.targetState){
                 val transitionPhoto = photoTransitionInfo.photo
+                val contentScale = when {
+                    photoTransitionInfo.photoProvider.isLongImage() -> {
+                        ContentScale.FillWidth
+                    }
+                    photoTransitionInfo.photoProvider.ratio() > 0f -> {
+                        ContentScale.Crop
+                    }
+                    else -> ContentScale.Fit
+                }
                 if (transitionPhoto != null) {
                     Image(
                         painter = BitmapPainter(transitionPhoto.toBitmap().asImageBitmap()),
                         contentDescription = "",
                         alignment = if (photoTransitionInfo.photoProvider.isLongImage()) Alignment.TopCenter else Alignment.Center,
-                        contentScale = if (photoTransitionInfo.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Crop,
+                        contentScale = contentScale,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     thumb?.Compose(
-                        contentScale = if (photoTransitionInfo.photoProvider.isLongImage()) ContentScale.FillWidth else ContentScale.Crop,
-                        isContainerFixed = true,
+                        contentScale = contentScale,
+                        isContainerDimenExactly = true,
                         onSuccess = null,
                         onError = null
                     )
                 }
             }
 
-            if (!isPhotoLoadSuccess) {
+            if (loadStatus == PhotoLoadStatus.loading) {
                 Loading()
+            } else if (loadStatus == PhotoLoadStatus.failed) {
+                LoadingFailed()
             }
         }
     }
@@ -262,20 +287,12 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         onSuccess: ((Drawable) -> Unit)?,
         onError: ((Throwable) -> Unit)? = null
     ) {
-
-        val photo = remember(photoTransitionInfo) {
-            val composer: @Composable () -> Unit = {
-                photoTransitionInfo.photoProvider.photo()?.Compose(
-                    contentScale = ContentScale.Fit,
-                    isContainerFixed = true,
-                    onSuccess = onSuccess,
-                    onError = onError
-                )
-            }
-            composer
-
-        }
-        photo()
+        photoTransitionInfo.photoProvider.photo()?.Compose(
+            contentScale = ContentScale.Fit,
+            isContainerDimenExactly = true,
+            onSuccess = onSuccess,
+            onError = onError
+        )
     }
 
     @Composable
@@ -283,6 +300,15 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         Box(modifier = Modifier.align(Alignment.Center)) {
             QMUIPhotoLoading(size = 48.dp)
         }
+    }
+
+    @Composable
+    protected open fun BoxScope.LoadingFailed() {
+        // do nothing default, users should handle load fail / reload in Photo
+    }
+
+    private enum class PhotoLoadStatus {
+        loading, success, failed
     }
 }
 

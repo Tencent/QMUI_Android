@@ -36,7 +36,7 @@ interface QMUIPhoto {
     @Composable
     fun Compose(
         contentScale: ContentScale,
-        isContainerFixed: Boolean,
+        isContainerDimenExactly: Boolean,
         onSuccess: ((Drawable) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     )

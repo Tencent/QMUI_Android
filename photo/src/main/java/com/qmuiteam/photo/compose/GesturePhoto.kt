@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
-
 @Composable
 fun QMUIGesturePhoto(
     containerWidth: Dp,
@@ -49,6 +48,10 @@ fun QMUIGesturePhoto(
     val imageWidth: Dp
     val imageHeight: Dp
     when {
+        imageRatio <= 0f -> {
+            imageWidth = containerWidth
+            imageHeight = containerHeight
+        }
         imageRatio >= layoutRatio -> {
             imageWidth = containerWidth
             imageHeight = containerWidth / imageRatio
@@ -83,6 +86,9 @@ fun QMUIGesturePhoto(
     val containerHeightPx = with(LocalDensity.current) { containerHeight.toPx() }
     val imageWidthPx = with(LocalDensity.current) { imageWidth.toPx() }
     val imageHeightPx = with(LocalDensity.current) { imageHeight.toPx() }
+    var isGestureHandling by remember(containerWidth, containerHeight) {
+        mutableStateOf(false)
+    }
 
     var transitionTargetState by remember(containerWidth, containerHeight) { mutableStateOf(true) }
     val transitionState = remember(containerWidth, containerHeight) {
@@ -197,6 +203,7 @@ fun QMUIGesturePhoto(
                                     var isZooming = false
                                     var isPanning = false
                                     var isExitPanning = false
+                                    isGestureHandling = false
                                     awaitFirstDown(requireUnconsumed = false)
                                     nestedScrollConnection.canConsumeEvent = false
                                     nestedScrollConnection.isIntercepted = false
@@ -219,9 +226,11 @@ fun QMUIGesturePhoto(
                                                 val panMotion = pan.getDistance()
 
                                                 if (zoomMotion > touchSlop) {
+                                                    isGestureHandling = true
                                                     isZooming = true
                                                 } else if (panMotion > touchSlop) {
                                                     isPanning = true
+                                                    isGestureHandling = true
                                                 }
                                             }
 
@@ -303,6 +312,7 @@ fun QMUIGesturePhoto(
                                         }
                                     } while (event.changes.any { it.pressed })
 
+                                    isGestureHandling = false
                                     if (isZooming) {
                                         if (photoTargetScale < 1f) {
                                             reset()
@@ -323,18 +333,22 @@ fun QMUIGesturePhoto(
                 }
         ) {
 
-            if (initRect == null || initRect == Rect.Zero) {
+            if (initRect == null || initRect == Rect.Zero || imageRatio <= 0f) {
                 PhotoContentWithAlphaTransition(
                     transition = transition,
-                    transitionDurationMs = transitionDurationMs
-                ) { alpha ->
+                    transitionDurationMs = transitionDurationMs,
+                    isGestureHandling = isGestureHandling,
+                    scale = photoTargetScale,
+                    translateX = photoTargetTranslateX,
+                    translateY = photoTargetTranslateY
+                ) { alpha, scale, translateX, translateY  ->
                     PhotoTransformContent(
                         alpha,
                         imageWidthPx,
                         imageHeightPx,
-                        photoTargetScale,
-                        photoTargetTranslateX,
-                        photoTargetTranslateY
+                        scale,
+                        translateX,
+                        translateY
                     ) {
                         content(transition)
                     }
@@ -384,15 +398,32 @@ fun PhotoBackgroundWithTransition(
 fun PhotoContentWithAlphaTransition(
     transition: Transition<Boolean>,
     transitionDurationMs: Int,
-    content: @Composable (alpha: Float) -> Unit
+    isGestureHandling: Boolean,
+    scale: Float,
+    translateX: Float,
+    translateY: Float,
+    content: @Composable (alpha: Float, scale: Float, translateX: Float, translateY: Float) -> Unit
 ) {
-    val alpha = transition.animateFloat(
+    val alphaState = transition.animateFloat(
         transitionSpec = { tween(durationMillis = transitionDurationMs) },
         label = "PhotoContentWithAlphaTransition"
     ) {
         if (it) 1f else 0f
     }
-    content(alpha.value)
+    val duration = if(isGestureHandling) 0 else transitionDurationMs
+    val scaleState = animateFloatAsState(
+        targetValue = scale,
+        animationSpec = tween(durationMillis = duration)
+    )
+    val translateXState = animateFloatAsState(
+        targetValue = translateX,
+        animationSpec = tween(durationMillis = duration)
+    )
+    val translateYState = animateFloatAsState(
+        targetValue = translateY,
+        animationSpec = tween(durationMillis = duration)
+    )
+    content(alphaState.value, scaleState.value, translateXState.value, translateYState.value)
 }
 
 @Composable
@@ -413,11 +444,11 @@ fun PhotoContentWithRectTransition(
     ) {
         if (it) Rect(translateX, translateY, translateX + imageWidth * scale, translateY + imageHeight * scale) else initRect
     }
-    if (transition.currentState && transition.targetState) {
-        content(imageWidth, imageHeight, rect.value.width / imageWidth, rect.value.left, rect.value.top)
-    } else {
-        content(rect.value.width, rect.value.height, 1f, rect.value.left, rect.value.top)
-    }
+    val isTransitionEnd = transition.currentState && transition.targetState
+    val usedWidth = if(isTransitionEnd) imageWidth else rect.value.width
+    val usedHeight = if(isTransitionEnd) imageHeight else rect.value.height
+    val usedScale = if(isTransitionEnd) rect.value.width / imageWidth else 1f
+    content(usedWidth, usedHeight, usedScale, rect.value.left, rect.value.top)
 }
 
 @Composable
