@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import android.util.SparseIntArray;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.qmuiteam.qmui.widget.section.QMUISection.ITEM_INDEX_LOAD_AFTER;
@@ -34,11 +35,11 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
     private ArrayList<QMUISection<H, T>> mOldList = new ArrayList<>();
     private ArrayList<QMUISection<H, T>> mNewList = new ArrayList<>();
 
-    private SparseIntArray mOldSectionIndex = new SparseIntArray();
-    private SparseIntArray mOldItemIndex = new SparseIntArray();
+    private ArrayList<Integer> mOldSectionIndex = new ArrayList<>();
+    private ArrayList<Integer> mOldItemIndex = new ArrayList<>();
 
-    private SparseIntArray mNewSectionIndex = new SparseIntArray();
-    private SparseIntArray mNewItemIndex = new SparseIntArray();
+    private ArrayList<Integer> mNewSectionIndex = new ArrayList<>();
+    private ArrayList<Integer> mNewItemIndex = new ArrayList<>();
     private boolean mRemoveSectionTitleIfOnlyOnceSection;
 
     public QMUISectionDiffCallback(
@@ -59,19 +60,21 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
         generateIndex(mNewList, mNewSectionIndex, mNewItemIndex, removeSectionTitleIfOnlyOnceSection);
     }
 
-    public void cloneNewIndexTo(@NonNull SparseIntArray sectionIndex, @NonNull SparseIntArray itemIndex) {
+    public void cloneNewIndexTo(@NonNull ArrayList<Integer> sectionIndex, @NonNull ArrayList<Integer> itemIndex) {
         sectionIndex.clear();
         itemIndex.clear();
+        sectionIndex.ensureCapacity(mNewSectionIndex.size());
+        itemIndex.ensureCapacity(mNewItemIndex.size());
         for (int i = 0; i < mNewSectionIndex.size(); i++) {
-            sectionIndex.append(mNewSectionIndex.keyAt(i), mNewSectionIndex.valueAt(i));
+            sectionIndex.add(i, mNewSectionIndex.get(i));
         }
         for (int i = 0; i < mNewItemIndex.size(); i++) {
-            itemIndex.append(mNewItemIndex.keyAt(i), mNewItemIndex.valueAt(i));
+            itemIndex.add(i, mNewItemIndex.get(i));
         }
     }
 
     private void generateIndex(List<QMUISection<H, T>> list,
-                               SparseIntArray sectionIndex, SparseIntArray itemIndex,
+                               ArrayList<Integer> sectionIndex, ArrayList<Integer> itemIndex,
                                boolean removeSectionTitleIfOnlyOnceSection) {
         sectionIndex.clear();
         itemIndex.clear();
@@ -268,14 +271,12 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
     }
 
     public static class IndexGenerationInfo {
-        private SparseIntArray sectionIndexArray;
-        private SparseIntArray itemIndexArray;
-        private int currentPosition;
+        private ArrayList<Integer> sectionIndexArray;
+        private ArrayList<Integer> itemIndexArray;
 
-        private IndexGenerationInfo(SparseIntArray sectionIndex, SparseIntArray itemIndex) {
+        private IndexGenerationInfo(ArrayList<Integer> sectionIndex, ArrayList<Integer> itemIndex) {
             sectionIndexArray = sectionIndex;
             itemIndexArray = itemIndex;
-            currentPosition = 0;
         }
 
         public final void appendCustomIndex(int sectionIndex, int itemIndex) {
@@ -288,13 +289,12 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             appendIndex(sectionIndex, offset);
         }
 
-        private final void appendIndex(int sectionIndex, int itemIndex) {
+        private void appendIndex(int sectionIndex, int itemIndex) {
             if (sectionIndex < 0) {
                 throw new IllegalArgumentException("use appendWholeListCustomIndex for whole list");
             }
-            sectionIndexArray.append(currentPosition, sectionIndex);
-            itemIndexArray.append(currentPosition, itemIndex);
-            currentPosition++;
+            sectionIndexArray.add(sectionIndex);
+            itemIndexArray.add(itemIndex);
         }
 
         public final void appendWholeListCustomIndex(int itemIndex) {
@@ -306,10 +306,9 @@ public class QMUISectionDiffCallback<H extends QMUISection.Model<H>, T extends Q
             appendWholeListIndex(offset);
         }
 
-        private final void appendWholeListIndex(int itemIndex) {
-            sectionIndexArray.append(currentPosition, QMUISection.SECTION_INDEX_UNKNOWN);
-            itemIndexArray.append(currentPosition, itemIndex);
-            currentPosition++;
+        private void appendWholeListIndex(int itemIndex) {
+            sectionIndexArray.add(QMUISection.SECTION_INDEX_UNKNOWN);
+            itemIndexArray.add(itemIndex);
         }
     }
 }

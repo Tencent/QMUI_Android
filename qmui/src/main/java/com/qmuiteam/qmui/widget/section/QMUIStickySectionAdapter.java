@@ -45,8 +45,8 @@ public abstract class QMUIStickySectionAdapter<
     private List<QMUISection<H, T>> mBackupData = new ArrayList<>();
     private List<QMUISection<H, T>> mCurrentData = new ArrayList<>();
 
-    private SparseIntArray mSectionIndex = new SparseIntArray();
-    private SparseIntArray mItemIndex = new SparseIntArray();
+    private ArrayList<Integer> mSectionIndex = new ArrayList<>();
+    private ArrayList<Integer> mItemIndex = new ArrayList<>();
     private ArrayList<QMUISection<H, T>> mLoadingBeforeSections = new ArrayList<>(2);
     private ArrayList<QMUISection<H, T>> mLoadingAfterSections = new ArrayList<>(2);
 
@@ -277,7 +277,7 @@ public abstract class QMUIStickySectionAdapter<
             mLoadingAfterSections.remove(section);
         }
 
-        if (mCurrentData.indexOf(section) < 0) {
+        if (!mCurrentData.contains(section)) {
             return;
         }
 
@@ -285,11 +285,10 @@ public abstract class QMUIStickySectionAdapter<
         // wash current items down
         if (isLoadBefore && !section.isFold()) {
             for (int i = 0; i < mItemIndex.size(); i++) {
-                int position = mItemIndex.keyAt(i);
-                int itemIndex = mItemIndex.valueAt(i);
-                if (itemIndex == 0 && section == getSection(position)) {
+                int itemIndex = mItemIndex.get(i);
+                if (itemIndex == 0 && section == getSection(i)) {
                     RecyclerView.ViewHolder focusViewHolder = mViewCallback == null ? null :
-                            mViewCallback.findViewHolderForAdapterPosition(position);
+                            mViewCallback.findViewHolderForAdapterPosition(i);
                     if (focusViewHolder != null) {
                         mViewCallback.requestChildFocus(focusViewHolder.itemView);
                     }
@@ -383,16 +382,15 @@ public abstract class QMUIStickySectionAdapter<
 
     private void safeScrollToSection(@NonNull QMUISection<H, T> targetSection, boolean scrollToTop) {
         for (int i = 0; i < mSectionIndex.size(); i++) {
-            int position = mSectionIndex.keyAt(i);
-            int sectionIndex = mSectionIndex.valueAt(i);
+            int sectionIndex = mSectionIndex.get(i);
             if (sectionIndex < 0 || sectionIndex >= mCurrentData.size()) {
                 continue;
             }
-            int itemIndex = mItemIndex.get(position);
+            int itemIndex = mItemIndex.get(i);
             if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
                 QMUISection<H, T> temp = mCurrentData.get(sectionIndex);
                 if (temp.getHeader().isSameItem(targetSection.getHeader())) {
-                    mViewCallback.scrollToPosition(position, true, scrollToTop);
+                    mViewCallback.scrollToPosition(i, true, scrollToTop);
                     return;
                 }
             }
@@ -433,17 +431,16 @@ public abstract class QMUIStickySectionAdapter<
 
     private void safeScrollToSectionItem(@NonNull QMUISection<H, T> targetSection, @NonNull T item, boolean scrollToTop) {
         for (int i = 0; i < mItemIndex.size(); i++) {
-            int position = mItemIndex.keyAt(i);
-            int itemIndex = mItemIndex.valueAt(i);
+            int itemIndex = mItemIndex.get(i);
             if (itemIndex < 0) {
                 continue;
             }
-            QMUISection<H, T> section = getSection(position);
+            QMUISection<H, T> section = getSection(i);
             if (section != targetSection) {
                 continue;
             }
             if (section.getItemAt(itemIndex).isSameItem(item)) {
-                mViewCallback.scrollToPosition(position, false, scrollToTop);
+                mViewCallback.scrollToPosition(i, false, scrollToTop);
                 return;
             }
         }
@@ -567,10 +564,9 @@ public abstract class QMUIStickySectionAdapter<
         diff(false, true);
         if (scrollToTop && !section.isFold() && mViewCallback != null) {
             for (int i = 0; i < mSectionIndex.size(); i++) {
-                int pos = mSectionIndex.keyAt(i);
-                int itemIndex = getItemIndex(pos);
-                if (itemIndex == ITEM_INDEX_SECTION_HEADER && getSection(pos) == section) {
-                    mViewCallback.scrollToPosition(pos, true, true);
+                int itemIndex = getItemIndex(i);
+                if (itemIndex == ITEM_INDEX_SECTION_HEADER && getSection(i) == section) {
+                    mViewCallback.scrollToPosition(i, true, true);
                     return;
                 }
             }
