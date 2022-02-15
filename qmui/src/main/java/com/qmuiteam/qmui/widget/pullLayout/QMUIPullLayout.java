@@ -1022,6 +1022,7 @@ public class QMUIPullLayout extends FrameLayout implements NestedScrollingParent
         private final float mPullRate;
         private final float mReceivedFlingFraction;
         private final int mActionInitOffset;
+        @PullEdge
         private final int mPullEdge;
         private final float mScrollSpeedPerPixel;
         private final boolean mNeedReceiveFlingFromTargetView;
@@ -1037,7 +1038,7 @@ public class QMUIPullLayout extends FrameLayout implements NestedScrollingParent
                    boolean isTargetCanOverPull,
                    float targetPullRate,
                    int actionInitOffset,
-                   int pullEdge,
+                   @PullEdge int pullEdge,
                    float scrollSpeedPerPixel,
                    boolean needReceiveFlingFromTargetView,
                    float receivedFlingFraction,
@@ -1107,6 +1108,7 @@ public class QMUIPullLayout extends FrameLayout implements NestedScrollingParent
             return mCanOverPull;
         }
 
+        @PullEdge
         public int getPullEdge() {
             return mPullEdge;
         }

@@ -15,6 +15,7 @@
  */
 package com.qmuiteam.qmui.skin;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -95,7 +96,7 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
                         }
                     }
                 }else{
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                         if(!sDidCheckLayoutInflaterCreateViewExitFourArgMethod){
                             try{
                                 LayoutInflater.class.getDeclaredMethod(
@@ -136,7 +137,7 @@ public class QMUISkinLayoutInflaterFactory implements LayoutInflater.Factory2 {
     private View originCreateViewForLowSDK(String name, Context context, AttributeSet attrs)
             throws NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException, InflateException, ClassNotFoundException {
-        Field field = LayoutInflater.class.getDeclaredField("mConstructorArgs");
+        @SuppressLint("SoonBlockedPrivateApi") Field field = LayoutInflater.class.getDeclaredField("mConstructorArgs");
         field.setAccessible(true);
         Object[] mConstructorArgs = (Object[]) field.get(mOriginLayoutInflater);
         Object lastContext = mConstructorArgs[0];

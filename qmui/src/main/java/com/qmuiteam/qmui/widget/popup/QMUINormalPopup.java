@@ -60,7 +60,7 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
     public static final int ANIM_SPEC = 4;
 
     @IntDef(value = {ANIM_AUTO, ANIM_GROW_FROM_LEFT, ANIM_GROW_FROM_RIGHT, ANIM_GROW_FROM_CENTER, ANIM_SPEC})
-    @interface AnimStyle {
+    public @interface AnimStyle {
     }
 
     public static final int DIRECTION_TOP = 0;

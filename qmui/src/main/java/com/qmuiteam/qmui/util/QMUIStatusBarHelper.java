@@ -26,15 +26,15 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.IntDef;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+
+
 
 /**
  * @author cginechen
@@ -42,17 +42,16 @@ import java.lang.reflect.Method;
  */
 public class QMUIStatusBarHelper {
 
-    private final static int STATUSBAR_TYPE_DEFAULT = 0;
-    private final static int STATUSBAR_TYPE_MIUI = 1;
-    private final static int STATUSBAR_TYPE_FLYME = 2;
-    private final static int STATUSBAR_TYPE_ANDROID6 = 3; // Android 6.0
+    private enum StatusBarType {
+        Default, Miui, Flyme, Android6
+    }
+
     private final static int STATUS_BAR_DEFAULT_HEIGHT_DP = 25; // 大部分状态栏都是25dp
     // 在某些机子上存在不同的density值，所以增加两个虚拟值
     public static float sVirtualDensity = -1;
     public static float sVirtualDensityDpi = -1;
     private static int sStatusBarHeight = -1;
-    private static @StatusBarType
-    int mStatusBarType = STATUSBAR_TYPE_DEFAULT;
+    private static StatusBarType mStatusBarType = StatusBarType.Default;
     private static Integer sTransparentValue;
 
     public static void translucent(Activity activity) {
@@ -90,7 +89,7 @@ public class QMUIStatusBarHelper {
             handleDisplayCutoutMode(window);
         }
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             // 小米 Android 6.0 ，开发版 7.7.13 及以后版本设置黑色字体又需要 clear FLAG_TRANSLUCENT_STATUS, 因此还原为官方模式
             if (QMUIDeviceHelper.isFlymeLowerThan(8) || (QMUIDeviceHelper.isMIUI() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
                 window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
@@ -178,18 +177,18 @@ public class QMUIStatusBarHelper {
     public static boolean setStatusBarLightMode(Activity activity) {
         if (activity == null) return false;
 
-        if (mStatusBarType != STATUSBAR_TYPE_DEFAULT) {
+        if (mStatusBarType != StatusBarType.Default) {
             return setStatusBarLightMode(activity, mStatusBarType);
         }
         if (isMIUICustomStatusBarLightModeImpl() && MIUISetStatusBarLightMode(activity.getWindow(), true)) {
-            mStatusBarType = STATUSBAR_TYPE_MIUI;
+            mStatusBarType = StatusBarType.Miui;
             return true;
         } else if (FlymeSetStatusBarLightMode(activity.getWindow(), true)) {
-            mStatusBarType = STATUSBAR_TYPE_FLYME;
+            mStatusBarType = StatusBarType.Flyme;
             return true;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Android6SetStatusBarLightMode(activity.getWindow(), true);
-            mStatusBarType = STATUSBAR_TYPE_ANDROID6;
+            mStatusBarType = StatusBarType.Android6;
             return true;
         }
         return false;
@@ -202,12 +201,12 @@ public class QMUIStatusBarHelper {
      * @param activity 需要被处理的 Activity
      * @param type     StatusBar 类型，对应不同的系统
      */
-    private static boolean setStatusBarLightMode(Activity activity, @StatusBarType int type) {
-        if (type == STATUSBAR_TYPE_MIUI) {
+    private static boolean setStatusBarLightMode(Activity activity, StatusBarType type) {
+        if (type == StatusBarType.Miui) {
             return MIUISetStatusBarLightMode(activity.getWindow(), true);
-        } else if (type == STATUSBAR_TYPE_FLYME) {
+        } else if (type == StatusBarType.Flyme) {
             return FlymeSetStatusBarLightMode(activity.getWindow(), true);
-        } else if (type == STATUSBAR_TYPE_ANDROID6) {
+        } else if (type == StatusBarType.Android6) {
             return Android6SetStatusBarLightMode(activity.getWindow(), true);
         }
         return false;
@@ -220,16 +219,16 @@ public class QMUIStatusBarHelper {
      */
     public static boolean setStatusBarDarkMode(Activity activity) {
         if (activity == null) return false;
-        if (mStatusBarType == STATUSBAR_TYPE_DEFAULT) {
+        if (mStatusBarType == StatusBarType.Default) {
             // 默认状态，不需要处理
             return true;
         }
 
-        if (mStatusBarType == STATUSBAR_TYPE_MIUI) {
+        if (mStatusBarType == StatusBarType.Miui) {
             return MIUISetStatusBarLightMode(activity.getWindow(), false);
-        } else if (mStatusBarType == STATUSBAR_TYPE_FLYME) {
+        } else if (mStatusBarType == StatusBarType.Flyme) {
             return FlymeSetStatusBarLightMode(activity.getWindow(), false);
-        } else if (mStatusBarType == STATUSBAR_TYPE_ANDROID6) {
+        } else if (mStatusBarType == StatusBarType.Android6) {
             return Android6SetStatusBarLightMode(activity.getWindow(), false);
         }
         return true;
@@ -244,12 +243,12 @@ public class QMUIStatusBarHelper {
      */
     @TargetApi(23)
     private static boolean Android6SetStatusBarLightMode(Window window, boolean light) {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(window, window.getDecorView());
-            if(insetsController != null){
+            if (insetsController != null) {
                 insetsController.setAppearanceLightStatusBars(light);
             }
-        }else{
+        } else {
             // 经过测试，小米 Android 11 用  WindowInsetsControllerCompat 不起作用， 我还能说什么呢。。。
             View decorView = window.getDecorView();
             int systemUi = decorView.getSystemUiVisibility();
@@ -461,10 +460,4 @@ public class QMUIStatusBarHelper {
     public static void setVirtualDensityDpi(float densityDpi) {
         sVirtualDensityDpi = densityDpi;
     }
-
-    @IntDef({STATUSBAR_TYPE_DEFAULT, STATUSBAR_TYPE_MIUI, STATUSBAR_TYPE_FLYME, STATUSBAR_TYPE_ANDROID6})
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface StatusBarType {
-    }
-
 }

@@ -1142,7 +1142,7 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IQMUISkin
                 COLLAPSE_MODE_PARALLAX
         })
         @Retention(RetentionPolicy.SOURCE)
-        @interface CollapseMode {
+        public @interface CollapseMode {
         }
 
         /**
