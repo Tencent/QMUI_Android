@@ -1,5 +1,6 @@
 package com.qmuiteam.photo.compose
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.*
@@ -39,29 +40,43 @@ fun QMUIGesturePhoto(
     transitionEnter: Boolean = false,
     transitionExit: Boolean = true,
     transitionDurationMs: Int = 360,
+    panEdgeProtection: Rect = Rect(0f, 0f, with(LocalDensity.current) { containerWidth.toPx() }, with(LocalDensity.current) { containerHeight.toPx() }),
     maxScale: Float = 4f,
     onBeginPullExit: () -> Boolean,
-    onExit: (afterTransition: Boolean) -> Unit,
-    content: @Composable (transition: Transition<Boolean>) -> Unit
+    onTapExit: (afterTransition: Boolean) -> Unit,
+    content: @Composable (transition: Transition<Boolean>, scale: Float, rect: Rect, onImageRatioEnsured: (Float) -> Unit) -> Unit
 ) {
+
+    var usedImageRatio by remember {
+        mutableStateOf(imageRatio)
+    }
+
+    val usedImageRatioUpdater = remember {
+        val func: (Float)->Unit = { value ->
+            Log.i("cginetest", "value = $value")
+            usedImageRatio = value
+        }
+        func
+    }
+
     val layoutRatio = containerWidth / containerHeight
     val imageWidth: Dp
     val imageHeight: Dp
     when {
-        imageRatio <= 0f -> {
+        usedImageRatio <= 0f -> {
             imageWidth = containerWidth
             imageHeight = containerHeight
         }
-        imageRatio >= layoutRatio -> {
+        usedImageRatio >= layoutRatio -> {
             imageWidth = containerWidth
-            imageHeight = containerWidth / imageRatio
+            imageHeight = containerWidth / usedImageRatio
         }
         isLongImage -> {
             imageWidth = containerWidth
             imageHeight = containerHeight
         }
         else -> {
-            imageWidth = containerHeight * imageRatio
+            imageWidth = containerHeight * usedImageRatio
             imageHeight = containerHeight
         }
     }
@@ -95,7 +110,7 @@ fun QMUIGesturePhoto(
         MutableTransitionState(!transitionEnter)
     }
 
-    val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale) {
+    val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale, usedImageRatio) {
         lambda@{ center, scaleParam, edgeProtection ->
             var scale = scaleParam
             if (photoTargetScale * scaleParam > maxScale) {
@@ -168,7 +183,7 @@ fun QMUIGesturePhoto(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onExit}_${onBeginPullExit}") {
+                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onTapExit}_${onBeginPullExit}_${usedImageRatio}") {
                     coroutineScope {
                         launch {
                             detectTapGestures(
@@ -176,7 +191,7 @@ fun QMUIGesturePhoto(
                                     if (transitionExit) {
                                         transitionTargetState = false
                                     } else {
-                                        onExit(false)
+                                        onTapExit(false)
                                     }
                                 },
                                 onDoubleTap = {
@@ -250,23 +265,25 @@ fun QMUIGesturePhoto(
                                                     var yConsumed = false
                                                     if (panChange != Offset.Zero) {
                                                         if (panChange.x > 0) {
-                                                            if (photoTargetTranslateX < 0) {
-                                                                photoTargetTranslateX = (photoTargetTranslateX + panChange.x).coerceAtMost(0f)
+                                                            if (photoTargetTranslateX < panEdgeProtection.left) {
+                                                                photoTargetTranslateX =
+                                                                    (photoTargetTranslateX + panChange.x).coerceAtMost(panEdgeProtection.left)
                                                                 xConsumed = true
                                                             }
                                                         }
                                                         if (panChange.x < 0) {
                                                             val w = imageWidthPx * photoTargetScale
-                                                            if (photoTargetTranslateX + w > containerWidthPx) {
+                                                            if (photoTargetTranslateX + w > panEdgeProtection.right) {
                                                                 photoTargetTranslateX =
-                                                                    (photoTargetTranslateX + panChange.x).coerceAtLeast(containerWidthPx - w)
+                                                                    (photoTargetTranslateX + panChange.x).coerceAtLeast(panEdgeProtection.right - w)
                                                                 xConsumed = true
                                                             }
                                                         }
 
                                                         if (panChange.y > 0) {
-                                                            if (photoTargetTranslateY < 0) {
-                                                                photoTargetTranslateY = (photoTargetTranslateY + panChange.y).coerceAtMost(0f)
+                                                            if (photoTargetTranslateY < panEdgeProtection.top) {
+                                                                photoTargetTranslateY =
+                                                                    (photoTargetTranslateY + panChange.y).coerceAtMost(panEdgeProtection.top)
                                                                 yConsumed = true
                                                             } else if (!xConsumed && panChange.y > panChange.x.absoluteValue) {
                                                                 isExitPanning = photoTargetScale == 1f && onBeginPullExit()
@@ -275,9 +292,9 @@ fun QMUIGesturePhoto(
 
                                                         if (panChange.y < 0) {
                                                             val h = imageHeightPx * photoTargetScale
-                                                            if (photoTargetTranslateY + h > containerHeightPx) {
+                                                            if (photoTargetTranslateY + h > panEdgeProtection.bottom) {
                                                                 photoTargetTranslateY =
-                                                                    (photoTargetTranslateY + panChange.y).coerceAtLeast(containerHeightPx - h)
+                                                                    (photoTargetTranslateY + panChange.y).coerceAtLeast(panEdgeProtection.bottom - h)
                                                                 yConsumed = true
                                                             }
                                                         }
@@ -350,7 +367,12 @@ fun QMUIGesturePhoto(
                         translateX,
                         translateY
                     ) {
-                        content(transition)
+                        content(
+                            transition,
+                            scale,
+                            Rect(translateX, translateY, translateX + imageWidthPx * scale, translateY + imageHeightPx * scale),
+                            usedImageRatioUpdater
+                        )
                     }
                 }
             } else {
@@ -365,7 +387,12 @@ fun QMUIGesturePhoto(
                     transitionDurationMs = transitionDurationMs
                 ) { w, h, scale, translateX, translateY ->
                     PhotoTransformContent(1f, w, h, scale, translateX, translateY) {
-                        content(transition)
+                        content(
+                            transition,
+                            scale,
+                            Rect(translateX, translateY, translateX + imageWidthPx * scale, translateY + imageHeightPx * scale),
+                            usedImageRatioUpdater
+                        )
                     }
                 }
             }
@@ -374,7 +401,7 @@ fun QMUIGesturePhoto(
 
 
     if (!transitionState.currentState && !transitionState.targetState) {
-        onExit(true)
+        onTapExit(true)
     }
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.qmuiteam.photo.activity.QMUIPhotoViewerActivity
+import com.qmuiteam.photo.data.PhotoResult
 import com.qmuiteam.photo.data.QMUIPhoto
 import com.qmuiteam.photo.data.QMUIPhotoProvider
 import com.qmuiteam.photo.data.QMUIPhotoTransitionInfo
@@ -49,7 +50,7 @@ private fun QMUIPhotoThumbnailItem(
     alphaWhenPressed: Float,
     isContainerDimenExactly: Boolean,
     onLayout: (offset: Offset, size: IntSize) -> Unit,
-    onPhotoLoaded: (Drawable) -> Unit,
+    onPhotoLoaded: (PhotoResult) -> Unit,
     click: (() -> Unit)?,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -74,7 +75,7 @@ private fun QMUIPhotoThumbnailItem(
         }
     ) {
         thumb?.Compose(
-            contentScale = ContentScale.Crop,
+            contentScale = if(isContainerDimenExactly) ContentScale.Crop else ContentScale.Fit,
             isContainerDimenExactly = isContainerDimenExactly,
             onSuccess = {
                 onPhotoLoaded(it)
@@ -133,7 +134,7 @@ fun QMUIPhotoThumbnail(
                                 renderInfo[0].size = size
                             },
                             onPhotoLoaded = {
-                                renderInfo[0].photo = it
+                                renderInfo[0].photo = it.drawable
                             },
                             click = if (onClick != null) {
                                 {
@@ -155,7 +156,7 @@ fun QMUIPhotoThumbnail(
                                 renderInfo[0].size = size
                             },
                             onPhotoLoaded = {
-                                renderInfo[0].photo = it
+                                renderInfo[0].photo = it.drawable
                             },
                             click = if (onClick != null) {
                                 {
@@ -178,7 +179,7 @@ fun QMUIPhotoThumbnail(
                                 renderInfo[0].size = size
                             },
                             onPhotoLoaded = {
-                                renderInfo[0].photo = it
+                                renderInfo[0].photo = it.drawable
                             },
                             click = if (onClick != null) {
                                 {
@@ -207,7 +208,7 @@ fun QMUIPhotoThumbnail(
                                 renderInfo[0].size = size
                             },
                             onPhotoLoaded = {
-                                renderInfo[0].photo = it
+                                renderInfo[0].photo = it.drawable
                             },
                             click = if (onClick != null) {
                                 {
@@ -240,7 +241,7 @@ fun QMUIPhotoThumbnail(
                                 renderInfo[0].size = size
                             },
                             onPhotoLoaded = {
-                                renderInfo[0].photo = it
+                                renderInfo[0].photo = it.drawable
                             },
                             click = if (onClick != null) {
                                 {
@@ -308,7 +309,7 @@ fun RowImages(
                     renderInfo[i].size = size
                 },
                 onPhotoLoaded = {
-                    renderInfo[i].photo = it
+                    renderInfo[i].photo = it.drawable
                 },
                 click = if (onClick != null) {
                     {

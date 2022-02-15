@@ -292,7 +292,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     override fun Compose(
         contentScale: ContentScale,
         isContainerDimenExactly: Boolean,
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         if (isLongImage) {
@@ -306,19 +306,19 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
                     .listener(onError = { _, result ->
                         onError?.invoke(result.throwable)
                     }) { _, result ->
-                        onSuccess?.invoke(result.drawable)
+                        onSuccess?.invoke(PhotoResult(url, result.drawable))
                     }.build()
             }
             AsyncImage(
                 model = model,
                 contentDescription = "",
-                contentScale = contentScale,
+                contentScale = if(isContainerDimenExactly) contentScale else ContentScale.Inside,
                 alignment = Alignment.Center,
                 modifier = Modifier.let {
                     if (isContainerDimenExactly) {
                         it.fillMaxSize()
                     } else {
-                        it.size(300.dp)
+                        it
                     }
                 }
             )
@@ -328,7 +328,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
 
     @Composable
     fun LongImage(
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -347,7 +347,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     @Composable
     fun LongImageContent(
         request: ImageRequest,
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         val imageLoader = LocalContext.current.imageLoader
@@ -360,7 +360,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
                 if (result is SuccessResult) {
                     bitmap = result.drawable.toBitmap()
                     withContext(Dispatchers.Main) {
-                        onSuccess?.invoke(result.drawable)
+                        onSuccess?.invoke(PhotoResult(url, result.drawable))
                     }
                 } else if (result is ErrorResult) {
                     withContext(Dispatchers.Main) {
@@ -389,7 +389,7 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
     override fun Compose(
         contentScale: ContentScale,
         isContainerDimenExactly: Boolean,
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         if (isLongImage) {
@@ -403,7 +403,7 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
                     .listener(onError = { _, result ->
                         onError?.invoke(result.throwable)
                     }) { _, result ->
-                        onSuccess?.invoke(result.drawable)
+                        onSuccess?.invoke(PhotoResult(url, result.drawable))
                     }.build()
             }
             AsyncImage(
@@ -424,7 +424,7 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
 
     @Composable
     fun LongImage(
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     ) {
         var images by remember {
@@ -443,7 +443,7 @@ class CoilPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
                 (result.drawable as? LongImageDrawableHolder)?.bitmapRegion?.let {
                     images = it.list
                 }
-                onSuccess?.invoke(result.drawable)
+                onSuccess?.invoke(PhotoResult(url, result.drawable))
             } else if (result is ErrorResult) {
                 onError?.invoke(result.throwable)
             }
@@ -573,11 +573,11 @@ class LongImageDecoder(
 class LongImageDrawableHolder(val bitmapRegion: QMUIBitmapRegion) : Drawable() {
 
     override fun getIntrinsicHeight(): Int {
-        return bitmapRegion.width
+        return bitmapRegion.height
     }
 
     override fun getIntrinsicWidth(): Int {
-        return bitmapRegion.height
+        return bitmapRegion.width
     }
 
     override fun draw(canvas: Canvas) {

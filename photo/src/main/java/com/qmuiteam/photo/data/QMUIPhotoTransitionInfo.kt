@@ -17,6 +17,7 @@ package com.qmuiteam.photo.data
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
@@ -31,13 +32,19 @@ class PhotoViewerData(
     val background: Bitmap?
 )
 
+internal enum class PhotoLoadStatus {
+    loading, success, failed
+}
+
+class PhotoResult(val model: Any, val drawable: Drawable)
+
 interface QMUIPhoto {
 
     @Composable
     fun Compose(
         contentScale: ContentScale,
         isContainerDimenExactly: Boolean,
-        onSuccess: ((Drawable) -> Unit)?,
+        onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)?
     )
 }
