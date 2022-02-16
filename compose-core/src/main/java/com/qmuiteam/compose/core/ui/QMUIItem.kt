@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.ui
+package com.qmuiteam.compose.core.ui
 
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background

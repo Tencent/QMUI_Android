@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
-import com.qmuiteam.compose.provider.QMUIWindowInsetsProvider
+import com.qmuiteam.compose.core.provider.QMUIWindowInsetsProvider
 
 abstract class ComposeBaseFragment(): BaseFragment() {
     override fun onCreateView(): View {

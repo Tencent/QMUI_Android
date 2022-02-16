@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qmuiteam.compose.R
-import com.qmuiteam.compose.ui.*
+import com.qmuiteam.compose.core.ui.*
 
 val DefaultDialogPaddingHor = 20.dp
 

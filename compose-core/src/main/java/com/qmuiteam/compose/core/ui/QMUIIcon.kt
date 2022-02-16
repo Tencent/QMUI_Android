@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.ui
+package com.qmuiteam.compose.core.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
@@ -7,7 +7,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import com.qmuiteam.compose.R
+import com.qmuiteam.compose.core.R
 
 @Composable
 fun QMUIChevronIcon(tint: Color? = null) {

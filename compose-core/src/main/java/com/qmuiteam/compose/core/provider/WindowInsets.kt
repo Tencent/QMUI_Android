@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.provider
+package com.qmuiteam.compose.core.provider
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalDensity
@@ -9,7 +9,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.qmuiteam.compose.R
+import com.qmuiteam.compose.core.R
 
 val QMUILocalWindowInsets = staticCompositionLocalOf { WindowInsetsCompat.CONSUMED }
 

@@ -17,7 +17,6 @@ package com.qmuiteam.qmuidemo.fragment
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import com.qmuiteam.compose.ex.drawBottomSeparator
+import com.qmuiteam.compose.core.ex.drawBottomSeparator
 import com.qmuiteam.compose.modal.*
-import com.qmuiteam.compose.ui.*
+import com.qmuiteam.compose.core.ui.*
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import com.qmuiteam.qmuidemo.R

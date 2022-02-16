@@ -1,3 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+includeBuild("./plugin")
+
 include(":qmuidemo")
 include(":qmui")
 include(":lib")
@@ -6,13 +14,8 @@ include(":arch")
 include(":arch-compiler")
 include(":arch-annotation")
 include(":type")
+include(":compose-core")
 include(":compose")
 include(":photo")
 
-includeBuild("./plugin")
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-    }
-}

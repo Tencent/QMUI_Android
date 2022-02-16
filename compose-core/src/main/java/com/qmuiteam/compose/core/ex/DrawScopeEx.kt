@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.ex
+package com.qmuiteam.compose.core.ex
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.qmuiteam.compose.ui.qmuiSeparatorColor
+import com.qmuiteam.compose.core.ui.qmuiSeparatorColor
 
 fun DrawScope.drawTopSeparator(color: Color = qmuiSeparatorColor, insetStart: Dp = 0.dp, insetEnd: Dp = 0.dp) {
     drawLine(

@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.ui
+package com.qmuiteam.compose.core.ui
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp

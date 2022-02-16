@@ -16,6 +16,7 @@ object Dep {
         const val qmuiVer = "2.0.1"
         const val archVer = "2.0.1"
         const val typeVer = "0.0.14"
+        const val composeCoreVer = "0.0.1"
         const val composeVer = "0.0.1"
         const val photoVer = "0.0.1"
     }

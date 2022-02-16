@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.ui
+package com.qmuiteam.compose.core.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -23,10 +23,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowInsetsCompat
-import com.qmuiteam.compose.R
-import com.qmuiteam.compose.helper.OnePx
-import com.qmuiteam.compose.provider.QMUILocalWindowInsets
-import com.qmuiteam.compose.provider.dp
+import com.qmuiteam.compose.core.R
+import com.qmuiteam.compose.core.helper.OnePx
+import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
+import com.qmuiteam.compose.core.provider.dp
 
 fun interface QMUITopBarItem {
     @Composable

@@ -1,4 +1,4 @@
-package com.qmuiteam.compose.helper
+package com.qmuiteam.compose.core.helper
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity

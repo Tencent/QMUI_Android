@@ -12,7 +12,7 @@ import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import com.qmuiteam.compose.ui.qmuiPrimaryColor
+import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 
 val DefaultMaskColor = Color.Black.copy(alpha = 0.5f)
 

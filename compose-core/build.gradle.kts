@@ -8,7 +8,7 @@ plugins {
     id("qmui-publish")
 }
 
-version = Dep.QMUI.composeVer
+version = Dep.QMUI.composeCoreVer
 
 android {
     compileSdk = Dep.compileSdk
@@ -43,5 +43,11 @@ android {
 }
 
 dependencies {
-    api(project(":compose-core"))
+    api(Dep.AndroidX.annotation)
+    api(Dep.AndroidX.appcompat)
+    api(Dep.AndroidX.coreKtx)
+    api(Dep.Compose.ui)
+    api(Dep.Compose.animation)
+    api(Dep.Compose.material)
+    api(Dep.Compose.compiler)
 }
