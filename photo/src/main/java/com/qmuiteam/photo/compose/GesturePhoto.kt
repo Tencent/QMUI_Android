@@ -366,10 +366,12 @@ fun QMUIGesturePhoto(
                         translateX,
                         translateY
                     ) {
+                        val imageLeft = translateX + imagePaddingFix.first * scale
+                        val imageTop = translateY + imagePaddingFix.second * scale
                         content(
                             transition,
                             scale,
-                            Rect(translateX, translateY, translateX + imageWidthPx * scale, translateY + imageHeightPx * scale),
+                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * scale, imageTop + imageHeightPx * scale),
                             usedImageRatioUpdater
                         )
                     }
@@ -386,10 +388,12 @@ fun QMUIGesturePhoto(
                     transitionDurationMs = transitionDurationMs
                 ) { w, h, scale, translateX, translateY ->
                     PhotoTransformContent(1f, w, h, scale, translateX, translateY) {
+                        val imageLeft = translateX + imagePaddingFix.first * scale
+                        val imageTop = translateY + imagePaddingFix.second * scale
                         content(
                             transition,
                             scale,
-                            Rect(translateX, translateY, translateX + imageWidthPx * scale, translateY + imageHeightPx * scale),
+                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * scale, imageTop + imageHeightPx * scale),
                             usedImageRatioUpdater
                         )
                     }
