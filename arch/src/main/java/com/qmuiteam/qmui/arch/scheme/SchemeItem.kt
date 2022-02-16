@@ -39,26 +39,29 @@ abstract class SchemeItem(
     private val schemeValueConverterCls: Class<out QMUISchemeValueConverter>?
 ) {
 
-    fun convertFrom(schemeParams: Map<String, String>?): Map<String, SchemeValue>? {
-        val originMap = mutableMapOf<String, String>()
-        if (defaultParams != null) {
-            for (item in defaultParams) {
-                if (item.isNotEmpty()) {
-                    val pair = item.split("=")
-                    if (pair.size == 2) {
-                        originMap[pair[0]] = pair[1]
+    fun appendDefaultParams(schemeParams: MutableMap<String, String>?) {
+        if(schemeParams == null || defaultParams == null){
+            return
+        }
+        for (item in defaultParams) {
+            if (item.isNotEmpty()) {
+                val pair = item.split("=")
+                if (pair.size == 2) {
+                    if(!schemeParams.contains(pair[0])){
+                        schemeParams[pair[0]] = pair[1]
                     }
                 }
             }
         }
-        if (schemeParams != null) {
-            originMap.putAll(schemeParams)
-        }
-        if (originMap.isEmpty()) {
+    }
+
+    protected fun convertFrom(schemeParams: Map<String, String>?): Map<String, SchemeValue>? {
+
+        if (schemeParams == null || schemeParams.isEmpty()) {
             return null
         }
         val queryMap = mutableMapOf<String, SchemeValue>()
-        for ((name, value) in originMap) {
+        for ((name, value) in schemeParams) {
             if (name.isEmpty()) {
                 continue
             }
@@ -77,7 +80,7 @@ abstract class SchemeItem(
                     }
                 }
                 if (converter != null) {
-                    usedValue = converter.convert(name, value, originMap)
+                    usedValue = converter.convert(name, value, schemeParams)
                 }
             }
             try {

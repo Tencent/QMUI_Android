@@ -124,6 +124,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
                     failed = true
                     break
                 }
+                schemeItem.appendDefaultParams(schemeInfo.params)
                 if (!schemeItem.handle(this, handleContext, schemeInfo)) {
                     QMUILog.i(TAG, "handle scheme failed: ${schemeInfo.origin}")
                     failed = true
