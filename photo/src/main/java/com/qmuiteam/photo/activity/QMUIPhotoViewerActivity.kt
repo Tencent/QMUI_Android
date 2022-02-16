@@ -183,19 +183,11 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         ) { page ->
             val item = list[page]
             val initRect = item.photoRect()
-            var ratio = item.photoProvider.ratio()
-            if (ratio <= 0f) {
-                item.photo?.let {
-                    if (it.intrinsicWidth > 0 && it.intrinsicHeight > 0) {
-                        ratio = it.intrinsicWidth.toFloat() / it.intrinsicHeight
-                    }
-                }
-            }
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 QMUIGesturePhoto(
                     containerWidth = maxWidth,
                     containerHeight = maxHeight,
-                    imageRatio = ratio,
+                    imageRatio = item.ratio(),
                     isLongImage = item.photoProvider.isLongImage(),
                     initRect = initRect,
                     transitionEnter = page == index,
@@ -254,7 +246,10 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     photoTransitionInfo.photoProvider.isLongImage() -> {
                         ContentScale.FillWidth
                     }
-                    else -> ContentScale.Crop
+                    photoTransitionInfo.ratio() > 0f -> {
+                        ContentScale.Crop
+                    }
+                    else -> ContentScale.Fit
                 }
                 if (transitionPhoto != null) {
                     Image(

@@ -73,6 +73,18 @@ class QMUIPhotoTransitionInfo(
         }
         return Rect(offset, size)
     }
+
+    fun ratio(): Float {
+        var ratio = photoProvider.ratio()
+        if (ratio <= 0f) {
+            photo?.let {
+                if (it.intrinsicWidth > 0 && it.intrinsicHeight > 0) {
+                    ratio = it.intrinsicWidth.toFloat() / it.intrinsicHeight
+                }
+            }
+        }
+        return ratio
+    }
 }
 
 val lossPhotoProvider = object : QMUIPhotoProvider {

@@ -47,39 +47,35 @@ fun QMUIGesturePhoto(
     content: @Composable (transition: Transition<Boolean>, scale: Float, rect: Rect, onImageRatioEnsured: (Float) -> Unit) -> Unit
 ) {
 
-    var usedImageRatio by remember {
+    val (imageWidth, imageHeight) = calculateImageSize(containerWidth, containerHeight, imageRatio, isLongImage)
+
+    var calculatedImageRatio by remember {
         mutableStateOf(imageRatio)
+    }
+
+    val density = LocalDensity.current
+    val imagePaddingFix by remember(density, panEdgeProtection, isLongImage, containerWidth, containerHeight, calculatedImageRatio, imageRatio) {
+        val (expectWidth, expectHeight) = calculateImageSize(containerWidth, containerHeight, calculatedImageRatio, isLongImage)
+        val widthPadding = with(density){
+            (imageWidth - expectWidth).toPx() / 2
+        }
+        val heightPadding = with(density){
+            (imageHeight - expectHeight).toPx() / 2
+        }
+
+        mutableStateOf(widthPadding to heightPadding)
     }
 
     val usedImageRatioUpdater = remember {
         val func: (Float)->Unit = { value ->
-            Log.i("cginetest", "value = $value")
-            usedImageRatio = value
+            if(value > 0){
+                calculatedImageRatio = value
+            }
         }
         func
     }
 
-    val layoutRatio = containerWidth / containerHeight
-    val imageWidth: Dp
-    val imageHeight: Dp
-    when {
-        usedImageRatio <= 0f -> {
-            imageWidth = containerWidth
-            imageHeight = containerHeight
-        }
-        usedImageRatio >= layoutRatio -> {
-            imageWidth = containerWidth
-            imageHeight = containerWidth / usedImageRatio
-        }
-        isLongImage -> {
-            imageWidth = containerWidth
-            imageHeight = containerHeight
-        }
-        else -> {
-            imageWidth = containerHeight * usedImageRatio
-            imageHeight = containerHeight
-        }
-    }
+
 
     var backgroundTargetAlpha by remember {
         mutableStateOf(1f)
@@ -110,7 +106,7 @@ fun QMUIGesturePhoto(
         MutableTransitionState(!transitionEnter)
     }
 
-    val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale, usedImageRatio) {
+    val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale, imageRatio) {
         lambda@{ center, scaleParam, edgeProtection ->
             var scale = scaleParam
             if (photoTargetScale * scaleParam > maxScale) {
@@ -155,7 +151,7 @@ fun QMUIGesturePhoto(
         }
     }
 
-    val reset: () -> Unit = remember(containerWidth, containerHeight) {
+    val reset: () -> Unit = remember(containerWidth, containerHeight, imageRatio) {
         {
             backgroundTargetAlpha = 1f
             photoTargetScale = 1f
@@ -183,7 +179,7 @@ fun QMUIGesturePhoto(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onTapExit}_${onBeginPullExit}_${usedImageRatio}") {
+                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onTapExit}_${onBeginPullExit}_${imagePaddingFix}") {
                     coroutineScope {
                         launch {
                             detectTapGestures(
@@ -265,25 +261,27 @@ fun QMUIGesturePhoto(
                                                     var yConsumed = false
                                                     if (panChange != Offset.Zero) {
                                                         if (panChange.x > 0) {
-                                                            if (photoTargetTranslateX < panEdgeProtection.left) {
+                                                            val fixEdgeLeft = panEdgeProtection.left - imagePaddingFix.first * photoTargetScale
+                                                            if (photoTargetTranslateX < fixEdgeLeft) {
                                                                 photoTargetTranslateX =
-                                                                    (photoTargetTranslateX + panChange.x).coerceAtMost(panEdgeProtection.left)
+                                                                    (photoTargetTranslateX + panChange.x).coerceAtMost(fixEdgeLeft)
                                                                 xConsumed = true
                                                             }
                                                         }
                                                         if (panChange.x < 0) {
                                                             val w = imageWidthPx * photoTargetScale
-                                                            if (photoTargetTranslateX + w > panEdgeProtection.right) {
+                                                            val fixEdgeRight = panEdgeProtection.right + imagePaddingFix.first * photoTargetScale
+                                                            if (photoTargetTranslateX + w > fixEdgeRight) {
                                                                 photoTargetTranslateX =
-                                                                    (photoTargetTranslateX + panChange.x).coerceAtLeast(panEdgeProtection.right - w)
+                                                                    (photoTargetTranslateX + panChange.x).coerceAtLeast(fixEdgeRight - w)
                                                                 xConsumed = true
                                                             }
                                                         }
 
                                                         if (panChange.y > 0) {
-                                                            if (photoTargetTranslateY < panEdgeProtection.top) {
-                                                                photoTargetTranslateY =
-                                                                    (photoTargetTranslateY + panChange.y).coerceAtMost(panEdgeProtection.top)
+                                                            val fixEdgeTop = panEdgeProtection.top - imagePaddingFix.second * photoTargetScale
+                                                            if (photoTargetTranslateY < fixEdgeTop) {
+                                                                photoTargetTranslateY = (photoTargetTranslateY + panChange.y).coerceAtMost(fixEdgeTop)
                                                                 yConsumed = true
                                                             } else if (!xConsumed && panChange.y > panChange.x.absoluteValue) {
                                                                 isExitPanning = photoTargetScale == 1f && onBeginPullExit()
@@ -292,9 +290,10 @@ fun QMUIGesturePhoto(
 
                                                         if (panChange.y < 0) {
                                                             val h = imageHeightPx * photoTargetScale
-                                                            if (photoTargetTranslateY + h > panEdgeProtection.bottom) {
+                                                            val fixEgeBottom = panEdgeProtection.bottom + imagePaddingFix.second * photoTargetScale
+                                                            if (photoTargetTranslateY + h > fixEgeBottom) {
                                                                 photoTargetTranslateY =
-                                                                    (photoTargetTranslateY + panChange.y).coerceAtLeast(panEdgeProtection.bottom - h)
+                                                                    (photoTargetTranslateY + panChange.y).coerceAtLeast(fixEgeBottom - h)
                                                                 yConsumed = true
                                                             }
                                                         }
@@ -536,5 +535,14 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
             canConsumeEvent = true
         }
         return available
+    }
+}
+
+private fun calculateImageSize(containerWidth: Dp, containerHeight: Dp, imageRatio: Float, isLongImage: Boolean): Pair<Dp, Dp> {
+    val layoutRatio = containerWidth / containerHeight
+    return when {
+        isLongImage || imageRatio <= 0f  -> containerWidth to containerHeight
+        imageRatio >= layoutRatio -> containerWidth to (containerWidth / imageRatio)
+        else -> (containerHeight * imageRatio) to containerHeight
     }
 }

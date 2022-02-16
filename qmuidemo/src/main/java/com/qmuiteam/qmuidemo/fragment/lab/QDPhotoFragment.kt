@@ -4,14 +4,12 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,8 +34,8 @@ import coil.imageLoader
 import coil.request.*
 import coil.size.Scale
 import coil.size.pxOrElse
-import com.qmuiteam.compose.ui.QMUITopBarBackIconItem
-import com.qmuiteam.compose.ui.QMUITopBarWithLazyScrollState
+import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
+import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
 import com.qmuiteam.photo.compose.QMUIPhotoThumbnailWithViewer
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
@@ -312,7 +310,7 @@ class CoilThumbPhoto(val url: String, val isLongImage: Boolean) : QMUIPhoto {
             AsyncImage(
                 model = model,
                 contentDescription = "",
-                contentScale = if(isContainerDimenExactly) contentScale else ContentScale.Inside,
+                contentScale = if (isContainerDimenExactly) contentScale else ContentScale.Inside,
                 alignment = Alignment.Center,
                 modifier = Modifier.let {
                     if (isContainerDimenExactly) {
