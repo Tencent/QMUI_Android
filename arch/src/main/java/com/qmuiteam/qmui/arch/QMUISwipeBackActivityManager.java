@@ -139,6 +139,10 @@ public class QMUISwipeBackActivityManager implements Application.ActivityLifecyc
     }
 
     public boolean canSwipeBack() {
-        return mActivityStack.size() > 2 || (mActivityStack.size() == 2 && !mActivityStack.get(0).isFinishing());
+        boolean ret = mActivityStack.size() > 2 || (mActivityStack.size() == 2 && !mActivityStack.get(0).isFinishing());
+        if(ret){
+            return true;
+        }
+        return mActivityStack.size() == 1 && !mActivityStack.get(0).isTaskRoot();
     }
 }

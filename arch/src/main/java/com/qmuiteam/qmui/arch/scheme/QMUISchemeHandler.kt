@@ -64,6 +64,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
     val defaultFragmentFactory = builder.defaultFragmentFactory
     val defaultSchemeMatcher = builder.defaultSchemeMatcher
     private val fallbackInterceptor = builder.fallbackInterceptor
+    private val unKnownSchemeHandler = builder.unKnownSchemeHandler
     private var lastHandledScheme: List<String>? = null
     private var lastSchemeHandledTime: Long = 0
 
@@ -121,6 +122,9 @@ class QMUISchemeHandler private constructor(builder: Builder) {
                 val schemeItem = sSchemeMap!!.findScheme(this, schemeInfo.action, schemeInfo.params)
                 if (schemeItem == null) {
                     QMUILog.i(TAG, "findScheme failed: ${schemeInfo.origin}")
+                    if(unKnownSchemeHandler != null && unKnownSchemeHandler.handle(this, handleContext, schemeInfo)){
+                        continue
+                    }
                     failed = true
                     break
                 }
@@ -179,6 +183,7 @@ class QMUISchemeHandler private constructor(builder: Builder) {
         var defaultIntentFactory: Class<out QMUISchemeIntentFactory> = QMUIDefaultSchemeIntentFactory::class.java
         var defaultFragmentFactory: Class<out QMUISchemeFragmentFactory> = QMUIDefaultSchemeFragmentFactory::class.java
         var defaultSchemeMatcher: Class<out QMUISchemeMatcher> = QMUIDefaultSchemeMatcher::class.java
+        var unKnownSchemeHandler: QMUIUnknownSchemeHandler? = null
         var fallbackInterceptor: QMUISchemeHandlerInterceptor? = null
 
         fun addInterceptor(interceptor: QMUISchemeHandlerInterceptor) {
