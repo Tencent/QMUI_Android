@@ -14,11 +14,18 @@ object Dep {
     object QMUI {
         const val group = "com.qmuiteam"
         const val qmuiVer = "2.0.1"
-        const val archVer = "2.0.1"
+        const val archVer = "2.0.1_f_14"
         const val typeVer = "0.0.14"
         const val composeCoreVer = "0.0.1"
         const val composeVer = "0.0.1"
         const val photoVer = "0.0.1"
+    }
+
+    object Coroutines {
+        private const val version = "1.6.0"
+        const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
+        const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
+        const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
     object AndroidX {
@@ -38,6 +45,7 @@ object Dep {
         val material = "androidx.compose.material:material:$version"
         val compiler = "androidx.compose.compiler:compiler:$version"
         val activity = "androidx.activity:activity-compose:1.4.0"
+        val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
         val pager = "com.google.accompanist:accompanist-pager:0.24.0-alpha"
     }

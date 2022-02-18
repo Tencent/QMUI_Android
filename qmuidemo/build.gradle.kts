@@ -76,8 +76,8 @@ dependencies {
     implementation(Dep.AndroidX.appcompat)
     implementation(Dep.AndroidX.annotation)
     implementation(Dep.MaterialDesign.material)
-
     implementation(Dep.ButterKnife.butterknife)
+    implementation(Dep.Compose.constraintlayout)
     kapt(Dep.ButterKnife.compiler)
     implementation(project(":lib"))
     implementation(project(":qmui"))
