@@ -37,12 +37,14 @@ fun QMUIGesturePhoto(
     imageRatio: Float,
     isLongImage: Boolean,
     initRect: Rect? = null,
-    transitionEnter: Boolean = false,
-    transitionExit: Boolean = true,
+    shouldTransitionEnter: Boolean = false,
+    shouldTransitionExit: Boolean = true,
+    transitionTarget: Boolean = true,
     transitionDurationMs: Int = 360,
     panEdgeProtection: Rect = Rect(0f, 0f, with(LocalDensity.current) { containerWidth.toPx() }, with(LocalDensity.current) { containerHeight.toPx() }),
     maxScale: Float = 4f,
     onBeginPullExit: () -> Boolean,
+    onLongPress: (() -> Unit)? = null,
     onTapExit: (afterTransition: Boolean) -> Unit,
     content: @Composable (transition: Transition<Boolean>, scale: Float, rect: Rect, onImageRatioEnsured: (Float) -> Unit) -> Unit
 ) {
@@ -101,9 +103,9 @@ fun QMUIGesturePhoto(
         mutableStateOf(false)
     }
 
-    var transitionTargetState by remember(containerWidth, containerHeight) { mutableStateOf(true) }
+    var transitionTargetState by remember(containerWidth, containerHeight, transitionTarget) { mutableStateOf(transitionTarget) }
     val transitionState = remember(containerWidth, containerHeight) {
-        MutableTransitionState(!transitionEnter)
+        MutableTransitionState(!shouldTransitionEnter)
     }
 
     val scaleHandler: (Offset, Float, Boolean) -> Unit = remember(containerWidth, containerHeight, maxScale, imageRatio) {
@@ -179,16 +181,19 @@ fun QMUIGesturePhoto(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${transitionExit}_${onTapExit}_${onBeginPullExit}_${imagePaddingFix}") {
+                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${shouldTransitionExit}_${onTapExit}_${onBeginPullExit}_${imagePaddingFix}") {
                     coroutineScope {
                         launch {
                             detectTapGestures(
                                 onTap = {
-                                    if (transitionExit) {
+                                    if (shouldTransitionExit) {
                                         transitionTargetState = false
                                     } else {
                                         onTapExit(false)
                                     }
+                                },
+                                onLongPress = {
+                                    onLongPress?.invoke()
                                 },
                                 onDoubleTap = {
                                     if (photoTargetScale == 1f) {
@@ -220,11 +225,12 @@ fun QMUIGesturePhoto(
                                     nestedScrollConnection.isIntercepted = false
                                     do {
                                         val event = awaitPointerEvent()
+                                        Log.i("cginetest", "${event.type}, ${event.changes[0]};;;${event.changes[0].consumed.downChange};${event.changes[0].consumed.positionChange}")
                                         if (isZooming || isExitPanning) {
                                             nestedScrollConnection.isIntercepted = true
                                         }
-                                        val needHandle = !nestedScrollConnection.canConsumeEvent && event.changes.any { it.positionChangeConsumed() }
-                                        if (!needHandle) {
+                                        val needHandle = nestedScrollConnection.canConsumeEvent || event.changes.none { it.positionChangeConsumed() }
+                                        if (needHandle) {
                                             val zoomChange = event.calculateZoom()
                                             val panChange = event.calculatePan()
 
@@ -528,6 +534,7 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
     var canConsumeEvent: Boolean = false
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        Log.i("cginetest", "onPreScroll=${available}")
         if (isIntercepted) {
             return available
         }
@@ -535,6 +542,7 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
     }
 
     override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+        Log.i("cginetest", "onPostScroll=${consumed}; ${available}")
         if (available.y > 0) {
             canConsumeEvent = true
         }

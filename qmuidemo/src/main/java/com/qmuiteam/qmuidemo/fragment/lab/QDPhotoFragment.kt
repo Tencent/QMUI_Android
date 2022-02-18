@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,9 +20,13 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -35,11 +40,14 @@ import coil.request.*
 import coil.size.Scale
 import coil.size.pxOrElse
 import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
+import com.qmuiteam.compose.core.ui.QMUITopBarTextItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
+import com.qmuiteam.photo.activity.QMUIPhotoPickerActivity
 import com.qmuiteam.photo.compose.QMUIPhotoThumbnailWithViewer
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmuidemo.R
+import com.qmuiteam.qmuidemo.activity.QDPhotoPickerActivity
 import com.qmuiteam.qmuidemo.base.ComposeBaseFragment
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +72,13 @@ class QDPhotoFragment : ComposeBaseFragment() {
                         popBackStack()
                     }
                 ),
+                rightItems = arrayListOf(
+                    QMUITopBarTextItem("Pick a Picture") {
+                        val activity = activity ?: return@QMUITopBarTextItem
+                        val intent = QMUIPhotoPickerActivity.intentOf(activity, QDPhotoPickerActivity::class.java)
+                        startActivity(intent)
+                    }
+                )
             )
             LazyColumn(
                 state = scrollState,
@@ -73,7 +88,6 @@ class QDPhotoFragment : ComposeBaseFragment() {
                     .background(Color.White),
                 contentPadding = PaddingValues(start = 44.dp)
             ) {
-
                 item {
                     Box(
                         modifier = Modifier

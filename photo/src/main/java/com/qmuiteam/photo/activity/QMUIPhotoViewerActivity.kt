@@ -16,7 +16,6 @@
 package com.qmuiteam.photo.activity
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -51,57 +50,13 @@ import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.util.asBitmap
+import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
 private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_delivery"
 private const val PHOTO_COUNT = "qmui_photo_count"
 private const val PHOTO_META_KEY_PREFIX = "qmui_photo_meta_"
 private const val PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX = "qmui_photo_provider_recover_cls_"
-
-class PhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
-
-    val enterIndex = state.get<Int>(PHOTO_CURRENT_INDEX) ?: 0
-    val data: PhotoViewerData?
-
-    private val transitionDeliverKey = state.get<Long>(PHOTO_TRANSITION_DELIVERY_KEY) ?: -1
-
-    init {
-        val transitionDeliverData = QMUIPhotoTransitionDelivery.getAndRemove(transitionDeliverKey)
-        data = if (transitionDeliverData != null) {
-            transitionDeliverData
-        } else {
-            val count = state.get<Int>(PHOTO_COUNT) ?: 0
-            if (count > 0) {
-                val list = arrayListOf<QMUIPhotoTransitionInfo>()
-                for (i in 0 until count) {
-                    try {
-                        val meta = state.get<Bundle>("${PHOTO_META_KEY_PREFIX}${i}")
-                        val clsName =
-                            state.get<String>("${PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX}${i}")
-                        if (meta == null || clsName.isNullOrBlank()) {
-                            list.add(lossPhotoTransitionInfo)
-                        } else {
-                            val cls = Class.forName(clsName)
-                            val recover = cls.newInstance() as PhotoTransitionProviderRecover
-                            list.add(recover.recover(meta) ?: lossPhotoTransitionInfo)
-                        }
-
-                    } catch (e: Throwable) {
-                        list.add(lossPhotoTransitionInfo)
-                    }
-                }
-                PhotoViewerData(list, enterIndex, null)
-            } else {
-                null
-            }
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        QMUIPhotoTransitionDelivery.remove(transitionDeliverKey)
-    }
-}
 
 open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
@@ -133,7 +88,8 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         }
     }
 
-    private val viewModel by viewModels<PhotoViewerViewModel>()
+    private val viewModel by viewModels<QMUIPhotoViewerViewModel>()
+    private val transitionTargetFlow = MutableStateFlow(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,6 +129,10 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        transitionTargetFlow.value = false
+    }
+
     @OptIn(ExperimentalPagerApi::class)
     @Composable
     protected open fun PhotoViewer(list: List<QMUIPhotoTransitionInfo>, index: Int) {
@@ -183,6 +143,9 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         ) { page ->
             val item = list[page]
             val initRect = item.photoRect()
+            val transitionTarget = if(pagerState.currentPage == page){
+                transitionTargetFlow.collectAsState().value
+            } else true
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 QMUIGesturePhoto(
                     containerWidth = maxWidth,
@@ -190,7 +153,8 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     imageRatio = item.ratio(),
                     isLongImage = item.photoProvider.isLongImage(),
                     initRect = initRect,
-                    transitionEnter = page == index,
+                    shouldTransitionEnter = page == index,
+                    transitionTarget = transitionTarget,
                     onBeginPullExit = {
                         true
                     },
@@ -230,7 +194,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         Box(modifier = Modifier.fillMaxSize()) {
             PhotoItem(photoTransitionInfo,
                 onSuccess = {
-                    if(it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0){
+                    if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
                         onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
                     }
                     loadStatus = PhotoLoadStatus.success
@@ -304,3 +268,48 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     }
 }
 
+
+class QMUIPhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
+
+    val enterIndex = state.get<Int>(PHOTO_CURRENT_INDEX) ?: 0
+    val data: PhotoViewerData?
+
+    private val transitionDeliverKey = state.get<Long>(PHOTO_TRANSITION_DELIVERY_KEY) ?: -1
+
+    init {
+        val transitionDeliverData = QMUIPhotoTransitionDelivery.getAndRemove(transitionDeliverKey)
+        data = if (transitionDeliverData != null) {
+            transitionDeliverData
+        } else {
+            val count = state.get<Int>(PHOTO_COUNT) ?: 0
+            if (count > 0) {
+                val list = arrayListOf<QMUIPhotoTransitionInfo>()
+                for (i in 0 until count) {
+                    try {
+                        val meta = state.get<Bundle>("${PHOTO_META_KEY_PREFIX}${i}")
+                        val clsName =
+                            state.get<String>("${PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX}${i}")
+                        if (meta == null || clsName.isNullOrBlank()) {
+                            list.add(lossPhotoTransitionInfo)
+                        } else {
+                            val cls = Class.forName(clsName)
+                            val recover = cls.newInstance() as PhotoTransitionProviderRecover
+                            list.add(recover.recover(meta) ?: lossPhotoTransitionInfo)
+                        }
+
+                    } catch (e: Throwable) {
+                        list.add(lossPhotoTransitionInfo)
+                    }
+                }
+                PhotoViewerData(list, enterIndex, null)
+            } else {
+                null
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        QMUIPhotoTransitionDelivery.remove(transitionDeliverKey)
+    }
+}

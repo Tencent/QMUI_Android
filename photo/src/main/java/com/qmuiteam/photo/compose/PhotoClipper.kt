@@ -111,7 +111,7 @@ fun QMUIPhotoClipper(
             containerHeight = maxHeight,
             imageRatio = photoProvider.ratio(),
             isLongImage = photoProvider.isLongImage(),
-            transitionExit = false,
+            shouldTransitionExit = false,
             panEdgeProtection = focusArea,
             onBeginPullExit = { false },
             onTapExit = {}
