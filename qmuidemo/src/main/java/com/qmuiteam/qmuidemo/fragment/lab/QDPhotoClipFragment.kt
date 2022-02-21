@@ -3,18 +3,21 @@ package com.qmuiteam.qmuidemo.fragment.lab
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import com.qmuiteam.photo.coil.QMUICoilPhotoProvider
 import com.qmuiteam.photo.compose.QMUIPhotoClipper
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmuidemo.R
@@ -31,14 +34,16 @@ class QDPhotoClipFragment : ComposeBaseFragment() {
             mutableStateOf<Bitmap?>(null)
         }
         QMUIPhotoClipper(
-            photoProvider = CoilPhotoProvider(
-                "https://weread-picture-1258476243.file.myqcloud.com/9979/31y68oGufDGL3zQ6TT.jpg",
+            photoProvider = QMUICoilPhotoProvider(
+                "https://weread-picture-1258476243.file.myqcloud.com/9979/31y68oGufDGL3zQ6TT.jpg".toUri(),
                 0f
             )
         ) { doClip ->
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+            ) {
                 Box(modifier = Modifier
                     .weight(1f)
                     .clickable {
@@ -46,7 +51,7 @@ class QDPhotoClipFragment : ComposeBaseFragment() {
                     }
                     .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Text(
                         "取消",
                         fontSize = 20.sp,
@@ -61,7 +66,7 @@ class QDPhotoClipFragment : ComposeBaseFragment() {
                     }
                     .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Text(
                         "确定",
                         fontSize = 20.sp,
@@ -72,7 +77,7 @@ class QDPhotoClipFragment : ComposeBaseFragment() {
             }
 
             ret?.let {
-                Image(bitmap =it.asImageBitmap(), contentDescription = "")
+                Image(bitmap = it.asImageBitmap(), contentDescription = "")
             }
 
         }

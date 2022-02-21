@@ -56,7 +56,7 @@ interface QMUIPhotoProvider {
     fun isLongImage(): Boolean = false
 
     fun meta(): Bundle?
-    fun recoverCls(): Class<in PhotoTransitionProviderRecover>?
+    fun recoverCls(): Class<out PhotoTransitionProviderRecover>?
 }
 
 class QMUIPhotoTransitionInfo(
@@ -100,7 +100,7 @@ val lossPhotoProvider = object : QMUIPhotoProvider {
         return null
     }
 
-    override fun recoverCls(): Class<in PhotoTransitionProviderRecover>? {
+    override fun recoverCls(): Class<out PhotoTransitionProviderRecover>? {
         return null
     }
 }

@@ -80,7 +80,7 @@
         </activity>
 
         <activity
-            android:name="com.qmuiteam.qmuidemo.activity.QDPhotoPickerActivity"
+            android:name="com.qmuiteam.photo.activity.QMUIPhotoPickerActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
 

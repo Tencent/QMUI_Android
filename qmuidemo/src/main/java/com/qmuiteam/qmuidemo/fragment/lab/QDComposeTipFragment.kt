@@ -15,12 +15,9 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
-import com.qmuiteam.compose.core.ui.QMUITopBarTextItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
-import com.qmuiteam.photo.activity.QMUIPhotoPickerActivity
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmuidemo.R
-import com.qmuiteam.qmuidemo.activity.QDPhotoPickerActivity
 import com.qmuiteam.qmuidemo.base.ComposeBaseFragment
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
 
@@ -37,13 +34,6 @@ class QDComposeTipFragment : ComposeBaseFragment() {
                 leftItems = arrayListOf(
                     QMUITopBarBackIconItem {
                         popBackStack()
-                    }
-                ),
-                rightItems = arrayListOf(
-                    QMUITopBarTextItem("Pick a Picture") {
-                        val activity = activity ?: return@QMUITopBarTextItem
-                        val intent = QMUIPhotoPickerActivity.intentOf(activity, QDPhotoPickerActivity::class.java)
-                        startActivity(intent)
                     }
                 )
             )
@@ -76,7 +66,7 @@ class QDComposeTipFragment : ComposeBaseFragment() {
                         ) {
                             val (one, two, three, four) = createRefs()
                             val horChain = createHorizontalChain(one, two, three, chainStyle = ChainStyle.Packed(0f))
-                            constrain(horChain){
+                            constrain(horChain) {
                                 start.linkTo(parent.start)
                                 end.linkTo(four.start)
                             }
@@ -117,7 +107,7 @@ class QDComposeTipFragment : ComposeBaseFragment() {
                                     .fillMaxHeight()
                                     .width(50.dp)
                                     .background(Color.Blue)
-                                    .constrainAs(four){
+                                    .constrainAs(four) {
                                         top.linkTo(parent.top)
                                         bottom.linkTo(parent.bottom)
                                         end.linkTo(parent.end)

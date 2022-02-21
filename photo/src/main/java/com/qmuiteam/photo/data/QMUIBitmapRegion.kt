@@ -5,14 +5,19 @@ import android.graphics.BitmapFactory
 import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
 import android.os.Build
+import android.util.LruCache
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.InputStream
+import java.util.LinkedHashMap
 import kotlin.math.max
 import kotlin.math.min
 
 
 fun interface QMUIBitmapRegionLoader {
-    fun load(): Bitmap?
+    suspend fun load(): Bitmap?
 }
 
 class QMUIBitmapRegionProvider(
@@ -22,25 +27,39 @@ class QMUIBitmapRegionProvider(
 )
 
 class QMUIAlreadyBitmapRegionLoader(private val bm: Bitmap) : QMUIBitmapRegionLoader {
-    override fun load(): Bitmap {
+    override suspend fun load(): Bitmap {
         return bm
     }
 }
 
-class QMUICacheBitmapRegionLoader(private val origin: QMUIBitmapRegionLoader) : QMUIBitmapRegionLoader {
+private class QMUICacheBitmapRegionLoader(
+    private val origin: QMUIBitmapRegionLoader,
+    private val cacheStatistic: QMUIBitmapRegionCacheStatistic
+) : QMUIBitmapRegionLoader {
+
     @Volatile
     private var cache: Bitmap? = null
+    private val mutex = Mutex()
 
-    override fun load(): Bitmap? {
-        if (cache != null) {
-            return cache
+    override suspend fun load(): Bitmap? {
+        val localCache = cache
+        if (localCache != null) {
+            return localCache
         }
-        synchronized(this) {
+        return mutex.withLock {
             if (cache != null) {
                 return cache
             }
-            cache = origin.load()
-            return cache
+            origin.load().also {
+                cache = it
+                cacheStatistic.doWhenLoaded(this)
+            }
+        }
+    }
+
+    suspend fun releaseCache() {
+        mutex.withLock {
+            cache = null
         }
     }
 }
@@ -82,9 +101,10 @@ fun loadLongImage(
     options: BitmapFactory.Options,
     fit: Boolean = false,
     preloadCount: Int = Int.MAX_VALUE,
-    cacheForLazyLoad: Boolean = false
+    cacheTimeoutForLazyLoad: Long = 1000,
+    cacheCountForLazyLoad: Int = 5
 ): QMUIBitmapRegion {
-
+    val cacheStatistic = QMUIBitmapRegionCacheStatistic(cacheTimeoutForLazyLoad, cacheCountForLazyLoad)
     return loadLongImage(ins, preferredSize, options, fit) { regionDecoder ->
         val w = regionDecoder.width
         val h = regionDecoder.height
@@ -105,17 +125,20 @@ fun loadLongImage(
             } else {
                 val finalTop = top
                 val loader = object : QMUIBitmapRegionLoader {
-                    override fun load(): Bitmap? {
-                        synchronized(this) {
-                            return regionDecoder.decodeRegion(Rect(0, finalTop, w, bottom), options)
+
+                    private val mutex = Mutex()
+
+                    override suspend fun load(): Bitmap? {
+                        return mutex.withLock {
+                            regionDecoder.decodeRegion(Rect(0, finalTop, w, bottom), options)
                         }
                     }
 
                 }
                 ret.add(
                     QMUIBitmapRegionProvider(
-                        w, bottom - finalTop, if (cacheForLazyLoad) {
-                            QMUICacheBitmapRegionLoader(loader)
+                        w, bottom - finalTop, if (cacheStatistic.canCache()) {
+                            QMUICacheBitmapRegionLoader(loader, cacheStatistic)
                         } else {
                             loader
                         }
@@ -184,5 +207,39 @@ private fun calculateInSampleSize(
         max(widthInSampleSize, heightInSampleSize).coerceAtLeast(1)
     } else {
         min(widthInSampleSize, heightInSampleSize).coerceAtLeast(1)
+    }
+}
+
+private class QMUIBitmapRegionCacheStatistic(
+    val cacheTimeoutForLazyLoad: Long,
+    val cacheCountForLazyLoad: Int
+) {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    private val cacheJobs = object: LruCache<QMUICacheBitmapRegionLoader, Job>(cacheCountForLazyLoad){
+        override fun entryRemoved(evicted: Boolean, key: QMUICacheBitmapRegionLoader?, oldValue: Job?, newValue: Job?) {
+            super.entryRemoved(evicted, key, oldValue, newValue)
+            if(newValue == null){
+                key?.let {
+                    scope.launch {
+                        it.releaseCache()
+                    }
+                }
+            }else{
+                oldValue?.cancel()
+            }
+        }
+    }
+
+    fun doWhenLoaded(loader: QMUICacheBitmapRegionLoader){
+        val job = scope.launch {
+            delay(cacheTimeoutForLazyLoad)
+            cacheJobs.remove(loader)
+        }
+        cacheJobs.put(loader, job)
+    }
+
+    fun canCache(): Boolean {
+        return cacheTimeoutForLazyLoad > 0 && cacheCountForLazyLoad > 0
     }
 }

@@ -25,6 +25,15 @@ open class QMUIMediaModel(
     val bucketName: String
 )
 
+class QMUIMediaPhotoVO(
+    val model: QMUIMediaModel,
+    val photoProvider: QMUIPhotoProvider
+)
+
+interface QMUIMediaPhotoProviderFactory {
+    fun factory(model: QMUIMediaModel): QMUIPhotoProvider
+}
+
 interface QMUIMediaDataProvider {
     suspend fun provide(context: Context, supportedMimeTypes: Array<String>): List<QMUIMediaModel>
 }

@@ -5,8 +5,6 @@ import android.app.Application
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,10 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,28 +33,31 @@ import com.qmuiteam.compose.core.helper.QMUILog
 import com.qmuiteam.photo.compose.QMUIDefaultPickerConfigProvider
 import com.qmuiteam.photo.compose.QMUILocalPickerConfig
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
-import com.qmuiteam.photo.data.QMUIMediaDataProvider
-import com.qmuiteam.photo.data.QMUIMediaImagesProvider
-import com.qmuiteam.photo.data.QMUIMediaModel
+import com.qmuiteam.photo.data.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT = 9
 private const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
+private const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
 
-abstract class QMUIPhotoPickerActivity : AppCompatActivity() {
+open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
     companion object {
 
         fun intentOf(
             activity: ComponentActivity,
             cls: Class<out QMUIPhotoPickerActivity>,
+            factoryCls: Class<out QMUIMediaPhotoProviderFactory>,
             pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
         ): Intent {
             val intent = Intent(activity, cls)
             intent.putExtra(QMUI_PHOTO_PICK_LIMIT_COUNT, pickLimitCount)
+            intent.putExtra(QMUI_PHOTO_PROVIDER_FACTORY, factoryCls.name)
             return intent
         }
     }
@@ -149,7 +147,7 @@ abstract class QMUIPhotoPickerActivity : AppCompatActivity() {
     @Composable
     protected open fun BoxScope.PhotoPickerContent(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaModel>
+        data: List<QMUIMediaPhotoVO>
     ) {
         val scene by viewModel.photoPickerSceneFlow.collectAsState()
         if (scene is QMUIPhotoPickerGridScene) {
@@ -160,26 +158,27 @@ abstract class QMUIPhotoPickerActivity : AppCompatActivity() {
     @Composable
     protected open fun BoxScope.PhotoPickerGridContent(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaModel>
-    ){
+        data: List<QMUIMediaPhotoVO>
+    ) {
+
 
     }
 
     @Composable
     protected open fun BoxScope.PhotoPickerPagerContent(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaModel>,
+        data: List<QMUIMediaPhotoVO>,
         index: Int
-    ){
+    ) {
 
     }
 
     @Composable
     protected open fun BoxScope.PhotoPickerEditContent(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaModel>,
+        data: List<QMUIMediaPhotoVO>,
         index: Int
-    ){
+    ) {
 
     }
 
@@ -256,6 +255,7 @@ class QMUIPhotoPickerViewModel(
     val supportedMimeTypes: Array<String>
 ) : ViewModel(), LogTag {
     val pickLimitCount = state.get<Int>(QMUI_PHOTO_PICK_LIMIT_COUNT) ?: QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
+    private val photoProviderFactory: QMUIMediaPhotoProviderFactory
 
     private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
     val photoPickerSceneFlow: StateFlow<QMUIPhotoPickerScene>
@@ -273,6 +273,11 @@ class QMUIPhotoPickerViewModel(
     val enablePickMoreFlow: StateFlow<Boolean>
         get() = _enablePickMoreFlow
 
+    init {
+        val photoProviderFactoryClsName =
+            state.get<String>(QMUI_PHOTO_PROVIDER_FACTORY) ?: throw RuntimeException("no QMUIMediaPhotoProviderFactory is provided.")
+        photoProviderFactory = Class.forName(photoProviderFactoryClsName).newInstance() as QMUIMediaPhotoProviderFactory
+    }
 
     fun updateScene(scene: QMUIPhotoPickerScene) {
         _photoPickerSceneFlow.value = scene
@@ -286,7 +291,11 @@ class QMUIPhotoPickerViewModel(
         _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoading, null)
         viewModelScope.launch {
             try {
-                val data = dataProvider.provide(application, supportedMimeTypes)
+                val data = withContext(Dispatchers.IO) {
+                    dataProvider.provide(application, supportedMimeTypes).map {
+                        QMUIMediaPhotoVO(it, photoProviderFactory.factory(it))
+                    }
+                }
                 _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, data)
             } catch (e: Throwable) {
                 _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, null, e)
@@ -327,6 +336,6 @@ enum class QMUIPhotoPickerLoadState {
 
 class QMUIPhotoPickerData(
     val state: QMUIPhotoPickerLoadState,
-    val data: List<QMUIMediaModel>?,
+    val data: List<QMUIMediaPhotoVO>?,
     val error: Throwable? = null
 )

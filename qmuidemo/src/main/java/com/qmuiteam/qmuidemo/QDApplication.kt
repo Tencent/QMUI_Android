@@ -30,7 +30,6 @@ import com.qmuiteam.qmui.QMUILog
 import com.qmuiteam.qmui.QMUILog.QMUILogDelegate
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler
-import com.qmuiteam.qmuidemo.fragment.lab.ImageDecoderFactory
 import com.qmuiteam.qmuidemo.manager.QDSkinManager
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager
 
@@ -83,9 +82,6 @@ class QDApplication : Application(), ImageLoaderFactory {
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(applicationContext)
             .crossfade(true)
-            .components {
-                add(ImageDecoderFactory())
-            }
             .build()
     }
 
