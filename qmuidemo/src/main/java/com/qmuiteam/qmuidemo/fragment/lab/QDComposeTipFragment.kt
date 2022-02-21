@@ -68,64 +68,62 @@ class QDComposeTipFragment : ComposeBaseFragment() {
                             fontSize = 13.sp,
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
-                        Row(
-                            modifier = Modifier.fillMaxWidth().height(100.dp)
+                        ConstraintLayout(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .background(Color.LightGray)
                         ) {
-                            ConstraintLayout(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight()
-                                    .background(Color.LightGray)
-                            ) {
-                                val (one, two, three) = createRefs()
-                                createHorizontalChain(one, two, three, chainStyle = ChainStyle.Packed(0f))
-                                Text(
-                                    "此处不压缩",
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .background(Color.Red)
-                                        .constrainAs(one) {
-                                            top.linkTo(parent.top)
-                                            bottom.linkTo(parent.bottom)
-                                            start.linkTo(parent.start)
-                                            end.linkTo(two.start)
-                                        })
-                                Text(
-                                    "此处如果内容有那么一点点过长，那就压缩省略压缩省略压缩省略",
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .background(Color.Green)
-                                        .constrainAs(two) {
-                                            width = Dimension.preferredWrapContent
-                                            top.linkTo(parent.top)
-                                            bottom.linkTo(parent.bottom)
-                                            start.linkTo(one.end)
-                                            end.linkTo(three.start)
-                                        })
-                                Text(
-                                    "此处也不压缩",
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .background(Color.Black)
-                                        .constrainAs(three) {
-                                            top.linkTo(parent.top)
-                                            bottom.linkTo(parent.bottom)
-                                            start.linkTo(two.end)
-                                            end.linkTo(parent.end)
-                                        })
+                            val (one, two, three, four) = createRefs()
+                            val horChain = createHorizontalChain(one, two, three, chainStyle = ChainStyle.Packed(0f))
+                            constrain(horChain){
+                                start.linkTo(parent.start)
+                                end.linkTo(four.start)
                             }
+                            Text(
+                                "此处不压缩",
+                                color = Color.White,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .background(Color.Red)
+                                    .constrainAs(one) {
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                    })
+                            Text(
+                                "此处如果内容有那么一点点过长，那就压缩省略压缩省略压缩省略",
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .background(Color.Green)
+                                    .constrainAs(two) {
+                                        width = Dimension.preferredWrapContent
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                    })
+                            Text(
+                                "此处也不压缩",
+                                color = Color.White,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .background(Color.Black)
+                                    .constrainAs(three) {
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                    })
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .width(50.dp)
                                     .background(Color.Blue)
+                                    .constrainAs(four){
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                        end.linkTo(parent.end)
+                                    }
                             )
                         }
-
                     }
                 }
             }
