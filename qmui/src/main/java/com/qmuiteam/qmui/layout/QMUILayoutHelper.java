@@ -45,7 +45,7 @@ import androidx.core.content.ContextCompat;
  * @date 2017-03-10
  */
 
-public class QMUILayoutHelper implements IQMUILayout {
+public class    QMUILayoutHelper implements IQMUILayout {
     public static final int RADIUS_OF_HALF_VIEW_HEIGHT = -1;
     public static final int RADIUS_OF_HALF_VIEW_WIDTH = -2;
     private Context mContext;
@@ -781,7 +781,7 @@ public class QMUILayoutHelper implements IQMUILayout {
             return;
         }
 
-        int width = canvas.getWidth(), height = canvas.getHeight();
+        int width = owner.getWidth(), height = owner.getHeight();
         canvas.save();
         canvas.translate(owner.getScrollX(), owner.getScrollY());
 
