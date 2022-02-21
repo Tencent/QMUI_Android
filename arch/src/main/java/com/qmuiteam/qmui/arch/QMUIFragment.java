@@ -794,6 +794,9 @@ public abstract class QMUIFragment extends Fragment implements
                     ViewGroup decorView = (ViewGroup) currentActivity.getWindow().getDecorView();
                     Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
                             .getPenultimateActivity(currentActivity);
+                    if(prevActivity == null){
+                        return;
+                    }
                     if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
                         mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
                     } else {
@@ -1253,6 +1256,11 @@ public abstract class QMUIFragment extends Fragment implements
             return false;
         }
 
+        Activity activity = getActivity();
+        if(activity == null || activity.isFinishing()){
+            return false;
+        }
+
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(false);
         if (provider == null) {
             return false;
@@ -1277,7 +1285,7 @@ public abstract class QMUIFragment extends Fragment implements
 
         // 6. can not swipe back if the backStack entry count is less than 2
         if ((fragmentManager.getBackStackEntryCount() <= 1 || mFinishActivityIfOnBackPressed) &&
-                !QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+                !QMUISwipeBackActivityManager.getInstance().canSwipeBack(activity)) {
             return false;
         }
 
@@ -1492,7 +1500,8 @@ public abstract class QMUIFragment extends Fragment implements
      * @return
      */
     protected boolean needInterceptLastFragmentFinish(){
-        return QMUISwipeBackActivityManager.getInstance().canSwipeBack();
+        Activity activity = getActivity();
+        return activity == null || !activity.isTaskRoot();
     }
 
     /**

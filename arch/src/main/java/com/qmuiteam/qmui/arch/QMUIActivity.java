@@ -89,6 +89,9 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
             if (decorView != null) {
                 Activity prevActivity = QMUISwipeBackActivityManager.getInstance()
                         .getPenultimateActivity(QMUIActivity.this);
+                if(prevActivity == null){
+                    return;
+                }
                 if (decorView.getChildAt(0) instanceof SwipeBackgroundView) {
                     mSwipeBackgroundView = (SwipeBackgroundView) decorView.getChildAt(0);
                 } else {
@@ -114,7 +117,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
         public int getDragDirection(SwipeBackLayout swipeBackLayout,
                                     SwipeBackLayout.ViewMoveAction moveAction,
                                     float downX, float downY, float dx, float dy, float touchSlop) {
-            if(!QMUISwipeBackActivityManager.getInstance().canSwipeBack()){
+            if(!QMUISwipeBackActivityManager.getInstance().canSwipeBack(QMUIActivity.this)){
                 return SwipeBackLayout.DRAG_DIRECTION_NONE;
             }
 
@@ -329,7 +332,7 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     @Override
     public void finish() {
-        if (!QMUISwipeBackActivityManager.getInstance().canSwipeBack()) {
+        if (isTaskRoot()) {
             Intent intent = onLastActivityFinish();
             if (intent != null) {
                 startActivity(intent);
