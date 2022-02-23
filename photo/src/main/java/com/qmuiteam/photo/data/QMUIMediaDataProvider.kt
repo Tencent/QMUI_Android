@@ -13,6 +13,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
+const val QMUIMediaPhotoBucketAllId = "__all__"
+const val QMUIMediaPhotoBucketAllName = "最近项目"
+
 open class QMUIMediaModel(
     val id: Long,
     val uri: Uri,
@@ -25,6 +28,18 @@ open class QMUIMediaModel(
     val bucketName: String
 )
 
+class QMUIMediaPhotoBucket(
+    val id: String,
+    val name: String,
+    val list: List<QMUIMediaModel>
+)
+
+class QMUIMediaPhotoBucketVO(
+    val id: String,
+    val name: String,
+    val list: List<QMUIMediaPhotoVO>
+)
+
 class QMUIMediaPhotoVO(
     val model: QMUIMediaModel,
     val photoProvider: QMUIPhotoProvider
@@ -35,7 +50,7 @@ interface QMUIMediaPhotoProviderFactory {
 }
 
 interface QMUIMediaDataProvider {
-    suspend fun provide(context: Context, supportedMimeTypes: Array<String>): List<QMUIMediaModel>
+    suspend fun provide(context: Context, supportedMimeTypes: Array<String>): List<QMUIMediaPhotoBucket>
 }
 
 class QMUIMediaImagesProvider : QMUIMediaDataProvider {
@@ -65,7 +80,7 @@ class QMUIMediaImagesProvider : QMUIMediaDataProvider {
         )
     }
 
-    override suspend fun provide(context: Context, supportedMimeTypes: Array<String>): List<QMUIMediaModel> {
+    override suspend fun provide(context: Context, supportedMimeTypes: Array<String>): List<QMUIMediaPhotoBucket> {
         return withContext(Dispatchers.IO) {
             val selection = if (supportedMimeTypes.isEmpty()) {
                 null
@@ -119,8 +134,30 @@ class QMUIMediaImagesProvider : QMUIMediaDataProvider {
                     } while (cursor.moveToNext())
                 }
             }
-            list
+            val buckets = mutableListOf<MutableMediaPhotoBucket>()
+            val defaultPhotoBucket = MutableMediaPhotoBucket(QMUIMediaPhotoBucketAllId, QMUIMediaPhotoBucketAllName)
+            buckets.add(defaultPhotoBucket)
+            list.forEach { model ->
+                defaultPhotoBucket.list.add(model)
+                if(model.name.isNotBlank()){
+                    val bucket = buckets.find { it.id == model.bucketId} ?:MutableMediaPhotoBucket(model.bucketId, model.bucketName).also {
+                        buckets.add(it)
+                    }
+                    bucket.list.add(model)
+                }
+            }
+
+            buckets.map {
+                QMUIMediaPhotoBucket(it.id, it.name, it.list)
+            }
         }
+    }
+
+    private class MutableMediaPhotoBucket(
+        val id: String,
+        val name: String
+    ){
+        val list: MutableList<QMUIMediaModel> = mutableListOf()
     }
 
 }

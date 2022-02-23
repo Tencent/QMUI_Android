@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -21,6 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
+import coil.compose.AsyncImageContent
+import coil.compose.AsyncImagePainter
 import coil.imageLoader
 import coil.request.ErrorResult
 import coil.request.ImageRequest
@@ -32,7 +36,8 @@ import kotlinx.coroutines.withContext
 
 open class QMUICoilThumbPhoto(
     val uri: Uri,
-    val isLongImage: Boolean
+    val isLongImage: Boolean,
+    val blankColor: Color = Color.LightGray,
 ) : QMUIPhoto {
     @Composable
     override fun Compose(
@@ -49,6 +54,7 @@ open class QMUICoilThumbPhoto(
                 ImageRequest.Builder(context)
                     .data(uri)
                     .allowHardware(false)
+                    .crossfade(true)
                     .decoderFactory(QMUICoilImageDecoderFactory.defaultInstance)
                     .listener(onError = { _, result ->
                         onError?.invoke(result.throwable)
@@ -68,7 +74,17 @@ open class QMUICoilThumbPhoto(
                         it
                     }
                 }
-            )
+            ) { state ->
+                if (state == AsyncImagePainter.State.Empty || state is AsyncImagePainter.State.Loading) {
+                    if (isContainerDimenExactly) {
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .background(blankColor))
+                    }
+                } else {
+                    AsyncImageContent()
+                }
+            }
         }
 
     }
@@ -83,6 +99,7 @@ open class QMUICoilThumbPhoto(
                 .allowHardware(false)
                 .setParameter("isThumb", true)
                 .setParameter("isLongImage", true)
+                .crossfade(true)
                 .decoderFactory(QMUICoilImageDecoderFactory.defaultInstance)
                 .data(uri)
                 .scale(Scale.FILL)
@@ -127,13 +144,18 @@ open class QMUICoilThumbPhoto(
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
             )
+        }else{
+            Box(modifier = Modifier.fillMaxSize().background(blankColor))
         }
 
     }
 }
 
 
-class QMUICoilPhoto(val uri: Uri, val isLongImage: Boolean) : QMUIPhoto {
+class QMUICoilPhoto(
+    val uri: Uri,
+    val isLongImage: Boolean
+) : QMUIPhoto {
 
     @Composable
     override fun Compose(
@@ -150,6 +172,7 @@ class QMUICoilPhoto(val uri: Uri, val isLongImage: Boolean) : QMUIPhoto {
                 ImageRequest.Builder(context)
                     .data(uri)
                     .allowHardware(false)
+                    .crossfade(true)
                     .decoderFactory(QMUICoilImageDecoderFactory.defaultInstance)
                     .listener(onError = { _, result ->
                         onError?.invoke(result.throwable)
@@ -186,6 +209,7 @@ class QMUICoilPhoto(val uri: Uri, val isLongImage: Boolean) : QMUIPhoto {
             val result = withContext(Dispatchers.IO) {
                 val request = ImageRequest.Builder(context)
                     .data(uri)
+                    .crossfade(true)
                     .setParameter("isLongImage", true)
                     .decoderFactory(QMUICoilImageDecoderFactory.defaultInstance)
                     .build()

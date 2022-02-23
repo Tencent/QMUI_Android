@@ -225,7 +225,6 @@ fun QMUIGesturePhoto(
                                     nestedScrollConnection.isIntercepted = false
                                     do {
                                         val event = awaitPointerEvent()
-                                        Log.i("cginetest", "${event.type}, ${event.changes[0]};;;${event.changes[0].consumed.downChange};${event.changes[0].consumed.positionChange}")
                                         if (isZooming || isExitPanning) {
                                             nestedScrollConnection.isIntercepted = true
                                         }
@@ -534,7 +533,6 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
     var canConsumeEvent: Boolean = false
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        Log.i("cginetest", "onPreScroll=${available}")
         if (isIntercepted) {
             return available
         }
@@ -542,7 +540,6 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
     }
 
     override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-        Log.i("cginetest", "onPostScroll=${consumed}; ${available}")
         if (available.y > 0) {
             canConsumeEvent = true
         }

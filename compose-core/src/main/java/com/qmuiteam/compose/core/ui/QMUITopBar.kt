@@ -166,7 +166,7 @@ open class QMUITopBarTextItem(
 @Composable
 fun QMUITopBarWithLazyScrollState(
     scrollState: LazyListState,
-    title: CharSequence,
+    title: CharSequence = "",
     subTitle: CharSequence = "",
     alignTitleCenter: Boolean = true,
     height: Dp = qmuiTopBarHeight,
