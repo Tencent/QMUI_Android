@@ -50,4 +50,5 @@ dependencies {
     api(Dep.Compose.animation)
     api(Dep.Compose.material)
     api(Dep.Compose.compiler)
+    api(Dep.Compose.constraintlayout)
 }

@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
@@ -38,6 +39,7 @@ import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
 import com.qmuiteam.compose.core.ui.QMUITopBarItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
 import com.qmuiteam.photo.compose.*
+import com.qmuiteam.photo.compose.picker.*
 import com.qmuiteam.photo.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -46,12 +48,20 @@ import kotlinx.coroutines.withContext
 
 const val QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT = 9
 private const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
+private const val QMUI_PHOTO_RESULT_ORIGIN_OPEN = "qmui_photo_result_origin_open"
+private const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
 private const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
 private const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
+class QMUIPhotoPickResult(val list: List<Uri>, val isOriginOpen: Boolean)
 
-fun Intent.getQMUIPhotoPickResult(): List<Uri>? {
-    return getParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST)
+fun Intent.getQMUIPhotoPickResult(): QMUIPhotoPickResult? {
+    val list = getParcelableArrayListExtra<Uri>(QMUI_PHOTO_RESULT_URI_LIST) ?: return null
+    if(list.isEmpty()){
+        return null
+    }
+    val isOriginOpen = getBooleanExtra(QMUI_PHOTO_RESULT_ORIGIN_OPEN, false)
+    return QMUIPhotoPickResult(list, isOriginOpen)
 }
 
 
@@ -63,11 +73,13 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             activity: ComponentActivity,
             cls: Class<out QMUIPhotoPickerActivity>,
             factoryCls: Class<out QMUIMediaPhotoProviderFactory>,
-            pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
+            pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT,
+            enableOrigin: Boolean = true
         ): Intent {
             val intent = Intent(activity, cls)
             intent.putExtra(QMUI_PHOTO_PICK_LIMIT_COUNT, pickLimitCount)
             intent.putExtra(QMUI_PHOTO_PROVIDER_FACTORY, factoryCls.name)
+            intent.putExtra(QMUI_PHOTO_ENABLE_ORIGIN, enableOrigin)
             return intent
         }
     }
@@ -179,7 +191,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             }
         }
     ) {
-        val currentBucket by remember {
+        var currentBucket by remember {
             mutableStateOf(data.first())
         }
 
@@ -202,6 +214,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             }
         }
 
+        val isFocusBucketChooser by isFocusBucketFlow.collectAsState()
+
         val topBarSendItem = remember(config) {
             config.topBarSendFactory(viewModel.pickLimitCount, viewModel.pickedCountFlow) {
                 onHandleSend()
@@ -220,24 +234,64 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             QMUITopBarWithLazyScrollState(
                 scrollState = scrollState,
                 paddingEnd = 16.dp,
+                separatorHeight = 0.dp,
                 backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
                 leftItems = topBarLeftItems,
                 rightItems = topBarRightItems
             )
-            QMUIPhotoPickerGrid(
-                data = currentBucket.list,
+            ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                state = scrollState,
-                pickedItems = pickedItems,
-                onPickItem = { _, model ->
-                    viewModel.togglePick(model)
-                },
-                onPreview = {
-
+                    .weight(1f)
+            ) {
+                val (content, toolbar) = createRefs()
+                QMUIPhotoPickerGrid(
+                    data = currentBucket.list,
+                    modifier = Modifier.constrainAs(content){
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(toolbar.top)
+                    },
+                    state = scrollState,
+                    pickedItems = pickedItems,
+                    onPickItem = { _, model ->
+                        viewModel.togglePick(model)
+                    },
+                    onPreview = {
+                        // onPreview
+                    }
+                )
+                QMUIPhotoPickerGridPageToolBar(
+                    modifier = Modifier
+                        .constrainAs(toolbar) {
+                            width = Dimension.fillToConstraints
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        },
+                    enableOrigin = viewModel.enableOrigin,
+                    pickedItems = pickedItems,
+                    isOriginOpenFlow = viewModel.isOriginOpenFlow,
+                    onToggleOrigin = {
+                        viewModel.toggleOrigin(it)
+                    }
+                ){
+                    // onPreview
                 }
-            )
+                QMUIPhotoBucketChooser(
+                    focus = isFocusBucketChooser,
+                    data = data,
+                    currentId = currentBucket.id,
+                    onBucketClick = {
+                        currentBucket = it
+                        isFocusBucketFlow.value = false
+                    }) {
+                    isFocusBucketFlow.value = false
+                }
+            }
         }
     }
 
@@ -309,6 +363,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             putParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST, arrayListOf<Parcelable?>().apply {
                 addAll(pickedList)
             })
+            putExtra(QMUI_PHOTO_RESULT_ORIGIN_OPEN, viewModel.isOriginOpenFlow.value)
         })
         finish()
     }
@@ -341,7 +396,11 @@ class QMUIPhotoPickerViewModel @Keep constructor(
     val dataProvider: QMUIMediaDataProvider,
     val supportedMimeTypes: Array<String>
 ) : ViewModel(), LogTag {
+
     val pickLimitCount = state.get<Int>(QMUI_PHOTO_PICK_LIMIT_COUNT) ?: QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
+
+    val enableOrigin = state.get<Boolean>(QMUI_PHOTO_ENABLE_ORIGIN) ?: true
+
     private val photoProviderFactory: QMUIMediaPhotoProviderFactory
 
     private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
@@ -354,8 +413,11 @@ class QMUIPhotoPickerViewModel @Keep constructor(
     private val _pickedListFlow = MutableStateFlow<List<Long>>(emptyList())
     val pickedListFlow = _pickedListFlow.asStateFlow()
 
-    private val _pickedCountFlow = MutableStateFlow<Int>(0)
+    private val _pickedCountFlow = MutableStateFlow(0)
     val pickedCountFlow = _pickedCountFlow.asStateFlow()
+
+    private val _isOriginOpenFlow = MutableStateFlow(false)
+    val isOriginOpenFlow = _isOriginOpenFlow.asStateFlow()
 
     init {
         val photoProviderFactoryClsName =
@@ -387,6 +449,10 @@ class QMUIPhotoPickerViewModel @Keep constructor(
                 _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, null, e)
             }
         }
+    }
+
+    fun toggleOrigin(toOpen: Boolean) {
+        _isOriginOpenFlow.value = toOpen
     }
 
     fun togglePick(model: QMUIMediaModel) {

@@ -48,10 +48,14 @@ fun QMUICheckBox(
 }
 
 @Composable
-fun QMUIMarkIcon(tint: Color? = null) {
+fun QMUIMarkIcon(
+    modifier: Modifier = Modifier,
+    tint: Color? = null
+) {
     Image(
         painter = painterResource(id = R.drawable.ic_qmui_mark),
         contentDescription = "",
-        colorFilter = tint?.let { ColorFilter.tint(it) }
+        colorFilter = tint?.let { ColorFilter.tint(it) },
+        modifier = modifier
     )
 }
