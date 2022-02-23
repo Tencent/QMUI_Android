@@ -33,7 +33,7 @@ android {
             keyPassword = properties.getProperty("RELEASE_KEY_PASSWORD")
             storeFile = file("qmuidemo.keystore")
             storePassword = properties.getProperty("RELEASE_STORE_PASSWORD")
-            enableV2Signing = false
+            enableV2Signing = true
         }
     }
 
@@ -62,11 +62,15 @@ android {
         targetSdk = Dep.targetSdk
         versionCode = gitVersion
         versionName = Dep.QMUI.qmuiVer
+
+        ndk {
+            abiFilters.add("arm64-v8a")
+        }
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -90,4 +94,6 @@ dependencies {
     implementation(Dep.Flipper.flipper)
     kapt(project(":compiler"))
     kapt(project(":arch-compiler"))
+
+    implementation("com.iqiyi.xcrash:xcrash-android-lib:3.1.0")
 }

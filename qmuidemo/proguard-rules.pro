@@ -24,3 +24,6 @@
 
 -keep class com.qmuiteam.qmui.arch.scheme.SchemeMap {*;}
 -keep class com.qmuiteam.qmui.arch.scheme.SchemeMapImpl {*;}
+
+-keep class com.facebook.jni.**{*;}
+-keep class com.facebook.flipper.**{*;}

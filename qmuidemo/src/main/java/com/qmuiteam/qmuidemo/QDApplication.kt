@@ -17,8 +17,11 @@ package com.qmuiteam.qmuidemo
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.ContentValues
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import coil.ImageLoader
 import coil.ImageLoaderFactory
@@ -32,12 +35,26 @@ import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager
 import com.qmuiteam.qmui.qqface.QMUIQQFaceCompiler
 import com.qmuiteam.qmuidemo.manager.QDSkinManager
 import com.qmuiteam.qmuidemo.manager.QDUpgradeManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import xcrash.TombstoneManager
+import xcrash.XCrash
+import java.io.File
+
 
 /**
  * Demo 的 Application 入口。
  * Created by cgine on 16/3/22.
  */
 class QDApplication : Application(), ImageLoaderFactory {
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        XCrash.init(this)
+    }
+
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
@@ -64,10 +81,27 @@ class QDApplication : Application(), ImageLoaderFactory {
         QMUISwipeBackActivityManager.init(this)
         QMUIQQFaceCompiler.setDefaultQQFaceManager(QDQQFaceManager.getInstance())
         QDSkinManager.install(this)
-        SoLoader.init(this, false)
-        val client = AndroidFlipperClient.getInstance(this)
-        client.addPlugin(InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()))
-        client.start()
+        if(BuildConfig.DEBUG){
+            SoLoader.init(this, false)
+            val client = AndroidFlipperClient.getInstance(this)
+            client.addPlugin(InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()))
+            client.start()
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(5000)
+            for (file in TombstoneManager.getAllTombstones()) {
+                val contentValues = ContentValues()
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "txt")
+                val uri = contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues) ?: continue
+                contentResolver.openOutputStream(uri)?.use { out ->
+                    file.inputStream().use { ins ->
+                        ins.copyTo(out)
+                    }
+                }
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
