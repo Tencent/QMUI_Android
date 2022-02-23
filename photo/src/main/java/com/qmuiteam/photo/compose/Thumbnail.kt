@@ -109,7 +109,7 @@ fun QMUIPhotoThumbnail(
     if (images.size < 0) {
         return
     }
-    val renderInfo = remember {
+    val renderInfo = remember(images) {
         Array(images.size) {
             QMUIPhotoTransitionInfo(images[it], null, null, null)
         }

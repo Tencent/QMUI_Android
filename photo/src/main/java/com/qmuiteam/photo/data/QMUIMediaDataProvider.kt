@@ -113,12 +113,16 @@ class QMUIMediaImagesProvider : QMUIMediaDataProvider {
                         try {
                             val path = cursor.readString(MediaStore.Images.Media.DATA)
                             val id = cursor.readLong(MediaStore.Images.Media._ID)
+                            val w = cursor.readInt(MediaStore.Images.Media.WIDTH)
+                            val h = cursor.readInt(MediaStore.Images.Media.HEIGHT)
+                            val o = cursor.readInt(MediaStore.Images.Media.ORIENTATION)
+                            val isRotated = o == 90 || o == 270
                             list.add(
                                 QMUIMediaModel(
                                     id,
                                     ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id),
-                                    cursor.readInt(MediaStore.Images.Media.WIDTH),
-                                    cursor.readInt(MediaStore.Images.Media.HEIGHT),
+                                    if(isRotated) h else w,
+                                    if(isRotated) w else h,
                                     cursor.readInt(MediaStore.Images.Media.ORIENTATION),
                                     cursor.readString(MediaStore.Images.Media.DISPLAY_NAME),
                                     cursor.readLong(MediaStore.Images.Media.DATE_MODIFIED),

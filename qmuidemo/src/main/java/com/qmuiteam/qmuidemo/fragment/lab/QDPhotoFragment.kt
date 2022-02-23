@@ -1,10 +1,18 @@
 package com.qmuiteam.qmuidemo.fragment.lab
 
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -12,7 +20,9 @@ import androidx.core.net.toUri
 import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
 import com.qmuiteam.compose.core.ui.QMUITopBarTextItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
+import com.qmuiteam.photo.activity.QMUIPhotoPickResult
 import com.qmuiteam.photo.activity.QMUIPhotoPickerActivity
+import com.qmuiteam.photo.activity.getQMUIPhotoPickResult
 import com.qmuiteam.photo.coil.QMUICoilPhotoProvider
 import com.qmuiteam.photo.coil.QMUIMediaCoilPhotoProviderFactory
 import com.qmuiteam.photo.compose.QMUIPhotoThumbnailWithViewer
@@ -20,10 +30,20 @@ import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmuidemo.R
 import com.qmuiteam.qmuidemo.base.ComposeBaseFragment
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Widget(name = "QMUI Photo", iconRes = R.mipmap.icon_grid_in_progress)
 @LatestVisitRecord
 class QDPhotoFragment : ComposeBaseFragment() {
+
+    val pickerFlow = MutableStateFlow<QMUIPhotoPickResult?>(null)
+
+    private val pickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            val pickerResult = it.data?.getQMUIPhotoPickResult() ?: return@registerForActivityResult
+            pickerFlow.value = pickerResult
+        }
+    }
 
     @Composable
     override fun PageContent() {
@@ -40,12 +60,11 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 rightItems = arrayListOf(
                     QMUITopBarTextItem("Pick a Picture") {
                         val activity = activity ?: return@QMUITopBarTextItem
-                        val intent = QMUIPhotoPickerActivity.intentOf(
+                        pickLauncher.launch(QMUIPhotoPickerActivity.intentOf(
                             activity,
                             QMUIPhotoPickerActivity::class.java,
                             QMUIMediaCoilPhotoProviderFactory::class.java
-                        )
-                        startActivity(intent)
+                        ))
                     }
                 )
             )
@@ -57,6 +76,11 @@ class QDPhotoFragment : ComposeBaseFragment() {
                     .background(Color.White),
                 contentPadding = PaddingValues(start = 44.dp)
             ) {
+
+                item {
+                    PickerResult()
+                }
+
                 item {
                     Box(
                         modifier = Modifier
@@ -264,5 +288,58 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 }
             }
         }
+    }
+
+    @Composable
+    fun PickerResult(){
+        val pickResultState = pickerFlow.collectAsState()
+        val pickResult = pickResultState.value
+        if(pickResult == null){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .clickable {
+                        val activity = activity ?: return@clickable
+                        pickLauncher.launch(
+                            QMUIPhotoPickerActivity.intentOf(
+                                activity,
+                                QMUIPhotoPickerActivity::class.java,
+                                QMUIMediaCoilPhotoProviderFactory::class.java
+                            )
+                        )
+                    }
+            ) {
+                Text("No Picked Images, click to pick")
+            }
+        }else{
+            val images = remember(pickResult) {
+                Log.i("cginetest", "${pickResult.list.joinToString("\n") { it.uri.toString() } }}")
+                pickResult.list.map {
+                    QMUICoilPhotoProvider(
+                        it.uri,
+                        it.width.toFloat() / it.height
+                    )
+                }
+            }
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 20.dp)){
+                Text(text = "原图：${pickResult.isOriginOpen}")
+                QMUIPhotoThumbnailWithViewer(
+                    activity = requireActivity(),
+                    images = images
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp)
+            ) {
+
+            }
+        }
+
+
     }
 }

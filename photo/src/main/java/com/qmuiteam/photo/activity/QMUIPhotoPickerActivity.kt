@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcel
 import android.os.Parcelable
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -53,10 +54,43 @@ private const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
 private const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
 private const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
-class QMUIPhotoPickResult(val list: List<Uri>, val isOriginOpen: Boolean)
+class QMUIPhotoPickItemInfo(
+    val width: Int,
+    val height: Int,
+    val uri: Uri
+): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readParcelable(Uri::class.java.classLoader)!!
+    )
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(width)
+        dest.writeInt(height)
+        dest.writeParcelable(uri, flags)
+    }
+
+    companion object CREATOR : Parcelable.Creator<QMUIPhotoPickItemInfo> {
+        override fun createFromParcel(parcel: Parcel): QMUIPhotoPickItemInfo {
+            return QMUIPhotoPickItemInfo(parcel)
+        }
+
+        override fun newArray(size: Int): Array<QMUIPhotoPickItemInfo?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+}
+
+class QMUIPhotoPickResult(val list: List<QMUIPhotoPickItemInfo>, val isOriginOpen: Boolean)
 
 fun Intent.getQMUIPhotoPickResult(): QMUIPhotoPickResult? {
-    val list = getParcelableArrayListExtra<Uri>(QMUI_PHOTO_RESULT_URI_LIST) ?: return null
+    val list = getParcelableArrayListExtra<QMUIPhotoPickItemInfo>(QMUI_PHOTO_RESULT_URI_LIST) ?: return null
     if(list.isEmpty()){
         return null
     }
@@ -358,9 +392,9 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     }
 
     protected open fun onHandleSend() {
-        val pickedList = viewModel.getPickedUriList()
+        val pickedList = viewModel.getPickedList()
         setResult(RESULT_OK, Intent().apply {
-            putParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST, arrayListOf<Parcelable?>().apply {
+            putParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST, arrayListOf<QMUIPhotoPickItemInfo>().apply {
                 addAll(pickedList)
             })
             putExtra(QMUI_PHOTO_RESULT_ORIGIN_OPEN, viewModel.isOriginOpenFlow.value)
@@ -479,9 +513,11 @@ class QMUIPhotoPickerViewModel @Keep constructor(
         }
     }
 
-    fun getPickedUriList(): List<Uri> {
-        return _pickedListFlow.value.mapNotNull {
-            _pickedMap[it]?.uri
+    fun getPickedList(): List<QMUIPhotoPickItemInfo> {
+        return _pickedListFlow.value.mapNotNull { id ->
+            _pickedMap[id]?.let {
+                QMUIPhotoPickItemInfo(it.width, it.height, it.uri)
+            }
         }
     }
 }
