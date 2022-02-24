@@ -130,20 +130,24 @@ internal class StillModalImpl(
     @Composable
     override fun ModalContent(visible: Boolean, dismissFinishAction: () -> Unit) {
         if (visible) {
-            var modifier = Modifier
-                .fillMaxSize()
-                .background(mask)
-            if (maskCancellable) {
-                modifier = modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    dismiss()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(mask)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        enabled = maskCancellable
+                    ) {
+                        dismiss()
+                    }
+            )
+        } else {
+            DisposableEffect("") {
+                onDispose {
+                    dismissFinishAction()
                 }
             }
-            Box(modifier = modifier)
-        } else {
-            dismissFinishAction()
         }
     }
 }
@@ -165,18 +169,16 @@ internal class AnimateModalImpl(
             enter = fadeIn(tween(durationMillis), 0f),
             exit = fadeOut(tween(durationMillis), 0f)
         ) {
-            var modifier = Modifier
+            Box(modifier = Modifier
                 .fillMaxSize()
                 .background(mask)
-            if (maskCancellable) {
-                modifier = modifier.clickable(
+                .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = null
+                    indication = null,
+                    enabled = maskCancellable
                 ) {
                     dismiss()
-                }
-            }
-            Box(modifier = modifier)
+                })
             content(this@AnimateModalImpl)
             DisposableEffect("") {
                 onDispose {
