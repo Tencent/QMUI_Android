@@ -52,7 +52,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
     public static final String QMUI_MUTI_START_INDEX = "qmui_muti_start_index";
     private static final String TAG = "QMUIFragmentActivity";
     private RootView mRootView;
-    private boolean mIsFirstFragmentAdded = false;
+    private FragmentAutoInitResult mFragmentAutoInitResult = FragmentAutoInitResult.unHandled;
     private boolean isChildHandlePopBackRequested = false;
 
     @Override
@@ -81,60 +81,66 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
             Intent intent = getIntent();
 
             // 1. handle muti fragments
-            mIsFirstFragmentAdded = instantiationMutiFragment(intent);
+            mFragmentAutoInitResult = instantiationMutiFragment(intent);
 
-            if(!mIsFirstFragmentAdded){
-                Class<? extends QMUIFragment> firstFragmentClass = null;
-                // 2. try get first fragment from fragment class name
-                String fragmentClassName = intent.getStringExtra(QMUI_INTENT_DST_FRAGMENT_NAME);
-                if (fragmentClassName != null) {
-                    try {
+            if (mFragmentAutoInitResult == FragmentAutoInitResult.unHandled) {
+                try {
+                    Class<? extends QMUIFragment> firstFragmentClass = null;
+                    // 2. try get first fragment from fragment class name
+                    String fragmentClassName = intent.getStringExtra(QMUI_INTENT_DST_FRAGMENT_NAME);
+                    if (fragmentClassName != null && !fragmentClassName.isEmpty()) {
                         firstFragmentClass = (Class<? extends QMUIFragment>) Class.forName(fragmentClassName);
-                    } catch (ClassNotFoundException e) {
-                        QMUILog.d(TAG, "Can not find " + fragmentClassName);
                     }
+
+                    // 3. try get fragment from annotation @DefaultFirstFragment
+                    if (firstFragmentClass == null) {
+                        firstFragmentClass = getDefaultFirstFragment();
+                    }
+
+                    if (firstFragmentClass != null) {
+                        QMUIFragment firstFragment = instantiationFragment(firstFragmentClass, intent.getBundleExtra(QMUI_INTENT_FRAGMENT_ARG));
+                        if (firstFragment != null) {
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .add(getContextViewId(), firstFragment, firstFragment.getClass().getSimpleName())
+                                    .addToBackStack(firstFragment.getClass().getSimpleName())
+                                    .commit();
+                            mFragmentAutoInitResult = FragmentAutoInitResult.success;
+                        }
+                    }
+                } catch (Exception e) {
+                    QMUILog.d(TAG, "fragment auto inited: " + e.getMessage());
+                    mFragmentAutoInitResult = FragmentAutoInitResult.failed;
                 }
 
-                // 3. try get fragment from annotation @DefaultFirstFragment
-                if (firstFragmentClass == null) {
-                    firstFragmentClass = getDefaultFirstFragment();
-                }
-
-                if (firstFragmentClass != null) {
-                    QMUIFragment firstFragment = instantiationFragment(firstFragmentClass, intent.getBundleExtra(QMUI_INTENT_FRAGMENT_ARG));
-                    if (firstFragment != null) {
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .add(getContextViewId(), firstFragment, firstFragment.getClass().getSimpleName())
-                                .addToBackStack(firstFragment.getClass().getSimpleName())
-                                .commit();
-                        mIsFirstFragmentAdded = true;
-                    }
-                }
             }
             Log.i(TAG, "the time it takes to inject first fragment from annotation is " + (System.currentTimeMillis() - start));
         }
     }
 
-    protected boolean instantiationMutiFragment(Intent intent) {
+    protected FragmentAutoInitResult instantiationMutiFragment(Intent intent) {
         List<Bundle> fragmentBundles = intent.getParcelableArrayListExtra(QMUI_INTENT_FRAGMENT_LIST_ARG);
-        if(fragmentBundles != null && fragmentBundles.size() > 0){
+        if (fragmentBundles != null && fragmentBundles.size() > 0) {
             List<QMUIFragment> fragments = new ArrayList<>(fragmentBundles.size());
-            for(Bundle bundle: fragmentBundles){
+            for (Bundle bundle : fragmentBundles) {
                 String fragmentClassName = bundle.getString(QMUI_INTENT_DST_FRAGMENT_NAME);
                 try {
                     Class<? extends QMUIFragment> cls = (Class<? extends QMUIFragment>) Class.forName(fragmentClassName);
-                    fragments.add(instantiationFragment(cls, bundle.getBundle(QMUI_INTENT_FRAGMENT_ARG)));
+                    QMUIFragment fragment = instantiationFragment(cls, bundle.getBundle(QMUI_INTENT_FRAGMENT_ARG));
+                    if (fragment == null) {
+                        return FragmentAutoInitResult.failed;
+                    }
+                    fragments.add(fragment);
                 } catch (ClassNotFoundException e) {
                     QMUILog.d(TAG, "Can not find " + fragmentClassName);
                 }
             }
-            if(fragments.size() > 0){
+            if (fragments.size() > 0) {
                 initMutiFragment(fragments);
-                return true;
+                return FragmentAutoInitResult.success;
             }
         }
-        return false;
+        return FragmentAutoInitResult.unHandled;
     }
 
     protected boolean initMutiFragment(QMUIFragment... fragments) {
@@ -150,7 +156,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         boolean disableSwipeBack = getIntent().getIntExtra(QMUIFragmentActivity.QMUI_MUTI_START_INDEX, 0) > 0;
         if (fragments.size() == 1) {
             QMUIFragment fragment = fragments.get(0);
-            if(disableSwipeBack){
+            if (disableSwipeBack) {
                 fragment.mDisableSwipeBackByMutiStarted = true;
             }
             String tagName = fragment.getClass().getSimpleName();
@@ -165,7 +171,7 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
         FragmentManager fragmentManager = getSupportFragmentManager();
         for (int i = 0; i < fragments.size(); i++) {
             QMUIFragment fragment = fragments.get(i);
-            if(disableSwipeBack){
+            if (disableSwipeBack) {
                 fragment.mDisableSwipeBackByMutiStarted = true;
             }
             disableSwipeBack = true;
@@ -199,12 +205,12 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
      *
      * @return true if first fragment is initialized.
      */
-    protected boolean isFirstFragmentAdded() {
-        return mIsFirstFragmentAdded;
+    protected FragmentAutoInitResult isFragmentAutoInitResult() {
+        return mFragmentAutoInitResult;
     }
 
-    protected void setFirstFragmentAdded(boolean firstFragmentAdded) {
-        mIsFirstFragmentAdded = firstFragmentAdded;
+    protected void setFragmentAutoInitResult(FragmentAutoInitResult fragmentAutoInitResult) {
+        mFragmentAutoInitResult = fragmentAutoInitResult;
     }
 
     protected Class<? extends QMUIFragment> getDefaultFirstFragment() {
@@ -472,4 +478,6 @@ public abstract class QMUIFragmentActivity extends InnerBaseActivity implements 
             return mFragmentContainerView;
         }
     }
+
+    public enum FragmentAutoInitResult {success, failed, unHandled}
 }
