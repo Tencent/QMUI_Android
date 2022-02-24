@@ -26,7 +26,11 @@ open class QMUIMediaModel(
     val modifyTimeSec: Long,
     val bucketId: String,
     val bucketName: String
-)
+) {
+    fun ratio(): Float {
+        return width.toFloat() / height
+    }
+}
 
 class QMUIMediaPhotoBucket(
     val id: String,

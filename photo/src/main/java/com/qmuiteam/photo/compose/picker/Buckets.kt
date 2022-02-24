@@ -127,7 +127,10 @@ fun QMUIPhotoBucketItem(
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
             }) {
-            data.list.firstOrNull()?.photoProvider?.thumbnail()?.Compose(
+            val thumbnail = remember(data) {
+                data.list.firstOrNull()?.photoProvider?.thumbnail()
+            }
+            thumbnail?.Compose(
                 contentScale = ContentScale.Crop,
                 isContainerDimenExactly = true,
                 onSuccess = null,

@@ -143,7 +143,10 @@ fun BoxScope.QMUIPhotoContent(
     var loadStatus by remember {
         mutableStateOf(PhotoLoadStatus.loading)
     }
-    photoProvider.photo()?.Compose(
+    val photo = remember(photoProvider) {
+        photoProvider.photo()
+    }
+    photo?.Compose(
         contentScale = ContentScale.Fit,
         isContainerDimenExactly = true,
         onSuccess = {

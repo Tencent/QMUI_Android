@@ -10,11 +10,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,34 +32,32 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.qmuiteam.compose.core.helper.LogTag
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.qmuiteam.compose.core.helper.QMUIGlobal
-import com.qmuiteam.compose.core.helper.QMUILog
 import com.qmuiteam.compose.core.provider.QMUIWindowInsetsProvider
+import com.qmuiteam.compose.core.ui.QMUITopBar
 import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
 import com.qmuiteam.compose.core.ui.QMUITopBarItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
 import com.qmuiteam.photo.compose.*
 import com.qmuiteam.photo.compose.picker.*
 import com.qmuiteam.photo.data.*
-import kotlinx.coroutines.Dispatchers
+import com.qmuiteam.photo.vm.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT = 9
-private const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
-private const val QMUI_PHOTO_RESULT_ORIGIN_OPEN = "qmui_photo_result_origin_open"
-private const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
-private const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
-private const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
+internal const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
+internal const val QMUI_PHOTO_RESULT_ORIGIN_OPEN = "qmui_photo_result_origin_open"
+internal const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
+internal const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
+internal const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
 class QMUIPhotoPickItemInfo(
     val width: Int,
     val height: Int,
     val uri: Uri
-): Parcelable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
@@ -91,7 +90,7 @@ class QMUIPhotoPickResult(val list: List<QMUIPhotoPickItemInfo>, val isOriginOpe
 
 fun Intent.getQMUIPhotoPickResult(): QMUIPhotoPickResult? {
     val list = getParcelableArrayListExtra<QMUIPhotoPickItemInfo>(QMUI_PHOTO_RESULT_URI_LIST) ?: return null
-    if(list.isEmpty()){
+    if (list.isEmpty()) {
         return null
     }
     val isOriginOpen = getBooleanExtra(QMUI_PHOTO_RESULT_ORIGIN_OPEN, false)
@@ -160,6 +159,25 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             PageContent(viewModel)
         }
         onStartCheckPermission()
+        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val currentScene = viewModel.photoPickerSceneFlow.value
+                when (currentScene) {
+                    is QMUIPhotoPickerEditScene -> {
+                        viewModel.updateScene(currentScene.prevScene)
+                    }
+                    is QMUIPhotoPickerPreviewScene -> {
+                        viewModel.updateScene(QMUIPhotoPickerGridScene)
+                    }
+                    else -> {
+                        isEnabled = false
+                        onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+
+        })
     }
 
     @Composable
@@ -202,6 +220,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     protected open fun BoxScope.PhotoPickerContent(
         viewModel: QMUIPhotoPickerViewModel,
@@ -209,8 +228,30 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     ) {
         val pickedItems by viewModel.pickedListFlow.collectAsState()
         val scene by viewModel.photoPickerSceneFlow.collectAsState()
-        if (scene is QMUIPhotoPickerGridScene) {
+        AnimatedVisibility(
+            visible = scene is QMUIPhotoPickerGridScene,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             PhotoPickerGridContent(viewModel, data, pickedItems)
+        }
+        AnimatedVisibility(
+            visible = scene is QMUIPhotoPickerPreviewScene,
+            enter = fadeIn() + scaleIn(initialScale = 0.8f),
+            exit = fadeOut() + scaleOut(targetScale = 0.8f)
+        ) {
+            val previewScheme = scene as? QMUIPhotoPickerPreviewScene
+            if (previewScheme != null) {
+                val list = remember(previewScheme) {
+                    if (previewScheme.onlySelected) {
+                        viewModel.getPickedVOList()
+                    } else {
+                        data.find { it.id == previewScheme.buckedId }?.list ?: emptyList<QMUIMediaPhotoVO>()
+                    }
+                }
+                PhotoPickerPreviewContent(viewModel, list, pickedItems, previewScheme.currentId)
+            }
+
         }
     }
 
@@ -251,7 +292,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         val isFocusBucketChooser by isFocusBucketFlow.collectAsState()
 
         val topBarSendItem = remember(config) {
-            config.topBarSendFactory(viewModel.pickLimitCount, viewModel.pickedCountFlow) {
+            config.topBarSendFactory(false, viewModel.pickLimitCount, viewModel.pickedCountFlow) {
                 onHandleSend()
             }
         }
@@ -281,7 +322,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                 val (content, toolbar) = createRefs()
                 QMUIPhotoPickerGrid(
                     data = currentBucket.list,
-                    modifier = Modifier.constrainAs(content){
+                    modifier = Modifier.constrainAs(content) {
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
                         top.linkTo(parent.top)
@@ -295,7 +336,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                         viewModel.togglePick(model)
                     },
                     onPreview = {
-                        // onPreview
+                        viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, false, it.id))
                     }
                 )
                 QMUIPhotoPickerGridPageToolBar(
@@ -312,8 +353,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                     onToggleOrigin = {
                         viewModel.toggleOrigin(it)
                     }
-                ){
-                    // onPreview
+                ) {
+                    viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, true, currentBucket.list.first().model.id))
                 }
                 QMUIPhotoBucketChooser(
                     focus = isFocusBucketChooser,
@@ -329,14 +370,55 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
     }
 
+
+    @OptIn(ExperimentalPagerApi::class)
     @Composable
-    protected open fun BoxScope.PhotoPickerPagerContent(
+    protected open fun BoxScope.PhotoPickerPreviewContent(
         viewModel: QMUIPhotoPickerViewModel,
         data: List<QMUIMediaPhotoVO>,
-        index: Int
+        pickedItems: List<Long>,
+        currentId: Long
     ) {
+        val config = QMUILocalPickerConfig.current
+        var isFullPageState by remember {
+            mutableStateOf(false)
+        }
+        val pagerState = remember(data, currentId) {
+            PagerState(
+                currentPage = data.indexOfFirst { it.model.id == currentId }.coerceAtLeast(0),
+            )
+        }
 
+        val topBarLeftItems = remember {
+            arrayListOf<QMUITopBarItem>(QMUITopBarBackIconItem {
+                viewModel.updateScene(QMUIPhotoPickerGridScene)
+            })
+        }
+
+        val topBarRightItems = remember(config) {
+            arrayListOf(config.topBarSendFactory(true, viewModel.pickLimitCount, viewModel.pickedCountFlow) {
+                onHandleSend()
+            })
+        }
+
+        QMUIPhotoPickerPreview(
+            pagerState,
+            data,
+            loading = { Loading() },
+            loadingFailed = {},
+        ) {
+            isFullPageState = !isFullPageState
+        }
+
+        QMUITopBar(
+            title = "${pagerState.currentPage + 1}/${data.size}",
+            separatorHeight = 0.dp,
+            backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
+            leftItems = topBarLeftItems,
+            rightItems = topBarRightItems
+        )
     }
+
 
     @Composable
     protected open fun BoxScope.PhotoPickerEditContent(
@@ -392,7 +474,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     }
 
     protected open fun onHandleSend() {
-        val pickedList = viewModel.getPickedList()
+        val pickedList = viewModel.getPickedResultList()
         setResult(RESULT_OK, Intent().apply {
             putParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST, arrayListOf<QMUIPhotoPickItemInfo>().apply {
                 addAll(pickedList)
@@ -422,126 +504,3 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         return QMUIMediaImagesProvider.DEFAULT_SUPPORT_MIMETYPES
     }
 }
-
-
-class QMUIPhotoPickerViewModel @Keep constructor(
-    val application: Application,
-    val state: SavedStateHandle,
-    val dataProvider: QMUIMediaDataProvider,
-    val supportedMimeTypes: Array<String>
-) : ViewModel(), LogTag {
-
-    val pickLimitCount = state.get<Int>(QMUI_PHOTO_PICK_LIMIT_COUNT) ?: QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
-
-    val enableOrigin = state.get<Boolean>(QMUI_PHOTO_ENABLE_ORIGIN) ?: true
-
-    private val photoProviderFactory: QMUIMediaPhotoProviderFactory
-
-    private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
-    val photoPickerSceneFlow = _photoPickerSceneFlow.asStateFlow()
-
-    private val _photoPickerDataFlow = MutableStateFlow(QMUIPhotoPickerData(QMUIPhotoPickerLoadState.permissionChecking, null))
-    val photoPickerDataFlow = _photoPickerDataFlow.asStateFlow()
-
-    private val _pickedMap = mutableMapOf<Long, QMUIMediaModel>()
-    private val _pickedListFlow = MutableStateFlow<List<Long>>(emptyList())
-    val pickedListFlow = _pickedListFlow.asStateFlow()
-
-    private val _pickedCountFlow = MutableStateFlow(0)
-    val pickedCountFlow = _pickedCountFlow.asStateFlow()
-
-    private val _isOriginOpenFlow = MutableStateFlow(false)
-    val isOriginOpenFlow = _isOriginOpenFlow.asStateFlow()
-
-    init {
-        val photoProviderFactoryClsName =
-            state.get<String>(QMUI_PHOTO_PROVIDER_FACTORY) ?: throw RuntimeException("no QMUIMediaPhotoProviderFactory is provided.")
-        photoProviderFactory = Class.forName(photoProviderFactoryClsName).newInstance() as QMUIMediaPhotoProviderFactory
-    }
-
-    fun updateScene(scene: QMUIPhotoPickerScene) {
-        _photoPickerSceneFlow.value = scene
-    }
-
-    fun permissionDenied() {
-        _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.permissionDenied, null)
-    }
-
-    fun permissionGranted() {
-        _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoading, null)
-        viewModelScope.launch {
-            try {
-                val data = withContext(Dispatchers.IO) {
-                    dataProvider.provide(application, supportedMimeTypes).map { bucket ->
-                        QMUIMediaPhotoBucketVO(bucket.id, bucket.name, bucket.list.map {
-                            QMUIMediaPhotoVO(it, photoProviderFactory.factory(it))
-                        })
-                    }
-                }
-                _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, data)
-            } catch (e: Throwable) {
-                _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, null, e)
-            }
-        }
-    }
-
-    fun toggleOrigin(toOpen: Boolean) {
-        _isOriginOpenFlow.value = toOpen
-    }
-
-    fun togglePick(model: QMUIMediaModel) {
-        if (_photoPickerDataFlow.value.state != QMUIPhotoPickerLoadState.dataLoaded) {
-            QMUILog.w(TAG, "pick when data is not finish loaded, please check why this method called here?")
-            return
-        }
-        val list = arrayListOf<Long>()
-        list.addAll(_pickedListFlow.value)
-        if (list.contains(model.id)) {
-            _pickedMap.remove(model.id)
-            list.remove(model.id)
-            _pickedListFlow.value = list
-            _pickedCountFlow.value = list.size
-        } else {
-            if (list.size >= pickLimitCount) {
-                QMUILog.w(TAG, "can not pick more photo, please check why this method called here?")
-                return
-            }
-            _pickedMap[model.id] = model
-            list.add(model.id)
-            _pickedListFlow.value = list
-            _pickedCountFlow.value = list.size
-        }
-    }
-
-    fun getPickedList(): List<QMUIPhotoPickItemInfo> {
-        return _pickedListFlow.value.mapNotNull { id ->
-            _pickedMap[id]?.let {
-                QMUIPhotoPickItemInfo(it.width, it.height, it.uri)
-            }
-        }
-    }
-}
-
-open class QMUIPhotoPickerScene
-
-object QMUIPhotoPickerGridScene : QMUIPhotoPickerScene()
-
-class QMUIPhotoPickerPagerScene(
-    val buckedId: String,
-    val current: QMUIMediaModel
-) : QMUIPhotoPickerScene()
-
-class QMUIPhotoPickerEditScene(
-    val prevScene: QMUIPhotoPickerScene,
-    val current: QMUIMediaModel
-) : QMUIPhotoPickerScene()
-
-enum class QMUIPhotoPickerLoadState {
-    permissionChecking, permissionDenied, dataLoading, dataLoaded
-}
-
-class QMUIPhotoPickerData(
-    val state: QMUIPhotoPickerLoadState,
-    val data: List<QMUIMediaPhotoBucketVO>?,
-    val error: Throwable? = null
-)

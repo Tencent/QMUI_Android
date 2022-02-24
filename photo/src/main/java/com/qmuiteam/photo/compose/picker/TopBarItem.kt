@@ -76,6 +76,7 @@ class QMUIPhotoSendTopBarItem(
     private val normalBgColor: Color,
     private val pressBgColor: Color,
     private val disableBgColor: Color,
+    private val canSendSelf: Boolean,
     private val text: String,
     private val maxSelectCount: Int,
     private val selectCountFlow: StateFlow<Int>,
@@ -91,7 +92,7 @@ class QMUIPhotoSendTopBarItem(
             isPressed.value -> pressBgColor
             else -> normalBgColor
         }
-        val usedTextColor = if (selectCount > 0) normalTextColor else disableTextColor
+        val usedTextColor = if (selectCount > 0 || canSendSelf) normalTextColor else disableTextColor
         val usedText = if (selectCount > 0) "$text($selectCount/$maxSelectCount)" else text
         Box(
             modifier = Modifier
@@ -100,7 +101,7 @@ class QMUIPhotoSendTopBarItem(
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                    enabled = selectCount > 0
+                    enabled = selectCount > 0 || canSendSelf
                 ) {
                     onClick()
                 }

@@ -118,7 +118,9 @@ fun QMUIPhotoThumbnail(
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         if (images.size == 1) {
             val image = images[0]
-            val thumb = image.thumbnail()
+            val thumb = remember(image) {
+                image.thumbnail()
+            }
             if (thumb != null) {
                 val ratio = image.ratio()
                 when {
@@ -299,7 +301,9 @@ fun RowImages(
             }
             val image = images[i]
             QMUIPhotoThumbnailItem(
-                image.thumbnail(),
+                remember(image) {
+                    image.thumbnail()
+                },
                 wh,
                 wh,
                 config.alphaWhenPressed,

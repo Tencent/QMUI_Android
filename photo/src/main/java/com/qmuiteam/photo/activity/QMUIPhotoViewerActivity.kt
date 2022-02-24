@@ -20,6 +20,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -106,6 +107,12 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             }
         }
 
+        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                transitionTargetFlow.value = false
+            }
+        })
+
         setContent {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -127,10 +134,6 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        transitionTargetFlow.value = false
     }
 
     @OptIn(ExperimentalPagerApi::class)
@@ -247,7 +250,10 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         onSuccess: ((PhotoResult) -> Unit)?,
         onError: ((Throwable) -> Unit)? = null
     ) {
-        photoTransitionInfo.photoProvider.photo()?.Compose(
+        val photo = remember(photoTransitionInfo) {
+            photoTransitionInfo.photoProvider.photo()
+        }
+        photo?.Compose(
             contentScale = ContentScale.Fit,
             isContainerDimenExactly = true,
             onSuccess = onSuccess,

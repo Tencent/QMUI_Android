@@ -50,7 +50,7 @@ fun QMUIPhotoPickerGrid(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     pickedItems: List<Long>,
-    onPickItem: (toPick: Boolean, model: QMUIMediaModel) -> Unit,
+    onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -85,7 +85,7 @@ private fun QMUIPhotoPickerGridRow(
     cellSize: Dp,
     gap: Dp,
     pickedItems: List<Long>,
-    onPickItem: (toPick: Boolean, model: QMUIMediaModel) -> Unit,
+    onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     Row(
@@ -110,7 +110,7 @@ private fun QMUIPhotoPickerGridCell(
     data: QMUIMediaPhotoVO,
     cellSize: Dp,
     pickedItems: List<Long>,
-    onPickItem: (toPick: Boolean, model: QMUIMediaModel) -> Unit,
+    onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     val pickedIndex = remember(pickedItems) {
@@ -132,7 +132,10 @@ private fun QMUIPhotoPickerGridCell(
                 onPreview.invoke(data.model)
             }
     ) {
-        data.photoProvider.thumbnail()?.Compose(
+        val thumbnail = remember(data) {
+            data.photoProvider.thumbnail()
+        }
+        thumbnail?.Compose(
             contentScale = ContentScale.Crop,
             isContainerDimenExactly = true,
             onSuccess = null,
@@ -145,7 +148,7 @@ private fun QMUIPhotoPickerGridCell(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .clickable {
-                    onPickItem(pickedIndex < 0, data.model)
+                    onPickItem(pickedIndex < 0, data)
                 }
                 .padding(4.dp)
                 .size(24.dp),

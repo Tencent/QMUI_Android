@@ -36,10 +36,11 @@ class QMUIPhotoPickerConfig(
         )
     },
     val topBarSendFactory: (
+        canSendSelf: Boolean,
         maxSelectCount: Int,
         selectCountFlow: StateFlow<Int>,
         onClick: () -> Unit
-    ) -> QMUITopBarItem = { maxSelectCount, selectCountFlow, onClick ->
+    ) -> QMUITopBarItem = { canSendSelf, maxSelectCount, selectCountFlow, onClick ->
         QMUIPhotoSendTopBarItem(
             normalTextColor = Color.White,
             disableTextColor = Color.White.copy(alpha = 0.3f),
@@ -47,6 +48,7 @@ class QMUIPhotoPickerConfig(
             pressBgColor = qmuiPrimaryColor.copy(alpha = 0.8f),
             disableBgColor = Color.White.copy(alpha = 0.15f),
             text = "发送",
+            canSendSelf = canSendSelf,
             maxSelectCount = maxSelectCount,
             selectCountFlow = selectCountFlow,
             onClick = onClick
