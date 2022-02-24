@@ -44,7 +44,10 @@ import com.qmuiteam.photo.compose.*
 import com.qmuiteam.photo.compose.picker.*
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.vm.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT = 9
 internal const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
@@ -161,8 +164,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         onStartCheckPermission()
         onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val currentScene = viewModel.photoPickerSceneFlow.value
-                when (currentScene) {
+                when (val currentScene = viewModel.photoPickerSceneFlow.value) {
                     is QMUIPhotoPickerEditScene -> {
                         viewModel.updateScene(currentScene.prevScene)
                     }
@@ -233,30 +235,22 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            PhotoPickerGridContent(viewModel, data, pickedItems)
+            PhotoPickerGridScene(viewModel, data, pickedItems)
         }
         AnimatedVisibility(
             visible = scene is QMUIPhotoPickerPreviewScene,
             enter = fadeIn() + scaleIn(initialScale = 0.8f),
             exit = fadeOut() + scaleOut(targetScale = 0.8f)
         ) {
-            val previewScheme = scene as? QMUIPhotoPickerPreviewScene
-            if (previewScheme != null) {
-                val list = remember(previewScheme) {
-                    if (previewScheme.onlySelected) {
-                        viewModel.getPickedVOList()
-                    } else {
-                        data.find { it.id == previewScheme.buckedId }?.list ?: emptyList<QMUIMediaPhotoVO>()
-                    }
-                }
-                PhotoPickerPreviewContent(viewModel, list, pickedItems, previewScheme.currentId)
+            val previewScene = scene as? QMUIPhotoPickerPreviewScene
+            if (previewScene != null) {
+                PhotoPickerPreviewScene(viewModel, previewScene, data, pickedItems)
             }
-
         }
     }
 
     @Composable
-    protected open fun BoxScope.PhotoPickerGridContent(
+    protected open fun BoxScope.PhotoPickerGridScene(
         viewModel: QMUIPhotoPickerViewModel,
         data: List<QMUIMediaPhotoBucketVO>,
         pickedItems: List<Long>,
@@ -370,6 +364,22 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
     }
 
+    @Composable
+    protected open fun BoxScope.PhotoPickerPreviewScene(
+        viewModel: QMUIPhotoPickerViewModel,
+        scene: QMUIPhotoPickerPreviewScene,
+        data: List<QMUIMediaPhotoBucketVO>,
+        pickedItems: List<Long>
+    ){
+        val list = remember(scene) {
+            if (scene.onlySelected) {
+                viewModel.getPickedVOList()
+            } else {
+                data.find { it.id == scene.buckedId }?.list ?: emptyList<QMUIMediaPhotoVO>()
+            }
+        }
+        PhotoPickerPreviewContent(viewModel, list, pickedItems, scene.currentId)
+    }
 
     @OptIn(ExperimentalPagerApi::class)
     @Composable
@@ -401,22 +411,68 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             })
         }
 
-        QMUIPhotoPickerPreview(
-            pagerState,
-            data,
-            loading = { Loading() },
-            loadingFailed = {},
-        ) {
-            isFullPageState = !isFullPageState
-        }
+        val scope = rememberCoroutineScope()
 
-        QMUITopBar(
-            title = "${pagerState.currentPage + 1}/${data.size}",
-            separatorHeight = 0.dp,
-            backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
-            leftItems = topBarLeftItems,
-            rightItems = topBarRightItems
-        )
+        Box(modifier = Modifier.fillMaxSize()){
+            QMUIPhotoPickerPreview(
+                pagerState,
+                data,
+                loading = { Loading() },
+                loadingFailed = {},
+            ) {
+                isFullPageState = !isFullPageState
+            }
+
+            AnimatedVisibility(
+                visible = !isFullPageState,
+                enter = slideInVertically(initialOffsetY = {-it}),
+                exit = slideOutVertically(targetOffsetY = {-it})
+            ) {
+                QMUITopBar(
+                    title = "${pagerState.currentPage + 1}/${data.size}",
+                    separatorHeight = 0.dp,
+                    backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
+                    leftItems = topBarLeftItems,
+                    rightItems = topBarRightItems
+                )
+            }
+
+            AnimatedVisibility(
+                visible = !isFullPageState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = slideInVertically(initialOffsetY = {it}),
+                exit = slideOutVertically(targetOffsetY = {it})
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    QMUIPhotoPickerPreviewPickedItems(data, pickedItems, data[pagerState.currentPage].model.id){
+                        scope.launch {
+                            pagerState.scrollToPage(data.indexOf(it))
+                        }
+                    }
+
+                    val isCurrentPicked = remember(data, pickedItems, pagerState.currentPage) {
+                        pickedItems.indexOf(data[pagerState.currentPage].model.id) >= 0
+                    }
+
+                    QMUIPhotoPickerPreviewToolBar(
+                        modifier = Modifier.fillMaxWidth(),
+                        isCurrentPicked = isCurrentPicked,
+                        enableOrigin = viewModel.enableOrigin,
+                        isOriginOpenFlow = viewModel.isOriginOpenFlow,
+                        onToggleOrigin = {
+                            viewModel.toggleOrigin(it)
+                        },
+                        onEdit = {
+
+                        },
+                        onToggleSelect = {
+                            viewModel.togglePick(data[pagerState.currentPage])
+                        }
+                    )
+
+                }
+            }
+        }
     }
 
 

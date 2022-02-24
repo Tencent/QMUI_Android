@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 class QMUIPhotoPickerConfig(
     val commonTextButtonTextColor: Color = Color.White,
     val commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),
-    val commonCheckIconNormalTintColor: Color = Color.White,
+    val commonCheckIconNormalTintColor: Color = Color.White.copy(0.8f),
     val commonCheckIconCheckedTintColor: Color = qmuiPrimaryColor,
     val commonCheckIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
 
