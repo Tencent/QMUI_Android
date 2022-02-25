@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -26,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -44,10 +47,8 @@ import com.qmuiteam.photo.compose.*
 import com.qmuiteam.photo.compose.picker.*
 import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.vm.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT = 9
 internal const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
@@ -162,11 +163,11 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             PageContent(viewModel)
         }
         onStartCheckPermission()
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                when (val currentScene = viewModel.photoPickerSceneFlow.value) {
+                when (viewModel.photoPickerSceneFlow.value) {
                     is QMUIPhotoPickerEditScene -> {
-                        viewModel.updateScene(currentScene.prevScene)
+                        viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene)
                     }
                     is QMUIPhotoPickerPreviewScene -> {
                         viewModel.updateScene(QMUIPhotoPickerGridScene)
@@ -229,7 +230,9 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         data: List<QMUIMediaPhotoBucketVO>
     ) {
         val pickedItems by viewModel.pickedListFlow.collectAsState()
-        val scene by viewModel.photoPickerSceneFlow.collectAsState()
+        val sceneState = viewModel.photoPickerSceneFlow.collectAsState()
+        val scene = sceneState.value
+
         AnimatedVisibility(
             visible = scene is QMUIPhotoPickerGridScene,
             enter = fadeIn(),
@@ -239,12 +242,35 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
         AnimatedVisibility(
             visible = scene is QMUIPhotoPickerPreviewScene,
+            enter = if(viewModel.prevScene !is QMUIPhotoPickerEditScene) fadeIn() + scaleIn(initialScale = 0.8f) else fadeIn(initialAlpha = 1f),
+            exit = if(scene !is QMUIPhotoPickerEditScene) fadeOut() + scaleOut(targetScale = 0.8f) else fadeOut(targetAlpha = 1f)
+        ) {
+            // For exit animation
+            val previewSceneHolder = remember {
+                SceneHolder(scene as? QMUIPhotoPickerPreviewScene)
+            }
+            if(scene is QMUIPhotoPickerPreviewScene){
+                previewSceneHolder.scene = scene
+            }
+            val previewScene = previewSceneHolder.scene
+            if (previewScene != null) {
+                PhotoPickerPreviewScene(viewModel, previewScene, data, pickedItems)
+            }
+        }
+        AnimatedVisibility(
+            visible = scene is QMUIPhotoPickerEditScene,
             enter = fadeIn() + scaleIn(initialScale = 0.8f),
             exit = fadeOut() + scaleOut(targetScale = 0.8f)
         ) {
-            val previewScene = scene as? QMUIPhotoPickerPreviewScene
-            if (previewScene != null) {
-                PhotoPickerPreviewScene(viewModel, previewScene, data, pickedItems)
+            val editSceneHolder = remember {
+                SceneHolder(scene as? QMUIPhotoPickerEditScene)
+            }
+            if(scene is QMUIPhotoPickerEditScene){
+                editSceneHolder.scene = scene
+            }
+            val editScene = editSceneHolder.scene
+            if (editScene != null) {
+                PhotoPickerEditScene(viewModel, editScene)
             }
         }
     }
@@ -260,6 +286,11 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             }
         }
     ) {
+
+        LaunchedEffect("") {
+            WindowCompat.getInsetsController(window, window.decorView)?.show(WindowInsetsCompat.Type.statusBars())
+        }
+
         var currentBucket by remember {
             mutableStateOf(data.first())
         }
@@ -287,7 +318,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
         val topBarSendItem = remember(config) {
             config.topBarSendFactory(false, viewModel.pickLimitCount, viewModel.pickedCountFlow) {
-                onHandleSend()
+                onHandleSend(viewModel.getPickedResultList())
             }
         }
 
@@ -370,7 +401,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         scene: QMUIPhotoPickerPreviewScene,
         data: List<QMUIMediaPhotoBucketVO>,
         pickedItems: List<Long>
-    ){
+    ) {
         val list = remember(scene) {
             if (scene.onlySelected) {
                 viewModel.getPickedVOList()
@@ -378,7 +409,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                 data.find { it.id == scene.buckedId }?.list ?: emptyList<QMUIMediaPhotoVO>()
             }
         }
-        PhotoPickerPreviewContent(viewModel, list, pickedItems, scene.currentId)
+        PhotoPickerPreviewContent(viewModel, list, pickedItems, scene)
     }
 
     @OptIn(ExperimentalPagerApi::class)
@@ -387,15 +418,25 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         viewModel: QMUIPhotoPickerViewModel,
         data: List<QMUIMediaPhotoVO>,
         pickedItems: List<Long>,
-        currentId: Long
+        scene: QMUIPhotoPickerPreviewScene
     ) {
         val config = QMUILocalPickerConfig.current
         var isFullPageState by remember {
             mutableStateOf(false)
         }
-        val pagerState = remember(data, currentId) {
+        LaunchedEffect(isFullPageState) {
+            WindowCompat.getInsetsController(window, window.decorView)?.let {
+                if (!isFullPageState) {
+                    it.show(WindowInsetsCompat.Type.statusBars())
+                } else {
+                    it.hide(WindowInsetsCompat.Type.statusBars())
+                }
+
+            }
+        }
+        val pagerState = remember(data, scene.currentId) {
             PagerState(
-                currentPage = data.indexOfFirst { it.model.id == currentId }.coerceAtLeast(0),
+                currentPage = data.indexOfFirst { it.model.id == scene.currentId }.coerceAtLeast(0),
             )
         }
 
@@ -407,13 +448,19 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
         val topBarRightItems = remember(config) {
             arrayListOf(config.topBarSendFactory(true, viewModel.pickLimitCount, viewModel.pickedCountFlow) {
-                onHandleSend()
+                val pickedList = viewModel.getPickedResultList()
+                if(pickedList.isEmpty()){
+                    onHandleSend(listOf(data[pagerState.currentPage].let { QMUIPhotoPickItemInfo(it.model.width, it.model.height, it.model.uri) }))
+                }else{
+                    onHandleSend(pickedList)
+                }
+
             })
         }
 
         val scope = rememberCoroutineScope()
 
-        Box(modifier = Modifier.fillMaxSize()){
+        Box(modifier = Modifier.fillMaxSize()) {
             QMUIPhotoPickerPreview(
                 pagerState,
                 data,
@@ -425,8 +472,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
             AnimatedVisibility(
                 visible = !isFullPageState,
-                enter = slideInVertically(initialOffsetY = {-it}),
-                exit = slideOutVertically(targetOffsetY = {-it})
+                enter = slideInVertically(initialOffsetY = { -it }),
+                exit = slideOutVertically(targetOffsetY = { -it })
             ) {
                 QMUITopBar(
                     title = "${pagerState.currentPage + 1}/${data.size}",
@@ -440,11 +487,11 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             AnimatedVisibility(
                 visible = !isFullPageState,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                enter = slideInVertically(initialOffsetY = {it}),
-                exit = slideOutVertically(targetOffsetY = {it})
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it })
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    QMUIPhotoPickerPreviewPickedItems(data, pickedItems, data[pagerState.currentPage].model.id){
+                    QMUIPhotoPickerPreviewPickedItems(data, pickedItems, data[pagerState.currentPage].model.id) {
                         scope.launch {
                             pagerState.scrollToPage(data.indexOf(it))
                         }
@@ -463,7 +510,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                             viewModel.toggleOrigin(it)
                         },
                         onEdit = {
-
+                            viewModel.updateScene(QMUIPhotoPickerEditScene(data[pagerState.currentPage]))
                         },
                         onToggleSelect = {
                             viewModel.togglePick(data[pagerState.currentPage])
@@ -477,12 +524,16 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
 
     @Composable
-    protected open fun BoxScope.PhotoPickerEditContent(
+    protected open fun BoxScope.PhotoPickerEditScene(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaPhotoVO>,
-        index: Int
+        scene: QMUIPhotoPickerEditScene
     ) {
-
+        LaunchedEffect("") {
+            WindowCompat.getInsetsController(window, window.decorView)?.hide(WindowInsetsCompat.Type.statusBars())
+        }
+        QMUIPhotoPickerEdit(onBackPressedDispatcher, scene.current) {
+            viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene)
+        }
     }
 
     @Composable
@@ -529,8 +580,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
     }
 
-    protected open fun onHandleSend() {
-        val pickedList = viewModel.getPickedResultList()
+    protected open fun onHandleSend(pickedList: List<QMUIPhotoPickItemInfo>) {
         setResult(RESULT_OK, Intent().apply {
             putParcelableArrayListExtra(QMUI_PHOTO_RESULT_URI_LIST, arrayListOf<QMUIPhotoPickItemInfo>().apply {
                 addAll(pickedList)
@@ -559,4 +609,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     protected open fun supportedMimeTypes(): Array<String> {
         return QMUIMediaImagesProvider.DEFAULT_SUPPORT_MIMETYPES
     }
+
+    private class SceneHolder<T:QMUIPhotoPickerScene>(var scene: T? = null)
 }
+
+

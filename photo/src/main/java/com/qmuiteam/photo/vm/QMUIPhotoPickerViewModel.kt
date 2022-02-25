@@ -31,6 +31,9 @@ class QMUIPhotoPickerViewModel @Keep constructor(
     private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
     val photoPickerSceneFlow = _photoPickerSceneFlow.asStateFlow()
 
+    var prevScene: QMUIPhotoPickerScene? = null
+        private set
+
     private val _photoPickerDataFlow = MutableStateFlow(QMUIPhotoPickerData(QMUIPhotoPickerLoadState.permissionChecking, null))
     val photoPickerDataFlow = _photoPickerDataFlow.asStateFlow()
 
@@ -51,6 +54,7 @@ class QMUIPhotoPickerViewModel @Keep constructor(
     }
 
     fun updateScene(scene: QMUIPhotoPickerScene) {
+        prevScene = _photoPickerSceneFlow.value
         _photoPickerSceneFlow.value = scene
     }
 
@@ -130,9 +134,9 @@ class QMUIPhotoPickerPreviewScene(
 ) : QMUIPhotoPickerScene()
 
 class QMUIPhotoPickerEditScene(
-    val prevScene: QMUIPhotoPickerScene,
-    val current: QMUIMediaModel
+    val current: QMUIMediaPhotoVO
 ) : QMUIPhotoPickerScene()
+
 
 enum class QMUIPhotoPickerLoadState {
     permissionChecking, permissionDenied, dataLoading, dataLoaded

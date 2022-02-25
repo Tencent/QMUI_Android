@@ -39,7 +39,7 @@ object Dep {
     }
 
     object Compose {
-        val version = "1.1.0-rc01"
+        val version = "1.1.1"
         val animation = "androidx.compose.animation:animation:$version"
         val ui = "androidx.compose.ui:ui:$version"
         val material = "androidx.compose.material:material:$version"

@@ -178,7 +178,7 @@ fun QMUIPhotoPickerPreviewToolBar(
         CommonTextButton(
             modifier = Modifier.align(Alignment.CenterStart),
             enable = true,
-            text = "预览",
+            text = "编辑",
             onClick = onEdit
         )
 

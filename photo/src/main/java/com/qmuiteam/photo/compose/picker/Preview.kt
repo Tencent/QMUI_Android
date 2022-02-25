@@ -131,7 +131,7 @@ private fun QMUIPhotoPickerPreviewPickedItem(
         item.photoProvider.thumbnail()
     }
     Box(modifier = Modifier
-        .size(40.dp)
+        .size(50.dp)
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null

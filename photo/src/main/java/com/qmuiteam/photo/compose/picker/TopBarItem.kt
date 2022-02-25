@@ -88,7 +88,7 @@ class QMUIPhotoSendTopBarItem(
         val interactionSource = remember { MutableInteractionSource() }
         val isPressed = interactionSource.collectIsPressedAsState()
         val usedBgColor = when {
-            selectCount == 0 -> disableBgColor
+            selectCount == 0 && !canSendSelf -> disableBgColor
             isPressed.value -> pressBgColor
             else -> normalBgColor
         }

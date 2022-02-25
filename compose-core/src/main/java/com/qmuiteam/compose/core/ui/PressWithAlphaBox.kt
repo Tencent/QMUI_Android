@@ -12,7 +12,7 @@ import androidx.compose.ui.draw.alpha
 
 @Composable
 fun PressWithAlphaBox(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     enable: Boolean = true,
     pressAlpha: Float = 0.5f,
     disableAlpha: Float = 0.5f,

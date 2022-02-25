@@ -16,6 +16,7 @@ class QMUIPhotoPickerConfig(
     val commonCheckIconNormalTintColor: Color = Color.White.copy(0.8f),
     val commonCheckIconCheckedTintColor: Color = qmuiPrimaryColor,
     val commonCheckIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
+    val commonIconButtonTintColor: Color = Color.White,
 
     val topBarBgColor: Color = Color(0xFF222222),
     val toolBarBgColor: Color = topBarBgColor,
