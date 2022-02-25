@@ -364,7 +364,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                         viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, false, it.id))
                     }
                 )
-                QMUIPhotoPickerGridPageToolBar(
+                QMUIPhotoPickerGridToolBar(
                     modifier = Modifier
                         .constrainAs(toolbar) {
                             width = Dimension.fillToConstraints

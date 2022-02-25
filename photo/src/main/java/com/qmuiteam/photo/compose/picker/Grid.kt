@@ -14,13 +14,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsCompat
+import com.qmuiteam.compose.core.ex.drawTopSeparator
 import com.qmuiteam.compose.core.helper.OnePx
+import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
+import com.qmuiteam.compose.core.provider.dp
 import com.qmuiteam.photo.data.QMUIMediaModel
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
+import kotlinx.coroutines.flow.StateFlow
 import java.lang.StringBuilder
 
 class QMUIPhotoPickerGridRowData(val key: String, val list: List<QMUIMediaPhotoVO>)
@@ -167,4 +173,45 @@ fun QMUIPhotoPickerGridCellMask(pickedIndex: Int){
             .fillMaxSize()
             .background(Color.Black.copy(alpha = maskAlpha.value))
     )
+}
+
+@Composable
+fun QMUIPhotoPickerGridToolBar(
+    modifier: Modifier = Modifier,
+    enableOrigin: Boolean,
+    pickedItems: List<Long>,
+    isOriginOpenFlow: StateFlow<Boolean>,
+    onToggleOrigin: (toOpen: Boolean) -> Unit,
+    onPreview: () -> Unit
+) {
+    val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
+        WindowInsetsCompat.Type.navigationBars()
+    ).dp()
+    val config = QMUILocalPickerConfig.current
+    Box(modifier = modifier
+        .background(config.toolBarBgColor)
+        .padding(bottom = insets.bottom)
+        .height(44.dp)
+        .drawBehind {
+            drawTopSeparator(config.commonSeparatorColor)
+        }
+    ) {
+        CommonTextButton(
+            modifier = Modifier.align(Alignment.CenterStart),
+            enable = pickedItems.isNotEmpty(),
+            text = "预览",
+            onClick = onPreview
+        )
+
+        if(enableOrigin){
+            OriginOpenButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.Center),
+                isOriginOpenFlow = isOriginOpenFlow,
+                onToggleOrigin = onToggleOrigin
+            )
+        }
+    }
 }

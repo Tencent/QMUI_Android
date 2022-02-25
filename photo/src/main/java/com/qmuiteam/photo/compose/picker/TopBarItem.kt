@@ -71,11 +71,6 @@ class QMUIPhotoPickerBucketTopBarItem(
 }
 
 class QMUIPhotoSendTopBarItem(
-    private val normalTextColor: Color,
-    private val disableTextColor: Color,
-    private val normalBgColor: Color,
-    private val pressBgColor: Color,
-    private val disableBgColor: Color,
     private val canSendSelf: Boolean,
     private val text: String,
     private val maxSelectCount: Int,
@@ -85,34 +80,11 @@ class QMUIPhotoSendTopBarItem(
     @Composable
     override fun Compose(topBarHeight: Dp) {
         val selectCount by selectCountFlow.collectAsState()
-        val interactionSource = remember { MutableInteractionSource() }
-        val isPressed = interactionSource.collectIsPressedAsState()
-        val usedBgColor = when {
-            selectCount == 0 && !canSendSelf -> disableBgColor
-            isPressed.value -> pressBgColor
-            else -> normalBgColor
-        }
-        val usedTextColor = if (selectCount > 0 || canSendSelf) normalTextColor else disableTextColor
-        val usedText = if (selectCount > 0) "$text($selectCount/$maxSelectCount)" else text
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .background(usedBgColor)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    enabled = selectCount > 0 || canSendSelf
-                ) {
-                    onClick()
-                }
-                .padding(start = 10.dp, end = 10.dp, top = 3.dp, bottom = 4.dp)
-        ) {
-            Text(
-                text = usedText,
-                fontSize = 17.sp,
-                color = usedTextColor
-            )
-        }
+        CommonButton(
+            enabled = selectCount > 0 || canSendSelf,
+            text = if (selectCount > 0) "$text($selectCount/$maxSelectCount)" else text,
+            onClick = onClick
+        )
     }
 }
 

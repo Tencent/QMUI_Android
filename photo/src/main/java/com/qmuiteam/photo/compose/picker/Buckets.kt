@@ -165,7 +165,7 @@ fun QMUIPhotoBucketItem(
                 end.linkTo(parent.end, 16.dp)
                 visibility = if (isCurrent) Visibility.Visible else Visibility.Gone
             },
-            tint = config.commonCheckIconCheckedTintColor
+            tint = config.commonIconCheckedTintColor
         )
     }
 }

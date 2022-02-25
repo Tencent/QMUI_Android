@@ -13,10 +13,16 @@ import kotlinx.coroutines.flow.StateFlow
 class QMUIPhotoPickerConfig(
     val commonTextButtonTextColor: Color = Color.White,
     val commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),
-    val commonCheckIconNormalTintColor: Color = Color.White.copy(0.8f),
-    val commonCheckIconCheckedTintColor: Color = qmuiPrimaryColor,
-    val commonCheckIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
-    val commonIconButtonTintColor: Color = Color.White,
+    val commonIconNormalTintColor: Color = Color.White.copy(0.9f),
+    val commonIconCheckedTintColor: Color = qmuiPrimaryColor,
+    val commonIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
+
+    val commonButtonNormalTextColor: Color = Color.White,
+    val commonButtonNormalBgColor: Color = qmuiPrimaryColor,
+    val commonButtonDisabledTextColor: Color = Color.White.copy(alpha = 0.3f),
+    val commonButtonDisableBgColor: Color = Color.White.copy(alpha = 0.15f),
+    val commonButtonPressBgColor: Color = qmuiPrimaryColor.copy(alpha = 0.8f),
+    val commonButtonPressedTextColor: Color = commonButtonNormalTextColor,
 
     val topBarBgColor: Color = Color(0xFF222222),
     val toolBarBgColor: Color = topBarBgColor,
@@ -43,11 +49,6 @@ class QMUIPhotoPickerConfig(
         onClick: () -> Unit
     ) -> QMUITopBarItem = { canSendSelf, maxSelectCount, selectCountFlow, onClick ->
         QMUIPhotoSendTopBarItem(
-            normalTextColor = Color.White,
-            disableTextColor = Color.White.copy(alpha = 0.3f),
-            normalBgColor = qmuiPrimaryColor,
-            pressBgColor = qmuiPrimaryColor.copy(alpha = 0.8f),
-            disableBgColor = Color.White.copy(alpha = 0.15f),
             text = "发送",
             canSendSelf = canSendSelf,
             maxSelectCount = maxSelectCount,

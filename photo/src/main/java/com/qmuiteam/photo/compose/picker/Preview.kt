@@ -11,14 +11,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsCompat
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.qmuiteam.compose.core.ex.drawTopSeparator
+import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
+import com.qmuiteam.compose.core.provider.dp
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.data.PhotoLoadStatus
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
+import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -140,7 +146,7 @@ private fun QMUIPhotoPickerPreviewPickedItem(
         }
         .let {
             if(isCurrent){
-                it.border(2.dp, QMUILocalPickerConfig.current.commonCheckIconCheckedTintColor)
+                it.border(2.dp, QMUILocalPickerConfig.current.commonIconCheckedTintColor)
             } else {
                 it
             }
@@ -151,5 +157,57 @@ private fun QMUIPhotoPickerPreviewPickedItem(
             isContainerDimenExactly = true,
             onSuccess = null,
             onError = null)
+    }
+}
+
+
+@Composable
+fun QMUIPhotoPickerPreviewToolBar(
+    modifier: Modifier = Modifier,
+    isCurrentPicked: Boolean,
+    enableOrigin: Boolean,
+    isOriginOpenFlow: StateFlow<Boolean>,
+    onToggleOrigin: (toOpen: Boolean) -> Unit,
+    onEdit: () -> Unit,
+    onToggleSelect: (toSelect: Boolean) -> Unit
+){
+    val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
+        WindowInsetsCompat.Type.navigationBars()
+    ).dp()
+    val config = QMUILocalPickerConfig.current
+    Box(modifier = modifier
+        .background(config.toolBarBgColor)
+        .padding(bottom = insets.bottom)
+        .height(44.dp)
+        .drawBehind {
+            drawTopSeparator(config.commonSeparatorColor)
+        }
+    ) {
+        CommonTextButton(
+            modifier = Modifier.align(Alignment.CenterStart),
+            enable = true,
+            text = "编辑",
+            onClick = onEdit
+        )
+
+        if(enableOrigin){
+            OriginOpenButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.Center),
+                isOriginOpenFlow = isOriginOpenFlow,
+                onToggleOrigin = onToggleOrigin
+            )
+        }
+
+        PickCurrentCheckButton(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 16.dp)
+                .align(Alignment.CenterEnd),
+            isPicked = isCurrentPicked,
+            onPicked = onToggleSelect
+        )
     }
 }
