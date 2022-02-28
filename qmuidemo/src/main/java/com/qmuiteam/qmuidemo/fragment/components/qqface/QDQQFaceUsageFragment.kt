@@ -30,6 +30,7 @@ import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmui.kotlin.onClick
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView
 import com.qmuiteam.qmui.span.QMUITouchableSpan
+import com.qmuiteam.qmui.type.SerialLineIndentHandler
 import com.qmuiteam.qmui.type.parser.EmojiTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
 import com.qmuiteam.qmui.type.view.LineTypeView
@@ -43,6 +44,8 @@ import com.qmuiteam.qmuidemo.base.BaseFragment
 import com.qmuiteam.qmuidemo.lib.Group
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
 import com.qmuiteam.qmuidemo.manager.QDDataManager
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * @author cginechen
@@ -66,6 +69,10 @@ class QDQQFaceUsageFragment : BaseFragment() {
     @JvmField
     @BindView(R.id.line_type_1)
     var mLineType1: LineTypeView? = null
+
+    @JvmField
+    @BindView(R.id.line_type_2)
+    var mLineType2: LineTypeView? = null
 
     @JvmField
     @BindView(R.id.qqface1)
@@ -193,6 +200,28 @@ class QDQQFaceUsageFragment : BaseFragment() {
         mLineType1!!.onClick {
             Toast.makeText(context, "你点整个 LineTypeView 干嘛", Toast.LENGTH_SHORT).show()
         }
+
+        mLineType2!!.textParser = textParser
+        mLineType2!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
+        mLineType2!!.textColor = Color.BLACK
+        mLineType2!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
+        mLineType2!!.textParser = textParser
+        val content2 = "a.这一条很重要，你要仔细研读研读。\n" +
+                "b.这一条不重要，但是有很多很多很多很多很多很多很多很多内容。。\n" +
+                "c.这一条特别重要，但是我也不知道对不对，只能放这里了，哈哈哈哈。\n"
+        mLineType2!!.text = content2
+
+        val pairs = arrayListOf<Pair<Int, Int>>()
+        val pattern = Pattern.compile("([a-z]\\.)")
+        val matcher = pattern.matcher(content2)
+        while (matcher.find()){
+            pairs.add(matcher.start() to matcher.end() - 1)
+        }
+
+        pairs.forEach {
+            mLineType2!!.addTextColorEffect(it.first, it.second, Color.LTGRAY)
+        }
+        mLineType2!!.lineLayout.lineIndentHandler = SerialLineIndentHandler(pairs)
 
         mQQFace1!!.text = "这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示"
         mQQFace2!!.text = "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +

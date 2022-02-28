@@ -36,6 +36,8 @@ class LineLayout {
     var typeModel: TypeModel? = null
     var shouldHandleWordBreak: Boolean = true
 
+    var lineIndentHandler:LineIndentHandler? = null
+
     private var exactlyHeightMaxLine = Int.MAX_VALUE
 
     private val mLines: MutableList<Line> = ArrayList()
@@ -62,7 +64,8 @@ class LineLayout {
         var element: Element? = typeModel!!.firstElement()
         var line = Line.acquire()
         var y = 0
-        line.init(0, y, env.widthLimit)
+        val indent = element?.let { lineIndentHandler?.getIndent(typeModel!!, it) } ?: 0
+        line.init(indent, y, env.widthLimit - indent)
 
         fun addLineAndHandleMaxLineAndNextY(line: Line, isParagraphEndLine: Boolean){
             mLines.add(line)
@@ -93,8 +96,8 @@ class LineLayout {
                     handleEllipse(env,true)
                     return
                 }
-                line = createNewLine(env, y)
-            } else if (line.contentWidth + element.measureWidth > env.widthLimit) {
+                line = createNewLine(env, element.next, y)
+            } else if (line.contentWidth + element.measureWidth >= line.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
                     // the width is too small.
                     line.release()
@@ -109,7 +112,7 @@ class LineLayout {
                     return
                 }
 
-                line = createNewLine(env, y)
+                line = createNewLine(env, back?.firstOrNull() ?: element, y)
                 if (back != null && back.isNotEmpty()) {
                     for (el in back) {
                         line.add(el)
@@ -141,9 +144,10 @@ class LineLayout {
         }
     }
 
-    private fun createNewLine(env: TypeEnvironment, y: Int): Line {
+    private fun createNewLine(env: TypeEnvironment, firstElement: Element?, y: Int): Line {
         val line = Line.acquire()
-        line.init(0, y, env.widthLimit)
+        val indent = firstElement?.let { lineIndentHandler?.getIndent(typeModel!!, it) } ?: 0
+        line.init(indent, y, env.widthLimit - indent)
         return line
     }
 
@@ -175,15 +179,11 @@ class LineLayout {
         val lastLine = mLines[mLines.size - 1]
         var limitWidth = lastLine.widthLimit
         val ellipseElement: Element = TextElement("...", -1, -1)
-        ellipseElement.addSingleEnvironmentUpdater(null, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.clear()
-            }
-        })
+        ellipseElement.addSingleEnvironmentUpdater(null) { it.clear() }
         ellipseElement.measure(env)
         limitWidth -= ellipseElement.measureWidth
         var moreElement: Element? = null
-        if (moreText != null && !moreText!!.isEmpty()) {
+        if (moreText != null && moreText!!.isNotEmpty()) {
             moreElement = MoreTextElement(moreText!!, -1, -1)
             val changeTypes: MutableList<Int> = ArrayList()
             changeTypes.add(TypeEnvironment.TYPE_TEXT_COLOR)
@@ -230,7 +230,7 @@ class LineLayout {
         }
         lastLine.layout(env, dropLastIfSpace, true)
         if (moreElement != null) {
-            moreElement.x = lastLine.widthLimit - moreElement.measureWidth
+            moreElement.x = lastLine.x + lastLine.widthLimit - moreElement.measureWidth
         }
     }
 

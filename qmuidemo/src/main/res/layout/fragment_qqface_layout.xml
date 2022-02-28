@@ -73,6 +73,16 @@
 
             <TextView
                 style="@style/QDCommonTitle"
+                android:text="新排版, 序号对齐"
+                android:layout_marginTop="20dp"/>
+
+            <com.qmuiteam.qmui.type.view.LineTypeView
+                android:id="@+id/line_type_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/QDCommonTitle"
                 android:text="单行表情，末尾省略"
                 android:layout_marginTop="20dp"/>
             <com.qmuiteam.qmui.qqface.QMUIQQFaceView

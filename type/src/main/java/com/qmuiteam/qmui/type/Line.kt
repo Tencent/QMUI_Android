@@ -148,7 +148,7 @@ class Line private constructor() {
         val last = mElements[mElements.size - 1]
         if (dropLastIfSpace && last is TextElement && last.length == 1 && last.text[0] == ' ' && last.visible != Element.GONE) {
             changeVisibleInner(last, Element.GONE)
-            contentWidth = (contentWidth - last.measureWidth).toInt()
+            contentWidth -= last.measureWidth
             return true
         }
         return false
