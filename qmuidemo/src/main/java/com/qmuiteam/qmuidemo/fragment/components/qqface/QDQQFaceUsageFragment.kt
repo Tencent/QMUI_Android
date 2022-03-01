@@ -212,7 +212,7 @@ class QDQQFaceUsageFragment : BaseFragment() {
         mLineType2!!.text = content2
 
         val pairs = arrayListOf<Pair<Int, Int>>()
-        val pattern = Pattern.compile("([a-z]\\.)")
+        val pattern = Pattern.compile("([a-z]+\\.)")
         val matcher = pattern.matcher(content2)
         while (matcher.find()){
             pairs.add(matcher.start() to matcher.end() - 1)

@@ -58,13 +58,14 @@ class LineLayout {
         exactlyHeightMaxLine = Int.MAX_VALUE
         env.clear()
         release()
+        lineIndentHandler?.reset()
         if (typeModel == null) {
             return
         }
         var element: Element? = typeModel!!.firstElement()
         var line = Line.acquire()
         var y = 0
-        val indent = element?.let { lineIndentHandler?.getIndent(typeModel!!, it) } ?: 0
+        val indent = element?.let { lineIndentHandler?.processIndent(typeModel!!, it, true) } ?: 0
         line.init(indent, y, env.widthLimit - indent)
 
         fun addLineAndHandleMaxLineAndNextY(line: Line, isParagraphEndLine: Boolean){
@@ -94,13 +95,15 @@ class LineLayout {
                 addLineAndHandleMaxLineAndNextY(line, true)
                 if (canInterrupt()) {
                     handleEllipse(env,true)
+                    totalLineCount = mLines.size
                     return
                 }
-                line = createNewLine(env, element.next, y)
+                line = createNewLine(env, element.next, y, true)
             } else if (line.contentWidth + element.measureWidth >= line.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
                     // the width is too small.
                     line.release()
+                    totalLineCount = mLines.size
                     return
                 }
                 val back = line.handleWordBreak(env, shouldHandleWordBreak)
@@ -108,11 +111,12 @@ class LineLayout {
                 addLineAndHandleMaxLineAndNextY(line, false)
 
                 if (canInterrupt()) {
+                    totalLineCount = mLines.size
                     handleEllipse(env,true)
                     return
                 }
 
-                line = createNewLine(env, back?.firstOrNull() ?: element, y)
+                line = createNewLine(env, back?.firstOrNull() ?: element, y, false)
                 if (back != null && back.isNotEmpty()) {
                     for (el in back) {
                         line.add(el)
@@ -144,9 +148,9 @@ class LineLayout {
         }
     }
 
-    private fun createNewLine(env: TypeEnvironment, firstElement: Element?, y: Int): Line {
+    private fun createNewLine(env: TypeEnvironment, firstElement: Element?, y: Int, newParagraph: Boolean): Line {
         val line = Line.acquire()
-        val indent = firstElement?.let { lineIndentHandler?.getIndent(typeModel!!, it) } ?: 0
+        val indent = firstElement?.let { lineIndentHandler?.processIndent(typeModel!!, it, newParagraph) } ?: 0
         line.init(indent, y, env.widthLimit - indent)
         return line
     }

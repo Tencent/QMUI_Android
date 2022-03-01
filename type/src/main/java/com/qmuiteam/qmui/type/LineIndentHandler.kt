@@ -3,53 +3,55 @@ package com.qmuiteam.qmui.type
 import com.qmuiteam.qmui.type.element.Element
 
 interface LineIndentHandler {
-    fun getIndent(typeModel: TypeModel, firstElement: Element): Int
+    fun reset()
+    fun processIndent(typeModel: TypeModel, firstElement: Element, newParagraph: Boolean): Int
 }
 
-class SerialLineIndentHandler(serials: List<Pair<Int, Int>>): LineIndentHandler {
+class SerialLineIndentHandler(
+    serials: List<Pair<Int, Int>>,
+    private val followIndentForNewParagraphIfNeeded: Boolean = false): LineIndentHandler {
 
     private val sorted = serials.sortedBy {
         it.first
     }
 
-    var prevIndexCache = -1
+    var currentIntend = 0
+    private var pendingCalculatePair: Pair<Int, Int>? = null
+    var nextIndex = 0
 
-    override fun getIndent(typeModel: TypeModel, firstElement: Element): Int {
-        if(sorted.isEmpty()){
-            return 0
-        }
-
-        if(prevIndexCache >= 0 && firstElement.index > prevIndexCache){
-            // check fast path
-            if(prevIndexCache == sorted.size - 1 || sorted[prevIndexCache + 1].first > firstElement.index){
-                return calculateIndent(typeModel, firstElement, prevIndexCache)
-            } else if(prevIndexCache + 1 == sorted.size - 1 || sorted[prevIndexCache + 2].first > firstElement.index) {
-                prevIndexCache += 1
-                return calculateIndent(typeModel, firstElement, prevIndexCache)
-            }else{
-                prevIndexCache = -1
-            }
-        }
-
-        val nextIndex = sorted.indexOfFirst { it.first > firstElement.index }
-        if(nextIndex == 0){
-            return 0
-        }
-        val prevIndex = if(nextIndex < 0) sorted.size - 1 else nextIndex - 1
-        prevIndexCache = prevIndex
-        return calculateIndent(typeModel, firstElement, prevIndex)
+    override fun reset() {
+        currentIntend = 0
+        nextIndex = 0
     }
 
-    private fun calculateIndent(typeModel: TypeModel, firstElement: Element, index: Int): Int{
-        val cur = sorted[index]
-        if(firstElement.index <= cur.second){
-            return 0
+    override fun processIndent(typeModel: TypeModel, firstElement: Element, newParagraph: Boolean): Int {
+        if(newParagraph){
+            val pair = sorted.find { it.first == firstElement.index }
+            if(pair != null){
+                currentIntend = 0
+            }else if(!followIndentForNewParagraphIfNeeded){
+                currentIntend = 0
+            } else {
+                // make sure it's calculated.
+                pendingCalculatePair?.let {
+                    var indent = 0
+                    for(i in it.first until it.second + 1){
+                        indent += typeModel[i]?.measureWidth ?: 0
+                    }
+                    currentIntend = indent
+                }
+            }
+            pendingCalculatePair = pair
+        }else{
+            pendingCalculatePair?.let {
+                var indent = 0
+                for(i in it.first until it.second + 1){
+                    indent += typeModel[i]?.measureWidth ?: 0
+                }
+                currentIntend = indent
+            }
+            pendingCalculatePair = null
         }
-
-        var indent = 0
-        for(i in cur.first until cur.second + 1){
-            indent += typeModel[i]?.measureWidth ?: 0
-        }
-        return indent
+        return currentIntend
     }
 }
