@@ -6,6 +6,7 @@ import java.io.File
 import java.util.*
 import kotlin.io.*
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -20,24 +21,12 @@ class QMUIPublish: Plugin<Project> {
 
         if (isAndroid) {
             println("android")
-            val android = project.extensions.getByName("android") as BaseExtension
-
-            //register sourcesJar for android
-            val sourcesJar = project.tasks.register("sourcesJar", Jar::class.java){
-                archiveClassifier.set("sources")
-                from(android.sourceSets.getByName("main").java.srcDirs)
-            }
-
-            //register task javadoc for android
-            val javadoc = project.tasks.register("javadoc", Javadoc::class.java) {
-                isFailOnError = false
-                setSource(android.sourceSets.getByName("main").java.srcDirs)
-                classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
-            }
-            project.tasks.register("androidJavaDocsJar", Jar::class.java) {
-                archiveClassifier.set("javadoc")
-                dependsOn(javadoc)
-                from(javadoc.get().destinationDir)
+            val android = project.extensions.getByName("android") as LibraryExtension
+            android.publishing {
+                singleVariant("release"){
+                    withJavadocJar()
+                    withSourcesJar()
+                }
             }
         }else{
             println("java/kotlin")
@@ -55,6 +44,7 @@ class QMUIPublish: Plugin<Project> {
                 val mavenUrl = properties.getProperty("maven.url")
                 val mavenUsername = properties.getProperty("maven.username")
                 val mavenPassword = properties.getProperty("maven.password")
+
                 println("mavenUrl:$mavenUrl")
 
                 project.configure<PublishingExtension> {
@@ -70,8 +60,6 @@ class QMUIPublish: Plugin<Project> {
                     publications {
                         create<MavenPublication>("release") {
                             if(isAndroid){
-                                artifact(project.tasks.getByName("sourcesJar"))
-                                artifact(project.tasks.getByName("androidJavaDocsJar"))
                                 from(components.getByName("release"))
                             }else{
                                 from(components.getByName("java"))
@@ -112,5 +100,5 @@ class QMUIPublish: Plugin<Project> {
 }
 
 fun println(log: String) {
-    kotlin.io.println("qmui publish > $log")
+    kotlin.io.println("qmui config publish > $log")
 }

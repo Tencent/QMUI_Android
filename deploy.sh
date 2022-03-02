@@ -3,14 +3,17 @@
 #./deploy.sh qmui publishToMavenLocal
 #./deploy.sh arch publishToMavenLocal
 #./deploy.sh type publishToMavenLocal
+#./deploy.sh compose publishToMavenLocal
 
 #./deploy.sh qmui publish
 #./deploy.sh arch publish
 #./deploy.sh type publish
+#./deploy.sh compose publish
 
 #./deploy.sh qmui bintrayUpload
 #./deploy.sh arch bintrayUpload
 #./deploy.sh type bintrayUpload
+#./deploy.sh compose publish
 
 if [[ "qmui" == "$1" ]]
 then
@@ -26,10 +29,16 @@ then
     $buildCmd
 elif [[ "type" == "$1" ]]
 then
-    buildCmd="./gradlew :type:clean :type:build type:$2"
+    buildCmd="./gradlew :type:clean :type:build :type:$2"
     $buildCmd
-elif [[ "lint" == "$1" ]]
+elif [[ "compose" == "$1" ]]
 then
-    buildCmd="./gradlew :lint:clean :lint:build type:$2"
+    buildCmd="./gradlew :compose-core:clean :compose-core:build :compose-core:$2"
+    $buildCmd
+    buildCmd="./gradlew :compose:clean :compose:build :compose:$2"
+    $buildCmd
+elif [[ "photo" == "$1" ]]
+then
+    buildCmd="./gradlew :photo:clean :photo:build :photo:$2"
     $buildCmd
 fi

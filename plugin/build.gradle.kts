@@ -14,7 +14,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.android.tools.build:gradle:7.1.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
     }
 }
@@ -47,8 +47,8 @@ dependencies {
     api(gradleKotlinDsl())
     api(kotlin("gradle-plugin", version = "1.6.10"))
     api(kotlin("gradle-plugin-api", version = "1.6.10"))
-    api("com.android.tools.build:gradle-api:7.0.4")
-    api("com.android.tools.build:gradle:7.0.4")
+    api("com.android.tools.build:gradle-api:7.1.2")
+    api("com.android.tools.build:gradle:7.1.2")
     implementation(kotlin("stdlib-jdk8"))
 }
 

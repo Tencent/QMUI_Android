@@ -20,7 +20,7 @@ fun QMUIWindowInsetsProvider(content: @Composable () -> Unit) {
         mutableStateOf(view.getTag(R.id.qmui_window_inset_cache) as? WindowInsetsCompat ?: WindowInsetsCompat.CONSUMED)
     }
     LaunchedEffect(view) {
-        ViewCompat.setOnApplyWindowInsetsListener(view, OnApplyWindowInsetsListener { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(view, OnApplyWindowInsetsListener { _, insets ->
             windowInsets.value = insets
             view.setTag(R.id.qmui_window_inset_cache, insets)
             return@OnApplyWindowInsetsListener insets

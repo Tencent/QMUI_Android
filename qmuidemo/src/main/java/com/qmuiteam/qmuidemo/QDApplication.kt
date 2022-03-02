@@ -91,15 +91,21 @@ class QDApplication : Application(), ImageLoaderFactory {
         GlobalScope.launch(Dispatchers.IO) {
             delay(5000)
             for (file in TombstoneManager.getAllTombstones()) {
-                val contentValues = ContentValues()
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "txt")
-                val uri = contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues) ?: continue
-                contentResolver.openOutputStream(uri)?.use { out ->
-                    file.inputStream().use { ins ->
-                        ins.copyTo(out)
+                try {
+                    val contentValues = ContentValues()
+                    contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                    contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "txt")
+                    val uri = contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues) ?: continue
+                    contentResolver.openOutputStream(uri)?.use { out ->
+                        file.inputStream().use { ins ->
+                            ins.copyTo(out)
+                        }
                     }
+                    file.delete()
+                }catch (ignore: Throwable){
+
                 }
+
             }
         }
     }
