@@ -50,7 +50,7 @@ class SerialLineIndentHandler(
     private fun calculateIndent(typeModel: TypeModel, pair: Pair<Int, Int>): Int {
         var indent = 0
         var el = typeModel.getByPos(pair.first)
-        while (el != null && el.start + el.text.length <= pair.second){
+        while (el != null && el.start <= pair.second){
             indent += el.measureWidth
             el = el.next
         }
