@@ -17,74 +17,55 @@ package com.qmuiteam.qmui.type
 
 import android.graphics.Typeface
 import com.qmuiteam.qmui.type.element.Element
-import java.lang.RuntimeException
-import java.util.*
 
 class TypeModel(
-        val origin: CharSequence,
-        private val mElementMap: Map<Int, Element>,
-        private val mFirstElement: Element,
-        private val mLastElement: Element) {
+    val origin: CharSequence,
+    private val mElementMap: Map<Int, Element>,
+    private val mFirstElement: Element,
+    private val mLastElement: Element
+) {
 
     var firstEffect: Element? = null
 
     fun addTypefaceEffect(start: Int, end: Int, typeface: Typeface): EffectRemover? {
         val types: MutableList<Int> = ArrayList()
         types.add(TypeEnvironment.TYPE_TYPEFACE)
-        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.typeface = typeface
-            }
-        })
+        return unsafeAddEffect(start, end, types) { env -> env.typeface = typeface }
     }
 
     fun addTextSizeEffect(start: Int, end: Int, textSize: Float): EffectRemover? {
         val types: MutableList<Int> = ArrayList()
         types.add(TypeEnvironment.TYPE_TEXT_SIZE)
-        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.textSize = textSize
-            }
-        })
+        return unsafeAddEffect(start, end, types) { env -> env.textSize = textSize }
     }
 
     fun addBgEffect(start: Int, end: Int, bgColor: Int): EffectRemover? {
         val types: MutableList<Int> = ArrayList()
         types.add(TypeEnvironment.TYPE_BG_COLOR)
-        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.backgroundColor = bgColor
-            }
-        })
+        return unsafeAddEffect(start, end, types) { env -> env.backgroundColor = bgColor }
     }
 
     fun addTextColorEffect(start: Int, end: Int, textColor: Int): EffectRemover? {
         val types: MutableList<Int> = ArrayList()
         types.add(TypeEnvironment.TYPE_TEXT_COLOR)
-        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.textColor = textColor
-            }
-        })
+        return unsafeAddEffect(start, end, types) { env -> env.textColor = textColor }
     }
 
     fun addUnderLineEffect(start: Int, end: Int, underLineColor: Int, underLineHeight: Int): EffectRemover? {
         val types: MutableList<Int> = ArrayList()
         types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_WIDTH)
         types.add(TypeEnvironment.TYPE_BORDER_BOTTOM_COLOR)
-        return unsafeAddEffect(start, end, types, object : EnvironmentUpdater {
-            override fun update(env: TypeEnvironment) {
-                env.setBorderBottom(underLineHeight, underLineColor)
-            }
-        })
+        return unsafeAddEffect(
+            start, end, types
+        ) { env -> env.setBorderBottom(underLineHeight, underLineColor) }
     }
 
     fun unsafeAddEffect(start: Int, end: Int, types: List<Int>, environmentUpdater: EnvironmentUpdater): EffectRemover? {
-        if(start > end){
+        if (start > end) {
             throw RuntimeException("unsafeAddEffect: start($start) is bigger than end($end)")
         }
-        val elementStart = mElementMap[start]
-        val elementEnd = mElementMap[end]
+        val elementStart = getByPos(start)
+        val elementEnd = getByPos(end)
         if (elementStart == null || elementEnd == null) {
             return null
         }
@@ -103,8 +84,8 @@ class TypeModel(
     }
 
     fun unsafeRemoveEffect(start: Int, end: Int, types: List<Int>, environmentUpdater: EnvironmentUpdater): Boolean {
-        val elementStart = mElementMap[start]
-        val elementEnd = mElementMap[end]
+        val elementStart = getByPos(start)
+        val elementEnd = getByPos(end)
         if (elementStart == null || elementEnd == null) {
             return false
         }
@@ -126,7 +107,34 @@ class TypeModel(
         return mLastElement
     }
 
-    operator fun get(pos: Int): Element? {
+
+    fun getByPos(pos: Int): Element? {
+        val anchor = mElementMap[pos] ?: mLastElement
+        val anchorEnd = anchor.start + anchor.text.length
+        if (anchor.start <= pos && anchorEnd > pos) {
+            return anchor
+        } else if (anchorEnd <= pos) {
+            var next = anchor.next
+            while (next != null) {
+                if (next.start + next.text.length > pos) {
+                    return next
+                }
+                next = next.next
+            }
+            return null
+        } else {
+            var prev = anchor.prev
+            while (prev != null) {
+                if (prev.start <= pos) {
+                    return prev
+                }
+                prev = prev.prev
+            }
+            return null
+        }
+    }
+
+    fun getByIndex(pos: Int): Element? {
         return mElementMap[pos]
     }
 
@@ -136,11 +144,12 @@ class TypeModel(
 }
 
 class DefaultEffectRemove(
-        private val typeModel: TypeModel,
-        private val start: Int,
-        private val end: Int,
-        private val types: List<Int>,
-        private val environmentUpdater: EnvironmentUpdater) : TypeModel.EffectRemover {
+    private val typeModel: TypeModel,
+    private val start: Int,
+    private val end: Int,
+    private val types: List<Int>,
+    private val environmentUpdater: EnvironmentUpdater
+) : TypeModel.EffectRemover {
     override fun remove() {
         typeModel.unsafeRemoveEffect(start, end, types, environmentUpdater)
     }

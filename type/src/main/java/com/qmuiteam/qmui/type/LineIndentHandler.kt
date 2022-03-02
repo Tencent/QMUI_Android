@@ -34,24 +34,26 @@ class SerialLineIndentHandler(
             } else {
                 // make sure it's calculated.
                 pendingCalculatePair?.let {
-                    var indent = 0
-                    for(i in it.first until it.second + 1){
-                        indent += typeModel[i]?.measureWidth ?: 0
-                    }
-                    currentIntend = indent
+                    currentIntend = calculateIndent(typeModel, it)
                 }
             }
             pendingCalculatePair = pair
         }else{
             pendingCalculatePair?.let {
-                var indent = 0
-                for(i in it.first until it.second + 1){
-                    indent += typeModel[i]?.measureWidth ?: 0
-                }
-                currentIntend = indent
+                currentIntend = calculateIndent(typeModel, it)
             }
             pendingCalculatePair = null
         }
         return currentIntend
+    }
+
+    private fun calculateIndent(typeModel: TypeModel, pair: Pair<Int, Int>): Int {
+        var indent = 0
+        var el = typeModel.getByPos(pair.first)
+        while (el != null && el.start + el.text.length <= pair.second){
+            indent += el.measureWidth
+            el = el.next
+        }
+        return indent
     }
 }

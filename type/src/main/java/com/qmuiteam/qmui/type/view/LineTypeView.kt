@@ -244,8 +244,8 @@ open class LineTypeView : BaseTypeView {
     }
 
     private fun isSpanTouched(typeModel: TypeModel, touchSpan: TouchSpan, x: Float, y: Float): Boolean {
-        val start = typeModel[touchSpan.start] ?: return false
-        val end = typeModel[touchSpan.end] ?: return false
+        val start = typeModel.getByPos(touchSpan.start) ?: return false
+        val end = typeModel.getByPos(touchSpan.end) ?: return false
         if (start.y + paddingTop > y || end.y + paddingTop + end.measureHeight < y) {
             return false
         } else if (start.y == end.y) { // in one line
