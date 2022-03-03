@@ -69,7 +69,20 @@ class QMUIPhotoPickerConfig(
     val bucketChooserBgColor: Color = topBarBgColor,
     val bucketChooserIndicationColor: Color = Color.White.copy(alpha = 0.2f),
     val bucketChooserMainTextColor: Color = Color.White,
-    val bucketChooserCountTextColor: Color = Color.White.copy(alpha = 0.64f)
+    val bucketChooserCountTextColor: Color = Color.White.copy(alpha = 0.64f),
+
+    val paintEditOptions: List<PaintEdit> = listOf(
+        PaintMosaic(2),
+        PaintMosaic(1),
+        PaintGraffiti(Color.White),
+        PaintGraffiti(Color.Black),
+        PaintGraffiti(Color.Red),
+        PaintGraffiti(Color.Yellow),
+        PaintGraffiti(Color.Green),
+        PaintGraffiti(Color.Blue),
+        PaintGraffiti(Color.Magenta)
+    ),
+    val paintEditStrokeWidth: Dp = 5.dp
 )
 
 val qmuiPhotoPickerDefaultConfig by lazy { QMUIPhotoPickerConfig() }

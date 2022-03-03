@@ -1,39 +1,104 @@
 package com.qmuiteam.photo.compose.picker
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.forEachGesture
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.pointer.consumeDownChange
+import androidx.compose.ui.input.pointer.consumePositionChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
 import androidx.core.view.WindowInsetsCompat
 import com.qmuiteam.compose.core.R
 import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.core.provider.dp
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
+import kotlinx.coroutines.coroutineScope
 
 private enum class QMUIPhotoPickerEditScene {
     normal, paint, text, clip
 }
 
-private class QMUIPhotoPickerPhotoInfo(
-    var scale: Float,
-    var rect: Rect?,
-    var drawable: Drawable?,
+private class MutablePickerPhotoInfo(
+    var drawable: Drawable?
 )
+
+private data class PickerPhotoLayoutInfo(var scale: Float, var rect: Rect)
+
+sealed class PaintEdit {
+    @Composable
+    abstract fun Compose(size: Dp, selected: Boolean, onClick: () -> Unit)
+}
+
+class PaintMosaic(val level: Int) : PaintEdit() {
+
+    @Composable
+    override fun Compose(size: Dp, selected: Boolean, onClick: () -> Unit) {
+        val ringWidth = with(LocalDensity.current) {
+            2.dp.toPx()
+        }
+        Canvas(modifier = Modifier.size(size)) {
+            drawCircle(
+                Color.White,
+                radius = this.size.minDimension / 2 - if (selected) 0f else ringWidth
+            )
+            drawCircle(
+                Color.Black,
+                radius = this.size.minDimension / 2 - ringWidth * 2
+            )
+        }
+    }
+}
+
+class PaintGraffiti(val color: Color) : PaintEdit() {
+    @Composable
+    override fun Compose(size: Dp, selected: Boolean, onClick: () -> Unit) {
+        val ringWidth = with(LocalDensity.current) {
+            2.dp.toPx()
+        }
+        Canvas(modifier = Modifier
+            .size(size)
+            .clickable(
+                interactionSource = remember {
+                    MutableInteractionSource()
+                },
+                indication = null
+            ) {
+                onClick()
+            }) {
+            drawCircle(
+                Color.White,
+                radius = this.size.minDimension / 2 - if (selected) 0f else ringWidth
+            )
+            drawCircle(
+                color,
+                radius = this.size.minDimension / 2 - ringWidth * 2
+            )
+        }
+    }
+}
 
 @Composable
 fun QMUIPhotoPickerEdit(
@@ -45,8 +110,17 @@ fun QMUIPhotoPickerEdit(
         mutableStateOf(QMUIPhotoPickerEditScene.normal)
     }
     val photoInfo = remember(data) {
-        QMUIPhotoPickerPhotoInfo(1f, null, null)
+        MutablePickerPhotoInfo(null)
     }
+
+    var photoLayoutInfo by remember(data) {
+        mutableStateOf(PickerPhotoLayoutInfo(1f, Rect.Zero))
+    }
+
+    val editLayers = remember(data) {
+        mutableStateListOf<EditLayer>()
+    }
+
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         QMUIGesturePhoto(
@@ -63,13 +137,15 @@ fun QMUIPhotoPickerEdit(
 
             }
         ) { _, scale, rect, onImageRatioEnsured ->
-            photoInfo.scale = scale
-            photoInfo.rect = rect
+            photoLayoutInfo = PickerPhotoLayoutInfo(scale, rect)
             QMUIPhotoPickerEditPhotoContent(data) {
                 photoInfo.drawable = it
                 onImageRatioEnsured(it.intrinsicWidth.toFloat() / it.intrinsicHeight)
             }
         }
+
+        QMUIPhotoEditHistoryList(photoLayoutInfo, editLayers)
+
         AnimatedVisibility(
             visible = scene == QMUIPhotoPickerEditScene.normal || scene == QMUIPhotoPickerEditScene.paint,
             enter = fadeIn(),
@@ -77,10 +153,11 @@ fun QMUIPhotoPickerEdit(
         ) {
             QMUIPhotoPickerEditPaint(
                 paintState = scene == QMUIPhotoPickerEditScene.paint,
-                photoInfo = photoInfo,
+                editLayers = editLayers,
+                layoutInfo = photoLayoutInfo,
                 onBack = onBack,
                 onPaintClick = {
-                    scene = if(it) QMUIPhotoPickerEditScene.paint else QMUIPhotoPickerEditScene.normal
+                    scene = if (it) QMUIPhotoPickerEditScene.paint else QMUIPhotoPickerEditScene.normal
                 },
                 onTextClick = {
                     scene = QMUIPhotoPickerEditScene.text
@@ -88,8 +165,11 @@ fun QMUIPhotoPickerEdit(
                 onClipClick = {
                     scene = QMUIPhotoPickerEditScene.clip
                 },
+                onFinishPaintLayer = {
+                    editLayers.add(it)
+                },
                 onEnsureClick = {
-                    // TODO
+
                 }
             )
         }
@@ -99,11 +179,13 @@ fun QMUIPhotoPickerEdit(
 @Composable
 private fun QMUIPhotoPickerEditPaint(
     paintState: Boolean,
-    photoInfo: QMUIPhotoPickerPhotoInfo,
+    editLayers: List<EditLayer>,
+    layoutInfo: PickerPhotoLayoutInfo,
     onBack: () -> Unit,
     onPaintClick: (toPaint: Boolean) -> Unit,
     onTextClick: () -> Unit,
     onClipClick: () -> Unit,
+    onFinishPaintLayer: (PaintEditLayer) -> Unit,
     onEnsureClick: () -> Unit
 ) {
     val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
@@ -112,11 +194,46 @@ private fun QMUIPhotoPickerEditPaint(
                 WindowInsetsCompat.Type.displayCutout()
     ).dp()
 
+    val paintEditOptions = QMUILocalPickerConfig.current.paintEditOptions
+    var paintEditCurrentIndex by remember {
+        mutableStateOf(4)
+    }
+
+    if (paintEditCurrentIndex >= paintEditOptions.size) {
+        paintEditCurrentIndex = paintEditOptions.size - 1
+    }
+
     var showTools by remember {
         mutableStateOf(true)
     }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .constrainAs(createRef()) {
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+                visibility = if (paintState) Visibility.Visible else Visibility.Gone
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }) {
+            QMUIPhotoPaintCanvas(
+                paintEditOptions[paintEditCurrentIndex],
+                layoutInfo,
+                editLayers,
+                onTouchBegin = {
+                    showTools = false
+                },
+                onTouchEnd = {
+                    showTools = true
+                    onFinishPaintLayer(it)
+                }
+            )
+        }
+
         AnimatedVisibility(
             visible = showTools,
             modifier = Modifier.constrainAs(createRef()) {
@@ -207,7 +324,13 @@ private fun QMUIPhotoPickerEditPaint(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Text("TODO", color = Color.White)
+            QMUIPhotoPickerEditPaintOptions(
+                paintEditOptions,
+                24.dp,
+                paintEditCurrentIndex
+            ) {
+                paintEditCurrentIndex = it
+            }
         }
     }
 }
@@ -236,12 +359,141 @@ fun QMUIPhotoPickerEditPhotoContent(
 }
 
 @Composable
-internal fun QMUIPhotoPickerEditPaintChooser(){
-
+private fun QMUIPhotoEditHistoryList(
+    layoutInfo: PickerPhotoLayoutInfo,
+    editLayers: List<EditLayer>
+) {
+    if (layoutInfo.rect == Rect.Zero) {
+        return
+    }
+    val (w, h) = with(LocalDensity.current) {
+        arrayOf(
+            layoutInfo.rect.width.toDp(),
+            layoutInfo.rect.height.toDp()
+        )
+    }
+    Canvas(modifier = Modifier
+        .width(w / layoutInfo.scale)
+        .height(h / layoutInfo.scale)
+        .graphicsLayer {
+            this.transformOrigin = TransformOrigin(0f, 0f)
+            this.translationX = layoutInfo.rect.left
+            this.translationY = layoutInfo.rect.top
+            this.scaleX = layoutInfo.scale
+            this.scaleY = layoutInfo.scale
+            this.clip = true
+        }) {
+        editLayers.forEach {
+            with(it) {
+                draw()
+            }
+        }
+    }
 }
 
 @Composable
-internal fun QMUIPhotoPickerEditToolBar(
+private fun QMUIPhotoPaintCanvas(
+    paintEdit: PaintEdit,
+    layoutInfo: PickerPhotoLayoutInfo,
+    editLayers: List<EditLayer>,
+    onTouchBegin: () -> Unit,
+    onTouchEnd: (PaintEditLayer) -> Unit
+) {
+    val (w, h) = with(LocalDensity.current) {
+        arrayOf(
+            layoutInfo.rect.width.toDp(),
+            layoutInfo.rect.height.toDp()
+        )
+    }
+
+    val strokeWidth = with(LocalDensity.current) {
+        QMUILocalPickerConfig.current.paintEditStrokeWidth.toPx()
+    }
+    val currentLayerState = remember(editLayers, paintEdit, layoutInfo) {
+        val layer = if (paintEdit is PaintGraffiti) {
+            GraffitiEditLayer(Path(), paintEdit.color, strokeWidth / layoutInfo.scale)
+        } else {
+            MosaicEditLayer(Path())
+        }
+        mutableStateOf(layer, neverEqualPolicy())
+    }
+
+    val currentLayer = currentLayerState.value
+
+    Canvas(modifier = Modifier
+        .width(w / layoutInfo.scale)
+        .height(h / layoutInfo.scale)
+        .graphicsLayer {
+            this.transformOrigin = TransformOrigin(0f, 0f)
+            this.translationX = layoutInfo.rect.left
+            this.translationY = layoutInfo.rect.top
+            this.scaleX = layoutInfo.scale
+            this.scaleY = layoutInfo.scale
+            this.clip = true
+        }) {
+        with(currentLayer) {
+            draw()
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(editLayers, paintEdit, layoutInfo) {
+                coroutineScope {
+                    forEachGesture {
+                        awaitPointerEventScope {
+                            val down = awaitFirstDown(requireUnconsumed = true)
+                            down.consumeDownChange()
+                            currentLayer.path.moveTo(
+                                (down.position.x - layoutInfo.rect.left) / layoutInfo.scale,
+                                (down.position.y - layoutInfo.rect.top) / layoutInfo.scale
+                            )
+                            onTouchBegin()
+                            do {
+                                val event = awaitPointerEvent()
+                                val change = event.changes.find { it.id.value == down.id.value }
+                                if (change != null) {
+                                    change.consumePositionChange()
+                                    currentLayer.path.lineTo(
+                                        (change.position.x - layoutInfo.rect.left) / layoutInfo.scale,
+                                        (change.position.y - layoutInfo.rect.top) / layoutInfo.scale
+                                    )
+                                    currentLayerState.value = currentLayer
+                                }
+
+                            } while (change == null || change.pressed)
+                            onTouchEnd(currentLayer)
+                        }
+                    }
+                }
+            }
+    )
+}
+
+
+@Composable
+private fun QMUIPhotoPickerEditPaintOptions(
+    paintEdit: List<PaintEdit>,
+    size: Dp,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        paintEdit.forEachIndexed { index, paintEdit ->
+            paintEdit.Compose(size = size, selected = index == selectedIndex) {
+                onSelect(index)
+            }
+        }
+    }
+}
+
+@Composable
+private fun QMUIPhotoPickerEditToolBar(
     modifier: Modifier,
     isPaintState: Boolean,
     onPaintClick: (toPaint: Boolean) -> Unit,
@@ -256,7 +508,7 @@ internal fun QMUIPhotoPickerEditToolBar(
     ) {
         val (paint, text, clip, ensure) = createRefs()
         val horChain = createHorizontalChain(paint, text, clip, chainStyle = ChainStyle.Packed(0f))
-        constrain(horChain){
+        constrain(horChain) {
             start.linkTo(parent.start, 16.dp)
             end.linkTo(ensure.start)
         }
@@ -298,7 +550,7 @@ internal fun QMUIPhotoPickerEditToolBar(
             enabled = true,
             text = "确定",
             onClick = onEnsureClick,
-            modifier = Modifier.constrainAs(ensure){
+            modifier = Modifier.constrainAs(ensure) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
                 end.linkTo(parent.end, 16.dp)
