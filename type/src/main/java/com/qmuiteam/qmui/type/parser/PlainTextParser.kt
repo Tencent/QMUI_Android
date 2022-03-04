@@ -22,11 +22,15 @@ import com.qmuiteam.qmui.type.element.TextElement
 import com.qmuiteam.qmui.type.parser.ParserHelper.handleWordPart
 import java.util.*
 
-class PlainTextParser : TextParser {
+class PlainTextParser(
+    private val wordBreakChecker: (c: Char) -> Boolean
+) : TextParser {
 
     companion object {
         val instance by lazy {
-            PlainTextParser()
+            PlainTextParser {
+                false
+            }
         }
     }
 
@@ -58,7 +62,7 @@ class PlainTextParser : TextParser {
                 tmp = TextElement(text.subSequence(i, i + charCount), index, i)
                 i += charCount - 1
             }
-            handleWordPart(c, last, tmp)
+            handleWordPart(c, last, tmp, wordBreakChecker)
             index++
             if (first == null) {
                 first = tmp

@@ -33,6 +33,7 @@ class LineLayout {
     var moreUnderlineColor = Color.TRANSPARENT
     var moreBgColor = 0
     var moreUnderlineHeight = 0
+    var moreTextFixAtEnd: Boolean = true
     var typeModel: TypeModel? = null
     var shouldHandleWordBreak: Boolean = true
 
@@ -234,7 +235,12 @@ class LineLayout {
         }
         lastLine.layout(env, dropLastIfSpace, true)
         if (moreElement != null) {
-            moreElement.x = lastLine.x + lastLine.widthLimit - moreElement.measureWidth
+            if(moreTextFixAtEnd){
+                moreElement.x = lastLine.x + lastLine.widthLimit - moreElement.measureWidth
+            }else{
+                moreElement.x = lastLine.contentWidth - moreElement.measureWidth
+            }
+
         }
     }
 

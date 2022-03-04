@@ -22,7 +22,10 @@ import com.qmuiteam.qmui.type.element.NextParagraphElement
 import com.qmuiteam.qmui.type.element.TextElement
 import java.util.*
 
-class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextParser {
+class EmojiTextParser(
+    private val emojiProvider: EmojiResourceProvider,
+    private val wordBreakChecker: (c: Char) -> Boolean
+) : TextParser {
 
     override fun parse(text: CharSequence?): TypeModel? {
         if(text == null || text.isEmpty()){
@@ -105,7 +108,7 @@ class EmojiTextParser(private val emojiProvider: EmojiResourceProvider) : TextPa
                     i += charCount - 1
                 }
             }
-            ParserHelper.handleWordPart(c, last, tmp!!)
+            ParserHelper.handleWordPart(c, last, tmp!!, wordBreakChecker)
             index++
             if (first == null) {
                 first = tmp

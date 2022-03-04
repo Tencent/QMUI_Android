@@ -159,7 +159,7 @@ class QDQQFaceUsageFragment : BaseFragment() {
     }
 
     private fun initData() {
-        val textParser: TextParser = EmojiTextParser(QDQQFaceManager.getInstance())
+        val textParser: TextParser = EmojiTextParser(QDQQFaceManager.getInstance()) { true }
         mMarqueeTypeView1!!.fadeWidth = QMUIDisplayHelper.dp2px(context, 40).toFloat()
         mMarqueeTypeView1!!.textParser = textParser
         mMarqueeTypeView1!!.text = "🙃🙃🙃🙃飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示"

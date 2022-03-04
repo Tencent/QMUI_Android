@@ -23,16 +23,20 @@ object ParserHelper {
         return c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9'
     }
 
-    fun handleWordPart(c: Char, prev: Element?, curr: Element) {
+    fun handleWordPart(c: Char, prev: Element?, curr: Element, wordBreakChecker: (c: Char) -> Boolean) {
         if (isEnglishLetterOrNumber(c)) {
             if (prev == null || prev.wordPart == Element.WORD_PART_WHOLE || prev.wordPart == Element.WORD_PART_END) {
                 curr.wordPart = Element.WORD_PART_START
             } else {
                 curr.wordPart = Element.WORD_PART_MIDDLE
+                if(wordBreakChecker(c)){
+                    curr.lineBreakType = Element.LINE_BREAK_WORD_BREAK_ALLOWED
+                }
             }
         } else {
             if (prev != null && prev.wordPart == Element.WORD_PART_MIDDLE) {
                 prev.wordPart = Element.WORD_PART_END
+                prev.lineBreakType = Element.LINE_BREAK_TYPE_NORMAL
             }
             curr.wordPart = Element.WORD_PART_WHOLE
         }

@@ -17,7 +17,6 @@ package com.qmuiteam.qmui.type
 
 import android.graphics.Canvas
 import androidx.core.util.Pools
-import com.qmuiteam.qmui.type.TypeEnvironment
 import com.qmuiteam.qmui.type.element.BreakWordLineElement
 import com.qmuiteam.qmui.type.element.Element
 import com.qmuiteam.qmui.type.element.NextParagraphElement
@@ -86,7 +85,7 @@ class Line private constructor() {
         }
     }
 
-    fun handleWordBreak(environment: TypeEnvironment?, shouldHandleWordBreak: Boolean): List<Element>? {
+    fun handleWordBreak(environment: TypeEnvironment, shouldHandleWordBreak: Boolean): List<Element>? {
         if (mElements.size == 0 || !shouldHandleWordBreak) {
             return null
         }
@@ -96,7 +95,8 @@ class Line private constructor() {
         val back: MutableList<Element> = LinkedList()
         if (last.wordPart == Element.WORD_PART_WHOLE) {
             if (last.lineBreakType == Element.LINE_BREAK_TYPE_NOT_END ||
-                    next != null && next.lineBreakType == Element.LINE_BREAK_TYPE_NOT_START) {
+                next != null && next.lineBreakType == Element.LINE_BREAK_TYPE_NOT_START
+            ) {
                 mElements.removeAt(lastIndex)
                 back.add(last)
             }
@@ -109,7 +109,7 @@ class Line private constructor() {
             back.add(last)
             mElements.removeAt(lastIndex)
             lastIndex--
-            val min = Math.max(0, lastIndex - 30) // try 30 letter.
+            val min = 0.coerceAtLeast(lastIndex - environment.workBreakMaxTryLength)
             var find = false
             while (lastIndex > min) {
                 val el = mElements[lastIndex]
@@ -119,10 +119,17 @@ class Line private constructor() {
                 } else if (el.lineBreakType == Element.LINE_BREAK_WORD_BREAK_ALLOWED) {
                     // TODO what if environment had changed after break? the measure may be wrong
                     val b = BreakWordLineElement()
-                    b.measure(environment!!)
-                    add(b)
-                    find = true
-                    break
+                    b.measure(environment)
+                    val backWidth = back.sumOf { it.measureWidth }
+                    if (backWidth >= b.measureWidth) {
+                        find = true
+                        add(b)
+                        break
+                    } else {
+                        back.add(0, el)
+                        mElements.removeAt(lastIndex)
+                        lastIndex--
+                    }
                 } else {
                     back.add(0, el)
                     mElements.removeAt(lastIndex)
@@ -139,7 +146,7 @@ class Line private constructor() {
             return null
         }
         for (el in back) {
-            contentWidth = (contentWidth -el.measureWidth).toInt()
+            contentWidth -= el.measureWidth
         }
         return back
     }
@@ -171,8 +178,9 @@ class Line private constructor() {
         for (i in 1 until mElements.size) {
             val el = mElements[i]
             if (el.visible != Element.GONE &&
-                    (el.wordPart == Element.WORD_PART_WHOLE ||
-                            el.wordPart == Element.WORD_PART_START)) {
+                (el.wordPart == Element.WORD_PART_WHOLE ||
+                        el.wordPart == Element.WORD_PART_START)
+            ) {
                 ret++
             }
         }
@@ -209,7 +217,8 @@ class Line private constructor() {
         for (i in mElements.indices) {
             val el = mElements[i]
             if (i > 0 && (el.wordPart == Element.WORD_PART_WHOLE
-                            || el.wordPart == Element.WORD_PART_START)) {
+                        || el.wordPart == Element.WORD_PART_START)
+            ) {
                 x += addSpace
                 mElements[i - 1].nextGapWidth = addSpace
             }

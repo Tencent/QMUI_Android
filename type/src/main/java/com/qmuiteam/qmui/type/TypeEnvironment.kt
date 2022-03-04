@@ -72,7 +72,7 @@ class TypeEnvironment {
     private val mCustomProp: SparseArray<Any?> = SparseArray()
     private val mStack = SparseArray<Stack<Any?>>()
 
-    val layoutExcludeAreas = arrayListOf<Rect>()
+    var workBreakMaxTryLength: Int = 10
 
     var lineSpace = 0
 
