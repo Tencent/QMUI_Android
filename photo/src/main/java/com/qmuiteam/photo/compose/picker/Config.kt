@@ -5,23 +5,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.qmuiteam.compose.core.ui.QMUITopBarItem
 import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 import kotlinx.coroutines.flow.StateFlow
 
 class QMUIPhotoPickerConfig(
+    val primaryColor: Color = qmuiPrimaryColor,
     val commonTextButtonTextColor: Color = Color.White,
     val commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),
     val commonIconNormalTintColor: Color = Color.White.copy(0.9f),
-    val commonIconCheckedTintColor: Color = qmuiPrimaryColor,
+    val commonIconCheckedTintColor: Color = primaryColor,
     val commonIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
 
     val commonButtonNormalTextColor: Color = Color.White,
-    val commonButtonNormalBgColor: Color = qmuiPrimaryColor,
+    val commonButtonNormalBgColor: Color = primaryColor,
     val commonButtonDisabledTextColor: Color = Color.White.copy(alpha = 0.3f),
     val commonButtonDisableBgColor: Color = Color.White.copy(alpha = 0.15f),
-    val commonButtonPressBgColor: Color = qmuiPrimaryColor.copy(alpha = 0.8f),
+    val commonButtonPressBgColor: Color = primaryColor.copy(alpha = 0.8f),
     val commonButtonPressedTextColor: Color = commonButtonNormalTextColor,
 
     val topBarBgColor: Color = Color(0xFF222222),
@@ -71,18 +74,32 @@ class QMUIPhotoPickerConfig(
     val bucketChooserMainTextColor: Color = Color.White,
     val bucketChooserCountTextColor: Color = Color.White.copy(alpha = 0.64f),
 
-    val paintEditOptions: List<PaintEdit> = listOf(
-        PaintMosaic(2),
-        PaintMosaic(1),
-        PaintGraffiti(Color.White),
-        PaintGraffiti(Color.Black),
-        PaintGraffiti(Color.Red),
-        PaintGraffiti(Color.Yellow),
-        PaintGraffiti(Color.Green),
-        PaintGraffiti(Color.Blue),
-        PaintGraffiti(Color.Magenta)
+    val editPaintOptions: List<EditPaint> = listOf(
+        MosaicEditPaint(16),
+        MosaicEditPaint(50),
+        ColorEditPaint(Color.White),
+        ColorEditPaint(Color.Black),
+        ColorEditPaint(Color.Red),
+        ColorEditPaint(Color.Yellow),
+        ColorEditPaint(Color.Green),
+        ColorEditPaint(Color.Blue),
+        ColorEditPaint(Color.Magenta)
     ),
-    val paintEditStrokeWidth: Dp = 5.dp
+    val graffitiPaintStrokeWidth: Dp = 5.dp,
+    val mosaicPaintStrokeWidth: Dp = 20.dp,
+
+    val textEditMaskColor:Color = Color.Black.copy(0.5f),
+    val textEditColorOptions: List<ColorEditPaint> = listOf(
+        ColorEditPaint(Color.White),
+        ColorEditPaint(Color.Black),
+        ColorEditPaint(Color.Red),
+        ColorEditPaint(Color.Yellow),
+        ColorEditPaint(Color.Green),
+        ColorEditPaint(Color.Blue),
+        ColorEditPaint(Color.Magenta)
+    ),
+    val textEditSize: TextUnit = 30.sp,
+    val textCursorColor: Color = primaryColor
 )
 
 val qmuiPhotoPickerDefaultConfig by lazy { QMUIPhotoPickerConfig() }
