@@ -3,6 +3,7 @@ import com.qmuiteam.plugin.Dep
 plugins {
     `java-library`
     `maven-publish`
+    signing
     id("qmui-publish")
 }
 version = Dep.QMUI.archVer

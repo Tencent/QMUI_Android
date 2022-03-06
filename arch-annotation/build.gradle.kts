@@ -4,6 +4,7 @@ plugins {
     `java-library`
     kotlin("jvm")
     `maven-publish`
+    signing
     id("qmui-publish")
 }
 

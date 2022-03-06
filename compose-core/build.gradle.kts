@@ -5,6 +5,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     `maven-publish`
+    signing
     id("qmui-publish")
 }
 

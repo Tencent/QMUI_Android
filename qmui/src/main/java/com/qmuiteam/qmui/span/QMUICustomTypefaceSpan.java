@@ -61,7 +61,7 @@ public class QMUICustomTypefaceSpan extends TypefaceSpan {
         int oldStyle;
         Typeface old = paint.getTypeface();
         if (old == null) {
-            oldStyle = 0;
+            oldStyle = Typeface.NORMAL;
         } else {
             oldStyle = old.getStyle();
         }

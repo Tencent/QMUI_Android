@@ -1,21 +1,18 @@
 package com.qmuiteam.plugin
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
-import java.util.*
-import kotlin.io.*
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.LibraryExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
+import org.gradle.plugins.signing.SigningExtension
+import java.util.*
+import kotlin.io.*
 
-class QMUIPublish: Plugin<Project> {
+class QMUIPublish : Plugin<Project> {
     override fun apply(project: Project) {
         val isAndroid = project.hasProperty("android")
 
@@ -23,12 +20,13 @@ class QMUIPublish: Plugin<Project> {
             println("android")
             val android = project.extensions.getByName("android") as LibraryExtension
             android.publishing {
-                singleVariant("release"){
+                singleVariant("release") {
                     withJavadocJar()
                     withSourcesJar()
                 }
             }
-        }else{
+
+        } else {
             println("java/kotlin")
             project.configure<JavaPluginExtension> {
                 withSourcesJar()
@@ -59,9 +57,14 @@ class QMUIPublish: Plugin<Project> {
                     }
                     publications {
                         create<MavenPublication>("release") {
-                            if(isAndroid){
+
+                            project.configure<SigningExtension> {
+                                sign(this@create)
+                            }
+
+                            if (isAndroid) {
                                 from(components.getByName("release"))
-                            }else{
+                            } else {
                                 from(components.getByName("java"))
                             }
 
@@ -72,6 +75,7 @@ class QMUIPublish: Plugin<Project> {
                             pom {
                                 name.set("${project.group}:${project.name}")
                                 url.set("https://github.com/Tencent/QMUI_Android")
+                                description.set("qmui android library.")
                                 licenses {
                                     license {
                                         name.set(properties.getProperty("license.name"))
