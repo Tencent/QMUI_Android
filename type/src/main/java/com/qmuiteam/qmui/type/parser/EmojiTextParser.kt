@@ -102,8 +102,7 @@ class EmojiTextParser(
                     }
                 }
                 if (!handled) {
-                    val unicode = Character.codePointAt(text, i)
-                    val charCount = Character.charCount(unicode)
+                    val charCount = ParserHelper.handleUnionIfNeeded(text, i)
                     tmp = TextElement(text.subSequence(i, i + charCount), index, i)
                     i += charCount - 1
                 }

@@ -75,6 +75,10 @@ class QDQQFaceUsageFragment : BaseFragment() {
     var mLineType2: LineTypeView? = null
 
     @JvmField
+    @BindView(R.id.line_type_3)
+    var mLineType3: LineTypeView? = null
+
+    @JvmField
     @BindView(R.id.qqface1)
     var mQQFace1: QMUIQQFaceView? = null
 
@@ -177,7 +181,6 @@ class QDQQFaceUsageFragment : BaseFragment() {
         mLineType1!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
         mLineType1!!.textColor = Color.BLACK
         mLineType1!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
-        mLineType1!!.textParser = textParser
         mLineType1!!.text = "QMUI Android 的设计[微笑]目的🙃🙃🙃🙃是用于辅助快速搭建一个具备基本设计还原[微笑]效果的 Android 项目，" +
                 "同时利用自身[微笑]提供的丰富控件及兼容处理，让开[微笑]发者能专注于业务需求而无需耗费[微笑]精力在基础代[微笑]码的设计上。" +
                 "不管是新项目的创建，或是已有项[微笑]目的维护，均可使开[微笑]发效率和项目[微笑]质量得到大幅度提升。"
@@ -205,7 +208,6 @@ class QDQQFaceUsageFragment : BaseFragment() {
         mLineType2!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
         mLineType2!!.textColor = Color.BLACK
         mLineType2!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
-        mLineType2!!.textParser = textParser
         val content2 = "a.这一条很重要，你要仔细研读研读。\n" +
                 "b.这一条不重要，但是有很多很多很多很多很多很多很多很多内容。。\n" +
                 "c.这一条特别重要，但是我也不知道对不对，只能放这里了，哈哈哈哈。\n"
@@ -222,6 +224,14 @@ class QDQQFaceUsageFragment : BaseFragment() {
             mLineType2!!.addTextColorEffect(it.first, it.second, Color.LTGRAY)
         }
         mLineType2!!.lineLayout.lineIndentHandler = SerialLineIndentHandler(pairs)
+
+
+        mLineType3!!.textParser = textParser
+        mLineType3!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
+        mLineType3!!.textColor = Color.BLACK
+        mLineType3!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
+        mLineType3!!.text = "འདི་བཞིན་གྱི་ཡིད་བརྙན་གྱི་ཚོགས་མང་པོ་ཞིག་གིས་ཞེ་དྲག་བསམ་གཞིག་གི་བར་སྟོང་ཡངས་པོར་ཕྱེས་འགྲོ"
+
 
         mQQFace1!!.text = "这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示"
         mQQFace2!!.text = "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +

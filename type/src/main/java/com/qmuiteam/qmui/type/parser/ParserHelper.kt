@@ -29,7 +29,7 @@ object ParserHelper {
                 curr.wordPart = Element.WORD_PART_START
             } else {
                 curr.wordPart = Element.WORD_PART_MIDDLE
-                if(wordBreakChecker(c)){
+                if (wordBreakChecker(c)) {
                     curr.lineBreakType = Element.LINE_BREAK_WORD_BREAK_ALLOWED
                 }
             }
@@ -40,5 +40,23 @@ object ParserHelper {
             }
             curr.wordPart = Element.WORD_PART_WHOLE
         }
+    }
+
+    fun handleUnionIfNeeded(text: CharSequence, i: Int): Int {
+        val unicode = Character.codePointAt(text, i)
+        var charCount = Character.charCount(unicode)
+        var next = i + charCount
+        while (next < text.length) {
+            val nextUnicode = Character.codePointAt(text, next)
+            val type = Character.getType(nextUnicode)
+            if (type == Character.NON_SPACING_MARK.toInt()) {
+                val nextCharCount = Character.charCount(nextUnicode)
+                charCount += nextCharCount
+                next += nextCharCount
+            } else {
+                break
+            }
+        }
+        return charCount
     }
 }

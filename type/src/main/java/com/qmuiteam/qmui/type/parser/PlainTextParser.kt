@@ -57,8 +57,7 @@ class PlainTextParser(
                     tmp = NextParagraphElement(text.subSequence(i, i + 1), index, i)
                 }
             } else {
-                val unicode = Character.codePointAt(text, i)
-                val charCount = Character.charCount(unicode)
+                val charCount = ParserHelper.handleUnionIfNeeded(text, i)
                 tmp = TextElement(text.subSequence(i, i + charCount), index, i)
                 i += charCount - 1
             }
