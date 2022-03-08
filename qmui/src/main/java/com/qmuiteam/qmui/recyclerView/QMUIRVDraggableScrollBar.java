@@ -121,7 +121,9 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
                 }
             } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                 if (mIsInDragging) {
-                    onDragging(rv, mScrollBarDrawable, x, y);
+                    if(action == MotionEvent.ACTION_UP){
+                        onDragging(rv, mScrollBarDrawable, x, y);
+                    }
                     endDrag();
                 }
             }
@@ -148,7 +150,9 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
                 }
             } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                 if (mIsInDragging) {
-                    onDragging(rv, mScrollBarDrawable, x, y);
+                    if(action == MotionEvent.ACTION_UP) {
+                        onDragging(rv, mScrollBarDrawable, x, y);
+                    }
                     endDrag();
                 }
             }
