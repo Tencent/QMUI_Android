@@ -49,7 +49,6 @@ dependencies {
     api(kotlin("gradle-plugin-api", version = "1.6.10"))
     api("com.android.tools.build:gradle-api:7.1.2")
     api("com.android.tools.build:gradle:7.1.2")
-    implementation(kotlin("stdlib-jdk8"))
 }
 
 java {

@@ -98,8 +98,12 @@ class QMUIPhotoPickerConfig(
         ColorEditPaint(Color.Blue),
         ColorEditPaint(Color.Magenta)
     ),
-    val textEditSize: TextUnit = 30.sp,
-    val textCursorColor: Color = primaryColor
+    val textEditFontSize: TextUnit = 30.sp,
+    val textEditLineSpace: TextUnit = 3.sp,
+    val textCursorColor: Color = primaryColor,
+
+    val editLayerDeleteAreaNormalBgColor: Color = Color.Black.copy(alpha = 0.3f),
+    val editLayerDeleteAreaNormalFocusColor: Color = Color.Red.copy(alpha = 0.6f),
 )
 
 val qmuiPhotoPickerDefaultConfig by lazy { QMUIPhotoPickerConfig() }

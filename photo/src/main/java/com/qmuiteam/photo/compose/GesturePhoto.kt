@@ -43,6 +43,7 @@ fun QMUIGesturePhoto(
     transitionDurationMs: Int = 360,
     panEdgeProtection: Rect = Rect(0f, 0f, with(LocalDensity.current) { containerWidth.toPx() }, with(LocalDensity.current) { containerHeight.toPx() }),
     maxScale: Float = 4f,
+    onPress: suspend PressGestureScope.(Offset) -> Unit = { },
     onBeginPullExit: () -> Boolean,
     onLongPress: (() -> Unit)? = null,
     onTapExit: (afterTransition: Boolean) -> Unit,
@@ -206,7 +207,8 @@ fun QMUIGesturePhoto(
                                     } else {
                                         reset()
                                     }
-                                }
+                                },
+                                onPress = onPress
                             )
                         }
 

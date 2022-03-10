@@ -1,7 +1,6 @@
 package com.qmuiteam.photo.compose.picker
 
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.shapes.RoundRectShape
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.animation.AnimatedVisibility
@@ -16,31 +15,26 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.consumeDownChange
 import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -52,28 +46,26 @@ import com.qmuiteam.compose.core.R
 import com.qmuiteam.compose.core.helper.OnePx
 import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.core.provider.dp
-import com.qmuiteam.photo.activity.QMUIPhotoPickerActivity
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
-import com.qmuiteam.photo.vm.QMUIPhotoPickerPreviewScene
-import com.qmuiteam.photo.vm.QMUIPhotoPickerScene
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 
 private sealed class PickerEditScene
 
-private object PickerEditSceneNormal: PickerEditScene()
-private object PickerEditScenePaint: PickerEditScene()
-private class PickerEditSceneText(val editLayer: TextEditLayer? = null): PickerEditScene()
-private class PickerEditSceneClip(val area: Rect): PickerEditScene()
+private object PickerEditSceneNormal : PickerEditScene()
+private object PickerEditScenePaint : PickerEditScene()
+private class PickerEditSceneText(val editLayer: TextEditLayer? = null) : PickerEditScene()
+private class PickerEditSceneClip(val area: Rect) : PickerEditScene()
 
-private class EditSceneHolder<T: PickerEditScene>(var scene: T? = null)
+private class EditSceneHolder<T : PickerEditScene>(var scene: T? = null)
 
 private class MutablePickerPhotoInfo(
     var drawable: Drawable?,
     var mosaicBitmapCache: MutableMap<Int, ImageBitmap> = mutableMapOf()
 )
 
-internal data class PickerPhotoLayoutInfo(var scale: Float, var rect: Rect)
+internal data class PickerPhotoLayoutInfo(val scale: Float, val rect: Rect)
 
 
 @Composable
@@ -104,6 +96,10 @@ fun QMUIPhotoPickerEdit(
 
     val config = QMUILocalPickerConfig.current
 
+    var forceHideTools by remember {
+        mutableStateOf(false)
+    }
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         QMUIGesturePhoto(
             containerWidth = maxWidth,
@@ -117,6 +113,11 @@ fun QMUIPhotoPickerEdit(
             },
             onTapExit = {
 
+            },
+            onPress = {
+                textEditLayers.forEach {
+                    it.isFocusFlow.value = false
+                }
             }
         ) { _, scale, rect, onImageRatioEnsured ->
             photoLayoutInfo = PickerPhotoLayoutInfo(scale, rect)
@@ -130,11 +131,21 @@ fun QMUIPhotoPickerEdit(
             photoLayoutInfo,
             paintEditLayers,
             textEditLayers,
+            onFocusLayer = { focusLayer ->
+                textEditLayers.forEach {
+                    if (it != focusLayer) {
+                        it.isFocusFlow.value = false
+                    }
+                }
+            },
             onEditTextLayer = {
                 sceneState.value = PickerEditSceneText(it)
             },
             onDeleteTextLayer = {
                 textEditLayers.remove(it)
+            },
+            onToggleDragging = {
+                forceHideTools = it
             }
         )
 
@@ -148,6 +159,7 @@ fun QMUIPhotoPickerEdit(
                 photoInfo = photoInfo,
                 editLayers = paintEditLayers,
                 layoutInfo = photoLayoutInfo,
+                forceHideTools = forceHideTools,
                 onBack = onBack,
                 onPaintClick = {
                     sceneState.value = if (it) PickerEditScenePaint else PickerEditSceneNormal
@@ -156,7 +168,7 @@ fun QMUIPhotoPickerEdit(
                     sceneState.value = PickerEditSceneText()
                 },
                 onClipClick = {
-                    sceneState.value = PickerEditSceneClip(Rect(Offset.Zero,photoLayoutInfo.rect.size))
+                    sceneState.value = PickerEditSceneClip(Rect(Offset.Zero, photoLayoutInfo.rect.size))
                 },
                 onFinishPaintLayer = {
                     paintEditLayers.add(it)
@@ -179,21 +191,33 @@ fun QMUIPhotoPickerEdit(
             val sceneHolder = remember {
                 EditSceneHolder(scene as? PickerEditSceneText)
             }
-            if(scene is PickerEditSceneText){
+            if (scene is PickerEditSceneText) {
                 sceneHolder.scene = scene
             }
             val textScene = sceneHolder.scene
             if (textScene != null) {
                 QMUIPhotoPickerEditTextScreen(
                     onBackPressedDispatcher,
+                    photoLayoutInfo,
+                    constraints,
+                    textScene.editLayer,
                     textScene.editLayer?.color ?: config.textEditColorOptions[0].color,
                     textScene.editLayer?.reverse ?: false,
-                    textEditLayers,
                     onCancel = {
                         sceneState.value = PickerEditSceneNormal
                     },
-                    onFinishTextLayer = {
-                        textEditLayers.add(it)
+                    onFinishTextLayer = { toReplace, target ->
+                        if (toReplace != null) {
+                            val index = textEditLayers.indexOf(toReplace)
+                            if (index >= 0) {
+                                textEditLayers[index] = target
+                            } else {
+                                textEditLayers.add(target)
+                            }
+                        } else {
+                            textEditLayers.add(target)
+                        }
+                        sceneState.value = PickerEditSceneNormal
                     }
                 )
             }
@@ -208,6 +232,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
     editLayers: List<PaintEditLayer>,
     photoInfo: MutablePickerPhotoInfo,
     layoutInfo: PickerPhotoLayoutInfo,
+    forceHideTools: Boolean,
     onBack: () -> Unit,
     onPaintClick: (toPaint: Boolean) -> Unit,
     onTextClick: () -> Unit,
@@ -264,7 +289,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         }
 
         AnimatedVisibility(
-            visible = showTools,
+            visible = showTools && !forceHideTools,
             modifier = Modifier.constrainAs(createRef()) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
@@ -283,7 +308,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         }
 
         AnimatedVisibility(
-            visible = showTools,
+            visible = showTools && !forceHideTools,
             modifier = Modifier.constrainAs(createRef()) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
@@ -302,7 +327,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         }
 
         AnimatedVisibility(
-            visible = showTools,
+            visible = showTools && !forceHideTools,
             modifier = Modifier.constrainAs(createRef()) {
                 start.linkTo(parent.start)
                 top.linkTo(parent.top)
@@ -322,7 +347,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         val (toolBar, paintChooser) = createRefs()
 
         AnimatedVisibility(
-            visible = showTools,
+            visible = showTools && !forceHideTools,
             modifier = Modifier.constrainAs(toolBar) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
@@ -343,7 +368,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         }
 
         AnimatedVisibility(
-            visible = showTools && paintState,
+            visible = showTools && paintState && !forceHideTools,
             modifier = Modifier.constrainAs(paintChooser) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
@@ -363,7 +388,7 @@ private fun QMUIPhotoPickerEditPaintScreen(
         }
 
         AnimatedVisibility(
-            visible = showTools && paintState,
+            visible = showTools && paintState && !forceHideTools,
             modifier = Modifier.constrainAs(createRef()) {
                 end.linkTo(parent.end)
                 bottom.linkTo(paintChooser.top)
@@ -385,20 +410,22 @@ private fun QMUIPhotoPickerEditPaintScreen(
 @Composable
 private fun QMUIPhotoPickerEditTextScreen(
     onBackPressedDispatcher: OnBackPressedDispatcher,
+    photoLayoutInfo: PickerPhotoLayoutInfo,
+    constraints: Constraints,
+    editLayer: TextEditLayer?,
     color: Color,
     isReverse: Boolean,
-    editLayers: List<TextEditLayer>,
     onCancel: () -> Unit,
-    onFinishTextLayer: (TextEditLayer) -> Unit
-){
-    DisposableEffect(""){
-        val callback = object: OnBackPressedCallback(true) {
+    onFinishTextLayer: (toReplace: TextEditLayer?, target: TextEditLayer) -> Unit
+) {
+    DisposableEffect("") {
+        val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 onCancel()
             }
         }
         onBackPressedDispatcher.addCallback(callback)
-        object: DisposableEffectResult {
+        object : DisposableEffectResult {
             override fun dispose() {
                 callback.remove()
             }
@@ -412,13 +439,14 @@ private fun QMUIPhotoPickerEditTextScreen(
                 WindowInsetsCompat.Type.displayCutout()
     ).dp()
 
-    var input by remember(editLayers){
-        mutableStateOf("")
+    var input by remember(editLayer) {
+        val text = editLayer?.text ?: ""
+        mutableStateOf(TextFieldValue(text, TextRange(text.length)))
     }
 
     val config = QMUILocalPickerConfig.current
 
-    var usedColor by remember(color){
+    var usedColor by remember(color) {
         mutableStateOf(color)
     }
 
@@ -441,21 +469,49 @@ private fun QMUIPhotoPickerEditTextScreen(
             },
             indication = null
         ) {
-            if (input.isNotBlank()) {
-                onFinishTextLayer(TextEditLayer(input, usedColor, usedReverse))
+            if (input.text.isNotBlank()) {
+                if (editLayer != null) {
+                    onFinishTextLayer(
+                        editLayer, TextEditLayer(
+                            input.text,
+                            editLayer.fontSize,
+                            editLayer.center,
+                            usedColor,
+                            usedReverse,
+                            editLayer.offsetFlow,
+                            editLayer.scaleFlow,
+                            editLayer.rotationFlow
+                        )
+                    )
+                } else {
+                    onFinishTextLayer(
+                        null, TextEditLayer(
+                            input.text,
+                            config.textEditFontSize,
+                            Offset(
+                                (constraints.maxWidth / 2 - photoLayoutInfo.rect.left) / photoLayoutInfo.scale,
+                                constraints.maxHeight / 2 - photoLayoutInfo.rect.top
+                            ),
+                            usedColor,
+                            usedReverse,
+                            scaleFlow = MutableStateFlow(1 / photoLayoutInfo.scale)
+                        )
+                    )
+                }
+
             } else {
                 onCancel()
             }
         }
         .padding(insets.left, insets.top, insets.right, insets.bottom)
-    ){
+    ) {
         val optionsId = createRef()
         QMUIPhotoPickerEditTextPaintOptions(
             config.textEditColorOptions,
             24.dp,
             usedColor,
             isReverse = usedReverse,
-            modifier = Modifier.constrainAs(optionsId){
+            modifier = Modifier.constrainAs(optionsId) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
@@ -470,15 +526,19 @@ private fun QMUIPhotoPickerEditTextScreen(
         )
         BasicTextField(
             value = input,
+            onValueChange = {
+                input = it
+            },
             modifier = Modifier
+                .padding(16.dp)
                 .let {
-                    if (usedReverse && input.isNotBlank()) {
+                    if (usedReverse && input.text.isNotBlank()) {
                         it.background(color = usedColor, shape = RoundedCornerShape(10.dp))
                     } else {
                         it
                     }
                 }
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 3.dp)
                 .defaultMinSize(8.dp, 48.dp)
                 .width(IntrinsicSize.Min)
                 .focusRequester(focusRequester)
@@ -489,17 +549,14 @@ private fun QMUIPhotoPickerEditTextScreen(
                     top.linkTo(parent.top)
                 },
             textStyle = TextStyle(
-                color = if(usedReverse) {
-                    if(usedColor == Color.White) Color.Black else Color.White
+                color = if (usedReverse) {
+                    if (usedColor == Color.White) Color.Black else Color.White
                 } else usedColor,
-                fontSize = config.textEditSize,
+                fontSize = config.textEditFontSize,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold
             ),
-            onValueChange = {
-                input = it
-            },
-            cursorBrush = SolidColor(config.primaryColor)
+            cursorBrush = SolidColor(config.textCursorColor)
         )
     }
 }
@@ -532,8 +589,10 @@ private fun QMUIPhotoEditHistoryList(
     layoutInfo: PickerPhotoLayoutInfo,
     editLayers: List<PaintEditLayer>,
     textEditLayers: List<TextEditLayer>,
+    onFocusLayer: (TextEditLayer) -> Unit,
     onEditTextLayer: (TextEditLayer) -> Unit,
-    onDeleteTextLayer:(TextEditLayer) -> Unit
+    onDeleteTextLayer: (TextEditLayer) -> Unit,
+    onToggleDragging: (Boolean) -> Unit
 ) {
     if (layoutInfo.rect == Rect.Zero) {
         return
@@ -555,24 +614,27 @@ private fun QMUIPhotoEditHistoryList(
             this.scaleY = layoutInfo.scale
             this.clip = true
         }) {
-        editLayers.filterIsInstance<MosaicEditLayer>().forEach {
-            with(it) {
-                draw()
-            }
-        }
-        editLayers.filterIsInstance<GraffitiEditLayer>().forEach {
+        editLayers.forEach {
             with(it) {
                 draw()
             }
         }
     }
     textEditLayers.forEach {
-        it.Content(
-            layoutInfo = layoutInfo,
-            onEdit = {
-            onEditTextLayer(it)
-        }) {
-            onDeleteTextLayer(it)
+        key(it) {
+            it.Content(
+                layoutInfo = layoutInfo,
+                onFocus = {
+                    onFocusLayer(it)
+                },
+                onToggleDragging = { isDragging ->
+                    onToggleDragging(isDragging)
+                },
+                onEdit = {
+                    onEditTextLayer(it)
+                }) {
+                onDeleteTextLayer(it)
+            }
         }
     }
 }
@@ -773,9 +835,10 @@ private fun QMUIPhotoPickerEditTextPaintOptions(
     onReverseClick: (isReverse: Boolean) -> Unit,
     onSelect: (Color) -> Unit
 ) {
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp),
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -786,10 +849,11 @@ private fun QMUIPhotoPickerEditTextPaintOptions(
             onReverseClick(!isReverse)
         }
 
-        Box(modifier = Modifier
-            .width(OnePx())
-            .height(size + 8.dp)
-            .background(QMUILocalPickerConfig.current.commonSeparatorColor)
+        Box(
+            modifier = Modifier
+                .width(OnePx())
+                .height(size + 8.dp)
+                .background(QMUILocalPickerConfig.current.commonSeparatorColor)
         )
 
         Row(
