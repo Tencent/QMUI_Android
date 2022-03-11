@@ -15,13 +15,18 @@
  */
 package com.qmuiteam.qmuidemo.fragment.components.qqface
 
+import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.LineHeightSpan
+import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import butterknife.BindView
@@ -44,13 +49,83 @@ import com.qmuiteam.qmuidemo.base.BaseFragment
 import com.qmuiteam.qmuidemo.lib.Group
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
 import com.qmuiteam.qmuidemo.manager.QDDataManager
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * @author cginechen
  * @date 2016-12-24
  */
+
+class B(val mHeight: Int): LineHeightSpan {
+    override fun chooseHeight(text: CharSequence?, start: Int, end: Int, spanstartv: Int, lineHeight: Int, fm: Paint.FontMetricsInt) {
+
+        // 参考官方 API 29 提供的 Standard 而进行修改
+        if (fm.descent <= fm.bottom && fm.ascent >= fm.top) {
+            if (fm.descent > mHeight) {
+                // Show as much descent as possible
+                fm.descent = Math.min(mHeight, fm.descent)
+                fm.bottom = fm.descent
+                fm.ascent = 0
+                fm.top = fm.ascent
+            } else if (-fm.ascent + fm.descent > mHeight) {
+                // Show all descent, and as much ascent as possible
+                fm.bottom = fm.descent
+                fm.ascent = -mHeight + fm.descent
+                fm.top = fm.ascent
+            } else {
+                // Show proportionally additional ascent / top & descent / bottom
+                val additional: Int = mHeight - (-fm.top + fm.bottom)
+
+                // Round up for the negative values and down for the positive values  (arbitrary choice)
+                // So that bottom - top equals additional even if it's an odd number.
+                fm.top -= Math.ceil((additional / 2.0f).toDouble()).toInt()
+                fm.bottom += Math.floor((additional / 2.0f).toDouble()).toInt()
+                fm.ascent = fm.top
+                fm.descent = fm.bottom
+            }
+        } else {
+            val originHeight = fm.descent - fm.ascent
+            // If original height is not positive, do nothing.
+            if (originHeight <= 0) {
+                return
+            }
+            if (originHeight < mHeight) {
+                // Show proportionally additional ascent / top & descent / bottom
+                val additional: Int = mHeight - originHeight
+
+                // Round up for the negative values and down for the positive values  (arbitrary choice)
+                // So that bottom - top equals additional even if it's an odd number.
+                fm.ascent -= Math.ceil((additional / 2.0f).toDouble()).toInt()
+                fm.top = fm.ascent
+                fm.descent += Math.floor((additional / 2.0f).toDouble()).toInt()
+                fm.bottom = fm.descent
+            } else {
+                var ratio: Float = mHeight * 1.0f / originHeight
+                fm.descent = Math.round(fm.descent * ratio)
+                fm.ascent = fm.descent - mHeight
+                ratio = mHeight * 1.0f / (fm.bottom - fm.top)
+                fm.bottom = Math.round(fm.bottom * ratio)
+                fm.top = fm.bottom - mHeight
+            }
+        }
+    }
+
+}
+
+class Test(context: Context, attrs: AttributeSet): TextView(context, attrs){
+
+    init {
+        setBackgroundColor(Color.RED)
+        text = SpannableString("呵呵བོད་སྐད").apply {
+            setSpan(B(80), 0, length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(80, MeasureSpec.EXACTLY))
+    }
+}
+
 @Widget(group = Group.Other, name = "QQ表情使用展示")
 @LatestVisitRecord
 class QDQQFaceUsageFragment : BaseFragment() {

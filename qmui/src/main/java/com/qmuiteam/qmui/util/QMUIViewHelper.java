@@ -700,6 +700,33 @@ public class QMUIViewHelper {
         ViewGroupHelper.offsetDescendantRect(parent, descendant, out);
     }
 
+    public static boolean getDescendantVisibleRect(ViewGroup target, View descendant, Rect out){
+        out.set(0, 0, descendant.getWidth(), descendant.getHeight());
+        ViewParent parent = descendant.getParent();
+        View next = descendant;
+        while (parent instanceof ViewGroup && parent != target){
+            final ViewGroup vp = (ViewGroup) parent;
+            ViewGroupHelper.offsetDescendantRect(vp, next, out);
+            if(out.left >= vp.getWidth() || out.right <= 0 || out.top >= vp.getHeight() || out.bottom <= 0){
+                return false;
+            }
+            if(out.left < 0){
+                out.left = 0;
+            }
+            if(out.right > vp.getWidth()){
+                out.right = vp.getWidth();
+            }
+            if(out.top < 0){
+                out.top = 0;
+            }
+            if(out.bottom > vp.getHeight()){
+                out.bottom = vp.getHeight();
+            }
+            next = vp;
+            parent = parent.getParent();
+        }
+        return out.left < target.getWidth() && out.right > 0 && out.top < target.getHeight() && out.bottom > 0;
+    }
 
     private static class ViewGroupHelper {
         private static final ThreadLocal<Matrix> sMatrix = new ThreadLocal<>();
@@ -728,6 +755,10 @@ public class QMUIViewHelper {
         }
 
         static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
+            if(target instanceof View){
+                final View vt = (View) target;
+                m.preTranslate(-vt.getScrollX(), -vt.getScrollY());
+            }
             final ViewParent parent = view.getParent();
             if (parent instanceof View && parent != target) {
                 final View vp = (View) parent;

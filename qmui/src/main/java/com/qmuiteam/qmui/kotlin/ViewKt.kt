@@ -6,6 +6,44 @@ import com.qmuiteam.qmui.R
 import com.qmuiteam.qmui.skin.QMUISkinHelper
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder
 
+fun View.throttleRun(
+    id: Int,
+    timeout: Long,
+    block: () -> Unit
+){
+    val exit = getTag(id) as? Runnable
+    if(exit != null){
+        return
+    }
+    val nextThrottle = Runnable {
+        setTag(id, null)
+        block()
+    }.also {
+        setTag(id, it)
+    }
+    postDelayed(nextThrottle, timeout)
+}
+
+fun View.debounceRun(
+    id: Int,
+    timeout: Long,
+    block: () -> Unit
+){
+    val exit = getTag(id) as? Runnable
+    if(exit != null){
+        removeCallbacks(exit)
+        postDelayed(exit, timeout)
+        return
+    }
+    val nextThrottle = Runnable {
+        setTag(id, null)
+        block()
+    }.also {
+        setTag(id, it)
+    }
+    postDelayed(nextThrottle, timeout)
+}
+
 fun throttleClick(wait: Long = 200, block: ((View) -> Unit)): View.OnClickListener {
 
     return View.OnClickListener { v ->
