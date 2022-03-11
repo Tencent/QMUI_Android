@@ -37,12 +37,24 @@ fun View.simpleExposure(
     debounceTimeout: Long = 400,
     containerProvider: ExposureContainerProvider = DefaultExposureContainerProvider,
     exposureChecker: ExposureChecker = defaultExposureChecker,
+    key: Any?,
     doExpose: (type: ExposureType) -> Unit
 ) {
     registerExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
-    bindExposure(SimpleExposure {
+    bindExposure(SimpleExposure(key) {
         doExpose(it)
     })
+}
+
+fun View.exposure(
+    holdTime: Long = 600,
+    debounceTimeout: Long = 400,
+    containerProvider: ExposureContainerProvider = DefaultExposureContainerProvider,
+    exposureChecker: ExposureChecker = fullExposureChecker,
+    exposure: Exposure
+){
+    registerExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
+    bindExposure(exposure)
 }
 
 fun View.registerExposure(
