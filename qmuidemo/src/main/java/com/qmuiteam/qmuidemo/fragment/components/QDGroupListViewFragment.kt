@@ -88,7 +88,7 @@ class QDGroupListViewFragment : BaseFragment() {
         itemWithDetail.setSkinConfig(skinConfig)
         itemWithDetail.detailText = "在右方的详细信息"
         val itemWithDetailBelow = mGroupListView!!.createItemView("Item 3")
-        itemWithDetailBelow.simpleExposure { type ->
+        itemWithDetailBelow.simpleExposure(key = "") { type ->
             Log.i("exposure", "simple exposure: $type")
         }
         itemWithDetailBelow.orientation = QMUICommonListItemView.VERTICAL

@@ -12,9 +12,11 @@ interface Exposure {
     fun expose(view: View, type: ExposureType)
 }
 
-class SimpleExposure(val block: (type: ExposureType) -> Unit) : Exposure {
+
+
+class SimpleExposure(val key: Any?, val block: (type: ExposureType) -> Unit) : Exposure {
     override fun same(data: Exposure): Boolean {
-        return data is SimpleExposure
+        return data is SimpleExposure && data.key == key
     }
 
     override fun expose(view: View, type: ExposureType) {
