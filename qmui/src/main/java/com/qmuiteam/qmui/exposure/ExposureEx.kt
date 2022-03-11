@@ -26,15 +26,15 @@ import com.qmuiteam.qmui.widget.tab.QMUIBasicTabSegment
  *     框架在满足曝光时触发 expose() 方法
  *
  *  3. 可配置项：
- *     holdTime -> 需要在可视区域停留超过 holdTime 后才算曝光， 默认 800ms
- *     debounceTimeout -> debounce 处理，防止界面多次 layout / scroll 不停触发曝光检查， 默认 500ms
+ *     holdTime -> 需要在可视区域停留超过 holdTime 后才算曝光， 默认 600ms
+ *     debounceTimeout -> debounce 处理，防止界面多次 layout / scroll 不停触发曝光检查， 默认 400ms
  *     containerProvider -> 在 containerProvider 提供的 ViewGroup 里可视才算曝光，默认是整个界面的 rootView
  *     exposureChecker -> 曝光检查器，默认是可视面积超过自身总面积的 85% 算可见
  */
 
 fun View.simpleExposure(
-    holdTime: Long = 800,
-    debounceTimeout: Long = 500,
+    holdTime: Long = 600,
+    debounceTimeout: Long = 400,
     containerProvider: ExposureContainerProvider = DefaultExposureContainerProvider,
     exposureChecker: ExposureChecker = defaultExposureChecker,
     doExpose: (type: ExposureType) -> Unit
@@ -46,8 +46,8 @@ fun View.simpleExposure(
 }
 
 fun View.registerExposure(
-    holdTime: Long = 800,
-    debounceTimeout: Long = 500,
+    holdTime: Long = 600,
+    debounceTimeout: Long = 400,
     containerProvider: ExposureContainerProvider = DefaultExposureContainerProvider,
     exposureChecker: ExposureChecker = fullExposureChecker
 ) {
