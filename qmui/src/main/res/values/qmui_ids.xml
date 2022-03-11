@@ -54,6 +54,7 @@
     <item name="qmui_click_timestamp" type="id"/>
     <item name="qmui_click_debounce_action" type="id"/>
 
+    <item name="qmui_exposure_register" type="id"/>
     <item name="qmui_exposure_config" type="id"/>
     <item name="qmui_exposure_data" type="id"/>
     <item name="qmui_exposure_effect_list" type="id"/>
