@@ -42,7 +42,6 @@ import com.qmuiteam.qmui.arch.annotation.DefaultFirstFragment;
 import com.qmuiteam.qmui.arch.annotation.FirstFragments;
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
-import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -126,29 +125,12 @@ public class QDMainActivity extends BaseFragmentActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    private void renderSkinMakerBtn() {
-        Fragment baseFragment = getCurrentFragment();
-        if (baseFragment instanceof BaseFragment) {
-            if (QDApplication.openSkinMake) {
-                ((BaseFragment) baseFragment).openSkinMaker();
-            } else {
-                QMUISkinMaker.getInstance().unBindAll();
-            }
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
         if (getSkinManager() != null) {
             getSkinManager().addSkinChangeListener(mOnSkinChangeListener);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        renderSkinMakerBtn();
     }
 
     @Override
@@ -161,9 +143,7 @@ public class QDMainActivity extends BaseFragmentActivity {
 
     private void showGlobalActionPopup(View v) {
         String[] listItems = new String[]{
-                "Change Skin",
-                QDApplication.openSkinMake ? "Close SkinMaker(Developing)" : "Open SkinMaker(Developing)",
-                "Export SkinMaker Result"
+                "Change Skin"
         };
         List<String> data = new ArrayList<>();
 
@@ -173,25 +153,18 @@ public class QDMainActivity extends BaseFragmentActivity {
         AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0) {
-                    final String[] items = new String[]{"蓝色（默认）", "黑色", "白色"};
-                    new QMUIDialog.MenuDialogBuilder(QDMainActivity.this)
-                            .addItems(items, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    QDSkinManager.changeSkin(which + 1);
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setSkinManager(QMUISkinManager.defaultInstance(QDMainActivity.this))
-                            .create()
-                            .show();
-                } else if (i == 1) {
-                    QDApplication.openSkinMake = !QDApplication.openSkinMake;
-                    renderSkinMakerBtn();
-                } else if (i == 2) {
-                    QMUISkinMaker.getInstance().export(QDMainActivity.this);
-                }
+                final String[] items = new String[]{"蓝色（默认）", "黑色", "白色"};
+                new QMUIDialog.MenuDialogBuilder(QDMainActivity.this)
+                        .addItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                QDSkinManager.changeSkin(which + 1);
+                                dialog.dismiss();
+                            }
+                        })
+                        .setSkinManager(QMUISkinManager.defaultInstance(QDMainActivity.this))
+                        .create()
+                        .show();
                 if (mGlobalAction != null) {
                     mGlobalAction.dismiss();
                 }

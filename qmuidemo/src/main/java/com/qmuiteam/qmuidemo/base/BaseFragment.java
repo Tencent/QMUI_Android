@@ -27,7 +27,6 @@ import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.arch.SwipeBackLayout;
-import com.qmuiteam.qmui.skin.QMUISkinMaker;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -47,34 +46,8 @@ public abstract class BaseFragment extends QMUIFragment {
 
     private static final String TAG = "BaseFragment";
 
-    private int mBindId = -1;
 
     public BaseFragment() {
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if(QDApplication.openSkinMake){
-            openSkinMaker();
-        }
-    }
-
-    public void openSkinMaker(){
-        if(mBindId < 0){
-            mBindId = QMUISkinMaker.getInstance().bind(this);
-        }
-    }
-
-    public void closeSkinMaker(){
-        QMUISkinMaker.getInstance().unBind(mBindId);
-        mBindId = -1;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        closeSkinMaker();
     }
 
     @Override

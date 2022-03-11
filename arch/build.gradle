@@ -30,7 +30,6 @@ dependencies {
     api project(':arch-annotation')
     compileOnly project(':qmui')
     testImplementation "junit:junit:$junitVersion"
-    lintChecks project(':lintrule')
 }
 
 // deploy

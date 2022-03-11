@@ -86,13 +86,11 @@ dependencies {
 //    implementation 'com.qmuiteam:arch:0.3.1'
 //    implementation 'com.qmuiteam:qmui:1.2.0'
     implementation project(':lib')
-    api project(':lint')
     implementation project(':qmui')
     implementation project(':arch')
     implementation project(':type')
     kapt project(':compiler')
     kapt project(':arch-compiler')
-    implementation project(":skin-maker")
 
     //leak
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
