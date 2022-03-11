@@ -1,5 +1,7 @@
 package com.qmuiteam.qmui.exposure
 
+import android.view.View
+
 
 enum class ExposureType {
     first, dataChange, repeat
@@ -7,7 +9,7 @@ enum class ExposureType {
 
 interface Exposure {
     fun same(data: Exposure): Boolean
-    fun expose(type: ExposureType)
+    fun expose(view: View, type: ExposureType)
 }
 
 class SimpleExposure(val block: (type: ExposureType) -> Unit) : Exposure {
@@ -15,7 +17,7 @@ class SimpleExposure(val block: (type: ExposureType) -> Unit) : Exposure {
         return data is SimpleExposure
     }
 
-    override fun expose(type: ExposureType) {
+    override fun expose(view: View, type: ExposureType) {
         block(type)
     }
 }

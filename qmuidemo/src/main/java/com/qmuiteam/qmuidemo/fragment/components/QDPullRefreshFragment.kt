@@ -49,7 +49,7 @@ class ListItemExposure(val text: String): Exposure {
         return data is ListItemExposure && data.text == text
     }
 
-    override fun expose(type: ExposureType) {
+    override fun expose(view: View, type: ExposureType) {
         Log.i("exposure", "list: $text; $text")
     }
 

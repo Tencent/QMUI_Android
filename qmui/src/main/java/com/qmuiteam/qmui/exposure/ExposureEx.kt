@@ -19,7 +19,7 @@ import com.qmuiteam.qmui.widget.tab.QMUIBasicTabSegment
  *     c. 和 RecyclerView/ListView 配合，onCreateViewHolder 时 registerExposure(...)，
  *        onBindViewHolder 时 bindExposure(Exposure)
  *     d. 有自定义 View 复用逻辑的容器，同 c, 但 ViewGroup 需要调用 setToRecyclerContainer()
- *     e. 如果子 View 需要在父 View 已曝光的前提下才能认为是曝光， 那么父容器需要调用 requestSelfExposedWhenDescendantExposed()
+ *     e. 如果子 View 需要在父 View 已曝光的前提下才能认为是曝光， 那么父容器需要调用 setSelfExposedWhenDescendantExposed()
  *
  *  2. Exposure 类
  *     曝光所用的数据类，使用者需要自定义，框架通过 same(Exposure) 判断数据是否变更而觉得是否需要重新曝光， RecyclerView 复用排重也依赖于它
@@ -29,7 +29,7 @@ import com.qmuiteam.qmui.widget.tab.QMUIBasicTabSegment
  *     holdTime -> 需要在可视区域停留超过 holdTime 后才算曝光， 默认 600ms
  *     debounceTimeout -> debounce 处理，防止界面多次 layout / scroll 不停触发曝光检查， 默认 400ms
  *     containerProvider -> 在 containerProvider 提供的 ViewGroup 里可视才算曝光，默认是整个界面的 rootView
- *     exposureChecker -> 曝光检查器，默认是可视面积超过自身总面积的 85% 算可见
+ *     exposureChecker -> 曝光检查器，默认是可视面积超过自身总面积的 80% 算可见
  */
 
 fun View.simpleExposure(
@@ -52,7 +52,11 @@ fun View.registerExposure(
     exposureChecker: ExposureChecker = fullExposureChecker
 ) {
     setTag(R.id.qmui_exposure_config, true)
-    addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+    var attachListener = getTag(R.id.qmui_exposure_register) as? View.OnAttachStateChangeListener
+    if(attachListener != null){
+        return
+    }
+    attachListener = object : View.OnAttachStateChangeListener {
         private val onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
             checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
         }
@@ -73,10 +77,21 @@ fun View.registerExposure(
             clearExposureHolder()
             clearExposureDebounce()
             doUnExpose()
-
         }
 
-    })
+    }
+    setTag(R.id.qmui_exposure_register, attachListener)
+    addOnAttachStateChangeListener(attachListener)
+}
+
+fun View.unregisterExposure(){
+    setTag(R.id.qmui_exposure_config, false)
+    val attachListener = getTag(R.id.qmui_exposure_register) as? View.OnAttachStateChangeListener
+    if(attachListener != null){
+        removeOnAttachStateChangeListener(attachListener)
+        attachListener.onViewDetachedFromWindow(this)
+        setTag(R.id.qmui_exposure_register, null)
+    }
 }
 
 fun View.bindExposure(exposure: Exposure) {
@@ -91,8 +106,13 @@ fun View.setToRecyclerContainer() {
     setTag(R.id.qmui_exposure_is_recycler_container, true)
 }
 
-fun ViewGroup.requestSelfExposedWhenDescendantExposed() {
-    setTag(R.id.qmui_exposure_parent_expose_request, ParentExposedRequestExposureEffect(this))
+fun ViewGroup.setSelfExposedWhenDescendantExposed(need: Boolean) {
+    if(need){
+        setTag(R.id.qmui_exposure_parent_expose_request, ParentExposedRequestExposureEffect(this))
+    }else{
+        setTag(R.id.qmui_exposure_parent_expose_request, null)
+    }
+
 }
 
 fun ViewGroup.customConfigRecyclerExposureEffect(effect: RecyclerExposureEffect) {
@@ -245,7 +265,7 @@ internal fun View.doExpose(
     }
     setTag(R.id.qmui_exposure_effect_list, ExposureEffectList(container, exposureList))
     if (effectResult == EffectResult.pass) {
-        exposure.expose(exposureType)
+        exposure.expose(this, exposureType)
         effectResult = EffectResult.handled
     }
     return effectResult == EffectResult.handled

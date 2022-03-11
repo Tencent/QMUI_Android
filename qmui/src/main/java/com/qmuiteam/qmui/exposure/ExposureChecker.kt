@@ -58,4 +58,4 @@ class AreaExposureChecker(val percent: Float): ExposureChecker {
 val fastFullExposureChecker = FastAreaExposureChecker(1f)
 val fullExposureChecker = AreaExposureChecker(1f)
 
-val defaultExposureChecker = AreaExposureChecker(0.85f)
+val defaultExposureChecker = AreaExposureChecker(0.80f)
