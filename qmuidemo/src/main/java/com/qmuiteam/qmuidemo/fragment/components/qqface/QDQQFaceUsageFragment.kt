@@ -35,7 +35,6 @@ import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmui.kotlin.onClick
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView
 import com.qmuiteam.qmui.span.QMUITouchableSpan
-import com.qmuiteam.qmui.type.SerialLineIndentHandler
 import com.qmuiteam.qmui.type.parser.EmojiTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
 import com.qmuiteam.qmui.type.view.LineTypeView
@@ -145,13 +144,6 @@ class QDQQFaceUsageFragment : BaseFragment() {
     @BindView(R.id.line_type_1)
     var mLineType1: LineTypeView? = null
 
-    @JvmField
-    @BindView(R.id.line_type_2)
-    var mLineType2: LineTypeView? = null
-
-    @JvmField
-    @BindView(R.id.line_type_3)
-    var mLineType3: LineTypeView? = null
 
     @JvmField
     @BindView(R.id.qqface1)
@@ -238,7 +230,7 @@ class QDQQFaceUsageFragment : BaseFragment() {
     }
 
     private fun initData() {
-        val textParser: TextParser = EmojiTextParser(QDQQFaceManager.getInstance()) { true }
+        val textParser: TextParser = EmojiTextParser(QDQQFaceManager.getInstance())
         mMarqueeTypeView1!!.fadeWidth = QMUIDisplayHelper.dp2px(context, 40).toFloat()
         mMarqueeTypeView1!!.textParser = textParser
         mMarqueeTypeView1!!.text = "🙃🙃🙃🙃飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀飘呀这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示"
@@ -261,52 +253,9 @@ class QDQQFaceUsageFragment : BaseFragment() {
                 "不管是新项目的创建，或是已有项[微笑]目的维护，均可使开[微笑]发效率和项目[微笑]质量得到大幅度提升。"
         mLineType1!!.addBgEffect(10, 16, QMUIColorHelper.setColorAlpha(Color.RED, 0.5f))
 
-        mLineType1!!.addClickEffect(20, 30,
-            { isPressed -> if (isPressed) Color.RED else Color.BLUE },
-            { isPressed -> if (isPressed) Color.BLUE else Color.RED }
-        ) { start, end ->
-            Toast.makeText(context, "你点${start}-${end}干嘛", Toast.LENGTH_SHORT).show()
-        }
-
-        mLineType1!!.addClickEffect(44, 82,
-            { isPressed -> if (isPressed) Color.RED else Color.BLUE },
-            { isPressed -> if (isPressed) Color.BLUE else Color.RED }
-        ) { start, end ->
-            Toast.makeText(context, "你点${start}-${end}干嘛", Toast.LENGTH_SHORT).show()
-        }
-
         mLineType1!!.onClick {
             Toast.makeText(context, "你点整个 LineTypeView 干嘛", Toast.LENGTH_SHORT).show()
         }
-
-        mLineType2!!.textParser = textParser
-        mLineType2!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
-        mLineType2!!.textColor = Color.BLACK
-        mLineType2!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
-        val content2 = "a.这一条很重要，你要仔细研读研读。\n" +
-                "b.这一条不重要，但是有很多很多很多很多很多很多很多很多内容。。\n" +
-                "c.这一条特别重要，但是我也不知道对不对，只能放这里了，哈哈哈哈。\n"
-        mLineType2!!.text = content2
-
-        val pairs = arrayListOf<Pair<Int, Int>>()
-        val pattern = Pattern.compile("([a-z]+\\.)")
-        val matcher = pattern.matcher(content2)
-        while (matcher.find()){
-            pairs.add(matcher.start() to matcher.end() - 1)
-        }
-
-        pairs.forEach {
-            mLineType2!!.addTextColorEffect(it.first, it.second, Color.LTGRAY)
-        }
-        mLineType2!!.lineLayout.lineIndentHandler = SerialLineIndentHandler(pairs)
-
-
-        mLineType3!!.textParser = textParser
-        mLineType3!!.lineHeight = QMUIDisplayHelper.dp2px(context, 36)
-        mLineType3!!.textColor = Color.BLACK
-        mLineType3!!.textSize = QMUIDisplayHelper.sp2px(context, 15).toFloat()
-        mLineType3!!.text = "འདི་བཞིན་གྱི་ཡིད་བརྙན་གྱི་ཚོགས་མང་པོ་ཞིག་གིས་ཞེ་དྲག་བསམ་གཞིག་གི་བར་སྟོང་ཡངས་པོར་ཕྱེས་འགྲོ"
-
 
         mQQFace1!!.text = "这是一行很长很长[微笑][微笑][微笑][微笑]的文本，但是[微笑][微笑][微笑][微笑]只能单行显示"
         mQQFace2!!.text = "这是一段很长很长[微笑][微笑][微笑][微笑]的文本，但是最多只能显示三行；" +

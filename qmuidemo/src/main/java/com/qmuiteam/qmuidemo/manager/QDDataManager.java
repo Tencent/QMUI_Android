@@ -33,7 +33,6 @@ import com.qmuiteam.qmuidemo.fragment.components.QDPullRefreshFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRadiusImageViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDRecyclerViewDraggableScrollBarFragment;
 import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeActionFragment;
-import com.qmuiteam.qmuidemo.fragment.components.swipeAction.QDRVSwipeMutiActionFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSliderFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDSpanTouchFixTextViewFragment;
 import com.qmuiteam.qmuidemo.fragment.components.QDTabSegmentFragment;
@@ -57,6 +56,7 @@ import com.qmuiteam.qmuidemo.fragment.util.QDSpanFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDStatusBarHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDViewHelperFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
+import com.qmuiteam.qmuidemo.manager.QDWidgetContainer;
 
 import java.util.ArrayList;
 import java.util.List;
