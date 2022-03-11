@@ -61,9 +61,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"/>
 
-            <TextView
+            <com.qmuiteam.qmuidemo.fragment.components.qqface.Test
                 style="@style/QDCommonTitle"
-                android:text="新排版, 两端对齐"
                 android:layout_marginTop="20dp"/>
 
             <com.qmuiteam.qmui.type.view.LineTypeView

@@ -86,7 +86,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         bindData(holder, position, mData.get(position));
     }
 
@@ -130,7 +130,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     @SuppressWarnings("SameReturnValue")
     abstract public int getItemLayoutId(int viewType);
 
-    abstract public void bindData(RecyclerViewHolder holder, int position, T item);
+    abstract public void bindData(@NonNull RecyclerViewHolder holder, int position, @NonNull T item);
 
     public interface OnItemClickListener {
         void onItemClick(View itemView, int pos);
