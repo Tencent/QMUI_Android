@@ -3,7 +3,6 @@ apply plugin: 'java-library'
 version = QMUI_ARCH_VERSION
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':arch-annotation')
     implementation 'com.squareup:javapoet:1.10.0'
     implementation 'com.google.auto.service:auto-service:1.0-rc2'
