@@ -15,20 +15,15 @@
  */
 package com.qmuiteam.qmuidemo.fragment.components
 
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.qmuiteam.qmui.exposure.requestSelfExposedWhenDescendantExposed
 import com.qmuiteam.qmui.exposure.simpleExposure
-import com.qmuiteam.qmui.kotlin.dip
 import com.qmuiteam.qmui.util.QMUIDisplayHelper
 import com.qmuiteam.qmui.util.QMUIResHelper
 import com.qmuiteam.qmui.widget.QMUILoadingView
