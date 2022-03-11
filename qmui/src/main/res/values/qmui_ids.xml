@@ -53,4 +53,16 @@
 
     <item name="qmui_click_timestamp" type="id"/>
     <item name="qmui_click_debounce_action" type="id"/>
+
+    <item name="qmui_exposure_config" type="id"/>
+    <item name="qmui_exposure_data" type="id"/>
+    <item name="qmui_exposure_effect_list" type="id"/>
+    <item name="qmui_exposure_last_data" type="id"/>
+    <item name="qmui_exposure_ing" type="id"/>
+    <item name="qmui_exposure_holder" type="id"/>
+    <item name="qmui_exposure_debounce" type="id"/>
+    <item name="qmui_exposure_parent_expose_request" type="id"/>
+    <item name="qmui_exposure_recycler_collection" type="id"/>
+    <item name="qmui_exposure_custom_effect" type="id"/>
+    <item name="qmui_exposure_is_recycler_container" type="id"/>
 </resources>
