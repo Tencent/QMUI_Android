@@ -503,6 +503,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
                     QMUIPhotoPickerPreviewToolBar(
                         modifier = Modifier.fillMaxWidth(),
+                        current = data[pagerState.currentPage],
                         isCurrentPicked = isCurrentPicked,
                         enableOrigin = viewModel.enableOrigin,
                         isOriginOpenFlow = viewModel.isOriginOpenFlow,

@@ -13,6 +13,7 @@ import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 import kotlinx.coroutines.flow.StateFlow
 
 class QMUIPhotoPickerConfig(
+    val editable: Boolean = true,
     val primaryColor: Color = qmuiPrimaryColor,
     val commonTextButtonTextColor: Color = Color.White,
     val commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),

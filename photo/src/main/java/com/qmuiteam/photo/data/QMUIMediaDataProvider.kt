@@ -25,7 +25,8 @@ open class QMUIMediaModel(
     val name: String,
     val modifyTimeSec: Long,
     val bucketId: String,
-    val bucketName: String
+    val bucketName: String,
+    val editable: Boolean
 ) {
     fun ratio(): Float {
         return width.toFloat() / height
@@ -133,7 +134,8 @@ class QMUIMediaImagesProvider : QMUIMediaDataProvider {
                                     cursor.readString(MediaStore.Images.Media.BUCKET_ID),
                                     (cursor.readString(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)).let {
                                         it.ifEmpty { File(path).parent ?: "" }
-                                    }
+                                    },
+                                    true
                                 )
                             )
                         } catch (e: Exception) {

@@ -164,6 +164,7 @@ private fun QMUIPhotoPickerPreviewPickedItem(
 @Composable
 fun QMUIPhotoPickerPreviewToolBar(
     modifier: Modifier = Modifier,
+    current: QMUIMediaPhotoVO,
     isCurrentPicked: Boolean,
     enableOrigin: Boolean,
     isOriginOpenFlow: StateFlow<Boolean>,
@@ -183,12 +184,14 @@ fun QMUIPhotoPickerPreviewToolBar(
             drawTopSeparator(config.commonSeparatorColor)
         }
     ) {
-        CommonTextButton(
-            modifier = Modifier.align(Alignment.CenterStart),
-            enable = true,
-            text = "编辑",
-            onClick = onEdit
-        )
+        if(current.model.editable && config.editable){
+            CommonTextButton(
+                modifier = Modifier.align(Alignment.CenterStart),
+                enable = true,
+                text = "编辑",
+                onClick = onEdit
+            )
+        }
 
         if(enableOrigin){
             OriginOpenButton(
