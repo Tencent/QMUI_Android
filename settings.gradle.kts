@@ -18,5 +18,6 @@ include(":compose-core")
 include(":compose")
 include(":photo")
 include(":photo-coil")
+include(":photo-glide")
 
 

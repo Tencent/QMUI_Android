@@ -1,9 +1,7 @@
 package com.qmuiteam.photo.data
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.BitmapRegionDecoder
-import android.graphics.Rect
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.LruCache
 import androidx.compose.ui.unit.IntSize
@@ -11,7 +9,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.InputStream
-import java.util.LinkedHashMap
 import kotlin.math.max
 import kotlin.math.min
 
@@ -216,22 +213,22 @@ private class QMUIBitmapRegionCacheStatistic(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private val cacheJobs = object: LruCache<QMUICacheBitmapRegionLoader, Job>(cacheCountForLazyLoad){
+    private val cacheJobs = object : LruCache<QMUICacheBitmapRegionLoader, Job>(cacheCountForLazyLoad) {
         override fun entryRemoved(evicted: Boolean, key: QMUICacheBitmapRegionLoader?, oldValue: Job?, newValue: Job?) {
             super.entryRemoved(evicted, key, oldValue, newValue)
-            if(newValue == null){
+            if (newValue == null) {
                 key?.let {
                     scope.launch {
                         it.releaseCache()
                     }
                 }
-            }else{
+            } else {
                 oldValue?.cancel()
             }
         }
     }
 
-    fun doWhenLoaded(loader: QMUICacheBitmapRegionLoader){
+    fun doWhenLoaded(loader: QMUICacheBitmapRegionLoader) {
         val job = scope.launch {
             delay(cacheTimeoutForLazyLoad)
             cacheJobs.remove(loader)
@@ -241,5 +238,33 @@ private class QMUIBitmapRegionCacheStatistic(
 
     fun canCache(): Boolean {
         return cacheTimeoutForLazyLoad > 0 && cacheCountForLazyLoad > 0
+    }
+}
+
+
+class QMUIBitmapRegionHolderDrawable(val bitmapRegion: QMUIBitmapRegion) : Drawable() {
+
+    override fun getIntrinsicHeight(): Int {
+        return bitmapRegion.height
+    }
+
+    override fun getIntrinsicWidth(): Int {
+        return bitmapRegion.width
+    }
+
+    override fun draw(canvas: Canvas) {
+
+    }
+
+    override fun setAlpha(alpha: Int) {
+
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+
+    }
+
+    override fun getOpacity(): Int {
+        return PixelFormat.OPAQUE
     }
 }

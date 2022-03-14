@@ -90,10 +90,12 @@ dependencies {
     implementation(project(":compose"))
     implementation(project(":photo"))
     implementation(project(":photo-coil"))
+    implementation(project(":photo-glide"))
     implementation(Dep.Flipper.soLoader)
     implementation(Dep.Flipper.flipper)
     kapt(project(":compiler"))
     kapt(project(":arch-compiler"))
+    kapt(Dep.Glide.compiler)
 
     implementation("com.iqiyi.xcrash:xcrash-android-lib:3.1.0")
 }

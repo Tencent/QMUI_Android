@@ -74,4 +74,10 @@ object Dep {
     object Coil {
         const val compose = "io.coil-kt:coil-compose:2.0.0-alpha06"
     }
+
+    object Glide {
+        private const val ver = "4.13.0"
+        const val glide = "com.github.bumptech.glide:glide:$ver"
+        const val compiler = "com.github.bumptech.glide:compiler:$ver"
+    }
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
@@ -20,7 +19,6 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
 import coil.compose.AsyncImageContent
@@ -30,6 +28,7 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.size.Scale
+import com.qmuiteam.photo.compose.QMUIBitmapRegionItem
 import com.qmuiteam.photo.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -77,9 +76,11 @@ open class QMUICoilThumbPhoto(
             ) { state ->
                 if (state == AsyncImagePainter.State.Empty || state is AsyncImagePainter.State.Loading) {
                     if (isContainerDimenExactly) {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .background(blankColor))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(blankColor)
+                        )
                     }
                 } else {
                     AsyncImageContent()
@@ -144,8 +145,10 @@ open class QMUICoilThumbPhoto(
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
             )
-        }else{
-            Box(modifier = Modifier.fillMaxSize().background(blankColor))
+        } else {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(blankColor))
         }
 
     }
@@ -216,7 +219,7 @@ class QMUICoilPhoto(
                 context.imageLoader.execute(request)
             }
             if (result is SuccessResult) {
-                (result.drawable as? QMUICoilLongImageDrawableHolder)?.bitmapRegion?.let {
+                (result.drawable as? QMUIBitmapRegionHolderDrawable)?.bitmapRegion?.let {
                     images = it.list
                 }
                 onSuccess?.invoke(PhotoResult(uri, result.drawable))
@@ -233,7 +236,7 @@ class QMUICoilPhoto(
                         val heightDp = with(LocalDensity.current) {
                             height.toDp()
                         }
-                        QMUILongImageItem(image, maxWidth, heightDp)
+                        QMUIBitmapRegionItem(image, maxWidth, heightDp)
                     }
                 }
             }
@@ -241,29 +244,6 @@ class QMUICoilPhoto(
     }
 }
 
-
-@Composable
-fun QMUILongImageItem(bmRegion: QMUIBitmapRegionProvider, w: Dp, h: Dp) {
-    var bitmap by remember {
-        mutableStateOf<Bitmap?>(null)
-    }
-    LaunchedEffect(key1 = bmRegion) {
-        withContext(Dispatchers.IO) {
-            bitmap = bmRegion.loader.load()
-        }
-    }
-    Box(modifier = Modifier.size(w, h)) {
-        val bm = bitmap
-        if (bm != null) {
-            Image(
-                painter = BitmapPainter(bm.asImageBitmap()),
-                contentDescription = "",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
-}
 
 open class QMUICoilPhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoProvider {
 

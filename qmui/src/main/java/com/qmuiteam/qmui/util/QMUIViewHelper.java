@@ -741,6 +741,7 @@ public class QMUIViewHelper {
                 m.reset();
             }
 
+            m.preTranslate(-group.getScrollX(), -group.getScrollY());
             offsetDescendantMatrix(group, child, m);
 
             RectF rectF = sRectF.get();
@@ -755,10 +756,6 @@ public class QMUIViewHelper {
         }
 
         static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
-            if(target instanceof View){
-                final View vt = (View) target;
-                m.preTranslate(-vt.getScrollX(), -vt.getScrollY());
-            }
             final ViewParent parent = view.getParent();
             if (parent instanceof View && parent != target) {
                 final View vp = (View) parent;
