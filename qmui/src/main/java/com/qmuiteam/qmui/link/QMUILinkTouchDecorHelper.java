@@ -23,7 +23,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.BuildConfig;
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.widget.textview.ISpanTouchFix;
 
 import java.lang.ref.WeakReference;
@@ -137,7 +137,7 @@ public class QMUILinkTouchDecorHelper {
             }
             return touchedSpan;
         } catch (IndexOutOfBoundsException e) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 Log.d(this.toString(), "getPressedSpan", e);
             }
         }

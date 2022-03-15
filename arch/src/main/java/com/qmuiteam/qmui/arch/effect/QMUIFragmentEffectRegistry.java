@@ -24,8 +24,8 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModel;
 
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.QMUILog;
-import com.qmuiteam.qmui.arch.BuildConfig;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 
 import java.lang.reflect.ParameterizedType;
@@ -188,7 +188,7 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
             }
 
             if (effectClz == null) {
-                if (BuildConfig.DEBUG) {
+                if (QMUIConfig.DEBUG) {
                     throw new RuntimeException("Error to get FragmentEffectHandler's generic parameter type");
                 } else {
                     QMUILog.d(TAG, "Error to get FragmentEffectHandler's generic parameter type");

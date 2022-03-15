@@ -22,11 +22,11 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
 
-import com.qmuiteam.qmui.BuildConfig;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIPackageHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
+import com.qmuiteam.qmuidemo.BuildConfig;
 import com.qmuiteam.qmuidemo.R;
 
 /**

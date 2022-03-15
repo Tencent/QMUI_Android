@@ -136,7 +136,7 @@ class QDDialogFragment() : ComposeBaseFragment() {
                                 maxHeight = 500.dp,
                                 list = list,
                                 markIndex = markIndex
-                            ) { modal, index ->
+                            ) { _, index ->
                                 Toast.makeText(view.context, "你点了第${index + 1}项", Toast.LENGTH_SHORT).show()
 //                                modal.dismiss()
                             }

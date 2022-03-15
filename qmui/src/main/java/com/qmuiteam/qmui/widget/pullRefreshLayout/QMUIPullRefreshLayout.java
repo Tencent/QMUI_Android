@@ -41,7 +41,7 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.qmuiteam.qmui.BuildConfig;
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.nestedScroll.QMUIContinuousNestedScrollLayout;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
@@ -399,7 +399,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
         int pointerIndex;
 
         if (!isEnabled() || canChildScrollUp() || mNestedScrollInProgress) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 Log.d(TAG, "fast end onIntercept: isEnabled = " + isEnabled() + "; canChildScrollUp = "
                         + canChildScrollUp() + " ; mNestedScrollInProgress = " + mNestedScrollInProgress);
             }
@@ -1023,7 +1023,7 @@ public class QMUIPullRefreshLayout extends ViewGroup implements NestedScrollingP
     }
 
     private void info(String msg) {
-        if (BuildConfig.DEBUG) {
+        if (QMUIConfig.DEBUG) {
             Log.i(TAG, msg);
         }
     }

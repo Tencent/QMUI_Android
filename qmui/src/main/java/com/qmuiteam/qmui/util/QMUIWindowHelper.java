@@ -25,7 +25,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.qmuiteam.qmui.BuildConfig;
+import com.qmuiteam.qmui.QMUIConfig;
 
 import java.lang.reflect.Field;
 
@@ -58,7 +58,7 @@ public class QMUIWindowHelper {
     @SuppressWarnings({"JavaReflectionMemberAccess"})
     public static Rect unSafeGetWindowVisibleInsets(@NonNull View view) {
         Object attachInfo = getAttachInfoFromView(view);
-        if(attachInfo == null){
+        if (attachInfo == null) {
             return null;
         }
         try {
@@ -70,7 +70,7 @@ public class QMUIWindowHelper {
                 return (Rect) visibleInsets;
             }
         } catch (Throwable e) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 e.printStackTrace();
             }
         }
@@ -81,7 +81,7 @@ public class QMUIWindowHelper {
     @SuppressWarnings({"JavaReflectionMemberAccess"})
     public static Rect unSafeGetContentInsets(@NonNull View view) {
         Object attachInfo = getAttachInfoFromView(view);
-        if(attachInfo == null){
+        if (attachInfo == null) {
             return null;
         }
         try {
@@ -93,34 +93,34 @@ public class QMUIWindowHelper {
                 return (Rect) visibleInsets;
             }
         } catch (Throwable e) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 e.printStackTrace();
             }
         }
         return null;
     }
 
-    public static Object getAttachInfoFromView(@NonNull View view){
+    public static Object getAttachInfoFromView(@NonNull View view) {
         Object attachInfo = null;
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             // Android 10+ can not reflect the View.mAttachInfo
             // fortunately now it is in light greylist in ViewRootImpl
             View rootView = view.getRootView();
-            if(rootView != null){
+            if (rootView != null) {
                 ViewParent vp = rootView.getParent();
-                if(vp != null){
+                if (vp != null) {
                     try {
                         Field field = vp.getClass().getDeclaredField("mAttachInfo");
                         field.setAccessible(true);
                         attachInfo = field.get(vp);
                     } catch (Throwable e) {
-                        if (BuildConfig.DEBUG) {
+                        if (QMUIConfig.DEBUG) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
-        }else{
+        } else {
             try {
                 // Android P forbid the reflection for @hide filed,
                 // fortunately now it is in light greylist, just be warned.
@@ -128,7 +128,7 @@ public class QMUIWindowHelper {
                 field.setAccessible(true);
                 attachInfo = field.get(view);
             } catch (Throwable e) {
-                if (BuildConfig.DEBUG) {
+                if (QMUIConfig.DEBUG) {
                     e.printStackTrace();
                 }
             }

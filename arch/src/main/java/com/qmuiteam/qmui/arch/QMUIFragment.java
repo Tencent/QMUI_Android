@@ -378,7 +378,7 @@ public abstract class QMUIFragment extends Fragment implements
 
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(true);
         if (provider == null) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 throw new RuntimeException("Can not find the fragment container provider.");
             } else {
                 Log.d(TAG, "Can not find the fragment container provider.");
@@ -417,7 +417,7 @@ public abstract class QMUIFragment extends Fragment implements
         }
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(true);
         if (provider == null) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 throw new RuntimeException("Can not find the fragment container provider.");
             } else {
                 Log.d(TAG, "Can not find the fragment container provider.");
@@ -437,7 +437,7 @@ public abstract class QMUIFragment extends Fragment implements
         }
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(true);
         if (provider == null) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 throw new RuntimeException("Can not find the fragment container provider.");
             } else {
                 Log.d(TAG, "Can not find the fragment container provider.");
@@ -496,7 +496,7 @@ public abstract class QMUIFragment extends Fragment implements
         }
         QMUIFragmentContainerProvider provider = findFragmentContainerProvider(true);
         if (provider == null) {
-            if (BuildConfig.DEBUG) {
+            if (QMUIConfig.DEBUG) {
                 throw new RuntimeException("Can not find the fragment container provider.");
             } else {
                 Log.d(TAG, "Can not find the fragment container provider.");

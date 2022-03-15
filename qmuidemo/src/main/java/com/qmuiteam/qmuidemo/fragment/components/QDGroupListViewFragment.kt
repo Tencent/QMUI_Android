@@ -97,7 +97,7 @@ class QDGroupListViewFragment : BaseFragment() {
         itemWithChevron.accessoryType = QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON
         val itemWithSwitch = mGroupListView!!.createItemView("Item 5")
         itemWithSwitch.accessoryType = QMUICommonListItemView.ACCESSORY_TYPE_SWITCH
-        itemWithSwitch.switch.setOnCheckedChangeListener { buttonView, isChecked ->
+        itemWithSwitch.switch.setOnCheckedChangeListener { _, isChecked ->
             Toast.makeText(
                 activity,
                 "checked = $isChecked",

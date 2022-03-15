@@ -38,7 +38,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.qmuiteam.qmui.BuildConfig;
+import com.qmuiteam.qmui.QMUIConfig;
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.qqface.QMUIQQFaceView;
@@ -266,7 +266,7 @@ public final class QMUISkinManager {
         if (view == null) {
             return;
         }
-        if (BuildConfig.DEBUG) {
+        if (QMUIConfig.DEBUG) {
             Trace.beginSection("QMUISkin::dispatch");
         }
         SkinItem skinItem = mSkins.get(skinIndex);
@@ -280,7 +280,7 @@ public final class QMUISkinManager {
             theme = skinItem.getTheme();
         }
         runDispatch(view, skinIndex, theme);
-        if (BuildConfig.DEBUG) {
+        if (QMUIConfig.DEBUG) {
             Trace.endSection();
         }
     }

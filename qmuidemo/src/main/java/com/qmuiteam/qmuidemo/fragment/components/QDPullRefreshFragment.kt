@@ -121,7 +121,7 @@ class QDPullRefreshFragment : BaseFragment() {
                 holder.itemView.bindExposure(ListItemExposure(item))
             }
         }
-        mAdapter?.setOnItemClickListener(BaseRecyclerAdapter.OnItemClickListener { itemView, pos ->
+        mAdapter?.setOnItemClickListener(BaseRecyclerAdapter.OnItemClickListener { _, pos ->
             Toast.makeText(
                 context,
                 "click position=$pos",
@@ -180,7 +180,7 @@ class QDPullRefreshFragment : BaseFragment() {
             .addItem(resources.getString(R.string.pull_refresh_default_offset_calculator))
             .addItem(resources.getString(R.string.pull_refresh_follow_offset_calculator))
             .addItem(resources.getString(R.string.pull_refresh_center_gravity_offset_calculator))
-            .setOnSheetItemClickListener { dialog, itemView, position, tag ->
+            .setOnSheetItemClickListener { dialog, _, position, _ ->
                 dialog.dismiss()
                 when (position) {
                     0 -> mPullRefreshLayout!!.setRefreshOffsetCalculator(QMUIDefaultRefreshOffsetCalculator())
