@@ -19,12 +19,18 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
+import com.qmuiteam.photo.compose.QMUILocalPhotoConfig
 
 class PhotoViewerData(
     val list: List<QMUIPhotoTransitionInfo>,
@@ -50,7 +56,7 @@ interface QMUIPhoto {
 }
 
 interface QMUIPhotoProvider {
-    fun thumbnail(): QMUIPhoto?
+    fun thumbnail(openBlankColor: Boolean): QMUIPhoto?
     fun photo(): QMUIPhoto?
     fun ratio(): Float = -1f
     fun isLongImage(): Boolean = false
@@ -88,7 +94,7 @@ class QMUIPhotoTransitionInfo(
 }
 
 val lossPhotoProvider = object : QMUIPhotoProvider {
-    override fun thumbnail(): QMUIPhoto? {
+    override fun thumbnail(openBlankColor: Boolean): QMUIPhoto? {
         return null
     }
 

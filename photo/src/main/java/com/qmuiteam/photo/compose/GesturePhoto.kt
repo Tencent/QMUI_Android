@@ -182,7 +182,7 @@ fun QMUIGesturePhoto(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .pointerInput("${containerWidth}_${containerHeight}_${maxScale}_${shouldTransitionExit}_${onTapExit}_${onBeginPullExit}_${imagePaddingFix}") {
+                .pointerInput(containerWidth, containerHeight, maxScale, shouldTransitionExit, onTapExit, onBeginPullExit, imagePaddingFix) {
                     coroutineScope {
                         launch {
                             detectTapGestures(
@@ -481,11 +481,8 @@ fun PhotoContentWithRectTransition(
     ) {
         if (it) Rect(translateX, translateY, translateX + imageWidth * scale, translateY + imageHeight * scale) else initRect
     }
-    val isTransitionEnd = transition.currentState && transition.targetState
-    val usedWidth = if(isTransitionEnd) imageWidth else rect.value.width
-    val usedHeight = if(isTransitionEnd) imageHeight else rect.value.height
-    val usedScale = if(isTransitionEnd) rect.value.width / imageWidth else 1f
-    content(usedWidth, usedHeight, usedScale, rect.value.left, rect.value.top)
+    val usedScale = rect.value.width / imageWidth
+    content(imageWidth, imageHeight, usedScale, rect.value.left, rect.value.top)
 }
 
 @Composable

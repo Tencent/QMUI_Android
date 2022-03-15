@@ -314,11 +314,10 @@ class QDPhotoFragment : ComposeBaseFragment() {
             }
         }else{
             val images = remember(pickResult) {
-                Log.i("cginetest", "${pickResult.list.joinToString("\n") { it.uri.toString() } }}")
                 pickResult.list.map {
                     QMUICoilPhotoProvider(
                         it.uri,
-                        it.width.toFloat() / it.height
+                        if(it.width <= 0 || it.height <= 0) -1f else it.width.toFloat() / it.height
                     )
                 }
             }
@@ -330,13 +329,6 @@ class QDPhotoFragment : ComposeBaseFragment() {
                     activity = requireActivity(),
                     images = images
                 )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-            ) {
-
             }
         }
 

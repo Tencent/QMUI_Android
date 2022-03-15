@@ -16,9 +16,13 @@
 package com.qmuiteam.photo.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -47,11 +51,17 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.qmuiteam.photo.R
+import com.qmuiteam.photo.compose.QMUIDefaultPhotoConfigProvider
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
+import com.qmuiteam.photo.util.QMUIPhotoHelper
 import com.qmuiteam.photo.util.asBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
 private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_delivery"
@@ -107,32 +117,44 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             }
         }
 
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 transitionTargetFlow.value = false
             }
         })
 
         setContent {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val data = viewModel.data
-                if (data == null || data.list.isEmpty()) {
-                    Text(text = "没有图片数据")
-                } else {
-                    viewModel.data?.background?.let {
-                        Image(
-                            painter = BitmapPainter(it.asImageBitmap()),
-                            contentDescription = "",
-                            contentScale = ContentScale.FillWidth,
-                            alignment = Alignment.TopCenter,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    PhotoViewer(list = data.list, index = data.index)
+            PageContent()
+        }
+    }
+
+    @Composable
+    protected open fun PageContent(){
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val data = viewModel.data
+            if (data == null || data.list.isEmpty()) {
+                Text(text = "没有图片数据")
+            } else {
+                viewModel.data?.background?.let {
+                    Image(
+                        painter = BitmapPainter(it.asImageBitmap()),
+                        contentDescription = "",
+                        contentScale = ContentScale.FillWidth,
+                        alignment = Alignment.TopCenter,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
+                PhotoViewerProviderWrapper(list = data.list, index = data.index)
             }
+        }
+    }
+
+    @Composable
+    protected open fun PhotoViewerProviderWrapper(list: List<QMUIPhotoTransitionInfo>, index: Int){
+        QMUIDefaultPhotoConfigProvider {
+            PhotoViewer(list, index)
         }
     }
 
@@ -146,9 +168,12 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         ) { page ->
             val item = list[page]
             val initRect = item.photoRect()
-            val transitionTarget = if(pagerState.currentPage == page){
+            val transitionTarget = if (pagerState.currentPage == page) {
                 transitionTargetFlow.collectAsState().value
             } else true
+            val drawableCache = remember {
+                MutableDrawableCache()
+            }
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 QMUIGesturePhoto(
                     containerWidth = maxWidth,
@@ -161,6 +186,11 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     onBeginPullExit = {
                         true
                     },
+                    onLongPress = {
+                        drawableCache.drawable?.let {
+                            onLongClick(it)
+                        }
+                    },
                     onTapExit = {
                         if (it) {
                             finish()
@@ -171,10 +201,20 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                         }
                     }
                 ) { transition, _, _, onImageRatioEnsured ->
+
+                    val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
+                        {
+                            drawableCache.drawable = it.drawable
+                            if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
+                                onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
+                            }
+                        }
+                    }
+
                     PhotoContent(
                         transition = transition,
                         photoTransitionInfo = item,
-                        onImageRatioEnsured = onImageRatioEnsured
+                        onPhotoLoaded = onPhotoLoad
                     )
                 }
             }
@@ -185,23 +225,25 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     protected open fun PhotoContent(
         transition: Transition<Boolean>,
         photoTransitionInfo: QMUIPhotoTransitionInfo,
-        onImageRatioEnsured: (Float) -> Unit
+        onPhotoLoaded: (PhotoResult) -> Unit
     ) {
 
-        val thumb = remember(photoTransitionInfo) { photoTransitionInfo.photoProvider.thumbnail() }
+        val thumb = remember(photoTransitionInfo) { photoTransitionInfo.photoProvider.thumbnail(false) }
 
         var loadStatus by remember {
             mutableStateOf(PhotoLoadStatus.loading)
         }
 
+        val onSuccess: (PhotoResult) -> Unit = remember(onPhotoLoaded) {
+            {
+                onPhotoLoaded(it)
+                loadStatus = PhotoLoadStatus.success
+            }
+        }
+
         Box(modifier = Modifier.fillMaxSize()) {
             PhotoItem(photoTransitionInfo,
-                onSuccess = {
-                    if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
-                        onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
-                    }
-                    loadStatus = PhotoLoadStatus.success
-                },
+                onSuccess = onSuccess,
                 onError = {
                     loadStatus = PhotoLoadStatus.failed
                 }
@@ -272,6 +314,10 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     protected open fun BoxScope.LoadingFailed() {
         // do nothing default, users should handle load fail / reload in Photo
     }
+
+    protected open fun onLongClick(drawable: Drawable) {
+
+    }
 }
 
 
@@ -319,3 +365,5 @@ class QMUIPhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
         QMUIPhotoTransitionDelivery.remove(transitionDeliverKey)
     }
 }
+
+class MutableDrawableCache(var drawable: Drawable? = null)

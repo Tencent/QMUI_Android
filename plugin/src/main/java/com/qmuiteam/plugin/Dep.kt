@@ -47,7 +47,7 @@ object Dep {
         val activity = "androidx.activity:activity-compose:1.4.0"
         val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
-        val pager = "com.google.accompanist:accompanist-pager:0.24.0-alpha"
+        val pager = "com.google.accompanist:accompanist-pager:0.23.1"
     }
 
     object Flipper {

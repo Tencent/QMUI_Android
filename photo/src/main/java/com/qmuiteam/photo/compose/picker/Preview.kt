@@ -1,5 +1,6 @@
 package com.qmuiteam.photo.compose.picker
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.core.provider.dp
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.data.PhotoLoadStatus
+import com.qmuiteam.photo.data.PhotoResult
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
 import kotlinx.coroutines.flow.StateFlow
 
@@ -56,7 +58,15 @@ fun QMUIPhotoPickerPreview(
                     onTap()
                 }
             ) { _, _, _, onImageRatioEnsured ->
-                QMUIPhotoPickerPreviewItemContent(item, onImageRatioEnsured, loadingFailed, loading)
+                item.photoProvider.photo()?.Compose(contentScale = ContentScale.Fit,
+                    isContainerDimenExactly = true,
+                    onSuccess = {
+
+                    },
+                    onError = {
+
+                    })
+//                QMUIPhotoPickerPreviewItemContent(item, onImageRatioEnsured, loadingFailed, loading)
             }
         }
     }
@@ -69,14 +79,16 @@ private fun QMUIPhotoPickerPreviewItemContent(
     loading: @Composable BoxScope.() -> Unit,
     loadingFailed: @Composable BoxScope.() -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        val photo = remember(item) {
-            item.photoProvider.photo()
-        }
 
-        var loadStatus by remember {
-            mutableStateOf(PhotoLoadStatus.loading)
-        }
+    val photo = remember(item) {
+        item.photoProvider.photo()
+    }
+
+    var loadStatus by remember {
+        mutableStateOf(PhotoLoadStatus.loading)
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
 
         photo?.Compose(
             contentScale = ContentScale.Fit,
@@ -134,7 +146,7 @@ private fun QMUIPhotoPickerPreviewPickedItem(
     onClick:(QMUIMediaPhotoVO) -> Unit
 ){
     val thumb = remember(item){
-        item.photoProvider.thumbnail()
+        item.photoProvider.thumbnail(true)
     }
     Box(modifier = Modifier
         .size(50.dp)

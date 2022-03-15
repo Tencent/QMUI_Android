@@ -1,7 +1,5 @@
 package com.qmuiteam.photo.compose
 
-import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -75,7 +73,7 @@ private fun QMUIPhotoThumbnailItem(
         }
     ) {
         thumb?.Compose(
-            contentScale = if(isContainerDimenExactly) ContentScale.Crop else ContentScale.Fit,
+            contentScale = if (isContainerDimenExactly) ContentScale.Crop else ContentScale.Fit,
             isContainerDimenExactly = isContainerDimenExactly,
             onSuccess = {
                 onPhotoLoaded(it)
@@ -92,8 +90,8 @@ fun QMUIPhotoThumbnailWithViewer(
     activity: ComponentActivity,
     images: List<QMUIPhotoProvider>,
     config: QMUIPhotoThumbnailConfig = remember { qmuiDefaultPhotoThumbnailConfig }
-){
-    QMUIPhotoThumbnail(images, config){ list, index ->
+) {
+    QMUIPhotoThumbnail(images, config) { list, index ->
         val intent = QMUIPhotoViewerActivity.intentOf(activity, targetActivity, list, index)
         activity.startActivity(intent)
         activity.overridePendingTransition(0, 0)
@@ -119,7 +117,7 @@ fun QMUIPhotoThumbnail(
         if (images.size == 1) {
             val image = images[0]
             val thumb = remember(image) {
-                image.thumbnail()
+                image.thumbnail(true)
             }
             if (thumb != null) {
                 val ratio = image.ratio()
@@ -192,9 +190,9 @@ fun QMUIPhotoThumbnail(
                     }
                     image.isLongImage() -> {
                         val width = maxWidth * config.singleLongImageWidthRatio
-                        val heightRatio = if(config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO){
+                        val heightRatio = if (config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO) {
                             val windowSize = getWindowSize(context)
-                           windowSize.width * 1f / windowSize.height
+                            windowSize.width * 1f / windowSize.height
                         } else {
                             config.singleHighImageMiniHeightRatio
                         }
@@ -222,7 +220,7 @@ fun QMUIPhotoThumbnail(
                     else -> {
                         var width = maxWidth * config.singleHighImageDefaultWidthRatio
                         var height = width / ratio
-                        val heightMiniRatio = if(config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO){
+                        val heightMiniRatio = if (config.singleHighImageMiniHeightRatio == SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO) {
                             val windowSize = getWindowSize(context)
                             windowSize.width * 1f / windowSize.height
                         } else {
@@ -302,7 +300,7 @@ fun RowImages(
             val image = images[i]
             QMUIPhotoThumbnailItem(
                 remember(image) {
-                    image.thumbnail()
+                    image.thumbnail(true)
                 },
                 wh,
                 wh,

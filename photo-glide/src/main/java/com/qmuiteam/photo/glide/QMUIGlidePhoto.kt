@@ -23,7 +23,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.qmuiteam.photo.compose.BlankBox
 import com.qmuiteam.photo.compose.QMUIBitmapRegionItem
+import com.qmuiteam.photo.compose.QMUILocalPhotoConfig
 import com.qmuiteam.photo.data.*
 
 
@@ -37,7 +39,7 @@ private fun GlideImage(
     onError: (() -> Unit)?,
     contentDescription: String = "",
     contentScale: ContentScale = ContentScale.Fit,
-    blankColor: Color = Color.Transparent,
+    openBlankColor: Boolean = true
 ) {
     BoxWithConstraints(modifier = if (isContainerDimenExactly) Modifier.fillMaxSize() else Modifier) {
         val state = remember(uri) {
@@ -131,12 +133,8 @@ private fun GlideImage(
                 )
             }
 
-        } else if (isContainerDimenExactly && blankColor != Color.Transparent) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(blankColor)
-            )
+        } else if (isContainerDimenExactly && openBlankColor) {
+            BlankBox()
         }
     }
 }
@@ -165,7 +163,7 @@ private fun LongImageContent(drawable: QMUIBitmapRegionHolderDrawable) {
 open class QMUIGlideThumbPhoto(
     val uri: Uri,
     val isLongImage: Boolean,
-    val blankColor: Color = Color.LightGray,
+    val openBlankColor: Boolean = true,
 ) : QMUIPhoto {
     @Composable
     override fun Compose(
@@ -184,13 +182,13 @@ open class QMUIGlideThumbPhoto(
                 onError?.invoke(RuntimeException("glide failed to load thumb image."))
             },
             contentScale = contentScale,
-            blankColor = blankColor
+            openBlankColor = openBlankColor
         )
     }
 }
 
 
-class QMUICoilPhoto(
+class QMUIGlidePhoto(
     val uri: Uri,
     val isLongImage: Boolean
 ) : QMUIPhoto {
@@ -216,20 +214,22 @@ class QMUICoilPhoto(
     }
 }
 
-open class QMUIGlidePhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoProvider {
+open class QMUIGlidePhotoProvider(val uri: Uri, val thumbUrl: Uri, val ratio: Float) : QMUIPhotoProvider {
 
     companion object {
         const val META_URI_KEY = "meta_uri"
+        const val META_THUMB_URI_KEY = "meta_thumb_uri"
         const val META_RATIO_KEY = "meta_ratio"
     }
 
+    constructor(uri: Uri, ratio: Float): this(uri, uri, ratio)
 
-    override fun thumbnail(): QMUIPhoto? {
-        return QMUIGlideThumbPhoto(uri, isLongImage())
+    override fun thumbnail(openBlankColor: Boolean): QMUIPhoto? {
+        return QMUIGlideThumbPhoto(thumbUrl, isLongImage(), openBlankColor)
     }
 
     override fun photo(): QMUIPhoto? {
-        return QMUICoilPhoto(uri, isLongImage())
+        return QMUIGlidePhoto(uri, isLongImage())
     }
 
     override fun ratio(): Float {
@@ -243,21 +243,23 @@ open class QMUIGlidePhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoPro
     override fun meta(): Bundle? {
         return Bundle().apply {
             putParcelable(META_URI_KEY, uri)
+            putParcelable(META_THUMB_URI_KEY, thumbUrl)
             putFloat(META_RATIO_KEY, ratio)
         }
     }
 
     override fun recoverCls(): Class<out PhotoTransitionProviderRecover>? {
-        return QMUICoilPhotoTransitionProviderRecover::class.java
+        return QMUIGlidePhotoTransitionProviderRecover::class.java
     }
 }
 
-class QMUICoilPhotoTransitionProviderRecover : PhotoTransitionProviderRecover {
+class QMUIGlidePhotoTransitionProviderRecover : PhotoTransitionProviderRecover {
     override fun recover(bundle: Bundle): QMUIPhotoTransitionInfo? {
         val uri = bundle.getParcelable<Uri>(QMUIGlidePhotoProvider.META_URI_KEY) ?: return null
+        val thumbUri = bundle.getParcelable<Uri>(QMUIGlidePhotoProvider.META_THUMB_URI_KEY) ?: uri
         val ratio = bundle.getFloat(QMUIGlidePhotoProvider.META_RATIO_KEY)
         return QMUIPhotoTransitionInfo(
-            QMUIGlidePhotoProvider(uri, ratio),
+            QMUIGlidePhotoProvider(uri, thumbUri, ratio),
             null,
             null,
             null

@@ -29,6 +29,9 @@ open class QMUIMediaModel(
     val editable: Boolean
 ) {
     fun ratio(): Float {
+        if(height <= 0 || width <= 0){
+            return -1f
+        }
         return width.toFloat() / height
     }
 }

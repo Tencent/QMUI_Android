@@ -139,7 +139,7 @@ private fun QMUIPhotoPickerGridCell(
             }
     ) {
         val thumbnail = remember(data) {
-            data.photoProvider.thumbnail()
+            data.photoProvider.thumbnail(true)
         }
         thumbnail?.Compose(
             contentScale = ContentScale.Crop,

@@ -3,22 +3,23 @@ package com.qmuiteam.photo.coil
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
 import coil.compose.AsyncImageContent
@@ -28,6 +29,7 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.size.Scale
+import com.qmuiteam.photo.compose.BlankBox
 import com.qmuiteam.photo.compose.QMUIBitmapRegionItem
 import com.qmuiteam.photo.data.*
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +38,7 @@ import kotlinx.coroutines.withContext
 open class QMUICoilThumbPhoto(
     val uri: Uri,
     val isLongImage: Boolean,
-    val blankColor: Color = Color.LightGray,
+    val openBlankColor: Boolean
 ) : QMUIPhoto {
     @Composable
     override fun Compose(
@@ -46,7 +48,7 @@ open class QMUICoilThumbPhoto(
         onError: ((Throwable) -> Unit)?
     ) {
         if (isLongImage) {
-            LongImage(onSuccess, onError)
+            LongImage(onSuccess, onError, openBlankColor)
         } else {
             val context = LocalContext.current
             val model = remember(context, uri, onSuccess, onError) {
@@ -75,12 +77,8 @@ open class QMUICoilThumbPhoto(
                 }
             ) { state ->
                 if (state == AsyncImagePainter.State.Empty || state is AsyncImagePainter.State.Loading) {
-                    if (isContainerDimenExactly) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(blankColor)
-                        )
+                    if (isContainerDimenExactly && openBlankColor) {
+                        BlankBox()
                     }
                 } else {
                     AsyncImageContent()
@@ -93,7 +91,8 @@ open class QMUICoilThumbPhoto(
     @Composable
     fun LongImage(
         onSuccess: ((PhotoResult) -> Unit)?,
-        onError: ((Throwable) -> Unit)?
+        onError: ((Throwable) -> Unit)?,
+        openBlankColor: Boolean
     ) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val request = ImageRequest.Builder(LocalContext.current)
@@ -106,7 +105,7 @@ open class QMUICoilThumbPhoto(
                 .scale(Scale.FILL)
                 .size(constraints.maxWidth, constraints.maxHeight)
                 .build()
-            LongImageContent(request, onSuccess, onError)
+            LongImageContent(request, onSuccess, onError, openBlankColor)
         }
 
     }
@@ -115,7 +114,8 @@ open class QMUICoilThumbPhoto(
     fun LongImageContent(
         request: ImageRequest,
         onSuccess: ((PhotoResult) -> Unit)?,
-        onError: ((Throwable) -> Unit)?
+        onError: ((Throwable) -> Unit)?,
+        openBlankColor: Boolean
     ) {
         val imageLoader = LocalContext.current.imageLoader
         var bitmap by remember("") {
@@ -145,10 +145,8 @@ open class QMUICoilThumbPhoto(
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
             )
-        } else {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(blankColor))
+        } else if (openBlankColor) {
+            BlankBox()
         }
 
     }
@@ -245,16 +243,23 @@ class QMUICoilPhoto(
 }
 
 
-open class QMUICoilPhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoProvider {
+open class QMUICoilPhotoProvider(
+    val uri: Uri,
+    val thumbUri: Uri,
+    val ratio: Float
+) : QMUIPhotoProvider {
 
     companion object {
         const val META_URI_KEY = "meta_uri"
+        const val META_THUMB_URI_KEY = "meta_thumb_uri"
         const val META_RATIO_KEY = "meta_ratio"
     }
 
+    constructor(uri: Uri, ratio: Float) : this(uri, uri, ratio)
 
-    override fun thumbnail(): QMUIPhoto? {
-        return QMUICoilThumbPhoto(uri, isLongImage())
+
+    override fun thumbnail(openBlankColor: Boolean): QMUIPhoto? {
+        return QMUICoilThumbPhoto(thumbUri, isLongImage(), openBlankColor)
     }
 
     override fun photo(): QMUIPhoto? {
@@ -272,6 +277,7 @@ open class QMUICoilPhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoProv
     override fun meta(): Bundle? {
         return Bundle().apply {
             putParcelable(META_URI_KEY, uri)
+            putParcelable(META_THUMB_URI_KEY, thumbUri)
             putFloat(META_RATIO_KEY, ratio)
         }
     }
@@ -284,13 +290,13 @@ open class QMUICoilPhotoProvider(val uri: Uri, val ratio: Float) : QMUIPhotoProv
 class QMUICoilPhotoTransitionProviderRecover : PhotoTransitionProviderRecover {
     override fun recover(bundle: Bundle): QMUIPhotoTransitionInfo? {
         val uri = bundle.getParcelable<Uri>(QMUICoilPhotoProvider.META_URI_KEY) ?: return null
+        val thumbUri = bundle.getParcelable<Uri>(QMUICoilPhotoProvider.META_THUMB_URI_KEY) ?: uri
         val ratio = bundle.getFloat(QMUICoilPhotoProvider.META_RATIO_KEY)
         return QMUIPhotoTransitionInfo(
-            QMUICoilPhotoProvider(uri, ratio),
+            QMUICoilPhotoProvider(uri, thumbUri, ratio),
             null,
             null,
             null
         )
     }
-
 }
