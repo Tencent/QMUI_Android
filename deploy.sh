@@ -4,16 +4,13 @@
 #./deploy.sh arch publishToMavenLocal
 #./deploy.sh type publishToMavenLocal
 #./deploy.sh compose publishToMavenLocal
+#./deploy.sh photo publishToMavenLocal
 
 #./deploy.sh qmui publish
 #./deploy.sh arch publish
 #./deploy.sh type publish
 #./deploy.sh compose publish
-
-#./deploy.sh qmui bintrayUpload
-#./deploy.sh arch bintrayUpload
-#./deploy.sh type bintrayUpload
-#./deploy.sh compose publish
+#./deploy.sh photo publish
 
 if [[ "qmui" == "$1" ]]
 then
@@ -40,5 +37,9 @@ then
 elif [[ "photo" == "$1" ]]
 then
     buildCmd="./gradlew :photo:clean :photo:build :photo:$2"
+    $buildCmd
+    buildCmd="./gradlew :photo-coil:clean :photo-coil:build :photo-coil:$2"
+    $buildCmd
+    buildCmd="./gradlew :photo-glide:clean :photo-glide:build :photo-glide:$2"
     $buildCmd
 fi
