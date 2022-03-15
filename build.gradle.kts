@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id("qmui-dep")
+    id("com.osacky.doctor") version "0.8.0"
 }
 
 subprojects {
