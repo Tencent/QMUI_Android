@@ -194,6 +194,17 @@ class QDDialogFragment() : ComposeBaseFragment() {
                         }.show()
                     }
                 }
+
+                item {
+                    QMUIItem(
+                        title = "Toast",
+                        drawBehind = {
+                            drawBottomSeparator(insetStart = qmuiCommonHorSpace, insetEnd = qmuiCommonHorSpace)
+                        }
+                    ) {
+                        view.qmuiToast("这只是个 Toast!")
+                    }
+                }
             }
         }
     }

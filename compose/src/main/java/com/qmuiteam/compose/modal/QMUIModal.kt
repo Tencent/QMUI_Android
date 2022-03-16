@@ -1,5 +1,6 @@
 package com.qmuiteam.compose.modal
 
+import android.os.SystemClock
 import android.view.View
 import android.view.Window
 import android.widget.FrameLayout
@@ -12,9 +13,14 @@ import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
+import com.qmuiteam.compose.R
 import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 
 val DefaultMaskColor = Color.Black.copy(alpha = 0.5f)
+
+enum class MaskTouchBehavior{
+    dismiss, penetrate, none
+}
 
 private class ModalHolder(var current: QMUIModal? = null)
 
@@ -25,15 +31,20 @@ class QMUIModalAction(
     val onClick: (QMUIModal) -> Unit
 )
 
+private class ShowingModals {
+    val modals = mutableMapOf<Long, QMUIModal>()
+}
+
 @Composable
 fun QMUIModal(
     isVisible: Boolean,
     mask: Color = DefaultMaskColor,
     durationMillis: Int = 300,
     systemCancellable: Boolean = true,
-    maskCancellable: Boolean = true,
+    maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
     doOnShow: QMUIModal.Action? = null,
     doOnDismiss: QMUIModal.Action? = null,
+    uniqueId: Long = SystemClock.elapsedRealtimeNanos(),
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
     content: @Composable AnimatedVisibilityScope.(QMUIModal) -> Unit
 ) {
@@ -42,7 +53,7 @@ fun QMUIModal(
     }
     if (isVisible) {
         if (modalHolder.current == null) {
-            val modal = LocalView.current.qmuiModal(mask, systemCancellable, maskCancellable, durationMillis, modalHostProvider, content)
+            val modal = LocalView.current.qmuiModal(mask, systemCancellable, maskTouchBehavior, durationMillis, uniqueId, modalHostProvider, content)
             doOnShow?.let { modal.doOnShow(it) }
             doOnDismiss?.let { modal.doOnDismiss(it) }
             modalHolder.current = modal
@@ -60,14 +71,14 @@ fun QMUIModal(
 }
 
 interface QMUIModal {
-    fun show()
+    fun show(): QMUIModal
     fun dismiss()
     fun isShowing(): Boolean
 
-    fun doOnShow(listener: Action)
-    fun doOnDismiss(listener: Action)
-    fun removeOnShowAction(listener: Action)
-    fun removeOnDismissAction(listener: Action)
+    fun doOnShow(listener: Action): QMUIModal
+    fun doOnDismiss(listener: Action): QMUIModal
+    fun removeOnShowAction(listener: Action): QMUIModal
+    fun removeOnDismissAction(listener: Action): QMUIModal
 
     fun interface Action {
         fun invoke(modal: QMUIModal)
@@ -92,8 +103,9 @@ val DefaultModalHostProvider = ActivityHostModalProvider()
 fun View.qmuiModal(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
-    maskCancellable: Boolean = true,
+    maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
     durationMillis: Int = 300,
+    uniqueId: Long = SystemClock.elapsedRealtimeNanos(),
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
     content: @Composable AnimatedVisibilityScope.(QMUIModal) -> Unit
 ): QMUIModal {
@@ -101,16 +113,21 @@ fun View.qmuiModal(
         throw RuntimeException("View is not attached to window")
     }
     val modalHost = modalHostProvider.provide(this)
-    return AnimateModalImpl(
+    val modal = AnimateModalImpl(
         modalHost.first,
         modalHost.second,
-        mask, systemCancellable, maskCancellable, durationMillis, content)
+        mask, systemCancellable, maskTouchBehavior, durationMillis, content
+    )
+    val hostView = modalHost.first
+    handleModelUnique(hostView, modal, uniqueId)
+    return modal
 }
 
 fun View.qmuiStillModal(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
-    maskCancellable: Boolean = true,
+    maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
+    uniqueId: Long = SystemClock.elapsedRealtimeNanos(),
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
     content: @Composable (QMUIModal) -> Unit
 ): QMUIModal {
@@ -118,5 +135,24 @@ fun View.qmuiStillModal(
         throw RuntimeException("View is not attached to window")
     }
     val modalHost = modalHostProvider.provide(this)
-    return StillModalImpl(modalHost.first, modalHost.second, mask, systemCancellable, maskCancellable, content)
+    val modal = StillModalImpl(modalHost.first, modalHost.second, mask, systemCancellable, maskTouchBehavior, content)
+    val hostView = modalHost.first
+    handleModelUnique(hostView, modal, uniqueId)
+    return modal
+}
+
+private fun handleModelUnique(hostView: FrameLayout, modal: QMUIModal, uniqueId: Long) {
+    val showingModals = (hostView.getTag(R.id.qmui_modals) as? ShowingModals) ?: ShowingModals().also {
+        hostView.setTag(R.id.qmui_modals, it)
+    }
+
+    modal.doOnShow {
+        showingModals.modals.put(uniqueId, it)?.dismiss()
+    }
+
+    modal.doOnDismiss {
+        if (showingModals.modals[uniqueId] == it) {
+            showingModals.modals.remove(uniqueId)
+        }
+    }
 }
