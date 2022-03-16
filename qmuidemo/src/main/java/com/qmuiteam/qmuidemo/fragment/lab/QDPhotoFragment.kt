@@ -1,22 +1,25 @@
 package com.qmuiteam.qmuidemo.fragment.lab
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import com.qmuiteam.compose.core.ui.QMUITopBarBackIconItem
 import com.qmuiteam.compose.core.ui.QMUITopBarTextItem
 import com.qmuiteam.compose.core.ui.QMUITopBarWithLazyScrollState
@@ -26,11 +29,15 @@ import com.qmuiteam.photo.activity.getQMUIPhotoPickResult
 import com.qmuiteam.photo.coil.QMUICoilPhotoProvider
 import com.qmuiteam.photo.coil.QMUIMediaCoilPhotoProviderFactory
 import com.qmuiteam.photo.compose.QMUIPhotoThumbnailWithViewer
+import com.qmuiteam.photo.util.QMUIPhotoHelper
 import com.qmuiteam.qmui.arch.annotation.LatestVisitRecord
 import com.qmuiteam.qmuidemo.R
 import com.qmuiteam.qmuidemo.base.ComposeBaseFragment
 import com.qmuiteam.qmuidemo.lib.annotation.Widget
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Widget(name = "QMUI Photo", iconRes = R.mipmap.icon_grid_in_progress)
 @LatestVisitRecord
@@ -65,6 +72,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                             QMUIPhotoPickerActivity::class.java,
                             QMUIMediaCoilPhotoProviderFactory::class.java
                         ))
+
                     }
                 )
             )
@@ -80,6 +88,10 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 item {
                     PickerResult()
                 }
+
+//                item {
+//                    TestImageCompress()
+//                }
 
                 item {
                     Box(
@@ -333,5 +345,33 @@ class QDPhotoFragment : ComposeBaseFragment() {
         }
 
 
+    }
+
+    @Composable
+    fun TestImageCompress(){
+        var bitmap by remember {
+            mutableStateOf<Bitmap?>(null)
+        }
+        LaunchedEffect(""){
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO){
+                    QMUIPhotoHelper.compressByShortEdgeWidthAndByteSize(
+                        requireContext(),
+                        {
+                            it.assets.open("test.png")
+                        },
+                        500
+                    )?.inputStream().use {
+                        if(it != null){
+                            bitmap = BitmapFactory.decodeStream(it)
+                        }
+                    }
+                }
+            }
+        }
+
+        if(bitmap != null){
+            Image(painter = BitmapPainter(bitmap!!.asImageBitmap()), contentDescription = "")
+        }
     }
 }

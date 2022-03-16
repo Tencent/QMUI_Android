@@ -1,6 +1,5 @@
 package com.qmuiteam.photo.compose
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.*
@@ -41,7 +40,11 @@ fun QMUIGesturePhoto(
     shouldTransitionExit: Boolean = true,
     transitionTarget: Boolean = true,
     transitionDurationMs: Int = 360,
-    panEdgeProtection: Rect = Rect(0f, 0f, with(LocalDensity.current) { containerWidth.toPx() }, with(LocalDensity.current) { containerHeight.toPx() }),
+    panEdgeProtection: Rect = Rect(
+        0f,
+        0f,
+        with(LocalDensity.current) { containerWidth.toPx() },
+        with(LocalDensity.current) { containerHeight.toPx() }),
     maxScale: Float = 4f,
     onPress: suspend PressGestureScope.(Offset) -> Unit = { },
     onBeginPullExit: () -> Boolean,
@@ -59,10 +62,10 @@ fun QMUIGesturePhoto(
     val density = LocalDensity.current
     val imagePaddingFix by remember(density, panEdgeProtection, isLongImage, containerWidth, containerHeight, calculatedImageRatio, imageRatio) {
         val (expectWidth, expectHeight) = calculateImageSize(containerWidth, containerHeight, calculatedImageRatio, isLongImage)
-        val widthPadding = with(density){
+        val widthPadding = with(density) {
             (imageWidth - expectWidth).toPx() / 2
         }
-        val heightPadding = with(density){
+        val heightPadding = with(density) {
             (imageHeight - expectHeight).toPx() / 2
         }
 
@@ -70,14 +73,13 @@ fun QMUIGesturePhoto(
     }
 
     val usedImageRatioUpdater = remember {
-        val func: (Float)->Unit = { value ->
-            if(value > 0){
+        val func: (Float) -> Unit = { value ->
+            if (value > 0) {
                 calculatedImageRatio = value
             }
         }
         func
     }
-
 
 
     var backgroundTargetAlpha by remember {
@@ -188,6 +190,7 @@ fun QMUIGesturePhoto(
                             detectTapGestures(
                                 onTap = {
                                     if (shouldTransitionExit) {
+                                        reset()
                                         transitionTargetState = false
                                     } else {
                                         onTapExit(false)
@@ -364,7 +367,7 @@ fun QMUIGesturePhoto(
                     scale = photoTargetScale,
                     translateX = photoTargetTranslateX,
                     translateY = photoTargetTranslateY
-                ) { alpha, scale, translateX, translateY  ->
+                ) { alpha, scale, translateX, translateY ->
                     PhotoTransformContent(
                         alpha,
                         imageWidthPx,
@@ -447,7 +450,7 @@ fun PhotoContentWithAlphaTransition(
     ) {
         if (it) 1f else 0f
     }
-    val duration = if(isGestureHandling) 0 else transitionDurationMs
+    val duration = if (isGestureHandling) 0 else transitionDurationMs
     val scaleState = animateFloatAsState(
         targetValue = scale,
         animationSpec = tween(durationMillis = duration)
@@ -481,8 +484,14 @@ fun PhotoContentWithRectTransition(
     ) {
         if (it) Rect(translateX, translateY, translateX + imageWidth * scale, translateY + imageHeight * scale) else initRect
     }
-    val usedScale = rect.value.width / imageWidth
-    content(imageWidth, imageHeight, usedScale, rect.value.left, rect.value.top)
+    val isTransitionEnd = transition.currentState && transition.targetState
+    val usedWidth = if (isTransitionEnd) imageWidth else rect.value.width.coerceAtMost(imageWidth)
+    val usedHeight = if (isTransitionEnd) imageHeight else rect.value.height.coerceAtMost(imageHeight)
+    val usedScale = if (isTransitionEnd || rect.value.width > imageWidth) {
+        rect.value.width / imageWidth
+    } else 1f
+    content(usedWidth, usedHeight, usedScale, rect.value.left, rect.value.top)
+
 }
 
 @Composable
@@ -549,7 +558,7 @@ internal class GestureNestScrollConnection : NestedScrollConnection {
 private fun calculateImageSize(containerWidth: Dp, containerHeight: Dp, imageRatio: Float, isLongImage: Boolean): Pair<Dp, Dp> {
     val layoutRatio = containerWidth / containerHeight
     return when {
-        isLongImage || imageRatio <= 0f  -> containerWidth to containerHeight
+        isLongImage || imageRatio <= 0f -> containerWidth to containerHeight
         imageRatio >= layoutRatio -> containerWidth to (containerWidth / imageRatio)
         else -> (containerHeight * imageRatio) to containerHeight
     }
