@@ -3,13 +3,16 @@ package com.qmuiteam.photo.util
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import java.io.IOException
+import java.io.InputStream
 import java.io.OutputStream
+
 
 object QMUIPhotoHelper {
 
@@ -83,5 +86,53 @@ object QMUIPhotoHelper {
             stream?.close()
         }
         return null
+    }
+
+    fun compressByShortEdgeWidthAndByteSize(
+        context: Context,
+        originProvider: (Context) -> InputStream?,
+        shortEdgeMaxWidth: Int = 1200,
+        byteMaxSizeStrategy: (Bitmap) -> Int = DefaultBitmapCompressMaxSizeStrategy,
+        canUseMemoryStorage: (Bitmap) -> Boolean = DefaultBitmapCompressCanUseMemoryStorage,
+        compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+        compressQuality: Int = 80
+    ): BitmapCompressResult? {
+        val applicationContext = context.applicationContext
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        var inputStream = originProvider(applicationContext) ?: return null
+        inputStream.use {
+            BitmapFactory.decodeStream(it, null, options)
+        }
+
+        val imageHeight = options.outHeight
+        val imageWidth = options.outWidth
+        if (imageWidth <= imageHeight) {
+            if (imageWidth > shortEdgeMaxWidth) {
+                options.inSampleSize = Integer.highestOneBit(imageWidth / shortEdgeMaxWidth)
+            }
+        } else {
+            if (imageHeight > shortEdgeMaxWidth) {
+                options.inSampleSize = Integer.highestOneBit(imageHeight / shortEdgeMaxWidth)
+            }
+        }
+        options.inJustDecodeBounds = false
+        inputStream = originProvider(applicationContext) ?: return null
+        val bitmap = inputStream.use {
+            BitmapFactory.decodeStream(it, null, options)
+        } ?: return object : BitmapCompressResult(compressFormat, -1) {
+            override fun inputStream(): InputStream? {
+                return originProvider(applicationContext)
+            }
+
+        }
+        return bitmap.compressByShortEdgeWidthAndByteSize(
+            context,
+            shortEdgeMaxWidth,
+            byteMaxSizeStrategy,
+            canUseMemoryStorage,
+            compressFormat,
+            compressQuality
+        )
     }
 }
