@@ -14,9 +14,9 @@ import com.qmuiteam.qmui.widget.tab.QMUIBasicTabSegment
 /**
  *  Exposure 使用：
  *  1. 使用场景：
- *     a. 只需要检测 View 出现在可视区域，可使用 simpleExposure(...);
- *     b. 需要检测数据的变更， view 初始化时 registerExposure(...)， 渲染数据时 bindExposure(Exposure)
- *     c. 和 RecyclerView/ListView 配合，onCreateViewHolder 时 registerExposure(...)，
+ *     a. 简单使用：simpleExposure(key=xxx, ...)
+ *     b. 复杂使用， view 初始化时 registerExposure(...)， 渲染数据时 bindExposure(Exposure)
+ *     c. 和 RecyclerView/ListView 配合，onBindViewHolder 时：simpleExposure(key=xxx, ...)， 或者在 onCreateViewHolder 时 registerExposure(...)，
  *        onBindViewHolder 时 bindExposure(Exposure)
  *     d. 有自定义 View 复用逻辑的容器，同 c, 但 ViewGroup 需要调用 setToRecyclerContainer()
  *     e. 如果子 View 需要在父 View 已曝光的前提下才能认为是曝光， 那么父容器需要调用 setSelfExposedWhenDescendantExposed()
@@ -77,15 +77,31 @@ fun View.registerExposure(
             checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
         }
 
+        private val customTriggerListener = CustomExposureTriggerListener {
+            checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
+        }
+
         override fun onViewAttachedToWindow(v: View?) {
             checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
             viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
             viewTreeObserver.addOnScrollChangedListener(onScrollListener)
+            containerProvider.provide(this@registerExposure)?.let { container ->
+                var exposureCheck = container.getTag(R.id.qmui_exposure_custom_check_trigger) as? CustomExposureTrigger
+                if(exposureCheck == null){
+                    exposureCheck = CustomExposureTrigger().also {
+                        container.setTag(R.id.qmui_exposure_custom_check_trigger, it)
+                    }
+                }
+                exposureCheck.addListener(customTriggerListener)
+            }
         }
 
         override fun onViewDetachedFromWindow(v: View?) {
             viewTreeObserver.removeOnGlobalLayoutListener(onGlobalLayoutListener)
             viewTreeObserver.removeOnScrollChangedListener(onScrollListener)
+            containerProvider.provide(this@registerExposure)?.let { container ->
+                (container.getTag(R.id.qmui_exposure_custom_check_trigger) as? CustomExposureTrigger)?.removeListener(customTriggerListener)
+            }
             clearExposureHolder()
             clearExposureDebounce()
             doUnExpose()
@@ -94,6 +110,9 @@ fun View.registerExposure(
     }
     setTag(R.id.qmui_exposure_register, attachListener)
     addOnAttachStateChangeListener(attachListener)
+    if(isAttachedToWindow){
+        checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
+    }
 }
 
 fun View.unregisterExposure(){
@@ -129,6 +148,15 @@ fun ViewGroup.setSelfExposedWhenDescendantExposed(need: Boolean) {
 
 fun ViewGroup.customConfigRecyclerExposureEffect(effect: RecyclerExposureEffect) {
     setTag(R.id.qmui_exposure_recycler_collection, effect)
+}
+
+fun View.triggerCustomExposureChecker(
+    containerProvider: ExposureContainerProvider = DefaultExposureContainerProvider
+) {
+    if(!isAttachedToWindow){
+        return
+    }
+    (containerProvider.provide(this)?.getTag(R.id.qmui_exposure_custom_check_trigger) as? CustomExposureTrigger)?.trigger()
 }
 
 fun View.defaultCanExpose(): Boolean {

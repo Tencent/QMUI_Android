@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import com.qmuiteam.qmui.util.QMUIViewHelper
+import java.util.*
 
 private val rect = Rect()
 
@@ -17,13 +18,13 @@ interface ExposureChecker {
 }
 
 
-class FastAreaExposureChecker(val percent: Float): ExposureChecker {
+class FastAreaExposureChecker(val percent: Float) : ExposureChecker {
     override fun isExposedInContainer(container: ViewGroup, target: View): Boolean {
-        if(target.width <= 0 || target.height <= 0){
+        if (target.width <= 0 || target.height <= 0) {
             return false
         }
         QMUIViewHelper.getDescendantRect(container, target, rect)
-        if(rect.left >= container.width || rect.top >= container.height || rect.right <= 0 || rect.bottom <= 0){
+        if (rect.left >= container.width || rect.top >= container.height || rect.right <= 0 || rect.bottom <= 0) {
             return false
         }
         if (rect.left < 0) {
@@ -42,13 +43,13 @@ class FastAreaExposureChecker(val percent: Float): ExposureChecker {
     }
 }
 
-class AreaExposureChecker(val percent: Float): ExposureChecker {
+class AreaExposureChecker(val percent: Float) : ExposureChecker {
     override fun isExposedInContainer(container: ViewGroup, target: View): Boolean {
-        if(target.width <= 0 || target.height <= 0){
+        if (target.width <= 0 || target.height <= 0) {
             return false
         }
         val hasVisibleArea = QMUIViewHelper.getDescendantVisibleRect(container, target, rect)
-        if(!hasVisibleArea){
+        if (!hasVisibleArea) {
             return false
         }
         return (rect.width() * rect.height() * 1f) / (target.width * target.height) >= percent
@@ -59,3 +60,55 @@ val fastFullExposureChecker = FastAreaExposureChecker(1f)
 val fullExposureChecker = AreaExposureChecker(1f)
 
 val defaultExposureChecker = AreaExposureChecker(0.80f)
+
+
+fun interface CustomExposureTriggerListener {
+    fun doCheck()
+}
+
+
+class CustomExposureTrigger {
+
+    private val listeners = mutableListOf<CustomExposureTriggerListener>()
+    private var isTriggering = false
+    private val pendingActions = LinkedList<PendingAction>()
+
+    fun addListener(listener: CustomExposureTriggerListener) {
+        if (isTriggering) {
+            pendingActions.add(PendingAction(listener, true))
+        } else {
+            listeners.add(listener)
+        }
+
+    }
+
+    fun removeListener(listener: CustomExposureTriggerListener) {
+        if (isTriggering) {
+            pendingActions.add(PendingAction(listener, true))
+        } else {
+            listeners.remove(listener)
+        }
+    }
+
+    fun trigger() {
+        isTriggering = true
+        listeners.forEach {
+            it.doCheck()
+        }
+        isTriggering = false
+        var pendingAction = pendingActions.poll()
+        while (pendingAction != null) {
+            if (pendingAction.isDelete) {
+                removeListener(pendingAction.listener)
+            } else {
+                addListener(pendingAction.listener)
+            }
+            pendingAction = pendingActions.poll()
+        }
+    }
+
+    private class PendingAction(
+        val listener: CustomExposureTriggerListener,
+        val isDelete: Boolean
+    )
+}

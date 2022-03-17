@@ -66,4 +66,5 @@
     <item name="qmui_exposure_recycler_collection" type="id"/>
     <item name="qmui_exposure_custom_effect" type="id"/>
     <item name="qmui_exposure_is_recycler_container" type="id"/>
+    <item name="qmui_exposure_custom_check_trigger" type="id" />
 </resources>
