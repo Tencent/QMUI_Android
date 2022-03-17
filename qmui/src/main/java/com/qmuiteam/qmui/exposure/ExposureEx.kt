@@ -111,7 +111,7 @@ fun View.registerExposure(
     setTag(R.id.qmui_exposure_register, attachListener)
     addOnAttachStateChangeListener(attachListener)
     if(isAttachedToWindow){
-        checkExposure(holdTime, debounceTimeout, containerProvider, exposureChecker)
+        attachListener.onViewAttachedToWindow(this)
     }
 }
 
