@@ -19,6 +19,7 @@ object Dep {
         const val composeCoreVer = "0.0.1"
         const val composeVer = "0.0.1"
         const val photoVer = "0.0.1.1"
+        const val editorVer = "0.0.1"
     }
 
     object Coroutines {

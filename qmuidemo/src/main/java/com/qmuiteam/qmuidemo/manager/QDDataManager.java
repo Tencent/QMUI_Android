@@ -46,6 +46,7 @@ import com.qmuiteam.qmuidemo.fragment.lab.QDAnimationListViewFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDArchTestFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDComposeTipFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDContinuousNestedScrollFragment;
+import com.qmuiteam.qmuidemo.fragment.lab.QDEditorFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDPhotoClipFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDPhotoFragment;
 import com.qmuiteam.qmuidemo.fragment.lab.QDSchemeFragment;
@@ -151,6 +152,7 @@ public class QDDataManager {
         mLabNames.add(QDComposeTipFragment.class);
         mLabNames.add(QDPhotoFragment.class);
         mLabNames.add(QDPhotoClipFragment.class);
+        mLabNames.add(QDEditorFragment.class);
     }
 
     public QDItemDescription getDescription(Class<? extends BaseFragment> cls) {

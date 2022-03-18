@@ -80,6 +80,7 @@ android {
 dependencies {
     implementation(Dep.AndroidX.appcompat)
     implementation(Dep.AndroidX.annotation)
+    implementation(Dep.AndroidX.activity)
     implementation(Dep.MaterialDesign.material)
     implementation(Dep.ButterKnife.butterknife)
     implementation(Dep.Compose.constraintlayout)
@@ -92,6 +93,7 @@ dependencies {
     implementation(project(":photo"))
     implementation(project(":photo-coil"))
     implementation(project(":photo-glide"))
+    implementation(project(":editor"))
     implementation(Dep.Flipper.soLoader)
     implementation(Dep.Flipper.flipper)
     kapt(project(":compiler"))
