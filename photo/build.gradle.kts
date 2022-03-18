@@ -44,8 +44,10 @@ android {
 }
 
 dependencies {
-    api(project(":compose-core"))
-    api(Dep.AndroidX.activity)
-    api(Dep.Compose.activity)
-    api(Dep.Compose.pager)
+    implementation(Dep.AndroidX.appcompat)
+    implementation(project(":compose-core"))
+    implementation(Dep.AndroidX.activity)
+    implementation(Dep.Compose.activity)
+    implementation(Dep.Compose.pager)
+    implementation(Dep.Compose.constraintlayout)
 }

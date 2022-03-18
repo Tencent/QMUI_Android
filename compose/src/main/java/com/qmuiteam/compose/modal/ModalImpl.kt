@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.isVisible
 import kotlinx.coroutines.flow.MutableStateFlow
 
 internal abstract class QMUIModalPresent(
@@ -61,7 +60,7 @@ internal abstract class QMUIModalPresent(
 
     private fun doAfterDismiss() {
         isDismissing = false
-        composeLayout.isVisible = false
+        composeLayout.visibility = View.GONE
         composeLayout.disposeComposition()
         rootLayout.removeView(composeLayout)
         onBackPressedCallback.remove()

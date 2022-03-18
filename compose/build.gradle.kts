@@ -45,4 +45,5 @@ android {
 
 dependencies {
     api(project(":compose-core"))
+    api(Dep.Compose.constraintlayout)
 }

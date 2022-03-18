@@ -45,7 +45,8 @@ android {
 }
 
 dependencies {
-    api(project(":compose-core"))
-    compileOnly(project(":photo"))
+    implementation(project(":compose-core"))
+    implementation(Dep.AndroidX.coreKtx)
+    api(project(":photo"))
     api(Dep.Coil.compose)
 }
