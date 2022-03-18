@@ -55,6 +55,7 @@ internal const val QMUI_PHOTO_RESULT_URI_LIST = "qmui_photo_result_uri_list"
 internal const val QMUI_PHOTO_RESULT_ORIGIN_OPEN = "qmui_photo_result_origin_open"
 internal const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
 internal const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
+internal const val QMUI_PHOTO_PICKED_ITEMS = "qmui_photo_picked_items"
 internal const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
 class QMUIPhotoPickItemInfo(
@@ -110,11 +111,13 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             activity: ComponentActivity,
             cls: Class<out QMUIPhotoPickerActivity>,
             factoryCls: Class<out QMUIMediaPhotoProviderFactory>,
+            pickedItems: ArrayList<Uri> = arrayListOf(),
             pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT,
             enableOrigin: Boolean = true
         ): Intent {
             val intent = Intent(activity, cls)
             intent.putExtra(QMUI_PHOTO_PICK_LIMIT_COUNT, pickLimitCount)
+            intent.putParcelableArrayListExtra(QMUI_PHOTO_PICKED_ITEMS, pickedItems)
             intent.putExtra(QMUI_PHOTO_PROVIDER_FACTORY, factoryCls.name)
             intent.putExtra(QMUI_PHOTO_ENABLE_ORIGIN, enableOrigin)
             return intent

@@ -1,6 +1,7 @@
 package com.qmuiteam.photo.vm
 
 import android.app.Application
+import android.net.Uri
 import androidx.annotation.Keep
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.ArrayList
 
 class QMUIPhotoPickerViewModel @Keep constructor(
     val application: Application,
@@ -73,6 +75,22 @@ class QMUIPhotoPickerViewModel @Keep constructor(
                         })
                     }
                 }
+                val pickedItems = state.get<ArrayList<Uri>>(QMUI_PHOTO_PICKED_ITEMS)
+                if(pickedItems != null){
+                    state.set(QMUI_PHOTO_PICKED_ITEMS, null)
+                    data.find { it.id == QMUIMediaPhotoBucketAllId}?.list?.forEach { item ->
+                        if(pickedItems.find { it == item.model.uri } != null){
+                            _pickedMap[item.model.id] = item
+                            val list = arrayListOf<Long>()
+                            list.add(item.model.id)
+                            _pickedListFlow.value = list
+                            _pickedCountFlow.value = list.size
+                        }
+                    }
+                }
+
+
+
                 _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, data)
             } catch (e: Throwable) {
                 _photoPickerDataFlow.value = QMUIPhotoPickerData(QMUIPhotoPickerLoadState.dataLoaded, null, e)
