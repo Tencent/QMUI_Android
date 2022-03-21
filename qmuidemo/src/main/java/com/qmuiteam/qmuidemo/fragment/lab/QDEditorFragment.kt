@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.qmuiteam.compose.core.ui.QMUITopBar
@@ -44,6 +45,7 @@ class QDEditorFragment : ComposeBaseFragment() {
                     .weight(1f)
                     .padding(16.dp),
                 value = TextFieldValue(""),
+                hint = AnnotatedString("写下这一刻的想法"),
                 channel = channel
             ) {
 
@@ -61,7 +63,19 @@ class QDEditorFragment : ComposeBaseFragment() {
 
                 TextButton("引用"){
                     scope.launch {
-                        channel.send(Quote())
+                        channel.send(Quote)
+                    }
+                }
+
+                TextButton("无序列表"){
+                    scope.launch {
+                        channel.send(UnOrderList)
+                    }
+                }
+
+                TextButton("Header"){
+                    scope.launch {
+                        channel.send(Header(HeaderLevel.h2))
                     }
                 }
             }

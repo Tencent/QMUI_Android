@@ -79,7 +79,7 @@ fun wordEdit(oldText: String, newText: String, shift: Int = 0): WordEditResult {
                     WordEditPoint(
                         WordEditAction.delete,
                         shift + j - 1,
-                        shift - 1
+                        -1
                     )
                 ).apply {
                     prev = array[j - 1]!!.node
@@ -110,7 +110,7 @@ fun wordEdit(oldText: String, newText: String, shift: Int = 0): WordEditResult {
                 val rowLast = next[j - 1]!!
                 val path2 = WordEditRecord(rowLast.dis + 1).apply {
                     node = WordEditRecordNode(
-                        WordEditPoint(WordEditAction.delete, shift + j - 1, shift + i)
+                        WordEditPoint(WordEditAction.delete, shift + j - 1, -1)
                     ).apply {
                         prev = rowLast.node
                     }
