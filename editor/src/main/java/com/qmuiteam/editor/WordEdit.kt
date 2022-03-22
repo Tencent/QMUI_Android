@@ -52,7 +52,7 @@ fun wordEdit(oldTextFieldValue: TextFieldValue, newTextFieldValue: TextFieldValu
     var suffixCheckLength = 10
     var suffix = (oldText.length - oldTextFieldValue.selection.end - suffixCheckLength)
         .coerceAtMost(newText.length - newTextFieldValue.selection.end - suffixCheckLength)
-        .coerceAtMost(0)
+        .coerceAtLeast(0)
     while (suffix > 0){
         if(oldText.substring(oldText.length - suffix) == newText.substring(newText.length - suffix)){
             break
