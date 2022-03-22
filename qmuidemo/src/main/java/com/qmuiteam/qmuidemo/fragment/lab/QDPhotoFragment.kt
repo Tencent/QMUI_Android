@@ -329,7 +329,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 pickResult.list.map {
                     QMUICoilPhotoProvider(
                         it.uri,
-                        if(it.width <= 0 || it.height <= 0) -1f else it.width.toFloat() / it.height
+                        it.ratio()
                     )
                 }
             }

@@ -9,7 +9,7 @@ class QMUIMediaCoilPhotoProviderFactory : QMUIMediaPhotoProviderFactory {
     override fun factory(model: QMUIMediaModel): QMUIPhotoProvider {
         return QMUICoilPhotoProvider(
             model.uri,
-            if (model.height > 0 && model.width > 0) model.width.toFloat() / model.height else 0f
+            model.ratio()
         )
     }
 }

@@ -59,14 +59,31 @@ internal const val QMUI_PHOTO_PICKED_ITEMS = "qmui_photo_picked_items"
 internal const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
 
 class QMUIPhotoPickItemInfo(
+    val id: Long,
+    val name: String,
     val width: Int,
     val height: Int,
-    val uri: Uri
+    val uri: Uri,
+    val rotation: Int
 ) : Parcelable {
+
+    fun ratio(): Float {
+        if(height <= 0 || width <= 0){
+            return -1f
+        }
+        if(rotation == 90 || rotation == 270){
+            return height.toFloat() / width
+        }
+        return width.toFloat() / height
+    }
+
     constructor(parcel: Parcel) : this(
+        parcel.readLong(),
+        parcel.readString()!!,
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readParcelable(Uri::class.java.classLoader)!!
+        parcel.readParcelable(Uri::class.java.classLoader)!!,
+        parcel.readInt()
     )
 
     override fun describeContents(): Int {
@@ -74,9 +91,13 @@ class QMUIPhotoPickItemInfo(
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeLong(id)
+        dest.writeString(name)
         dest.writeInt(width)
         dest.writeInt(height)
         dest.writeParcelable(uri, flags)
+        dest.writeInt(rotation)
+
     }
 
     companion object CREATOR : Parcelable.Creator<QMUIPhotoPickItemInfo> {
@@ -453,7 +474,16 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             arrayListOf(config.topBarSendFactory(true, viewModel.pickLimitCount, viewModel.pickedCountFlow) {
                 val pickedList = viewModel.getPickedResultList()
                 if(pickedList.isEmpty()){
-                    onHandleSend(listOf(data[pagerState.currentPage].let { QMUIPhotoPickItemInfo(it.model.width, it.model.height, it.model.uri) }))
+                    onHandleSend(listOf(data[pagerState.currentPage].let {
+                        QMUIPhotoPickItemInfo(
+                            it.model.id,
+                            it.model.name,
+                            it.model.width,
+                            it.model.height,
+                            it.model.uri,
+                            it.model.rotation
+                        )
+                    }))
                 }else{
                     onHandleSend(pickedList)
                 }

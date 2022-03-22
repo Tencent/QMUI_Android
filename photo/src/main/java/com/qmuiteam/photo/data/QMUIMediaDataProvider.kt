@@ -32,6 +32,9 @@ open class QMUIMediaModel(
         if(height <= 0 || width <= 0){
             return -1f
         }
+        if(rotation == 90 || rotation == 270){
+            return height.toFloat() / width
+        }
         return width.toFloat() / height
     }
 }

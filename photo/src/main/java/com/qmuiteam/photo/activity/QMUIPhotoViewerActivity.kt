@@ -255,7 +255,9 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                     photoTransitionInfo.photoProvider.isLongImage() -> {
                         ContentScale.FillWidth
                     }
-                    photoTransitionInfo.ratio() > 0f -> {
+                    photoTransitionInfo.ratio() > 0f &&
+                            photoTransitionInfo.offsetInWindow != null &&
+                            photoTransitionInfo.size != null -> {
                         ContentScale.Crop
                     }
                     else -> ContentScale.Fit

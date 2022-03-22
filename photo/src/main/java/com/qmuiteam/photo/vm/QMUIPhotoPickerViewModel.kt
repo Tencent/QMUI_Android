@@ -78,10 +78,11 @@ class QMUIPhotoPickerViewModel @Keep constructor(
                 val pickedItems = state.get<ArrayList<Uri>>(QMUI_PHOTO_PICKED_ITEMS)
                 if(pickedItems != null){
                     state.set(QMUI_PHOTO_PICKED_ITEMS, null)
+                    val list = arrayListOf<Long>()
+                    _pickedMap.clear()
                     data.find { it.id == QMUIMediaPhotoBucketAllId}?.list?.forEach { item ->
                         if(pickedItems.find { it == item.model.uri } != null){
                             _pickedMap[item.model.id] = item
-                            val list = arrayListOf<Long>()
                             list.add(item.model.id)
                             _pickedListFlow.value = list
                             _pickedCountFlow.value = list.size
@@ -135,7 +136,7 @@ class QMUIPhotoPickerViewModel @Keep constructor(
     fun getPickedResultList(): List<QMUIPhotoPickItemInfo> {
         return _pickedListFlow.value.mapNotNull { id ->
             _pickedMap[id]?.model?.let {
-                QMUIPhotoPickItemInfo(it.width, it.height, it.uri)
+                QMUIPhotoPickItemInfo(it.id, it.name, it.width, it.height, it.uri, it.rotation)
             }
         }
     }
