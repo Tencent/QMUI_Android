@@ -1,6 +1,5 @@
 package com.qmuiteam.photo.compose.picker
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,7 +23,6 @@ import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.core.provider.dp
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.data.PhotoLoadStatus
-import com.qmuiteam.photo.data.PhotoResult
 import com.qmuiteam.photo.data.QMUIMediaPhotoVO
 import kotlinx.coroutines.flow.StateFlow
 
@@ -58,15 +56,7 @@ fun QMUIPhotoPickerPreview(
                     onTap()
                 }
             ) { _, _, _, onImageRatioEnsured ->
-                item.photoProvider.photo()?.Compose(contentScale = ContentScale.Fit,
-                    isContainerDimenExactly = true,
-                    onSuccess = {
-
-                    },
-                    onError = {
-
-                    })
-//                QMUIPhotoPickerPreviewItemContent(item, onImageRatioEnsured, loadingFailed, loading)
+                QMUIPhotoPickerPreviewItemContent(item, onImageRatioEnsured, loadingFailed, loading)
             }
         }
     }
@@ -117,7 +107,7 @@ fun QMUIPhotoPickerPreviewPickedItems(
     data: List<QMUIMediaPhotoVO>,
     pickedItems: List<Long>,
     currentId: Long,
-    onClick:(QMUIMediaPhotoVO) -> Unit
+    onClick: (QMUIMediaPhotoVO) -> Unit
 ) {
     if (pickedItems.isNotEmpty()) {
         val list = remember(data, pickedItems) {
@@ -132,7 +122,7 @@ fun QMUIPhotoPickerPreviewPickedItems(
             horizontalArrangement = spacedBy(5.dp),
             contentPadding = PaddingValues(horizontal = 5.dp)
         ) {
-            items(list, { it.model.id }){
+            items(list, { it.model.id }) {
                 QMUIPhotoPickerPreviewPickedItem(it, it.model.id == currentId, onClick)
             }
         }
@@ -143,9 +133,9 @@ fun QMUIPhotoPickerPreviewPickedItems(
 private fun QMUIPhotoPickerPreviewPickedItem(
     item: QMUIMediaPhotoVO,
     isCurrent: Boolean,
-    onClick:(QMUIMediaPhotoVO) -> Unit
-){
-    val thumb = remember(item){
+    onClick: (QMUIMediaPhotoVO) -> Unit
+) {
+    val thumb = remember(item) {
         item.photoProvider.thumbnail(true)
     }
     Box(modifier = Modifier
@@ -157,18 +147,19 @@ private fun QMUIPhotoPickerPreviewPickedItem(
             onClick(item)
         }
         .let {
-            if(isCurrent){
+            if (isCurrent) {
                 it.border(2.dp, QMUILocalPickerConfig.current.commonIconCheckedTintColor)
             } else {
                 it
             }
         }
-    ){
+    ) {
         thumb?.Compose(
             contentScale = ContentScale.Crop,
             isContainerDimenExactly = true,
             onSuccess = null,
-            onError = null)
+            onError = null
+        )
     }
 }
 
@@ -183,7 +174,7 @@ fun QMUIPhotoPickerPreviewToolBar(
     onToggleOrigin: (toOpen: Boolean) -> Unit,
     onEdit: () -> Unit,
     onToggleSelect: (toSelect: Boolean) -> Unit
-){
+) {
     val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
         WindowInsetsCompat.Type.navigationBars()
     ).dp()
@@ -196,7 +187,7 @@ fun QMUIPhotoPickerPreviewToolBar(
             drawTopSeparator(config.commonSeparatorColor)
         }
     ) {
-        if(current.model.editable && config.editable){
+        if (current.model.editable && config.editable) {
             CommonTextButton(
                 modifier = Modifier.align(Alignment.CenterStart),
                 enable = true,
@@ -205,7 +196,7 @@ fun QMUIPhotoPickerPreviewToolBar(
             )
         }
 
-        if(enableOrigin){
+        if (enableOrigin) {
             OriginOpenButton(
                 modifier = Modifier
                     .fillMaxHeight()

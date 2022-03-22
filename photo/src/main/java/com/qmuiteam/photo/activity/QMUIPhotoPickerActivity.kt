@@ -511,6 +511,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                 QMUITopBar(
                     title = "${pagerState.currentPage + 1}/${data.size}",
                     separatorHeight = 0.dp,
+                    paddingEnd = 16.dp,
                     backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
                     leftItems = topBarLeftItems,
                     rightItems = topBarRightItems
