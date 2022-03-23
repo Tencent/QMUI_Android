@@ -1,5 +1,6 @@
 package com.qmuiteam.editor
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -12,13 +13,58 @@ internal fun String.isHeaderTag(): Boolean{
     return HeaderLevel.values().find { it.tag == this } != null
 }
 
-class Bold(val weight: Int) : EditorBehavior {
+internal fun String.isBoldTag(): Boolean{
+    return startsWith(BoldBehavior.prefix)
+}
+
+class BoldBehavior(val weight: Int = 700) : EditorBehavior {
+
+    companion object {
+        val prefix = "blod"
+    }
+
+    val tag: String = "$prefix:$weight"
+
     override fun apply(value: TextFieldValue): TextFieldValue {
-        return value.bold(weight)
+        return value.bold(this)
     }
 }
 
-object Quote : EditorBehavior {
+class StopBehavior(val target: String): EditorBehavior {
+    companion object {
+        val prefix = "stop"
+    }
+
+    val tag: String = "${prefix}:$target"
+
+    override fun apply(value: TextFieldValue): TextFieldValue {
+        return value
+    }
+}
+
+class TextColorBehavior(val color: Color = Color.White) : EditorBehavior {
+
+    companion object {
+        val prefix = "color"
+    }
+
+    val tag: String = "$prefix:$color"
+
+    override fun apply(value: TextFieldValue): TextFieldValue {
+        return value.textColor(this)
+    }
+}
+
+object NormalParagraphBehavior: EditorBehavior {
+
+    const val tag = "p"
+
+    override fun apply(value: TextFieldValue): TextFieldValue {
+        return value.quote()
+    }
+}
+
+object QuoteBehavior : EditorBehavior {
 
     const val tag = "quote"
 
@@ -28,7 +74,7 @@ object Quote : EditorBehavior {
 }
 
 
-object UnOrderList : EditorBehavior {
+object UnOrderListBehavior : EditorBehavior {
 
     const val tag = "ul"
 
@@ -37,7 +83,7 @@ object UnOrderList : EditorBehavior {
     }
 }
 
-class Header(val level: HeaderLevel): EditorBehavior {
+class HeaderBehavior(val level: HeaderLevel): EditorBehavior {
 
     override fun apply(value: TextFieldValue): TextFieldValue {
         return value.header(level)

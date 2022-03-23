@@ -16,12 +16,17 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.DpRect
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.height
+import androidx.compose.ui.unit.width
 import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
@@ -78,6 +83,7 @@ class UnOrderedDecoration(val rect: Rect) : EditorDecoration {
     }
 }
 
+
 @Composable
 fun QMUIEditor(
     modifier: Modifier = Modifier,
@@ -123,7 +129,7 @@ fun QMUIEditor(
                 onTextLayout = {
                     val list = mutableListOf<EditorDecoration>()
                     it.layoutInput.text.paragraphStyles.forEach { paragraph ->
-                        val rect = if(paragraph.start == paragraph.end){
+                        val rect = if (paragraph.start == paragraph.end) {
                             val cursorRect = it.multiParagraph.getCursorRect(paragraph.start)
                             Rect(
                                 0f,
@@ -131,7 +137,7 @@ fun QMUIEditor(
                                 it.multiParagraph.width,
                                 cursorRect.bottom
                             )
-                        }else{
+                        } else {
                             val start = it.multiParagraph.getBoundingBox(paragraph.start)
                             val end = it.multiParagraph.getBoundingBox(paragraph.end - 1)
                             Rect(
@@ -141,9 +147,9 @@ fun QMUIEditor(
                                 end.bottom
                             )
                         }
-                        if (paragraph.tag == Quote.tag) {
+                        if (paragraph.tag == QuoteBehavior.tag) {
                             list.add(QuoteDecoration(rect))
-                        } else if (paragraph.tag == UnOrderList.tag) {
+                        } else if (paragraph.tag == UnOrderListBehavior.tag) {
                             list.add(UnOrderedDecoration(rect))
                         }
                     }
@@ -165,233 +171,13 @@ fun QMUIEditor(
                             it.Compose()
                         }
                     }
-                    if(textFieldValue.text.isEmpty()){
+                    if (textFieldValue.text.isEmpty()) {
                         Text(text = hint, style = hintStyle)
                     }
                     innerTextField()
                 }
             )
         }
-    }
-}
-
-private fun TextFieldValue.check(): TextFieldValue {
-    val paragraphs = mutableListOf<AnnotatedString.Range<ParagraphStyle>>()
-    var currentIndex = 0
-    var nextIndex = text.indexOf('\n')
-    while (nextIndex >= 0) {
-        val exist = annotatedString.paragraphStyles.find { it.start == 0 && it.end == nextIndex + 1 }
-        if (exist == null) {
-            paragraphs.add(AnnotatedString.Range(ParagraphStyle(), currentIndex, nextIndex + 1, "p"))
-        } else {
-            paragraphs.add(exist)
-        }
-        currentIndex = nextIndex + 1
-        nextIndex = text.indexOf('\n', currentIndex)
-    }
-
-    if (currentIndex < text.length) {
-        val exist = annotatedString.paragraphStyles.find { it.start == 0 && it.end == text.length }
-        if (exist == null) {
-            paragraphs.add(AnnotatedString.Range(ParagraphStyle(), currentIndex, text.length, "p"))
-        } else {
-            paragraphs.add(exist)
-        }
-    }
-
-    if (text.isEmpty() || (selection.collapsed && selection.end == text.length)) {
-        val exist = annotatedString.paragraphStyles.find { it.start == text.length && it.end == text.length }
-        if (exist == null) {
-            paragraphs.add(AnnotatedString.Range(ParagraphStyle(), text.length, text.length, "p"))
-        } else {
-            paragraphs.add(exist)
-        }
-    }
-    return TextFieldValue(
-        AnnotatedString(text, annotatedString.spanStyles, paragraphs),
-        selection,
-        composition
-    )
-}
-
-private fun TextFieldValue.modifySpans(
-    block: (spans: MutableList<MutableRange<SpanStyle>>) -> Unit
-): TextFieldValue {
-    val mutableSpans = mutableListOf<MutableRange<SpanStyle>>()
-    annotatedString.spanStyles.forEach {
-        mutableSpans.add(MutableRange(it.item, it.start, it.end, it.tag))
-    }
-    block(mutableSpans)
-    val spanStyles = mutableSpans.map {
-        AnnotatedString.Range(it.item, it.start, it.end, it.tag)
-    }
-
-    return TextFieldValue(
-        AnnotatedString(text, spanStyles, annotatedString.paragraphStyles),
-        selection,
-        composition
-    )
-}
-
-private fun TextFieldValue.modifyParagraphs(
-    block: (paragraphs: MutableList<MutableRange<ParagraphStyle>>) -> Unit
-): TextFieldValue {
-    val mutableParagraphs = mutableListOf<MutableRange<ParagraphStyle>>()
-    annotatedString.paragraphStyles.forEach {
-        mutableParagraphs.add(MutableRange(it.item, it.start, it.end, it.tag))
-    }
-
-    block(mutableParagraphs)
-
-    val paragraphStyles = mutableParagraphs.map {
-        AnnotatedString.Range(it.item, it.start, it.end, it.tag)
-    }
-
-    return TextFieldValue(
-        AnnotatedString(text, annotatedString.spanStyles, paragraphStyles),
-        selection,
-        composition
-    )
-}
-
-fun TextFieldValue.bold(weight: Int): TextFieldValue {
-    return modifySpans { spans ->
-        if (selection.collapsed) {
-            val contained = spans.find {
-                it.tag == "bold" && it.end >= selection.start && it.start <= selection.start
-            }
-            if (contained == null) {
-                spans.add(
-                    MutableRange(
-                        SpanStyle(fontWeight = FontWeight.Bold),
-                        selection.start,
-                        selection.end,
-                        "bold"
-                    )
-                )
-            }
-        } else {
-            spans.forEach {
-                if (it.tag == "bold") {
-                    if (selection.collapsed) {
-                        if (it.end > selection.start && it.start < selection.end) {
-                            if (selection.start > it.start) {
-                                it.end = selection.start
-                            }
-                            if (selection.end < it.end) {
-                                it.start = selection.end
-                            }
-                        }
-                    }
-                }
-            }
-            spans.add(
-                MutableRange(
-                    SpanStyle(fontWeight = FontWeight.Bold),
-                    selection.start,
-                    selection.end,
-                    "bold"
-                )
-            )
-        }
-    }
-}
-
-private fun MutableRange<ParagraphStyle>.updateStyleIfNeeded(
-    value: TextFieldValue, tag: String, style: ParagraphStyle
-): Boolean{
-    if (value.selection.collapsed) {
-        val shouldModify = if(start == end){
-            start == start
-        }else if(value.selection.start in start until end){
-            true
-        } else if(value.selection.end == end){
-            value.text[end - 1] != '\n'
-        }else false
-        if (shouldModify) {
-            item = style
-            this.tag = tag
-            return true
-        }
-    } else {
-        if (start < value.selection.end && end > value.selection.start) {
-            item = style
-            this.tag = tag
-            return true
-        }
-    }
-    return false
-}
-
-internal fun TextFieldValue.paragraphStyle(tag: String, style: ParagraphStyle): TextFieldValue {
-    return modifyParagraphs { paragraphs ->
-        paragraphs.forEach {
-            it.updateStyleIfNeeded(this, tag, style)
-        }
-    }.modifySpans { spans ->
-        spans.removeAll {
-            if (selection.collapsed) {
-                it.tag == "h" && it.start <= selection.end && it.end >= selection.start
-            } else {
-                it.tag == "h" && it.start < selection.end && it.end > selection.start
-            }
-
-        }
-    }
-}
-
-internal fun TextFieldValue.quote(): TextFieldValue {
-    return paragraphStyle(
-        Quote.tag, ParagraphStyle(
-            textIndent = TextIndent(10.sp, 10.sp)
-        )
-    )
-}
-
-internal fun TextFieldValue.unOrder(): TextFieldValue {
-    return paragraphStyle(
-        UnOrderList.tag, ParagraphStyle(
-            textIndent = TextIndent(10.sp, 10.sp)
-        )
-    )
-}
-
-internal fun TextFieldValue.header(level: HeaderLevel): TextFieldValue {
-    var start = Int.MAX_VALUE
-    var end = Int.MIN_VALUE
-    val ret = modifyParagraphs { paragraphs ->
-        val style = ParagraphStyle()
-        paragraphs.forEach {
-            if(it.updateStyleIfNeeded(this,  level.tag, style)){
-                start = it.start.coerceAtMost(start)
-                end = it.end.coerceAtLeast(end)
-            }
-        }
-    }
-    if (start == Int.MAX_VALUE || end == Int.MIN_VALUE) {
-        return ret
-    }
-    return ret.modifySpans {
-        var i = 0
-        while (i < it.size) {
-            val span = it[i]
-            if (span.end > start && (span.start < end || (span.start == end && span.start == span.end))) {
-                when {
-                    span.start < start -> {
-                        span.end = start
-                    }
-                    span.end > end -> {
-                        span.start = end
-                    }
-                    else -> {
-                        it.removeAt(i)
-                        i--
-                    }
-                }
-            }
-            i++
-        }
-        it.add(MutableRange(SpanStyle(fontSize = level.fontSize), start, end, "h"))
     }
 }
 
@@ -418,17 +204,36 @@ private fun updateTextFieldValue(
     wordEdit(current, next).list.forEach { point ->
         val lastIndex = point.oldIndex + indexCorrect
         if (point.action == WordEditAction.insert) {
+            val toInsertPos = lastIndex + 1
             mutableParagraph.forEachIndexed { index, item ->
-                item.modifyByInsert(lastIndex, index == mutableParagraph.size - 1)
+                item.modifyByInsert(toInsertPos, index == mutableParagraph.size - 1)
             }
-            mutableSpan.forEach { item ->
-                item.modifyByInsert(lastIndex, true)
-                if(item.tag=="h"){
-                    mutableParagraph.find { it.start == item.start }?.let {
-                        item.end = it.end
-                    }
+            val stopSpans = mutableListOf<MutableRange<SpanStyle>>()
+            val normalSpans = mutableListOf<MutableRange<SpanStyle>>()
+            mutableSpan.forEach {
+                if (it.tag.startsWith(StopBehavior.prefix)) {
+                    stopSpans.add(it)
+                } else {
+                    normalSpans.add(it)
                 }
             }
+            mutableSpan.forEach { item ->
+                item.modifyByInsert(
+                    toInsertPos,
+                    stopSpans.find { it.end == item.end && it.tag.endsWith(item.tag) } == null
+                )
+                // update companion span.
+                mutableParagraph.find { it.tag == item.tag && it.start == item.start }?.let {
+                    item.end = it.end
+                }
+            }
+            stopSpans.forEach {
+                it.modifyByInsert(toInsertPos, true)
+                if (it.end > it.start) {
+                    mutableSpan.remove(it)
+                }
+            }
+
             if (next.text[point.newIndex] == '\n') {
                 for (i in 0 until mutableParagraph.size) {
                     val paragraph = mutableParagraph[i]
@@ -441,7 +246,6 @@ private fun updateTextFieldValue(
                                 it.start == paragraph.start && it.end == paragraph.end && it.tag == "h"
                             }?.let { it.end = point.newIndex + 1 }
                         }
-
                         paragraph.end = point.newIndex + 1
                         break
                     }
@@ -449,6 +253,22 @@ private fun updateTextFieldValue(
             }
             indexCorrect++
         } else if (point.action == WordEditAction.delete) {
+
+            if (current.text[point.oldIndex] == '\n') {
+                val prevParagraph = mutableParagraph.find { it.end == point.oldIndex + 1 }
+                val nextParagraph = mutableParagraph.find { it.start == point.oldIndex + 1 && it.end != it.start }
+                nextParagraph?.let { np ->
+                    prevParagraph?.let { pp ->
+                        pp.end = np.end
+                        mutableSpan.find { it.start == pp.start && it.tag == pp.tag }?.let {
+                            it.end = np.end
+                        }
+                    }
+                    mutableParagraph.remove(np)
+                    mutableSpan.removeAll { np.start == it.start && it.tag == np.tag }
+                }
+            }
+
             var i = 0
             while (i < mutableSpan.size) {
                 val span = mutableSpan[i]
@@ -460,6 +280,7 @@ private fun updateTextFieldValue(
                 i++
             }
             i = 0
+
             while (i < mutableParagraph.size) {
                 val paragraph = mutableParagraph[i]
                 val shouldRemove = paragraph.modifyByDelete(lastIndex)
@@ -469,6 +290,7 @@ private fun updateTextFieldValue(
                 }
                 i++
             }
+
             indexCorrect--
         }
     }
@@ -490,45 +312,4 @@ private fun updateTextFieldValue(
         next.selection,
         next.composition
     )
-}
-
-private class MutableRange<T>(var item: T, var start: Int, var end: Int, var tag: String) {
-    fun modifyByInsert(insertPos: Int, appendIfAtEnd: Boolean) {
-        val toInsertPos = insertPos + 1
-        if (start == end) {
-            if (toInsertPos < start) {
-                start++
-                end++
-            } else if (toInsertPos == start) {
-                end++
-            }
-        } else {
-            if (toInsertPos < start) {
-                start++
-                end++
-            } else if (toInsertPos < end || (appendIfAtEnd && toInsertPos == end)) {
-                end++
-            }
-        }
-    }
-
-    fun modifyByDelete(deletePos: Int): Boolean {
-        if (start == end) {
-            if (deletePos < start - 1) {
-                start--
-                end--
-            } else if (deletePos == start - 1) {
-                start--
-                end--
-                return true
-            }
-        }
-        if (deletePos < start) {
-            start--
-            end--
-        } else if (deletePos < end) {
-            end--
-        }
-        return false
-    }
 }

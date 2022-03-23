@@ -56,26 +56,26 @@ class QDEditorFragment : ComposeBaseFragment() {
                 .height(60.dp)) {
                 TextButton("加粗"){
                     scope.launch {
-                        channel.send(Bold(500))
+                        channel.send(BoldBehavior(500))
                     }
 
                 }
 
                 TextButton("引用"){
                     scope.launch {
-                        channel.send(Quote)
+                        channel.send(QuoteBehavior)
                     }
                 }
 
                 TextButton("无序列表"){
                     scope.launch {
-                        channel.send(UnOrderList)
+                        channel.send(UnOrderListBehavior)
                     }
                 }
 
                 TextButton("Header"){
                     scope.launch {
-                        channel.send(Header(HeaderLevel.h2))
+                        channel.send(HeaderBehavior(HeaderLevel.h2))
                     }
                 }
             }
