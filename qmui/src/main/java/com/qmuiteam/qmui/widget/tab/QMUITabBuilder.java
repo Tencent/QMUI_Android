@@ -90,10 +90,9 @@ public class QMUITabBuilder {
      * gravity of text
      */
     private int gravity = Gravity.CENTER;
-    /**
-     * text
-     */
+
     private CharSequence text;
+    private CharSequence description;
 
     /**
      * text typeface in normal state
@@ -172,6 +171,7 @@ public class QMUITabBuilder {
         this.iconPosition = other.iconPosition;
         this.gravity = other.gravity;
         this.text = other.text;
+        this.description = other.description;
         this.signCount = other.signCount;
         this.signCountDigits = other.signCountDigits;
         this.signCountHorizontalOffset = other.signCountHorizontalOffset;
@@ -347,8 +347,13 @@ public class QMUITabBuilder {
         return this;
     }
 
+    public QMUITabBuilder setDescription(CharSequence description){
+        this.description = description;
+        return this;
+    }
+
     public QMUITab build(Context context) {
-        QMUITab tab = new QMUITab(this.text);
+        QMUITab tab = new QMUITab(text, description == null ? text : description);
         if(!skinChangeWithTintColor){
             if(!skinChangeNormalWithTintColor){
                 if(normalDrawableAttr != 0){
