@@ -76,6 +76,7 @@ public class QMUITab {
     @IconPosition int iconPosition = ICON_POSITION_TOP;
     int gravity = Gravity.CENTER;
     private CharSequence text;
+    private CharSequence description;
     int signCountDigits = 2;
     int signCountHorizontalOffset = 0;
     int signCountVerticalOffset = 0;
@@ -89,7 +90,12 @@ public class QMUITab {
 
 
     QMUITab(CharSequence text) {
+        this(text, text);
+    }
+
+    QMUITab(CharSequence text, CharSequence description) {
         this.text = text;
+        this.description = description;
     }
 
 
@@ -99,6 +105,14 @@ public class QMUITab {
 
     public void setText(CharSequence text) {
         this.text = text;
+    }
+
+    public void setDescription(CharSequence description) {
+        this.description = description;
+    }
+
+    public CharSequence getDescription() {
+        return description;
     }
 
     public int getIconPosition() {

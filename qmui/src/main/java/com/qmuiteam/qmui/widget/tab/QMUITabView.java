@@ -179,6 +179,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         }
         updateSkinInfo(tab);
         requestLayout();
+        setContentDescription(tab.getDescription());
     }
 
 
