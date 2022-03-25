@@ -1,9 +1,7 @@
 package com.qmuiteam.compose.modal
 
 import android.view.View
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -53,9 +51,11 @@ fun View.qmuiToast(
     horEdge: Dp = qmuiCommonHorSpace,
     verEdge: Dp = qmuiToastVerEdgeProtectionMargin,
     radius: Dp = 8.dp,
-    background: Color = Color.Black
+    background: Color = Color.Black,
+    enter: EnterTransition = slideInVertically(initialOffsetY = { it }),
+    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }),
 ): QMUIModal {
-    return qmuiToast(duration, modalHostProvider, animationDurationMillis, alignment, horEdge, verEdge, radius, background) {
+    return qmuiToast(duration, modalHostProvider, animationDurationMillis, alignment, horEdge, verEdge, radius, background, enter, exit) {
         Text(
             text = text,
             color = textColor,
@@ -77,6 +77,8 @@ fun View.qmuiToast(
     verEdge: Dp = qmuiToastVerEdgeProtectionMargin,
     radius: Dp = 8.dp,
     background: Color = Color.Black,
+    enter: EnterTransition = slideInVertically(initialOffsetY = { it }),
+    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }),
     content: @Composable BoxScope.(QMUIModal) -> Unit
 ): QMUIModal {
     var job: Job? = null
@@ -97,8 +99,8 @@ fun View.qmuiToast(
             Box(
                 modifier = Modifier
                     .animateEnterExit(
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { it })
+                        enter = enter,
+                        exit = exit
                     )
             ) {
                 QMUIToast(modal, radius, background, content)
