@@ -74,7 +74,9 @@ class QMUIMediaImagesProvider : QMUIMediaDataProvider {
             "image/jpeg",
             "image/png",
             "image/gif",
-            "image/webp"
+            "image/webp",
+            "image/heic",
+            "image/heif"
         )
 
         private val COLUMNS = arrayOf(
