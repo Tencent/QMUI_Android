@@ -17,6 +17,8 @@
 
 package com.qmuiteam.qmui.arch.effect;
 
+import android.util.ArraySet;
+
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
@@ -32,8 +34,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -69,9 +73,10 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
 
     private final AtomicInteger mNextRc = new AtomicInteger(0);
 
-    private final transient Map<Integer, EffectHandlerWrapper> mKeyToHandler = new HashMap<>();
-    private transient boolean mNotifyEffectRunning = false;
-    private transient List<PendingRegister> mPendingRegister = new ArrayList<>();
+    private final transient Map<Integer, EffectHandlerWrapper<?>> mKeyToHandler = new HashMap<>();
+    private transient int mNotifyEffectRunning = 0;
+    private final transient Set<Integer> mPendingRemoveKeys = new HashSet<>();
+    private final transient List<PendingRegister<?>> mPendingRegister = new ArrayList<>();
 
 
     /**
@@ -88,30 +93,22 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
     public <T extends Effect> QMUIFragmentEffectRegistration register(
             @NonNull final LifecycleOwner lifecycleOwner,
             @NonNull final QMUIFragmentEffectHandler<T> effectHandler) {
-        if(mNotifyEffectRunning){
+        if(mNotifyEffectRunning > 0){
             PendingRegister<T> pendingRegister = new PendingRegister<>(lifecycleOwner, effectHandler);
             mPendingRegister.add(pendingRegister);
             return pendingRegister;
         }
+
         final int rc = mNextRc.getAndIncrement();
         Lifecycle lifecycle = lifecycleOwner.getLifecycle();
         mKeyToHandler.put(rc, new EffectHandlerWrapper<T>(effectHandler, lifecycle));
-        lifecycle.addObserver(new LifecycleEventObserver() {
-            @Override
-            public void onStateChanged(@NonNull LifecycleOwner lifecycleOwner,
-                                       @NonNull Lifecycle.Event event) {
-                if (Lifecycle.Event.ON_DESTROY.equals(event)) {
-                    unregister(rc);
-                }
+        lifecycle.addObserver((LifecycleEventObserver) (lifecycleOwner1, event) -> {
+            if (Lifecycle.Event.ON_DESTROY.equals(event)) {
+                unregister(rc);
             }
         });
-        return new QMUIFragmentEffectRegistration() {
 
-            @Override
-            public void unregister() {
-                QMUIFragmentEffectRegistry.this.unregister(rc);
-            }
-        };
+        return () -> QMUIFragmentEffectRegistry.this.unregister(rc);
     }
 
     /**
@@ -122,7 +119,15 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
      */
     @MainThread
     final void unregister(int key) {
-        EffectHandlerWrapper effectHandlerWrapper = mKeyToHandler.remove(key);
+        if(mNotifyEffectRunning > 0){
+            mPendingRemoveKeys.add(key);
+            return;
+        }
+        safeUnregister(key);
+    }
+
+    private void safeUnregister(int key){
+        EffectHandlerWrapper<?> effectHandlerWrapper = mKeyToHandler.remove(key);
         if (effectHandlerWrapper != null) {
             effectHandlerWrapper.cancel();
         }
@@ -136,19 +141,26 @@ public class QMUIFragmentEffectRegistry extends ViewModel {
      * @param effect
      */
     public <T extends Effect> void notifyEffect(T effect) {
-        mNotifyEffectRunning = true;
+        mNotifyEffectRunning++;
         for (Integer key : mKeyToHandler.keySet()) {
-            EffectHandlerWrapper wrapper = mKeyToHandler.get(key);
+            EffectHandlerWrapper<?> wrapper = mKeyToHandler.get(key);
             if (wrapper != null && wrapper.shouldHandleEffect(effect)) {
                 wrapper.pushOrHandleEffect(effect);
             }
         }
-        mNotifyEffectRunning = false;
-        if(!mPendingRegister.isEmpty()){
-            List<PendingRegister> list = mPendingRegister;
-            mPendingRegister = new ArrayList<>();
-            for(PendingRegister register: list){
-                register.doRegister();
+        mNotifyEffectRunning--;
+        if(mNotifyEffectRunning == 0){
+            if(!mPendingRemoveKeys.isEmpty()){
+                for(Integer key: mPendingRemoveKeys){
+                    safeUnregister(key);
+                }
+                mPendingRemoveKeys.clear();
+            }
+            if(!mPendingRegister.isEmpty()){
+                for(PendingRegister<?> register: mPendingRegister){
+                    register.doRegister();
+                }
+                mPendingRegister.clear();
             }
         }
     }
