@@ -6,11 +6,13 @@ import android.view.Window
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import com.qmuiteam.compose.R
@@ -39,7 +41,8 @@ private class ShowingModals {
 fun QMUIModal(
     isVisible: Boolean,
     mask: Color = DefaultMaskColor,
-    durationMillis: Int = 300,
+    enter: EnterTransition = fadeIn(tween(), 0f),
+    exit: ExitTransition = fadeOut(tween(), 0f),
     systemCancellable: Boolean = true,
     maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
     doOnShow: QMUIModal.Action? = null,
@@ -53,7 +56,16 @@ fun QMUIModal(
     }
     if (isVisible) {
         if (modalHolder.current == null) {
-            val modal = LocalView.current.qmuiModal(mask, systemCancellable, maskTouchBehavior, durationMillis, uniqueId, modalHostProvider, content)
+            val modal = LocalView.current.qmuiModal(
+                mask,
+                systemCancellable,
+                maskTouchBehavior,
+                uniqueId,
+                modalHostProvider,
+                enter,
+                exit,
+                content
+            )
             doOnShow?.let { modal.doOnShow(it) }
             doOnDismiss?.let { modal.doOnDismiss(it) }
             modalHolder.current = modal
@@ -104,9 +116,10 @@ fun View.qmuiModal(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
     maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
-    durationMillis: Int = 300,
     uniqueId: Long = SystemClock.elapsedRealtimeNanos(),
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
+    enter: EnterTransition = fadeIn(tween(), 0f),
+    exit: ExitTransition = fadeOut(tween(), 0f),
     content: @Composable AnimatedVisibilityScope.(QMUIModal) -> Unit
 ): QMUIModal {
     if (!isAttachedToWindow) {
@@ -116,7 +129,12 @@ fun View.qmuiModal(
     val modal = AnimateModalImpl(
         modalHost.first,
         modalHost.second,
-        mask, systemCancellable, maskTouchBehavior, durationMillis, content
+        mask,
+        systemCancellable,
+        maskTouchBehavior,
+        enter,
+        exit,
+        content
     )
     val hostView = modalHost.first
     handleModelUnique(hostView, modal, uniqueId)

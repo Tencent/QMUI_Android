@@ -205,6 +205,25 @@ class QDDialogFragment() : ComposeBaseFragment() {
                         view.qmuiToast("这只是个 Toast!")
                     }
                 }
+
+                item {
+                    QMUIItem(
+                        title = "BottomSheet(list)",
+                        drawBehind = {
+                            drawBottomSeparator(insetStart = qmuiCommonHorSpace, insetEnd = qmuiCommonHorSpace)
+                        }
+                    ) {
+                        view.qmuiBottomSheet {
+                            QMUIBottomSheetList(it) {
+                                items(200){ index ->
+                                    QMUIItem(title = "第${index + 1}项") {
+                                        Toast.makeText(view.context, "你点了第${index + 1}项", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }.show()
+                    }
+                }
             }
         }
     }

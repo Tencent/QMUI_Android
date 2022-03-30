@@ -5,11 +5,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -174,7 +171,8 @@ internal class AnimateModalImpl(
     mask: Color = DefaultMaskColor,
     systemCancellable: Boolean = true,
     maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
-    val durationMillis: Int = 300,
+    val enter: EnterTransition = fadeIn(tween(), 0f),
+    val exit: ExitTransition = fadeOut(tween(), 0f),
     val content: @Composable AnimatedVisibilityScope.(modal: QMUIModal) -> Unit
 ) : QMUIModalPresent(rootLayout, onBackPressedDispatcher, mask, systemCancellable, maskTouchBehavior) {
 
@@ -182,8 +180,8 @@ internal class AnimateModalImpl(
     override fun ModalContent(visible: Boolean, dismissFinishAction: () -> Unit) {
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(durationMillis), 0f),
-            exit = fadeOut(tween(durationMillis), 0f)
+            enter = enter,
+            exit = exit
         ) {
             Box(modifier = Modifier
                 .fillMaxSize()

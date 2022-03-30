@@ -1,6 +1,11 @@
 package com.qmuiteam.compose.modal
 
 import android.view.View
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
@@ -326,7 +331,8 @@ fun View.qmuiDialog(
     systemCancellable: Boolean = true,
     maskTouchBehavior: MaskTouchBehavior = MaskTouchBehavior.dismiss,
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
-    animationDurationMillis: Int = 300,
+    enter: EnterTransition = fadeIn(tween(), 0f),
+    exit: ExitTransition = fadeOut(tween(), 0f),
     horEdge: Dp = qmuiCommonHorSpace,
     verEdge: Dp = qmuiDialogVerEdgeProtectionMargin,
     widthLimit: Dp = 360.dp,
@@ -334,7 +340,14 @@ fun View.qmuiDialog(
     background: Color = Color.White,
     content: @Composable (QMUIModal) -> Unit
 ): QMUIModal {
-    return qmuiModal(mask, systemCancellable, maskTouchBehavior, animationDurationMillis, modalHostProvider = modalHostProvider) { modal ->
+    return qmuiModal(
+        mask,
+        systemCancellable,
+        maskTouchBehavior,
+        modalHostProvider = modalHostProvider,
+        enter = enter,
+        exit = exit
+    ) { modal ->
         QMUIDialog(modal, horEdge, verEdge, widthLimit, radius, background, content)
     }
 }

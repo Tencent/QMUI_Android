@@ -2,6 +2,7 @@ package com.qmuiteam.compose.modal
 
 import android.view.View
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -46,16 +47,25 @@ fun View.qmuiToast(
     fontSize: TextUnit = 16.sp,
     duration: Long = 1000,
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
-    animationDurationMillis: Int = 300,
     alignment: Alignment = Alignment.BottomCenter,
     horEdge: Dp = qmuiCommonHorSpace,
     verEdge: Dp = qmuiToastVerEdgeProtectionMargin,
     radius: Dp = 8.dp,
     background: Color = Color.Black,
-    enter: EnterTransition = slideInVertically(initialOffsetY = { it }),
-    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }),
+    enter: EnterTransition = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
 ): QMUIModal {
-    return qmuiToast(duration, modalHostProvider, animationDurationMillis, alignment, horEdge, verEdge, radius, background, enter, exit) {
+    return qmuiToast(
+        duration,
+        modalHostProvider,
+        alignment,
+        horEdge,
+        verEdge,
+        radius,
+        background,
+        enter,
+        exit
+    ) {
         Text(
             text = text,
             color = textColor,
@@ -71,14 +81,13 @@ fun View.qmuiToast(
 fun View.qmuiToast(
     duration: Long = 1000,
     modalHostProvider: ModalHostProvider = DefaultModalHostProvider,
-    animationDurationMillis: Int = 300,
     alignment: Alignment = Alignment.BottomCenter,
     horEdge: Dp = qmuiCommonHorSpace,
     verEdge: Dp = qmuiToastVerEdgeProtectionMargin,
     radius: Dp = 8.dp,
     background: Color = Color.Black,
-    enter: EnterTransition = slideInVertically(initialOffsetY = { it }),
-    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }),
+    enter: EnterTransition = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+    exit: ExitTransition = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
     content: @Composable BoxScope.(QMUIModal) -> Unit
 ): QMUIModal {
     var job: Job? = null
@@ -86,9 +95,10 @@ fun View.qmuiToast(
         Color.Transparent,
         false,
         MaskTouchBehavior.penetrate,
-        animationDurationMillis,
         -1,
-        modalHostProvider
+        modalHostProvider,
+        enter = EnterTransition.None,
+        exit = ExitTransition.None
     ) { modal ->
         Box(
             modifier = Modifier
