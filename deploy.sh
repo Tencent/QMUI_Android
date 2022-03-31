@@ -3,12 +3,14 @@
 #./deploy.sh qmui publishToMavenLocal
 #./deploy.sh arch publishToMavenLocal
 #./deploy.sh type publishToMavenLocal
+#./deploy.sh compose-core publishToMavenLocal
 #./deploy.sh compose publishToMavenLocal
 #./deploy.sh photo publishToMavenLocal
 
 #./deploy.sh qmui publish
 #./deploy.sh arch publish
 #./deploy.sh type publish
+#./deploy.sh compose-core publish
 #./deploy.sh compose publish
 #./deploy.sh photo publish
 
@@ -28,10 +30,12 @@ elif [[ "type" == "$1" ]]
 then
     buildCmd="./gradlew :type:clean :type:build :type:$2"
     $buildCmd
-elif [[ "compose" == "$1" ]]
+elif [[ "compose-core" == "$1" ]]
 then
     buildCmd="./gradlew :compose-core:clean :compose-core:build :compose-core:$2"
     $buildCmd
+elif [[ "compose" == "$1" ]]
+then
     buildCmd="./gradlew :compose:clean :compose:build :compose:$2"
     $buildCmd
 elif [[ "photo" == "$1" ]]
