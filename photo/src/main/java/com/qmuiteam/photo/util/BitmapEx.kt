@@ -2,6 +2,9 @@ package com.qmuiteam.photo.util
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
+import androidx.core.net.toUri
 import com.qmuiteam.compose.core.helper.QMUILog
 import java.io.*
 
@@ -35,6 +38,25 @@ internal class BitmapCompressStreamResult(
     override fun inputStream(): InputStream? {
         return stream.inputStream()
     }
+}
+
+fun Bitmap.saveToLocal(
+    dir: File,
+    compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+    compressQuality: Int = 80,
+): Uri{
+    val suffix = when(compressFormat){
+        Bitmap.CompressFormat.JPEG -> "jpeg"
+        Bitmap.CompressFormat.PNG -> "png"
+        else -> "webp"
+    }
+    val fileName = "qmui_photo_${System.nanoTime()}.${suffix}"
+    dir.mkdirs()
+    val destFile = File(dir, fileName)
+    destFile.outputStream().buffered().use {
+        compress(compressFormat, compressQuality, it)
+    }
+    return destFile.toUri()
 }
 
 fun Bitmap.compressByShortEdgeWidthAndByteSize(
