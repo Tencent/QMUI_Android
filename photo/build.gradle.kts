@@ -45,7 +45,7 @@ android {
 
 dependencies {
     implementation(Dep.AndroidX.appcompat)
-    implementation(project(":compose-core"))
+    api(project(":compose-core"))
     implementation(Dep.AndroidX.activity)
     implementation(Dep.Compose.activity)
     implementation(Dep.Compose.pager)

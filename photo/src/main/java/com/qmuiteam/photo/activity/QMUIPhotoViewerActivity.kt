@@ -16,13 +16,10 @@
 package com.qmuiteam.photo.activity
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -49,19 +46,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.rememberPagerState
 import com.qmuiteam.photo.R
 import com.qmuiteam.photo.compose.QMUIDefaultPhotoConfigProvider
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
 import com.qmuiteam.photo.compose.QMUIPhotoLoading
 import com.qmuiteam.photo.data.*
-import com.qmuiteam.photo.util.QMUIPhotoHelper
 import com.qmuiteam.photo.util.asBitmap
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val PHOTO_CURRENT_INDEX = "qmui_photo_current_index"
 private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_delivery"
@@ -129,7 +122,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     }
 
     @Composable
-    protected open fun PageContent(){
+    protected open fun PageContent() {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -152,7 +145,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     }
 
     @Composable
-    protected open fun PhotoViewerProviderWrapper(list: List<QMUIPhotoTransitionInfo>, index: Int){
+    protected open fun PhotoViewerProviderWrapper(list: List<QMUIPhotoTransitionInfo>, index: Int) {
         QMUIDefaultPhotoConfigProvider {
             PhotoViewer(list, index)
         }
@@ -166,57 +159,57 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             count = list.size,
             state = pagerState
         ) { page ->
-            val item = list[page]
-            val initRect = item.photoRect()
-            val transitionTarget = if (pagerState.currentPage == page) {
-                transitionTargetFlow.collectAsState().value
-            } else true
-            val drawableCache = remember {
-                MutableDrawableCache()
-            }
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                QMUIGesturePhoto(
-                    containerWidth = maxWidth,
-                    containerHeight = maxHeight,
-                    imageRatio = item.ratio(),
-                    isLongImage = item.photoProvider.isLongImage(),
-                    initRect = initRect,
-                    shouldTransitionEnter = page == index,
-                    transitionTarget = transitionTarget,
-                    onBeginPullExit = {
-                        true
-                    },
-                    onLongPress = {
-                        drawableCache.drawable?.let {
-                            onLongClick(it)
-                        }
-                    },
-                    onTapExit = {
-                        if (it) {
-                            finish()
-                            overridePendingTransition(0, 0)
-                        } else {
-                            finish()
-                            overridePendingTransition(0, R.anim.scale_exit)
-                        }
-                    }
-                ) { transition, _, _, onImageRatioEnsured ->
+            PhotoPage(page, list[page], page == index)
+        }
+    }
 
-                    val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
-                        {
-                            drawableCache.drawable = it.drawable
-                            if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
-                                onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
-                            }
-                        }
-                    }
 
-                    PhotoContent(
-                        transition = transition,
-                        photoTransitionInfo = item,
-                        onPhotoLoaded = onPhotoLoad
-                    )
+    @OptIn(ExperimentalPagerApi::class)
+    @Composable
+    protected open fun PagerScope.PhotoPage(page: Int, item: QMUIPhotoTransitionInfo, shouldTransitionEnter: Boolean) {
+        val initRect = item.photoRect()
+        val transitionTarget = if (currentPage == page) {
+            transitionTargetFlow.collectAsState().value
+        } else true
+        val drawableCache = remember {
+            MutableDrawableCache()
+        }
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            QMUIGesturePhoto(
+                containerWidth = maxWidth,
+                containerHeight = maxHeight,
+                imageRatio = item.ratio(),
+                isLongImage = item.photoProvider.isLongImage(),
+                initRect = initRect,
+                shouldTransitionEnter = shouldTransitionEnter,
+                transitionTarget = transitionTarget,
+                onBeginPullExit = {
+                    true
+                },
+                onLongPress = {
+                    drawableCache.drawable?.let {
+                        onLongClick(page, it)
+                    }
+                },
+                onTapExit = {
+                    onTapExit(page, it)
                 }
+            ) { transition, _, _, onImageRatioEnsured ->
+
+                val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
+                    {
+                        drawableCache.drawable = it.drawable
+                        if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
+                            onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
+                        }
+                    }
+                }
+
+                PhotoContent(
+                    transition = transition,
+                    photoTransitionInfo = item,
+                    onPhotoLoaded = onPhotoLoad
+                )
             }
         }
     }
@@ -317,8 +310,18 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         // do nothing default, users should handle load fail / reload in Photo
     }
 
-    protected open fun onLongClick(drawable: Drawable) {
+    protected open fun onLongClick(page: Int, drawable: Drawable) {
 
+    }
+
+    protected open fun onTapExit(page: Int, afterTransition: Boolean) {
+        if (afterTransition) {
+            finish()
+            overridePendingTransition(0, 0)
+        } else {
+            finish()
+            overridePendingTransition(0, R.anim.scale_exit)
+        }
     }
 }
 
