@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
-    api(Dep.AndroidX.annotation)
-    api(Dep.AndroidX.coreKtx)
+    implementation(Dep.AndroidX.appcompat)
+    implementation(Dep.AndroidX.annotation)
+    implementation(Dep.AndroidX.coreKtx)
 }
