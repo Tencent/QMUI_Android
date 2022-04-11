@@ -9,6 +9,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.plugins.signing.SigningExtension
+import java.io.File
 import java.util.*
 import kotlin.io.*
 
@@ -36,7 +37,7 @@ class QMUIPublish : Plugin<Project> {
 
         project.afterEvaluate {
             val properties = Properties()
-            val file = project.rootProject.file("gradle/deploy.properties")
+            val file = File(project.rootProject.file("gradle"), "deploy.properties")
             if (file.exists()) {
                 properties.load(file.inputStream())
                 val mavenUrl = properties.getProperty("maven.url")
