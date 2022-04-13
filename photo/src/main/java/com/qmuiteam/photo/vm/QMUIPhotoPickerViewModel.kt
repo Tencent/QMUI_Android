@@ -3,6 +3,7 @@ package com.qmuiteam.photo.vm
 import android.app.Application
 import android.net.Uri
 import androidx.annotation.Keep
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,6 +33,8 @@ class QMUIPhotoPickerViewModel @Keep constructor(
 
     private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
     val photoPickerSceneFlow = _photoPickerSceneFlow.asStateFlow()
+
+    val gridSceneScrollState = LazyListState()
 
     var prevScene: QMUIPhotoPickerScene? = null
         private set

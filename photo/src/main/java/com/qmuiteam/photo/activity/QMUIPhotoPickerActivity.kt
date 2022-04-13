@@ -319,7 +319,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             mutableStateOf(data.first())
         }
 
-        val scrollState = rememberLazyListState()
+        val scrollState = viewModel.gridSceneScrollState
 
         val bucketFlow = remember {
             MutableStateFlow(currentBucket.name)
