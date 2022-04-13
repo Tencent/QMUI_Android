@@ -280,7 +280,7 @@ public class QMUINotchHelper {
         if(rootWindowInsets == null){
             return;
         }
-        Insets cutoutInsets = rootWindowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        Insets cutoutInsets = rootWindowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
         out.set(cutoutInsets.left, cutoutInsets.top, cutoutInsets.right, cutoutInsets.bottom);
     }
 
