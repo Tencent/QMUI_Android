@@ -24,6 +24,7 @@ import androidx.compose.ui.input.pointer.positionChangeConsumed
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -40,6 +41,7 @@ fun QMUIGesturePhoto(
     shouldTransitionExit: Boolean = true,
     transitionTarget: Boolean = true,
     transitionDurationMs: Int = 360,
+    pullExitMiniTranslateY: Dp = 72.dp,
     panEdgeProtection: Rect = Rect(
         0f,
         0f,
@@ -346,7 +348,7 @@ fun QMUIGesturePhoto(
                                     }
 
                                     if (isExitPanning) {
-                                        if (photoTargetScale > 0.9f) {
+                                        if (photoTargetTranslateY - photoTargetNormalTranslateY < pullExitMiniTranslateY.toPx()) {
                                             reset()
                                         } else {
                                             transitionTargetState = false
