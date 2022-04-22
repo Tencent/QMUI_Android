@@ -18,7 +18,7 @@ object Dep {
         const val typeVer = "0.1.0.3"
         const val composeCoreVer = "0.0.1"
         const val composeVer = "0.0.1.2"
-        const val photoVer = "0.0.1.5"
+        const val photoVer = "0.0.1.7"
         const val editorVer = "0.0.1"
     }
 

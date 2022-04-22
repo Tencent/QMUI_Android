@@ -3,6 +3,7 @@ package com.qmuiteam.photo.glide
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,14 +40,15 @@ private fun GlideImage(
     onError: (() -> Unit)?,
     contentDescription: String = "",
     contentScale: ContentScale = ContentScale.Fit,
-    openBlankColor: Boolean = true
+    openBlankColor: Boolean = false
 ) {
     BoxWithConstraints(modifier = if (isContainerDimenExactly) Modifier.fillMaxSize() else Modifier) {
         val state = remember(uri) {
-            mutableStateOf<Drawable?>(null)
+            mutableStateOf<Pair<Long, Drawable?>?>(null)
         }
         val context = LocalContext.current
         DisposableEffect(uri, isContainerDimenExactly, isLongImage, isThumbImage, contentScale) {
+            val key = SystemClock.elapsedRealtime()
             val request = if (isLongImage) {
                 Glide.with(context).`as`(QMUILongGlidePhotoData::class.java).load(uri)
                     .downsample(DownsampleStrategy.CENTER_OUTSIDE)
@@ -58,20 +60,20 @@ private fun GlideImage(
                     ) {
 
                         override fun onResourceReady(resource: QMUILongGlidePhotoData, transition: Transition<in QMUILongGlidePhotoData>?) {
-                            state.value = resource.drawable
+                            state.value = key to resource.drawable
                             onSuccess?.invoke(PhotoResult(uri, resource.drawable))
                         }
 
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             if (placeholder != null) {
-                                state.value = placeholder
+                                state.value = -1L to placeholder
                             }
                         }
 
                         override fun onLoadCleared(placeholder: Drawable?) {
                             if (placeholder != null) {
-                                state.value = placeholder
+                                state.value = -1L to placeholder
                             }
                         }
 
@@ -82,7 +84,7 @@ private fun GlideImage(
                     .request
             } else {
                 Glide.with(context).load(uri)
-                    .downsample(DownsampleStrategy.CENTER_OUTSIDE)
+                    .downsample(DownsampleStrategy.AT_LEAST)
                     .dontTransform()
                     .into(object : CustomTarget<Drawable>(
                         constraints.maxWidth,
@@ -90,20 +92,20 @@ private fun GlideImage(
                     ) {
 
                         override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                            state.value = resource
+                            state.value = key to resource
                             onSuccess?.invoke(PhotoResult(uri, resource))
                         }
 
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             if (placeholder != null) {
-                                state.value = placeholder
+                                state.value = -1L to placeholder
                             }
                         }
 
                         override fun onLoadCleared(placeholder: Drawable?) {
                             if (placeholder != null) {
-                                state.value = placeholder
+                                state.value = -1L to placeholder
                             }
                         }
 
@@ -115,10 +117,14 @@ private fun GlideImage(
             }
 
             onDispose {
+                if(state.value?.first == key){
+                    // clear the cached value to fix recycle issue.
+                    state.value = null
+                }
                 request?.clear()
             }
         }
-        val currentDrawable = state.value
+        val currentDrawable = state.value?.second
         if (currentDrawable != null) {
             if (currentDrawable is QMUIBitmapRegionHolderDrawable) {
                 LongImageContent(currentDrawable)

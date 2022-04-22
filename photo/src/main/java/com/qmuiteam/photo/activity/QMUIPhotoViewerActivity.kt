@@ -27,10 +27,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -183,11 +180,12 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                 imageRatio = item.ratio(),
                 isLongImage = item.photoProvider.isLongImage(),
                 initRect = initRect,
-                shouldTransitionEnter = shouldTransitionEnter,
+                shouldTransitionEnter = shouldTransitionEnter && shouldTransitionPhoto(),
+                shouldTransitionExit = shouldTransitionPhoto(),
                 transitionTarget = transitionTarget,
                 pullExitMiniTranslateY = pullExitMiniTranslateY(),
                 onBeginPullExit = {
-                    true
+                    allowPullExit()
                 },
                 onLongPress = {
                     drawableCache.drawable?.let {
@@ -311,6 +309,14 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     @Composable
     protected open fun BoxScope.LoadingFailed() {
         // do nothing default, users should handle load fail / reload in Photo
+    }
+
+    protected open fun shouldTransitionPhoto(): Boolean {
+        return true
+    }
+
+    protected open fun allowPullExit(): Boolean {
+        return true
     }
 
     protected open fun onLongClick(page: Int, drawable: Drawable) {
