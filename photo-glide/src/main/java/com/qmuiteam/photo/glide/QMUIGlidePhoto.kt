@@ -28,6 +28,8 @@ import com.qmuiteam.photo.compose.BlankBox
 import com.qmuiteam.photo.compose.QMUIBitmapRegionItem
 import com.qmuiteam.photo.compose.QMUILocalPhotoConfig
 import com.qmuiteam.photo.data.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -47,80 +49,80 @@ private fun GlideImage(
             mutableStateOf<Pair<Long, Drawable?>?>(null)
         }
         val context = LocalContext.current
-        DisposableEffect(uri, isContainerDimenExactly, isLongImage, isThumbImage, contentScale) {
+        DisposableEffect(uri, isContainerDimenExactly, constraints.isZero,isLongImage, isThumbImage, contentScale) {
             val key = SystemClock.elapsedRealtime()
-            val request = if (isLongImage) {
-                Glide.with(context).`as`(QMUILongGlidePhotoData::class.java).load(uri)
-                    .downsample(DownsampleStrategy.CENTER_OUTSIDE)
-                    .dontTransform()
-                    .set(QMUI_PHOTO_IMG_IS_THUMB, isThumbImage)
-                    .into(object : CustomTarget<QMUILongGlidePhotoData>(
-                        constraints.maxWidth,
-                        constraints.maxHeight
-                    ) {
+            val request = when {
+                constraints.isZero ->  null
+                isLongImage -> {
+                    Glide.with(context).`as`(QMUILongGlidePhotoData::class.java).load(uri)
+                        .downsample(DownsampleStrategy.CENTER_OUTSIDE)
+                        .dontTransform()
+                        .set(QMUI_PHOTO_IMG_IS_THUMB, isThumbImage)
+                        .into(object : CustomTarget<QMUILongGlidePhotoData>(
+                            constraints.maxWidth,
+                            constraints.maxHeight
+                        ) {
 
-                        override fun onResourceReady(resource: QMUILongGlidePhotoData, transition: Transition<in QMUILongGlidePhotoData>?) {
-                            state.value = key to resource.drawable
-                            onSuccess?.invoke(PhotoResult(uri, resource.drawable))
-                        }
-
-
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            if (placeholder != null) {
-                                state.value = -1L to placeholder
+                            override fun onResourceReady(resource: QMUILongGlidePhotoData, transition: Transition<in QMUILongGlidePhotoData>?) {
+                                state.value = key to resource.drawable
+                                onSuccess?.invoke(PhotoResult(uri, resource.drawable))
                             }
-                        }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            if (placeholder != null) {
-                                state.value = -1L to placeholder
+
+                            override fun onLoadStarted(placeholder: Drawable?) {
+                                if (placeholder != null || state.value?.first == key) {
+                                    state.value = -1L to placeholder
+                                }
                             }
-                        }
 
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            onError?.invoke()
-                        }
-                    })
-                    .request
-            } else {
-                Glide.with(context).load(uri)
-                    .downsample(DownsampleStrategy.AT_LEAST)
-                    .dontTransform()
-                    .into(object : CustomTarget<Drawable>(
-                        constraints.maxWidth,
-                        constraints.maxHeight
-                    ) {
-
-                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                            state.value = key to resource
-                            onSuccess?.invoke(PhotoResult(uri, resource))
-                        }
-
-
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            if (placeholder != null) {
-                                state.value = -1L to placeholder
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                if (state.value?.first == key) {
+                                    state.value = -1L to placeholder
+                                }
                             }
-                        }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            if (placeholder != null) {
-                                state.value = -1L to placeholder
+                            override fun onLoadFailed(errorDrawable: Drawable?) {
+                                onError?.invoke()
                             }
-                        }
+                        })
+                        .request
+                }
+                else -> {
+                    Glide.with(context).load(uri)
+                        .downsample(DownsampleStrategy.AT_LEAST)
+                        .dontTransform()
+                        .into(object : CustomTarget<Drawable>(
+                            constraints.maxWidth,
+                            constraints.maxHeight
+                        ) {
 
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            onError?.invoke()
-                        }
-                    })
-                    .request
+                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                state.value = key to resource
+                                onSuccess?.invoke(PhotoResult(uri, resource))
+                            }
+
+
+                            override fun onLoadStarted(placeholder: Drawable?) {
+                                if (placeholder != null || state.value?.first == key) {
+                                    state.value = -1L to placeholder
+                                }
+                            }
+
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                if (state.value?.first == key) {
+                                    state.value = -1L to placeholder
+                                }
+                            }
+
+                            override fun onLoadFailed(errorDrawable: Drawable?) {
+                                onError?.invoke()
+                            }
+                        })
+                        .request
+                }
             }
 
             onDispose {
-                if(state.value?.first == key){
-                    // clear the cached value to fix recycle issue.
-                    state.value = null
-                }
                 request?.clear()
             }
         }
