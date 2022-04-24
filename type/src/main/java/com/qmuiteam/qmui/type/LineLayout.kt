@@ -94,7 +94,7 @@ class LineLayout {
                 line.add(element)
                 line.layout(env, dropLastIfSpace, false)
                 addLineAndHandleMaxLineAndNextY(line, true)
-                if (canInterrupt()) {
+                if (canInterrupt(element)) {
                     handleEllipse(env,true)
                     totalLineCount = mLines.size
                     return
@@ -111,7 +111,7 @@ class LineLayout {
                 line.layout(env, dropLastIfSpace, false)
                 addLineAndHandleMaxLineAndNextY(line, false)
 
-                if (canInterrupt()) {
+                if (canInterrupt(element)) {
                     totalLineCount = mLines.size
                     handleEllipse(env,true)
                     return
@@ -455,8 +455,11 @@ class LineLayout {
         }
     }
 
-    private fun canInterrupt(): Boolean {
-        return mLines.size == getUsedMaxLine() && !calculateWholeLines && (ellipsize == null || ellipsize == TruncateAt.END)
+    private fun canInterrupt(element: Element): Boolean {
+        return mLines.size == getUsedMaxLine() &&
+                !calculateWholeLines &&
+                (ellipsize == null || ellipsize == TruncateAt.END) &&
+                element.next != null
     }
 
     private fun getUsedMaxLine(): Int {
