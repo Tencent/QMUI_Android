@@ -100,7 +100,7 @@ class LineLayout {
                     return
                 }
                 line = createNewLine(env, element.next, y, true)
-            } else if (line.contentWidth + element.measureWidth >= line.widthLimit) {
+            } else if (line.contentWidth + element.measureWidth > line.widthLimit) {
                 if (mLines.size == 0 && line.size == 0) {
                     // the width is too small.
                     line.release()
