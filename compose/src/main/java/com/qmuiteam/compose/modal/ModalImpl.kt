@@ -155,6 +155,7 @@ internal class StillModalImpl(
                         }
                     }
             )
+            content(this)
         } else {
             DisposableEffect("") {
                 onDispose {
