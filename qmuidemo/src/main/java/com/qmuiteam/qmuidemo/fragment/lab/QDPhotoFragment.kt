@@ -2,9 +2,7 @@ package com.qmuiteam.qmuidemo.fragment.lab
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,8 +43,8 @@ class QDPhotoFragment : ComposeBaseFragment() {
 
     val pickerFlow = MutableStateFlow<QMUIPhotoPickResult?>(null)
 
-    private val pickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == RESULT_OK){
+    private val pickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
             val pickerResult = it.data?.getQMUIPhotoPickResult() ?: return@registerForActivityResult
             pickerFlow.value = pickerResult
         }
@@ -67,11 +65,13 @@ class QDPhotoFragment : ComposeBaseFragment() {
                 rightItems = arrayListOf(
                     QMUITopBarTextItem("Pick a Picture") {
                         val activity = activity ?: return@QMUITopBarTextItem
-                        pickLauncher.launch(QMUIPhotoPickerActivity.intentOf(
-                            activity,
-                            QMUIPhotoPickerActivity::class.java,
-                            QMUIMediaCoilPhotoProviderFactory::class.java
-                        ))
+                        pickLauncher.launch(
+                            QMUIPhotoPickerActivity.intentOf(
+                                activity,
+                                QMUIPhotoPickerActivity::class.java,
+                                QMUIMediaCoilPhotoProviderFactory::class.java
+                            )
+                        )
 
                     }
                 )
@@ -303,10 +303,10 @@ class QDPhotoFragment : ComposeBaseFragment() {
     }
 
     @Composable
-    fun PickerResult(){
+    fun PickerResult() {
         val pickResultState = pickerFlow.collectAsState()
         val pickResult = pickResultState.value
-        if(pickResult == null){
+        if (pickResult == null) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -324,7 +324,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
             ) {
                 Text("No Picked Images, click to pick")
             }
-        }else{
+        } else {
             val images = remember(pickResult) {
                 pickResult.list.map {
                     QMUICoilPhotoProvider(
@@ -333,9 +333,11 @@ class QDPhotoFragment : ComposeBaseFragment() {
                     )
                 }
             }
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 20.dp)){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp)
+            ) {
                 Text(text = "原图：${pickResult.isOriginOpen}")
                 QMUIPhotoThumbnailWithViewer(
                     activity = requireActivity(),
@@ -348,13 +350,13 @@ class QDPhotoFragment : ComposeBaseFragment() {
     }
 
     @Composable
-    fun TestImageCompress(){
+    fun TestImageCompress() {
         var bitmap by remember {
             mutableStateOf<Bitmap?>(null)
         }
-        LaunchedEffect(""){
+        LaunchedEffect("") {
             lifecycleScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     QMUIPhotoHelper.compressByShortEdgeWidthAndByteSize(
                         requireContext(),
                         {
@@ -362,7 +364,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
                         },
                         500
                     )?.inputStream().use {
-                        if(it != null){
+                        if (it != null) {
                             bitmap = BitmapFactory.decodeStream(it)
                         }
                     }
@@ -370,7 +372,7 @@ class QDPhotoFragment : ComposeBaseFragment() {
             }
         }
 
-        if(bitmap != null){
+        if (bitmap != null) {
             Image(painter = BitmapPainter(bitmap!!.asImageBitmap()), contentDescription = "")
         }
     }

@@ -262,9 +262,6 @@ internal class TextEditLayer(
                         scaleY = currentScale
                         rotationZ = currentRotation
                     }
-                    .onPlaced {
-                        Log.i("cginetest", "22.3 ${it.positionInWindow()}; ${it.size}")
-                    }
                     .pointerInput("") {
                         coroutineScope {
 
@@ -330,8 +327,6 @@ internal class TextEditLayer(
                                                         offsetFlow.value = offsetFlow.value + panChange
                                                         scaleFlow.value = scaleFlow.value * zoomChange
                                                         rotationFlow.value = rotationFlow.value + rotationChange
-                                                        Log.i("cginetest", "10: ${panChange}; $zoomChange;" +
-                                                                " $rotationChange; ${event.calculateCentroid(true)}")
                                                         if (isDragging) {
                                                             isInDeleteArea = dragInfo.isInDeleteArea(offsetFlow.value)
                                                         }
@@ -391,7 +386,6 @@ internal class TextEditLayer(
             .padding(bottom = insets.bottom + 16.dp)
             .clip(RoundedCornerShape(8.dp))
             .onGloballyPositioned {
-                Log.i("cginetest", "1: ${it.positionInWindow()}; ${it.size}")
                 onPlaced(it.positionInWindow(), it.size)
             }
             .background(if (isFocusing) config.editLayerDeleteAreaNormalFocusColor else config.editLayerDeleteAreaNormalBgColor)
@@ -424,7 +418,6 @@ private class MutableDragInfo(
 ) {
     fun isInDeleteArea(offset: Offset): Boolean {
         val windowOffset = editLayerCenter + offset
-        Log.i("cginetest", "3: $windowOffset; $deleteAreaOffset; $deleteAreaSize")
         return windowOffset.x > deleteAreaOffset.x &&
                 windowOffset.x < deleteAreaOffset.x + deleteAreaSize.width &&
                 windowOffset.y > deleteAreaOffset.y &&

@@ -151,10 +151,6 @@ open class EmojiEditText(
 
             fixSelection()
             isPendingRemoving = false
-            Log.i(
-                "cginetest",
-                "afterTextChanged end: $s, $isPendingRemoving, $isPendingRemoving"
-            )
         }
 
     }

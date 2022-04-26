@@ -1,5 +1,6 @@
 package com.qmuiteam.photo.compose
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.*
@@ -10,11 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -23,7 +25,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChangeConsumed
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -192,7 +196,6 @@ fun QMUIGesturePhoto(
                             detectTapGestures(
                                 onTap = {
                                     if (shouldTransitionExit) {
-                                        reset()
                                         transitionTargetState = false
                                     } else {
                                         onTapExit(false)
@@ -375,15 +378,16 @@ fun QMUIGesturePhoto(
                         imageWidthPx,
                         imageHeightPx,
                         scale,
+                        scale,
                         translateX,
                         translateY
                     ) {
-                        val imageLeft = translateX + imagePaddingFix.first * scale
-                        val imageTop = translateY + imagePaddingFix.second * scale
+                        val imageLeft = translateX + imagePaddingFix.first * it
+                        val imageTop = translateY + imagePaddingFix.second * it
                         content(
                             transition,
-                            scale,
-                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * scale, imageTop + imageHeightPx * scale),
+                            it,
+                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * it, imageTop + imageHeightPx * it),
                             usedImageRatioUpdater
                         )
                     }
@@ -398,14 +402,14 @@ fun QMUIGesturePhoto(
                     translateY = photoTargetTranslateY,
                     transition = transition,
                     transitionDurationMs = transitionDurationMs
-                ) { w, h, scale, translateX, translateY ->
-                    PhotoTransformContent(1f, w, h, scale, translateX, translateY) {
-                        val imageLeft = translateX + imagePaddingFix.first * scale
-                        val imageTop = translateY + imagePaddingFix.second * scale
+                ) { scaleX, scaleY, translateX, translateY ->
+                    PhotoTransformContent(1f, imageWidthPx, imageHeightPx, scaleX, scaleY, translateX, translateY) {
+                        val imageLeft = translateX + imagePaddingFix.first * it
+                        val imageTop = translateY + imagePaddingFix.second * it
                         content(
                             transition,
-                            scale,
-                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * scale, imageTop + imageHeightPx * scale),
+                            it,
+                            Rect(imageLeft, imageTop, imageLeft + imageWidthPx * it, imageTop + imageHeightPx * it),
                             usedImageRatioUpdater
                         )
                     }
@@ -478,7 +482,7 @@ fun PhotoContentWithRectTransition(
     translateY: Float,
     transition: Transition<Boolean>,
     transitionDurationMs: Int,
-    content: @Composable (w: Float, h: Float, scale: Float, translateX: Float, translateY: Float) -> Unit
+    content: @Composable (scaleX: Float, scaleY: Float, translateX: Float, translateY: Float) -> Unit
 ) {
     val rect = transition.animateRect(
         transitionSpec = { tween(durationMillis = transitionDurationMs) },
@@ -486,13 +490,12 @@ fun PhotoContentWithRectTransition(
     ) {
         if (it) Rect(translateX, translateY, translateX + imageWidth * scale, translateY + imageHeight * scale) else initRect
     }
-    val isTransitionEnd = transition.currentState && transition.targetState
-    val usedWidth = if (isTransitionEnd) imageWidth else rect.value.width.coerceAtMost(imageWidth)
-    val usedHeight = if (isTransitionEnd) imageHeight else rect.value.height.coerceAtMost(imageHeight)
-    val usedScale = if (isTransitionEnd || rect.value.width > imageWidth) {
-        rect.value.width / imageWidth
-    } else 1f
-    content(usedWidth, usedHeight, usedScale, rect.value.left, rect.value.top)
+    content(
+        (rect.value.width / imageWidth).coerceAtLeast(0f),
+        (rect.value.height / imageHeight).coerceAtLeast(0f),
+        rect.value.left,
+        rect.value.top
+    )
 
 }
 
@@ -513,27 +516,49 @@ fun PhotoTransformContent(
     alpha: Float,
     width: Float,
     height: Float,
-    scale: Float,
+    scaleX: Float,
+    scaleY: Float,
     translateX: Float,
     translateY: Float,
-    content: @Composable () -> Unit
+    content: @Composable (scale: Float) -> Unit
 ) {
     val widthDp = with(LocalDensity.current) { width.toDp() }
     val heightDp = with(LocalDensity.current) { height.toDp() }
+    val scale = scaleX.coerceAtLeast(scaleY)
+    val clipSize = remember(scaleX, scaleY, width, height) {
+        if(scale == 0f){
+            Size(0f, 0f)
+        }else{
+            val expectedW = width * scaleX / scale
+            val expectedH = height * scaleY / scale
+            val clipW = (width - expectedW) / 2
+            val clipH = (height - expectedH) / 2
+            Size(clipW, clipH)
+        }
+
+    }
     Box(
         modifier = Modifier
             .width(widthDp)
             .height(heightDp)
             .graphicsLayer {
                 this.transformOrigin = TransformOrigin(0f, 0f)
-                this.translationX = translateX
-                this.translationY = translateY
                 this.alpha = alpha
                 this.scaleX = scale
                 this.scaleY = scale
+                this.clip = true
+                this.shape = object : Shape {
+                    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density) =
+                        Outline.Rectangle(Rect(clipSize.width, clipSize.height, size.width - clipSize.width, size.height - clipSize.height))
+
+                    override fun toString(): String = "PhotoTransformShape"
+                }
+                this.translationX = translateX - clipSize.width * scale
+                this.translationY = translateY - clipSize.height * scale
+
             }
     ) {
-        content()
+        content(scale)
     }
 }
 

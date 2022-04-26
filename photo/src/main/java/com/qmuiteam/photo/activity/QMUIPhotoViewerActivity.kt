@@ -19,6 +19,7 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -46,6 +47,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.rememberPagerState
+import com.qmuiteam.compose.core.helper.QMUILog
 import com.qmuiteam.photo.R
 import com.qmuiteam.photo.compose.QMUIDefaultPhotoConfigProvider
 import com.qmuiteam.photo.compose.QMUIGesturePhoto
@@ -75,17 +77,22 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             intent.putExtra(PHOTO_TRANSITION_DELIVERY_KEY, QMUIPhotoTransitionDelivery.put(data))
             intent.putExtra(PHOTO_CURRENT_INDEX, index)
             intent.putExtra(PHOTO_COUNT, list.size)
-            list.forEachIndexed { i, transition ->
-                val meta = transition.photoProvider.meta()
-                val recoverCls = transition.photoProvider.recoverCls()
-                if (meta != null && recoverCls != null) {
-                    intent.putExtra("${PHOTO_META_KEY_PREFIX}${i}", meta)
-                    intent.putExtra(
-                        "${PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX}${i}",
-                        recoverCls.name
-                    )
+            if(list.size < 250){
+                list.forEachIndexed { i, transition ->
+                    val meta = transition.photoProvider.meta()
+                    val recoverCls = transition.photoProvider.recoverCls()
+                    if (meta != null && recoverCls != null) {
+                        intent.putExtra("${PHOTO_META_KEY_PREFIX}${i}", meta)
+                        intent.putExtra(
+                            "${PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX}${i}",
+                            recoverCls.name
+                        )
+                    }
                 }
+            } else {
+                QMUILog.w("QMUIPhotoViewerActivity", "once delivered too many photos, so only use memory data for delivery, there may be some recover issue.")
             }
+
             return intent
         }
     }

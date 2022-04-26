@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,7 @@ private fun GlideImage(
             mutableStateOf<Pair<Long, Drawable?>?>(null)
         }
         val context = LocalContext.current
+        Log.i("cginetest", "1. $constraints")
         DisposableEffect(uri, isContainerDimenExactly, constraints.isZero,isLongImage, isThumbImage, contentScale) {
             val key = SystemClock.elapsedRealtime()
             val request = when {
@@ -251,7 +253,9 @@ open class QMUIGlidePhotoProvider(val uri: Uri, val thumbUrl: Uri, val ratio: Fl
     override fun meta(): Bundle? {
         return Bundle().apply {
             putParcelable(META_URI_KEY, uri)
-            putParcelable(META_THUMB_URI_KEY, thumbUrl)
+            if(thumbUrl != uri){
+                putParcelable(META_THUMB_URI_KEY, thumbUrl)
+            }
             putFloat(META_RATIO_KEY, ratio)
         }
     }

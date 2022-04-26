@@ -276,6 +276,9 @@ open class QMUICoilPhotoProvider(
     override fun meta(): Bundle? {
         return Bundle().apply {
             putParcelable(META_URI_KEY, uri)
+            if(thumbUri != uri){
+                putParcelable(META_THUMB_URI_KEY, thumbUri)
+            }
             putParcelable(META_THUMB_URI_KEY, thumbUri)
             putFloat(META_RATIO_KEY, ratio)
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -18,11 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.qmuiteam.photo.activity.QMUIPhotoViewerActivity
-import com.qmuiteam.photo.data.PhotoResult
-import com.qmuiteam.photo.data.QMUIPhoto
-import com.qmuiteam.photo.data.QMUIPhotoProvider
-import com.qmuiteam.photo.data.QMUIPhotoTransitionInfo
+import com.qmuiteam.photo.data.*
 import com.qmuiteam.photo.util.getWindowSize
+import kotlinx.coroutines.launch
 
 const val SINGLE_HIGH_IMAGE_MINI_SCREEN_HEIGHT_RATIO = -1F
 
