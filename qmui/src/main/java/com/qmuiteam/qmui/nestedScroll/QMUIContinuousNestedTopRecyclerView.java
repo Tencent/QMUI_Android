@@ -56,12 +56,16 @@ public class QMUIContinuousNestedTopRecyclerView extends RecyclerView implements
     @Override
     public int consumeScroll(int dyUnconsumed) {
         if (dyUnconsumed == Integer.MIN_VALUE) {
-            scrollToPosition(0);
+            if(canScrollVertically(-1)){
+                scrollToPosition(0);
+            }
             return Integer.MIN_VALUE;
         } else if (dyUnconsumed == Integer.MAX_VALUE) {
-            Adapter adapter = getAdapter();
-            if (adapter != null) {
-                scrollToPosition(adapter.getItemCount() - 1);
+            if(canScrollVertically(1)){
+                Adapter adapter = getAdapter();
+                if (adapter != null) {
+                    scrollToPosition(adapter.getItemCount() - 1);
+                }
             }
             return Integer.MAX_VALUE;
         }

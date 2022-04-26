@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -114,6 +115,9 @@ public class SwipeBackLayout extends FrameLayout {
     private int mCurrentDragDirection = 0;
     private boolean mIsScrollOverValid = true;
     private boolean mEnableSwipeBack = true;
+
+    private int mRequestLayoutCount = 0;
+    private long mRequestLayoutCheckStartTime = -1;
 
 
     public SwipeBackLayout(Context context) {
@@ -336,6 +340,32 @@ public class SwipeBackLayout extends FrameLayout {
         } else {
             return y - mLastMotionY;
         }
+    }
+
+    @Override
+    public void requestLayout() {
+        super.requestLayout();
+        mRequestLayoutCount++;
+        if(mRequestLayoutCheckStartTime == -1){
+            mRequestLayoutCheckStartTime = SystemClock.elapsedRealtime();
+        }
+        if(mRequestLayoutCount >= 100){
+            long duration = SystemClock.elapsedRealtime() - mRequestLayoutCheckStartTime;
+            if(duration < 4000){
+                if(mCallback != null){
+                    mCallback.reportFrequentlyRequestLayout(mRequestLayoutCount, duration);
+                }
+            }
+            mRequestLayoutCount = 0;
+            mRequestLayoutCheckStartTime = -1;
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mRequestLayoutCount=0;
+        mRequestLayoutCheckStartTime = -1;
     }
 
     @Override
@@ -861,6 +891,8 @@ public class SwipeBackLayout extends FrameLayout {
     public interface Callback {
         int getDragDirection(SwipeBackLayout swipeBackLayout, ViewMoveAction moveAction,
                              float downX, float downY, float dx, float dy, float touchSlop);
+
+        void reportFrequentlyRequestLayout(int count, long duration);
     }
 
     public interface ViewMoveAction {

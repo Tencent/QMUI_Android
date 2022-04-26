@@ -597,6 +597,11 @@ public abstract class QMUIFragment extends Fragment implements
                         return QMUIFragment.this.getDragDirection(
                                 swipeBackLayout, viewMoveAction, downX, downY, dx, dy, touchSlop);
                     }
+
+                    @Override
+                    public void reportFrequentlyRequestLayout(int count, long duration) {
+                        QMUIFragment.this.reportFrequentlyRequestLayout(count, duration);
+                    }
                 });
         initSwipeBackLayout(swipeBackLayout);
         if(getParentFragment() != null){
@@ -1009,6 +1014,10 @@ public abstract class QMUIFragment extends Fragment implements
 
     protected void onBackPressed() {
         onNormalBackPressed();
+    }
+
+    protected void reportFrequentlyRequestLayout(int count, long duration){
+        QMUILog.w(TAG, "requestLayout is too frequent(requestLayout " + count + "times within " + duration + "ms");
     }
 
     protected void onHandleSpecLastFragmentFinish(FragmentActivity fragmentActivity,

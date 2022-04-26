@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.arch.scheme.ActivitySchemeRefreshable;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
@@ -127,6 +128,11 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
             return QMUIActivity.this.getDragDirection(swipeBackLayout,moveAction,downX, downY, dx, dy, touchSlop);
         }
+
+        @Override
+        public void reportFrequentlyRequestLayout(int count, long duration) {
+            QMUIActivity.this.reportFrequentlyRequestLayout(count, duration);
+        }
     };
 
     @Override
@@ -198,6 +204,10 @@ public class QMUIActivity extends InnerBaseActivity implements ActivitySchemeRef
 
     protected void doOnBackPressed() {
         super.onBackPressed();
+    }
+
+    protected void reportFrequentlyRequestLayout(int count, long duration){
+        QMUILog.w(TAG, "requestLayout is too frequent(requestLayout " + count + "times within " + duration + "ms");
     }
 
     public boolean isInSwipeBack() {
