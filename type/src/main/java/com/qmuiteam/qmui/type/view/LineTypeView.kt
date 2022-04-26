@@ -23,6 +23,7 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.ColorInt
 import com.qmuiteam.qmui.type.LineLayout
 import com.qmuiteam.qmui.type.TypeEnvironment
@@ -97,6 +98,12 @@ open class LineTypeView : BaseTypeView {
                 requestLayout()
             }
         }
+
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        info.text = text
+        info.contentDescription = text
+    }
 
     fun addClickEffect(
         start: Int, end: Int,

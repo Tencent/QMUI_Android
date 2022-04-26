@@ -32,6 +32,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -810,6 +811,13 @@ public class QMUIQQFaceView extends View {
 
     public void setListener(QQFaceViewListener listener) {
         mListener = listener;
+    }
+
+    @Override
+    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+        super.onInitializeAccessibilityNodeInfo(info);
+        info.setText(getText());
+        info.setContentDescription(getText());
     }
 
     @Override

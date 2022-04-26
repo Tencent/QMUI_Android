@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.os.SystemClock
 import android.util.AttributeSet
+import android.view.accessibility.AccessibilityNodeInfo
 import com.qmuiteam.qmui.type.TypeModel
 import com.qmuiteam.qmui.type.parser.PlainTextParser
 import com.qmuiteam.qmui.type.parser.TextParser
@@ -60,6 +61,12 @@ class MarqueeTypeView : BaseTypeView {
             (fadeHelper ?: FadeHelper().also { fadeHelper = it }).fadeWidth = value
             invalidate()
         }
+
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        info.text = text
+        info.contentDescription = text
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
