@@ -30,6 +30,10 @@ QMUI Android 支持 API Level 21+。
 ## 使用方法
 请查看官网的[开始使用](http://qmuiteam.com/android/page/start.html)。
 
+## 隐私与安全
+1. 框架会调用 android.os.Build 下的字段读取 brand、model 等信息，用于区分不同的设备。
+2. 框架会尝试读取系统设置获取是否是全面屏手势
+
 ## QMUI Demo APP 安装包下载
 点击链接下载：[http://cdn.qmuiteam.com/download/android/latest](http://cdn.qmuiteam.com/download/android/latest)
 
