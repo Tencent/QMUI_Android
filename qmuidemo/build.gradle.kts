@@ -83,6 +83,7 @@ dependencies {
     implementation(Dep.AndroidX.activity)
     implementation(Dep.MaterialDesign.material)
     implementation(Dep.ButterKnife.butterknife)
+    implementation(Dep.Compose.activity)
     implementation(Dep.Compose.constraintlayout)
     kapt(Dep.ButterKnife.compiler)
     implementation(project(":lib"))

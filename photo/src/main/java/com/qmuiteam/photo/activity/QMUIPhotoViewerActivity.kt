@@ -228,7 +228,15 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         photoTransitionInfo: QMUIPhotoTransitionInfo,
         onPhotoLoaded: (PhotoResult) -> Unit
     ) {
+        DefaultPhotoContent(transition, photoTransitionInfo, onPhotoLoaded)
+    }
 
+    @Composable
+    protected fun DefaultPhotoContent(
+        transition: Transition<Boolean>,
+        photoTransitionInfo: QMUIPhotoTransitionInfo,
+        onPhotoLoaded: (PhotoResult) -> Unit
+    ){
         val thumb = remember(photoTransitionInfo) { photoTransitionInfo.photoProvider.thumbnail(false) }
 
         var loadStatus by remember {
