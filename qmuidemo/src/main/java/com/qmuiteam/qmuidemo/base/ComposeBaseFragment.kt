@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.qmuiteam.compose.core.provider.QMUIWindowInsetsProvider
 import com.qmuiteam.qmui.kotlin.matchParent
 
@@ -23,7 +23,7 @@ abstract class ComposeBaseFragment(): BaseFragment() {
             }.apply {
                 ViewTreeLifecycleOwner.set(this, this@ComposeBaseFragment)
                 ViewTreeViewModelStoreOwner.set(this, this@ComposeBaseFragment)
-                ViewTreeSavedStateRegistryOwner.set(this, this@ComposeBaseFragment)
+                setViewTreeSavedStateRegistryOwner(this@ComposeBaseFragment)
             }
 
             init {
