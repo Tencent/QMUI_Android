@@ -181,45 +181,52 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             MutableDrawableCache()
         }
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            QMUIGesturePhoto(
-                containerWidth = maxWidth,
-                containerHeight = maxHeight,
-                imageRatio = item.ratio(),
-                isLongImage = item.photoProvider.isLongImage(),
-                initRect = initRect,
-                shouldTransitionEnter = shouldTransitionEnter && shouldTransitionPhoto(),
-                shouldTransitionExit = shouldTransitionPhoto(),
-                transitionTarget = transitionTarget,
-                pullExitMiniTranslateY = pullExitMiniTranslateY(),
-                onBeginPullExit = {
-                    allowPullExit()
-                },
-                onLongPress = {
-                    drawableCache.drawable?.let {
-                        onLongClick(page, it)
+            PhotoContentWrapper {
+                QMUIGesturePhoto(
+                    containerWidth = maxWidth,
+                    containerHeight = maxHeight,
+                    imageRatio = item.ratio(),
+                    isLongImage = item.photoProvider.isLongImage(),
+                    initRect = initRect,
+                    shouldTransitionEnter = shouldTransitionEnter && shouldTransitionPhoto(),
+                    shouldTransitionExit = shouldTransitionPhoto(),
+                    transitionTarget = transitionTarget,
+                    pullExitMiniTranslateY = pullExitMiniTranslateY(),
+                    onBeginPullExit = {
+                        allowPullExit()
+                    },
+                    onLongPress = {
+                        drawableCache.drawable?.let {
+                            onLongClick(page, it)
+                        }
+                    },
+                    onTapExit = {
+                        onTapExit(page, it)
                     }
-                },
-                onTapExit = {
-                    onTapExit(page, it)
-                }
-            ) { transition, _, _, onImageRatioEnsured ->
+                ) { transition, _, _, onImageRatioEnsured ->
 
-                val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
-                    {
-                        drawableCache.drawable = it.drawable
-                        if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
-                            onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
+                    val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
+                        {
+                            drawableCache.drawable = it.drawable
+                            if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
+                                onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
+                            }
                         }
                     }
-                }
 
-                PhotoContent(
-                    transition = transition,
-                    photoTransitionInfo = item,
-                    onPhotoLoaded = onPhotoLoad
-                )
+                    PhotoContent(
+                        transition = transition,
+                        photoTransitionInfo = item,
+                        onPhotoLoaded = onPhotoLoad
+                    )
+                }
             }
         }
+    }
+
+    @Composable
+    protected open fun BoxWithConstraintsScope.PhotoContentWrapper(content: @Composable BoxWithConstraintsScope.()->Unit){
+        content()
     }
 
     @Composable
