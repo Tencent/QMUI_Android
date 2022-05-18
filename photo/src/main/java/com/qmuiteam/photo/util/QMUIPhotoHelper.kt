@@ -120,7 +120,7 @@ object QMUIPhotoHelper {
         inputStream = originProvider(applicationContext) ?: return null
         val bitmap = inputStream.use {
             BitmapFactory.decodeStream(it, null, options)
-        } ?: return object : BitmapCompressResult(compressFormat, -1) {
+        } ?: return object : BitmapCompressResult(compressFormat, -1, -1, -1) {
             override fun inputStream(): InputStream? {
                 return originProvider(applicationContext)
             }

@@ -24,7 +24,9 @@ val DefaultBitmapCompressCanUseMemoryStorage: (Bitmap) -> Boolean = {
 
 abstract class BitmapCompressResult internal constructor(
     val compressFormat: Bitmap.CompressFormat,
-    val compressQuality: Int
+    val compressQuality: Int,
+    val width: Int,
+    val height: Int,
 ) {
     abstract fun inputStream(): InputStream?
 }
@@ -32,8 +34,10 @@ abstract class BitmapCompressResult internal constructor(
 internal class BitmapCompressStreamResult(
     compressFormat: Bitmap.CompressFormat,
     compressQuality: Int,
+    width: Int,
+    height: Int,
     private val stream: BitmapCompressStream
-): BitmapCompressResult(compressFormat, compressQuality){
+): BitmapCompressResult(compressFormat, compressQuality, width, height){
 
     override fun inputStream(): InputStream? {
         return stream.inputStream()
@@ -120,7 +124,7 @@ fun Bitmap.compressByShortEdgeWidthAndByteSize(
     if (!succes) {
         return null
     }
-    return BitmapCompressStreamResult(compressFormat, currentQuality, stream)
+    return BitmapCompressStreamResult(compressFormat, currentQuality, bitmap.width, bitmap.height, stream)
 }
 
 internal interface BitmapCompressStream {
