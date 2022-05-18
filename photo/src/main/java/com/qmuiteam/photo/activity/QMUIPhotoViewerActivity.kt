@@ -181,7 +181,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             MutableDrawableCache()
         }
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            PhotoContentWrapper {
+            PhotoGestureWrapper(item) { photoLoadCallback ->
                 QMUIGesturePhoto(
                     containerWidth = maxWidth,
                     containerHeight = maxHeight,
@@ -211,6 +211,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                             if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
                                 onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
                             }
+                            photoLoadCallback?.invoke(it)
                         }
                     }
 
@@ -225,8 +226,11 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
     }
 
     @Composable
-    protected open fun BoxWithConstraintsScope.PhotoContentWrapper(content: @Composable BoxWithConstraintsScope.()->Unit){
-        content()
+    protected open fun BoxWithConstraintsScope.PhotoGestureWrapper(
+        item: QMUIPhotoTransitionInfo,
+        content: @Composable BoxWithConstraintsScope.(onPhotoLoaded: ((PhotoResult) -> Unit)?)->Unit
+    ){
+        content(null)
     }
 
     @Composable
