@@ -6,6 +6,7 @@
 /.idea
 /bin
 /build
+*/build
 /local.properties
 /captures
 /gradle/deploy.properties

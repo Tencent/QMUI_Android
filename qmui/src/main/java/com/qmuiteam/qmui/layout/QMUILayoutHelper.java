@@ -641,9 +641,9 @@ public class    QMUILayoutHelper implements IQMUILayout {
             if (size > mHeightLimit) {
                 int mode = View.MeasureSpec.getMode(heightMeasureSpec);
                 if (mode == View.MeasureSpec.AT_MOST) {
-                    heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mWidthLimit, View.MeasureSpec.AT_MOST);
+                    heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mHeightLimit, View.MeasureSpec.AT_MOST);
                 } else {
-                    heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mWidthLimit, View.MeasureSpec.EXACTLY);
+                    heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mHeightLimit, View.MeasureSpec.EXACTLY);
                 }
             }
         }
