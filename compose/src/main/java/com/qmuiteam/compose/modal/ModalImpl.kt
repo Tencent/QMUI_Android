@@ -157,10 +157,8 @@ internal class StillModalImpl(
             )
             content(this)
         } else {
-            DisposableEffect("") {
-                onDispose {
-                    dismissFinishAction()
-                }
+            LaunchedEffect("") {
+                dismissFinishAction()
             }
         }
     }
