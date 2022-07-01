@@ -55,8 +55,8 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
                 Resources.Theme theme = skinManager.getTheme(newSkin);
                 mDimAmount = QMUIResHelper.getAttrFloatValue(theme, mDimAmountAttr);
                 updateDimAmount(mDimAmount);
-                QMUIBasePopup.this.onSkinChange(oldSkin, newSkin);
             }
+            QMUIBasePopup.this.onSkinChange(oldSkin, newSkin);
         }
     };
 
