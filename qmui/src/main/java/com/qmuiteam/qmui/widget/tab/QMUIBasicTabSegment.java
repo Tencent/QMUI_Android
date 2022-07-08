@@ -138,14 +138,7 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
 
     private boolean mIsInSelectTab = false;
     private QMUILayoutHelper mLayoutHelper;
-    private static SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
-
-    static {
-        sDefaultSkinAttrs = new SimpleArrayMap<>(3);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_skin_support_tab_separator_color);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TOP_SEPARATOR, R.attr.qmui_skin_support_tab_separator_color);
-        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_skin_support_tab_bg);
-    }
+    private SimpleArrayMap<String, Integer> sDefaultSkinAttrs;
 
     public QMUIBasicTabSegment(Context context) {
         this(context, null);
@@ -166,6 +159,10 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        sDefaultSkinAttrs = new SimpleArrayMap<>(3);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BOTTOM_SEPARATOR, R.attr.qmui_skin_support_tab_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.TOP_SEPARATOR, R.attr.qmui_skin_support_tab_separator_color);
+        sDefaultSkinAttrs.put(QMUISkinValueBuilder.BACKGROUND, R.attr.qmui_skin_support_tab_bg);
 
         TypedArray array = context.obtainStyledAttributes(attrs,
                 R.styleable.QMUITabSegment, defStyleAttr, 0);
