@@ -66,6 +66,7 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
     private static final String TAG = "QMUIBottomSheet";
     private QMUIBottomSheetRootLayout mRootView;
     private OnBottomSheetShowListener mOnBottomSheetShowListener;
+    private OnBottomSheetSlideListener mOnBottomSheetSlideListener;
     private QMUIBottomSheetBehavior<QMUIBottomSheetRootLayout> mBehavior;
     private boolean mAnimateToCancel = false;
     private boolean mAnimateToDismiss = false;
@@ -100,7 +101,9 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
+                if (mOnBottomSheetSlideListener != null) {
+                    mOnBottomSheetSlideListener.onSlide(slideOffset);
+                }
             }
         });
         mBehavior.setPeekHeight(0);
@@ -206,6 +209,10 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
         mOnBottomSheetShowListener = onBottomSheetShowListener;
     }
 
+    public void setOnBottomSheetSlideListener(OnBottomSheetSlideListener onBottomSheetSlideListener) {
+        mOnBottomSheetSlideListener = onBottomSheetSlideListener;
+    }
+
     public void setRadius(int radius) {
         mRootView.setRadius(radius, HIDE_RADIUS_SIDE_BOTTOM);
     }
@@ -242,6 +249,10 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
 
     public interface OnBottomSheetShowListener {
         void onShow();
+    }
+
+    public interface OnBottomSheetSlideListener {
+        void onSlide(float slideOffset);
     }
 
     @Override
