@@ -16,6 +16,7 @@
 package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import com.qmuiteam.qmui.type.EnvironmentUpdater
 import com.qmuiteam.qmui.type.TypeEnvironment
 
@@ -32,7 +33,7 @@ class IgnoreEffectElement(list: List<Element>) : Element("", -1, -1) {
         })
     }
 
-    override fun onMeasure(env: TypeEnvironment) {
+    override fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt?) {
         setMeasureDimen(0, 0, 0)
     }
 

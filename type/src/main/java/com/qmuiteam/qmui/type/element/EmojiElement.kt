@@ -16,12 +16,13 @@
 package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.qmuiteam.qmui.type.TypeEnvironment
 
 class EmojiElement(val drawable: Drawable, text: CharSequence, index: Int, start: Int) : Element(text, index, start) {
 
-    override fun onMeasure(env: TypeEnvironment) {
+    override fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt?) {
         val paint = env.paint
         val size = (paint.fontMetrics.descent - paint.fontMetrics.ascent).toInt()
         drawable.setBounds(0, 0, size, size)

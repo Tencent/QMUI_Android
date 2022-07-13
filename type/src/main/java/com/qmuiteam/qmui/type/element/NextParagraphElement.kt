@@ -16,11 +16,12 @@
 package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import com.qmuiteam.qmui.type.TypeEnvironment
 
 class NextParagraphElement(text: CharSequence, index: Int, start: Int) : Element(text, index, start) {
 
-    override fun onMeasure(env: TypeEnvironment) {
+    override fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt?) {
         setMeasureDimen(0, 0, 0)
     }
 

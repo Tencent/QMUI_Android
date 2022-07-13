@@ -55,7 +55,7 @@ class LineLayout {
         return mLines.getOrNull(i)
     }
 
-    fun measureAndLayout(env: TypeEnvironment, exactlyHeight: Boolean) {
+    fun measureAndLayout(env: TypeEnvironment, exactlyHeight: Boolean, useMeasureCache: Boolean) {
         exactlyHeightMaxLine = Int.MAX_VALUE
         env.clear()
         release()
@@ -89,7 +89,7 @@ class LineLayout {
         }
 
         while (element != null) {
-            element.measure(env)
+            element.measure(env, useMeasureCache)
             if (element is NextParagraphElement) {
                 line.add(element)
                 line.layout(env, dropLastIfSpace, false)
