@@ -50,6 +50,8 @@ open class LineTypeView : BaseTypeView {
     private val touchSpanList = arrayListOf<TouchSpan>()
     private var currentTouchSpan: TouchSpan? = null
 
+    var useMeasureCache = false
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
@@ -60,7 +62,7 @@ open class LineTypeView : BaseTypeView {
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         environment.setMeasureLimit(widthSize - paddingLeft - paddingRight, heightSize - paddingTop - paddingBottom)
-        lineLayout.measureAndLayout(environment, heightMode == MeasureSpec.EXACTLY)
+        lineLayout.measureAndLayout(environment, heightMode == MeasureSpec.EXACTLY, useMeasureCache)
         val usedWidth = if (widthMode == MeasureSpec.AT_MOST) {
             lineLayout.maxLayoutWidth + paddingLeft + paddingRight
         } else widthSize

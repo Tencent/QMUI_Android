@@ -17,6 +17,7 @@ package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import com.qmuiteam.qmui.type.EnvironmentUpdater
 import com.qmuiteam.qmui.type.TypeEnvironment
 import java.util.*
@@ -242,9 +243,9 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
     }
 
 
-    fun measure(env: TypeEnvironment) {
+    fun measure(env: TypeEnvironment, useMeasureCache: Boolean = false) {
         updateEnv(env)
-        onMeasure(env)
+        onMeasure(env, if(useMeasureCache) env.paint.fontMetricsInt else null)
         restoreEnv(env)
     }
 
@@ -271,7 +272,7 @@ abstract class Element(val text: CharSequence, val index: Int, val start: Int) {
         }
     }
 
-    protected abstract fun onMeasure(env: TypeEnvironment)
+    protected abstract fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt? = null)
     protected abstract fun onDraw(env: TypeEnvironment, canvas: Canvas)
     protected fun drawBg(env: TypeEnvironment, canvas: Canvas) {
         if (env.backgroundColor != Color.TRANSPARENT) {

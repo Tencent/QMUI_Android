@@ -16,6 +16,7 @@
 package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.qmuiteam.qmui.type.TypeEnvironment
 
@@ -28,7 +29,7 @@ class DrawableElement(
         setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
     }
 
-    override fun onMeasure(env: TypeEnvironment) {
+    override fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt?) {
         setMeasureDimen(drawable.intrinsicWidth, drawable.intrinsicHeight, 0)
     }
 

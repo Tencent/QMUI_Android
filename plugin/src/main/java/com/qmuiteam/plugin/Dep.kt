@@ -15,7 +15,7 @@ object Dep {
         const val group = "com.qmuiteam"
         const val qmuiVer = "2.1.0.10"
         const val archVer = "2.1.0.3"
-        const val typeVer = "0.1.0.5"
+        const val typeVer = "0.1.0.6"
 
         // composeMajor.composeMinor.qmuiReleaseNumber
         const val composeCoreVer = "1.1.1"

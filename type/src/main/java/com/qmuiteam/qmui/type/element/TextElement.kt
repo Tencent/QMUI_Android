@@ -16,15 +16,17 @@
 package com.qmuiteam.qmui.type.element
 
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
 import com.qmuiteam.qmui.type.TypeEnvironment
 
 open class TextElement(text: CharSequence, index: Int, start: Int) : Element(text, index, start) {
 
-    override fun onMeasure(env: TypeEnvironment) {
-        val paint = env.paint
-        setMeasureDimen((paint.measureText(text, 0, text.length) + 0.5f).toInt(),
-                paint.fontMetricsInt.descent - paint.fontMetricsInt.ascent,
-                -paint.fontMetricsInt.ascent)
+    override fun onMeasure(env: TypeEnvironment, fontMetricsInt: Paint.FontMetricsInt?) {
+        val f = fontMetricsInt ?: env.paint.fontMetricsInt
+        setMeasureDimen((env.paint.measureText(text, 0, text.length) + 0.5f).toInt(),
+            f.descent - f.ascent,
+            -f.ascent)
     }
 
     override fun onDraw(env: TypeEnvironment, canvas: Canvas) {
