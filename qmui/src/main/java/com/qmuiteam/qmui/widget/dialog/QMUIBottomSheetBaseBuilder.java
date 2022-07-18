@@ -113,10 +113,12 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     }
 
     public QMUIBottomSheet build(int style) {
-        mDialog = new QMUIBottomSheet(mContext, style);
+        mDialog = createBottomSheet(style);
         Context dialogContext = mDialog.getContext();
         QMUIBottomSheetRootLayout rootLayout = mDialog.getRootView();
-        rootLayout.removeAllViews();
+        if (ifPreRemoveAllViews()) {
+            rootLayout.removeAllViews();
+        }
         View titleView = onCreateTitleView(mDialog, rootLayout, dialogContext);
         if (titleView != null) {
             mDialog.addContentView(titleView);
@@ -222,5 +224,13 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
         QMUISkinHelper.setSkinValue(button, valueBuilder);
         valueBuilder.release();
         return button;
+    }
+
+    protected QMUIBottomSheet createBottomSheet(int style) {
+        return new QMUIBottomSheet(mContext, style);
+    }
+
+    protected boolean ifPreRemoveAllViews() {
+        return true;
     }
 }
