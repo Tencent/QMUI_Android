@@ -134,4 +134,8 @@ public class QMUIBaseDialog extends AppCompatDialog {
             }
         }
     }
+
+    public QMUISkinManager getSkinManager() {
+        return mSkinManager;
+    }
 }
