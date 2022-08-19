@@ -297,6 +297,19 @@ public class QMUIContinuousNestedTopAreaBehavior extends QMUIViewOffsetBehavior<
     }
 
     @Override
+    public boolean onLayoutChild(CoordinatorLayout parent, View child, int layoutDirection) {
+        boolean ret =  super.onLayoutChild(parent, child, layoutDirection);
+        int top = child.getTop();
+        int layoutTop = getLayoutTop();
+        if(top > layoutTop){
+            setTopAndBottomOffset(0);
+        }else if(child.getBottom() < layoutTop + child.getHeight()){
+            setTopAndBottomOffset(-child.getHeight());
+        }
+        return ret;
+    }
+
+    @Override
     public void onNestedPreScroll(@NonNull CoordinatorLayout parent, @NonNull View child,
                                   @NonNull View target, int dx, int dy,
                                   @NonNull int[] consumed, int type) {
