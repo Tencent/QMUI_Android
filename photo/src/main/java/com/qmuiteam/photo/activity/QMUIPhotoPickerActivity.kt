@@ -191,10 +191,10 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
                 when (viewModel.photoPickerSceneFlow.value) {
                     is QMUIPhotoPickerEditScene -> {
-                        viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene)
+                        viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene())
                     }
                     is QMUIPhotoPickerPreviewScene -> {
-                        viewModel.updateScene(QMUIPhotoPickerGridScene)
+                        viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene())
                     }
                     else -> {
                         isEnabled = false
@@ -223,7 +223,10 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     }
 
     @Composable
-    protected open fun BoxScope.PhotoPicker(viewModel: QMUIPhotoPickerViewModel) {
+    protected open fun BoxScope.PhotoPicker(
+        viewModel: QMUIPhotoPickerViewModel,
+        onPickItemBeyondLimit: () -> Unit = {}
+    ) {
         val data by viewModel.photoPickerDataFlow.collectAsState()
         when (data.state) {
             QMUIPhotoPickerLoadState.dataLoading,
@@ -241,7 +244,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                 } else if (list == null || list.isEmpty()) {
                     PageEmpty()
                 } else {
-                    PhotoPickerContent(viewModel, list)
+                    PhotoPickerContent(viewModel, list, onPickItemBeyondLimit)
                 }
             }
         }
@@ -251,7 +254,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     @Composable
     protected open fun BoxScope.PhotoPickerContent(
         viewModel: QMUIPhotoPickerViewModel,
-        data: List<QMUIMediaPhotoBucketVO>
+        data: List<QMUIMediaPhotoBucketVO>,
+        onPickItemBeyondLimit: () -> Unit
     ) {
         val pickedItems by viewModel.pickedListFlow.collectAsState()
         val sceneState = viewModel.photoPickerSceneFlow.collectAsState()
@@ -262,7 +266,14 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            PhotoPickerGridScene(viewModel, data, pickedItems)
+            val previewSceneHolder = remember {
+                SceneHolder(scene as? QMUIPhotoPickerGridScene)
+            }
+            if(scene is QMUIPhotoPickerGridScene){
+                previewSceneHolder.scene = scene
+            }
+            val previewScene = previewSceneHolder.scene
+            PhotoPickerGridScene(viewModel, previewScene ?: QMUIPhotoPickerGridScene(), data, pickedItems, onPickItemBeyondLimit)
         }
         AnimatedVisibility(
             visible = scene is QMUIPhotoPickerPreviewScene,
@@ -302,8 +313,10 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
     @Composable
     protected open fun BoxScope.PhotoPickerGridScene(
         viewModel: QMUIPhotoPickerViewModel,
+        scene: QMUIPhotoPickerGridScene,
         data: List<QMUIMediaPhotoBucketVO>,
         pickedItems: List<Long>,
+        onPickItemBeyondLimit: () -> Unit,
         topBarBackItem: QMUITopBarItem = remember {
             QMUITopBarBackIconItem {
                 finish()
@@ -316,7 +329,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
         }
 
         var currentBucket by remember {
-            mutableStateOf(data.first())
+            mutableStateOf(scene.buckedId?.let { buckedId -> data.first { it.id == buckedId } } ?: data.first())
         }
 
         val scrollState = viewModel.gridSceneScrollState
@@ -380,10 +393,12 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                         bottom.linkTo(toolbar.top)
                     },
                     state = scrollState,
+                    pickLimitCount = viewModel.pickLimitCount,
                     pickedItems = pickedItems,
                     onPickItem = { _, model ->
                         viewModel.togglePick(model)
                     },
+                    onPickItemBeyondLimit = onPickItemBeyondLimit,
                     onPreview = {
                         viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, false, it.id))
                     }
@@ -412,6 +427,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                     onBucketClick = {
                         currentBucket = it
                         isFocusBucketFlow.value = false
+                        viewModel.updateScene(QMUIPhotoPickerGridScene(currentBucket.id))
                     }) {
                     isFocusBucketFlow.value = false
                 }
@@ -466,7 +482,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
 
         val topBarLeftItems = remember {
             arrayListOf<QMUITopBarItem>(QMUITopBarBackIconItem {
-                viewModel.updateScene(QMUIPhotoPickerGridScene)
+                viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene())
             })
         }
 
@@ -567,7 +583,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             WindowCompat.getInsetsController(window, window.decorView)?.hide(WindowInsetsCompat.Type.statusBars())
         }
         QMUIPhotoPickerEdit(onBackPressedDispatcher, scene.current) {
-            viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene)
+            viewModel.updateScene(viewModel.prevScene ?: QMUIPhotoPickerGridScene())
         }
     }
 

@@ -31,7 +31,7 @@ class QMUIPhotoPickerViewModel @Keep constructor(
 
     private val photoProviderFactory: QMUIMediaPhotoProviderFactory
 
-    private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene)
+    private val _photoPickerSceneFlow = MutableStateFlow<QMUIPhotoPickerScene>(QMUIPhotoPickerGridScene())
     val photoPickerSceneFlow = _photoPickerSceneFlow.asStateFlow()
 
     val gridSceneScrollState = LazyListState()
@@ -155,7 +155,7 @@ class QMUIPhotoPickerViewModel @Keep constructor(
 
 open class QMUIPhotoPickerScene
 
-object QMUIPhotoPickerGridScene : QMUIPhotoPickerScene()
+class QMUIPhotoPickerGridScene(val buckedId: String? = null) : QMUIPhotoPickerScene()
 
 class QMUIPhotoPickerPreviewScene(
     val buckedId: String,

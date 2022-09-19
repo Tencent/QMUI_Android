@@ -14,13 +14,13 @@ object Dep {
     object QMUI {
         const val group = "com.qmuiteam"
         const val qmuiVer = "2.1.0.11"
-        const val archVer = "2.1.0.3"
+        const val archVer = "2.1.0.4"
         const val typeVer = "0.1.0.6"
 
         // composeMajor.composeMinor.qmuiReleaseNumber
-        const val composeCoreVer = "1.1.1"
+        const val composeCoreVer = "1.1.1.1"
         const val composeVer = "1.1.1.1"
-        const val photoVer = "1.1.1.1"
+        const val photoVer = "1.1.1.6"
         const val editorVer = "1.1.1"
     }
 
@@ -42,7 +42,7 @@ object Dep {
     }
 
     object Compose {
-        val version = "1.2.0-alpha08"
+        val version = "1.2.0-beta02"
         val animation = "androidx.compose.animation:animation:$version"
         val ui = "androidx.compose.ui:ui:$version"
         val material = "androidx.compose.material:material:$version"

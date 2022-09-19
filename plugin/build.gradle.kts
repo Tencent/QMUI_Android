@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-gradle-plugin`
     idea
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
     `kotlin-dsl`
 }
 
@@ -15,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.1.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.20")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
     }
 }
 
@@ -45,8 +45,8 @@ repositories {
 dependencies {
     api(gradleApi())
     api(gradleKotlinDsl())
-    api(kotlin("gradle-plugin", version = "1.6.20"))
-    api(kotlin("gradle-plugin-api", version = "1.6.20"))
+    api(kotlin("gradle-plugin", version = "1.6.21"))
+    api(kotlin("gradle-plugin-api", version = "1.6.21"))
     api("com.android.tools.build:gradle-api:7.1.3")
     api("com.android.tools.build:gradle:7.1.3")
 }
