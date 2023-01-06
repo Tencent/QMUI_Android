@@ -32,7 +32,6 @@
     <attr name="app_skin_span_pressed_text_color" format="color"/>
     <attr name="app_skin_span_normal_bg_color" format="color"/>
     <attr name="app_skin_span_pressed_bg_color" format="color"/>
-    <attr name="app_skin_photo_can_not_pick_mask_color" format="color"/>
     <attr name="app_skin_alpha_test" format="float"/>
 
 
@@ -162,7 +161,6 @@
         <item name="app_skin_span_pressed_text_color">@color/qmui_config_color_50_white</item>
         <item name="app_skin_span_normal_bg_color">@color/qmui_config_color_gray_4</item>
         <item name="app_skin_span_pressed_bg_color">@color/qmui_config_color_gray_2</item>
-        <item name="app_skin_photo_can_not_pick_mask_color">@color/qmui_config_color_50_pure_black</item>
         <item name="app_skin_alpha_test">0.5</item>
     </style>
 
@@ -195,7 +193,6 @@
         <item name="app_skin_btn_test_border_single">?attr/qmui_config_color_gray_1</item>
         <item name="app_skin_progress_bar_bg_color">@color/qmui_config_color_gray_8</item>
         <item name="app_skin_progress_bar_progress_color">@color/qmui_config_color_gray_1</item>
-        <item name="app_skin_photo_can_not_pick_mask_color">@color/qmui_config_color_50_white</item>
     </style>
 
 </resources>

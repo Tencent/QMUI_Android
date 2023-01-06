@@ -55,10 +55,8 @@ fun QMUIPhotoPickerGrid(
     data: List<QMUIMediaPhotoVO>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    pickLimitCount: Int,
     pickedItems: List<Long>,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
-    onPickItemBeyondLimit: () -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -81,7 +79,7 @@ fun QMUIPhotoPickerGrid(
             verticalArrangement = Arrangement.Absolute.spacedBy(gap)
         ) {
             items(rowData, key = { it.key }){ item ->
-                QMUIPhotoPickerGridRow(item, cellSize, gap, pickLimitCount, pickedItems, onPickItem, onPickItemBeyondLimit, onPreview)
+                QMUIPhotoPickerGridRow(item, cellSize, gap, pickedItems, onPickItem, onPreview)
             }
         }
     }
@@ -92,10 +90,8 @@ private fun QMUIPhotoPickerGridRow(
     data: QMUIPhotoPickerGridRowData,
     cellSize: Dp,
     gap: Dp,
-    pickLimitCount: Int,
     pickedItems: List<Long>,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
-    onPickItemBeyondLimit: () -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     Row(
@@ -107,10 +103,8 @@ private fun QMUIPhotoPickerGridRow(
             QMUIPhotoPickerGridCell(
                 data = data.list[i],
                 cellSize = cellSize,
-                pickLimitCount = pickLimitCount,
                 pickedItems = pickedItems,
                 onPickItem = onPickItem,
-                onPickItemBeyondLimit = onPickItemBeyondLimit,
                 onPreview = onPreview
             )
         }
@@ -121,19 +115,14 @@ private fun QMUIPhotoPickerGridRow(
 private fun QMUIPhotoPickerGridCell(
     data: QMUIMediaPhotoVO,
     cellSize: Dp,
-    pickLimitCount: Int,
     pickedItems: List<Long>,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
-    onPickItemBeyondLimit: () -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
     val pickedIndex = remember(pickedItems) {
         pickedItems.indexOfFirst {
             it == data.model.id
         }
-    }
-    val pickedSize = remember(pickedItems) {
-        pickedItems.size
     }
     Box(
         modifier = Modifier
@@ -146,9 +135,7 @@ private fun QMUIPhotoPickerGridCell(
                 indication = null,
                 enabled = true
             ) {
-                if (!(pickedSize >= pickLimitCount && (pickedIndex < 0))) {
-                    onPreview.invoke(data.model)
-                }
+                onPreview.invoke(data.model)
             }
     ) {
         val thumbnail = remember(data) {
@@ -161,17 +148,13 @@ private fun QMUIPhotoPickerGridCell(
             onError = null
         )
 
-        QMUIPhotoPickerGridCellMask(pickedIndex, pickedSize, pickLimitCount)
+        QMUIPhotoPickerGridCellMask(pickedIndex)
 
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .clickable {
-                    if (pickedIndex < 0 && pickedSize >= pickLimitCount) {
-                        onPickItemBeyondLimit()
-                    } else {
-                        onPickItem(pickedIndex < 0, data)
-                    }
+                    onPickItem(pickedIndex < 0, data)
                 }
                 .padding(4.dp)
                 .size(24.dp),
@@ -183,19 +166,12 @@ private fun QMUIPhotoPickerGridCell(
 }
 
 @Composable
-fun QMUIPhotoPickerGridCellMask(pickedIndex: Int, pickedSize: Int, pickLimitCount: Int) {
-    val photoNotPickMaskColor = QMUILocalPickerConfig.current.photoNotPickMaskColor
-    val maskAlpha = animateFloatAsState(targetValue = if (pickedIndex >= 0) 0.36f else 0.15f)
-    val maskPickedAlpha = animateFloatAsState(targetValue = if (pickedSize >= pickLimitCount) photoNotPickMaskColor.alpha else 0.15f)
-    val bgColor = if (pickedSize >= pickLimitCount && (pickedIndex < 0)) {
-        photoNotPickMaskColor.copy(alpha = maskPickedAlpha.value)
-    } else {
-        Color.Black.copy(alpha = maskAlpha.value)
-    }
+fun QMUIPhotoPickerGridCellMask(pickedIndex: Int){
+    val maskAlpha = animateFloatAsState(targetValue = if(pickedIndex >= 0) 0.36f else 0.15f)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(bgColor)
+            .background(Color.Black.copy(alpha = maskAlpha.value))
     )
 }
 
