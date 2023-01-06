@@ -14,13 +14,13 @@ object Dep {
     object QMUI {
         const val group = "com.qmuiteam"
         const val qmuiVer = "2.1.0.11"
-        const val archVer = "2.1.0.3"
+        const val archVer = "2.1.0.4"
         const val typeVer = "0.1.0.6"
 
         // composeMajor.composeMinor.qmuiReleaseNumber
-        const val composeCoreVer = "1.1.1"
+        const val composeCoreVer = "1.1.1.1"
         const val composeVer = "1.1.1.1"
-        const val photoVer = "1.1.1.1"
+        const val photoVer = "1.1.1.7"
         const val editorVer = "1.1.1"
     }
 

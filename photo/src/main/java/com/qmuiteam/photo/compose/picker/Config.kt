@@ -1,5 +1,6 @@
 package com.qmuiteam.photo.compose.picker
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -12,26 +13,26 @@ import com.qmuiteam.compose.core.ui.QMUITopBarItem
 import com.qmuiteam.compose.core.ui.qmuiPrimaryColor
 import kotlinx.coroutines.flow.StateFlow
 
-class QMUIPhotoPickerConfig(
-    val editable: Boolean = true,
-    val primaryColor: Color = qmuiPrimaryColor,
-    val commonTextButtonTextColor: Color = Color.White,
-    val commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),
-    val commonIconNormalTintColor: Color = Color.White.copy(0.9f),
-    val commonIconCheckedTintColor: Color = primaryColor,
-    val commonIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
+data class QMUIPhotoPickerConfig(
+    var editable: Boolean = true,
+    var primaryColor: Color = qmuiPrimaryColor,
+    var commonTextButtonTextColor: Color = Color.White,
+    var commonSeparatorColor: Color = Color.White.copy(alpha = 0.3f),
+    var commonIconNormalTintColor: Color = Color.White.copy(0.9f),
+    var commonIconCheckedTintColor: Color = primaryColor,
+    var commonIconCheckedTextColor: Color = Color.White.copy(alpha = 0.6f),
 
-    val commonButtonNormalTextColor: Color = Color.White,
-    val commonButtonNormalBgColor: Color = primaryColor,
-    val commonButtonDisabledTextColor: Color = Color.White.copy(alpha = 0.3f),
-    val commonButtonDisableBgColor: Color = Color.White.copy(alpha = 0.15f),
-    val commonButtonPressBgColor: Color = primaryColor.copy(alpha = 0.8f),
-    val commonButtonPressedTextColor: Color = commonButtonNormalTextColor,
+    var commonButtonNormalTextColor: Color = Color.White,
+    var commonButtonNormalBgColor: Color = primaryColor,
+    var commonButtonDisabledTextColor: Color = Color.White.copy(alpha = 0.3f),
+    var commonButtonDisableBgColor: Color = Color.White.copy(alpha = 0.15f),
+    var commonButtonPressBgColor: Color = primaryColor.copy(alpha = 0.8f),
+    var commonButtonPressedTextColor: Color = commonButtonNormalTextColor,
 
-    val topBarBgColor: Color = Color(0xFF222222),
-    val toolBarBgColor: Color = topBarBgColor,
+    var topBarBgColor: Color = Color(0xFF222222),
+    var toolBarBgColor: Color = topBarBgColor,
 
-    val topBarBucketFactory: (
+    var topBarBucketFactory: (
         textFlow: StateFlow<String>,
         isFocusFlow: StateFlow<Boolean>,
         onClick: () -> Unit
@@ -46,7 +47,7 @@ class QMUIPhotoPickerConfig(
             onClick = onClick
         )
     },
-    val topBarSendFactory: (
+    var topBarSendFactory: (
         canSendSelf: Boolean,
         maxSelectCount: Int,
         selectCountFlow: StateFlow<Int>,
@@ -61,21 +62,21 @@ class QMUIPhotoPickerConfig(
         )
     },
 
-    val screenBgColor: Color = Color(0xFF333333),
-    val loadingColor: Color = Color.White,
-    val tipTextColor: Color = Color.White,
+    var screenBgColor: Color = Color(0xFF333333),
+    var loadingColor: Color = Color.White,
+    var tipTextColor: Color = Color.White,
 
-    val gridPreferredSize: Dp = 80.dp,
-    val gridGap: Dp = 2.dp,
-    val gridBorderColor: Color = Color.White.copy(alpha = 0.15f),
+    var gridPreferredSize: Dp = 80.dp,
+    var gridGap: Dp = 2.dp,
+    var gridBorderColor: Color = Color.White.copy(alpha = 0.15f),
 
-    val bucketChooserMaskColor: Color = Color.Black.copy(alpha = 0.36f),
-    val bucketChooserBgColor: Color = topBarBgColor,
-    val bucketChooserIndicationColor: Color = Color.White.copy(alpha = 0.2f),
-    val bucketChooserMainTextColor: Color = Color.White,
-    val bucketChooserCountTextColor: Color = Color.White.copy(alpha = 0.64f),
+    var bucketChooserMaskColor: Color = Color.Black.copy(alpha = 0.36f),
+    var bucketChooserBgColor: Color = topBarBgColor,
+    var bucketChooserIndicationColor: Color = Color.White.copy(alpha = 0.2f),
+    var bucketChooserMainTextColor: Color = Color.White,
+    var bucketChooserCountTextColor: Color = Color.White.copy(alpha = 0.64f),
 
-    val editPaintOptions: List<EditPaint> = listOf(
+    var editPaintOptions: List<EditPaint> = listOf(
         MosaicEditPaint(16),
         MosaicEditPaint(50),
         ColorEditPaint(Color.White),
@@ -86,11 +87,11 @@ class QMUIPhotoPickerConfig(
         ColorEditPaint(Color.Blue),
         ColorEditPaint(Color.Magenta)
     ),
-    val graffitiPaintStrokeWidth: Dp = 5.dp,
-    val mosaicPaintStrokeWidth: Dp = 20.dp,
+    var graffitiPaintStrokeWidth: Dp = 5.dp,
+    var mosaicPaintStrokeWidth: Dp = 20.dp,
 
-    val textEditMaskColor:Color = Color.Black.copy(0.5f),
-    val textEditColorOptions: List<ColorEditPaint> = listOf(
+    var textEditMaskColor:Color = Color.Black.copy(0.5f),
+    var textEditColorOptions: List<ColorEditPaint> = listOf(
         ColorEditPaint(Color.White),
         ColorEditPaint(Color.Black),
         ColorEditPaint(Color.Red),
@@ -99,20 +100,37 @@ class QMUIPhotoPickerConfig(
         ColorEditPaint(Color.Blue),
         ColorEditPaint(Color.Magenta)
     ),
-    val textEditFontSize: TextUnit = 30.sp,
-    val textEditLineSpace: TextUnit = 3.sp,
-    val textCursorColor: Color = primaryColor,
+    var textEditFontSize: TextUnit = 30.sp,
+    var textEditLineSpace: TextUnit = 3.sp,
+    var textCursorColor: Color = primaryColor,
 
-    val editLayerDeleteAreaNormalBgColor: Color = Color.Black.copy(alpha = 0.3f),
-    val editLayerDeleteAreaNormalFocusColor: Color = Color.Red.copy(alpha = 0.6f),
+    var editLayerDeleteAreaNormalBgColor: Color = Color.Black.copy(alpha = 0.3f),
+    var editLayerDeleteAreaNormalFocusColor: Color = Color.Red.copy(alpha = 0.6f),
+    var photoNotPickMaskColor: Color,
 )
 
-val qmuiPhotoPickerDefaultConfig by lazy { QMUIPhotoPickerConfig() }
+val lightConfig by lazy { QMUIPhotoPickerConfig(photoNotPickMaskColor = Color(0x80FFFFFF)) }
+val darkConfig by lazy { QMUIPhotoPickerConfig(photoNotPickMaskColor = Color(0x80000000)) }
+
+val qmuiPhotoPickerDefaultConfig by lazy { lightConfig }
+
 val QMUILocalPickerConfig = staticCompositionLocalOf { qmuiPhotoPickerDefaultConfig }
 
 @Composable
-fun QMUIDefaultPickerConfigProvider(content: @Composable () -> Unit) {
-    CompositionLocalProvider(QMUILocalPickerConfig provides qmuiPhotoPickerDefaultConfig) {
+fun QMUIDefaultPickerConfigProvider(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    configSet: (QMUIPhotoPickerConfig) -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    val config = if (darkTheme) {
+        darkConfig
+    } else {
+        lightConfig
+    }.apply {
+        configSet(this)
+    }
+
+    CompositionLocalProvider(QMUILocalPickerConfig provides config) {
         content()
     }
 }

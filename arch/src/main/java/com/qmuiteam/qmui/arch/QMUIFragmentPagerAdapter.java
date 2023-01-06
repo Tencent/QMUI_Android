@@ -28,11 +28,15 @@ import androidx.lifecycle.Lifecycle;
 
 import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
 
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurrentTransaction;
     private Fragment mCurrentPrimaryItem = null;
+    private Map map = new HashMap<Integer, QMUIFragment>();
 
     public QMUIFragmentPagerAdapter(@NonNull FragmentManager fm) {
         mFragmentManager = fm;
@@ -48,16 +52,17 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
     @SuppressLint("CommitTransaction")
     @Override
     @NonNull
-    protected Object hydrate(@NonNull ViewGroup container, int position) {
+    public Object hydrate(@NonNull ViewGroup container, int position) {
         String name = makeFragmentName(container.getId(), position);
         if (mCurrentTransaction == null) {
             mCurrentTransaction = mFragmentManager.beginTransaction();
         }
         Fragment fragment = mFragmentManager.findFragmentByTag(name);
-        if (fragment != null) {
-            return fragment;
+        if (fragment == null) {
+            fragment = createFragment(position);
         }
-        return createFragment(position);
+        map.put(position, fragment);
+        return fragment;
     }
 
     @SuppressLint("CommitTransaction")
@@ -134,5 +139,9 @@ public abstract class QMUIFragmentPagerAdapter extends QMUIPagerAdapter {
 
     private String makeFragmentName(int viewId, long id) {
         return "QMUIFragmentPagerAdapter:" + viewId + ":" + id;
+    }
+
+    public QMUIFragment getFragment(int position) {
+        return (QMUIFragment) map.get(position);
     }
 }
