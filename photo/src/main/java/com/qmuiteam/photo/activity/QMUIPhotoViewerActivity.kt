@@ -196,7 +196,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
                         allowPullExit()
                     },
                     onLongPress = {
-                        drawableCache.drawable?.let {
+                        drawableCache.photoResult?.let {
                             onLongClick(page, it)
                         }
                     },
@@ -207,7 +207,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
                     val onPhotoLoad: (PhotoResult) -> Unit = remember(drawableCache, onImageRatioEnsured) {
                         {
-                            drawableCache.drawable = it.drawable
+                            drawableCache.photoResult = it
                             if (it.drawable.intrinsicWidth > 0 && it.drawable.intrinsicHeight > 0) {
                                 onImageRatioEnsured(it.drawable.intrinsicWidth.toFloat() / it.drawable.intrinsicHeight)
                             }
@@ -345,7 +345,7 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
         return true
     }
 
-    protected open fun onLongClick(page: Int, drawable: Drawable) {
+    protected open fun onLongClick(page: Int, photoResult: PhotoResult) {
 
     }
 
@@ -406,4 +406,4 @@ class QMUIPhotoViewerViewModel(val state: SavedStateHandle) : ViewModel() {
     }
 }
 
-class MutableDrawableCache(var drawable: Drawable? = null)
+class MutableDrawableCache(var photoResult: PhotoResult? = null)
