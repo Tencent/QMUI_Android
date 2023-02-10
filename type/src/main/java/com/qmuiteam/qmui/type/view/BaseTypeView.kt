@@ -47,6 +47,16 @@ open class BaseTypeView(context: Context,
             }
         }
 
+    var letterSpacing: Float
+        get() = environment.letterSpacing
+        set(value){
+            throwIfRunning("setLetterSpacing")
+            if(environment.letterSpacing != value){
+                environment.letterSpacing = value
+                invalidate()
+            }
+        }
+
     var typeface: Typeface?
         get() = environment.typeface
         set(value){

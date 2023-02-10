@@ -44,6 +44,7 @@ class TypeEnvironment {
         const val TYPE_BORDER_LEFT_COLOR = -15
         const val TYPE_BORDER_PAINT = -16
         const val TYPE_LINE_HEIGHT = -17
+        const val TYPE_LETTER_SPACING = -18
 
         val DEFAULT_LAST_LINE_JUSTIFY_MAX_WIDTH = (Resources.getSystem().displayMetrics.density * 36).toInt()
     }
@@ -96,6 +97,11 @@ class TypeEnvironment {
         set(value) {
             field = value
             paint.color = value
+        }
+    var letterSpacing: Float = paint.letterSpacing
+        set(value) {
+            field = value
+            paint.letterSpacing = value
         }
     var backgroundColor: Int = Color.TRANSPARENT
         set(value) {
@@ -186,6 +192,7 @@ class TypeEnvironment {
         env.textSize = textSize
         env.typeface = typeface
         env.textColor = textColor
+        env.letterSpacing = letterSpacing
         env.backgroundColor = backgroundColor
         for (i in 0 until mStack.size()) {
             env.mStack.put(mStack.keyAt(i), mStack.valueAt(i).clone() as Stack<Any?>)
@@ -218,6 +225,8 @@ class TypeEnvironment {
             stack.push(paragraphSpace)
         } else if(type == TYPE_LINE_HEIGHT){
             stack.push(lineHeight)
+        } else if(type == TYPE_LETTER_SPACING){
+            stack.push(letterSpacing)
         } else{
             stack.push(mCustomProp[type])
         }
@@ -248,8 +257,10 @@ class TypeEnvironment {
             lineSpace = v as Int
         } else if (type == TYPE_PARAGRAPH_SPACE) {
             paragraphSpace = v as Int
-        }else if (type == TYPE_LINE_HEIGHT) {
+        } else if (type == TYPE_LINE_HEIGHT) {
             lineHeight = v as Int
+        } else if (type == TYPE_LETTER_SPACING) {
+            letterSpacing = v as Float
         } else {
             setCustomProp(type, v)
         }
