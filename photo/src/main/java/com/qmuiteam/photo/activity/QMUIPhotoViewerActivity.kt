@@ -61,6 +61,7 @@ private const val PHOTO_TRANSITION_DELIVERY_KEY = "qmui_photo_transition_deliver
 private const val PHOTO_COUNT = "qmui_photo_count"
 private const val PHOTO_META_KEY_PREFIX = "qmui_photo_meta_"
 private const val PHOTO_PROVIDER_RECOVER_CLASS_KEY_PREFIX = "qmui_photo_provider_recover_cls_"
+const val PHOTO_FROM_CHAT = "qmui_photo_from_chat"
 
 open class QMUIPhotoViewerActivity : AppCompatActivity() {
 
@@ -70,12 +71,14 @@ open class QMUIPhotoViewerActivity : AppCompatActivity() {
             activity: ComponentActivity,
             cls: Class<out QMUIPhotoViewerActivity>,
             list: List<QMUIPhotoTransitionInfo>,
-            index: Int
+            index: Int,
+            fromChat :Boolean = false
         ): Intent {
             val data = PhotoViewerData(list, index, activity.window.decorView.asBitmap())
             val intent = Intent(activity, cls)
             intent.putExtra(PHOTO_TRANSITION_DELIVERY_KEY, QMUIPhotoTransitionDelivery.put(data))
             intent.putExtra(PHOTO_CURRENT_INDEX, index)
+            intent.putExtra(PHOTO_FROM_CHAT, fromChat)
             intent.putExtra(PHOTO_COUNT, list.size)
             if(list.size < 250){
                 list.forEachIndexed { i, transition ->

@@ -59,9 +59,9 @@ class QMUIPublish : Plugin<Project> {
                     publications {
                         create<MavenPublication>("release") {
 
-                            project.configure<SigningExtension> {
-                                sign(this@create)
-                            }
+//                            project.configure<SigningExtension> {
+//                                sign(this@create)
+//                            }
 
                             if (isAndroid) {
                                 from(components.getByName("release"))
