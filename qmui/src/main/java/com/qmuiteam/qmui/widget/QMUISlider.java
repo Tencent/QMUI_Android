@@ -64,7 +64,7 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
     private int mDownTouchX = 0;
     private int mLastTouchX = 0;
     private boolean mIsThumbTouched = false;
-    private boolean mIsMoving = false;
+    public boolean mIsMoving = false;
     private int mTouchSlop;
     private RectF mTempRect = new RectF();
     private LongPressAction mLongPressAction = new LongPressAction();
@@ -125,9 +125,17 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         setWillNotDraw(false);
         setClipToPadding(false);
         setClipChildren(false);
+        IThumbView secondThumbView = onCreateSecondThumbView(context, thumbSize, thumbStyleAttr);
         IThumbView thumbView = onCreateThumbView(context, thumbSize, thumbStyleAttr);
         if (!(thumbView instanceof View)) {
             throw new IllegalArgumentException("thumbView must be a instance of View");
+        }
+        if (secondThumbView != null && !(secondThumbView instanceof View)) {
+            throw new IllegalArgumentException("secondThumbView must be a instance of View");
+        }
+        if (secondThumbView != null) {
+            View secondThumbViewAsView = (View) secondThumbView;
+            addView(secondThumbViewAsView, onCreateThumbLayoutParams());
         }
         mThumbView = thumbView;
         View thumbAsView = (View) thumbView;
@@ -482,12 +490,16 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         return new DefaultThumbView(context, thumbSize, thumbStyleAttr);
     }
 
+    public IThumbView onCreateSecondThumbView(Context context, int thumbSize, int thumbStyleAttr) {
+        return null;
+    }
+
     protected LayoutParams onCreateThumbLayoutParams() {
         return new LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    private View convertThumbToView() {
+    public View convertThumbToView() {
         return (View) mThumbView;
     }
 
