@@ -313,6 +313,9 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
                 if (Math.abs(x - mDownTouchX) < mTouchSlop && (mClickToChangeProgress || isRecordProgressClicked)) {
                     int oldProgress = mCurrentProgress;
                     if (isRecordProgressClicked) {
+                        if (mCallback != null) {
+                            mCallback.onRecordProgressClicked();
+                        }
                         safeSetCurrentProgress(mRecordProgress);
                     } else {
                         checkTouch(x, getMaxThumbOffset());
@@ -556,6 +559,8 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         void onStopMoving(QMUISlider slider, int progress, int tickCount);
 
         void onLongTouch(QMUISlider slider, int progress, int tickCount);
+        
+        void onRecordProgressClicked();
     }
 
     public static class DefaultCallback implements Callback {
@@ -588,6 +593,11 @@ public class QMUISlider extends FrameLayout implements IQMUISkinDefaultAttrProvi
         @Override
         public void onLongTouch(QMUISlider slider, int progress, int tickCount) {
 
+        }
+
+        @Override
+        public void onRecordProgressClicked() {
+            
         }
     }
 
