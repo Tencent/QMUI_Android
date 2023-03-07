@@ -27,6 +27,8 @@ class QMUIPhotoPickerViewModel @Keep constructor(
 
     val pickLimitCount = state.get<Int>(QMUI_PHOTO_PICK_LIMIT_COUNT) ?: QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT
 
+    val singleOptionMode = state.get<Boolean>(QMUI_PHOTO_SINGLE_OPTION_MODE) ?: false
+
     val enableOrigin = state.get<Boolean>(QMUI_PHOTO_ENABLE_ORIGIN) ?: true
 
     private val photoProviderFactory: QMUIMediaPhotoProviderFactory

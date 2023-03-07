@@ -56,6 +56,7 @@ fun QMUIPhotoPickerGrid(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     pickedItems: List<Long>,
+    singleOptionMode: Boolean,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
@@ -79,7 +80,7 @@ fun QMUIPhotoPickerGrid(
             verticalArrangement = Arrangement.Absolute.spacedBy(gap)
         ) {
             items(rowData, key = { it.key }){ item ->
-                QMUIPhotoPickerGridRow(item, cellSize, gap, pickedItems, onPickItem, onPreview)
+                QMUIPhotoPickerGridRow(item, cellSize, gap, pickedItems, singleOptionMode, onPickItem, onPreview)
             }
         }
     }
@@ -91,6 +92,7 @@ private fun QMUIPhotoPickerGridRow(
     cellSize: Dp,
     gap: Dp,
     pickedItems: List<Long>,
+    singleOptionMode: Boolean,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
@@ -104,6 +106,7 @@ private fun QMUIPhotoPickerGridRow(
                 data = data.list[i],
                 cellSize = cellSize,
                 pickedItems = pickedItems,
+                singleOptionMode = singleOptionMode,
                 onPickItem = onPickItem,
                 onPreview = onPreview
             )
@@ -116,6 +119,7 @@ private fun QMUIPhotoPickerGridCell(
     data: QMUIMediaPhotoVO,
     cellSize: Dp,
     pickedItems: List<Long>,
+    singleOptionMode: Boolean,
     onPickItem: (toPick: Boolean, model: QMUIMediaPhotoVO) -> Unit,
     onPreview: (model: QMUIMediaModel) -> Unit
 ) {
@@ -135,7 +139,11 @@ private fun QMUIPhotoPickerGridCell(
                 indication = null,
                 enabled = true
             ) {
-                onPreview.invoke(data.model)
+                if (singleOptionMode) {
+                    onPickItem(pickedIndex < 0, data)
+                } else {
+                    onPreview.invoke(data.model)
+                }
             }
     ) {
         val thumbnail = remember(data) {
@@ -150,17 +158,19 @@ private fun QMUIPhotoPickerGridCell(
 
         QMUIPhotoPickerGridCellMask(pickedIndex)
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .clickable {
-                    onPickItem(pickedIndex < 0, data)
-                }
-                .padding(4.dp)
-                .size(24.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            QMUIPhotoPickCheckBox(pickedIndex)
+        if (!singleOptionMode) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .clickable {
+                        onPickItem(pickedIndex < 0, data)
+                    }
+                    .padding(4.dp)
+                    .size(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                QMUIPhotoPickCheckBox(pickedIndex)
+            }
         }
     }
 }

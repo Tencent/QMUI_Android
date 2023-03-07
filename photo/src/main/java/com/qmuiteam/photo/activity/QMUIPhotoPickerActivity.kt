@@ -57,6 +57,7 @@ internal const val QMUI_PHOTO_ENABLE_ORIGIN = "qmui_photo_enable_origin"
 internal const val QMUI_PHOTO_PICK_LIMIT_COUNT = "qmui_photo_pick_limit_count"
 internal const val QMUI_PHOTO_PICKED_ITEMS = "qmui_photo_picked_items"
 internal const val QMUI_PHOTO_PROVIDER_FACTORY = "qmui_photo_provider_factory"
+internal const val QMUI_PHOTO_SINGLE_OPTION_MODE = "qmui_photo_single_option_mode"
 
 class QMUIPhotoPickItemInfo(
     val id: Long,
@@ -134,13 +135,15 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             factoryCls: Class<out QMUIMediaPhotoProviderFactory>,
             pickedItems: ArrayList<Uri> = arrayListOf(),
             pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT,
-            enableOrigin: Boolean = true
+            enableOrigin: Boolean = true,
+            singleOptionMode: Boolean = false,
         ): Intent {
             val intent = Intent(activity, cls)
             intent.putExtra(QMUI_PHOTO_PICK_LIMIT_COUNT, pickLimitCount)
             intent.putParcelableArrayListExtra(QMUI_PHOTO_PICKED_ITEMS, pickedItems)
             intent.putExtra(QMUI_PHOTO_PROVIDER_FACTORY, factoryCls.name)
             intent.putExtra(QMUI_PHOTO_ENABLE_ORIGIN, enableOrigin)
+            intent.putExtra(QMUI_PHOTO_SINGLE_OPTION_MODE, singleOptionMode)
             return intent
         }
     }
@@ -350,8 +353,12 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             arrayListOf(topBarBackItem, topBarBucketItem)
         }
 
-        val topBarRightItems = remember(topBarSendItem) {
-            arrayListOf(topBarSendItem)
+        val topBarRightItems = if (viewModel.singleOptionMode) {
+            emptyList()
+        } else {
+            remember(topBarSendItem) {
+                arrayListOf(topBarSendItem)
+            }
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -383,10 +390,18 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                     pickedItems = pickedItems,
                     onPickItem = { _, model ->
                         viewModel.togglePick(model)
+                        if (viewModel.singleOptionMode) {
+                            onHandleSend(viewModel.getPickedResultList())
+                        }
                     },
                     onPreview = {
-                        viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, false, it.id))
-                    }
+                        if (viewModel.singleOptionMode) {
+                            onHandleSend(viewModel.getPickedResultList())
+                        } else {
+                            viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, false, it.id))
+                        }
+                    },
+                    singleOptionMode = viewModel.singleOptionMode
                 )
                 QMUIPhotoPickerGridToolBar(
                     modifier = Modifier
