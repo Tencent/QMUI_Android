@@ -3,13 +3,19 @@ package com.qmuiteam.compose.core.ui
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.InspectorInfo
@@ -27,6 +33,7 @@ import com.qmuiteam.compose.core.R
 import com.qmuiteam.compose.core.helper.OnePx
 import com.qmuiteam.compose.core.provider.QMUILocalWindowInsets
 import com.qmuiteam.compose.core.provider.dp
+import kotlinx.coroutines.flow.StateFlow
 
 fun interface QMUITopBarItem {
     @Composable
@@ -183,7 +190,8 @@ fun QMUITopBarWithLazyScrollState(
     titleBoxPaddingHor: Dp = 8.dp,
     leftItems: List<QMUITopBarItem> = emptyList(),
     rightItems: List<QMUITopBarItem> = emptyList(),
-    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() }
+    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() },
+    centerItem: QMUITopBarItem? = null,
 ){
     val percent = with(LocalDensity.current){
         if(scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset.toDp() > scrollAlphaChangeMaxOffset){
@@ -197,7 +205,7 @@ fun QMUITopBarWithLazyScrollState(
         shadowElevation, shadowAlpha * percent,
         separatorHeight, separatorColor.copy(separatorColor.alpha * percent),
         paddingStart, paddingEnd,
-        titleBoxPaddingHor, leftItems, rightItems, titleLayout
+        titleBoxPaddingHor, leftItems, rightItems, titleLayout, centerItem
     )
 }
 
@@ -218,7 +226,8 @@ fun QMUITopBar(
     titleBoxPaddingHor: Dp = 8.dp,
     leftItems: List<QMUITopBarItem> = emptyList(),
     rightItems: List<QMUITopBarItem> = emptyList(),
-    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() }
+    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() },
+    centerItem: QMUITopBarItem? = null,
 ) {
     val insets = QMUILocalWindowInsets.current.getInsetsIgnoringVisibility(
         WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
@@ -228,12 +237,14 @@ fun QMUITopBar(
         .height(IntrinsicSize.Max)
         .zIndex(zIndex)
     ){
-        Box(modifier = Modifier.fillMaxSize().graphicsLayer {
-            this.alpha = shadowAlpha
-            this.shadowElevation = shadowElevation.toPx()
-            this.shape =  RectangleShape
-            this.clip = shadowElevation > 0.dp
-        })
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                this.alpha = shadowAlpha
+                this.shadowElevation = shadowElevation.toPx()
+                this.shape = RectangleShape
+                this.clip = shadowElevation > 0.dp
+            })
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -251,7 +262,8 @@ fun QMUITopBar(
                 titleBoxPaddingHor,
                 leftItems,
                 rightItems,
-                titleLayout
+                titleLayout,
+                centerItem
             )
             if(separatorHeight > 0.dp && separatorColor != Color.Transparent){
                 Box(modifier = Modifier
@@ -277,7 +289,8 @@ fun QMUITopBarContent(
     titleBoxPaddingHor: Dp = 8.dp,
     leftItems: List<QMUITopBarItem> = emptyList(),
     rightItems: List<QMUITopBarItem> = emptyList(),
-    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() }
+    titleLayout: QMUITopBarTitleLayout = remember { DefaultQMUITopBarTitleLayout() },
+    centerItem: QMUITopBarItem? = null,
 ) {
 
     val measurePolicy = remember(alignTitleCenter) {
@@ -341,15 +354,28 @@ fun QMUITopBarContent(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .qmuiTopBarArea(QMUITopBarArea.Center)
-                    .padding(horizontal = titleBoxPaddingHor),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                titleLayout.Compose(title, subTitle, alignTitleCenter)
+            centerItem?.let {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .qmuiTopBarArea(QMUITopBarArea.Center)
+                        .padding(horizontal = titleBoxPaddingHor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    it.Compose(topBarHeight = height)
+                }
+            } ?: kotlin.run {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .qmuiTopBarArea(QMUITopBarArea.Center)
+                        .padding(horizontal = titleBoxPaddingHor),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    titleLayout.Compose(title, subTitle, alignTitleCenter)
+                }
             }
+
 
             Row(
                 modifier = Modifier

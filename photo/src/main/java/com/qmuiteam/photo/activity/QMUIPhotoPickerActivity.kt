@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -136,7 +137,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             pickedItems: ArrayList<Uri> = arrayListOf(),
             pickLimitCount: Int = QMUI_PHOTO_DEFAULT_PICK_LIMIT_COUNT,
             enableOrigin: Boolean = true,
-            singleOptionMode: Boolean = false,
+            singleOptionMode: Boolean = true,
         ): Intent {
             val intent = Intent(activity, cls)
             intent.putExtra(QMUI_PHOTO_PICK_LIMIT_COUNT, pickLimitCount)
@@ -349,8 +350,14 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             }
         }
 
-        val topBarLeftItems = remember(topBarBackItem, topBarBucketItem) {
-            arrayListOf(topBarBackItem, topBarBucketItem)
+        val topBarLeftItems = if (viewModel.singleOptionMode) {
+            remember(topBarBackItem) {
+                arrayListOf(topBarBackItem)
+            }
+        } else {
+            remember(topBarBackItem, topBarBucketItem) {
+                arrayListOf(topBarBackItem, topBarBucketItem)
+            }
         }
 
         val topBarRightItems = if (viewModel.singleOptionMode) {
@@ -361,6 +368,14 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
             }
         }
 
+        val topBarCenterItem = if (viewModel.singleOptionMode) {
+            remember(topBarBucketItem) {
+                topBarBucketItem
+            }
+        } else {
+            null
+        }
+
         Column(modifier = Modifier.fillMaxSize()) {
             QMUITopBarWithLazyScrollState(
                 scrollState = scrollState,
@@ -368,7 +383,8 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                 separatorHeight = 0.dp,
                 backgroundColor = QMUILocalPickerConfig.current.topBarBgColor,
                 leftItems = topBarLeftItems,
-                rightItems = topBarRightItems
+                rightItems = topBarRightItems,
+                centerItem = topBarCenterItem
             )
             ConstraintLayout(
                 modifier = Modifier
@@ -384,7 +400,7 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        bottom.linkTo(toolbar.top)
+                        bottom.linkTo(if (viewModel.singleOptionMode) parent.bottom else toolbar.top)
                     },
                     state = scrollState,
                     pickedItems = pickedItems,
@@ -403,23 +419,26 @@ open class QMUIPhotoPickerActivity : AppCompatActivity() {
                     },
                     singleOptionMode = viewModel.singleOptionMode
                 )
-                QMUIPhotoPickerGridToolBar(
-                    modifier = Modifier
-                        .constrainAs(toolbar) {
-                            width = Dimension.fillToConstraints
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
+                if (!viewModel.singleOptionMode) {
+                    QMUIPhotoPickerGridToolBar(
+                        modifier = Modifier
+                            .constrainAs(toolbar) {
+                                width = Dimension.fillToConstraints
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            },
+                        enableOrigin = viewModel.enableOrigin,
+                        pickedItems = pickedItems,
+                        isOriginOpenFlow = viewModel.isOriginOpenFlow,
+                        onToggleOrigin = {
+                            viewModel.toggleOrigin(it)
                         },
-                    enableOrigin = viewModel.enableOrigin,
-                    pickedItems = pickedItems,
-                    isOriginOpenFlow = viewModel.isOriginOpenFlow,
-                    onToggleOrigin = {
-                        viewModel.toggleOrigin(it)
+                    ) {
+                        viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, true, currentBucket.list.first().model.id))
                     }
-                ) {
-                    viewModel.updateScene(QMUIPhotoPickerPreviewScene(currentBucket.id, true, currentBucket.list.first().model.id))
                 }
+
                 QMUIPhotoBucketChooser(
                     focus = isFocusBucketChooser,
                     data = data,
