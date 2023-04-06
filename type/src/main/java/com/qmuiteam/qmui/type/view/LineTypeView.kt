@@ -25,6 +25,8 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.ColorInt
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
 import com.qmuiteam.qmui.type.LineLayout
 import com.qmuiteam.qmui.type.TypeEnvironment
 import com.qmuiteam.qmui.type.TypeModel
@@ -55,6 +57,10 @@ open class LineTypeView : BaseTypeView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    init {
+        ViewCompat.setAccessibilityDelegate(this, AccessibilityDelegateCompat())
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
