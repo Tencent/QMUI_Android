@@ -37,6 +37,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
 
 import com.qmuiteam.qmui.QMUILog;
 import com.qmuiteam.qmui.R;
@@ -169,6 +171,7 @@ public class QMUIQQFaceView extends View {
         mDecorationPaint.setAntiAlias(true);
         mDecorationPaint.setStyle(Paint.Style.FILL);
         setCompiler(QMUIQQFaceCompiler.getDefaultInstance());
+        ViewCompat.setAccessibilityDelegate(this, new AccessibilityDelegateCompat());
     }
 
     public void setOpenQQFace(boolean openQQFace) {
