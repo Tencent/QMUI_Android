@@ -135,28 +135,28 @@ public class QMUITopBarLayout extends QMUIFrameLayout implements IQMUISkinDefaul
         mTopBar.addRightView(view, viewId, layoutParams);
     }
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId) {
-        return mTopBar.addRightImageButton(drawableResId, viewId);
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId, String describe) {
+        return mTopBar.addRightImageButton(drawableResId, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId) {
-        return mTopBar.addRightImageButton(drawableResId, followTintColor, viewId);
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, String describe) {
+        return mTopBar.addRightImageButton(drawableResId, followTintColor, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
-        return mTopBar.addRightImageButton(drawableResId, followTintColor, viewId, iconWidth, iconHeight);
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight, String describe) {
+        return mTopBar.addRightImageButton(drawableResId, followTintColor, viewId, iconWidth, iconHeight, describe);
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId) {
-        return mTopBar.addLeftImageButton(drawableResId, viewId);
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId, String describe) {
+        return mTopBar.addLeftImageButton(drawableResId, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId) {
-        return mTopBar.addLeftImageButton(drawableResId, followTintColor, viewId);
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, String describe) {
+        return mTopBar.addLeftImageButton(drawableResId, followTintColor, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
-        return mTopBar.addLeftImageButton(drawableResId, followTintColor, viewId, iconWidth, iconHeight);
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight, String describe) {
+        return mTopBar.addLeftImageButton(drawableResId, followTintColor, viewId, iconWidth, iconHeight, describe);
     }
 
     public Button addLeftTextButton(int stringResId, int viewId) {

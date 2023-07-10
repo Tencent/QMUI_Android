@@ -510,12 +510,12 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
     }
 
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId) {
-        return addRightImageButton(drawableResId, true, viewId);
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, int viewId, String describe) {
+        return addRightImageButton(drawableResId, true, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId) {
-        return addRightImageButton(drawableResId, followTintColor, viewId, -1, -1);
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, String describe) {
+        return addRightImageButton(drawableResId, followTintColor, viewId, -1, -1, describe);
     }
 
     /**
@@ -526,18 +526,19 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
-    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
+    public QMUIAlphaImageButton addRightImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight, String describe) {
         QMUIAlphaImageButton rightButton = generateTopBarImageButton(drawableResId, followTintColor);
         this.addRightView(rightButton, viewId, generateTopBarImageButtonLayoutParams(iconWidth, iconHeight));
+        rightButton.setContentDescription(describe);
         return rightButton;
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId) {
-        return addLeftImageButton(drawableResId, true, viewId);
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, int viewId, String describe) {
+        return addLeftImageButton(drawableResId, true, viewId, describe);
     }
 
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId) {
-        return addLeftImageButton(drawableResId, followTintColor, viewId, -1, -1);
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, String describe) {
+        return addLeftImageButton(drawableResId, followTintColor, viewId, -1, -1, describe);
     }
 
     /**
@@ -548,9 +549,10 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
      * @param followTintColor 换肤时使用 tintColor 更改它的颜色
      * @return 返回生成的按钮
      */
-    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight) {
+    public QMUIAlphaImageButton addLeftImageButton(int drawableResId, boolean followTintColor, int viewId, int iconWidth, int iconHeight, String describe) {
         QMUIAlphaImageButton leftButton = generateTopBarImageButton(drawableResId, followTintColor);
         this.addLeftView(leftButton, viewId, generateTopBarImageButtonLayoutParams(iconWidth, iconHeight));
+        leftButton.setContentDescription(describe);
         return leftButton;
     }
 
@@ -678,9 +680,9 @@ public class QMUITopBar extends QMUIRelativeLayout implements IQMUISkinHandlerVi
             QMUIViewHelper.setPaddingLeft(this, 0);
         }
         if(mLeftBackViewWidth > 0){
-            return addLeftImageButton(mLeftBackDrawableRes, true, R.id.qmui_topbar_item_left_back, mLeftBackViewWidth, -1);
+            return addLeftImageButton(mLeftBackDrawableRes, true, R.id.qmui_topbar_item_left_back, mLeftBackViewWidth, -1, "返回");
         }
-        return addLeftImageButton(mLeftBackDrawableRes, R.id.qmui_topbar_item_left_back);
+        return addLeftImageButton(mLeftBackDrawableRes, R.id.qmui_topbar_item_left_back, "返回");
     }
 
     /**
