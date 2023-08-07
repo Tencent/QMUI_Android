@@ -171,6 +171,9 @@ public class QMUIBottomSheetListItemView extends QMUIConstraintLayout {
         builder.clear();
 
         mTextView.setText(itemModel.text);
+        if (itemModel.contentDesc != null && !itemModel.contentDesc.isEmpty()) {
+            mTextView.setContentDescription(itemModel.contentDesc);
+        }
         if (itemModel.typeface != null) {
             mTextView.setTypeface(itemModel.typeface);
         }

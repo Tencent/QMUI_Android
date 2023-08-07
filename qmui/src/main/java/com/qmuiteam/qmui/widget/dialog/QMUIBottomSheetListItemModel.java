@@ -27,6 +27,7 @@ public class QMUIBottomSheetListItemModel {
     int textSkinColorAttr = 0;
     CharSequence text;
     String tag = "";
+    String contentDesc = "";
     boolean hasRedPoint = false;
     boolean isDisabled = false;
     Typeface typeface;
@@ -34,6 +35,12 @@ public class QMUIBottomSheetListItemModel {
     public QMUIBottomSheetListItemModel(CharSequence text, String tag) {
         this.text = text;
         this.tag = tag;
+    }
+
+    public QMUIBottomSheetListItemModel(CharSequence text, String tag, String contentDesc) {
+        this.text = text;
+        this.tag = tag;
+        this.contentDesc = contentDesc;
     }
 
     public QMUIBottomSheetListItemModel image(Drawable image) {
