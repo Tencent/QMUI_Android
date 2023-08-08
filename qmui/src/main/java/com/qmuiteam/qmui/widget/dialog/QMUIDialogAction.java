@@ -55,6 +55,7 @@ public class QMUIDialogAction {
 
 
     private CharSequence mStr;
+    private String mContentDesc;
     private int mIconRes = 0;
     private int mActionProp = ACTION_PROP_NEUTRAL;
     private int mSkinTextColorAttr = 0;
@@ -98,6 +99,11 @@ public class QMUIDialogAction {
         return this;
     }
 
+    public QMUIDialogAction contentDesc(String contentDesc) {
+        mContentDesc = contentDesc;
+        return this;
+    }
+
     public QMUIDialogAction skinTextColorAttr(int skinTextColorAttr) {
         mSkinTextColorAttr = skinTextColorAttr;
         return this;
@@ -132,7 +138,7 @@ public class QMUIDialogAction {
     }
 
     public QMUIButton buildActionView(final QMUIDialog dialog, final int index) {
-        mButton = generateActionButton(dialog.getContext(), mStr, mIconRes,
+        mButton = generateActionButton(dialog.getContext(), mStr, mContentDesc, mIconRes,
                 mSkinBackgroundAttr, mSkinTextColorAttr, mSkinIconTintColorAttr);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +154,7 @@ public class QMUIDialogAction {
     /**
      * 生成适用于对话框的按钮
      */
-    private QMUIButton generateActionButton(Context context, CharSequence text, int iconRes,
+    private QMUIButton generateActionButton(Context context, CharSequence text, String contentDesc, int iconRes,
                                             int skinBackgroundAttr, int skinTextColorAttr, int iconTintColor) {
         QMUIButton button = new QMUIButton(context);
         button.setBackground(null);
@@ -197,7 +203,9 @@ public class QMUIDialogAction {
             button.setText(QMUISpanHelper.generateSideIconText(
                     true, iconSpace, text, ContextCompat.getDrawable(context, iconRes), iconTintColor, button));
         }
-
+        if (contentDesc != null && !contentDesc.isEmpty()) {
+            button.setContentDescription(contentDesc);
+        }
 
         button.setClickable(true);
         button.setEnabled(mIsEnabled);

@@ -232,6 +232,10 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         return addAction(0, strResId, listener);
     }
 
+    public T addAction(int strResId, String contentDesc, QMUIDialogAction.ActionListener listener) {
+        return addAction(0, strResId, contentDesc, listener);
+    }
+
     /**
      * 添加无图标正常类型的操作按钮
      *
@@ -239,7 +243,11 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param listener 点击回调事件
      */
     public T addAction(CharSequence str, QMUIDialogAction.ActionListener listener) {
-        return addAction(0, str, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
+        return addAction(0, str, "", QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
+    }
+
+    public T addAction(CharSequence str, String contentDesc, QMUIDialogAction.ActionListener listener) {
+        return addAction(0, str, contentDesc, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
     }
 
 
@@ -254,6 +262,10 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
         return addAction(iconResId, strResId, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
     }
 
+    public T addAction(int iconResId, int strResId, String contentDesc, QMUIDialogAction.ActionListener listener) {
+        return addAction(iconResId, strResId, contentDesc, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
+    }
+
     /**
      * 添加普通类型的操作按钮
      *
@@ -262,7 +274,11 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param listener  点击回调事件
      */
     public T addAction(int iconResId, CharSequence str, QMUIDialogAction.ActionListener listener) {
-        return addAction(iconResId, str, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
+        return addAction(iconResId, str, "", QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
+    }
+
+    public T addAction(int iconResId, CharSequence str, String contentDesc, QMUIDialogAction.ActionListener listener) {
+        return addAction(iconResId, str, contentDesc, QMUIDialogAction.ACTION_PROP_NEUTRAL, listener);
     }
 
 
@@ -275,7 +291,11 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param listener 点击回调事件
      */
     public T addAction(int iconRes, int strRes, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
-        return addAction(iconRes, mContext.getResources().getString(strRes), prop, listener);
+        return addAction(iconRes, mContext.getResources().getString(strRes), "", prop, listener);
+    }
+
+    public T addAction(int iconRes, int strRes, String contentDesc, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
+        return addAction(iconRes, mContext.getResources().getString(strRes), contentDesc, prop, listener);
     }
 
     /**
@@ -287,10 +307,11 @@ public abstract class QMUIDialogBuilder<T extends QMUIDialogBuilder> {
      * @param listener 点击回调事件
      */
     @SuppressWarnings("unchecked")
-    public T addAction(int iconRes, CharSequence str, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
+    public T addAction(int iconRes, CharSequence str, String contentDesc, @QMUIDialogAction.Prop int prop, QMUIDialogAction.ActionListener listener) {
         QMUIDialogAction action = new QMUIDialogAction(str)
                 .iconRes(iconRes)
                 .prop(prop)
+                .contentDesc(contentDesc)
                 .onClick(listener);
         mActions.add(action);
         return (T) this;
