@@ -85,7 +85,7 @@ public abstract class HomeController extends LinearLayout {
     private void initTopBar() {
         mTopBar.setTitle(getTitle());
 
-        mTopBar.addRightImageButton(R.mipmap.icon_topbar_about, R.id.topbar_right_about_button).setOnClickListener(new OnClickListener() {
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_about, R.id.topbar_right_about_button, "").setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 QDAboutFragment fragment = new QDAboutFragment();

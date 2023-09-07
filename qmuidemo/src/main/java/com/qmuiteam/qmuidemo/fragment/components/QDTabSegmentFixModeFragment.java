@@ -123,7 +123,7 @@ public class QDTabSegmentFixModeFragment extends BaseFragment {
         });
 
         mTopBar.setTitle(mQDItemDescription.getName());
-        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button, "")
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

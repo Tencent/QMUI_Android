@@ -92,7 +92,7 @@ class QDPullRefreshFragment : BaseFragment() {
         mTopBar!!.setTitle(mQDItemDescription!!.name)
 
         // 切换其他情况的按钮
-        mTopBar!!.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button).setOnClickListener { showBottomSheetList() }
+        mTopBar!!.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button, "更多").setOnClickListener { showBottomSheetList() }
     }
 
     private fun initData() {

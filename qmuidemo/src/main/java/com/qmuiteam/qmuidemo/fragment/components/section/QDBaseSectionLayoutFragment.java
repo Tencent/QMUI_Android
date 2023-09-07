@@ -74,7 +74,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
 
         mTopBar.setTitle(QDDataManager.getInstance().getDescription(this.getClass()).getName());
 
-        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button, "")
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

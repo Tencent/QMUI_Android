@@ -62,7 +62,7 @@ public class QDRadiusImageView2ScaleTypeFragment extends BaseFragment {
         mTopBar.setTitle(QDDataManager.getInstance().getName(this.getClass()));
 
         // 动态修改效果按钮
-        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button, "")
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
