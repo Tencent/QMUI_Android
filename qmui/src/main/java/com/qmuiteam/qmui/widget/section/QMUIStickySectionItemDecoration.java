@@ -17,6 +17,7 @@
 package com.qmuiteam.qmui.widget.section;
 
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -163,8 +164,14 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
 
         setHeaderVisibility(true);
 
-        int contactPoint = sectionContainer.getHeight() - 1;
-        final View childInContact = parent.findChildViewUnder(parent.getWidth() / 2, contactPoint);
+        View secondChild = linearLayoutManager.findViewByPosition(firstVisibleItemPosition + 1);
+        View firstChild = linearLayoutManager.findViewByPosition(firstVisibleItemPosition);
+        View childInContact = null;
+        if (firstChild != null && firstChild.getTop() == 0) {
+            childInContact = firstChild;
+        } else {
+            childInContact = secondChild;
+        }
         if (childInContact == null) {
             mTargetTop = parent.getTop();
             ViewCompat.offsetTopAndBottom(sectionContainer, mTargetTop - sectionContainer.getTop());
@@ -173,7 +180,9 @@ public class QMUIStickySectionItemDecoration<VH extends QMUIStickySectionAdapter
 
         if (mCallback.isHeaderItem(parent.getChildAdapterPosition(childInContact))) {
             mTargetTop = childInContact.getTop() + parent.getTop() - sectionContainer.getHeight();
-            ViewCompat.offsetTopAndBottom(sectionContainer, mTargetTop - sectionContainer.getTop());
+            if (mTargetTop <= 0) {
+                ViewCompat.offsetTopAndBottom(sectionContainer, mTargetTop - sectionContainer.getTop());
+            }
             return;
         }
 
