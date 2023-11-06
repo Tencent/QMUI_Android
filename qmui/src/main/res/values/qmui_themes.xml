@@ -170,6 +170,9 @@
         <item name="qmui_skin_support_common_list_new_drawable">@drawable/qmui_icon_tip_new</item>
         <item name="qmui_skin_support_common_list_separator_color">?attr/qmui_skin_support_color_separator</item>
         <item name="qmui_skin_support_s_common_list_bg">?attr/qmui_skin_support_s_list_item_bg_2</item>
+        <item name="qmui_skin_support_s_common_list_new_style_bg">?attr/qmui_skin_support_s_list_item_bg_3</item>
+        <item name="qmui_skin_support_s_common_list_new_style_bg_only_top">?attr/qmui_skin_support_s_list_item_bg_only_top_round</item>
+        <item name="qmui_skin_support_s_common_list_new_style_bg_only_bottom">?attr/qmui_skin_support_s_list_item_bg_only_bottom_round</item>
         <item name="qmui_skin_support_common_list_chevron_color">?attr/qmui_config_color_gray_5</item>
         <!-- skin support-->
 
@@ -186,6 +189,7 @@
         <item name="qmui_common_list_item_holder_margin_with_title">8dp</item>
         <item name="qmui_common_list_item_chevron">@drawable/qmui_icon_chevron</item>
         <item name="qmui_common_list_item_switch">@drawable/qmui_s_icon_switch</item>
+        <item name="qmui_common_list_item_switch_new">@drawable/qmui_s_icon_switch_new</item>
 
 
         <item name="qmui_content_padding_horizontal">@dimen/qmui_content_padding_horizontal
@@ -289,10 +293,14 @@
         *             qmui list item bg                  *
         **********************************************-->
         <item name="qmui_list_item_height">@dimen/qmui_list_item_height</item>
+        <item name="qmui_list_item_margin_hor">@dimen/qmui_list_item_margin_hor</item>
         <item name="qmui_list_item_height_higher">@dimen/qmui_list_item_height_higher</item>
 
         <item name="qmui_skin_support_s_list_item_bg_1">@drawable/qmui_s_list_item_bg_1</item>
         <item name="qmui_skin_support_s_list_item_bg_2">@drawable/qmui_s_list_item_bg_2</item>
+        <item name="qmui_skin_support_s_list_item_bg_3">@drawable/qmui_s_list_item_bg_3</item>
+        <item name="qmui_skin_support_s_list_item_bg_only_top_round">@drawable/qmui_s_list_item_bg_only_top_round</item>
+        <item name="qmui_skin_support_s_list_item_bg_only_bottom_round">@drawable/qmui_s_list_item_bg_only_bottom_round</item>
 
 
         <!--**********************************************

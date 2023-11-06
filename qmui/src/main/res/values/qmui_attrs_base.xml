@@ -74,6 +74,9 @@
     <attr name="qmui_skin_support_common_list_new_drawable" format="reference"/>
     <attr name="qmui_skin_support_common_list_separator_color" format="color|reference"/>
     <attr name="qmui_skin_support_s_common_list_bg" format="reference"/>
+    <attr name="qmui_skin_support_s_common_list_new_style_bg" format="reference"/>
+    <attr name="qmui_skin_support_s_common_list_new_style_bg_only_top" format="reference"/>
+    <attr name="qmui_skin_support_s_common_list_new_style_bg_only_bottom" format="reference"/>
     <attr name="qmui_skin_support_common_list_chevron_color" format="color|reference"/>
 
 
@@ -81,16 +84,19 @@
     *             qmui list item bg                  *
     **********************************************-->
     <attr name="qmui_list_item_height" format="dimension" />
+    <attr name="qmui_list_item_margin_hor" format="dimension" />
     <attr name="qmui_list_item_height_higher" format="dimension" />
     <attr name="qmui_skin_support_s_list_item_bg_1" format="reference" />
     <attr name="qmui_skin_support_s_list_item_bg_2" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_3" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_only_top_round" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_only_bottom_round" format="reference" />
 
     <!--**********************************************
     *             qmui drawbale                      *
     **********************************************-->
     <attr name="qmui_skin_support_icon_mark" format="reference" />
     <attr name="qmui_skin_support_s_checkbox" format="reference" />
-
 
     <!--**********************************************
     *                  qmui btn                      *

@@ -75,6 +75,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
      * 自定义右侧显示的 View
      */
     public final static int ACCESSORY_TYPE_CUSTOM = 3;
+    /**
+     * 左侧显示一个开关
+     */
+    public final static int ACCESSORY_TYPE_SWITCH_LEFT = 4;
 
     private final static int TIP_SHOW_NOTHING = 0;
     private final static int TIP_SHOW_RED_POINT = 1;
@@ -133,9 +137,11 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
 
     protected ImageView mImageView;
     private ViewGroup mAccessoryView;
+    private ViewGroup mLeftAccessoryView;
     protected TextView mTextView;
     protected TextView mDetailTextView;
     protected CheckBox mSwitch;
+    protected CheckBox mNewStyleSwitch;
     private ImageView mRedDot;
     private ImageView mNewTipView;
     private boolean mDisableSwitchSelf = false;
@@ -173,6 +179,7 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         mTextView.setTextColor(initTitleColor);
         mDetailTextView.setTextColor(initDetailColor);
         mAccessoryView = findViewById(R.id.group_list_item_accessoryView);
+        mLeftAccessoryView = findViewById(R.id.group_list_item_accessoryView_left);
         setOrientation(orientation);
         setAccessoryType(accessoryType);
     }
@@ -499,6 +506,22 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
             case ACCESSORY_TYPE_CUSTOM:
                 mAccessoryView.setVisibility(VISIBLE);
                 break;
+            // 左侧switch
+            case ACCESSORY_TYPE_SWITCH_LEFT:
+                if (mNewStyleSwitch == null) {
+                    mNewStyleSwitch = new AppCompatCheckBox(getContext());
+                    mNewStyleSwitch.setBackground(null);
+                    mNewStyleSwitch.setButtonDrawable(QMUIResHelper.getAttrDrawable(getContext(), R.attr.qmui_common_list_item_switch_new));
+                    mNewStyleSwitch.setLayoutParams(getAccessoryLayoutParams());
+                    if (mDisableSwitchSelf) {
+                        mNewStyleSwitch.setClickable(false);
+                        mNewStyleSwitch.setEnabled(false);
+                    }
+                }
+                mLeftAccessoryView.addView(mNewStyleSwitch);
+                mAccessoryView.setVisibility(GONE);
+                mLeftAccessoryView.setVisibility(VISIBLE);
+                break;
             // 清空所有accessoryView
             case ACCESSORY_TYPE_NONE:
                 mAccessoryView.setVisibility(GONE);
@@ -542,6 +565,10 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
         return mSwitch;
     }
 
+    public CheckBox getNewStyleSwitch() {
+        return mNewStyleSwitch;
+    }
+
     public ViewGroup getAccessoryContainerView() {
         return mAccessoryView;
     }
@@ -563,6 +590,11 @@ public class QMUICommonListItemView extends QMUIConstraintLayout {
             mSwitch.setClickable(!disableSwitchSelf);
             mSwitch.setEnabled(!disableSwitchSelf);
         }
+    }
+
+    @Override
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
     }
 
     public void setSkinConfig(SkinConfig skinConfig) {

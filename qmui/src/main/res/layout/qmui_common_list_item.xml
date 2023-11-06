@@ -41,6 +41,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <FrameLayout
+        android:id="@+id/group_list_item_accessoryView_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5.5dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/group_list_item_imageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/group_list_item_textView"
@@ -56,7 +66,7 @@
         android:textSize="?attr/qmui_common_list_item_title_h_text_size"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/group_list_item_imageView"
+        app:layout_constraintLeft_toRightOf="@+id/group_list_item_accessoryView_left"
         app:layout_constraintRight_toLeftOf="@+id/group_list_item_accessoryView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="0dp"

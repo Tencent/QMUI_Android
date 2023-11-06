@@ -220,9 +220,19 @@ class QDGroupListViewFragment : BaseFragment() {
                 Toast.makeText(activity, "$text is Clicked", Toast.LENGTH_SHORT).show()
                 if (v.accessoryType == QMUICommonListItemView.ACCESSORY_TYPE_SWITCH) {
                     v.switch.toggle()
+                } else if (v.accessoryType == QMUICommonListItemView.ACCESSORY_TYPE_SWITCH_LEFT) {
+                    v.newStyleSwitch.toggle()
                 }
             }
         }
+        val itemNew5 = mGroupListView!!.createItemView(
+            null,
+            "左边switch",
+            "",
+            QMUICommonListItemView.HORIZONTAL,
+            QMUICommonListItemView.ACCESSORY_TYPE_SWITCH_LEFT,
+            height
+        )
         val size = QMUIDisplayHelper.dp2px(context, 20)
         QMUIGroupListView.newSection(context)
             .setTitle("Section 1: 默认提供的样式")
@@ -240,6 +250,7 @@ class QDGroupListViewFragment : BaseFragment() {
             .addTo(mGroupListView)
         QMUIGroupListView.newSection(context)
             .setTitle("Section 2: 自定义右侧 View/红点/new 提示")
+            .setBgAttrForSection(true)
             .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
             .addItemView(itemWithCustom, onClickListener)
             .addItemView(itemRedPoint1, onClickListener)
@@ -250,7 +261,8 @@ class QDGroupListViewFragment : BaseFragment() {
             .addItemView(itemNew2, onClickListener)
             .addItemView(itemNew3, onClickListener)
             .addItemView(itemNew4, onClickListener)
-            .setOnlyShowStartEndSeparator(true)
+            .addItemView(itemNew5, onClickListener)
+            .setShowSeparator(false)
             .addTo(mGroupListView)
     }
 }

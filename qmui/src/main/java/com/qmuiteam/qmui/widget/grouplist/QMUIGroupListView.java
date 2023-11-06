@@ -149,10 +149,12 @@ public class QMUIGroupListView extends LinearLayout {
         private SparseArray<QMUICommonListItemView> mItemViews;
         private boolean mUseDefaultTitleIfNone;
         private boolean mUseTitleViewForSectionSpace = true;
+        private int mTitleSectionSpaceHeight = -1;
         private int mSeparatorColorAttr = R.attr.qmui_skin_support_common_list_separator_color;
         private boolean mHandleSeparatorCustom = false;
         private boolean mShowSeparator = true;
         private boolean mOnlyShowStartEndSeparator = false;
+        private boolean mBgAttrForSection = false; // 单独一个section区块，UI区分
         private boolean mOnlyShowMiddleSeparator = false;
         private int mMiddleSeparatorInsetLeft = 0;
         private int mMiddleSeparatorInsetRight = 0;
@@ -254,6 +256,16 @@ public class QMUIGroupListView extends LinearLayout {
             return this;
         }
 
+        public Section setBgAttrForSection(boolean bgAttrForSection) {
+            this.mBgAttrForSection = bgAttrForSection;
+            return this;
+        }
+
+        public Section setSectionSpaceHeight(int sectionSpaceHeight) {
+            this.mTitleSectionSpaceHeight = sectionSpaceHeight;
+            return this;
+        }
+
         public Section setOnlyShowMiddleSeparator(boolean onlyShowMiddleSeparator) {
             mOnlyShowMiddleSeparator = onlyShowMiddleSeparator;
             return this;
@@ -286,6 +298,11 @@ public class QMUIGroupListView extends LinearLayout {
                 groupListView.addView(mTitleView);
             }
 
+            if (mUseTitleViewForSectionSpace && mTitleSectionSpaceHeight != -1) {
+                ViewGroup.LayoutParams layoutParams = mTitleView.getLayoutParams();
+                layoutParams.height = mTitleSectionSpaceHeight;
+                mTitleView.setLayoutParams(layoutParams);
+            }
 
             final int itemViewCount = mItemViews.size();
             QMUICommonListItemView.LayoutParamConfig leftIconLpConfig = new QMUICommonListItemView.LayoutParamConfig() {
@@ -305,9 +322,37 @@ public class QMUIGroupListView extends LinearLayout {
             int separatorColor = QMUIResHelper.getAttrColor(groupListView.getContext(), mSeparatorColorAttr);
             for (int i = 0; i < itemViewCount; i++) {
                 QMUICommonListItemView itemView = mItemViews.get(i);
-                Drawable bg = QMUISkinHelper.getSkinDrawable(groupListView, mBgAttr);
-                QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg == null ? null : bg.mutate());
-                QMUISkinHelper.setSkinValue(itemView, skin);
+                if (!mBgAttrForSection) {
+                    Drawable bg = QMUISkinHelper.getSkinDrawable(groupListView, mBgAttr);
+                    QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg == null ? null : bg.mutate());
+                    QMUISkinHelper.setSkinValue(itemView, skin);
+                } else {
+                    int attr;
+                    if (itemViewCount == 1) {
+                        attr = R.attr.qmui_skin_support_s_common_list_new_style_bg;
+                    } else if (i == 0) {
+                        attr = R.attr.qmui_skin_support_s_common_list_new_style_bg_only_top;
+                    } else if (i == itemViewCount - 1) {
+                        attr = R.attr.qmui_skin_support_s_common_list_new_style_bg_only_bottom;
+                    } else {
+                        attr = R.attr.qmui_skin_support_s_common_list_bg;
+                    }
+                    String sectionSkin = builder.background(attr)
+                            .topSeparator(mSeparatorColorAttr)
+                            .bottomSeparator(mSeparatorColorAttr)
+                            .build();
+                    QMUISkinValueBuilder.release(builder);
+                    Drawable bg = QMUISkinHelper.getSkinDrawable(groupListView, attr);
+                    QMUIViewHelper.setBackgroundKeepingPadding(itemView, bg == null ? null : bg.mutate());
+                    QMUISkinHelper.setSkinValue(itemView, sectionSkin);
+                    LinearLayout.LayoutParams lp = (LayoutParams) itemView.getLayoutParams();
+                    if (lp == null) {
+                        lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    }
+                    int horMargin = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_list_item_margin_hor);
+                    lp.setMargins(horMargin, 0, horMargin, 0);
+                    itemView.setLayoutParams(lp);
+                }
                 if (!mHandleSeparatorCustom && mShowSeparator) {
                     if (itemViewCount == 1) {
                         itemView.updateTopDivider(0, 0, 1, separatorColor);
