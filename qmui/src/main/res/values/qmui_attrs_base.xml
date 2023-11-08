@@ -88,7 +88,7 @@
     <attr name="qmui_list_item_height_higher" format="dimension" />
     <attr name="qmui_skin_support_s_list_item_bg_1" format="reference" />
     <attr name="qmui_skin_support_s_list_item_bg_2" format="reference" />
-    <attr name="qmui_skin_support_s_list_item_bg_3" format="reference" />
+    <attr name="qmui_skin_support_s_list_item_bg_all_round" format="reference" />
     <attr name="qmui_skin_support_s_list_item_bg_only_top_round" format="reference" />
     <attr name="qmui_skin_support_s_list_item_bg_only_bottom_round" format="reference" />
 

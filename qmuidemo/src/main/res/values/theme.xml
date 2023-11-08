@@ -122,7 +122,7 @@
         <item name="qmui_skin_support_common_list_chevron_color">@color/qmui_config_color_50_white</item>
         <item name="qmui_skin_support_s_list_item_bg_1">@drawable/s_list_item_bg_dark_1</item>
         <item name="qmui_skin_support_s_list_item_bg_2">@drawable/s_list_item_bg_dark_2</item>
-        <item name="qmui_skin_support_s_list_item_bg_3">@drawable/s_list_item_bg_dark_3</item>
+        <item name="qmui_skin_support_s_list_item_bg_all_round">@drawable/s_list_item_bg_dark_all_round</item>
         <item name="qmui_skin_support_s_list_item_bg_only_top_round">@drawable/s_list_item_bg_dark_only_top_round</item>
         <item name="qmui_skin_support_s_list_item_bg_only_bottom_round">@drawable/s_list_item_bg_dark_only_bottom_round</item>
 
