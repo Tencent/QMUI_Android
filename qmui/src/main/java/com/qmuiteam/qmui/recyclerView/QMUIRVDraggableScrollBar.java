@@ -34,6 +34,7 @@ import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerDecoration;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.section.QMUIStickySectionLayout;
@@ -480,14 +481,14 @@ public class QMUIRVDraggableScrollBar extends RecyclerView.ItemDecoration implem
     public void handle(@NotNull @NonNull RecyclerView recyclerView,
                        @NotNull @NonNull QMUISkinManager manager,
                        int skinIndex,
-                       @NotNull @NonNull Resources.Theme theme) {
+                       @NotNull @NonNull SkinValue skinValue) {
         if (mScrollBarSkinRes != 0) {
-            mScrollBarDrawable = QMUIResHelper.getAttrDrawable(
-                    recyclerView.getContext(), theme, mScrollBarSkinRes);
+            mScrollBarDrawable = skinValue.getDrawable(
+                    recyclerView.getContext(), mScrollBarSkinRes);
         } else if (mScrollBarSkinTintColorRes != 0 && mScrollBarDrawable != null) {
             DrawableCompat.setTintList(mScrollBarDrawable,
-                    QMUIResHelper.getAttrColorStateList(
-                            recyclerView.getContext(), theme, mScrollBarSkinTintColorRes));
+                    skinValue.getColorStateList(
+                            recyclerView.getContext(), mScrollBarSkinTintColorRes));
         }
         invalidate();
     }

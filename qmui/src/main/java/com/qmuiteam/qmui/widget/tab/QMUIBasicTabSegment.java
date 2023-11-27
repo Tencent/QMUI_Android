@@ -43,6 +43,7 @@ import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.skin.defaultAttr.IQMUISkinDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -1186,10 +1187,10 @@ public class QMUIBasicTabSegment extends HorizontalScrollView implements IQMUILa
     }
 
     @Override
-    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
+    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull SkinValue theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         manager.defaultHandleSkinAttrs(this, theme, attrs);
         if (mIndicator != null) {
-            mIndicator.handleSkinChange(manager, skinIndex, theme, mTabAdapter.getItem(mCurrentSelectedIndex));
+            mIndicator.handleSkinChange(getContext(), manager, skinIndex, theme, mTabAdapter.getItem(mCurrentSelectedIndex));
             mContentLayout.invalidate();
         }
     }

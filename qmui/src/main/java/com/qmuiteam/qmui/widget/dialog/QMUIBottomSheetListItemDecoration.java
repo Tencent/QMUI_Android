@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerDecoration;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -79,9 +80,9 @@ public class QMUIBottomSheetListItemDecoration extends RecyclerView.ItemDecorati
     public void handle(@NotNull RecyclerView recyclerView,
                        @NotNull QMUISkinManager manager,
                        int skinIndex,
-                       @NotNull Resources.Theme theme) {
+                       @NotNull SkinValue skinValue) {
         if (mSeparatorAttr != 0) {
-            mSeparatorPaint.setColor(QMUIResHelper.getAttrColor(theme, mSeparatorAttr));
+            mSeparatorPaint.setColor(skinValue.getColor(recyclerView.getContext(), mSeparatorAttr));
         }
     }
 }

@@ -21,5 +21,5 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 public interface IQMUISkinApplyListener {
-    void onApply(View view, int skinIndex, @NonNull Resources.Theme theme);
+    void onApply(View view, int skinIndex, @NonNull SkinValue skinValue);
 }

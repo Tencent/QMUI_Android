@@ -21,15 +21,16 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 public abstract class QMUISkinRuleFloatHandler implements IQMUISkinRuleHandler {
     @Override
-    public final void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull Resources.Theme theme,
+    public final void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull SkinValue skinValue,
                              @NotNull String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrFloatValue(theme, attr));
+        handle(view, name, skinValue.getFloat(view.getContext(), attr));
     }
 
     protected abstract void handle(@NonNull View view,

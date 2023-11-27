@@ -23,5 +23,5 @@ import androidx.recyclerview.widget.RecyclerView;
 public interface IQMUISkinHandlerDecoration {
 
     void handle(@NonNull RecyclerView recyclerView, @NonNull QMUISkinManager manager,
-                int skinIndex, @NonNull Resources.Theme theme);
+                int skinIndex, @NonNull SkinValue skinValue);
 }

@@ -42,6 +42,7 @@ import com.qmuiteam.qmui.skin.IQMUISkinHandlerView;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.skin.defaultAttr.QMUISkinSimpleDefaultAttrProvider;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUIColorHelper;
@@ -716,7 +717,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     }
 
     @Override
-    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
+    public void handle(@NotNull QMUISkinManager manager, int skinIndex, @NotNull SkinValue theme, @Nullable SimpleArrayMap<String, Integer> attrs) {
         if (mTab != null) {
             updateSkinInfo(mTab);
             invalidate();

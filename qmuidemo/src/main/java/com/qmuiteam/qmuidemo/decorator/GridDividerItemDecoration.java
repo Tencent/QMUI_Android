@@ -24,6 +24,7 @@ import android.view.View;
 
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerDecoration;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmuidemo.R;
 
@@ -84,8 +85,8 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration imple
     }
 
     @Override
-    public void handle(@NotNull RecyclerView recyclerView, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
-        mDividerPaint.setColor(QMUIResHelper.getAttrColor(theme, mDividerAttr));
+    public void handle(@NotNull RecyclerView recyclerView, @NotNull QMUISkinManager manager, int skinIndex, @NotNull SkinValue theme) {
+        mDividerPaint.setColor(theme.getColor(recyclerView.getContext(), mDividerAttr));
         recyclerView.invalidate();
     }
 }

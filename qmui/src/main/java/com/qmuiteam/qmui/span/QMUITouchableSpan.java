@@ -26,6 +26,7 @@ import com.qmuiteam.qmui.link.ITouchableSpan;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerSpan;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import androidx.annotation.ColorInt;
@@ -144,22 +145,22 @@ public abstract class QMUITouchableSpan extends ClickableSpan implements IToucha
     }
 
     @Override
-    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
+    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull SkinValue skinValue) {
         boolean noAttrExist = true;
         if (mNormalTextColorAttr != 0) {
-            mNormalTextColor = QMUIResHelper.getAttrColor(theme, mNormalTextColorAttr);
+            mNormalTextColor = skinValue.getColor(view.getContext(), mNormalTextColorAttr);
             noAttrExist = false;
         }
         if (mPressedTextColorAttr != 0) {
-            mPressedTextColor = QMUIResHelper.getAttrColor(theme, mPressedTextColorAttr);
+            mPressedTextColor = skinValue.getColor(view.getContext(), mPressedTextColorAttr);
             noAttrExist = false;
         }
         if (mNormalBgAttr != 0) {
-            mNormalBackgroundColor = QMUIResHelper.getAttrColor(theme, mNormalBgAttr);
+            mNormalBackgroundColor = skinValue.getColor(view.getContext(), mNormalBgAttr);
             noAttrExist = false;
         }
         if (mPressedBgAttr != 0) {
-            mPressedBackgroundColor = QMUIResHelper.getAttrColor(theme, mPressedBgAttr);
+            mPressedBackgroundColor = skinValue.getColor(view.getContext(), mPressedBgAttr);
             noAttrExist = false;
         }
 

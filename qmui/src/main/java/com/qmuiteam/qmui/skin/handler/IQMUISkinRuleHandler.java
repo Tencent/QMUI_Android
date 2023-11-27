@@ -21,10 +21,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 
 public interface IQMUISkinRuleHandler {
     void handle(@NonNull QMUISkinManager skinManager,
                 @NonNull View view,
-                @NonNull Resources.Theme theme,
+                @NonNull SkinValue skinValue,
                 @NonNull String name, int attr);
 }

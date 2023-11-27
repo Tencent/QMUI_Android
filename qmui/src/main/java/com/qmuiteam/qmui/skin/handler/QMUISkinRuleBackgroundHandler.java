@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
@@ -31,17 +32,15 @@ import org.jetbrains.annotations.NotNull;
 public class QMUISkinRuleBackgroundHandler implements IQMUISkinRuleHandler {
 
     @Override
-    public void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull Resources.Theme theme, @NotNull String name, int attr) {
+    public void handle(@NotNull QMUISkinManager skinManager, @NotNull View view, @NotNull SkinValue skinValue, @NotNull String name, int attr) {
         if(view instanceof QMUIRoundButton){
-            ((QMUIRoundButton)view).setBgData(
-                    QMUIResHelper.getAttrColorStateList(view.getContext(), theme, attr));
+            ((QMUIRoundButton)view).setBgData(skinValue.getColorStateList(view.getContext(), attr));
         }else if(view instanceof QMUIProgressBar){
-            view.setBackgroundColor(QMUIResHelper.getAttrColor(theme, attr));
+            view.setBackgroundColor(skinValue.getColor(view.getContext(), attr));
         }else if(view instanceof QMUISlider){
-            ((QMUISlider)view).setBarNormalColor(QMUIResHelper.getAttrColor(theme, attr));
+            ((QMUISlider)view).setBarNormalColor(skinValue.getColor(view.getContext(), attr));
         }else{
-            QMUIViewHelper.setBackgroundKeepingPadding(view,
-                    QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+            QMUIViewHelper.setBackgroundKeepingPadding(view, skinValue.getDrawable(view.getContext(), attr));
         }
     }
 }

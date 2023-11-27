@@ -16,6 +16,7 @@
 
 package com.qmuiteam.qmui.widget.tab;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,6 +26,7 @@ import android.view.View;
 
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -153,13 +155,13 @@ public class QMUITabIndicator {
         }
     }
 
-    protected void handleSkinChange(@NonNull QMUISkinManager manager, int skinIndex,
-                                    @NonNull Resources.Theme theme,
+    protected void handleSkinChange(Context context, @NonNull QMUISkinManager manager, int skinIndex,
+                                    @NonNull SkinValue theme,
                                     @Nullable QMUITab selectedTab){
         mShouldReGetFixedColor = true;
         if(selectedTab != null && mFixedColorAttr == 0){
             updateColor(
-                    selectedTab.selectedColorAttr == 0 ? selectedTab.selectColor : QMUIResHelper.getAttrColor(theme,selectedTab.selectedColorAttr));
+                    selectedTab.selectedColorAttr == 0 ? selectedTab.selectColor : theme.getColor(context,selectedTab.selectedColorAttr));
         }
     }
 }

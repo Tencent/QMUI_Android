@@ -24,6 +24,6 @@ import androidx.collection.SimpleArrayMap;
 public interface IQMUISkinHandlerView {
     void handle(@NonNull QMUISkinManager manager,
                 int skinIndex,
-                @NonNull Resources.Theme theme,
+                @NonNull SkinValue skinValue,
                 @Nullable SimpleArrayMap<String, Integer> attrs);
 }

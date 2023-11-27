@@ -22,6 +22,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +31,9 @@ public abstract class QMUISkinRuleDrawableHandler implements IQMUISkinRuleHandle
     @Override
     public final void handle(@NotNull @NonNull QMUISkinManager skinManager,
                              @NotNull @NonNull View view,
-                             @NotNull @NonNull Resources.Theme theme,
+                             @NotNull @NonNull SkinValue skinValue,
                              @NotNull @NonNull String name, int attr) {
-        handle(view, name, QMUIResHelper.getAttrDrawable(view.getContext(), theme, attr));
+        handle(view, name, skinValue.getDrawable(view.getContext(), attr));
     }
 
     protected abstract void handle(@NonNull View view, @NonNull String name, Drawable drawable);

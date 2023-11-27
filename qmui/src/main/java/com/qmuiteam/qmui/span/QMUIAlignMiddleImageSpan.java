@@ -27,6 +27,7 @@ import android.view.View;
 import com.qmuiteam.qmui.skin.IQMUISkinHandlerSpan;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIDrawableHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
@@ -138,10 +139,10 @@ public class QMUIAlignMiddleImageSpan extends ImageSpan implements IQMUISkinHand
     }
 
     @Override
-    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull Resources.Theme theme) {
+    public void handle(@NotNull View view, @NotNull QMUISkinManager manager, int skinIndex, @NotNull SkinValue skinValue) {
         if (mDrawableTintColorAttr != 0) {
             QMUIDrawableHelper.setDrawableTintColor(mDrawable,
-                    QMUIResHelper.getAttrColor(theme, mDrawableTintColorAttr));
+                    skinValue.getColor(view.getContext(), mDrawableTintColorAttr));
         }
     }
 }

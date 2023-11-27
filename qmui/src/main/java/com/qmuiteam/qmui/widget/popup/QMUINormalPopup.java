@@ -42,6 +42,7 @@ import com.qmuiteam.qmui.layout.QMUILayoutHelper;
 import com.qmuiteam.qmui.skin.IQMUISkinDispatchInterceptor;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
 import com.qmuiteam.qmui.skin.QMUISkinValueBuilder;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -648,12 +649,12 @@ public class QMUINormalPopup<T extends QMUIBasePopup> extends QMUIBasePopup<T> {
         }
 
         @Override
-        public boolean intercept(int skinIndex, @NotNull Resources.Theme theme) {
+        public boolean intercept(int skinIndex, @NotNull SkinValue theme) {
             if (!mIsBorderColorSet && mBorderColorAttr != 0) {
-                mBorderUsedColor = QMUIResHelper.getAttrColor(theme, mBorderColorAttr);
+                mBorderUsedColor = theme.getColor(mContext, mBorderColorAttr);
             }
             if (!mIsBgColorSet && mBgColorAttr != 0) {
-                mBgUsedColor = QMUIResHelper.getAttrColor(theme, mBgColorAttr);
+                mBgUsedColor = theme.getColor(mContext, mBgColorAttr);
             }
             return false;
         }

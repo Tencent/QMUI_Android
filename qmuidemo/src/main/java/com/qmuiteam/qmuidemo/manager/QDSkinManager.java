@@ -17,10 +17,14 @@ package com.qmuiteam.qmuidemo.manager;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmuidemo.QDApplication;
 import com.qmuiteam.qmuidemo.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class QDSkinManager {
     public static final int SKIN_BLUE = 1;
@@ -30,9 +34,12 @@ public class QDSkinManager {
 
     public static void install(Context context) {
         QMUISkinManager skinManager = QMUISkinManager.defaultInstance(context);
-        skinManager.addSkin(SKIN_BLUE, R.style.app_skin_blue);
-        skinManager.addSkin(SKIN_DARK, R.style.app_skin_dark);
-        skinManager.addSkin(SKIN_WHITE, R.style.app_skin_white);
+        skinManager.addSkin(SKIN_BLUE, R.style.app_skin_blue, null);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("qmui_skin_support_empty_view_title_color", Color.RED);
+        skinManager.addSkin(SKIN_DARK, R.style.app_skin_dark, map);
+        skinManager.addSkin(SKIN_WHITE, R.style.app_skin_white, null);
         boolean isDarkMode = (context.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         int storeSkinIndex = QDPreferenceManager.getInstance(context).getSkinIndex();

@@ -32,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.skin.SkinValue;
+import com.qmuiteam.qmui.skin.ThemeSkinValue;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 
 import java.lang.ref.WeakReference;
@@ -52,8 +54,8 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
         @Override
         public void onSkinChange(QMUISkinManager skinManager, int oldSkin, int newSkin) {
             if (mDimAmountAttr != 0) {
-                Resources.Theme theme = skinManager.getTheme(newSkin);
-                mDimAmount = QMUIResHelper.getAttrFloatValue(theme, mDimAmountAttr);
+                SkinValue theme = skinManager.getSkinValue(newSkin);
+                mDimAmount = theme.getFloat(mContext, mDimAmountAttr);
                 updateDimAmount(mDimAmount);
                 QMUIBasePopup.this.onSkinChange(oldSkin, newSkin);
             }
@@ -201,9 +203,9 @@ public abstract class QMUIBasePopup<T extends QMUIBasePopup> {
             mSkinManager.register(mWindow);
             mSkinManager.addSkinChangeListener(mOnSkinChangeListener);
             if (mDimAmountAttr != 0) {
-                Resources.Theme currentTheme = mSkinManager.getCurrentTheme();
-                currentTheme = currentTheme == null ? parent.getContext().getTheme() : currentTheme;
-                mDimAmount = QMUIResHelper.getAttrFloatValue(currentTheme, mDimAmountAttr);
+                SkinValue currentTheme = mSkinManager.getCurrentSkinValue();
+                currentTheme = currentTheme == null ? new ThemeSkinValue(parent.getContext().getTheme()) : currentTheme;
+                mDimAmount = currentTheme.getFloat(mContext, mDimAmountAttr);
             }
         }
         if (mDimAmount != DIM_AMOUNT_NOT_EXIST) {

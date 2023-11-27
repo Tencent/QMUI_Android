@@ -74,6 +74,7 @@ import com.qmuiteam.qmui.QMUIInterpolatorStaticHolder;
 import com.qmuiteam.qmui.R;
 import com.qmuiteam.qmui.skin.IQMUISkinDispatchInterceptor;
 import com.qmuiteam.qmui.skin.QMUISkinHelper;
+import com.qmuiteam.qmui.skin.SkinValue;
 import com.qmuiteam.qmui.util.QMUICollapsingTextHelper;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -1317,12 +1318,12 @@ public class QMUICollapsingTopBarLayout extends FrameLayout implements IQMUISkin
     }
 
     @Override
-    public boolean intercept(int skinIndex, @NotNull Resources.Theme theme) {
+    public boolean intercept(int skinIndex, @NotNull SkinValue theme) {
         if (mContentScrimSkinAttr != 0) {
-            setContentScrimInner(QMUIResHelper.getAttrDrawable(getContext(), theme, mContentScrimSkinAttr));
+            setContentScrimInner(theme.getDrawable(getContext(), mContentScrimSkinAttr));
         }
         if (mStatusBarScrimSkinAttr != 0) {
-            setStatusBarScrimInner(QMUIResHelper.getAttrDrawable(getContext(), theme, mStatusBarScrimSkinAttr));
+            setStatusBarScrimInner(theme.getDrawable(getContext(), mStatusBarScrimSkinAttr));
         }
 
         if (mCollapsedTextColorSkinAttr != 0) {
