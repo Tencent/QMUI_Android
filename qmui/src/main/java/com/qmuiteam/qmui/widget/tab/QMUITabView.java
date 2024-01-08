@@ -54,7 +54,7 @@ import org.jetbrains.annotations.NotNull;
 public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private static final String TAG = "QMUITabView";
     protected QMUITab mTab;
-    private QMUICollapsingTextHelper mCollapsingTextHelper;
+    protected QMUICollapsingTextHelper mCollapsingTextHelper;
     private Interpolator mPositionInterpolator;
     private GestureDetector mGestureDetector;
     private Callback mCallback;
@@ -76,7 +76,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     protected float mSelectedTextLeft = 0;
     private float mSelectedTextTop = 0;
 
-    private float mSelectFraction = 0f;
+    protected float mSelectFraction = 0f;
 
     private QMUIRoundButton mSignCountView;
 
