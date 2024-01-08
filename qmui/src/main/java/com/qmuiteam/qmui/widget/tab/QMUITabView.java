@@ -53,27 +53,27 @@ import org.jetbrains.annotations.NotNull;
 
 public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private static final String TAG = "QMUITabView";
-    private QMUITab mTab;
+    protected QMUITab mTab;
     private QMUICollapsingTextHelper mCollapsingTextHelper;
     private Interpolator mPositionInterpolator;
     private GestureDetector mGestureDetector;
     private Callback mCallback;
-    private float mCurrentIconLeft = 0;
+    protected float mCurrentIconLeft = 0;
     private float mCurrentIconTop = 0;
-    private float mCurrentTextLeft = 0;
+    protected float mCurrentTextLeft = 0;
     private float mCurrentTextTop = 0;
     private float mCurrentIconWidth = 0;
     private float mCurrentIconHeight = 0;
     private float mCurrentTextWidth = 0;
     private float mCurrentTextHeight = 0;
 
-    private float mNormalIconLeft = 0;
+    protected float mNormalIconLeft = 0;
     private float mNormalIconTop = 0;
-    private float mNormalTextLeft = 0;
+    protected float mNormalTextLeft = 0;
     private float mNormalTextTop = 0;
-    private float mSelectedIconLeft = 0;
+    protected float mSelectedIconLeft = 0;
     private float mSelectedIconTop = 0;
-    private float mSelectedTextLeft = 0;
+    protected float mSelectedTextLeft = 0;
     private float mSelectedTextTop = 0;
 
     private float mSelectFraction = 0f;
@@ -154,7 +154,7 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
         if (hasRedPoint || hasSignCount) {
             ensureSignCountView(getContext());
 
-            FrameLayout.LayoutParams signCountLp = (FrameLayout.LayoutParams) mSignCountView.getLayoutParams();
+            LayoutParams signCountLp = (LayoutParams) mSignCountView.getLayoutParams();
             if (hasSignCount) {
                 mSignCountView.setText(
                         QMUILangHelper.formatNumberToLimitedDigits(mTab.signCount, mTab.signCountDigits));
@@ -277,11 +277,11 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
     private QMUIRoundButton ensureSignCountView(Context context) {
         if (mSignCountView == null) {
             mSignCountView = createSignCountView(context);
-            FrameLayout.LayoutParams signCountLp;
+            LayoutParams signCountLp;
             if (mSignCountView.getLayoutParams() != null) {
-                signCountLp = new FrameLayout.LayoutParams(mSignCountView.getLayoutParams());
+                signCountLp = new LayoutParams(mSignCountView.getLayoutParams());
             } else {
-                signCountLp = new FrameLayout.LayoutParams(
+                signCountLp = new LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
             addView(mSignCountView, signCountLp);
@@ -624,55 +624,47 @@ public class QMUITabView extends FrameLayout implements IQMUISkinHandlerView {
                         break;
                     case Gravity.CENTER_HORIZONTAL:
                     default:
-                        if (iconPosition == QMUITab.ICON_POSITION_RIGHT) {
-                            mNormalTextLeft = (width - normalTotalWidth) / 2;
-                            mSelectedTextLeft = (width - selectedTotalWidth) / 2;
-                            mNormalIconLeft = mNormalTextLeft + normalTextWidth + gap;
-                            mSelectedIconLeft = mSelectedTextLeft + selectedTextWidth + gap;
-                        } else {
-                            mNormalIconLeft = (width - normalTotalWidth) / 2;
-                            mSelectedIconLeft = (width - selectedTotalWidth) / 2;
+                        if (iconPosition == QMUITab.ICON_POSITION_LEFT) {
+                            // normal
+                            if (normalTotalWidth >= width) {
+                                mNormalIconLeft = width - normalTotalWidth;
+                            } else {
+                                mNormalIconLeft = (width - normalTotalWidth) / 2;
+                            }
                             mNormalTextLeft = mNormalIconLeft + normalIconWidth + gap;
+
+                            // selected
+                            if (selectedTotalWidth >= width) {
+                                mSelectedIconLeft = width - selectedTotalWidth;
+                            } else {
+                                mSelectedIconLeft = (width - selectedTotalWidth) / 2;
+                            }
                             mSelectedTextLeft = mSelectedIconLeft + selectedIconWidth + gap;
+                        } else {
+                            // normal
+                            if (normalTotalWidth >= width) {
+                                mNormalTextLeft = 0;
+                            } else {
+                                mNormalTextLeft = (width - normalTotalWidth) / 2;
+                            }
+                            mNormalIconLeft = mNormalTextLeft + normalTextWidth + gap;
+
+                            // selected
+                            if (selectedTotalWidth >= width) {
+                                mSelectedTextLeft = 0;
+                            } else {
+                                mSelectedTextLeft = (width - selectedTotalWidth) / 2;
+                            }
+                            mSelectedIconLeft = mSelectedTextLeft + selectedTextWidth + gap;
                         }
                         break;
                 }
-
-                if (iconPosition == QMUITab.ICON_POSITION_LEFT) {
-                    // normal
-                    if (normalTotalWidth >= width) {
-                        mNormalIconLeft = width - normalTotalWidth;
-                    } else {
-                        mNormalIconLeft = (width - normalTotalWidth) / 2;
-                    }
-                    mNormalTextLeft = mNormalIconLeft + normalIconWidth + gap;
-
-                    // selected
-                    if (selectedTotalWidth >= width) {
-                        mSelectedIconLeft = width - selectedTotalWidth;
-                    } else {
-                        mSelectedIconLeft = (width - selectedTotalWidth) / 2;
-                    }
-                    mSelectedTextLeft = mSelectedIconLeft + selectedIconWidth + gap;
-                } else {
-                    // normal
-                    if (normalTotalWidth >= width) {
-                        mNormalTextLeft = 0;
-                    } else {
-                        mNormalTextLeft = (width - normalTotalWidth) / 2;
-                    }
-                    mNormalIconLeft = mNormalTextLeft + normalTextWidth + gap;
-
-                    // selected
-                    if (selectedTotalWidth >= width) {
-                        mSelectedTextLeft = 0;
-                    } else {
-                        mSelectedTextLeft = (width - selectedTotalWidth) / 2;
-                    }
-                    mSelectedIconLeft = mSelectedTextLeft + selectedTextWidth + gap;
-                }
             }
         }
+        updateLayoutPosition();
+    }
+
+    protected void updateLayoutPosition() {
         updateCurrentInfo(1 - mCollapsingTextHelper.getExpansionFraction());
     }
 
