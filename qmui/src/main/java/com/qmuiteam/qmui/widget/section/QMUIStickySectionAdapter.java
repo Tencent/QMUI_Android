@@ -503,11 +503,11 @@ public abstract class QMUIStickySectionAdapter<
                 }
                 int itemIndex = getItemIndex(i);
                 if (itemIndex == ITEM_INDEX_SECTION_HEADER) {
-                    if (positionFinder.find(section, null)) {
+                    if (positionFinder.find(section, null, -1)) {
                         return i;
                     }
                 } else if (itemIndex >= 0) {
-                    if (positionFinder.find(section, section.getItemAt(itemIndex))) {
+                    if (positionFinder.find(section, section.getItemAt(itemIndex), itemIndex)) {
                         return i;
                     }
                 }
@@ -519,12 +519,12 @@ public abstract class QMUIStickySectionAdapter<
         loop:
         for (int i = 0; i < mCurrentData.size(); i++) {
             QMUISection<H, T> section = mCurrentData.get(i);
-            if (positionFinder.find(section, null)) {
+            if (positionFinder.find(section, null, -1)) {
                 targetSection = section;
                 break;
             }
             for (int j = 0; j < section.getItemCount(); j++) {
-                if (positionFinder.find(section, section.getItemAt(j))) {
+                if (positionFinder.find(section, section.getItemAt(j), j)) {
                     targetSection = section;
                     targetItem = section.getItemAt(j);
                     boolean isFold = section.isFold();
@@ -751,7 +751,7 @@ public abstract class QMUIStickySectionAdapter<
          * @param item
          * @return
          */
-        boolean find(@NonNull QMUISection<H, T> section, @Nullable T item);
+        boolean find(@NonNull QMUISection<H, T> section, @Nullable T item, int itemIndex);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

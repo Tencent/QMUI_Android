@@ -202,7 +202,7 @@ public abstract class QDBaseSectionLayoutFragment extends BaseFragment {
                             case 2: {
                                 int targetPosition = mAdapter.findPosition(new QMUIStickySectionAdapter.PositionFinder<SectionHeader, SectionItem>() {
                                     @Override
-                                    public boolean find(@NonNull QMUISection<SectionHeader, SectionItem> section, @Nullable SectionItem item) {
+                                    public boolean find(@NonNull QMUISection<SectionHeader, SectionItem> section, @Nullable SectionItem item, int itemIndex) {
                                         return "header 4".equals(section.getHeader().getText()) && (item != null && "item 13".equals(item.getText()));
                                     }
                                 }, true);
