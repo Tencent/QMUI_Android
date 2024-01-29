@@ -126,6 +126,25 @@ public class QMUIViewHelper {
         }
     }
 
+    public static void expendTouchArea(final View view, final int left, final int right, final int top, final int bottom) {
+        if (view != null) {
+            final View parentView = (View) view.getParent();
+
+            parentView.post(new Runnable() {
+                @Override
+                public void run() {
+                    Rect rect = new Rect();
+                    view.getHitRect(rect); //如果太早执行本函数，会获取rect失败，因为此时UI界面尚未开始绘制，无法获得正确的坐标
+                    rect.left -= left;
+                    rect.top -= top;
+                    rect.right += right;
+                    rect.bottom += bottom;
+                    parentView.setTouchDelegate(new TouchDelegate(rect, view));
+                }
+            });
+        }
+    }
+
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void setBackground(View view, Drawable drawable) {
