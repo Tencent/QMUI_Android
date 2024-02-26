@@ -302,6 +302,12 @@ public class QMUIBottomSheet extends QMUIBaseDialog {
         mRootView.addView(view, lp);
     }
 
+    public void removeContentView(View view) {
+        if (view != null) {
+            mRootView.removeView(view);
+        }
+    }
+
     public void addContentView(int layoutResId) {
         LayoutInflater.from(mRootView.getContext()).inflate(layoutResId, mRootView, true);
     }

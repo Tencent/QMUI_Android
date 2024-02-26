@@ -39,6 +39,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     private CharSequence mTitle;
     private boolean mAddCancelBtn;
     private String mCancelText;
+    private View mContentView;
     private DialogInterface.OnDismissListener mOnBottomDialogDismissListener;
     private int mRadius = -1;
     private boolean mAllowDrag = false;
@@ -109,11 +110,21 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
     }
 
     public QMUIBottomSheet build() {
-        return build(R.style.QMUI_BottomSheet);
+        return build(R.style.QMUI_BottomSheet, false);
+    }
+
+    public QMUIBottomSheet build(boolean refresh) {
+        return build(R.style.QMUI_BottomSheet, refresh);
     }
 
     public QMUIBottomSheet build(int style) {
-        mDialog = createBottomSheet(style);
+        return build(style, false);
+    }
+
+    public QMUIBottomSheet build(int style, boolean refresh) {
+        if (!refresh) {
+            mDialog = createBottomSheet(style);
+        }
         Context dialogContext = mDialog.getContext();
         QMUIBottomSheetRootLayout rootLayout = mDialog.getRootView();
         if (ifPreRemoveAllViews()) {
@@ -130,6 +141,7 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lp.setPriority(QMUIPriorityLinearLayout.LayoutParams.PRIORITY_DISPOSABLE);
             mDialog.addContentView(contentView, lp);
+            mContentView = contentView;
         }
         onAddCustomViewAfterContent(mDialog, rootLayout, dialogContext);
 
@@ -232,5 +244,9 @@ public abstract class QMUIBottomSheetBaseBuilder<T extends QMUIBottomSheetBaseBu
 
     protected boolean ifPreRemoveAllViews() {
         return true;
+    }
+
+    public View getContentView() {
+        return mContentView;
     }
 }
