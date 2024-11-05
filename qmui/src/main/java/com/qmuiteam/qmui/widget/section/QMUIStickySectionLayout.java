@@ -267,6 +267,11 @@ public class QMUIStickySectionLayout extends QMUIFrameLayout implements QMUIStic
         mRecyclerView.requestChildFocus(view, null);
     }
 
+    @Override
+    public int doGetStickyHeaderPosition() {
+        return getStickyHeaderPosition();
+    }
+
     public interface StickySectionWrapViewConfig {
         void config(QMUIFrameLayout stickySectionWrapView);
     }

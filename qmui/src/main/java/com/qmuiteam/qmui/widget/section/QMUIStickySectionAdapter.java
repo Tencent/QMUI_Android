@@ -573,6 +573,29 @@ public abstract class QMUIStickySectionAdapter<
         }
     }
 
+    public void toggleFoldForChapterBuy(int position) {
+        QMUISection<H, T> section = getSection(position);
+        if (section == null) {
+            return;
+        }
+        if (mViewCallback != null && !section.isFold()) {
+            for (int i = 0; i < mSectionIndex.size(); i++) {
+                int itemIndex = getItemIndex(i);
+                if (itemIndex == ITEM_INDEX_SECTION_HEADER && getSection(i) == section && mViewCallback.doGetStickyHeaderPosition() == position) {
+                    mViewCallback.scrollToPosition(i, true, true);
+                    RecyclerView recyclerView = mViewCallback.getRecyclerView();
+                    section.setFold(!section.isFold());
+                    lock(section);
+                    diff(false, true);
+                    return;
+                }
+            }
+        }
+        section.setFold(!section.isFold());
+        lock(section);
+        diff(false, true);
+    }
+
 
     public int getRelativeStickyPosition(int position) {
         while (getItemViewType(position) != ITEM_TYPE_SECTION_HEADER) {
@@ -741,6 +764,8 @@ public abstract class QMUIStickySectionAdapter<
         RecyclerView.ViewHolder findViewHolderForAdapterPosition(int position);
 
         void requestChildFocus(View view);
+        int doGetStickyHeaderPosition();
+        RecyclerView getRecyclerView();
     }
 
     public interface PositionFinder<H extends QMUISection.Model<H>, T extends QMUISection.Model<T>> {
